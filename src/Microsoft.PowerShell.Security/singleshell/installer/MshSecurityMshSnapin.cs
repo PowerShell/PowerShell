@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -8,27 +7,25 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration.Install;
-using System.Reflection;
-using Microsoft.Win32;
 using System.IO;
 using System.Management.Automation;
+using System.Reflection;
+
+using Microsoft.Win32;
 
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// 
-    /// MshSecurityMshSnapin (or MshSecurityMshSnapinInstaller) is a class for facilitating registry 
-    /// of necessary information for monad security mshsnapin. 
-    /// 
-    /// This class will be built with monad security dll 
-    /// 
+    /// MshSecurityMshSnapin (or MshSecurityMshSnapinInstaller) is a class for facilitating registry
+    /// of necessary information for monad security mshsnapin.
+    ///
+    /// This class will be built with monad security dll.
     /// </summary>
-    /// 
     [RunInstaller(true)]
     public sealed class PSSecurityPSSnapIn : PSSnapIn
     {
         /// <summary>
-        /// Create an instance of this class. 
+        /// Create an instance of this class.
         /// </summary>
         public PSSecurityPSSnapIn()
             : base()
@@ -47,7 +44,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Get the default vendor string for this mshsnapin. 
+        /// Get the default vendor string for this mshsnapin.
         /// </summary>
         public override string Vendor
         {
@@ -58,7 +55,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Get resource information for vendor. This is a string of format: resourceBaseName,resourceName. 
+        /// Get resource information for vendor. This is a string of format: resourceBaseName,resourceName.
         /// </summary>
         public override string VendorResource
         {
@@ -69,7 +66,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Get the default description string for this mshsnapin. 
+        /// Get the default description string for this mshsnapin.
         /// </summary>
         public override string Description
         {
@@ -80,7 +77,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Get resource information for description. This is a string of format: resourceBaseName,resourceName. 
+        /// Get resource information for description. This is a string of format: resourceBaseName,resourceName.
         /// </summary>
         public override string DescriptionResource
         {

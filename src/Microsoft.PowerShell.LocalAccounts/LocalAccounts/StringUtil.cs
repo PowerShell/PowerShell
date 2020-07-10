@@ -1,10 +1,13 @@
-﻿using System.Globalization;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System.Globalization;
 using System.Management.Automation.SecurityAccountsManager.Native;
 
 namespace System.Management.Automation.SecurityAccountsManager
 {
     /// <summary>
-    /// Contains utility functions for formatting localizable strings
+    /// Contains utility functions for formatting localizable strings.
     /// </summary>
     internal class StringUtil
     {
@@ -35,6 +38,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         {
             return string.Format(CultureInfo.CurrentCulture, fmt, p0);
         }
+
         internal static string Format(string fmt, int p0)
         {
             return string.Format(CultureInfo.CurrentCulture, fmt, p0);

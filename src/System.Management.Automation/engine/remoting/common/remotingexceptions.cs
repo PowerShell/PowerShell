@@ -1,24 +1,17 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation.  All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using System.Runtime.Serialization;
 using System.Management.Automation.Internal;
-
-#if CORECLR
-// Use stubs for SerializableAttribute, SecurityPermissionAttribute and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#else
+using System.Runtime.Serialization;
 using System.Security.Permissions;
-#endif
 
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
     /// This enum defines the error message ids used by the resource manager to get
     /// localized messages.
-    /// 
-    /// Related error ids are organized in a pre-defined range of values. 
+    ///
+    /// Related error ids are organized in a pre-defined range of values.
     /// </summary>
     internal enum PSRemotingErrorId : uint
     {
@@ -26,7 +19,7 @@ namespace System.Management.Automation.Remoting
         DefaultRemotingExceptionMessage = 0,
         OutOfMemory = 1,
 
-        // Pipeline related range: 10-99      
+        // Pipeline related range: 10-99
         PipelineIdsDoNotMatch = 10,
         PipelineNotFoundOnServer = 11,
         PipelineStopped = 12,
@@ -67,7 +60,7 @@ namespace System.Management.Automation.Remoting
         MissingIsStartFragment = 409,
         MissingProperty = 410,
         ObjectIdsNotMatching = 411,
-        FragmetIdsNotInSequence = 412,
+        FragmentIdsNotInSequence = 412,
         ObjectIsTooBig = 413,
         MissingIsEndFragment = 414,
         DeserializedObjectIsNull = 415,
@@ -134,6 +127,7 @@ namespace System.Management.Automation.Remoting
         CannotSetStdOutHandle = 822,
         CannotSetStdErrHandle = 823,
         InvalidConfigurationName = 824,
+        ConnectSkipCheckFailed = 825,
         // Error codes added to support new WSMan Fan-In Model API
         CreateSessionFailed = 851,
         CreateExFailed = 853,
@@ -193,7 +187,7 @@ namespace System.Management.Automation.Remoting
         RemoteRunspaceNotAvailableForSpecifiedSessionId = 920,
         ItemNotFoundInRepository = 921,
         CannotRemoveJob = 922,
-        NewRunspaceAmbiguosAuthentication = 923,
+        NewRunspaceAmbiguousAuthentication = 923,
         WildCardErrorFilePathParameter = 924,
         FilePathNotFromFileSystemProvider = 925,
         FilePathShouldPS1Extension = 926,
@@ -204,7 +198,7 @@ namespace System.Management.Automation.Remoting
         URIRedirectionReported = 930,
         NoMoreInputWrites = 931,
         InvalidComputerName = 932,
-        ProxyAmbiguosAuthentication = 933,
+        ProxyAmbiguousAuthentication = 933,
         ProxyCredentialWithoutAccess = 934,
 
         // Start-PSSession related error codes.
@@ -215,7 +209,6 @@ namespace System.Management.Automation.Remoting
         RemoteRunspaceHasMultipleMatchesForSpecifiedName = 955,
         RemoteRunspaceDoesNotSupportPushRunspace = 956,
         HostInNestedPrompt = 957,
-        RemoteHostDoesNotSupportPushRunspace = 958,
         InvalidVMId = 959,
         InvalidVMNameNoVM = 960,
         InvalidVMNameMultipleVM = 961,
@@ -241,7 +234,7 @@ namespace System.Management.Automation.Remoting
         PSDefaultSessionOptionDescription = 1002,
         PSSenderInfoDescription = 1004,
 
-        // IPC for Backgroud jobs related errors: 2000
+        // IPC for Background jobs related errors: 2000
         IPCUnknownNodeType = 2001,
         IPCInsufficientDataforElement = 2002,
         IPCWrongAttributeCountForDataElement = 2003,
@@ -259,7 +252,6 @@ namespace System.Management.Automation.Remoting
         IPCCloseTimedOut = 2106,
         IPCExceptionLaunchingProcess = 2107,
     }
-
 
     /// <summary>
     /// This static class defines the resource base name used by remoting errors.
@@ -296,7 +288,7 @@ namespace System.Management.Automation.Remoting
         #region Constructors
 
         /// <summary>
-        /// Default construtor.
+        /// Default constructor.
         /// </summary>
         public PSRemotingDataStructureException()
             : base(PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.DefaultRemotingExceptionMessage, typeof(PSRemotingDataStructureException).FullName))
@@ -350,7 +342,7 @@ namespace System.Management.Automation.Remoting
         /// This constuctor takes an inner exception and an error id.
         /// </summary>
         /// <param name="innerException">
-        /// Inner excetion.
+        /// Inner exception.
         /// </param>
         /// <param name="resourceString">
         /// The resource string in the base resource file.
@@ -374,7 +366,6 @@ namespace System.Management.Automation.Remoting
         {
         }
 
-
         #endregion Constructors
 
         /// <summary>
@@ -386,7 +377,6 @@ namespace System.Management.Automation.Remoting
             SetErrorId(typeof(PSRemotingDataStructureException).FullName);
         }
     }
-
 
     /// <summary>
     /// This exception is used by remoting code to indicate an error condition in network operations.
@@ -419,8 +409,6 @@ namespace System.Management.Automation.Remoting
         {
             SetDefaultErrorRecord();
         }
-
-
 
         /// <summary>
         /// This constructor takes a localized message and an inner exception.
@@ -460,7 +448,7 @@ namespace System.Management.Automation.Remoting
         /// This constuctor takes an inner exception and an error id.
         /// </summary>
         /// <param name="innerException">
-        /// Inner excetion.
+        /// Inner exception.
         /// </param>
         /// <param name="resourceString">
         /// The resource string in the base resource file.
@@ -487,7 +475,7 @@ namespace System.Management.Automation.Remoting
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             _errorCode = info.GetInt32("ErrorCode");
@@ -499,14 +487,14 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Serializes the exception data.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -533,6 +521,7 @@ namespace System.Management.Automation.Remoting
             {
                 return _errorCode;
             }
+
             set
             {
                 _errorCode = value;
@@ -548,6 +537,7 @@ namespace System.Management.Automation.Remoting
             {
                 return _transportMessage;
             }
+
             set
             {
                 _transportMessage = value;
@@ -602,7 +592,7 @@ namespace System.Management.Automation.Remoting
         /// This constuctor takes an inner exception and an error id.
         /// </summary>
         /// <param name="innerException">
-        /// Inner excetion.
+        /// Inner exception.
         /// </param>
         /// <param name="resourceString">
         /// The resource string in the base resource file.
@@ -628,7 +618,7 @@ namespace System.Management.Automation.Remoting
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             RedirectLocation = info.GetString("RedirectLocation");
@@ -662,14 +652,14 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Serializes the exception data.
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);

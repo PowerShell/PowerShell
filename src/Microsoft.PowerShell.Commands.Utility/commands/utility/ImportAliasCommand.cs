@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -13,10 +12,9 @@ using System.Security;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The implementation of the "import-alias" cmdlet
+    /// The implementation of the "import-alias" cmdlet.
     /// </summary>
-    /// 
-    [Cmdlet(VerbsData.Import, "Alias", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113339")]
+    [Cmdlet(VerbsData.Import, "Alias", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097125")]
     [OutputType(typeof(AliasInfo))]
     public class ImportAliasCommand : PSCmdlet
     {
@@ -29,18 +27,16 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// The path from which to import the aliases
+        /// The path from which to import the aliases.
         /// </summary>
-        /// 
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
         public string Path { get; set; }
 
         /// <summary>
-        /// The literal path from which to import the aliases
+        /// The literal path from which to import the aliases.
         /// </summary>
-        /// 
         [Parameter(Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = LiteralPathParameterSetName)]
-        [Alias("PSPath")]
+        [Alias("PSPath", "LP")]
         public string LiteralPath
         {
             get
@@ -57,16 +53,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The scope to import the aliases to.
         /// </summary>
-        /// 
         [Parameter]
         [ValidateNotNullOrEmpty]
         public string Scope { get; set; }
 
         /// <summary>
-        /// If set to true, the alias that is set is passed to the
-        /// pipeline.
+        /// If set to true, the alias that is set is passed to the pipeline.
         /// </summary>
-        /// 
         [Parameter]
         public SwitchParameter PassThru
         {
@@ -80,13 +73,13 @@ namespace Microsoft.PowerShell.Commands
                 _passThru = value;
             }
         }
+
         private bool _passThru;
 
         /// <summary>
         /// If set to true and an existing alias of the same name exists
         /// and is ReadOnly, the alias will be overwritten.
         /// </summary>
-        /// 
         [Parameter]
         public SwitchParameter Force
         {
@@ -100,6 +93,7 @@ namespace Microsoft.PowerShell.Commands
                 _force = value;
             }
         }
+
         private bool _force;
 
         #endregion Parameters
@@ -109,7 +103,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The main processing loop of the command.
         /// </summary>
-        /// 
         protected override void ProcessRecord()
         {
             Collection<AliasInfo> importedAliases = GetAliasesFromFile(this.ParameterSetName.Equals(LiteralPathParameterSetName,
@@ -132,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!Force)
                 {
                     AliasInfo existingAlias = null;
-                    if (String.IsNullOrEmpty(Scope))
+                    if (string.IsNullOrEmpty(Scope))
                     {
                         existingAlias = SessionState.Internal.GetAlias(alias.Name);
                     }
@@ -179,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         continue;
                     }
-                } // if (!Force)
+                }
 
                 // Set the alias in the specified scope or the
                 // current scope.
@@ -188,7 +181,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (String.IsNullOrEmpty(Scope))
+                    if (string.IsNullOrEmpty(Scope))
                     {
                         result = SessionState.Internal.SetAliasItem(alias, Force, MyInvocation.CommandOrigin);
                     }
@@ -229,9 +222,10 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(result);
                 }
             }
-        } // ProcessRecord
+        }
 
         private Dictionary<string, CommandTypes> _existingCommands;
+
         private Dictionary<string, CommandTypes> ExistingCommands
         {
             get
@@ -259,6 +253,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+
                 return _existingCommands;
             }
         }
@@ -375,15 +370,17 @@ namespace Microsoft.PowerShell.Commands
                             Context,
                             options);
 
-                    if (!String.IsNullOrEmpty(values[2]))
+                    if (!string.IsNullOrEmpty(values[2]))
                     {
                         newAlias.Description = values[2];
                     }
 
                     result.Add(newAlias);
                 }
+
                 reader.Dispose();
             }
+
             return result;
         }
 
@@ -478,9 +475,9 @@ namespace Microsoft.PowerShell.Commands
                 result = false;
                 break;
             }
+
             return result;
         }
         #endregion Command code
-    } // class ImportAliasCommand
-}//Microsoft.PowerShell.Commands
-
+    }
+}

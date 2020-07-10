@@ -1,18 +1,21 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
 using System.Globalization;
+using System.Management.Automation;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Construct the Useragent string
+    /// Construct the Useragent string.
     /// </summary>
     public static class PSUserAgent
     {
+        private static string s_windowsUserAgent;
+
         internal static string UserAgent
         {
             get
@@ -20,13 +23,13 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} ({1}; {2}; {3}) {4}",
-                    Compatibility, Platform, OS, Culture, App);
+                    Compatibility, PlatformName, OS, Culture, App);
                 return (userAgent);
             }
         }
 
         /// <summary>
-        /// Useragent string for InternetExplorer (9.0)
+        /// Useragent string for InternetExplorer (9.0).
         /// </summary>
         public static string InternetExplorer
         {
@@ -35,13 +38,13 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} (compatible; MSIE 9.0; {1}; {2}; {3})",
-                    Compatibility, Platform, OS, Culture);
+                    Compatibility, PlatformName, OS, Culture);
                 return (userAgent);
             }
         }
 
         /// <summary>
-        /// Useragent string for Firefox (4.0)
+        /// Useragent string for Firefox (4.0).
         /// </summary>
         public static string FireFox
         {
@@ -50,13 +53,13 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} ({1}; {2}; {3}) Gecko/20100401 Firefox/4.0",
-                    Compatibility, Platform, OS, Culture);
+                    Compatibility, PlatformName, OS, Culture);
                 return (userAgent);
             }
         }
 
         /// <summary>
-        /// Useragent string for Chrome (7.0)
+        /// Useragent string for Chrome (7.0).
         /// </summary>
         public static string Chrome
         {
@@ -65,13 +68,13 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} ({1}; {2}; {3}) AppleWebKit/534.6 (KHTML, like Gecko) Chrome/7.0.500.0 Safari/534.6",
-                    Compatibility, Platform, OS, Culture);
+                    Compatibility, PlatformName, OS, Culture);
                 return (userAgent);
             }
         }
 
         /// <summary>
-        /// Useragent string for Opera (9.0)
+        /// Useragent string for Opera (9.0).
         /// </summary>
         public static string Opera
         {
@@ -80,13 +83,13 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "Opera/9.70 ({0}; {1}; {2}) Presto/2.2.1",
-                    Platform, OS, Culture);
+                    PlatformName, OS, Culture);
                 return (userAgent);
             }
         }
 
         /// <summary>
-        /// Useragent string for Safari (5.0)
+        /// Useragent string for Safari (5.0).
         /// </summary>
         public static string Safari
         {
@@ -95,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} ({1}; {2}; {3}) AppleWebKit/533.16 (KHTML, like Gecko) Version/5.0 Safari/533.16",
-                    Compatibility, Platform, OS, Culture);
+                    Compatibility, PlatformName, OS, Culture);
                 return (userAgent);
             }
         }
@@ -113,16 +116,43 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 string app = string.Format(CultureInfo.InvariantCulture,
-                    "WindowsPowerShell/{0}", PSVersionInfo.PSVersion);
+                    "PowerShell/{0}", PSVersionInfo.PSVersion);
                 return (app);
             }
         }
 
-        internal static string Platform
+        internal static string PlatformName
         {
             get
             {
-                return ("Windows NT");
+                if (Platform.IsWindows)
+                {
+                    // only generate the windows user agent once
+                    if (s_windowsUserAgent == null)
+                    {
+                        // find the version in the windows operating system description
+                        Regex pattern = new Regex(@"\d+(\.\d+)+");
+                        string versionText = pattern.Match(OS).Value;
+                        Version windowsPlatformversion = new Version(versionText);
+                        s_windowsUserAgent = $"Windows NT {windowsPlatformversion.Major}.{windowsPlatformversion.Minor}";
+                    }
+
+                    return s_windowsUserAgent;
+                }
+                else if (Platform.IsMacOS)
+                {
+                    return "Macintosh";
+                }
+                else if (Platform.IsLinux)
+                {
+                    return "Linux";
+                }
+                else
+                {
+                    // unknown/unsupported platform
+                    Diagnostics.Assert(false, "Unable to determine Operating System Platform");
+                    return string.Empty;
+                }
             }
         }
 
@@ -130,15 +160,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-#if CORECLR
-                return System.Runtime.InteropServices.RuntimeInformation.OSDescription;
-#else
-                OperatingSystem os = Environment.OSVersion;
-                string platform = GetOSName(os.Platform);
-                string formattedOS = string.Format(CultureInfo.InvariantCulture,
-                    "{0} {1}.{2}", platform, os.Version.Major, os.Version.Minor);
-                return (formattedOS);
-#endif
+                return RuntimeInformation.OSDescription.Trim();
             }
         }
 
@@ -149,32 +171,5 @@ namespace Microsoft.PowerShell.Commands
                 return (CultureInfo.CurrentCulture.Name);
             }
         }
-
-#if !CORECLR
-        private static string GetOSName(PlatformID platformId)
-        {
-            string platform;
-            switch (platformId)
-            {
-                case PlatformID.Win32NT: // is this really the only valid option?
-                    platform = "Windows NT";
-                    break;
-                case PlatformID.Win32Windows:
-                    platform = "Windows";
-                    break;
-                case PlatformID.Win32S:
-                case PlatformID.WinCE:
-                case PlatformID.Xbox:
-                case PlatformID.MacOSX:
-                case PlatformID.Unix:
-                default:
-                    // TODO: should we be doing something more robust here?
-                    platform = platformId.ToString();
-                    break;
-            }
-
-            return (platform);
-        }
-#endif
     }
 }

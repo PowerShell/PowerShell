@@ -1,11 +1,10 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Runspaces;
-using System.Globalization;
 using System.Text;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -44,7 +43,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Name of command. 
+        /// Name of command.
         /// </summary>
         /// <value>Name of command</value>
         internal override string Name
@@ -54,18 +53,18 @@ namespace System.Management.Automation
                 PSObject commandDetails = this.Details;
                 if (commandDetails == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 if (commandDetails.Properties["Name"] == null ||
                     commandDetails.Properties["Name"].Value == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 string name = commandDetails.Properties["Name"].Value.ToString();
                 if (name == null)
-                    return "";
+                    return string.Empty;
 
                 return name.Trim();
             }
@@ -82,13 +81,13 @@ namespace System.Management.Automation
                 PSObject commandDetails = this.Details;
                 if (commandDetails == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 if (commandDetails.Properties["Description"] == null ||
                     commandDetails.Properties["Description"].Value == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 object[] synopsisItems = (object[])LanguagePrimitives.ConvertTo(
@@ -97,7 +96,7 @@ namespace System.Management.Automation
                     CultureInfo.InvariantCulture);
                 if (synopsisItems == null || synopsisItems.Length == 0)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 PSObject firstSynopsisItem = synopsisItems[0] == null ? null : PSObject.AsPSObject(synopsisItems[0]);
@@ -105,13 +104,13 @@ namespace System.Management.Automation
                     firstSynopsisItem.Properties["Text"] == null ||
                     firstSynopsisItem.Properties["Text"].Value == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 string synopsis = firstSynopsisItem.Properties["Text"].Value.ToString();
                 if (synopsis == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 return synopsis.Trim();
@@ -130,7 +129,7 @@ namespace System.Management.Automation
         /// RelatedLinks.
         /// </summary>
         /// <returns>
-        /// Null if no Uri is specified by the helpinfo or a 
+        /// Null if no Uri is specified by the helpinfo or a
         /// valid Uri.
         /// </returns>
         /// <exception cref="InvalidOperationException">
@@ -205,7 +204,7 @@ namespace System.Management.Automation
             if (this.FullHelp.Properties["ModuleName"] != null)
             {
                 PSNoteProperty moduleNameNP = this.FullHelp.Properties["ModuleName"] as PSNoteProperty;
-                if (null != moduleNameNP)
+                if (moduleNameNP != null)
                 {
                     LanguagePrimitives.TryConvertTo<string>(moduleNameNP.Value, CultureInfo.InvariantCulture,
                                                             out moduleName);
@@ -220,7 +219,7 @@ namespace System.Management.Automation
             }
 
             ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
-            if (null == context)
+            if (context == null)
             {
                 return null;
             }
@@ -249,8 +248,8 @@ namespace System.Management.Automation
                     if (!System.Uri.IsWellFormedUriString(uriString, UriKind.RelativeOrAbsolute))
                     {
                         // WinBlue: 545315 Online help links are broken with localized help
-                        // Example: http://go.microsoft.com/fwlink/?LinkID=113324 (möglicherwei se auf Englisch)
-                        // Split the string based on <s> (space). We decided to go with this approach as 
+                        // Example: https://go.microsoft.com/fwlink/?LinkID=113324 (moglicherwei se auf Englisch)
+                        // Split the string based on <s> (space). We decided to go with this approach as
                         // UX localization authors use spaces. Correctly extracting only the wellformed URI
                         // is out-of-scope for this fix.
                         string[] tempUriSplitArray = uriString.Split(Utils.Separators.Space);
@@ -307,7 +306,7 @@ namespace System.Management.Automation
 
                 PSObject navigationLink = PSObject.AsPSObject(navigationLinkAsObject);
                 PSNoteProperty uriNP = navigationLink.Properties["uri"] as PSNoteProperty;
-                if (null != uriNP)
+                if (uriNP != null)
                 {
                     string uriString = string.Empty;
                     LanguagePrimitives.TryConvertTo<string>(uriNP.Value, CultureInfo.InvariantCulture, out uriString);
@@ -316,8 +315,8 @@ namespace System.Management.Automation
                         if (!System.Uri.IsWellFormedUriString(uriString, UriKind.RelativeOrAbsolute))
                         {
                             // WinBlue: 545315 Online help links are broken with localized help
-                            // Example: http://go.microsoft.com/fwlink/?LinkID=113324 (möglicherwei se auf Englisch)
-                            // Split the string based on <s> (space). We decided to go with this approach as 
+                            // Example: https://go.microsoft.com/fwlink/?LinkID=113324 (moglicherwei se auf Englisch)
+                            // Split the string based on <s> (space). We decided to go with this approach as
                             // UX localization authors use spaces. Correctly extracting only the wellformed URI
                             // is out-of-scope for this fix.
                             string[] tempUriSplitArray = uriString.Split(Utils.Separators.Space);
@@ -342,27 +341,27 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns true if help content in help info matches the
-        /// pattern contained in <paramref name="pattern"/>. 
+        /// pattern contained in <paramref name="pattern"/>.
         /// The underlying code will usually run pattern.IsMatch() on
         /// content it wants to search.
-        /// Cmdlet help info looks for pattern in Synopsis and 
-        /// DetailedDescription
+        /// Cmdlet help info looks for pattern in Synopsis and
+        /// DetailedDescription.
         /// </summary>
         /// <param name="pattern"></param>
         /// <returns></returns>
         internal override bool MatchPatternInContent(WildcardPattern pattern)
         {
-            Dbg.Assert(null != pattern, "pattern cannot be null");
+            Dbg.Assert(pattern != null, "pattern cannot be null");
 
             string synopsis = Synopsis;
             string detailedDescription = DetailedDescription;
 
-            if (null == synopsis)
+            if (synopsis == null)
             {
                 synopsis = string.Empty;
             }
 
-            if (null == detailedDescription)
+            if (detailedDescription == null)
             {
                 detailedDescription = string.Empty;
             }
@@ -371,10 +370,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returs help information for a parameter(s) identified by pattern
+        /// Returns help information for a parameter(s) identified by pattern.
         /// </summary>
-        /// <param name="pattern">pattern to search for parameters</param>
-        /// <returns>A collection of parameters that match pattern</returns>        
+        /// <param name="pattern">Pattern to search for parameters.</param>
+        /// <returns>A collection of parameters that match pattern.</returns>
         internal override PSObject[] GetParameter(string pattern)
         {
             // this object knows Maml format...
@@ -394,8 +393,19 @@ namespace System.Management.Automation
                 return base.GetParameter(pattern);
             }
 
+            // The Maml format simplifies array fields containing only one object
+            // by transforming them into the objects themselves. To ensure the consistency
+            // of the help command result we change it back into an array.
+            var param = prmts.Properties["parameter"].Value;
+            PSObject[] paramAsPSObjArray = new PSObject[1];
+
+            if (param is PSObject paramPSObj)
+            {
+                paramAsPSObjArray[0] = paramPSObj;
+            }
+
             PSObject[] prmtArray = (PSObject[])LanguagePrimitives.ConvertTo(
-                prmts.Properties["parameter"].Value,
+                paramAsPSObjArray[0] != null ? paramAsPSObjArray : param,
                 typeof(PSObject[]),
                 CultureInfo.InvariantCulture);
 
@@ -435,12 +445,12 @@ namespace System.Management.Automation
             get
             {
                 if (this.FullHelp == null)
-                    return "";
+                    return string.Empty;
 
                 if (this.FullHelp.Properties["Description"] == null ||
                     this.FullHelp.Properties["Description"].Value == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 object[] descriptionItems = (object[])LanguagePrimitives.ConvertTo(
@@ -449,7 +459,7 @@ namespace System.Management.Automation
                     CultureInfo.InvariantCulture);
                 if (descriptionItems == null || descriptionItems.Length == 0)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 // I think every cmdlet description should atleast have 400 characters...
@@ -465,9 +475,9 @@ namespace System.Management.Automation
                     }
 
                     PSObject descriptionObject = PSObject.AsPSObject(descriptionItem);
-                    if ((null == descriptionObject) ||
-                        (null == descriptionObject.Properties["Text"]) ||
-                        (null == descriptionObject.Properties["Text"].Value))
+                    if ((descriptionObject == null) ||
+                        (descriptionObject.Properties["Text"] == null) ||
+                        (descriptionObject.Properties["Text"].Value == null))
                     {
                         continue;
                     }

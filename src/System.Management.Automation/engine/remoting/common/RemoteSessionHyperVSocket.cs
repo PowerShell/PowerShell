@@ -1,19 +1,14 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using System.Management.Automation.Tracing;
 using System.IO;
+using System.Management.Automation.Tracing;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using Dbg = System.Diagnostics.Debug;
 
-#if CORECLR
-// Use stubs for SerializableAttribute.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
+using Dbg = System.Diagnostics.Debug;
 
 namespace System.Management.Automation.Remoting
 {
@@ -50,12 +45,14 @@ namespace System.Management.Automation.Remoting
         public Guid VmId
         {
             get { return _vmId; }
+
             set { _vmId = value; }
         }
 
         public Guid ServiceId
         {
             get { return _serviceId; }
+
             set { _vmId = value; }
         }
 
@@ -82,7 +79,7 @@ namespace System.Management.Automation.Remoting
             return endpoint;
         }
 
-        public override bool Equals(Object obj)
+        public override bool Equals(object obj)
         {
             HyperVSocketEndPoint endpoint = (HyperVSocketEndPoint)obj;
 
@@ -197,7 +194,7 @@ namespace System.Management.Automation.Remoting
                     //
                     // Create named pipe client.
                     //
-                    using (clientPipeStream = new NamedPipeClientStream(".",                       
+                    using (clientPipeStream = new NamedPipeClientStream(".",
                                                                         "PS_VMSession",
                                                                         PipeDirection.InOut,
                                                                         PipeOptions.None,
@@ -207,29 +204,29 @@ namespace System.Management.Automation.Remoting
                         // Connect to named pipe server.
                         //
                         clientPipeStream.Connect(10*1000);
-                        
+
                         //
                         // Read LPWSAPROTOCOL_INFO.
                         //
                         bytesRead = clientPipeStream.Read(buffer, 0, 1000);
                     }
                 }
-                
+
                 //
                 // Create duplicate socket.
                 //
                 byte[] protocolInfo = new byte[bytesRead];
                 Array.Copy(buffer, protocolInfo, bytesRead);
-                
+
                 SocketInformation sockInfo = new SocketInformation();
                 sockInfo.ProtocolInformation = protocolInfo;
                 sockInfo.Options = SocketInformationOptions.Connected;
-                
+
                 socket = new Socket(sockInfo);
                 if (socket == null)
                 {
                     Dbg.Assert(false, "Unexpected error in RemoteSessionHyperVSocketServer.");
-                
+
                     tracer.WriteMessage("RemoteSessionHyperVSocketServer", "RemoteSessionHyperVSocketServer", Guid.Empty,
                         "Unexpected error in constructor: {0}", "socket duplication failure");
                 }
@@ -253,9 +250,9 @@ namespace System.Management.Automation.Remoting
                 TextWriter.AutoFlush = true;
 
                 //
-                // listenSocket is not closed when it goes out of scope here. Sometimes it is 
+                // listenSocket is not closed when it goes out of scope here. Sometimes it is
                 // closed later in this thread, while other times it is not closed at all. This will
-                // cause problem when we set up a second PowerShell Direct session. Let's 
+                // cause problem when we set up a second PowerShell Direct session. Let's
                 // explicitly close listenSocket here for safe.
                 //
                 if (listenSocket != null)
@@ -266,13 +263,12 @@ namespace System.Management.Automation.Remoting
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 ex = e;
             }
 
             if (ex != null)
             {
-                Dbg.Assert(false, "Unexpected error in RemoteSessionHyperVSocketServer.");
+                Dbg.Fail("Unexpected error in RemoteSessionHyperVSocketServer.");
 
                 // Unexpected error.
                 string errorMessage = !string.IsNullOrEmpty(ex.Message) ? ex.Message : string.Empty;
@@ -282,7 +278,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSInvalidOperationException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.RemoteSessionHyperVSocketServerConstructorFailure),
                     ex,
-                    PSRemotingErrorId.RemoteSessionHyperVSocketServerConstructorFailure.ToString(),
+                    nameof(PSRemotingErrorId.RemoteSessionHyperVSocketServerConstructorFailure),
                     ErrorCategory.InvalidOperation,
                     null);
             }
@@ -293,13 +289,14 @@ namespace System.Management.Automation.Remoting
         #region IDisposable
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         public void Dispose()
         {
             lock (_syncObject)
             {
                 if (IsDisposed) { return; }
+
                 IsDisposed = true;
             }
 
@@ -307,6 +304,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextReader.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextReader = null;
             }
 
@@ -314,6 +312,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextWriter.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextWriter = null;
             }
 
@@ -414,7 +413,7 @@ namespace System.Management.Automation.Remoting
 
             //
             // We need to call SetSocketOption() in order to set up Hyper-V socket connection between container host and Hyper-V container.
-            // Here is the scenario: the Hyper-V container is inside a utility vm, which is inside the container host 
+            // Here is the scenario: the Hyper-V container is inside a utility vm, which is inside the container host
             //
             if (isContainer)
             {
@@ -440,13 +439,14 @@ namespace System.Management.Automation.Remoting
         #region IDisposable
 
         /// <summary>
-        /// Dispose
+        /// Dispose.
         /// </summary>
         public void Dispose()
         {
             lock (_syncObject)
             {
                 if (IsDisposed) { return; }
+
                 IsDisposed = true;
             }
 
@@ -454,6 +454,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextReader.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextReader = null;
             }
 
@@ -461,6 +462,7 @@ namespace System.Management.Automation.Remoting
             {
                 try { TextWriter.Dispose(); }
                 catch (ObjectDisposedException) { }
+
                 TextWriter = null;
             }
 
@@ -482,12 +484,12 @@ namespace System.Management.Automation.Remoting
         #region Public Methods
 
         /// <summary>
-        /// Connect to Hyper-V socket server.  This is a blocking call until a 
-        /// connection occurs or the timeout time has ellapsed.
+        /// Connect to Hyper-V socket server.  This is a blocking call until a
+        /// connection occurs or the timeout time has elapsed.
         /// </summary>
-        /// <param name="networkCredential">The credential used for authentication</param>
-        /// <param name="configurationName">The configuration name of the PS session</param>
-        /// <param name="isFirstConnection">Whether this is the first connection</param>        
+        /// <param name="networkCredential">The credential used for authentication.</param>
+        /// <param name="configurationName">The configuration name of the PS session.</param>
+        /// <param name="isFirstConnection">Whether this is the first connection.</param>
         public bool Connect(
             NetworkCredential networkCredential,
             string configurationName,
@@ -501,7 +503,7 @@ namespace System.Management.Automation.Remoting
             //
             if (isFirstConnection)
             {
-                if (String.IsNullOrEmpty(networkCredential.UserName))
+                if (string.IsNullOrEmpty(networkCredential.UserName))
                 {
                     throw new PSDirectException(
                         PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidUsername));
@@ -519,18 +521,18 @@ namespace System.Management.Automation.Remoting
 
                 if (isFirstConnection)
                 {
-                    if (String.IsNullOrEmpty(networkCredential.Domain))
+                    if (string.IsNullOrEmpty(networkCredential.Domain))
                     {
                         networkCredential.Domain = "localhost";
                     }
 
-                    bool emptyPassword = String.IsNullOrEmpty(networkCredential.Password);
-                    bool emptyConfiguration = String.IsNullOrEmpty(configurationName);
+                    bool emptyPassword = string.IsNullOrEmpty(networkCredential.Password);
+                    bool emptyConfiguration = string.IsNullOrEmpty(configurationName);
 
-                    Byte[] domain = Encoding.Unicode.GetBytes(networkCredential.Domain);
-                    Byte[] userName = Encoding.Unicode.GetBytes(networkCredential.UserName);
-                    Byte[] password = Encoding.Unicode.GetBytes(networkCredential.Password);
-                    Byte[] response = new Byte[4]; // either "PASS" or "FAIL"
+                    byte[] domain = Encoding.Unicode.GetBytes(networkCredential.Domain);
+                    byte[] userName = Encoding.Unicode.GetBytes(networkCredential.UserName);
+                    byte[] password = Encoding.Unicode.GetBytes(networkCredential.Password);
+                    byte[] response = new byte[4]; // either "PASS" or "FAIL"
                     string responseString;
 
                     //
@@ -566,14 +568,14 @@ namespace System.Management.Automation.Remoting
                     //
                     // There are 3 cases for the responseString received above.
                     // - "FAIL": credential is invalid
-                    // - "PASS": credentail is valid, but PowerShell Direct in VM does not support configuration (Server 2016 TP4 and before)
-                    // - "CONF": credentail is valid, and PowerShell Direct in VM supports configuration (Server 2016 TP5 and later)
+                    // - "PASS": credential is valid, but PowerShell Direct in VM does not support configuration (Server 2016 TP4 and before)
+                    // - "CONF": credential is valid, and PowerShell Direct in VM supports configuration (Server 2016 TP5 and later)
                     //
 
                     //
                     // Credential is invalid.
                     //
-                    if (String.Compare(responseString, "FAIL", StringComparison.Ordinal) == 0)
+                    if (string.Equals(responseString, "FAIL", StringComparison.Ordinal))
                     {
                         HyperVSocket.Send(response);
 
@@ -584,7 +586,7 @@ namespace System.Management.Automation.Remoting
                     //
                     // If PowerShell Direct in VM supports configuration, send configuration name.
                     //
-                    if (String.Compare(responseString, "CONF", StringComparison.Ordinal) == 0)
+                    if (string.Equals(responseString, "CONF", StringComparison.Ordinal))
                     {
                         if (emptyConfiguration)
                         {
@@ -595,7 +597,7 @@ namespace System.Management.Automation.Remoting
                             HyperVSocket.Send(Encoding.ASCII.GetBytes("NONEMPTYCF"));
                             HyperVSocket.Receive(response);
 
-                            Byte[] configName = Encoding.Unicode.GetBytes(configurationName);
+                            byte[] configName = Encoding.Unicode.GetBytes(configurationName);
                             HyperVSocket.Send(configName);
                         }
                     }

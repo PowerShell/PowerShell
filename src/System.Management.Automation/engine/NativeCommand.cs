@@ -1,20 +1,21 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Internal;
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Derives InternalCommand for Native Commands
+    /// Derives InternalCommand for Native Commands.
     /// </summary>
     internal sealed class NativeCommand : InternalCommand
     {
         private NativeCommandProcessor _myCommandProcessor;
+
         internal NativeCommandProcessor MyCommandProcessor
         {
             get { return _myCommandProcessor; }
+
             set { _myCommandProcessor = value; }
         }
 
@@ -28,11 +29,8 @@ namespace System.Management.Automation
                 if (_myCommandProcessor != null)
                     _myCommandProcessor.StopProcessing();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-                // Ignore exceptions here...
-                ;
             }
         }
     }

@@ -1,11 +1,11 @@
 /* ****************************************************************************
  *
- * Copyright (c) Microsoft Corporation. 
+ * Copyright (c) Microsoft Corporation.
  *
- * This source code is subject to terms and conditions of the Apache License, Version 2.0. A 
- * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Apache License, Version 2.0, please send an email to 
- * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
+ * This source code is subject to terms and conditions of the Apache License, Version 2.0. A
+ * copy of the license can be found in the License.html file at the root of this distribution. If
+ * you cannot locate the Apache License, Version 2.0, please send an email to
+ * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Apache License, Version 2.0.
  *
  * You must not remove this notice, or any other, from this software.
@@ -35,6 +35,7 @@ namespace System.Management.Automation.Interpreter
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2105:ArrayFieldsShouldNotBeReadOnly")]
         private int[] _continuations;
+
         private int _continuationIndex;
         private int _pendingContinuation;
         private object _pendingValue;
@@ -47,10 +48,6 @@ namespace System.Management.Automation.Interpreter
 
         public int StackIndex;
         public int InstructionIndex;
-
-        // When a ThreadAbortException is raised from interpreted code this is the first frame that caught it.
-        // No handlers within this handler re-abort the current thread when left.
-        public ExceptionHandler CurrentAbortHandler;
 
         internal InterpretedFrame(Interpreter interpreter, StrongBox<object>[] closure)
         {
@@ -140,7 +137,7 @@ namespace System.Management.Automation.Interpreter
 
         public static bool IsInterpretedFrame(MethodBase method)
         {
-            //ContractUtils.RequiresNotNull(method, "method");
+            // ContractUtils.RequiresNotNull(method, "method");
             return method.DeclaringType == typeof(Interpreter) && method.Name == "Run";
         }
 
@@ -159,12 +156,14 @@ namespace System.Management.Automation.Interpreter
                     {
                         continue;
                     }
+
                     inInterpretedFrame = true;
                 }
                 else
                 {
                     inInterpretedFrame = false;
                 }
+
                 yield return frame;
             }
         }
@@ -249,7 +248,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Get called from the LeaveFinallyInstruction
+        /// Get called from the LeaveFinallyInstruction.
         /// </summary>
         public int YieldToPendingContinuation()
         {
@@ -313,7 +312,7 @@ namespace System.Management.Automation.Interpreter
         {
             // TODO: we know this at compile time (except for compiled loop):
             RuntimeLabel target = Interpreter._labels[labelIndex];
-            Debug.Assert(!gotoExceptionHandler || (gotoExceptionHandler && _continuationIndex == target.ContinuationStackDepth),
+            Debug.Assert(!gotoExceptionHandler || _continuationIndex == target.ContinuationStackDepth,
                 "When it's time to jump to the exception handler, all previous finally blocks should already be processed");
 
             if (_continuationIndex == target.ContinuationStackDepth)
@@ -323,6 +322,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     Data[StackIndex - 1] = value;
                 }
+
                 return target.Index - InstructionIndex;
             }
 

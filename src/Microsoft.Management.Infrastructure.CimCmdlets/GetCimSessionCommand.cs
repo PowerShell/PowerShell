@@ -1,7 +1,5 @@
-/*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
- *============================================================================
- */
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #region Using directives
 using System;
@@ -10,29 +8,28 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 #endregion
 
-
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// The command returns zero, one or more CimSession objects that represent 
+    /// The command returns zero, one or more CimSession objects that represent
     /// connections with remote computers established from the current PS Session.
     /// </summary>
-
-    [Cmdlet(VerbsCommon.Get, "CimSession", DefaultParameterSetName = ComputerNameSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227966")]
+    [Alias("gcms")]
+    [Cmdlet(VerbsCommon.Get, "CimSession", DefaultParameterSetName = ComputerNameSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227966")]
     [OutputType(typeof(CimSession))]
     public sealed class GetCimSessionCommand : CimBaseCommand
     {
         #region constructor
-        
+
         /// <summary>
-        /// constructor
+        /// Constructor.
         /// </summary>
         public GetCimSessionCommand()
             : base(parameters, parameterSets)
         {
             DebugHelper.WriteLogEx();
         }
-        
+
         #endregion
 
         #region parameters
@@ -40,17 +37,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <para>
         /// The following is the definition of the input parameter "ComputerName".
-        /// Specifies one or more connections by providing their ComputerName(s). The 
-        /// Cmdlet then gets CimSession(s) opened with those connections. This parameter 
-        /// is an alternative to using CimSession(s) that also identifies the remote 
+        /// Specifies one or more connections by providing their ComputerName(s). The
+        /// Cmdlet then gets CimSession(s) opened with those connections. This parameter
+        /// is an alternative to using CimSession(s) that also identifies the remote
         /// computer(s).
         /// </para>
         /// <para>
-        /// This is the only optional parameter of the Cmdlet. If not provided, the 
-        /// Cmdlet returns all CimSession(s) live/active in the runspace. 
+        /// This is the only optional parameter of the Cmdlet. If not provided, the
+        /// Cmdlet returns all CimSession(s) live/active in the runspace.
         /// </para>
         /// <para>
-        /// If an instance of CimSession is pipelined to Get-CimSession, the 
+        /// If an instance of CimSession is pipelined to Get-CimSession, the
         /// ComputerName property of the instance is bound by name with this parameter.
         /// </para>
         /// </summary>
@@ -59,16 +56,18 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = ComputerNameSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName
+        public string[] ComputerName
         {
-            get { return computername;}
+            get { return computername; }
+
             set
             {
                 computername = value;
                 base.SetParameter(value, nameComputerName);
             }
         }
-        private String[] computername;
+
+        private string[] computername;
 
         /// <summary>
         /// The following is the definition of the input parameter "Id".
@@ -81,18 +80,20 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public UInt32[] Id
         {
-            get { return id;}
+            get { return id; }
+
             set
             {
                 id = value;
                 base.SetParameter(value, nameId);
             }
         }
+
         private UInt32[] id;
 
         /// <summary>
         /// The following is the definition of the input parameter "InstanceID".
-        /// Specifies one or Session Instance IDs
+        /// Specifies one or Session Instance IDs.
         /// </summary>
         [Parameter(Mandatory = true,
             ValueFromPipelineByPropertyName = true,
@@ -100,34 +101,38 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Guid[] InstanceId
         {
-            get { return instanceid;}
+            get { return instanceid; }
+
             set
             {
                 instanceid = value;
                 base.SetParameter(value, nameInstanceId);
             }
         }
+
         private Guid[] instanceid;
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
-        /// Specifies one or more session Name(s)  for which to get CimSession(s). The 
+        /// Specifies one or more session Name(s)  for which to get CimSession(s). The
         /// argument may contain wildcard characters.
         /// </summary>
         [Parameter(Mandatory = true,
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = NameSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] Name
+        public string[] Name
         {
-            get { return name;}
+            get { return name; }
+
             set
             {
                 name = value;
                 base.SetParameter(value, nameName);
             }
         }
-        private String[] name;
+
+        private string[] name;
 
         #endregion
 
@@ -139,7 +144,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             cimGetSession = new CimGetSession();
             this.AtBeginProcess = false;
-        }//End BeginProcessing()
+        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -148,13 +153,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             base.CheckParameterSet();
             cimGetSession.GetCimSession(this);
-        }//End ProcessRecord()
+        }
 
         #endregion
 
         #region private members
         /// <summary>
-        /// <see cref="CimGetSession"/> object used to search CimSession from cache
+        /// <see cref="CimGetSession"/> object used to search CimSession from cache.
         /// </summary>
         private CimGetSession cimGetSession;
 
@@ -166,9 +171,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// static parameter definition entries
+        /// Static parameter definition entries.
         /// </summary>
-        static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
             {
                 nameComputerName, new HashSet<ParameterDefinitionEntry> {
@@ -193,9 +198,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         };
 
         /// <summary>
-        /// static parameter set entries
+        /// Static parameter set entries.
         /// </summary>
-        static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
             {   CimBaseCommand.ComputerNameSet, new ParameterSetEntry(0, true)     },
             {   CimBaseCommand.SessionIdSet, new ParameterSetEntry(1)     },
@@ -203,5 +208,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {   CimBaseCommand.NameSet, new ParameterSetEntry(1)     },
         };
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

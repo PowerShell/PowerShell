@@ -1,0 +1,78 @@
+# https://help.github.com/articles/about-codeowners/
+
+# Areas are not limited to the filters defined in this file
+# First, let's start with areas with no filters or paths
+
+# Area: Performance
+# @adityapatwardhan 
+
+# Area: Portability
+# @JamesWTruher
+
+# Area: Security
+# @TravisEz13 @PaulHigin
+src/System.Management.Automation/security/wldpNativeMethods.cs @TravisEz13 @PaulHigin
+
+# Area: Documentation
+.github/    @joeyaiello @TravisEz13
+
+# Area: Test
+# @JamesWTruher @TravisEz13 @adityapatwardhan
+
+# Area: Cmdlets Core
+# @JamesWTruher @SteveL-MSFT @anmenaga
+
+# Now, areas that should have paths or filters, although we might not have them defined
+# According to the docs, order here must be by precedence of the filter, with later rules overwritting
+# but the feature seems to make taking a union of all the matching rules.
+
+# Area: Cmdlets Management
+src/Microsoft.PowerShell.Commands.Management/      @daxian-dbw @adityapatwardhan
+
+# Area: Utility Cmdlets
+src/Microsoft.PowerShell.Commands.Utility/         @JamesWTruher @PaulHigin
+
+# Area: Console
+src/Microsoft.PowerShell.ConsoleHost/              @daxian-dbw @anmenaga @TylerLeonhardt
+
+# Area: Demos
+demos/                                             @joeyaiello @SteveL-MSFT @HemantMahawar
+
+# Area: DSC
+src/System.Management.Automation/DscSupport        @TravisEz13 @SteveL-MSFT
+
+# Area: Engine
+# src/System.Management.Automation/engine            @daxian-dbw
+
+# Area: Debugging
+# Must be below engine to override
+src/System.Management.Automation/engine/debugger/  @PaulHigin
+
+# Area: Help
+src/System.Management.Automation/help              @adityapatwardhan
+
+# Area: Intellisense
+# @daxian-dbw
+
+# Area: Language
+src/System.Management.Automation/engine/parser     @daxian-dbw
+
+# Area: Providers
+src/System.Management.Automation/namespaces        @anmenaga
+
+# Area: Remoting
+src/System.Management.Automation/engine/remoting    @PaulHigin
+
+# Areas: Build
+# Must be last
+*.config   @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @PaulHigin
+*.props    @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @PaulHigin
+*.yml      @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @PaulHigin
+*.csproj   @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @PaulHigin
+build.*    @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @PaulHigin
+tools/     @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @PaulHigin
+docker/    @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @PaulHigin
+
+# Area: Compliance
+tools/terms    @TravisEz13
+tools/credScan @TravisEz13

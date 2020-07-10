@@ -1,0 +1,42 @@
+parameters:
+  pool: 'ubuntu-latest'
+  jobName: 'none'
+  scriptName: ''
+  container: ''
+  verification: ''
+  continueOnError: false
+
+jobs:
+
+- job: ${{ parameters.jobName }}
+  variables:
+    scriptName: ${{ parameters.scriptName }}
+
+  ${{ if ne(parameters.container, '') }}:
+    container: ${{ parameters.container }}
+
+  pool:
+    vmImage: ${{ parameters.pool }}
+
+  displayName: ${{ parameters.jobName }}
+
+  steps:
+  - pwsh: |
+      Get-ChildItem -Path env:
+    displayName: Capture Environment
+    condition: succeededOrFailed()
+
+  - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
+    displayName: Set Build Name for Non-PR
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+
+  - bash: |
+      $(scriptName)
+    displayName: Run Script - $(scriptName)
+    condition: succeededOrFailed()
+    continueOnError: ${{ parameters.continueOnError }}
+
+  - ${{ if ne(parameters.verification, '') }}:
+    - pwsh: ${{ parameters.verification }}
+      displayName: Verification
+      continueOnError: ${{ parameters.continueOnError }}

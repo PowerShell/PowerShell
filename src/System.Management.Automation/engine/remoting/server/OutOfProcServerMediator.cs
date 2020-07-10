@@ -1,13 +1,15 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation.  All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using System.Management.Automation.Tracing;
 using System.IO;
-using System.Threading;
-using System.Security.Principal;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Tracing;
+using System.Threading;
+#if !UNIX
+using System.Security.Principal;
+#endif
 using Microsoft.Win32.SafeHandles;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting.Server
@@ -27,11 +29,13 @@ namespace System.Management.Automation.Remoting.Server
         protected string _initialCommand;
         protected ManualResetEvent allcmdsClosedEvent;
 
+#if !UNIX
         // Thread impersonation.
         protected WindowsIdentity _windowsIdentityToImpersonate;
+#endif
 
         /// <summary>
-        /// Count of commands in progress
+        /// Count of commands in progress.
         /// </summary>
         protected int _inProgressCommandsCount = 0;
 
@@ -69,7 +73,7 @@ namespace System.Management.Automation.Remoting.Server
         {
             try
             {
-#if !CORECLR    
+#if !CORECLR
                 // CurrentUICulture is not available in Thread Class in CSS
                 // WinBlue: 621775. Thread culture is not properly set
                 // for local background jobs causing experience differences
@@ -82,9 +86,10 @@ namespace System.Management.Automation.Remoting.Server
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 PSEtwLog.LogOperationalError(
-                    PSEventId.TransportError, PSOpcode.Open, PSTask.None,
+                    PSEventId.TransportError,
+                    PSOpcode.Open,
+                    PSTask.None,
                     PSKeyword.UseAlwaysOperational,
                     Guid.Empty.ToString(),
                     Guid.Empty.ToString(),
@@ -93,7 +98,9 @@ namespace System.Management.Automation.Remoting.Server
                     e.StackTrace);
 
                 PSEtwLog.LogAnalyticError(
-                    PSEventId.TransportError_Analytic, PSOpcode.Open, PSTask.None,
+                    PSEventId.TransportError_Analytic,
+                    PSOpcode.Open,
+                    PSTask.None,
                     PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                     Guid.Empty.ToString(),
                     Guid.Empty.ToString(),
@@ -113,7 +120,7 @@ namespace System.Management.Automation.Remoting.Server
         protected void OnDataPacketReceived(byte[] rawData, string stream, Guid psGuid)
         {
             string streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_STDIN;
-            if (stream.Equals(DataPriorityType.PromptResponse.ToString(), StringComparison.OrdinalIgnoreCase))
+            if (stream.Equals(nameof(DataPriorityType.PromptResponse), StringComparison.OrdinalIgnoreCase))
             {
                 streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE;
             }
@@ -135,7 +142,7 @@ namespace System.Management.Automation.Remoting.Server
                     cmdTM = sessionTM.GetCommandTransportManager(psGuid);
                 }
 
-                if (null != cmdTM)
+                if (cmdTM != null)
                 {
                     // not throwing when there is no associated command as the command might have
                     // legitimately closed while the client is sending data. however the client
@@ -155,7 +162,9 @@ namespace System.Management.Automation.Remoting.Server
 
         protected void OnDataAckPacketReceived(Guid psGuid)
         {
-            throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownElementReceived, RemotingErrorIdStrings.IPCUnknownElementReceived,
+            throw new PSRemotingTransportException(
+                PSRemotingErrorId.IPCUnknownElementReceived,
+                RemotingErrorIdStrings.IPCUnknownElementReceived,
                 OutOfProcessUtils.PS_OUT_OF_PROC_DATA_ACK_TAG);
         }
 
@@ -200,14 +209,14 @@ namespace System.Management.Automation.Remoting.Server
                     }
 
                     // dont throw if there is no cmdTM as it might have legitimately closed
-                    if (null != cmdTM)
+                    if (cmdTM != null)
                     {
                         cmdTM.Close(null);
                     }
                 }
                 finally
                 {
-                    // Always send ack signal to avoid hang in client.
+                    // Always send ack signal to avoid not responding in client.
                     originalStdOut.WriteLine(OutOfProcessUtils.CreateSignalAckPacket(psGuid));
                 }
             }
@@ -250,6 +259,7 @@ namespace System.Management.Automation.Remoting.Server
                         // changing PSRP/IPC at this point is too risky, therefore protecting about this duplication
                         sessionTM.Close(null);
                     }
+
                     tracer.WriteMessage("END calling close on session transport manager");
                     sessionTM = null;
                 }
@@ -267,7 +277,7 @@ namespace System.Management.Automation.Remoting.Server
                 }
 
                 // dont throw if there is no cmdTM as it might have legitimately closed
-                if (null != cmdTM)
+                if (cmdTM != null)
                 {
                     cmdTM.Close(null);
                 }
@@ -297,33 +307,39 @@ namespace System.Management.Automation.Remoting.Server
 
         #region Methods
 
-        protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(string configurationName, PSRemotingCryptoHelperServer cryptoHelper)
+        protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(string configurationName, PSRemotingCryptoHelperServer cryptoHelper, string workingDirectory)
         {
             PSSenderInfo senderInfo;
 #if !UNIX
             WindowsIdentity currentIdentity = WindowsIdentity.GetCurrent();
-            PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity("", true, currentIdentity.Name, null),
+            PSPrincipal userPrincipal = new PSPrincipal(
+                new PSIdentity(string.Empty, true, currentIdentity.Name, null),
                 currentIdentity);
             senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
 #else
-            PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity("", true, "", null),
+            PSPrincipal userPrincipal = new PSPrincipal(
+                new PSIdentity(string.Empty, true, string.Empty, null),
                 null);
             senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
 #endif
 
             OutOfProcessServerSessionTransportManager tm = new OutOfProcessServerSessionTransportManager(originalStdOut, originalStdErr, cryptoHelper);
 
-            ServerRemoteSession srvrRemoteSession = ServerRemoteSession.CreateServerRemoteSession(senderInfo,
-                _initialCommand, tm, configurationName);
+            ServerRemoteSession.CreateServerRemoteSession(
+                senderInfo,
+                _initialCommand,
+                tm,
+                configurationName,
+                workingDirectory);
 
             return tm;
         }
 
-        protected void Start(string initialCommand, PSRemotingCryptoHelperServer cryptoHelper, string configurationName = null)
+        protected void Start(string initialCommand, PSRemotingCryptoHelperServer cryptoHelper, string workingDirectory = null, string configurationName = null)
         {
             _initialCommand = initialCommand;
 
-            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper);
+            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, workingDirectory);
 
             try
             {
@@ -334,40 +350,45 @@ namespace System.Management.Automation.Remoting.Server
                     {
                         if (sessionTM == null)
                         {
-                            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper);
+                            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, workingDirectory);
                         }
                     }
+
                     if (string.IsNullOrEmpty(data))
                     {
                         lock (_syncObject)
                         {
                             // give a chance to runspace/pipelines to close (as it looks like the client died
-                            // interminently)
+                            // intermittently)
                             sessionTM.Close(null);
                             sessionTM = null;
                         }
-                        throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownElementReceived,
-                            RemotingErrorIdStrings.IPCUnknownElementReceived, string.Empty);
+
+                        throw new PSRemotingTransportException(
+                            PSRemotingErrorId.IPCUnknownElementReceived,
+                            RemotingErrorIdStrings.IPCUnknownElementReceived,
+                            string.Empty);
                     }
 
-                    // process data in a thread pool thread..this way Runspace, Command 
+                    // process data in a thread pool thread..this way Runspace, Command
                     // data can be processed concurrently.
-#if CORECLR
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessingThreadStart), data);
-#else
+#if !UNIX
                     Utils.QueueWorkItemWithImpersonation(
-                        _windowsIdentityToImpersonate,
-                        new WaitCallback(ProcessingThreadStart),
-                        data);
+                            _windowsIdentityToImpersonate,
+                            new WaitCallback(ProcessingThreadStart),
+                            data);
+#else
+                    ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessingThreadStart), data);
 #endif
-                } while (true);
+                }
+                while (true);
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 PSEtwLog.LogOperationalError(
-                    PSEventId.TransportError, PSOpcode.Open, PSTask.None,
+                    PSEventId.TransportError,
+                    PSOpcode.Open,
+                    PSTask.None,
                     PSKeyword.UseAlwaysOperational,
                     Guid.Empty.ToString(),
                     Guid.Empty.ToString(),
@@ -376,7 +397,9 @@ namespace System.Management.Automation.Remoting.Server
                     e.StackTrace);
 
                 PSEtwLog.LogAnalyticError(
-                    PSEventId.TransportError_Analytic, PSOpcode.Open, PSTask.None,
+                    PSEventId.TransportError_Analytic,
+                    PSOpcode.Open,
+                    PSTask.None,
                     PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                     Guid.Empty.ToString(),
                     Guid.Empty.ToString(),
@@ -430,8 +453,8 @@ namespace System.Management.Automation.Remoting.Server
         #region Constructors
 
         /// <summary>
-        /// The mediator will take actions from the StdIn stream and responds to them. 
-        /// It will replace StdIn,StdOut and StdErr stream with TextWriter.Null's. This is 
+        /// The mediator will take actions from the StdIn stream and responds to them.
+        /// It will replace StdIn,StdOut and StdErr stream with TextWriter.Null's. This is
         /// to make sure these streams are totally used by our Mediator.
         /// </summary>
         private OutOfProcessMediator() : base(true)
@@ -440,20 +463,20 @@ namespace System.Management.Automation.Remoting.Server
             // We don't use the provided Console.In TextReader because it can have
             // an incorrect encoding, e.g., Hyper-V Container console where the
             // TextReader has incorrect default console encoding instead of the actual
-            // stream encoding.  This way the stream encoding is determined by the 
+            // stream encoding.  This way the stream encoding is determined by the
             // stream BOM as needed.
             originalStdIn = new StreamReader(Console.OpenStandardInput(), true);
 
-            // replacing StdIn with Null so that no other app messes with the 
+            // replacing StdIn with Null so that no other app messes with the
             // original stream.
             Console.SetIn(TextReader.Null);
 
-            // replacing StdOut with Null so that no other app messes with the 
+            // replacing StdOut with Null so that no other app messes with the
             // original stream
             originalStdOut = new OutOfProcessTextWriter(Console.Out);
             Console.SetOut(TextWriter.Null);
 
-            // replacing StdErr with Null so that no other app messes with the 
+            // replacing StdErr with Null so that no other app messes with the
             // original stream
             originalStdErr = new OutOfProcessTextWriter(Console.Error);
             Console.SetError(TextWriter.Null);
@@ -464,12 +487,15 @@ namespace System.Management.Automation.Remoting.Server
         #region Static Methods
 
         /// <summary>
+        /// Starts the out-of-process powershell server instance.
         /// </summary>
-        internal static void Run(string initialCommand)
+        /// <param name="initialCommand">Specifies the initialization script.</param>
+        /// <param name="workingDirectory">Specifies the initial working directory. The working directory is set before the initial command.</param>
+        internal static void Run(string initialCommand, string workingDirectory)
         {
             lock (SyncObject)
             {
-                if (null != s_singletonInstance)
+                if (s_singletonInstance != null)
                 {
                     Dbg.Assert(false, "Run should not be called multiple times");
                     return;
@@ -482,7 +508,7 @@ namespace System.Management.Automation.Remoting.Server
             // Setup unhandled exception to log events
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
 #endif
-            s_singletonInstance.Start(initialCommand, new PSRemotingCryptoHelperServer());
+            s_singletonInstance.Start(initialCommand, new PSRemotingCryptoHelperServer(), workingDirectory);
         }
 
         #endregion
@@ -528,7 +554,6 @@ namespace System.Management.Automation.Remoting.Server
         #region Static Methods
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="initialCommand"></param>
         internal static void Run(string initialCommand)
@@ -544,14 +569,7 @@ namespace System.Management.Automation.Remoting.Server
                 s_singletonInstance = new SSHProcessMediator();
             }
 
-            PSRemotingCryptoHelperServer cryptoHelper;
-#if !UNIX
-            cryptoHelper = new PSRemotingCryptoHelperServer();
-#else
-            cryptoHelper = null;
-#endif
-
-            s_singletonInstance.Start(initialCommand, cryptoHelper);
+            s_singletonInstance.Start(initialCommand, new PSRemotingCryptoHelperServer());
         }
 
         #endregion
@@ -585,7 +603,7 @@ namespace System.Management.Automation.Remoting.Server
         {
             if (namedPipeServer == null)
             {
-                throw new PSArgumentNullException("namedPipeServer");
+                throw new PSArgumentNullException(nameof(namedPipeServer));
             }
 
             _namedPipeServer = namedPipeServer;
@@ -595,15 +613,10 @@ namespace System.Management.Automation.Remoting.Server
             originalStdOut = new OutOfProcessTextWriter(namedPipeServer.TextWriter);
             originalStdErr = new NamedPipeErrorTextWriter(namedPipeServer.TextWriter);
 
-            // Flow impersonation if requested.
-            WindowsIdentity currentIdentity = null;
-            try
-            {
-                currentIdentity = WindowsIdentity.GetCurrent();
-            }
-            catch (System.Security.SecurityException) { }
-            _windowsIdentityToImpersonate = ((currentIdentity != null) && (currentIdentity.ImpersonationLevel == TokenImpersonationLevel.Impersonation)) ?
-                currentIdentity : null;
+#if !UNIX
+            // Flow impersonation as needed.
+            Utils.TryGetWindowsImpersonatedIdentity(out _windowsIdentityToImpersonate);
+#endif
         }
 
         #endregion
@@ -715,7 +728,7 @@ namespace System.Management.Automation.Remoting.Server
                 s_instance = new HyperVSocketMediator();
             }
 
-#if !CORECLR 
+#if !CORECLR
             // AppDomain is not available in CoreCLR
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
 #endif

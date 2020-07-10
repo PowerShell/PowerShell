@@ -1,13 +1,13 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management.Automation.Internal;
-using System.Reflection;
 using System.Management.Automation.Language;
+using System.Reflection;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -18,10 +18,9 @@ namespace System.Management.Automation
     internal abstract class ScriptCommandProcessorBase : CommandProcessorBase
     {
         protected ScriptCommandProcessorBase(ScriptBlock scriptBlock, ExecutionContext context, bool useLocalScope, CommandOrigin origin, SessionStateInternal sessionState)
+            : base(new ScriptInfo(string.Empty, scriptBlock, context))
         {
             this._dontUseScopeCommandOrigin = false;
-            this.CommandInfo = new ScriptInfo(String.Empty, scriptBlock, context);
-
             this._fromScriptFile = false;
 
             CommonInitialization(scriptBlock, context, useLocalScope, origin, sessionState);
@@ -53,20 +52,21 @@ namespace System.Management.Automation
         protected bool _rethrowExitException;
 
         /// <summary>
-        /// This indicates whether exit is called during the execution of 
-        /// script block. 
+        /// This indicates whether exit is called during the execution of
+        /// script block.
         /// </summary>
         /// <remarks>
-        /// Exit command can be executed in any of begin/process/end blocks. 
-        /// 
+        /// Exit command can be executed in any of begin/process/end blocks.
+        ///
         /// If exit is called in one block (for example, begin), any subsequent
-        /// blocks (for example, process and end) should not be executed. 
+        /// blocks (for example, process and end) should not be executed.
         /// </remarks>
         protected bool _exitWasCalled;
 
         protected ScriptBlock _scriptBlock;
 
         private ScriptParameterBinderController _scriptParameterBinderController;
+
         internal ScriptParameterBinderController ScriptParameterBinderController
         {
             get
@@ -80,13 +80,14 @@ namespace System.Management.Automation
                     _scriptParameterBinderController.CommandLineParameters.UpdateInvocationInfo(this.Command.MyInvocation);
                     this.Command.MyInvocation.UnboundArguments = _scriptParameterBinderController.DollarArgs;
                 }
+
                 return _scriptParameterBinderController;
             }
         }
 
         /// <summary>
-        /// Helper function for setting up command object and commandRuntime object 
-        /// for script command processor. 
+        /// Helper function for setting up command object and commandRuntime object
+        /// for script command processor.
         /// </summary>
         protected void CommonInitialization(ScriptBlock scriptBlock, ExecutionContext context, bool useLocalScope, CommandOrigin origin, SessionStateInternal sessionState)
         {
@@ -101,7 +102,7 @@ namespace System.Management.Automation
             ScriptCommand scriptCommand = new ScriptCommand { CommandInfo = this.CommandInfo };
 
             this.Command = scriptCommand;
-            // WinBlue: 219115             
+            // WinBlue: 219115
             // Set the command origin for the new ScriptCommand object since we're not
             // going through command discovery here where it's usually set.
             this.Command.CommandOriginInternal = origin;
@@ -128,9 +129,9 @@ namespace System.Management.Automation
         /// Checks if user has requested help (for example passing "-?" parameter for a cmdlet)
         /// and if yes, then returns the help target to display.
         /// </summary>
-        /// <param name="helpTarget">help target to request</param>
-        /// <param name="helpCategory">help category to request</param>
-        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise</returns>
+        /// <param name="helpTarget">Help target to request.</param>
+        /// <param name="helpCategory">Help category to request.</param>
+        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
         internal override bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
             if (arguments != null && CommandInfo != null && !string.IsNullOrEmpty(CommandInfo.Name) && _scriptBlock != null)
@@ -161,83 +162,89 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// This class implements a command processor for script related commands. 
+    /// This class implements a command processor for script related commands.
     /// </summary>
     /// <remarks>
-    /// 
     /// 1. Usage scenarios
-    /// 
-    /// ScriptCommandProcessor is used for four kinds of commands. 
-    /// 
+    ///
+    /// ScriptCommandProcessor is used for four kinds of commands.
+    ///
     /// a. Functions and filters
-    /// 
-    /// For example, 
-    /// 
+    ///
+    /// For example,
+    ///
     ///     function foo($a) {$a}
     ///     foo "my text"
-    /// 
-    /// Second command is an example of a function invocation. 
-    /// 
-    /// In this case, a FunctionInfo object is provided while constructing 
-    /// command processor. 
-    /// 
+    ///
+    /// Second command is an example of a function invocation.
+    ///
+    /// In this case, a FunctionInfo object is provided while constructing
+    /// command processor.
+    ///
     /// b. Script File
-    /// 
+    ///
     /// For example,
-    /// 
+    ///
     ///     . .\my.ps1
-    /// 
-    /// In this case, a ExternalScriptInfo or ScriptInfo object is provided 
-    /// while constructing command processor. 
-    /// 
+    ///
+    /// In this case, a ExternalScriptInfo or ScriptInfo object is provided
+    /// while constructing command processor.
+    ///
     /// c. ScriptBlock
-    /// 
-    /// For example, 
-    /// 
+    ///
+    /// For example,
+    ///
     ///     . {$a = 5}
-    /// 
+    ///
     /// In this case, a ScriptBlock object is provided while constructing command
-    /// processor. 
-    /// 
+    /// processor.
+    ///
     /// d. Script Text
-    /// 
+    ///
     /// This is used internally for directly running a text stream of script.
-    /// 
+    ///
     /// 2. Design
-    /// 
+    ///
     /// a. Script block
-    /// 
+    ///
     /// No matter how a script command processor is created, core piece of information
-    /// is always a ScriptBlock object, which can come from either a FunctionInfo object, 
-    /// a ScriptInfo object, or directly parsed from script text. 
-    /// 
+    /// is always a ScriptBlock object, which can come from either a FunctionInfo object,
+    /// a ScriptInfo object, or directly parsed from script text.
+    ///
     /// b. Script scope
-    /// 
-    /// A script block can be executed either in current scope or in a new scope. 
-    /// 
+    ///
+    /// A script block can be executed either in current scope or in a new scope.
+    ///
     /// New scope created should be a scope supporting $script: in case the command
-    /// processor is created from a script file. 
-    /// 
+    /// processor is created from a script file.
+    ///
     /// c. Begin/Process/End blocks
-    /// 
+    ///
     /// Each script block can have one block of script for begin/process/end. These map
-    /// to BeginProcessing, ProcessingRecord, and EndProcessing of cmdlet api. 
-    /// 
+    /// to BeginProcessing, ProcessingRecord, and EndProcessing of cmdlet api.
+    ///
     /// d. ExitException handling
-    /// 
+    ///
     /// If the command processor is created based on a script file, its exit exception
     /// handling is different in the sense that it indicates an exitcode instead of killing
-    /// current powershell session. 
-    /// 
+    /// current powershell session.
     /// </remarks>
     internal sealed class DlrScriptCommandProcessor : ScriptCommandProcessorBase
     {
-        private new ScriptBlock _scriptBlock;
         private readonly ArrayList _input = new ArrayList();
+        private readonly object _dollarUnderbar = AutomationNull.Value;
+        private new ScriptBlock _scriptBlock;
         private MutableTuple _localsTuple;
         private bool _runOptimizedCode;
         private bool _argsBound;
         private FunctionContext _functionContext;
+
+        internal DlrScriptCommandProcessor(ScriptBlock scriptBlock, ExecutionContext context, bool useNewScope, CommandOrigin origin, SessionStateInternal sessionState, object dollarUnderbar)
+            : base(scriptBlock, context, useNewScope, origin, sessionState)
+        {
+            Init();
+            _dollarUnderbar = dollarUnderbar;
+        }
 
         internal DlrScriptCommandProcessor(ScriptBlock scriptBlock, ExecutionContext context, bool useNewScope, CommandOrigin origin, SessionStateInternal sessionState)
             : base(scriptBlock, context, useNewScope, origin, sessionState)
@@ -269,25 +276,26 @@ namespace System.Management.Automation
             _obsoleteAttribute = _scriptBlock.ObsoleteAttribute;
             _runOptimizedCode = _scriptBlock.Compile(optimized: _context._debuggingMode > 0 ? false : UseLocalScope);
             _localsTuple = _scriptBlock.MakeLocalsTuple(_runOptimizedCode);
-        }
 
-        /// <summary>
-        /// Get the ObsoleteAttribute of the current command
-        /// </summary>
-        internal override ObsoleteAttribute ObsoleteAttribute
-        {
-            get { return _obsoleteAttribute; }
-        }
-        private ObsoleteAttribute _obsoleteAttribute;
-
-        internal override void Prepare(IDictionary psDefaultParameterValues)
-        {
             if (UseLocalScope)
             {
                 Diagnostics.Assert(CommandScope.LocalsTuple == null, "a newly created scope shouldn't have it's tuple set.");
                 CommandScope.LocalsTuple = _localsTuple;
             }
+        }
 
+        /// <summary>
+        /// Get the ObsoleteAttribute of the current command.
+        /// </summary>
+        internal override ObsoleteAttribute ObsoleteAttribute
+        {
+            get { return _obsoleteAttribute; }
+        }
+
+        private ObsoleteAttribute _obsoleteAttribute;
+
+        internal override void Prepare(IDictionary psDefaultParameterValues)
+        {
             _localsTuple.SetAutomaticVariable(AutomaticVariable.MyInvocation, this.Command.MyInvocation, _context);
             _scriptBlock.SetPSScriptRootAndPSCommandPath(_localsTuple, _context);
             _functionContext = new FunctionContext
@@ -480,7 +488,26 @@ namespace System.Management.Automation
                         Context.LanguageMode = newLanguageMode.Value;
                     }
 
-                    EnterScope();
+                    bool? oldLangModeTransitionStatus = null;
+                    try
+                    {
+                        // If it's from ConstrainedLanguage to FullLanguage, indicate the transition before parameter binding takes place.
+                        if (oldLanguageMode == PSLanguageMode.ConstrainedLanguage && newLanguageMode == PSLanguageMode.FullLanguage)
+                        {
+                            oldLangModeTransitionStatus = Context.LanguageModeTransitionInParameterBinding;
+                            Context.LanguageModeTransitionInParameterBinding = true;
+                        }
+
+                        EnterScope();
+                    }
+                    finally
+                    {
+                        if (oldLangModeTransitionStatus.HasValue)
+                        {
+                            // Revert the transition state to old value after doing the parameter binding
+                            Context.LanguageModeTransitionInParameterBinding = oldLangModeTransitionStatus.Value;
+                        }
+                    }
 
                     if (commandRuntime.ErrorMergeTo == MshCommandRuntime.MergeDataStream.Output)
                     {
@@ -494,6 +521,10 @@ namespace System.Management.Automation
                     if (dollarUnderbar != AutomationNull.Value)
                     {
                         _localsTuple.SetAutomaticVariable(AutomaticVariable.Underbar, dollarUnderbar, _context);
+                    }
+                    else if (_dollarUnderbar != AutomationNull.Value)
+                    {
+                        _localsTuple.SetAutomaticVariable(AutomaticVariable.Underbar, _dollarUnderbar, _context);
                     }
 
                     if (inputToProcess != AutomationNull.Value)
@@ -560,8 +591,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // This cmdlet threw an exception, so
                 // wrap it and bubble it up.
                 throw ManageInvocationException(e);
@@ -587,6 +616,8 @@ namespace System.Management.Automation
 
         protected override void OnSetCurrentScope()
         {
+            // When dotting a script, push the locals of automatic variables to
+            // the 'DottedScopes' of the current scope.
             if (!UseLocalScope)
             {
                 CommandSessionState.CurrentScope.DottedScopes.Push(_localsTuple);
@@ -595,6 +626,8 @@ namespace System.Management.Automation
 
         protected override void OnRestorePreviousScope()
         {
+            // When dotting a script, pop the locals of automatic variables from
+            // the 'DottedScopes' of the current scope.
             if (!UseLocalScope)
             {
                 CommandSessionState.CurrentScope.DottedScopes.Pop();

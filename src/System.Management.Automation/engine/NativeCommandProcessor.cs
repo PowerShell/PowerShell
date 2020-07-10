@@ -1,6 +1,6 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 #pragma warning disable 1634, 1691
 
 using System.Diagnostics;
@@ -17,11 +17,8 @@ using Dbg = System.Management.Automation.Diagnostics;
 using System.Runtime.Serialization;
 using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
-
-#if CORECLR
-// Use stubs for SerializableAttribute and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace System.Management.Automation
 {
@@ -39,7 +36,7 @@ namespace System.Management.Automation
     };
 
     /// <summary>
-    /// Different streams produced by minishell output
+    /// Different streams produced by minishell output.
     /// </summary>
     internal enum MinishellStream
     {
@@ -55,7 +52,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Helper class which holds stream names and also provide conversion
-    /// method
+    /// method.
     /// </summary>
     internal static class StringToMinishellStreamConverter
     {
@@ -105,29 +102,28 @@ namespace System.Management.Automation
         }
     }
 
-
     /// <summary>
     /// An output object from the child process.
-    /// If it's from the error stream isError will be true
+    /// If it's from the error stream isError will be true.
     /// </summary>
     internal class ProcessOutputObject
     {
         /// <summary>
-        /// Get the data from this object
+        /// Get the data from this object.
         /// </summary>
         /// <value>The data</value>
         internal object Data { get; }
 
         /// <summary>
-        /// Stream to which data belongs
+        /// Stream to which data belongs.
         /// </summary>
         internal MinishellStream Stream { get; }
 
         /// <summary>
-        /// Build an output object
+        /// Build an output object.
         /// </summary>
-        /// <param name="data">The data to output</param>
-        /// <param name="stream">stream to which data belongs</param>
+        /// <param name="data">The data to output.</param>
+        /// <param name="stream">Stream to which data belongs.</param>
         internal ProcessOutputObject(object data, MinishellStream stream)
         {
             Data = data;
@@ -143,23 +139,20 @@ namespace System.Management.Automation
         #region ctor/native command properties
 
         /// <summary>
-        /// Information about application which is invoked by this instance of 
-        /// NativeCommandProcessor 
+        /// Information about application which is invoked by this instance of
+        /// NativeCommandProcessor.
         /// </summary>
         private ApplicationInfo _applicationInfo;
 
         /// <summary>
         /// Initializes the new instance of NativeCommandProcessor class.
         /// </summary>
-        /// 
         /// <param name="applicationInfo">
         /// The information about the application to run.
         /// </param>
-        /// 
         /// <param name="context">
         /// The execution context for this command.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// <paramref name="applicationInfo"/> or <paramref name="context"/> is null
         /// </exception>
@@ -168,7 +161,7 @@ namespace System.Management.Automation
         {
             if (applicationInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("applicationInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(applicationInfo));
             }
 
             _applicationInfo = applicationInfo;
@@ -181,13 +174,15 @@ namespace System.Management.Automation
 
             this.CommandScope = context.EngineSessionState.CurrentScope;
 
-            //provide native command a backpointer to this object.
-            //When kill is called on the command object,
-            //it calls this NCP back to kill the process...
+            // provide native command a backpointer to this object.
+            // When kill is called on the command object,
+            // it calls this NCP back to kill the process...
             ((NativeCommand)Command).MyCommandProcessor = this;
 
-            //Create input writer for providing input to the process.
+            // Create input writer for providing input to the process.
             _inputWriter = new ProcessInputWriter(Command);
+
+            _isTranscribing = this.Command.Context.EngineHostInterface.UI.IsTranscribing;
         }
 
         /// <summary>
@@ -233,27 +228,24 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Variable which is set to true when prepare is called.
-        /// Parameter Binder should only be created after Prepare method is called
+        /// Parameter Binder should only be created after Prepare method is called.
         /// </summary>
         private bool _isPreparedCalled = false;
 
         /// <summary>
-        /// Parameter binder used by this command processor
+        /// Parameter binder used by this command processor.
         /// </summary>
         private NativeCommandParameterBinderController _nativeParameterBinderController;
 
         /// <summary>
-        /// Gets a new instance of a ParameterBinderController using a NativeCommandParameterBinder
+        /// Gets a new instance of a ParameterBinderController using a NativeCommandParameterBinder.
         /// </summary>
-        /// 
         /// <param name="command">
         /// The native command to be run.
         /// </param>
-        /// 
         /// <returns>
         /// A new parameter binder controller for the specified command.
         /// </returns>
-        /// 
         internal ParameterBinderController NewParameterBinderController(InternalCommand command)
         {
             Dbg.Assert(_isPreparedCalled, "parameter binder should not be created before prepared is called");
@@ -282,6 +274,7 @@ namespace System.Management.Automation
                 {
                     NewParameterBinderController(this.Command);
                 }
+
                 return _nativeParameterBinderController;
             }
         }
@@ -297,14 +290,25 @@ namespace System.Management.Automation
         {
             _isPreparedCalled = true;
 
-            //Check if the application is minishell
+            // Check if the application is minishell
             _isMiniShell = IsMiniShell();
 
-            //For minishell parameter binding is done in Complete method because we need 
-            //to know if output is redirected before we can bind parameters. 
+            // For minishell parameter binding is done in Complete method because we need
+            // to know if output is redirected before we can bind parameters.
             if (!_isMiniShell)
             {
                 this.NativeParameterBinderController.BindParameters(arguments);
+            }
+
+            try
+            {
+                InitNativeProcess();
+            }
+            catch (Exception)
+            {
+                // Do cleanup in case of exception
+                CleanUp();
+                throw;
             }
         }
 
@@ -313,36 +317,64 @@ namespace System.Management.Automation
         /// </summary>
         internal override void ProcessRecord()
         {
-            while (Read())
+            try
             {
-                // Accumulate everything from the pipe and execute at the end.
-                _inputWriter.Add(Command.CurrentPipelineObject);
+                while (Read())
+                {
+                    _inputWriter.Add(Command.CurrentPipelineObject);
+                }
+
+                ConsumeAvailableNativeProcessOutput(blocking: false);
+            }
+            catch (Exception)
+            {
+                // Do cleanup in case of exception
+                CleanUp();
+                throw;
             }
         }
 
         /// <summary>
-        /// Process object for the invoked application
+        /// Process object for the invoked application.
         /// </summary>
         private System.Diagnostics.Process _nativeProcess;
 
         /// <summary>
-        /// This is used for writing input to the process
+        /// This is used for writing input to the process.
         /// </summary>
         private ProcessInputWriter _inputWriter = null;
 
         /// <summary>
-        /// This is used for reading input form the process
-        /// </summary>
-        private ProcessOutputReader _outputReader = null;
-
-        /// <summary>
         /// Is true if this command is to be run "standalone" - that is, with
         /// no redirection.
-        /// </summary>        
+        /// </summary>
         private bool _runStandAlone;
 
         /// <summary>
-        /// object used for synchronization between StopProcessing thread and 
+        /// Indicate whether we need to consider redirecting the output/error of the current native command.
+        /// Usually a windows program which is the last command in a pipeline can be executed as 'background' -- we don't need to capture its output/error streams.
+        /// </summary>
+        private bool _isRunningInBackground;
+
+        /// <summary>
+        /// Indicate if we have called 'NotifyBeginApplication()' on the host, so that
+        /// we can call the counterpart 'NotifyEndApplication' as approriate.
+        /// </summary>
+        private bool _hasNotifiedBeginApplication;
+
+        /// <summary>
+        /// This output queue helps us keep the output and error (if redirected) order correct.
+        /// We could do a blocking read in the Complete block instead,
+        /// but then we would not be able to restore the order reasonable.
+        /// </summary>
+        private BlockingCollection<ProcessOutputObject> _nativeProcessOutputQueue;
+
+        private static bool? s_supportScreenScrape = null;
+        private bool _isTranscribing;
+        private Host.Coordinates _startPosition;
+
+        /// <summary>
+        /// Object used for synchronization between StopProcessing thread and
         /// Pipeline thread.
         /// </summary>
         private object _sync = new object();
@@ -356,73 +388,71 @@ namespace System.Management.Automation
         /// <exception cref="ApplicationFailedException">
         /// The native command could not be run
         /// </exception>
-        internal override void Complete()
+        private void InitNativeProcess()
         {
-            // Indicate whether we need to consider redirecting the output/error of the current native command.
-            // Usually a windows program which is the last command in a pipeline can be executed as 'background' -- we don't need to capture its output/error streams.
-            bool background;
-
             // Figure out if we're going to run this process "standalone" i.e. without
             // redirecting anything. This is a bit tricky as we always run redirected so
             // we have to see if the redirection is actually being done at the topmost level or not.
 
-            //Calculate if input and output are redirected.
+            // Calculate if input and output are redirected.
             bool redirectOutput;
             bool redirectError;
             bool redirectInput;
+
+            _startPosition = new Host.Coordinates();
 
             CalculateIORedirection(out redirectOutput, out redirectError, out redirectInput);
 
             // Find out if it's the only command in the pipeline.
             bool soloCommand = this.Command.MyInvocation.PipelineLength == 1;
 
-            // Get the start info for the process. 
+            // Get the start info for the process.
             ProcessStartInfo startInfo = GetProcessStartInfo(redirectOutput, redirectError, redirectInput, soloCommand);
+
+#if !UNIX
+            string commandPath = this.Path.ToLowerInvariant();
+            if (commandPath.EndsWith("powershell.exe") || commandPath.EndsWith("powershell_ise.exe"))
+            {
+                // if starting Windows PowerShell, need to remove PowerShell specific segments of PSModulePath
+                string psmodulepath = ModuleIntrinsics.GetWindowsPowerShellModulePath();
+                startInfo.Environment["PSModulePath"] = psmodulepath;
+
+                // must set UseShellExecute to false if we modify the environment block
+                startInfo.UseShellExecute = false;
+            }
+#endif
 
             if (this.Command.Context.CurrentPipelineStopping)
             {
                 throw new PipelineStoppedException();
             }
 
-            // If a problem occurred in running the program, this exception will
-            // be set and should be rethrown at the end of the try/catch block...
             Exception exceptionToRethrow = null;
-            Host.Coordinates startPosition = new Host.Coordinates();
-            bool scrapeHostOutput = false;
-
             try
             {
                 // If this process is being run standalone, tell the host, which might want
-                // to save off the window title or other such state as might be tweaked by 
+                // to save off the window title or other such state as might be tweaked by
                 // the native process
-                if (!redirectOutput)
+                if (_runStandAlone)
                 {
                     this.Command.Context.EngineHostInterface.NotifyBeginApplication();
+                    _hasNotifiedBeginApplication = true;
 
                     // Also, store the Raw UI coordinates so that we can scrape the screen after
                     // if we are transcribing.
-                    try
+                    if (_isTranscribing && (true == s_supportScreenScrape))
                     {
-                        if (this.Command.Context.EngineHostInterface.UI.IsTranscribing)
-                        {
-                            scrapeHostOutput = true;
-                            startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
-                            startPosition.X = 0;
-                        }
-                    }
-                    catch (Host.HostException)
-                    {
-                        // The host doesn't support scraping via its RawUI interface
-                        scrapeHostOutput = false;
+                        _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
+                        _startPosition.X = 0;
                     }
                 }
 
-                //Start the process. If stop has been called, throw exception.
-                //Note: if StopProcessing is called which this method has the lock,
-                //Stop thread will wait for nativeProcess to start.
-                //If StopProcessing gets the lock first, then it will set the stopped
-                //flag and this method will throw PipelineStoppedException when it gets
-                //the lock.
+                // Start the process. If stop has been called, throw exception.
+                // Note: if StopProcessing is called which this method has the lock,
+                // Stop thread will wait for nativeProcess to start.
+                // If StopProcessing gets the lock first, then it will set the stopped
+                // flag and this method will throw PipelineStoppedException when it gets
+                // the lock.
                 lock (_sync)
                 {
                     if (_stopped)
@@ -432,22 +462,19 @@ namespace System.Management.Automation
 
                     try
                     {
-                        _nativeProcess = new Process();
-                        _nativeProcess.StartInfo = startInfo;
+                        _nativeProcess = new Process() { StartInfo = startInfo };
                         _nativeProcess.Start();
                     }
                     catch (Win32Exception)
                     {
-#if CORECLR             // Shell doesn't exist on OneCore, so a file cannot be associated with an executable,
-                        // and we cannot run an executable as 'ShellExecute' either.
-                        throw;
-#else
-                        // See if there is a file association for this command. If so
-                        // then we'll use that. If there's no file association, then
-                        // try shell execute...
+                        // On Unix platforms, nothing can be further done, so just throw
+                        // On headless Windows SKUs, there is no shell to fall back to, so just throw
+                        if (!Platform.IsWindowsDesktop) { throw; }
+
+                        // on Windows desktops, see if there is a file association for this command. If so then we'll use that.
                         string executable = FindExecutable(startInfo.FileName);
                         bool notDone = true;
-                        if (!String.IsNullOrEmpty(executable))
+                        if (!string.IsNullOrEmpty(executable))
                         {
                             if (IsConsoleApplication(executable))
                             {
@@ -471,7 +498,7 @@ namespace System.Management.Automation
                                 startInfo.FileName = oldFileName;
                             }
                         }
-                        // We got here because there was either no executable found for this 
+                        // We got here because there was either no executable found for this
                         // file or we tried to launch the exe and it failed. In either case
                         // we will try launching one last time using ShellExecute...
                         if (notDone)
@@ -489,7 +516,6 @@ namespace System.Management.Automation
                                 throw;
                             }
                         }
-#endif
                     }
                 }
 
@@ -499,20 +525,20 @@ namespace System.Management.Automation
                     // Something like
                     //    ls | notepad | sort.exe
                     // should block until the notepad process is terminated.
-                    background = false;
+                    _isRunningInBackground = false;
                 }
                 else
                 {
-                    background = true;
+                    _isRunningInBackground = true;
                     if (startInfo.UseShellExecute == false)
                     {
-                        background = IsWindowsApplication(_nativeProcess.StartInfo.FileName);
+                        _isRunningInBackground = IsWindowsApplication(_nativeProcess.StartInfo.FileName);
                     }
                 }
 
                 try
                 {
-                    //If input is redirected, start input to process.
+                    // If input is redirected, start input to process.
                     if (startInfo.RedirectStandardInput)
                     {
                         NativeCommandIOFormat inputFormat = NativeCommandIOFormat.Text;
@@ -520,31 +546,12 @@ namespace System.Management.Automation
                         {
                             inputFormat = ((MinishellParameterBinderController)NativeParameterBinderController).InputFormat;
                         }
+
                         lock (_sync)
                         {
                             if (!_stopped)
                             {
                                 _inputWriter.Start(_nativeProcess, inputFormat);
-                            }
-                        }
-                    }
-
-                    if (background == false)
-                    {
-                        //if output is redirected, start reading output of process.
-                        if (startInfo.RedirectStandardOutput || startInfo.RedirectStandardError)
-                        {
-                            lock (_sync)
-                            {
-                                if (!_stopped)
-                                {
-                                    _outputReader = new ProcessOutputReader(_nativeProcess, Path, redirectOutput, redirectError);
-                                    _outputReader.Start();
-                                }
-                            }
-                            if (_outputReader != null)
-                            {
-                                ProcessOutputHelper();
                             }
                         }
                     }
@@ -554,70 +561,16 @@ namespace System.Management.Automation
                     StopProcessing();
                     throw;
                 }
-                finally
+
+                if (_isRunningInBackground == false)
                 {
-                    if (background == false)
-                    {
-                        //Wait for process to exit
-                        _nativeProcess.WaitForExit();
-
-                        //Wait for input writer to finish.
-                        _inputWriter.Done();
-
-                        //Wait for outputReader to finish
-                        if (_outputReader != null)
-                        {
-                            _outputReader.Done();
-                        }
-
-                        // Capture screen output if we are transcribing
-                        if (this.Command.Context.EngineHostInterface.UI.IsTranscribing &&
-                            scrapeHostOutput)
-                        {
-                            Host.Coordinates endPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
-                            endPosition.X = this.Command.Context.EngineHostInterface.UI.RawUI.BufferSize.Width - 1;
-
-                            // If the end position is before the start position, then capture the entire buffer.
-                            if (endPosition.Y < startPosition.Y)
-                            {
-                                startPosition.Y = 0;
-                            }
-
-                            Host.BufferCell[,] bufferContents = this.Command.Context.EngineHostInterface.UI.RawUI.GetBufferContents(
-                                new Host.Rectangle(startPosition, endPosition));
-
-                            StringBuilder lineContents = new StringBuilder();
-                            StringBuilder bufferText = new StringBuilder();
-
-                            for (int row = 0; row < bufferContents.GetLength(0); row++)
-                            {
-                                if (row > 0)
-                                {
-                                    bufferText.Append(Environment.NewLine);
-                                }
-
-                                lineContents.Clear();
-                                for (int column = 0; column < bufferContents.GetLength(1); column++)
-                                {
-                                    lineContents.Append(bufferContents[row, column].Character);
-                                }
-
-                                bufferText.Append(lineContents.ToString().TrimEnd(Utils.Separators.SpaceOrTab));
-                            }
-
-                            this.Command.Context.InternalHost.UI.TranscribeResult(bufferText.ToString());
-                        }
-
-                        this.Command.Context.SetVariable(SpecialVariables.LastExitCodeVarPath, _nativeProcess.ExitCode);
-                        if (_nativeProcess.ExitCode != 0)
-                            this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
-                    }
+                    InitOutputQueue();
                 }
             }
             catch (Win32Exception e)
             {
                 exceptionToRethrow = e;
-            } // try
+            }
             catch (PipelineStoppedException)
             {
                 // If we're stopping the process, just rethrow this exception...
@@ -625,17 +578,172 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
+                exceptionToRethrow = e;
+            }
 
+            // An exception was thrown while attempting to run the program
+            // so wrap and rethrow it here...
+            if (exceptionToRethrow != null)
+            {
+                // It's a system exception so wrap it in one of ours and re-throw.
+                string message = StringUtil.Format(ParserStrings.ProgramFailedToExecute,
+                    this.NativeCommandName, exceptionToRethrow.Message,
+                    this.Command.MyInvocation.PositionMessage);
+                ApplicationFailedException appFailedException = new ApplicationFailedException(message, exceptionToRethrow);
+
+                // There is no need to set this exception here since this exception will eventually be caught by pipeline processor.
+                // this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
+
+                throw appFailedException;
+            }
+        }
+
+        private void InitOutputQueue()
+        {
+            // if output is redirected, start reading output of process in queue.
+            if (_nativeProcess.StartInfo.RedirectStandardOutput || _nativeProcess.StartInfo.RedirectStandardError)
+            {
+                lock (_sync)
+                {
+                    if (!_stopped)
+                    {
+                        _nativeProcessOutputQueue = new BlockingCollection<ProcessOutputObject>();
+                        // we don't assign the handler to anything, because it's used only for objects marshaling
+                        new ProcessOutputHandler(_nativeProcess, _nativeProcessOutputQueue);
+                    }
+                }
+            }
+        }
+
+        private ProcessOutputObject DequeueProcessOutput(bool blocking)
+        {
+            if (blocking)
+            {
+                // If adding was completed and collection is empty (IsCompleted == true)
+                // there is no need to do a blocking Take(), we should just return.
+                if (!_nativeProcessOutputQueue.IsCompleted)
+                {
+                    try
+                    {
+                        // If adding is not complete we need a try {} catch {}
+                        // to mitigate a concurrent call to CompleteAdding().
+                        return _nativeProcessOutputQueue.Take();
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // It's a normal situation: another thread can mark collection as CompleteAdding
+                        // in a concurrent way and we will rise an exception in Take().
+                        // Although it's a normal situation it's not the most common path
+                        // and will be executed only on the race condtion case.
+                    }
+                }
+
+                return null;
+            }
+            else
+            {
+                ProcessOutputObject record = null;
+                _nativeProcessOutputQueue.TryTake(out record);
+                return record;
+            }
+        }
+
+        /// <summary>
+        /// Read the output from the native process and send it down the line.
+        /// </summary>
+        private void ConsumeAvailableNativeProcessOutput(bool blocking)
+        {
+            if (_isRunningInBackground == false)
+            {
+                if (_nativeProcess.StartInfo.RedirectStandardOutput || _nativeProcess.StartInfo.RedirectStandardError)
+                {
+                    ProcessOutputObject record;
+                    while ((record = DequeueProcessOutput(blocking)) != null)
+                    {
+                        if (this.Command.Context.CurrentPipelineStopping)
+                        {
+                            this.StopProcessing();
+                            return;
+                        }
+
+                        ProcessOutputRecord(record);
+                    }
+                }
+            }
+        }
+
+        internal override void Complete()
+        {
+            Exception exceptionToRethrow = null;
+            try
+            {
+                if (_isRunningInBackground == false)
+                {
+                    // Wait for input writer to finish.
+                    _inputWriter.Done();
+
+                    // read all the available output in the blocking way
+                    ConsumeAvailableNativeProcessOutput(blocking: true);
+                    _nativeProcess.WaitForExit();
+
+                    // Capture screen output if we are transcribing and running stand alone
+                    if (_isTranscribing && (true == s_supportScreenScrape) && _runStandAlone)
+                    {
+                        Host.Coordinates endPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
+                        endPosition.X = this.Command.Context.EngineHostInterface.UI.RawUI.BufferSize.Width - 1;
+
+                        // If the end position is before the start position, then capture the entire buffer.
+                        if (endPosition.Y < _startPosition.Y)
+                        {
+                            _startPosition.Y = 0;
+                        }
+
+                        Host.BufferCell[,] bufferContents = this.Command.Context.EngineHostInterface.UI.RawUI.GetBufferContents(
+                            new Host.Rectangle(_startPosition, endPosition));
+
+                        StringBuilder lineContents = new StringBuilder();
+                        StringBuilder bufferText = new StringBuilder();
+
+                        for (int row = 0; row < bufferContents.GetLength(0); row++)
+                        {
+                            if (row > 0)
+                            {
+                                bufferText.Append(Environment.NewLine);
+                            }
+
+                            lineContents.Clear();
+                            for (int column = 0; column < bufferContents.GetLength(1); column++)
+                            {
+                                lineContents.Append(bufferContents[row, column].Character);
+                            }
+
+                            bufferText.Append(lineContents.ToString().TrimEnd(Utils.Separators.SpaceOrTab));
+                        }
+
+                        this.Command.Context.InternalHost.UI.TranscribeResult(bufferText.ToString());
+                    }
+
+                    this.Command.Context.SetVariable(SpecialVariables.LastExitCodeVarPath, _nativeProcess.ExitCode);
+                    if (_nativeProcess.ExitCode != 0)
+                        this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
+                }
+            }
+            catch (Win32Exception e)
+            {
+                exceptionToRethrow = e;
+            }
+            catch (PipelineStoppedException)
+            {
+                // If we're stopping the process, just rethrow this exception...
+                throw;
+            }
+            catch (Exception e)
+            {
                 exceptionToRethrow = e;
             }
             finally
             {
-                if (!redirectOutput)
-                {
-                    this.Command.Context.EngineHostInterface.NotifyEndApplication();
-                }
-                // Do the clean up...
+                // Do some cleanup
                 CleanUp();
             }
 
@@ -656,16 +764,15 @@ namespace System.Management.Automation
             }
         }
 
-
         #region Process cleanup with Child Process cleanup
 
         /// <summary>
-        /// Utility routine to kill a process, discarding non-critial exceptions.
+        /// Utility routine to kill a process, discarding non-critical exceptions.
         /// This utility makes two passes at killing a process. In the first pass,
         /// if the process handle is invalid (as seems to be the case with an ntvdm)
         /// then we try to get a fresh handle based on the original process id.
         /// </summary>
-        /// <param name="processToKill">The process to kill</param>
+        /// <param name="processToKill">The process to kill.</param>
         private static void KillProcess(Process processToKill)
         {
             if (NativeCommandProcessor.IsServerSide)
@@ -685,20 +792,18 @@ namespace System.Management.Automation
                 try
                 {
                     // For processes running in an NTVDM, trying to kill with
-                    // the original handle fails with a Win32 error, so we'll 
+                    // the original handle fails with a Win32 error, so we'll
                     // use the ID and try to get a new handle...
                     Process newHandle = Process.GetProcessById(processToKill.Id);
                     // If the process was not found, we won't get here...
                     newHandle.Kill();
                 }
-                catch (Exception e) // ignore non-severe exceptions
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
-            catch (Exception e) // ignore non-severe exceptions
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
         }
 
@@ -712,6 +817,7 @@ namespace System.Management.Automation
         {
             public Process OriginalProcessInstance;
             private int _parentId;
+
             public int ParentId
             {
                 get
@@ -721,6 +827,7 @@ namespace System.Management.Automation
                     {
                         ConstructParentId();
                     }
+
                     return _parentId;
                 }
             }
@@ -738,6 +845,7 @@ namespace System.Management.Automation
                 {
                     result[index] = new ProcessWithParentId(originalProcCollection[index]);
                 }
+
                 return result;
             }
 
@@ -745,8 +853,8 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    // note that we have tried to retrived parent id once.
-                    // retreiving parent id might throw exceptions..so
+                    // note that we have tried to retrieved parent id once.
+                    // retrieving parent id might throw exceptions..so
                     // setting this to -1 so that we dont try again to
                     // get the parent id.
                     _parentId = -1;
@@ -791,21 +899,19 @@ namespace System.Management.Automation
                 try
                 {
                     // For processes running in an NTVDM, trying to kill with
-                    // the original handle fails with a Win32 error, so we'll 
+                    // the original handle fails with a Win32 error, so we'll
                     // use the ID and try to get a new handle...
                     Process newHandle = Process.GetProcessById(processToKill.Id);
 
                     // If the process was not found, we won't get here...
                     newHandle.Kill();
                 }
-                catch (Exception e) // ignore non-severe exceptions
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
-            catch (Exception e) // ignore non-severe exceptions
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
         }
 
@@ -842,9 +948,8 @@ namespace System.Management.Automation
         [ArchitectureSensitive]
         private static bool IsWindowsApplication(string fileName)
         {
-#if CORECLR
-            return false;
-#else
+            if (!Platform.IsWindowsDesktop) { return false; }
+
             SHFILEINFO shinfo = new SHFILEINFO();
             IntPtr type = SHGetFileInfo(fileName, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), SHGFI_EXETYPE);
 
@@ -863,13 +968,12 @@ namespace System.Management.Automation
                     // anything else - is a windows program...
                     return true;
             }
-#endif
         }
 
         #endregion checkForConsoleApplication
 
         /// <summary>
-        /// This is set to true when StopProcessing is called
+        /// This is set to true when StopProcessing is called.
         /// </summary>
         private bool _stopped = false;
         /// <summary>
@@ -887,123 +991,108 @@ namespace System.Management.Automation
             {
                 if (!_runStandAlone)
                 {
-                    //Stop input writer
+                    // Stop input writer
                     _inputWriter.Stop();
-
-                    //stop output writer
-                    if (_outputReader != null)
-                    {
-                        _outputReader.Stop();
-                    }
 
                     KillProcess(_nativeProcess);
                 }
             }
         }
 
-        #endregion internal overrides        
+        #endregion internal overrides
 
         /// <summary>
         /// Aggressively clean everything up...
         /// </summary>
         private void CleanUp()
         {
+            // We need to call 'NotifyEndApplication' as appropriate during cleanup
+            if (_hasNotifiedBeginApplication)
+            {
+                this.Command.Context.EngineHostInterface.NotifyEndApplication();
+            }
+
             try
             {
+                // Dispose the process if it's already created
                 if (_nativeProcess != null)
                 {
                     _nativeProcess.Dispose();
                 }
             }
-            catch (Exception e) // ignore non-severe exceptions
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
         }
 
-        /// <summary>
-        /// This method process the output
-        /// </summary>
-        private void ProcessOutputHelper()
+        private void ProcessOutputRecord(ProcessOutputObject outputValue)
         {
-            Dbg.Assert(_outputReader != null, "this should be called only when output has been created");
+            Dbg.Assert(outputValue != null, "only object of type ProcessOutputObject expected");
 
-            object value = _outputReader.Read();
-            while (value != AutomationNull.Value)
+            if (outputValue.Stream == MinishellStream.Error)
             {
-                ProcessOutputObject outputValue = value as ProcessOutputObject;
-                Dbg.Assert(outputValue != null, "only object of type ProcessOutputObject expected");
-
-                if (outputValue.Stream == MinishellStream.Error)
+                ErrorRecord record = outputValue.Data as ErrorRecord;
+                Dbg.Assert(record != null, "ProcessReader should ensure that data is ErrorRecord");
+                record.SetInvocationInfo(this.Command.MyInvocation);
+                this.commandRuntime._WriteErrorSkipAllowCheck(record, isNativeError: true);
+            }
+            else if (outputValue.Stream == MinishellStream.Output)
+            {
+                this.commandRuntime._WriteObjectSkipAllowCheck(outputValue.Data);
+            }
+            else if (outputValue.Stream == MinishellStream.Debug)
+            {
+                string temp = outputValue.Data as string;
+                Dbg.Assert(temp != null, "ProcessReader should ensure that data is string");
+                this.Command.PSHostInternal.UI.WriteDebugLine(temp);
+            }
+            else if (outputValue.Stream == MinishellStream.Verbose)
+            {
+                string temp = outputValue.Data as string;
+                Dbg.Assert(temp != null, "ProcessReader should ensure that data is string");
+                this.Command.PSHostInternal.UI.WriteVerboseLine(temp);
+            }
+            else if (outputValue.Stream == MinishellStream.Warning)
+            {
+                string temp = outputValue.Data as string;
+                Dbg.Assert(temp != null, "ProcessReader should ensure that data is string");
+                this.Command.PSHostInternal.UI.WriteWarningLine(temp);
+            }
+            else if (outputValue.Stream == MinishellStream.Progress)
+            {
+                PSObject temp = outputValue.Data as PSObject;
+                if (temp != null)
                 {
-                    ErrorRecord record = outputValue.Data as ErrorRecord;
-                    Dbg.Assert(record != null, "ProcessReader should ensure that data is ErrorRecord");
-                    record.SetInvocationInfo(this.Command.MyInvocation);
-                    this.commandRuntime._WriteErrorSkipAllowCheck(record, isNativeError: true);
-                }
-                else if (outputValue.Stream == MinishellStream.Output)
-                {
-                    this.commandRuntime._WriteObjectSkipAllowCheck(outputValue.Data);
-                }
-                else if (outputValue.Stream == MinishellStream.Debug)
-                {
-                    string temp = outputValue.Data as string;
-                    Dbg.Assert(temp != null, "ProcessReader should ensure that data is string");
-                    this.Command.PSHostInternal.UI.WriteDebugLine(temp);
-                }
-                else if (outputValue.Stream == MinishellStream.Verbose)
-                {
-                    string temp = outputValue.Data as string;
-                    Dbg.Assert(temp != null, "ProcessReader should ensure that data is string");
-                    this.Command.PSHostInternal.UI.WriteVerboseLine(temp);
-                }
-                else if (outputValue.Stream == MinishellStream.Warning)
-                {
-                    string temp = outputValue.Data as string;
-                    Dbg.Assert(temp != null, "ProcessReader should ensure that data is string");
-                    this.Command.PSHostInternal.UI.WriteWarningLine(temp);
-                }
-                else if (outputValue.Stream == MinishellStream.Progress)
-                {
-                    PSObject temp = outputValue.Data as PSObject;
-                    if (temp != null)
+                    long sourceId = 0;
+                    PSMemberInfo info = temp.Properties["SourceId"];
+                    if (info != null)
                     {
-                        long sourceId = 0;
-                        PSMemberInfo info = temp.Properties["SourceId"];
-                        if (info != null)
-                        {
-                            sourceId = (long)info.Value;
-                        }
-                        info = temp.Properties["Record"];
-                        ProgressRecord rec = null;
-                        if (info != null)
-                        {
-                            rec = info.Value as ProgressRecord;
-                        }
-                        if (rec != null)
-                        {
-                            this.Command.PSHostInternal.UI.WriteProgress(sourceId, rec);
-                        }
+                        sourceId = (long)info.Value;
+                    }
+
+                    info = temp.Properties["Record"];
+                    ProgressRecord rec = null;
+                    if (info != null)
+                    {
+                        rec = info.Value as ProgressRecord;
+                    }
+
+                    if (rec != null)
+                    {
+                        this.Command.PSHostInternal.UI.WriteProgress(sourceId, rec);
                     }
                 }
-                else if (outputValue.Stream == MinishellStream.Information)
-                {
-                    InformationRecord record = outputValue.Data as InformationRecord;
-                    Dbg.Assert(record != null, "ProcessReader should ensure that data is InformationRecord");
-                    this.commandRuntime.WriteInformation(record);
-                }
-
-                if (this.Command.Context.CurrentPipelineStopping)
-                {
-                    this.StopProcessing();
-                    break;
-                }
-                value = _outputReader.Read();
+            }
+            else if (outputValue.Stream == MinishellStream.Information)
+            {
+                InformationRecord record = outputValue.Data as InformationRecord;
+                Dbg.Assert(record != null, "ProcessReader should ensure that data is InformationRecord");
+                this.commandRuntime.WriteInformation(record);
             }
         }
 
         /// <summary>
-        /// Gets the start info for process
+        /// Gets the start info for process.
         /// </summary>
         /// <param name="redirectOutput"></param>
         /// <param name="redirectError"></param>
@@ -1015,32 +1104,36 @@ namespace System.Management.Automation
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = this.Path;
 
-            // On Windows, check the extension list and see if we should try to execute this directly.
-            // Otherwise, use the platform library to check executability
-            if ((Platform.IsWindows && ValidateExtension(this.Path))
-                || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(this.Path)))
+            if (IsExecutable(this.Path))
             {
                 startInfo.UseShellExecute = false;
                 if (redirectInput)
                 {
                     startInfo.RedirectStandardInput = true;
                 }
+
                 if (redirectOutput)
                 {
                     startInfo.RedirectStandardOutput = true;
+                    startInfo.StandardOutputEncoding = Console.OutputEncoding;
                 }
+
                 if (redirectError)
                 {
                     startInfo.RedirectStandardError = true;
+                    startInfo.StandardErrorEncoding = Console.OutputEncoding;
                 }
             }
             else
             {
-#if CORECLR     // Shell doesn't exist on OneCore, so documents cannot be associated with an application.
-                // Therefore, we cannot run document directly on OneCore.
-                throw InterpreterError.NewInterpreterException(this.Path, typeof(RuntimeException),
-                    this.Command.InvocationExtent, "CantActivateDocumentInPowerShellCore", ParserStrings.CantActivateDocumentInPowerShellCore, this.Path);
-#else
+                if (Platform.IsNanoServer || Platform.IsIoT)
+                {
+                    // Shell doesn't exist on headless SKUs, so documents cannot be associated with an application.
+                    // Therefore, we cannot run document in this case.
+                    throw InterpreterError.NewInterpreterException(this.Path, typeof(RuntimeException),
+                        this.Command.InvocationExtent, "CantActivateDocumentInPowerShellCore", ParserStrings.CantActivateDocumentInPowerShellCore, this.Path);
+                }
+
                 // We only want to ShellExecute something that is standalone...
                 if (!soloCommand)
                 {
@@ -1049,17 +1142,17 @@ namespace System.Management.Automation
                 }
 
                 startInfo.UseShellExecute = true;
-#endif
             }
 
-            //For minishell value of -outoutFormat parameter depends on value of redirectOutput.
-            //So we delay the parameter binding. Do parameter binding for minishell now.
+            // For minishell value of -outoutFormat parameter depends on value of redirectOutput.
+            // So we delay the parameter binding. Do parameter binding for minishell now.
             if (_isMiniShell)
             {
                 MinishellParameterBinderController mpc = (MinishellParameterBinderController)NativeParameterBinderController;
                 mpc.BindParameters(arguments, redirectOutput, this.Command.Context.EngineHostInterface.Name);
                 startInfo.CreateNoWindow = mpc.NonInteractive;
             }
+
             startInfo.Arguments = NativeParameterBinderController.Arguments;
 
             ExecutionContext context = this.Command.Context;
@@ -1081,11 +1174,11 @@ namespace System.Management.Automation
             if (outputProcessor != null)
             {
                 // We have the test 'utscript\Engine\TestOutDefaultRedirection.ps1' to check that a user defined
-                // Out-Default function should not cause a native command to be redirected. So here we should only 
+                // Out-Default function should not cause a native command to be redirected. So here we should only
                 // compare the command name to avoid breaking change.
-                if (String.Equals(outputProcessor.CommandInfo.Name, "Out-Default", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(outputProcessor.CommandInfo.Name, "Out-Default", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Verify that this isn't an Out-Default added for transcripting
+                    // Verify that this isn't an Out-Default added for transcribing
                     if (!outputProcessor.Command.MyInvocation.BoundParameters.ContainsKey("Transcript"))
                     {
                         return true;
@@ -1097,23 +1190,22 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This method calculates if input and output of the process are redirected
+        /// This method calculates if input and output of the process are redirected.
         /// </summary>
         /// <param name="redirectOutput"></param>
         /// <param name="redirectError"></param>
         /// <param name="redirectInput"></param>
         private void CalculateIORedirection(out bool redirectOutput, out bool redirectError, out bool redirectInput)
         {
-            redirectInput = true;
+            redirectInput = this.Command.MyInvocation.ExpectingInput;
             redirectOutput = true;
             redirectError = true;
-
 
             // Figure out if we're going to run this process "standalone" i.e. without
             // redirecting anything. This is a bit tricky as we always run redirected so
             // we have to see if the redirection is actually being done at the topmost level or not.
 
-            // If we're eligable to be running standalone, that is, without redirection
+            // If we're eligible to be running standalone, that is, without redirection
             // use our pipeline position to determine if we really want to redirect
             // input and error or not. If we're first in the pipeline, then we don't
             // redirect input. If we're last in the pipeline, we don't redirect output.
@@ -1121,11 +1213,11 @@ namespace System.Management.Automation
             if (this.Command.MyInvocation.PipelinePosition == this.Command.MyInvocation.PipelineLength)
             {
                 // If the output pipe is the default outputter, for example, calling the native command from command-line host,
-                // then we're possiblly running standalone.
+                // then we're possibly running standalone.
                 //
-                // If the downstream cmdlet is explicitly Out-Default, for example: 
-                //    $powershell.AddScript('ipconfig.exe') 
-                //    $powershell.AddCommand('Out-Default') 
+                // If the downstream cmdlet is explicitly Out-Default, for example:
+                //    $powershell.AddScript('ipconfig.exe')
+                //    $powershell.AddCommand('Out-Default')
                 //    $powershell.Invoke())
                 // we should not count it as a redirection.
                 if (IsDownstreamOutDefault(this.commandRuntime.OutputPipe))
@@ -1134,17 +1226,16 @@ namespace System.Management.Automation
                 }
             }
 
-
             // See if the error output stream has been redirected, either through an explicit 2> foo.txt or
             // my merging error into output through 2>&1.
             if (CommandRuntime.ErrorMergeTo != MshCommandRuntime.MergeDataStream.Output)
             {
                 // If the error output pipe is the default outputter, for example, calling the native command from command-line host,
-                // then we're possiblly running standalone.
+                // then we're possibly running standalone.
                 //
-                // If the downstream cmdlet is explicitly Out-Default, for example: 
-                //    $powershell.AddScript('ipconfig.exe') 
-                //    $powershell.AddCommand('Out-Default') 
+                // If the downstream cmdlet is explicitly Out-Default, for example:
+                //    $powershell.AddScript('ipconfig.exe')
+                //    $powershell.AddCommand('Out-Default')
                 //    $powershell.Invoke())
                 // we should not count that as a redirection.
                 if (IsDownstreamOutDefault(this.commandRuntime.ErrorOutputPipe))
@@ -1153,21 +1244,18 @@ namespace System.Management.Automation
                 }
             }
 
-            //In minishell scenario, if output is redirected 
-            //then error should also be redirected.
-            if (redirectError == false && redirectOutput == true && _isMiniShell)
+            // In minishell scenario, if output is redirected
+            // then error should also be redirected.
+            if (redirectError == false && redirectOutput && _isMiniShell)
             {
                 redirectError = true;
             }
-
-            if (_inputWriter.Count == 0 && (!this.Command.MyInvocation.ExpectingInput))
-                redirectInput = false;
 
             // Remoting server consideration.
             // Currently, the WinRM is using std io pipes to communicate with PowerShell server.
             // To protect these std io pipes from access from user command, we have replaced the original std io pipes with null pipes.
             // The original std io pipes are taken private, to be used by remoting infrastructure only.
-            // Doing so prevents user data to corrupt PowerShell remoting communication data which are encoded in a 
+            // Doing so prevents user data to corrupt PowerShell remoting communication data which are encoded in a
             // special format.
             // In the following, we check for this server condition.
             // If it is the server, then we redirect all std io handles for the native command.
@@ -1178,11 +1266,10 @@ namespace System.Management.Automation
                 redirectOutput = true;
                 redirectError = true;
             }
-#if !CORECLR // UI doesn't exist on OneCore, so all applications running on an OneCore client should be console applications.
-            // The powershell on the OneCore client should already have a console attached.
-            else if (IsConsoleApplication(this.Path))
+            else if (Platform.IsWindowsDesktop && IsConsoleApplication(this.Path))
             {
-                // Allocate a console if there isn't one attached already...
+                // On Windows desktops, if the command to run is a console application,
+                // then allocate a console if there isn't one attached already...
                 ConsoleVisibility.AllocateHiddenConsole();
 
                 if (ConsoleVisibility.AlwaysCaptureApplicationIO)
@@ -1191,21 +1278,50 @@ namespace System.Management.Automation
                     redirectError = true;
                 }
             }
-#endif
-            if (!(redirectInput || redirectOutput))
-                _runStandAlone = true;
+
+            _runStandAlone = !redirectInput && !redirectOutput && !redirectError;
+
+            if (_runStandAlone)
+            {
+                if (s_supportScreenScrape == null)
+                {
+                    try
+                    {
+                        _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
+                        Host.BufferCell[,] bufferContents = this.Command.Context.EngineHostInterface.UI.RawUI.GetBufferContents(
+                            new Host.Rectangle(_startPosition, _startPosition));
+                        s_supportScreenScrape = true;
+                    }
+                    catch (Exception)
+                    {
+                        s_supportScreenScrape = false;
+                    }
+                }
+
+                // if screen scraping isn't supported, we enable redirection so that the output is still transcribed
+                // as redirected output is always transcribed
+                if (_isTranscribing && (false == s_supportScreenScrape))
+                {
+                    redirectOutput = true;
+                    redirectError = true;
+                    _runStandAlone = false;
+                }
+            }
         }
 
-        private bool ValidateExtension(string path)
+        // On Windows, check the extension list and see if we should try to execute this directly.
+        // Otherwise, use the platform library to check executability
+        private bool IsExecutable(string path)
         {
-            // Now check the extension and see if it's one of the ones in pathext
+#if UNIX
+            return Platform.NonWindowsIsExecutable(this.Path);
+#else
+
             string myExtension = System.IO.Path.GetExtension(path);
 
-            string pathext = (string)LanguagePrimitives.ConvertTo(
-                this.Command.Context.GetVariableValue(SpecialVariables.PathExtVarPath),
-                typeof(string), CultureInfo.InvariantCulture);
+            var pathext = Environment.GetEnvironmentVariable("PATHEXT");
             string[] extensionList;
-            if (String.IsNullOrEmpty(pathext))
+            if (string.IsNullOrEmpty(pathext))
             {
                 extensionList = new string[] { ".exe", ".com", ".bat", ".cmd" };
             }
@@ -1213,17 +1329,19 @@ namespace System.Management.Automation
             {
                 extensionList = pathext.Split(Utils.Separators.Semicolon);
             }
+
             foreach (string extension in extensionList)
             {
-                if (String.Equals(extension, myExtension, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(extension, myExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
             }
+
             return false;
+#endif
         }
 
-#if !CORECLR // Shell doesn't exist on OneCore, so documents cannot be associated with applications.
         #region Interop for FindExecutable...
 
         // Constant used to determine the buffer size for a path
@@ -1258,7 +1376,7 @@ namespace System.Management.Automation
                 // If we got an index-out-of-range exception here, it's because
                 // of a buffer overrun error so we fail fast instead of
                 // continuing to run in an possibly unstable environment....
-                WindowsErrorReporting.FailFast(e);
+                Environment.FailFast(e.Message, e);
             }
 
             // If FindExecutable returns a result >= 32, then it succeeded
@@ -1290,8 +1408,10 @@ namespace System.Management.Automation
             public IntPtr hIcon;
             public int iIcon;
             public uint dwAttributes;
+
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
             public string szDisplayName;
+
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
             public string szTypeName;
         };
@@ -1303,7 +1423,6 @@ namespace System.Management.Automation
             ref SHFILEINFO psfi, uint cbSizeFileInfo, uint uFlags);
 
         #endregion
-#endif
 
         #region Minishell Interop
 
@@ -1313,7 +1432,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns></returns>
         /// <remarks>
-        /// If any of the argument supplied to native command is script block, 
+        /// If any of the argument supplied to native command is script block,
         /// we assume it is minishell.
         /// </remarks>
         private bool IsMiniShell()
@@ -1329,6 +1448,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return false;
         }
 
@@ -1337,16 +1457,260 @@ namespace System.Management.Automation
         internal static bool IsServerSide { get; set; }
     }
 
+    internal class ProcessOutputHandler
+    {
+        internal const string XmlCliTag = "#< CLIXML";
+
+        private int _refCount;
+        private BlockingCollection<ProcessOutputObject> _queue;
+        private bool _isFirstOutput;
+        private bool _isFirstError;
+        private bool _isXmlCliOutput;
+        private bool _isXmlCliError;
+        private string _processFileName;
+
+        public ProcessOutputHandler(Process process, BlockingCollection<ProcessOutputObject> queue)
+        {
+            Debug.Assert(process.StartInfo.RedirectStandardOutput || process.StartInfo.RedirectStandardError, "Caller should redirect at least one stream");
+            _refCount = 0;
+            _processFileName = process.StartInfo.FileName;
+            _queue = queue;
+
+            // we incrementing refCount on the same thread and before running any processing
+            // so it's safe to do it without Interlocked.
+            if (process.StartInfo.RedirectStandardOutput) { _refCount++; }
+
+            if (process.StartInfo.RedirectStandardError) { _refCount++; }
+
+            // once we have _refCount, we can start processing
+            if (process.StartInfo.RedirectStandardOutput)
+            {
+                _isFirstOutput = true;
+                _isXmlCliOutput = false;
+                process.OutputDataReceived += OutputHandler;
+                process.BeginOutputReadLine();
+            }
+
+            if (process.StartInfo.RedirectStandardError)
+            {
+                _isFirstError = true;
+                _isXmlCliError = false;
+                process.ErrorDataReceived += ErrorHandler;
+                process.BeginErrorReadLine();
+            }
+        }
+
+        private void decrementRefCount()
+        {
+            Debug.Assert(_refCount > 0, "RefCount should always be positive, when we are trying to decrement it");
+            if (Interlocked.Decrement(ref _refCount) == 0)
+            {
+                _queue.CompleteAdding();
+            }
+        }
+
+        private void OutputHandler(object sender, DataReceivedEventArgs outputReceived)
+        {
+            if (outputReceived.Data != null)
+            {
+                if (_isFirstOutput)
+                {
+                    _isFirstOutput = false;
+                    if (string.Equals(outputReceived.Data, XmlCliTag, StringComparison.Ordinal))
+                    {
+                        _isXmlCliOutput = true;
+                        return;
+                    }
+                }
+
+                if (_isXmlCliOutput)
+                {
+                    foreach (var record in DeserializeCliXmlObject(outputReceived.Data, true))
+                    {
+                        _queue.Add(record);
+                    }
+                }
+                else
+                {
+                    _queue.Add(new ProcessOutputObject(outputReceived.Data, MinishellStream.Output));
+                }
+            }
+            else
+            {
+                decrementRefCount();
+            }
+        }
+
+        private void ErrorHandler(object sender, DataReceivedEventArgs errorReceived)
+        {
+            if (errorReceived.Data != null)
+            {
+                if (string.Equals(errorReceived.Data, XmlCliTag, StringComparison.Ordinal))
+                {
+                    _isXmlCliError = true;
+                    return;
+                }
+
+                if (_isXmlCliError)
+                {
+                    foreach (var record in DeserializeCliXmlObject(errorReceived.Data, false))
+                    {
+                        _queue.Add(record);
+                    }
+                }
+                else
+                {
+                    ErrorRecord errorRecord;
+                    if (_isFirstError)
+                    {
+                        _isFirstError = false;
+                        // Produce a regular error record for the first line of the output
+                        errorRecord = new ErrorRecord(new RemoteException(errorReceived.Data), "NativeCommandError", ErrorCategory.NotSpecified, errorReceived.Data);
+                    }
+                    else
+                    {
+                        // Wrap the rest of the output in ErrorRecords with the "NativeCommandErrorMessage" error ID
+                        errorRecord = new ErrorRecord(new RemoteException(errorReceived.Data), "NativeCommandErrorMessage", ErrorCategory.NotSpecified, null);
+                    }
+
+                    _queue.Add(new ProcessOutputObject(errorRecord, MinishellStream.Error));
+                }
+            }
+            else
+            {
+                decrementRefCount();
+            }
+        }
+
+        private List<ProcessOutputObject> DeserializeCliXmlObject(string xml, bool isOutput)
+        {
+            var result = new List<ProcessOutputObject>();
+            try
+            {
+                using (var streamReader = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
+                {
+                    XmlReader xmlReader = XmlReader.Create(streamReader, InternalDeserializer.XmlReaderSettingsForCliXml);
+                    Deserializer des = new Deserializer(xmlReader);
+                    while (!des.Done())
+                    {
+                        string streamName;
+                        object obj = des.Deserialize(out streamName);
+
+                        // Decide the stream to which data belongs
+                        MinishellStream stream = MinishellStream.Unknown;
+                        if (streamName != null)
+                        {
+                            stream = StringToMinishellStreamConverter.ToMinishellStream(streamName);
+                        }
+
+                        if (stream == MinishellStream.Unknown)
+                        {
+                            stream = isOutput ? MinishellStream.Output : MinishellStream.Error;
+                        }
+
+                        // Null is allowed only in output stream
+                        if (stream != MinishellStream.Output && obj == null)
+                        {
+                            continue;
+                        }
+
+                        if (stream == MinishellStream.Error)
+                        {
+                            if (obj is PSObject)
+                            {
+                                obj = ErrorRecord.FromPSObjectForRemoting(PSObject.AsPSObject(obj));
+                            }
+                            else
+                            {
+                                string errorMessage = null;
+                                try
+                                {
+                                    errorMessage = (string)LanguagePrimitives.ConvertTo(obj, typeof(string), CultureInfo.InvariantCulture);
+                                }
+                                catch (PSInvalidCastException)
+                                {
+                                    continue;
+                                }
+
+                                obj = new ErrorRecord(new RemoteException(errorMessage),
+                                                    "NativeCommandError", ErrorCategory.NotSpecified, errorMessage);
+                            }
+                        }
+                        else if (stream == MinishellStream.Information)
+                        {
+                            if (obj is PSObject)
+                            {
+                                obj = InformationRecord.FromPSObjectForRemoting(PSObject.AsPSObject(obj));
+                            }
+                            else
+                            {
+                                string messageData = null;
+                                try
+                                {
+                                    messageData = (string)LanguagePrimitives.ConvertTo(obj, typeof(string), CultureInfo.InvariantCulture);
+                                }
+                                catch (PSInvalidCastException)
+                                {
+                                    continue;
+                                }
+
+                                obj = new InformationRecord(messageData, null);
+                            }
+                        }
+                        else if (stream == MinishellStream.Debug ||
+                                 stream == MinishellStream.Verbose ||
+                                 stream == MinishellStream.Warning)
+                        {
+                            // Convert to string
+                            try
+                            {
+                                obj = LanguagePrimitives.ConvertTo(obj, typeof(string), CultureInfo.InvariantCulture);
+                            }
+                            catch (PSInvalidCastException)
+                            {
+                                continue;
+                            }
+                        }
+
+                        result.Add(new ProcessOutputObject(obj, stream));
+                    }
+                }
+            }
+            catch (XmlException originalException)
+            {
+                string template = NativeCP.CliXmlError;
+                string message = string.Format(
+                    null,
+                    template,
+                    isOutput ? MinishellStream.Output : MinishellStream.Error,
+                    _processFileName,
+                    originalException.Message);
+                XmlException newException = new XmlException(
+                    message,
+                    originalException);
+
+                ErrorRecord error = new ErrorRecord(
+                    newException,
+                    "ProcessStreamReader_CliXmlError",
+                    ErrorCategory.SyntaxError,
+                    _processFileName);
+                result.Add(new ProcessOutputObject(error, MinishellStream.Error));
+            }
+
+            return result;
+        }
+    }
+
     /// <summary>
     /// Helper class to handle writing input to a process.
     /// </summary>
     internal class ProcessInputWriter
     {
-        #region constructor 
+        #region constructor
 
         private InternalCommand _command;
         /// <summary>
-        /// Creates an instance of ProcessInputWriter 
+        /// Creates an instance of ProcessInputWriter.
         /// </summary>
         internal ProcessInputWriter(InternalCommand command)
         {
@@ -1356,32 +1720,75 @@ namespace System.Management.Automation
 
         #endregion constructor
 
+        private SteppablePipeline _pipeline;
+        private Serializer _xmlSerializer;
+
         /// <summary>
-        /// Input is collected in this list
-        /// </summary>
-        private ArrayList _inputList = new ArrayList();
-        /// <summary>
-        /// Add an object to write to process
+        /// Add an object to write to process.
         /// </summary>
         /// <param name="input"></param>
         internal void Add(object input)
         {
-            _inputList.Add(input);
+            if (_stopping || _streamWriter == null)
+            {
+                // if _streamWriter is already null, then we already called Dispose()
+                // so we should just discard the input.
+                return;
+            }
+
+            if (_inputFormat == NativeCommandIOFormat.Text)
+            {
+                AddTextInput(input);
+            }
+            else // Xml
+            {
+                AddXmlInput(input);
+            }
         }
 
-        /// <summary>
-        /// Count of object in inputlist
-        /// </summary>
-        internal int Count
+        private void AddTextInput(object input)
         {
-            get
+            AddTextInputFromFormattedArray(_pipeline.Process(input));
+        }
+
+        private void AddTextInputFromFormattedArray(Array formattedObjects)
+        {
+            foreach (var item in formattedObjects)
             {
-                return _inputList.Count;
+                string line = PSObject.ToStringParser(_command.Context, item);
+                // if process is already finished and we are trying to write something to it,
+                // we will get IOException
+                try
+                {
+                    _streamWriter.WriteLine(line);
+                }
+                catch (IOException)
+                {
+                    // we are assuming that process is already finished
+                    // we should just stop processing at this point
+                    this.Dispose();
+                    // stop foreach execution
+                    break;
+                }
+            }
+        }
+
+        private void AddXmlInput(object input)
+        {
+            try
+            {
+                _xmlSerializer.Serialize(input);
+            }
+            catch (IOException)
+            {
+                // we are assuming that process is already finished
+                // we should just stop processing at this point
+                this.Dispose();
             }
         }
 
         /// <summary>
-        /// Stream to which input is written
+        /// Stream to which input is written.
         /// </summary>
         private StreamWriter _streamWriter;
 
@@ -1391,12 +1798,7 @@ namespace System.Management.Automation
         private NativeCommandIOFormat _inputFormat;
 
         /// <summary>
-        /// Thread which writes the input
-        /// </summary>
-        private Thread _inputThread;
-
-        /// <summary>
-        /// Start writing input to process
+        /// Start writing input to process.
         /// </summary>
         /// <param name="process">
         /// process to which input is written
@@ -1407,607 +1809,99 @@ namespace System.Management.Automation
         {
             Dbg.Assert(process != null, "caller should validate the paramter");
 
-            //Get the encoding for writing to native command. Note we get the Encoding 
-            //from the current scope so a script or function can use a different encoding
-            //than global value.
+            // Get the encoding for writing to native command. Note we get the Encoding
+            // from the current scope so a script or function can use a different encoding
+            // than global value.
             Encoding pipeEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as System.Text.Encoding ??
-                                    Encoding.ASCII;
+                                    Utils.utf8NoBom;
 
-            _streamWriter = new StreamWriter(process.StandardInput.BaseStream,
-                                            pipeEncoding);
+            _streamWriter = new StreamWriter(process.StandardInput.BaseStream, pipeEncoding);
+            _streamWriter.AutoFlush = true;
+
             _inputFormat = inputFormat;
 
-            if (inputFormat == NativeCommandIOFormat.Text)
+            if (_inputFormat == NativeCommandIOFormat.Xml)
             {
-                ConvertToString();
+                _streamWriter.WriteLine(ProcessOutputHandler.XmlCliTag);
+                _xmlSerializer = new Serializer(XmlWriter.Create(_streamWriter));
             }
-            _inputThread = new Thread(new ThreadStart(this.WriterThreadProc));
-            _inputThread.Start();
+            else // Text
+            {
+                _pipeline = ScriptBlock.Create("Out-String -Stream").GetSteppablePipeline();
+                _pipeline.Begin(true);
+            }
         }
 
         private bool _stopping = false;
+
         /// <summary>
-        /// Stop writing input to process
+        /// Stop writing input to process.
         /// </summary>
         internal void Stop()
         {
             _stopping = true;
         }
 
-        /// <summary>
-        /// This method wait for writer thread to finish.
-        /// </summary>
-        internal void Done()
+        internal void Dispose()
         {
-            if (_inputThread != null)
+            // we allow call Dispose() multiply times.
+            // For example one time from ProcessRecord() code path,
+            // when we detect that process already finished
+            // and once from Done() code path.
+            // Even though Dispose() could be called multiple times,
+            // the calls are on the same thread, so there is no race condition
+            if (_pipeline != null)
             {
-                _inputThread.Join();
+                _pipeline.Dispose();
+                _pipeline = null;
             }
-        }
 
-        /// <summary>
-        /// Thread procedure for writing data to the child process...
-        /// </summary>
-        private void WriterThreadProc()
-        {
-            try
+            if (_xmlSerializer != null)
             {
-                if (_inputFormat == NativeCommandIOFormat.Text)
-                {
-                    WriteTextInput();
-                }
-                else
-                {
-                    WriteXmlInput();
-                }
+                _xmlSerializer = null;
             }
-            catch (System.IO.IOException)
-            {
-            }
-        }
 
-        private void WriteTextInput()
-        {
-            try
-            {
-                foreach (object o in _inputList)
-                {
-                    if (_stopping) return;
-
-                    string line = PSObject.ToStringParser(_command.Context, o);
-                    _streamWriter.Write(line);
-                }
-            }
-            finally
-            {
-                _streamWriter.Dispose();
-            }
-        }
-
-        private void WriteXmlInput()
-        {
-            try
-            {
-                //Write header
-                _streamWriter.WriteLine("#< CLIXML");
-
-                // When (if) switching to XmlTextWriter.Create remember the OmitXmlDeclaration difference
-                XmlWriter writer = XmlWriter.Create(_streamWriter);
-                Serializer ser = new Serializer(writer);
-                foreach (object o in _inputList)
-                {
-                    if (_stopping) return;
-                    ser.Serialize(o);
-                }
-                ser.Done();
-            }
-            finally
-            {
-                _streamWriter.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Formats the input objects using out-string. Output of out-string
-        /// is given as input to native command processor.
-        /// This method is to be called from the pipeline thread and not from the
-        /// thread which writes input in to process.
-        /// </summary>
-        private void ConvertToString()
-        {
-            Dbg.Assert(_inputFormat == NativeCommandIOFormat.Text, "InputFormat should be Text");
-
-            PipelineProcessor p = new PipelineProcessor();
-            p.Add(_command.Context.CreateCommand("out-string", false));
-            object[] result = (object[])p.SynchronousExecuteEnumerate(_inputList.ToArray());
-            _inputList = new ArrayList(result);
-        }
-    }
-
-    /// <summary>
-    /// This helper class reads the output from error and output streams of
-    /// process.
-    /// </summary>
-    internal class ProcessOutputReader
-    {
-        #region constructor
-
-        /// <summary>
-        /// Process whose output is to be read.
-        /// </summary>
-        private Process _process;
-
-        /// <summary>
-        /// Path of the process application
-        /// </summary>
-        private string _processPath;
-
-        private bool _redirectOutput;
-
-        private bool _redirectError;
-
-        /// <summary>
-        /// Process whose output is read
-        /// </summary>
-        internal ProcessOutputReader(Process process, string processPath, bool redirectOutput, bool redirectError)
-        {
-            Dbg.Assert(process != null, "caller should validate the parameter");
-            Dbg.Assert(processPath != null, "caller should validate the parameter");
-            Dbg.Assert(redirectOutput || redirectError, "Either redirectOutput or redirectError must be true");
-            _process = process;
-            _processPath = processPath;
-            _redirectOutput = redirectOutput;
-            _redirectError = redirectError;
-        }
-
-        #endregion constructor
-
-        /// <summary>
-        /// Reader for output stream of process
-        /// </summary>
-        private ProcessStreamReader _outputReader;
-        /// <summary>
-        /// Reader for error stream of process
-        /// </summary>
-        private ProcessStreamReader _errorReader;
-        /// <summary>
-        /// Synchronized object queue in which object read form output and 
-        /// error streams are deposited
-        /// </summary>
-        private ObjectStream _processOutput;
-
-        /// <summary>
-        /// Start reading the output/error. Note all the work is done asynchronously.
-        /// </summary>
-        internal void Start()
-        {
-            _processOutput = new ObjectStream(128);
-
-            // Start async reading of error and output
-            // readercount variable is used by multiple threads to close "processOutput" ObjectStream.
-            // Without properly initializing the readercount, the ObjectStream might get
-            // closed early. readerCount is protected here by using the lock.
-            lock (_readerLock)
-            {
-                if (_redirectOutput)
-                {
-                    _readerCount++;
-                    _outputReader = new ProcessStreamReader(_process.StandardOutput, _processPath, true, _processOutput.ObjectWriter, this);
-                    _outputReader.Start();
-                }
-                if (_redirectError)
-                {
-                    _readerCount++;
-                    _errorReader = new ProcessStreamReader(_process.StandardError, _processPath, false, _processOutput.ObjectWriter, this);
-                    _errorReader.Start();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Stops reading from streams. This is called from NativeCommandProcessor's StopProcessing
-        /// method. Note return of this method doesn't mean reading has stopped and all threads are
-        /// done. 
-        /// Use Done to ensure that all reading threads are finished.
-        /// </summary>
-        internal void Stop()
-        {
-            if (_processOutput != null)
+            // streamWriter can be null if we didn't call Start method
+            if (_streamWriter != null)
             {
                 try
                 {
-                    //Close the reader for the stream.
-                    _processOutput.ObjectReader.Close();
+                    _streamWriter.Dispose();
                 }
-                catch (Exception e) // ignore non-severe exceptions
+                catch (IOException)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
+                    // on unix, if process is already finished attempt to dispose it will
+                    // lead to "Broken pipe" exception.
+                    // we are ignoring it here
                 }
 
-                try
-                {
-                    _processOutput.Close();
-                }
-                catch (Exception e) // ignore non-severe exceptions
-                {
-                    CommandProcessorBase.CheckForSevereException(e);
-                }
+                _streamWriter = null;
             }
         }
 
-        /// <summary>
-        /// This method returns when all output reader threads have returned
-        /// </summary>
         internal void Done()
         {
-            if (_outputReader != null)
+            if (_inputFormat == NativeCommandIOFormat.Xml)
             {
-                _outputReader.Done();
+                if (_xmlSerializer != null)
+                {
+                    _xmlSerializer.Done();
+                }
             }
-            if (_errorReader != null)
+            else // Text
             {
-                _errorReader.Done();
+                // if _pipeline == null, we already called Dispose(),
+                // for example, because downstream process finished
+                if (_pipeline != null)
+                {
+                    var finalResults = _pipeline.End();
+                    AddTextInputFromFormattedArray(finalResults);
+                }
             }
-        }
 
-        /// <summary>
-        /// Return one object which was read from the process.
-        /// </summary>
-        /// <returns>
-        /// AutomationNull.Value if no more objects.
-        /// object of type ProcessOutputObject otherwise
-        /// </returns>
-        internal object Read()
-        {
-            return _processOutput.ObjectReader.Read();
-        }
-
-        /// <summary>
-        /// object used for synchronizing ReaderDone call between two readers
-        /// </summary>
-        private object _readerLock = new object();
-
-        /// <summary>
-        /// Count of readers - this is set by Start. If both output and error
-        /// are redirected, it will be 2. If only one is redirected, it'll be 1.
-        /// </summary>
-        private int _readerCount;
-
-        /// <summary>
-        /// This method is called by output or error reader when they are
-        /// done reading. When it is called two times, we close the writer.
-        /// </summary>
-        /// <param name="isOutput"></param>
-        internal void ReaderDone(bool isOutput)
-        {
-            int temp;
-            lock (_readerLock)
-            {
-                temp = --_readerCount;
-            }
-            if (temp == 0)
-            {
-                _processOutput.ObjectWriter.Close();
-            }
+            Dispose();
         }
     }
-
-    /// <summary>
-    /// This class reads the string from output or error streams of process
-    /// and processes them appropriately.
-    /// </summary>
-    /// <remarks>
-    /// This class is not thread safe. It is assumed that NativeCommnadProcessor
-    /// class will synchronize access to this class between different threads.
-    /// </remarks>
-    internal class ProcessStreamReader
-    {
-        #region constructor 
-
-        /// <summary>
-        /// Stream from which data is read.
-        /// </summary>
-        private StreamReader _streamReader;
-
-        /// <summary>
-        /// Flag which tells if streamReader is for stdout or stderr stream of process
-        /// </summary>
-        private bool _isOutput;
-
-        /// <summary>
-        /// Writer to which data read from stream are written
-        /// </summary>
-        private PipelineWriter _writer;
-
-        /// <summary>
-        /// Path to the process. This is used for setting the name of the thread.
-        /// </summary>
-        private string _processPath;
-
-        /// <summary>
-        /// ProcessReader which owns this stream reader
-        /// </summary>
-        private ProcessOutputReader _processOutputReader;
-
-        /// <summary>
-        /// Creates an instance of ProcessStreamReader
-        /// </summary>
-        /// <param name="streamReader">
-        /// Stream from which data is read
-        /// </param>
-        /// <param name="processPath">
-        /// Path to the process. This is used for setting the name of the thread.
-        /// </param>
-        /// <param name="isOutput">
-        /// if true stream is output stream of process 
-        /// else stream is error stream. 
-        /// </param>
-        /// <param name="writer">
-        /// Processed data is written to it
-        /// </param>
-        /// <param name="processOutputReader">
-        /// ProcessOutputReader which owns this stream reader
-        /// </param>
-        internal ProcessStreamReader(StreamReader streamReader, string processPath, bool isOutput,
-            PipelineWriter writer, ProcessOutputReader processOutputReader)
-        {
-            Dbg.Assert(streamReader != null, "Caller should validate the parameter");
-            Dbg.Assert(processPath != null, "Caller should validate the parameter");
-            Dbg.Assert(writer != null, "Caller should validate the parameter");
-            Dbg.Assert(processOutputReader != null, "Caller should validate the parameter");
-
-            _streamReader = streamReader;
-            _processPath = processPath;
-            _isOutput = isOutput;
-            _writer = writer;
-            _processOutputReader = processOutputReader;
-        }
-
-        #endregion constructor
-
-        /// <summary>
-        /// Thread on which reading happens
-        /// </summary>
-        private Thread _thread = null;
-
-        /// <summary>
-        /// Launches a new thread to start reading.
-        /// </summary>
-        internal void Start()
-        {
-            _thread = new Thread(new ThreadStart(ReaderStartProc));
-            if (_isOutput)
-            {
-                _thread.Name = string.Format(CultureInfo.InvariantCulture, "{0} :Output Reader", _processPath);
-            }
-            else
-            {
-                _thread.Name = string.Format(CultureInfo.InvariantCulture, "{0} :Error Reader", _processPath);
-            }
-            _thread.Start();
-        }
-
-        /// <summary>
-        /// This method returns when reader thread has returned.
-        /// </summary>
-        internal void Done()
-        {
-            if (_thread != null)
-            {
-                _thread.Join();
-            }
-        }
-
-        /// <summary>
-        /// Thread proc for reading
-        /// </summary>
-        private void ReaderStartProc()
-        {
-            try
-            {
-                ReaderStartProcHelper();
-            }
-            catch (Exception ex)
-            {
-                CommandProcessorBase.CheckForSevereException(ex);
-            }
-            finally
-            {
-                _processOutputReader.ReaderDone(_isOutput);
-            }
-        }
-
-        private void ReaderStartProcHelper()
-        {
-            //read the first line to detect the format.
-            //for xml, first line is #< CLIXML
-            string line = _streamReader.ReadLine();
-            if (line == null)
-            {
-                // nothing to do
-            }
-            else if (line.Equals("#< CLIXML", StringComparison.Ordinal) == false)
-            {
-                ReadText(line);
-            }
-            else
-            {
-                ReadXml();
-            }
-        }
-
-        private void ReadText(string line)
-        {
-            if (_isOutput)
-            {
-                while (line != null)
-                {
-                    AddObjectToWriter(line, MinishellStream.Output);
-                    line = _streamReader.ReadLine();
-                }
-            }
-            else
-            {
-                //
-                // Produce a regular error record for the first line of the output
-                //
-                ErrorRecord errorRecord = new ErrorRecord(new RemoteException(line),
-                                        "NativeCommandError", ErrorCategory.NotSpecified, line);
-                AddObjectToWriter(errorRecord, MinishellStream.Error);
-
-                //
-                // Wrap the rest of the output in ErrorRecords with the "NativeCommandErrorMessage" error ID
-                //
-                while ((line = _streamReader.ReadLine()) != null)
-                {
-                    AddObjectToWriter(
-                        new ErrorRecord(
-                            new RemoteException(line),
-                            "NativeCommandErrorMessage",
-                            ErrorCategory.NotSpecified,
-                            null),
-                        MinishellStream.Error);
-                }
-            }
-        }
-
-        private void ReadXml()
-        {
-            try
-            {
-                XmlReader xmlReader = XmlReader.Create(_streamReader, InternalDeserializer.XmlReaderSettingsForCliXml);
-                Deserializer des = new Deserializer(xmlReader);
-                while (!des.Done())
-                {
-                    string streamName;
-                    object obj = des.Deserialize(out streamName);
-
-                    //Decide the stream to which data belongs
-                    MinishellStream stream = MinishellStream.Unknown;
-                    if (streamName != null)
-                    {
-                        stream = StringToMinishellStreamConverter.ToMinishellStream(streamName);
-                    }
-                    if (stream == MinishellStream.Unknown)
-                    {
-                        stream = _isOutput ? MinishellStream.Output : MinishellStream.Error;
-                    }
-
-                    //Null is allowed only in output stream
-                    if (stream != MinishellStream.Output && obj == null)
-                    {
-                        continue;
-                    }
-
-                    if (stream == MinishellStream.Error)
-                    {
-                        if (obj is PSObject)
-                        {
-                            obj = ErrorRecord.FromPSObjectForRemoting(PSObject.AsPSObject(obj));
-                        }
-                        else
-                        {
-                            string errorMessage = null;
-                            try
-                            {
-                                errorMessage = (string)LanguagePrimitives.ConvertTo(obj, typeof(string), CultureInfo.InvariantCulture);
-                            }
-                            catch (PSInvalidCastException)
-                            {
-                                continue;
-                            }
-                            obj = new ErrorRecord(new RemoteException(errorMessage),
-                                                "NativeCommandError", ErrorCategory.NotSpecified, errorMessage);
-                        }
-                    }
-                    else if (stream == MinishellStream.Information)
-                    {
-                        if (obj is PSObject)
-                        {
-                            obj = InformationRecord.FromPSObjectForRemoting(PSObject.AsPSObject(obj));
-                        }
-                        else
-                        {
-                            string messageData = null;
-                            try
-                            {
-                                messageData = (string)LanguagePrimitives.ConvertTo(obj, typeof(string), CultureInfo.InvariantCulture);
-                            }
-                            catch (PSInvalidCastException)
-                            {
-                                continue;
-                            }
-
-                            obj = new InformationRecord(messageData, null);
-                        }
-                    }
-                    else if (stream == MinishellStream.Debug ||
-                             stream == MinishellStream.Verbose ||
-                             stream == MinishellStream.Warning)
-                    {
-                        //Convert to string
-                        try
-                        {
-                            obj = LanguagePrimitives.ConvertTo(obj, typeof(string), CultureInfo.InvariantCulture);
-                        }
-                        catch (PSInvalidCastException)
-                        {
-                            continue;
-                        }
-                    }
-                    AddObjectToWriter(obj, stream);
-                }
-            }
-            catch (XmlException originalException)
-            {
-                string template = NativeCP.CliXmlError;
-                string message = string.Format(
-                    null,
-                    template,
-                    _isOutput ? MinishellStream.Output : MinishellStream.Error,
-                    _processPath,
-                    originalException.Message);
-                XmlException newException = new XmlException(
-                    message,
-                    originalException);
-
-                ErrorRecord error = new ErrorRecord(
-                    newException,
-                    "ProcessStreamReader_CliXmlError",
-                    ErrorCategory.SyntaxError,
-                    _processPath);
-                AddObjectToWriter(error, MinishellStream.Error);
-            }
-        }
-
-        /// <summary>
-        /// Adds one object to writer
-        /// </summary>
-        private void AddObjectToWriter(object data, MinishellStream stream)
-        {
-            try
-            {
-                ProcessOutputObject dataObject = new ProcessOutputObject(data, stream);
-                //writer is shared between Error and Output reader.
-                lock (_writer)
-                {
-                    _writer.Write(dataObject);
-                }
-            }
-            catch (PipelineClosedException)
-            {
-                // The output queue may have been closed asynchronously
-                ;
-            }
-            catch (System.ObjectDisposedException)
-            {
-                // The output queue may have been disposed asynchronously when StopProcessing is called...
-                ;
-            }
-        }
-    }
-
-#if !CORECLR // There is no GUI application on OneCore, so powershell on OneCore should always have a console attached.
 
     /// <summary>
     /// Static class that allows you to show and hide the console window
@@ -2043,31 +1937,31 @@ namespace System.Management.Automation
         /// Code to control the display properties of the a window...
         /// </summary>
         /// <param name="hWnd">The window to show...</param>
-        /// <param name="nCmdShow">The command to do</param>
-        /// <returns>true it it was successful</returns>
+        /// <param name="nCmdShow">The command to do.</param>
+        /// <returns>True it it was successful.</returns>
         [DllImport("user32.dll")]
-        internal static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
+        internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         /// <summary>
         /// Code to allocate a console...
         /// </summary>
-        /// <returns>true if a console was created...</returns>
+        /// <returns>True if a console was created...</returns>
         [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool AllocConsole();
 
-
         /// <summary>
-        /// Called to save the foreground window before allocating a hidden console window
+        /// Called to save the foreground window before allocating a hidden console window.
         /// </summary>
-        /// <returns>A handle to the foreground window</returns>
+        /// <returns>A handle to the foreground window.</returns>
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
 
         /// <summary>
-        /// Called to restore the foreground window after allocating a hidden console window
+        /// Called to restore the foreground window after allocating a hidden console window.
         /// </summary>
         /// <param name="hWnd">A handle to the window that should be activated and brought to the foreground.</param>
-        /// <returns>true if the window was brought to the foreground</returns>
+        /// <returns>True if the window was brought to the foreground.</returns>
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
@@ -2153,14 +2047,13 @@ namespace System.Management.Automation
             }
         }
     }
-#endif
 
     /// <summary>
-    /// Exception used to wrap the error coming from 
+    /// Exception used to wrap the error coming from
     /// remote instance of Msh.
-    /// </summary>     
+    /// </summary>
     /// <remarks>
-    /// This remote instance of Msh can be in a separate process, 
+    /// This remote instance of Msh can be in a separate process,
     /// appdomain or machine.
     /// </remarks>
     [Serializable]
@@ -2168,7 +2061,7 @@ namespace System.Management.Automation
     public class RemoteException : RuntimeException
     {
         /// <summary>
-        /// Initializes a new instance of RemoteException
+        /// Initializes a new instance of RemoteException.
         /// </summary>
         public RemoteException()
             : base()
@@ -2176,10 +2069,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of RemoteException with a specified error message. 
+        /// Initializes a new instance of RemoteException with a specified error message.
         /// </summary>
         /// <param name="message">
-        /// The message that describes the error. 
+        /// The message that describes the error.
         /// </param>
         public RemoteException(string message)
             : base(message)
@@ -2187,12 +2080,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the RemoteException class 
-        /// with a specified error message and a reference to the inner exception 
-        /// that is the cause of this exception. 
+        /// Initializes a new instance of the RemoteException class
+        /// with a specified error message and a reference to the inner exception
+        /// that is the cause of this exception.
         /// </summary>
         /// <param name="message">
-        /// The message that describes the error.         
+        /// The message that describes the error.
         /// </param>
         /// <param name="innerException">
         /// The exception that is the cause of the current exception.
@@ -2203,11 +2096,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the RemoteException 
-        /// with a specified error message, serialzed Exception and 
-        /// serialized InvocationInfo
+        /// Initializes a new instance of the RemoteException
+        /// with a specified error message, serialized Exception and
+        /// serialized InvocationInfo.
         /// </summary>
-        /// <param name="message">The message that describes the error. </param>
+        /// <param name="message">The message that describes the error.</param>
         /// <param name="serializedRemoteException">
         /// serialized exception from remote msh
         /// </param>
@@ -2226,7 +2119,6 @@ namespace System.Management.Automation
             _serializedRemoteInvocationInfo = serializedRemoteInvocationInfo;
         }
 
-
         #region ISerializable Members
 
         /// <summary>
@@ -2234,11 +2126,11 @@ namespace System.Management.Automation
         ///  class with serialized data.
         /// </summary>
         /// <param name="info">
-        /// The <see cref="SerializationInfo"/> that holds the serialized object 
+        /// The <see cref="SerializationInfo"/> that holds the serialized object
         /// data about the exception being thrown.
         /// </param>
         /// <param name="context">
-        /// The <see cref="StreamingContext"/> that contains contextual information 
+        /// The <see cref="StreamingContext"/> that contains contextual information
         /// about the source or destination.
         /// </param>
         protected RemoteException(SerializationInfo info, StreamingContext context)
@@ -2250,11 +2142,12 @@ namespace System.Management.Automation
 
         [NonSerialized]
         private PSObject _serializedRemoteException;
+
         [NonSerialized]
         private PSObject _serializedRemoteInvocationInfo;
 
         /// <summary>
-        /// Original Serialized Exception from remote msh
+        /// Original Serialized Exception from remote msh.
         /// </summary>
         /// <remarks>This is the exception which was thrown in remote.
         /// </remarks>
@@ -2282,7 +2175,7 @@ namespace System.Management.Automation
 
         private ErrorRecord _remoteErrorRecord;
         /// <summary>
-        /// Sets the remote error record associated with this exception
+        /// Sets the remote error record associated with this exception.
         /// </summary>
         /// <param name="remoteError"></param>
         internal void SetRemoteErrorRecord(ErrorRecord remoteError)
@@ -2291,7 +2184,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// ErrorRecord associated with the exception
+        /// ErrorRecord associated with the exception.
         /// </summary>
         public override ErrorRecord ErrorRecord
         {

@@ -1,7 +1,5 @@
-/*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
- *============================================================================
- */
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #region Using directives
 
@@ -27,7 +25,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Execute the write opration to given cmdlet object
+        /// Execute the write operation to given cmdlet object
         /// </para>
         /// </summary>
         /// <param name="cmdlet">
@@ -42,7 +40,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <para>
         /// <see cref="XOperationContextBase"/> object that related to current action.
         /// It may used by action, such as <see cref="CimWriteResultObject"/>,
-        /// since later on action may require namspace, and proxy object to reuse
+        /// since later on action may require namespace, and proxy object to reuse
         /// <see cref="CimSession"/>, <see cref="CimOperationOptions"/> object.
         /// </para>
         /// </summary>
@@ -52,13 +50,15 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return this.context;
             }
+
             set
             {
                 this.context = value;
             }
         }
+
         private XOperationContextBase context;
-    }//End Class
+    }
 
     /// <summary>
     /// <para>
@@ -69,7 +69,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimSyncAction : CimBaseAction, IDisposable
     {
         /// <summary>
-        /// Constructor
+        /// The constructor.
         /// </summary>
         public CimSyncAction()
         {
@@ -82,7 +82,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Block current thread until action completed
         /// </para>
         /// </summary>
-        /// <returns>Response from user</returns>
+        /// <returns>Response from user.</returns>
         public virtual CimResponseType GetResponse()
         {
             this.Block();
@@ -91,7 +91,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Set response result
+        /// Set the response result.
         /// </para>
         /// </summary>
         internal CimResponseType ResponseType
@@ -102,7 +102,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <para>
         /// Call this method when the action is completed or
-        /// the operation is terminated
+        /// the operation is terminated.
         /// </para>
         /// </summary>
         internal virtual void OnComplete()
@@ -112,7 +112,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// block current thread.
+        /// Block current thread.
         /// </para>
         /// </summary>
         protected virtual void Block()
@@ -124,12 +124,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region members
 
         /// <summary>
-        /// action completed event
+        /// Action completed event.
         /// </summary>
         private ManualResetEventSlim completeEvent;
 
         /// <summary>
-        /// response result
+        /// Response result.
         /// </summary>
         protected CimResponseType responseType;
 
@@ -137,7 +137,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region IDisposable interface
         /// <summary>
-        /// IDisposable interface
+        /// IDisposable interface.
         /// </summary>
         private bool _disposed;
 
@@ -152,7 +152,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             Dispose(true);
             // This object will be cleaned up by the Dispose method.
-            // Therefore, you should call GC.SupressFinalize to
+            // Therefore, you should call GC.SuppressFinalize to
             // take this object off the finalization queue
             // and prevent finalization code for this object
             // from executing a second time.
@@ -170,7 +170,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// other objects. Only unmanaged resources can be disposed.
         /// </para>
         /// </summary>
-        /// <param name="disposing">Whether it is directly called</param>
+        /// <param name="disposing">Whether it is directly called.</param>
         protected virtual void Dispose(bool disposing)
         {
             // Check to see if Dispose has already been called.
@@ -197,5 +197,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

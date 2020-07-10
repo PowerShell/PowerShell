@@ -1,12 +1,12 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -15,26 +15,38 @@ namespace Microsoft.PowerShell.Commands
     /// A command to resolve MSH paths containing glob characters to
     /// MSH paths that match the glob strings.
     /// </summary>
-    [Cmdlet("Split", "Path", DefaultParameterSetName = "ParentSet", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113404")]
-    [OutputType(typeof(string), ParameterSetName = new string[] { SplitPathCommand.leafSet,
-                                                                  SplitPathCommand.noQualifierSet,
-                                                                  SplitPathCommand.parentSet,
-                                                                  SplitPathCommand.qualifierSet,
-                                                                  SplitPathCommand.literalPathSet})]
-    [OutputType(typeof(bool), ParameterSetName = new string[] { SplitPathCommand.isAbsoluteSet })]
+    [Cmdlet(VerbsCommon.Split, "Path", DefaultParameterSetName = "ParentSet", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097149")]
+    [OutputType(typeof(string), ParameterSetName = new[] { leafSet,
+                                                           leafBaseSet,
+                                                           extensionSet,
+                                                           noQualifierSet,
+                                                           parentSet,
+                                                           qualifierSet,
+                                                           literalPathSet})]
+    [OutputType(typeof(bool), ParameterSetName = new[] { isAbsoluteSet })]
     public class SplitPathCommand : CoreCommandWithCredentialsBase
     {
         #region Parameters
 
         /// <summary>
-        /// The parameter set name to get the parent path
+        /// The parameter set name to get the parent path.
         /// </summary>
         private const string parentSet = "ParentSet";
 
         /// <summary>
-        /// The parameter set name to get the leaf name
+        /// The parameter set name to get the leaf name.
         /// </summary>
         private const string leafSet = "LeafSet";
+
+        /// <summary>
+        /// The parameter set name to get the leaf base name.
+        /// </summary>
+        private const string leafBaseSet = "LeafBaseSet";
+
+        /// <summary>
+        /// The parameter set name to get the extension.
+        /// </summary>
+        private const string extensionSet = "ExtensionSet";
 
         /// <summary>
         /// The parameter set name to get the qualifier set.
@@ -57,239 +69,132 @@ namespace Microsoft.PowerShell.Commands
         private const string literalPathSet = "LiteralPathSet";
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = parentSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 0, ParameterSetName = leafSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 0, ParameterSetName = leafBaseSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 0, ParameterSetName = extensionSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 0, ParameterSetName = qualifierSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 0, ParameterSetName = noQualifierSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 0, ParameterSetName = isAbsoluteSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        public string[] Path
-        {
-            get
-            {
-                return _paths;
-            } // get
-
-            set
-            {
-                _paths = value;
-            } // set
-        } // Path
+        public string[] Path { get; set; }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPathSet", Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath")]
+        [Alias("PSPath", "LP")]
         public string[] LiteralPath
         {
             get
             {
-                return _paths;
-            } // get
+                return Path;
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
-                _paths = value;
-            } // set
-        } // LiteralPath
+                Path = value;
+            }
+        }
 
         /// <summary>
-        /// Determines if the qualifier should be returned
+        /// Determines if the qualifier should be returned.
         /// </summary>
-        ///
         /// <value>
         /// If true the qualifier of the path will be returned.
-        /// The qualifier is the drive or provider that is qualifing
+        /// The qualifier is the drive or provider that is qualifying
         /// the MSH path.
         /// </value>
-        ///
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ParameterSetName = qualifierSet, Mandatory = false)]
-        public SwitchParameter Qualifier
-        {
-            get
-            {
-                return _qualifier;
-            } // get
-
-            set
-            {
-                _qualifier = value;
-            } //set
-        } // Qualifier
+        [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = qualifierSet)]
+        public SwitchParameter Qualifier { get; set; }
 
         /// <summary>
-        /// Determines if the qualifier should be returned
+        /// Determines if the qualifier should be returned.
         /// </summary>
-        ///
         /// <value>
         /// If true the qualifier of the path will be returned.
-        /// The qualifier is the drive or provider that is qualifing
+        /// The qualifier is the drive or provider that is qualifying
         /// the MSH path.
         /// </value>
-        ///
         [Parameter(ParameterSetName = noQualifierSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
-        public SwitchParameter NoQualifier
-        {
-            get
-            {
-                return _noqualifier;
-            } // get
-
-            set
-            {
-                _noqualifier = value;
-            } //set
-        } // NoQualifier
-
+        public SwitchParameter NoQualifier { get; set; }
 
         /// <summary>
-        /// Determines if the parent path should be returned
+        /// Determines if the parent path should be returned.
         /// </summary>
-        ///
         /// <value>
         /// If true the parent of the path will be returned.
         /// </value>
-        ///
         [Parameter(ParameterSetName = parentSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
-        public SwitchParameter Parent
-        {
-            get
-            {
-                return _parent;
-            } // get
-
-            set
-            {
-                _parent = value;
-            } //set
-        } // Parent
+        public SwitchParameter Parent { get; set; } = true;
 
         /// <summary>
-        /// Determines if the leaf name should be returned
+        /// Determines if the leaf name should be returned.
         /// </summary>
-        ///
         /// <value>
         /// If true the leaf name of the path will be returned.
         /// </value>
-        ///
         [Parameter(ParameterSetName = leafSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
-        public SwitchParameter Leaf
-        {
-            get
-            {
-                return _leaf;
-            } // get
+        public SwitchParameter Leaf { get; set; }
 
-            set
-            {
-                _leaf = value;
-            } //set
-        } // Leaf
+        /// <summary>
+        /// Determines if the leaf base name (name without extension) should be returned.
+        /// </summary>
+        /// <value>
+        /// If true the leaf base name of the path will be returned.
+        /// </value>
+        [Parameter(ParameterSetName = leafBaseSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
+        public SwitchParameter LeafBase { get; set; }
+
+        /// <summary>
+        /// Determines if the extension should be returned.
+        /// </summary>
+        /// <value>
+        /// If true the extension of the path will be returned.
+        /// </value>
+        [Parameter(ParameterSetName = extensionSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
+        public SwitchParameter Extension { get; set; }
 
         /// <summary>
         /// Determines if the path should be resolved before being parsed.
         /// </summary>
         /// <value></value>
         [Parameter]
-        public SwitchParameter Resolve
-        {
-            get
-            {
-                return _resolve;
-            } // get
-
-            set
-            {
-                _resolve = value;
-            } //set
-        } // Resolve
+        public SwitchParameter Resolve { get; set; }
 
         /// <summary>
         /// Determines if the path is an absolute path.
         /// </summary>
-        /// 
         [Parameter(ParameterSetName = isAbsoluteSet)]
-        public SwitchParameter IsAbsolute
-        {
-            get
-            {
-                return _isAbsolute;
-            } // get
+        public SwitchParameter IsAbsolute { get; set; }
 
-            set
-            {
-                _isAbsolute = value;
-            } //set
-        }
         #endregion Parameters
 
         #region parameter data
-
-        /// <summary>
-        /// The path to resolve
-        /// </summary>
-        private string[] _paths;
-
-        /// <summary>
-        /// Determines if the qualifier of the path should be returned.
-        /// The qualifier is either the drive name or provider name that
-        /// is qualifying the path.
-        /// </summary>
-        private bool _qualifier;
-
-        /// <summary>
-        /// Determines if the qualifier of the path should be returned.
-        /// If false, the qualifier will be returned. If true, it will
-        /// be stripped from the path.
-        /// The qualifier is either the drive name or provider name that
-        /// is qualifying the path.
-        /// </summary>
-        private bool _noqualifier;
-
-        /// <summary>
-        /// Determines if the parent path of the specified path should be returned.
-        /// </summary>
-        private bool _parent = true;
-
-        /// <summary>
-        /// Determines if the leaf name of the specified path should be returned.
-        /// </summary>
-        private bool _leaf;
-
-        /// <summary>
-        /// Determines if the path(s) should be resolved before being parsed.
-        /// </summary>
-        private bool _resolve;
-
-        /// <summary>
-        /// Determines if the path(s) are absolute paths.
-        /// </summary>
-        private bool _isAbsolute;
 
         #endregion parameter data
 
         #region Command code
 
         /// <summary>
-        /// Parses the specified path and returns the portion determined by the 
+        /// Parses the specified path and returns the portion determined by the
         /// boolean parameters.
         /// </summary>
         protected override void ProcessRecord()
         {
             StringCollection pathsToParse = new StringCollection();
 
-            if (_resolve)
+            if (Resolve)
             {
                 CmdletProviderContext currentContext = CmdletProviderContext;
 
-                foreach (string path in _paths)
+                foreach (string path in Path)
                 {
                     // resolve the paths and then parse each one.
 
-                    Collection<PathInfo> resolvedPaths = null;
+                    Collection<PathInfo> resolvedPaths;
 
                     try
                     {
@@ -387,7 +292,7 @@ namespace Microsoft.PowerShell.Commands
                 switch (ParameterSetName)
                 {
                     case isAbsoluteSet:
-                        string ignored = null;
+                        string ignored;
                         bool isPathAbsolute =
                             SessionState.Path.IsPSAbsolute(pathsToParse[index], out ignored);
 
@@ -395,7 +300,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
 
                     case qualifierSet:
-                        int separatorIndex = pathsToParse[index].IndexOf(":", StringComparison.CurrentCulture);
+                        int separatorIndex = pathsToParse[index].IndexOf(':');
 
                         if (separatorIndex < 0)
                         {
@@ -432,20 +337,17 @@ namespace Microsoft.PowerShell.Commands
                                         separatorIndex + 1);
                             }
                         }
+
                         break;
 
                     case parentSet:
                     case literalPathSet:
-                        bool pathStartsWithRoot =
-                            pathsToParse[index].StartsWith("\\", StringComparison.CurrentCulture) ||
-                            pathsToParse[index].StartsWith("/", StringComparison.CurrentCulture);
-
                         try
                         {
                             result =
                                 SessionState.Path.ParseParent(
                                     pathsToParse[index],
-                                    String.Empty,
+                                    string.Empty,
                                     CmdletProviderContext,
                                     true);
                         }
@@ -456,19 +358,30 @@ namespace Microsoft.PowerShell.Commands
                             // provider.  Since the paths for these types of
                             // providers can't be split, asking for the parent
                             // is asking for an empty string.
-                            result = String.Empty;
+                            result = string.Empty;
                         }
 
                         break;
 
                     case leafSet:
+                    case leafBaseSet:
+                    case extensionSet:
                         try
                         {
+                            // default handles leafSet
                             result =
                                 SessionState.Path.ParseChildName(
                                     pathsToParse[index],
                                     CmdletProviderContext,
                                     true);
+                            if (LeafBase)
+                            {
+                                result = System.IO.Path.GetFileNameWithoutExtension(result);
+                            }
+                            else if (Extension)
+                            {
+                                result = System.IO.Path.GetExtension(result);
+                            }
                         }
                         catch (PSNotSupportedException)
                         {
@@ -507,28 +420,25 @@ namespace Microsoft.PowerShell.Commands
                             false,
                             "Only a known parameter set should be called");
                         break;
-                } // switch
+                }
 
                 if (result != null)
                 {
                     WriteObject(result);
                 }
-            } // for each path
-        } // ProcessRecord
+            }
+        }
         #endregion Command code
 
         /// <summary>
         /// Removes either the drive or provider qualifier or both from the path.
         /// </summary>
-        /// 
         /// <param name="path">
         /// The path to strip the provider qualifier from.
         /// </param>
-        /// 
         /// <returns>
         /// The path without the qualifier.
         /// </returns>
-        /// 
         private string RemoveQualifier(string path)
         {
             Dbg.Diagnostics.Assert(
@@ -539,7 +449,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (SessionState.Path.IsProviderQualified(path))
             {
-                int index = path.IndexOf("::", StringComparison.CurrentCulture);
+                int index = path.IndexOf("::", StringComparison.Ordinal);
 
                 if (index != -1)
                 {
@@ -549,7 +459,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                string driveName = String.Empty;
+                string driveName = string.Empty;
 
                 if (SessionState.Path.IsPSAbsolute(path, out driveName))
                 {
@@ -563,7 +473,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // RemoveQualifier
-    } // SplitPathCommand
-} // namespace Microsoft.PowerShell.Commands
-
+        }
+    }
+}

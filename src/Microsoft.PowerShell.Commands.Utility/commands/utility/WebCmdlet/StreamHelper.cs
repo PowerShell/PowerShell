@@ -1,26 +1,23 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
-using System.Text;
 using System.IO;
 using System.IO.Compression;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-
-#if CORECLR
 using System.Net.Http;
-#else
-using System.Net;
-#endif
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// Microsoft.PowerShell.Commands.WebResponse has a public property RawContentStream
     /// which is of type MemoryStream. We shipped like that in PowerShell 3. Creating
-    /// this class as a wrapper to MemoryStream to lazily initialize. Otherwise, the 
+    /// this class as a wrapper to MemoryStream to lazily initialize. Otherwise, the
     /// content will unnecessarily be read even if there are no consumers for it.
     /// </summary>
     internal class WebResponseContentMemoryStream : MemoryStream
@@ -35,11 +32,10 @@ namespace Microsoft.PowerShell.Commands
 
         #region Constructors
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="initialCapacity"></param>
-        /// <param name="cmdlet">Owner cmdlet if any</param>
+        /// <param name="cmdlet">Owner cmdlet if any.</param>
         internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet cmdlet)
             : base(initialCapacity)
         {
@@ -49,7 +45,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         /// <summary>
-        /// 
         /// </summary>
         public override bool CanRead
         {
@@ -60,7 +55,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         public override bool CanSeek
         {
@@ -71,7 +65,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         public override bool CanTimeout
         {
@@ -82,7 +75,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         public override bool CanWrite
         {
@@ -93,7 +85,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         public override long Length
         {
@@ -105,20 +96,18 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="bufferSize"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override System.Threading.Tasks.Task CopyToAsync(Stream destination, int bufferSize, System.Threading.CancellationToken cancellationToken)
+        public override Task CopyToAsync(Stream destination, int bufferSize, CancellationToken cancellationToken)
         {
             Initialize();
             return base.CopyToAsync(destination, bufferSize, cancellationToken);
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
@@ -131,21 +120,19 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
         /// <param name="count"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override System.Threading.Tasks.Task<int> ReadAsync(byte[] buffer, int offset, int count, System.Threading.CancellationToken cancellationToken)
+        public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             Initialize();
             return base.ReadAsync(buffer, offset, count, cancellationToken);
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
         public override int ReadByte()
@@ -155,7 +142,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="value"></param>
         public override void SetLength(long value)
@@ -165,7 +151,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
         public override byte[] ToArray()
@@ -175,7 +160,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
@@ -187,21 +171,19 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
         /// <param name="count"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override System.Threading.Tasks.Task WriteAsync(byte[] buffer, int offset, int count, System.Threading.CancellationToken cancellationToken)
+        public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             Initialize();
             return base.WriteAsync(buffer, offset, count, cancellationToken);
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="value"></param>
         public override void WriteByte(byte value)
@@ -211,7 +193,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="stream"></param>
         public override void WriteTo(Stream stream)
@@ -221,68 +202,29 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
         }
 
-#if !CORECLR
         /// <summary>
-        /// 
-        /// </summary>
-        public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
-        {
-            Initialize();
-            return base.BeginRead(buffer, offset, count, callback, state);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
-        {
-            Initialize();
-            return base.BeginWrite(buffer, offset, count, callback, state);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public override byte[] GetBuffer()
-        {
-            Initialize();
-            return base.GetBuffer();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public override void Close()
-        {
-            base.Close();
-        }
-#endif
-
-        /// <summary>
-        /// 
         /// </summary>
         private void Initialize()
         {
             if (_isInitialized) { return; }
+
             _isInitialized = true;
             try
             {
                 long totalLength = 0;
                 byte[] buffer = new byte[StreamHelper.ChunkSize];
+                ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
                 for (int read = 1; 0 < read; totalLength += read)
                 {
-                    if (null != _ownerCmdlet)
+                    if (_ownerCmdlet != null)
                     {
-                        ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId,
-                            WebCmdletStrings.ReadResponseProgressActivity,
-                        StringUtil.Format(WebCmdletStrings.ReadResponseProgressStatus, totalLength));
+                        record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseProgressStatus, totalLength);
                         _ownerCmdlet.WriteProgress(record);
 
                         if (_ownerCmdlet.IsStopping)
@@ -301,9 +243,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_ownerCmdlet != null)
                 {
-                    ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId,
-                        WebCmdletStrings.ReadResponseProgressActivity,
-                        StringUtil.Format(WebCmdletStrings.ReadResponseComplete, totalLength));
+                    record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseComplete, totalLength);
                     record.RecordType = ProgressRecordType.Completed;
                     _ownerCmdlet.WriteProgress(record);
                 }
@@ -335,79 +275,59 @@ namespace Microsoft.PowerShell.Commands
 
         #region Static Methods
 
-        internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet)
+        internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet, CancellationToken cancellationToken)
         {
-            byte[] data = new byte[ChunkSize];
-
-            int read = 0;
-            long totalWritten = 0;
-            do
+            if (cmdlet == null)
             {
-                if (cmdlet != null)
-                {
-                    ProgressRecord record = new ProgressRecord(ActivityId,
-                        WebCmdletStrings.WriteRequestProgressActivity,
-                        StringUtil.Format(WebCmdletStrings.WriteRequestProgressStatus, totalWritten));
-                    cmdlet.WriteProgress(record);
-                }
-
-                read = input.Read(data, 0, ChunkSize);
-
-                if (0 < read)
-                {
-                    output.Write(data, 0, read);
-                    totalWritten += read;
-                }
-            } while (read != 0);
-
-
-            if (cmdlet != null)
-            {
-                ProgressRecord record = new ProgressRecord(ActivityId,
-                    WebCmdletStrings.WriteRequestProgressActivity,
-                    StringUtil.Format(WebCmdletStrings.WriteRequestComplete, totalWritten));
-                record.RecordType = ProgressRecordType.Completed;
-                cmdlet.WriteProgress(record);
+                throw new ArgumentNullException(nameof(cmdlet));
             }
 
-            output.Flush();
-        }
+            Task copyTask = input.CopyToAsync(output, cancellationToken);
 
-        internal static void WriteToStream(byte[] input, Stream output)
-        {
-            output.Write(input, 0, input.Length);
-            output.Flush();
+            ProgressRecord record = new ProgressRecord(
+                ActivityId,
+                WebCmdletStrings.WriteRequestProgressActivity,
+                WebCmdletStrings.WriteRequestProgressStatus);
+            try
+            {
+                do
+                {
+                    record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestProgressStatus, output.Position);
+                    cmdlet.WriteProgress(record);
+
+                    Task.Delay(1000).Wait(cancellationToken);
+                }
+                while (!copyTask.IsCompleted && !cancellationToken.IsCancellationRequested);
+
+                if (copyTask.IsCompleted)
+                {
+                    record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestComplete, output.Position);
+                    cmdlet.WriteProgress(record);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+            }
         }
 
         /// <summary>
         /// Saves content from stream into filePath.
-        /// Caller need to ensure <paramref name="stream"/> postion is properly set.
+        /// Caller need to ensure <paramref name="stream"/> position is properly set.
         /// </summary>
-        /// <param name="stream"></param>
-        /// <param name="filePath"></param>
-        /// <param name="cmdlet"></param>
-        internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet)
+        /// <param name="stream">Input stream.</param>
+        /// <param name="filePath">Output file name.</param>
+        /// <param name="cmdlet">Current cmdlet (Invoke-WebRequest or Invoke-RestMethod).</param>
+        /// <param name="cancellationToken">CancellationToken to track the cmdlet cancellation.</param>
+        internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet, CancellationToken cancellationToken)
         {
-            using (FileStream output = File.Create(filePath))
-            {
-                WriteToStream(stream, output, cmdlet);
-            }
+            // If the web cmdlet should resume, append the file instead of overwriting.
+            FileMode fileMode = cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume ? FileMode.Append : FileMode.Create;
+            using FileStream output = new FileStream(filePath, fileMode, FileAccess.Write, FileShare.Read);
+            WriteToStream(stream, output, cmdlet, cancellationToken);
         }
 
-        internal static string DecodeStream(Stream stream, string characterSet)
+        private static string StreamToString(Stream stream, Encoding encoding)
         {
-            Encoding encoding = ContentHelper.GetEncodingOrDefault(characterSet);
-            return DecodeStream(stream, encoding);
-        }
-
-        internal static string DecodeStream(Stream stream, Encoding encoding)
-        {
-            if (null == encoding)
-            {
-                // just use the default encoding if one wasn't provided
-                encoding = ContentHelper.GetDefaultEncoding();
-            }
-
             StringBuilder result = new StringBuilder(capacity: ChunkSize);
             Decoder decoder = encoding.GetDecoder();
 
@@ -416,15 +336,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 useBufferSize = encoding.GetMaxCharCount(10);
             }
+
             char[] chars = new char[useBufferSize];
-
-
             byte[] bytes = new byte[useBufferSize * 4];
             int bytesRead = 0;
             do
             {
-                // Read at most the number of bytes that will fit in the input buffer. The  
-                // return value is the actual number of bytes read, or zero if no bytes remain. 
+                // Read at most the number of bytes that will fit in the input buffer. The
+                // return value is the actual number of bytes read, or zero if no bytes remain.
                 bytesRead = stream.Read(bytes, 0, useBufferSize * 4);
 
                 bool completed = false;
@@ -434,28 +353,107 @@ namespace Microsoft.PowerShell.Commands
 
                 while (!completed)
                 {
-                    // If this is the last input data, flush the decoder's internal buffer and state. 
+                    // If this is the last input data, flush the decoder's internal buffer and state.
                     bool flush = (bytesRead == 0);
                     decoder.Convert(bytes, byteIndex, bytesRead - byteIndex,
                                     chars, 0, useBufferSize, flush,
                                     out bytesUsed, out charsUsed, out completed);
 
-                    // The conversion produced the number of characters indicated by charsUsed. Write that number 
+                    // The conversion produced the number of characters indicated by charsUsed. Write that number
                     // of characters to our result buffer
                     result.Append(chars, 0, charsUsed);
 
                     // Increment byteIndex to the next block of bytes in the input buffer, if any, to convert.
                     byteIndex += bytesUsed;
+
+                    // The behavior of decoder.Convert changed start .NET 3.1-preview2.
+                    // The change was made in https://github.com/dotnet/coreclr/pull/27229
+                    // The recommendation from .NET team is to not check for 'completed' if 'flush' is false.
+                    // Break out of the loop if all bytes have been read.
+                    if (!flush && bytesRead == byteIndex)
+                    {
+                        break;
+                    }
                 }
-            }
-            while (bytesRead != 0);
+            } while (bytesRead != 0);
 
             return result.ToString();
         }
 
-        internal static Byte[] EncodeToBytes(String str, Encoding encoding)
+        internal static string DecodeStream(Stream stream, string characterSet, out Encoding encoding)
         {
-            if (null == encoding)
+            try
+            {
+                encoding = Encoding.GetEncoding(characterSet);
+            }
+            catch (ArgumentException)
+            {
+                encoding = null;
+            }
+
+            return DecodeStream(stream, ref encoding);
+        }
+
+        internal static bool TryGetEncoding(string characterSet, out Encoding encoding)
+        {
+            bool result = false;
+            try
+            {
+                encoding = Encoding.GetEncoding(characterSet);
+                result = true;
+            }
+            catch (ArgumentException)
+            {
+                encoding = null;
+            }
+
+            return result;
+        }
+
+        private static readonly Regex s_metaexp = new Regex(
+                @"<meta\s.*[^.><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
+                RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase
+            );
+
+        internal static string DecodeStream(Stream stream, ref Encoding encoding)
+        {
+            bool isDefaultEncoding = false;
+            if (encoding == null)
+            {
+                // Use the default encoding if one wasn't provided
+                encoding = ContentHelper.GetDefaultEncoding();
+                isDefaultEncoding = true;
+            }
+
+            string content = StreamToString(stream, encoding);
+            if (isDefaultEncoding)
+            {
+                do
+                {
+                    // check for a charset attribute on the meta element to override the default.
+                    Match match = s_metaexp.Match(content);
+                    if (match.Success)
+                    {
+                        Encoding localEncoding = null;
+                        string characterSet = match.Groups["charset"].Value;
+
+                        if (TryGetEncoding(characterSet, out localEncoding))
+                        {
+                            stream.Seek(0, SeekOrigin.Begin);
+                            content = StreamToString(stream, localEncoding);
+                            // report the encoding used.
+                            encoding = localEncoding;
+                        }
+                    }
+                } while (false);
+            }
+
+            return content;
+        }
+
+        internal static byte[] EncodeToBytes(string str, Encoding encoding)
+        {
+            if (encoding == null)
             {
                 // just use the default encoding if one wasn't provided
                 encoding = ContentHelper.GetDefaultEncoding();
@@ -464,12 +462,11 @@ namespace Microsoft.PowerShell.Commands
             return encoding.GetBytes(str);
         }
 
-        internal static Byte[] EncodeToBytes(String str)
+        internal static byte[] EncodeToBytes(string str)
         {
             return EncodeToBytes(str, null);
         }
 
-#if CORECLR
         internal static Stream GetResponseStream(HttpResponseMessage response)
         {
             Stream responseStream = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
@@ -491,28 +488,6 @@ namespace Microsoft.PowerShell.Commands
 
             return responseStream;
         }
-#else
-        internal static Stream GetResponseStream(WebResponse response)
-        {
-            Stream responseStream = response.GetResponseStream();
-
-            // See if it had a content-encoding, wrap in a decoding stream if so.
-            string contentEncoding = response.Headers["Content-Encoding"];
-            if (contentEncoding != null)
-            {
-                if (contentEncoding.IndexOf("gzip", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    responseStream = new GZipStream(responseStream, CompressionMode.Decompress);
-                }
-                else if (contentEncoding.IndexOf("deflate", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
-                }
-            }
-
-            return responseStream;
-        }
-#endif
 
         #endregion Static Methods
     }

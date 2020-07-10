@@ -1,30 +1,44 @@
-﻿@{
-GUID="1DA87E53-152B-403E-98DC-74D7B4D63D59"
-Author="Microsoft Corporation"
-CompanyName="Microsoft Corporation"
-Copyright="© Microsoft Corporation. All rights reserved."
-ModuleVersion="3.1.0.0"
-PowerShellVersion="3.0"
-CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
-    "Out-File", "Out-String", "Get-FormatData", "Export-FormatData", "ConvertFrom-Json", "ConvertTo-Json",
-    "Invoke-RestMethod", "Invoke-WebRequest", "Register-ObjectEvent", "Register-EngineEvent",
-    "Wait-Event", "Get-Event", "Remove-Event", "Get-EventSubscriber", "Unregister-Event",
-    "New-Event", "Add-Member", "Add-Type", "Compare-Object", "ConvertFrom-StringData", 
-    "Export-Csv", "Import-Csv", "ConvertTo-Csv", "ConvertFrom-Csv", "Export-Alias", "Invoke-Expression",
-    "Get-Alias", "Get-Culture", "Get-Date", "Get-Host", "Get-Member", "Get-Random",
-    "Get-UICulture", "Get-Unique", "Import-Alias", "Import-LocalizedData",
-    "Select-String", "Measure-Object", "New-Alias", "New-TimeSpan", "Read-Host", "Set-Alias", "Set-Date",
-    "Start-Sleep", "Tee-Object", "Measure-Command", "Update-TypeData", "Update-FormatData",
-    "Remove-TypeData", "Get-TypeData", "Write-Host", "Write-Progress", "New-Object", "Select-Object",
-    "Group-Object", "Sort-Object", "Get-Variable", "New-Variable", "Set-Variable", "Remove-Variable",
-    "Clear-Variable", "Export-Clixml", "Import-Clixml", "ConvertTo-Xml", "Select-Xml", "Write-Debug",
-    "Write-Verbose", "Write-Warning", "Write-Error", "Write-Information", "Write-Output", "Set-PSBreakpoint",
-    "Get-PSBreakpoint", "Remove-PSBreakpoint", "Enable-PSBreakpoint", "Disable-PSBreakpoint", "Get-PSCallStack",
-    "Get-TraceSource", "Set-TraceSource", "Trace-Command",
-    "Get-Runspace", "Debug-Runspace", "Enable-RunspaceDebug", "Disable-RunspaceDebug",
-    "Get-RunspaceDebug", "Wait-Debugger" 
-FunctionsToExport= "Get-FileHash", "New-TemporaryFile", "New-Guid", "Format-Hex", "Import-PowerShellDataFile"
-AliasesToExport= "fhx"
-NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"
-HelpInfoURI = 'http://go.microsoft.com/fwlink/?linkid=390787'
+@{
+GUID = "1DA87E53-152B-403E-98DC-74D7B4D63D59"
+Author = "PowerShell"
+CompanyName = "Microsoft Corporation"
+Copyright = "Copyright (c) Microsoft Corporation."
+ModuleVersion = "7.0.0.0"
+CompatiblePSEditions = @("Core")
+PowerShellVersion = "3.0"
+CmdletsToExport = @(
+  'Export-Alias', 'Get-Alias', 'Import-Alias', 'New-Alias', 'Remove-Alias', 'Set-Alias', 'Export-Clixml',
+  'Import-Clixml', 'Measure-Command', 'Trace-Command', 'ConvertFrom-Csv', 'ConvertTo-Csv', 'Export-Csv',
+  'Import-Csv', 'Get-Culture', 'Format-Custom', 'Get-Date', 'Set-Date', 'Write-Debug', 'Wait-Debugger',
+  'Register-EngineEvent', 'Write-Error', 'Get-Event', 'New-Event', 'Remove-Event', 'Unregister-Event',
+  'Wait-Event', 'Get-EventSubscriber', 'Invoke-Expression', 'Out-File', 'Get-FileHash', 'Export-FormatData',
+  'Get-FormatData', 'Update-FormatData', 'New-Guid', 'Format-Hex', 'Get-Host', 'Read-Host', 'Write-Host',
+  'ConvertTo-Html', 'Write-Information', 'ConvertFrom-Json', 'ConvertTo-Json', 'Test-Json', 'Format-List',
+  'Import-LocalizedData', 'Send-MailMessage', 'ConvertFrom-Markdown', 'Show-Markdown', 'Get-MarkdownOption',
+  'Set-MarkdownOption', 'Add-Member', 'Get-Member', 'Compare-Object', 'Group-Object', 'Measure-Object',
+  'New-Object', 'Select-Object', 'Sort-Object', 'Tee-Object', 'Register-ObjectEvent', 'Write-Output',
+  'Import-PowerShellDataFile', 'Write-Progress', 'Disable-PSBreakpoint', 'Enable-PSBreakpoint',
+  'Get-PSBreakpoint', 'Remove-PSBreakpoint', 'Set-PSBreakpoint', 'Get-PSCallStack', 'Export-PSSession',
+  'Import-PSSession', 'Get-Random', 'Invoke-RestMethod', 'Debug-Runspace', 'Get-Runspace',
+  'Disable-RunspaceDebug', 'Enable-RunspaceDebug', 'Get-RunspaceDebug', 'Start-Sleep', 'Join-String',
+  'Out-String', 'Select-String', 'ConvertFrom-StringData', 'Format-Table', 'New-TemporaryFile', 'New-TimeSpan',
+  'Get-TraceSource', 'Set-TraceSource', 'Add-Type', 'Get-TypeData', 'Remove-TypeData', 'Update-TypeData',
+  'Get-UICulture', 'Get-Unique', 'Get-Uptime', 'Clear-Variable', 'Get-Variable', 'New-Variable',
+  'Remove-Variable', 'Set-Variable', 'Get-Verb', 'Write-Verbose', 'Write-Warning', 'Invoke-WebRequest',
+  'Format-Wide', 'ConvertTo-Xml', 'Select-Xml', 'Get-Error', 'Update-List', 'Unblock-File'
+)
+FunctionsToExport = @()
+AliasesToExport = @('fhx')
+NestedModules = @("Microsoft.PowerShell.Commands.Utility.dll")
+HelpInfoURI = 'https://aka.ms/powershell71-help'
+PrivateData = @{
+  PSData = @{
+    ExperimentalFeatures = @(
+      @{
+        Name        = 'Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace'
+        Description = 'Enables -BreakAll parameter on Debug-Runspace and Debug-Job cmdlets to allow users to decide if they want PowerShell to break immediately in the current location when they attach a debugger.'
+      }
+    )
+  }
+}
 }

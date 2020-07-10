@@ -1,10 +1,9 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using System.Text;
-using System.Management.Automation.Runspaces;
 using System.Collections.ObjectModel;
+using System.Management.Automation.Runspaces;
+using System.Text;
 
 namespace System.Management.Automation
 {
@@ -16,58 +15,47 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Creates an instance of the FunctonInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock.
         /// </summary>
-        /// 
         /// <param name="name">
         /// The name of the function.
         /// </param>
-        /// 
         /// <param name="function">
         /// The ScriptBlock for the function
         /// </param>
-        /// 
         /// <param name="context">
         /// The execution context for the function.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        /// 
         internal FunctionInfo(string name, ScriptBlock function, ExecutionContext context) : this(name, function, context, null)
         {
-        } // FunctionInfo ctor
+        }
 
         /// <summary>
-        /// Creates an instance of the FunctonInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock.
         /// </summary>
-        /// 
         /// <param name="name">
         /// The name of the function.
         /// </param>
-        /// 
         /// <param name="function">
         /// The ScriptBlock for the function
         /// </param>
-        /// 
         /// <param name="context">
         /// The execution context for the function.
         /// </param>
-        /// 
         /// <param name="helpFile">
         /// The name of the help file associated with the function.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        /// 
         internal FunctionInfo(string name, ScriptBlock function, ExecutionContext context, string helpFile) : base(name, CommandTypes.Function, context)
         {
             if (function == null)
             {
-                throw PSTraceSource.NewArgumentNullException("function");
+                throw PSTraceSource.NewArgumentNullException(nameof(function));
             }
 
             _scriptBlock = function;
@@ -76,69 +64,56 @@ namespace System.Management.Automation
 
             this.Module = function.Module;
             _helpFile = helpFile;
-        } // FunctionInfo ctor
+        }
 
         /// <summary>
-        /// Creates an instance of the FunctonInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock.
         /// </summary>
-        /// 
         /// <param name="name">
         /// The name of the function.
         /// </param>
-        /// 
         /// <param name="function">
         /// The ScriptBlock for the function
         /// </param>
-        /// 
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.
         /// </param>
-        /// 
         /// <param name="context">
         /// The execution context for the function.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        /// 
         internal FunctionInfo(string name, ScriptBlock function, ScopedItemOptions options, ExecutionContext context) : this(name, function, options, context, null)
         {
-        } // FunctionInfo ctor
+        }
 
         /// <summary>
-        /// Creates an instance of the FunctonInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock.
         /// </summary>
-        /// 
         /// <param name="name">
         /// The name of the function.
         /// </param>
-        /// 
         /// <param name="function">
         /// The ScriptBlock for the function
         /// </param>
-        /// 
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.
         /// </param>
-        /// 
         /// <param name="context">
         /// The execution context for the function.
         /// </param>
-        /// 
         /// <param name="helpFile">
         /// The name of the help file associated with the function.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        /// 
         internal FunctionInfo(string name, ScriptBlock function, ScopedItemOptions options, ExecutionContext context, string helpFile)
             : this(name, function, context, helpFile)
         {
             _options = options;
-        } // FunctionInfo ctor
+        }
 
         /// <summary>
         /// This is a copy constructor, used primarily for get-command.
@@ -189,36 +164,34 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the ScriptBlock which is the implementation of the function
+        /// Gets the ScriptBlock which is the implementation of the function.
         /// </summary>
         public ScriptBlock ScriptBlock
         {
             get { return _scriptBlock; }
         }
+
         private ScriptBlock _scriptBlock;
 
         /// <summary>
         /// Updates a function.
         /// </summary>
-        /// 
         /// <param name="newFunction">
         /// The script block that the function should represent.
         /// </param>
-        /// 
         /// <param name="force">
         /// If true, the script block will be applied even if the filter is ReadOnly.
         /// </param>
-        /// 
         /// <param name="options">
         /// Any options to set on the new function, null if none.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="newFunction"/> is null.
         /// </exception>
-        /// 
         internal void Update(ScriptBlock newFunction, bool force, ScopedItemOptions options)
         {
             Update(newFunction, force, options, null);
+            this.DefiningLanguageMode = newFunction.LanguageMode;
         }
 
         /// <summary/>
@@ -230,27 +203,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Updates a function.
         /// </summary>
-        /// 
         /// <param name="newFunction">
         /// The script block that the function should represent.
         /// </param>
-        /// 
         /// <param name="force">
         /// If true, the script block will be applied even if the filter is ReadOnly.
         /// </param>
-        /// 
         /// <param name="options">
         /// Any options to set on the new function, null if none.
         /// </param>
-        /// 
         /// <param name="helpFile">
         /// The helpfile for this function.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="newFunction"/> is null.
         /// </exception>
-        /// 
         internal void Update(ScriptBlock newFunction, bool force, ScopedItemOptions options, string helpFile)
         {
             if (newFunction == null)
@@ -309,7 +276,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the name of the default parameter set.  
+        /// Gets the name of the default parameter set.
         /// Returns <c>null</c> if this function doesn't use cmdlet parameter binding or if the default parameter set wasn't specified.
         /// </summary>
         public string DefaultParameterSet
@@ -329,7 +296,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the scope options for the function.
         /// </summary>
-        /// 
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the trying to set a function that is constant or
         ///     if the value trying to be set is ScopedItemOptions.Constant
@@ -402,10 +368,11 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private ScopedItemOptions _options = ScopedItemOptions.None;
 
         /// <summary>
-        /// Gets or sets the description associated with the function
+        /// Gets or sets the description associated with the function.
         /// </summary>
         public string Description
         {
@@ -426,10 +393,11 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private string _description = null;
 
         /// <summary>
-        /// Gets the verb of the function
+        /// Gets the verb of the function.
         /// </summary>
         public string Verb
         {
@@ -437,8 +405,9 @@ namespace System.Management.Automation
             {
                 return _verb;
             }
-        } // Verb
-        private string _verb = String.Empty;
+        }
+
+        private string _verb = string.Empty;
 
         /// <summary>
         /// Gets the noun of the function.
@@ -449,8 +418,9 @@ namespace System.Management.Automation
             {
                 return _noun;
             }
-        } // Noun
-        private string _noun = String.Empty;
+        }
+
+        private string _noun = string.Empty;
 
         /// <summary>
         /// Gets the help file path for the function.
@@ -461,15 +431,17 @@ namespace System.Management.Automation
             {
                 return _helpFile;
             }
+
             internal set
             {
                 _helpFile = value;
             }
-        } // HelpFile
-        private string _helpFile = String.Empty;
+        }
+
+        private string _helpFile = string.Empty;
 
         /// <summary>
-        /// Returns the syntax of a command
+        /// Returns the syntax of a command.
         /// </summary>
         internal override string Syntax
         {
@@ -481,11 +453,11 @@ namespace System.Management.Automation
                 {
                     synopsis.AppendLine();
                     synopsis.AppendLine(
-                        String.Format(
+                        string.Format(
                             Globalization.CultureInfo.CurrentCulture,
                             "{0} {1}",
                             Name,
-                            parameterSet.ToString((this.CommandType & CommandTypes.Workflow) == CommandTypes.Workflow)));
+                            parameterSet.ToString()));
                 }
 
                 return synopsis.ToString();
@@ -501,7 +473,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The command metadata for the function or filter
+        /// The command metadata for the function or filter.
         /// </summary>
         internal override CommandMetadata CommandMetadata
         {
@@ -512,14 +484,15 @@ namespace System.Management.Automation
                         new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
             }
         }
+
         private CommandMetadata _commandMetadata;
 
         /// <summary>
-        /// The output type(s) is specified in the script block
+        /// The output type(s) is specified in the script block.
         /// </summary>
         public override ReadOnlyCollection<PSTypeName> OutputType
         {
             get { return ScriptBlock.OutputType; }
         }
-    } // FunctionInfo
-} // namespace System.Management.Automation
+    }
+}

@@ -1,11 +1,11 @@
 /* ****************************************************************************
  *
- * Copyright (c) Microsoft Corporation. 
+ * Copyright (c) Microsoft Corporation.
  *
- * This source code is subject to terms and conditions of the Apache License, Version 2.0. A 
- * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Apache License, Version 2.0, please send an email to 
- * ironpy@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
+ * This source code is subject to terms and conditions of the Apache License, Version 2.0. A
+ * copy of the license can be found in the License.html file at the root of this distribution. If
+ * you cannot locate the Apache License, Version 2.0, please send an email to
+ * ironpy@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Apache License, Version 2.0.
  *
  * You must not remove this notice, or any other, from this software.
@@ -57,7 +57,7 @@ namespace System.Management.Automation.Interpreter
                 return GetArrayAccessor(info, argumentCount);
             }
 
-            if (info is DynamicMethod || !info.IsStatic && info.DeclaringType.GetTypeInfo().IsValueType)
+            if (info is DynamicMethod || !info.IsStatic && info.DeclaringType.IsValueType)
             {
                 return new MethodInfoCallInstruction(info, argumentCount);
             }
@@ -90,7 +90,7 @@ namespace System.Management.Automation.Interpreter
                 }
             }
 
-            // create it 
+            // create it
             try
             {
                 if (argumentCount < MaxArgs)
@@ -113,9 +113,9 @@ namespace System.Management.Automation.Interpreter
             }
             catch (NotSupportedException)
             {
-                // if Delegate.CreateDelegate can't handle the method fallback to 
-                // the slow reflection version.  For example this can happen w/ 
-                // a generic method defined on an interface and implemented on a class or 
+                // if Delegate.CreateDelegate can't handle the method fallback to
+                // the slow reflection version.  For example this can happen w/
+                // a generic method defined on an interface and implemented on a class or
                 // a virtual generic method.
                 res = new MethodInfoCallInstruction(info, argumentCount);
             }
@@ -213,11 +213,11 @@ namespace System.Management.Automation.Interpreter
 
         private static bool IndexIsNotReturnType(int index, MethodInfo target, ParameterInfo[] pi)
         {
-            return pi.Length != index || (pi.Length == index && !target.IsStatic);
+            return pi.Length != index || !target.IsStatic;
         }
 
         /// <summary>
-        /// Uses reflection to create new instance of the appropriate ReflectedCaller
+        /// Uses reflection to create new instance of the appropriate ReflectedCaller.
         /// </summary>
         private static CallInstruction SlowCreate(MethodInfo info, ParameterInfo[] pis)
         {
@@ -227,10 +227,12 @@ namespace System.Management.Automation.Interpreter
             {
                 types.Add(pi.ParameterType);
             }
+
             if (info.ReturnType != typeof(void))
             {
                 types.Add(info.ReturnType);
             }
+
             Type[] arrTypes = types.ToArray();
 
             return (CallInstruction)Activator.CreateInstance(GetHelperType(info, arrTypes), info);
@@ -241,6 +243,7 @@ namespace System.Management.Automation.Interpreter
         #region Instruction
 
         public sealed override int ProducedStack { get { return Info.ReturnType == typeof(void) ? 0 : 1; } }
+
         public sealed override int ConsumedStack { get { return ArgumentCount; } }
 
         public sealed override string InstructionName
@@ -262,6 +265,7 @@ namespace System.Management.Automation.Interpreter
         private readonly int _argumentCount;
 
         public override MethodInfo Info { get { return _target; } }
+
         public override int ArgumentCount { get { return _argumentCount; } }
 
         internal MethodInfoCallInstruction(MethodInfo target, int argumentCount)
@@ -330,6 +334,7 @@ namespace System.Management.Automation.Interpreter
             {
                 newArgs[i] = args[i + 1];
             }
+
             return newArgs;
         }
 
@@ -352,6 +357,7 @@ namespace System.Management.Automation.Interpreter
             {
                 frame.StackIndex = first;
             }
+
             return 1;
         }
     }

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,41 +26,41 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -144,17 +144,14 @@
   <data name="RestoreFailed" xml:space="preserve">
     <value>The last attempt to restore the computer failed.</value>
   </data>
-  <data name="RestoreSuceess" xml:space="preserve">
+  <data name="RestoreSuccess" xml:space="preserve">
     <value>The computer has been restored to the specified restore point.</value>
   </data>
   <data name="RestoreInterrupted" xml:space="preserve">
     <value>The last attempt to restore the computer was interrupted.</value>
   </data>
-  <data name="NoResorePoint" xml:space="preserve">
+  <data name="NoRestorePoint" xml:space="preserve">
     <value>The command cannot locate the "{0}" restore point. Verify the "{0}" sequence number, and then try the command again.</value>
-  </data>
-  <data name="NoPingResult" xml:space="preserve">
-    <value>Testing connection to computer '{0}' failed: {1}</value>
   </data>
   <data name="DoubleComputerName" xml:space="preserve">
     <value>{0} ({1})</value>
@@ -178,7 +175,7 @@
     <value>After you leave the domain, you will need to know the password of the local Administrator account to log onto this computer. Do you wish to continue?</value>
   </data>
   <data name="InvalidComputerNameFormat" xml:space="preserve">
-    <value>The following computer name is not valid: {0}. Make sure that the computer name is not longer than 255 characters, that it does not contain two or more consecutive dots, that it does not begin with a dot, that it does not contain only numeric characters, and that it does not contain any of the following characters:  
+    <value>The following computer name is not valid: {0}. Make sure that the computer name is not longer than 255 characters, that it does not contain two or more consecutive dots, that it does not begin with a dot, that it does not contain only numeric characters, and that it does not contain any of the following characters:
 {{|}}~[\]^:;&lt;=&gt;?@!"#$%^`()+/,</value>
   </data>
   <data name="InvalidDomainNameFormat" xml:space="preserve">
@@ -238,7 +235,7 @@
     <value>Verifying that the computer has been restarted...</value>
   </data>
   <data name="WaitForPowerShell" xml:space="preserve">
-    <value>Waiting for Windows PowerShell connectivity...</value>
+    <value>Waiting for PowerShell connectivity...</value>
   </data>
   <data name="WaitForRestartToBegin" xml:space="preserve">
     <value>Waiting for the restart to begin...</value>
@@ -357,18 +354,6 @@
   <data name="RestartComputerSkipped" xml:space="preserve">
     <value>The computer {0} is skipped. Fail to retrieve its LastBootUpTime via the WMI service with the following error message: {1}.</value>
   </data>
-  <data name="InvalidParameterForDCOM" xml:space="preserve">
-    <value>Parameter WsmanAuthentication should not be specified when the DCOM protocol is in use. {0}</value>
-  </data>
-  <data name="InvalidParameterForWSMan" xml:space="preserve">
-    <value>Parameters DcomAuthentication and Impersonation should not be specified when the WSMan protocol is in use. {0}</value>
-  </data>
-  <data name="ParameterConfliction" xml:space="preserve">
-    <value>Parameter WsmanAuthentication should not be specified with DcomAuthentication and Impersonation at the same time. {0}</value>
-  </data>
-  <data name="ParameterUsage" xml:space="preserve">
-    <value>Parameter WsmanAuthentication is valid only if the WSMan protocol is used. Parameters DcomAuthentication (Authentication) and Impersonation are valid only if the DCOM protocol is used.</value>
-  </data>
   <data name="FailToTestSecureChannel" xml:space="preserve">
     <value>Cannot verify the secure channel for the local computer. Operation failed with the following exception: {0}.</value>
   </data>
@@ -395,24 +380,6 @@
   </data>
   <data name="FailToRetrieveLastRestorePoint" xml:space="preserve">
     <value>Cannot validate the time interval for restore point creation. It failed to retrieve the last restore point with the following error message: {0}.</value>
-  </data>
-  <data name="RenameCommandWsmanAuthParamConflict" xml:space="preserve">
-    <value>Parameter WsmanAuthentication cannot be specified with the DCOM protocol. Parameter WSManAuthentication is valid only when the WSMan protocol is used.</value>
-  </data>
-  <data name="StopCommandAuthProtcolConflict" xml:space="preserve">
-    <value>Parameters DcomAuthentication and Impersonation cannot be specified with the WSMan protocol. {0}</value>
-  </data>
-  <data name="StopCommandParamMessage" xml:space="preserve">
-    <value>Parameter WsmanAuthentication is valid only when the WSMan protocol is used. Parameters DcomAuthentication and Impersonation are valid only when the DCOM protocol is used.</value>
-  </data>
-  <data name="StopCommandParamWSManAuthConflict" xml:space="preserve">
-    <value>Parameter WsmanAuthentication cannot be specified with DcomAuthentication or Impersonation parameters. {0}</value>
-  </data>
-  <data name="StopCommandWSManAuthProtcolConflict" xml:space="preserve">
-    <value>Parameter WsmanAuthentication cannot be specified with the DCOM protocol. {0}</value>
-  </data>
-  <data name="InvalidParameterDCOMNotSupported" xml:space="preserve">
-    <value>DcomAuthentication is not supported. Please use WsmanAuthentication instead.</value>
   </data>
   <data name="InvalidParameterSetAsJob" xml:space="preserve">
     <value>The AsJob Parameter Set is not supported.</value>

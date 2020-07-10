@@ -1,4 +1,7 @@
-﻿using System.Runtime.InteropServices;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
@@ -9,7 +12,7 @@ using Microsoft.PowerShell.LocalAccounts;
 namespace System.Management.Automation.SecurityAccountsManager.Extensions
 {
     /// <summary>
-    /// Provides extension methods for the Cmdlet class
+    /// Provides extension methods for the Cmdlet class.
     /// </summary>
     internal static class CmdletExtensions
     {
@@ -30,7 +33,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
                                                   bool allowSidConstants = false)
         {
             if (!allowSidConstants)
-                if (!(s.Length > 2 && s.StartsWith("S-", StringComparison.Ordinal) && Char.IsDigit(s[2])))
+                if (!(s.Length > 2 && s.StartsWith("S-", StringComparison.Ordinal) && char.IsDigit(s[2])))
                     return null;
 
             SecurityIdentifier sid = null;
@@ -49,12 +52,12 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
     }
 
     /// <summary>
-    /// Provides extension methods for the PSCmdlet class
+    /// Provides extension methods for the PSCmdlet class.
     /// </summary>
     internal static class PSExtensions
     {
         /// <summary>
-        /// Determine if a given parameter was provided to the cmdlet
+        /// Determine if a given parameter was provided to the cmdlet.
         /// </summary>
         /// <param name="cmdlet">
         /// The <see cref="PSCmdlet"/> object to check.
@@ -144,7 +147,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
     }
 
     internal static class SecureStringExtensions
-    { 
+    {
         /// <summary>
         /// Extension method to extract clear text from a
         /// <see cref="System.Security.SecureString"/> object.

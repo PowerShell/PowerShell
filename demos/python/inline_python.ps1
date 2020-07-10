@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 #
 # An example showing inline Python code in a PowerShell script
 #

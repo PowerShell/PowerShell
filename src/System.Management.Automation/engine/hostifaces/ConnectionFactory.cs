@@ -1,11 +1,11 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Management.Automation.Host;
 using System.Management.Automation.Tracing;
+
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
 
@@ -17,7 +17,7 @@ namespace System.Management.Automation.Runspaces
     public static class RunspaceFactory
     {
         /// <summary>
-        /// Static constructor
+        /// Static constructor.
         /// </summary>
         static RunspaceFactory()
         {
@@ -33,9 +33,7 @@ namespace System.Management.Automation.Runspaces
         #region Runspace Factory
 
         /// <summary>
-        /// Creates a runspace using host of type <see cref="DefaultHost"/>. 
-        /// This runspace is created using the <see cref="RunspaceConfiguration"/> information 
-        /// from EntryAssembly.
+        /// Creates a runspace using host of type <see cref="DefaultHost"/>.
         /// </summary>
         /// <returns>
         /// A runspace object.
@@ -52,93 +50,23 @@ namespace System.Management.Automation.Runspaces
         /// configuration information from EntryAssembly.
         /// </summary>
         /// <param name="host">
-        /// The explicit PSHost implementation. 
+        /// The explicit PSHost implementation.
         /// </param>
         /// <returns>
         /// A runspace object
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown when host is null.
-        /// </exception>            
+        /// </exception>
         public static Runspace CreateRunspace(PSHost host)
         {
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
-            return CreateRunspace(host, RunspaceConfiguration.Create());
+            return new LocalRunspace(host, InitialSessionState.CreateDefault());
         }
-
-        /// <summary>
-        /// Creates a runspace using <see cref="DefaultHost"/>
-        /// </summary>
-        /// <param name="runspaceConfiguration">
-        /// RunspaceConfiguration information for the runspace.
-        /// </param>
-        /// <returns>
-        /// A runspace object
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when runspaceConfiguration is null
-        /// </exception>    
-#if CORECLR
-        internal
-#else
-        public
-#endif
-        static Runspace CreateRunspace(RunspaceConfiguration runspaceConfiguration)
-        {
-            if (runspaceConfiguration == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("runspaceConfiguration");
-            }
-
-            PSHost host = new DefaultHost(CultureInfo.CurrentCulture, CultureInfo.CurrentUICulture);
-
-            return CreateRunspace(host, runspaceConfiguration);
-        }
-
-        /// <summary>
-        /// Creates a runspace using specified PSHost and RunspaceConfiguration
-        /// </summary>
-        /// <param name="host">
-        /// Host implementation for runspace.
-        /// </param>
-        /// <param name="runspaceConfiguration">
-        /// RunspaceConfiguration information for the runspace.
-        /// </param>
-        /// <returns>
-        /// A runspace object
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when host is null
-        /// </exception>            
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when runspaceConfiguration is null
-        /// </exception>    
-#if CORECLR
-        internal
-#else
-        public
-#endif
-        static Runspace CreateRunspace(PSHost host, RunspaceConfiguration runspaceConfiguration)
-        {
-            if (host == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("host");
-            }
-
-            if (runspaceConfiguration == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("runspaceConfiguration");
-            }
-
-            return new LocalRunspace(host, runspaceConfiguration);
-        }
-
-        //=========================================================
-        // Create runspaces with InitialSessionState instead of RunspaceConfig objects...
 
         /// <summary>
         /// Creates a runspace using <see cref="DefaultHost"/>
@@ -151,13 +79,13 @@ namespace System.Management.Automation.Runspaces
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown when initialSessionState is null
-        /// </exception>    
+        /// </exception>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         public static Runspace CreateRunspace(InitialSessionState initialSessionState)
         {
             if (initialSessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("initialSessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
             PSHost host = new DefaultHost(CultureInfo.CurrentCulture, CultureInfo.CurrentUICulture);
@@ -166,7 +94,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Creates a runspace using specified PSHost and InitialSessionState
+        /// Creates a runspace using specified PSHost and InitialSessionState.
         /// </summary>
         /// <param name="host">
         /// Host implementation for runspace.
@@ -179,28 +107,28 @@ namespace System.Management.Automation.Runspaces
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown when host is null
-        /// </exception>            
+        /// </exception>
         /// <exception cref="ArgumentNullException">
         /// Thrown when initialSessionState is null
-        /// </exception>    
+        /// </exception>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         public static Runspace CreateRunspace(PSHost host, InitialSessionState initialSessionState)
         {
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
             if (initialSessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("initialSessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
             return new LocalRunspace(host, initialSessionState);
         }
 
         /// <summary>
-        /// Creates a runspace using specified PSHost and InitialSessionState
+        /// Creates a runspace using specified PSHost and InitialSessionState.
         /// </summary>
         /// <param name="host">
         /// Host implementation for runspace.
@@ -213,21 +141,21 @@ namespace System.Management.Automation.Runspaces
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown when host is null
-        /// </exception>            
+        /// </exception>
         /// <exception cref="ArgumentNullException">
         /// Thrown when initialSessionState is null
-        /// </exception>    
+        /// </exception>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         internal static Runspace CreateRunspaceFromSessionStateNoClone(PSHost host, InitialSessionState initialSessionState)
         {
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
             if (initialSessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("initialSessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
             return new LocalRunspace(host, initialSessionState, true);
@@ -238,28 +166,21 @@ namespace System.Management.Automation.Runspaces
         #region RunspacePool Factory
 
         /// <summary>
-        /// Creates a RunspacePool using default RunspaceConfiguration 
-        /// with MaxRunspaces 1 and MinRunspaces 1.
+        /// Creates a RunspacePool with MaxRunspaces 1 and MinRunspaces 1.
         /// </summary>
         public static RunspacePool CreateRunspacePool()
         {
-            return CreateRunspacePool(1, 1,
-                RunspaceConfiguration.Create(),
-                new DefaultHost
-                (
-                    CultureInfo.CurrentCulture,
-                    CultureInfo.CurrentUICulture
-                ));
+            return CreateRunspacePool(1, 1);
         }
 
         /// <summary>
-        /// Creates a RunspacePool using default RunspaceConfiguration. 
+        /// Creates a RunspacePool
         /// <paramref name="maxRunspaces"/>
         /// limits the number of Runspaces that can exist in this
         /// pool. The minimum pool size is set to <paramref name="minPoolSoze"/>.
         /// </summary>
         /// <param name="minRunspaces">
-        /// The minimum number of Runspaces that exist in this 
+        /// The minimum number of Runspaces that exist in this
         /// pool. Should be greater than or equal to 1.
         /// </param>
         /// <param name="maxRunspaces">
@@ -273,7 +194,6 @@ namespace System.Management.Automation.Runspaces
         public static RunspacePool CreateRunspacePool(int minRunspaces, int maxRunspaces)
         {
             return CreateRunspacePool(minRunspaces, maxRunspaces,
-                RunspaceConfiguration.Create(),
                 new DefaultHost
                 (
                     CultureInfo.CurrentCulture,
@@ -291,7 +211,7 @@ namespace System.Management.Automation.Runspaces
         /// Runspace in the pool.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// RunspaceConfiguration is null.
+        /// InitialSessionState is null.
         /// </exception>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         public static RunspacePool CreateRunspacePool(InitialSessionState initialSessionState)
@@ -313,11 +233,11 @@ namespace System.Management.Automation.Runspaces
         /// Should be greater than or equal to 1.
         /// </param>
         /// <param name="maxRunspaces">
-        /// The maximum number of Runspaces that can exist in this pool. 
+        /// The maximum number of Runspaces that can exist in this pool.
         /// Should be greater than or equal to 1.
         /// </param>
         /// <param name="host">
-        /// The explicit PSHost implementation. 
+        /// The explicit PSHost implementation.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="host"/> is null.
@@ -328,44 +248,7 @@ namespace System.Management.Automation.Runspaces
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         public static RunspacePool CreateRunspacePool(int minRunspaces, int maxRunspaces, PSHost host)
         {
-            return CreateRunspacePool(minRunspaces, maxRunspaces, RunspaceConfiguration.Create(), host);
-        }
-
-        /// <summary>
-        /// Creates a RunspacePool using the supplied <paramref name="configuration"/>,
-        /// <paramref name="minRunspaces"/> and <paramref name="maxRunspaces"/>
-        /// </summary>
-        /// <param name="minRunspaces">
-        /// The minimum number of Runspaces that can exist in this pool.
-        /// Should be greater than or equal to 1.
-        /// </param>
-        /// <param name="maxRunspaces">
-        /// The maximum number of Runspaces that can exist in this pool. 
-        /// Should be greater than or equal to 1.
-        /// </param>
-        /// <param name="runspaceConfiguration">
-        /// RunspaceConfiguration to use when creating a new Runspace in the
-        /// pool.
-        /// </param>        
-        /// <exception cref="ArgumentNullException">
-        /// RunspaceConfiguration is null.
-        /// </exception>
-        /// <param name="host">
-        /// The explicit PSHost implementation. 
-        /// </param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="runspaceConfiguration"/> is null.
-        /// <paramref name="host"/> is null.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// Maximum runspaces is less than 1.
-        /// Minimum runspaces is less than 1.
-        /// </exception>
-        private static RunspacePool CreateRunspacePool(int minRunspaces, int maxRunspaces,
-            RunspaceConfiguration runspaceConfiguration, PSHost host)
-        {
-            return new RunspacePool(minRunspaces,
-                maxRunspaces, runspaceConfiguration, host);
+            return new RunspacePool(minRunspaces, maxRunspaces, host);
         }
 
         /// <summary>
@@ -377,21 +260,21 @@ namespace System.Management.Automation.Runspaces
         /// Should be greater than or equal to 1.
         /// </param>
         /// <param name="maxRunspaces">
-        /// The maximum number of Runspaces that can exist in this pool. 
+        /// The maximum number of Runspaces that can exist in this pool.
         /// Should be greater than or equal to 1.
         /// </param>
         /// <param name="initialSessionState">
         /// initialSessionState to use when creating a new Runspace in the
         /// pool.
-        /// </param>        
-        /// <exception cref="ArgumentNullException">
-        /// RunspaceConfiguration is null.
-        /// </exception>
-        /// <param name="host">
-        /// The explicit PSHost implementation. 
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="runspaceConfiguration"/> is null.
+        /// InitialSessionState is null.
+        /// </exception>
+        /// <param name="host">
+        /// The explicit PSHost implementation.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="initialSessionState"/> is null.
         /// <paramref name="host"/> is null.
         /// </exception>
         /// <exception cref="ArgumentException">
@@ -407,21 +290,20 @@ namespace System.Management.Automation.Runspaces
                 maxRunspaces, initialSessionState, host);
         }
 
-
         #endregion
 
         #region RunspacePool - remote Factory
 
         /// <summary>
-        /// Creates a RunspacePool 
+        /// Creates a RunspacePool
         /// on the specified remote computer.
         /// <paramref name="maxRunspaces"/>
         /// limits the number of Runspaces that can exist in this
-        /// pool. The minimum pool size is set to 
+        /// pool. The minimum pool size is set to
         /// <paramref name="minPoolSoze"/>.
         /// </summary>
         /// <param name="minRunspaces">
-        /// The minimum number of Runspace that should exist in this 
+        /// The minimum number of Runspace that should exist in this
         /// pool. Should be greater than 1.
         /// </param>
         /// <param name="maxRunspaces">
@@ -445,15 +327,15 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Creates a RunspacePool 
+        /// Creates a RunspacePool
         /// on the specified remote runspace computer.
         /// <paramref name="maxRunspaces"/>
         /// limits the number of Runspaces that can exist in this
-        /// pool. The minimum pool size is set to 
+        /// pool. The minimum pool size is set to
         /// <paramref name="minPoolSoze"/>.
         /// </summary>
         /// <param name="minRunspaces">
-        /// The minimum number of Runspace that should exist in this 
+        /// The minimum number of Runspace that should exist in this
         /// pool. Should be greater than 1.
         /// </param>
         /// <param name="maxRunspaces">
@@ -479,15 +361,15 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Creates a RunspacePool 
-        /// on the specified remote runspace compuer.
+        /// Creates a RunspacePool
+        /// on the specified remote runspace computer.
         /// <paramref name="maxRunspaces"/>
         /// limits the number of Runspaces that can exist in this
-        /// pool. The minimum pool size is set to 
+        /// pool. The minimum pool size is set to
         /// <paramref name="minPoolSoze"/>.
         /// </summary>
         /// <param name="minRunspaces">
-        /// The minimum number of Runspace that should exist in this 
+        /// The minimum number of Runspace that should exist in this
         /// pool. Should be greater than 1.
         /// </param>
         /// <param name="maxRunspaces">
@@ -498,12 +380,12 @@ namespace System.Management.Automation.Runspaces
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
-        ///   2. SerailizationDepth
+        ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
-        /// TypeTable has the following inforamtion used by deserializer:
-        ///   1. TargetTypeForDeserializaiton
+        /// TypeTable has the following information used by deserializer:
+        ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
-        /// 
+        ///
         /// If <paramref name="typeTable"/> is null no custom serialization/deserialization
         /// can be done. Default PowerShell behavior will be used in this case.
         /// </param>
@@ -526,15 +408,15 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Creates a RunspacePool 
-        /// on the specified remote runspace compuer.
+        /// Creates a RunspacePool
+        /// on the specified remote runspace computer.
         /// <paramref name="maxRunspaces"/>
         /// limits the number of Runspaces that can exist in this
-        /// pool. The minimum pool size is set to 
+        /// pool. The minimum pool size is set to
         /// <paramref name="minPoolSoze"/>.
         /// </summary>
         /// <param name="minRunspaces">
-        /// The minimum number of Runspace that should exist in this 
+        /// The minimum number of Runspace that should exist in this
         /// pool. Should be greater than 1.
         /// </param>
         /// <param name="maxRunspaces">
@@ -545,12 +427,12 @@ namespace System.Management.Automation.Runspaces
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
-        ///   2. SerailizationDepth
+        ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
-        /// TypeTable has the following inforamtion used by deserializer:
-        ///   1. TargetTypeForDeserializaiton
+        /// TypeTable has the following information used by deserializer:
+        ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
-        /// 
+        ///
         /// If <paramref name="typeTable"/> is null no custom serialization/deserialization
         /// can be done. Default PowerShell behavior will be used in this case.
         /// </param>
@@ -594,16 +476,15 @@ namespace System.Management.Automation.Runspaces
         #region Runspace - Remote Factory
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="typeTable">
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
-        ///   2. SerailizationDepth
+        ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
-        /// TypeTable has the following inforamtion used by deserializer:
-        ///   1. TargetTypeForDeserializaiton
+        /// TypeTable has the following information used by deserializer:
+        ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// </param>
         /// <param name="host"></param>
@@ -615,16 +496,15 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="typeTable">
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
-        ///   2. SerailizationDepth
+        ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
-        /// TypeTable has the following inforamtion used by deserializer:
-        ///   1. TargetTypeForDeserializaiton
+        /// TypeTable has the following information used by deserializer:
+        ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// </param>
         /// <param name="host"></param>
@@ -639,7 +519,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="connectionInfo"></param>
         /// <param name="host"></param>
@@ -647,10 +526,10 @@ namespace System.Management.Automation.Runspaces
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
-        ///   2. SerailizationDepth
+        ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
-        /// TypeTable has the following inforamtion used by deserializer:
-        ///   1. TargetTypeForDeserializaiton
+        /// TypeTable has the following information used by deserializer:
+        ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// </param>
         /// <param name="applicationArguments">
@@ -679,7 +558,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="host"></param>
         /// <param name="connectionInfo"></param>
@@ -690,7 +568,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="connectionInfo"></param>
         /// <returns></returns>
@@ -704,7 +581,6 @@ namespace System.Management.Automation.Runspaces
         #region V3 Extensions
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="typeTable"></param>
         /// <returns></returns>
@@ -716,7 +592,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="typeTable"></param>
         /// <param name="processInstance"></param>

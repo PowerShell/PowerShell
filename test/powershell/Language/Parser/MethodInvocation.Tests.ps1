@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 if ( $IsCoreCLR ) {
     return
 }
@@ -39,7 +41,7 @@ namespace MSFT_716893
             serviceHost = new ServiceHost(typeof(ServiceImplementation), baseAddress);
             serviceHost.Open();
         }
-        
+
         public static IInterface1 GetProxy()
         {
             ChannelFactory<IInterface2> factory = new ChannelFactory<IInterface2>(
@@ -68,14 +70,14 @@ namespace MSFT_716893
     }
 
     It "Direct invocation" {
-        $proxy.Operation("a") | Should Be "1 - a"
-        $proxy.Operation("a", "b") | Should Be "2 - a b"
-        $proxy.BaseOperation(42) | Should Be "3 - 42"
+        $proxy.Operation("a") | Should -Be "1 - a"
+        $proxy.Operation("a", "b") | Should -Be "2 - a b"
+        $proxy.BaseOperation(42) | Should -Be "3 - 42"
     }
 
     It "Invocation via method constraints" {
-        ([MSFT_716893.IInterface2]$proxy).Operation("c") | Should Be "1 - c"
-        ([MSFT_716893.IInterface2]$proxy).Operation("d", "e") | Should Be "2 - d e"
-        ([MSFT_716893.IInterface1]$proxy).BaseOperation(22) | Should Be "3 - 22"
+        ([MSFT_716893.IInterface2]$proxy).Operation("c") | Should -Be "1 - c"
+        ([MSFT_716893.IInterface2]$proxy).Operation("d", "e") | Should -Be "2 - d e"
+        ([MSFT_716893.IInterface1]$proxy).BaseOperation(22) | Should -Be "3 - 22"
     }
 }

@@ -1,10 +1,13 @@
-Describe "ConvertTo-SecureString" -Tags "CI" {
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+	Describe "ConvertTo--SecureString" -Tags "CI" {
 
-    Context "Checking return types of ConvertTo-SecureString" {
+    Context "Checking return types of ConvertTo--SecureString" {
 
 	It "Should return System.Security.SecureString after converting plaintext variable"{
-	    $PesterTestConvert = (ConvertTo-SecureString "plaintextpester" -AsPlainText -force)
-	    ($PesterTestConvert).GetType() | Should Be securestring
+        #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
+	    $PesterTestConvert = (ConvertTo-SecureString "plaintextpester" -AsPlainText -Force)
+	    $PesterTestConvert | Should -BeOfType securestring
 
 	}
     }

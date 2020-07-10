@@ -1,11 +1,11 @@
 /* ****************************************************************************
  *
- * Copyright (c) Microsoft Corporation. 
+ * Copyright (c) Microsoft Corporation.
  *
- * This source code is subject to terms and conditions of the Apache License, Version 2.0. A 
- * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Apache License, Version 2.0, please send an email to 
- * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
+ * This source code is subject to terms and conditions of the Apache License, Version 2.0. A
+ * copy of the license can be found in the License.html file at the root of this distribution. If
+ * you cannot locate the Apache License, Version 2.0, please send an email to
+ * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Apache License, Version 2.0.
  *
  * You must not remove this notice, or any other, from this software.
@@ -73,6 +73,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     return fastCtor;
                 }
+
                 return MakeRunDelegateCtor(delegateType);
             }
         }
@@ -156,10 +157,10 @@ namespace System.Management.Automation.Interpreter
             return s_runCache[delegateType] = lambda => targetMethod.CreateDelegate(delegateType, lambda);
         }
 
-        //TODO enable sharing of these custom delegates
+        // TODO enable sharing of these custom delegates
         private Delegate CreateCustomDelegate(Type delegateType)
         {
-            //PerfTrack.NoteEvent(PerfTrack.Categories.Compiler, "Synchronously compiling a custom delegate");
+            // PerfTrack.NoteEvent(PerfTrack.Categories.Compiler, "Synchronously compiling a custom delegate");
 
             var method = delegateType.GetMethod("Invoke");
             var paramInfos = method.GetParameters();
@@ -251,10 +252,10 @@ namespace System.Management.Automation.Interpreter
 
         internal void RunVoidRef2<T0, T1>(ref T0 arg0, ref T1 arg1)
         {
-            //if (_compiled != null || TryGetCompiled()) {
+            // if (_compiled != null || TryGetCompiled()) {
             //    ((ActionRef<T0, T1>)_compiled)(ref arg0, ref arg1);
             //    return;
-            //}
+            // }
 
             // copy in and copy out for today...
             var frame = MakeFrame();
@@ -273,7 +274,6 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-
         public object Run(params object[] arguments)
         {
             if (_compiled != null || TryGetCompiled())
@@ -286,6 +286,7 @@ namespace System.Management.Automation.Interpreter
             {
                 frame.Data[i] = arguments[i];
             }
+
             var currentFrame = frame.Enter();
             try
             {
@@ -295,6 +296,7 @@ namespace System.Management.Automation.Interpreter
             {
                 frame.Leave(currentFrame);
             }
+
             return frame.Pop();
         }
     }

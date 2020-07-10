@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 
@@ -13,7 +12,7 @@ namespace Microsoft.PowerShell.Cmdletization
     public enum MethodParameterBindings
     {
         /// <summary>
-        /// Bind value of a method parameter based on arguments of a cmdlet parameter
+        /// Bind value of a method parameter based on arguments of a cmdlet parameter.
         /// </summary>
         In = 1,
 
@@ -34,7 +33,7 @@ namespace Microsoft.PowerShell.Cmdletization
     public sealed class MethodParameter
     {
         /// <summary>
-        /// Name of the method parameter
+        /// Name of the method parameter.
         /// </summary>
         public string Name { get; set; }
 
@@ -55,13 +54,13 @@ namespace Microsoft.PowerShell.Cmdletization
         public MethodParameterBindings Bindings { get; set; }
 
         /// <summary>
-        /// Value of the argument of the method parameter
+        /// Value of the argument of the method parameter.
         /// </summary>
         public object Value { get; set; }
 
         /// <summary>
         /// Whether the value is 1) an explicit default (*) or 2) has been bound from cmdlet parameter
-        /// (*) explicit default = whatever was in DefaultValue attribute in Cmdletization XML
+        /// (*) explicit default = whatever was in DefaultValue attribute in Cmdletization XML.
         /// </summary>
         public bool IsValuePresent { get; set; }
         // TODO/FIXME: this should be renamed to ValueExplicitlySpecified or something like this

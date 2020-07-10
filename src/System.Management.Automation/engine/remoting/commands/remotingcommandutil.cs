@@ -1,13 +1,13 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
-using System.Management.Automation.Runspaces;
-using Microsoft.Win32;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Remoting;
+using System.Management.Automation.Runspaces;
+
+using Microsoft.Win32;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -17,37 +17,31 @@ namespace Microsoft.PowerShell.Commands
     internal enum RunspaceParameterSet
     {
         /// <summary>
-        /// Use ComputerName parameter set
+        /// Use ComputerName parameter set.
         /// </summary>
         ComputerName,
         /// <summary>
-        /// Use Runspace Parameter set
+        /// Use Runspace Parameter set.
         /// </summary>
         Runspace
     }
 
     /// <summary>
-    /// This is a static utility class that performs some of the common chore work for the 
+    /// This is a static utility class that performs some of the common chore work for the
     /// the remoting cmdlets.
     /// </summary>
     internal static class RemotingCommandUtil
     {
-        /// <summary>
-        /// The existence of the following registry confirms that the host machine is a WinPE 
-        /// HKLM\System\CurrentControlSet\Control\MiniNT
-        /// </summary>
-        internal static string WinPEIdentificationRegKey = @"System\CurrentControlSet\Control\MiniNT";
-
         internal static bool HasRepeatingRunspaces(PSSession[] runspaceInfos)
         {
             if (runspaceInfos == null)
             {
-                throw PSTraceSource.NewArgumentNullException("runspaceInfos");
+                throw PSTraceSource.NewArgumentNullException(nameof(runspaceInfos));
             }
 
             if (runspaceInfos.GetLength(0) == 0)
             {
-                throw PSTraceSource.NewArgumentException("runspaceInfos");
+                throw PSTraceSource.NewArgumentException(nameof(runspaceInfos));
             }
 
             for (int i = 0; i < runspaceInfos.GetLength(0); i++)
@@ -71,12 +65,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (runspaceInfos == null)
             {
-                throw PSTraceSource.NewArgumentNullException("runspaceInfos");
+                throw PSTraceSource.NewArgumentNullException(nameof(runspaceInfos));
             }
 
             if (runspaceInfos.GetLength(0) == 0)
             {
-                throw PSTraceSource.NewArgumentException("runspaceInfos");
+                throw PSTraceSource.NewArgumentException(nameof(runspaceInfos));
             }
 
             return false;
@@ -84,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Checks the prerequisites for a cmdlet and terminates if the cmdlet
-        /// is not valid
+        /// is not valid.
         /// </summary>
         internal static void CheckRemotingCmdletPrerequisites()
         {
@@ -93,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
             return;
 #else
             bool notSupported = true;
-            String WSManKeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\WSMAN\\";
+            string WSManKeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\WSMAN\\";
 
             CheckHostRemotingPrerequisites();
 
@@ -153,8 +147,8 @@ namespace Microsoft.PowerShell.Commands
         /// PowerShell remoting is supported on all Windows SQU's except WinPE.
         /// </summary>
         /// <exception cref="InvalidOperationException">
-        /// When PowerShell is hosted on a WinPE machine, the execution 
-        /// of this API would result in an InvalidOperationException being 
+        /// When PowerShell is hosted on a WinPE machine, the execution
+        /// of this API would result in an InvalidOperationException being
         /// thrown, indicating that remoting is not supported on a WinPE machine.
         /// </exception>
         internal static void CheckHostRemotingPrerequisites()
@@ -165,10 +159,65 @@ namespace Microsoft.PowerShell.Commands
             if (isWinPEHost)
             {
                 // WSMan is not supported on this platform
-                //throw new InvalidOperationException(
+                // throw new InvalidOperationException(
                 //     "WinPE does not support Windows PowerShell remoting");
                 ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.WinPERemotingNotSupported)), null, ErrorCategory.InvalidOperation, null);
                 throw new InvalidOperationException(errorRecord.ToString());
+            }
+        }
+
+        internal static void CheckPSVersion(Version version)
+        {
+            // PSVersion value can only be 2.0, 3.0, 4.0, 5.0, or 5.1
+            if (version != null)
+            {
+                // PSVersion value can only be 2.0, 3.0, 4.0, 5.0, or 5.1
+                if (!(version.Major >= 2 && version.Major <= 4 && version.Minor == 0) &&
+                    !(version.Major == 5 && version.Minor <= 1))
+                {
+                    throw new ArgumentException(
+                       StringUtil.Format(RemotingErrorIdStrings.PSVersionParameterOutOfRange, version, "PSVersion"));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if the specified version of PowerShell is installed.
+        /// </summary>
+        /// <param name="version"></param>
+        internal static void CheckIfPowerShellVersionIsInstalled(Version version)
+        {
+            // Check if PowerShell 2.0 is installed
+            if (version != null && version.Major == 2)
+            {
+#if CORECLR
+                // PowerShell 2.0 is not available for CoreCLR
+                throw new ArgumentException(
+                    PSRemotingErrorInvariants.FormatResourceString(
+                        RemotingErrorIdStrings.PowerShellNotInstalled,
+                        version, "PSVersion"));
+#else
+                // Because of app-compat issues, in Win8, we will have PS 2.0 installed by default but not .NET 2.0
+                // In such a case, it is not enough if we check just PowerShell registry keys. We also need to check if .NET 2.0 is installed.
+                try
+                {
+                    RegistryKey engineKey = PSSnapInReader.GetPSEngineKey(PSVersionInfo.RegistryVersion1Key);
+                    // Also check for .NET 2.0 installation
+                    if (!PsUtils.FrameworkRegistryInstallation.IsFrameworkInstalled(2, 0, 0))
+                    {
+                        throw new ArgumentException(
+                            PSRemotingErrorInvariants.FormatResourceString(
+                                RemotingErrorIdStrings.NetFrameWorkV2NotInstalled));
+                    }
+                }
+                catch (PSArgumentException)
+                {
+                    throw new ArgumentException(
+                        PSRemotingErrorInvariants.FormatResourceString(
+                            RemotingErrorIdStrings.PowerShellNotInstalled,
+                            version, "PSVersion"));
+                }
+#endif
             }
         }
     }

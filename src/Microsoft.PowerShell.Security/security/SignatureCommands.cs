@@ -1,21 +1,20 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
-
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
-using System.Management.Automation.Internal;
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Collections.Generic;
 using System.Collections;
-using System.IO;
-using System.Management.Automation.Provider;
-using System.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Provider;
+using System.Runtime.InteropServices;
+using System.Security;
+using System.Security.Cryptography.X509Certificates;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 using DWORD = System.UInt32;
 
@@ -28,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
     public abstract class SignatureCommandsBase : PSCmdlet
     {
         /// <summary>
-        /// Gets or sets the path to the file for which to get or set the 
+        /// Gets or sets the path to the file for which to get or set the
         /// digital signature.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
@@ -44,10 +43,11 @@ namespace Microsoft.PowerShell.Commands
                 _path = value;
             }
         }
+
         private string[] _path;
 
         /// <summary>
-        /// Gets or sets the literal path to the file for which to get or set the 
+        /// Gets or sets the literal path to the file for which to get or set the
         /// digital signature.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
@@ -66,17 +66,20 @@ namespace Microsoft.PowerShell.Commands
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
-        /// Gets or sets the digital signature to be written to 
+        /// Gets or sets the digital signature to be written to
         /// the output pipeline.
         /// </summary>
         protected Signature Signature
         {
             get { return _signature; }
+
             set { _signature = value; }
         }
+
         private Signature _signature;
 
         /// <summary>
@@ -97,10 +100,11 @@ namespace Microsoft.PowerShell.Commands
                 _sourcePathOrExtension = value;
             }
         }
+
         private string[] _sourcePathOrExtension;
 
         /// <summary>
-        /// File contents as a byte array
+        /// File contents as a byte array.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByContent")]
         [ValidateNotNullOrEmpty]
@@ -108,11 +112,13 @@ namespace Microsoft.PowerShell.Commands
         public byte[] Content
         {
             get { return _content; }
+
             set
             {
                 _content = value;
             }
         }
+
         private byte[] _content;
 
         //
@@ -124,7 +130,6 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a new instance of the SignatureCommandsBase class,
         /// using the given command name.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the command.
         /// </param>
@@ -233,7 +238,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Performs the action (ie: get signature, or set signature) 
+        /// Performs the action (ie: get signature, or set signature)
         /// on the specified file.
         /// </summary>
         /// <param name="filePath">
@@ -242,7 +247,7 @@ namespace Microsoft.PowerShell.Commands
         protected abstract Signature PerformAction(string filePath);
 
         /// <summary>
-        /// Performs the action (ie: get signature, or set signature) 
+        /// Performs the action (ie: get signature, or set signature)
         /// on the specified contents.
         /// </summary>
         /// <param name="fileName">
@@ -258,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
     /// Defines the implementation of the 'get-AuthenticodeSignature' cmdlet.
     /// This cmdlet extracts the digital signature from the given file.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "AuthenticodeSignature", DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113307")]
+    [Cmdlet(VerbsCommon.Get, "AuthenticodeSignature", DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096823")]
     [OutputType(typeof(Signature))]
     public sealed class GetAuthenticodeSignatureCommand : SignatureCommandsBase
     {
@@ -284,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the signature from the specified file contents.
         /// </summary>
-        /// <param name="sourcePathOrExtension">The file type associated with the contents</param>
+        /// <param name="sourcePathOrExtension">The file type associated with the contents.</param>
         /// <param name="content">
         /// The contents of the file on which to perform the action.
         /// </param>
@@ -302,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet sets the digital signature on a given file.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "AuthenticodeSignature", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113391")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096919")]
     [OutputType(typeof(Signature))]
     public sealed class SetAuthenticodeSignatureCommand : SignatureCommandsBase
     {
@@ -328,6 +333,7 @@ namespace Microsoft.PowerShell.Commands
                 _certificate = value;
             }
         }
+
         private X509Certificate2 _certificate;
 
         /// <summary>
@@ -337,10 +343,9 @@ namespace Microsoft.PowerShell.Commands
         /// Use 'notroot' to include all certificates in the certificate
         ///    chain, except for the root authority.
         /// Use 'all' to include all certificates in the certificate chain.
-        /// 
+        ///
         /// Defaults to 'notroot'.
         /// </summary>
-        ///
         [Parameter(Mandatory = false)]
         [ValidateSet("signer", "notroot", "all")]
         public string IncludeChain
@@ -355,6 +360,7 @@ namespace Microsoft.PowerShell.Commands
                 _includeChain = value;
             }
         }
+
         private string _includeChain = "notroot";
 
         /// <summary>
@@ -374,12 +380,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    value = String.Empty;
+                    value = string.Empty;
                 }
+
                 _timestampServer = value;
             }
         }
-        private string _timestampServer = "";
+
+        private string _timestampServer = string.Empty;
 
         /// <summary>
         /// Gets or sets the hash algorithm used for signing.
@@ -399,6 +407,7 @@ namespace Microsoft.PowerShell.Commands
                 _hashAlgorithm = value;
             }
         }
+
         private string _hashAlgorithm = null;
 
         /// <summary>
@@ -411,11 +420,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -468,7 +479,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 // remember to reset the read-only attribute later
                                 readOnlyFileInfo = fInfo;
-                                //Make sure the file is not read only
+                                // Make sure the file is not read only
                                 fInfo.Attributes &= ~(FileAttributes.ReadOnly);
                             }
                         }
@@ -540,11 +551,11 @@ namespace Microsoft.PowerShell.Commands
                 if (SecurityUtils.GetFileSize(filePath) < 4)
                 {
                     // Note that the message param comes first
-                    string message = String.Format(
+                    string message = string.Format(
                         System.Globalization.CultureInfo.CurrentCulture,
                         UtilsStrings.FileSmallerThan4Bytes, filePath);
 
-                    PSArgumentException e = new PSArgumentException(message, "filePath");
+                    PSArgumentException e = new PSArgumentException(message, nameof(filePath));
                     ErrorRecord er = SecurityUtils.CreateInvalidArgumentErrorRecord(
                             e,
                             "SignatureCommandsBaseFileSmallerThan4Bytes"
@@ -564,7 +575,7 @@ namespace Microsoft.PowerShell.Commands
             finally
             {
                 // reset the read-only attribute
-                if (null != readOnlyFileInfo)
+                if (readOnlyFileInfo != null)
                 {
                     readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
                 }
@@ -572,7 +583,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Not implemented
+        /// Not implemented.
         /// </summary>
         protected override Signature PerformAction(string sourcePathOrExtension, byte[] content)
         {
@@ -592,7 +603,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// association between SigningOption.* values and the
+        /// Association between SigningOption.* values and the
         /// corresponding string names.
         /// </summary>
         private static readonly SigningOptionInfo[] s_sigOptionInfo =
@@ -603,18 +614,15 @@ namespace Microsoft.PowerShell.Commands
         };
 
         /// <summary>
-        /// get SigningOption value corresponding to a string name
+        /// Get SigningOption value corresponding to a string name.
         /// </summary>
-        ///
-        /// <param name="optionName"> name of option </param>
-        ///
-        /// <returns> SigningOption </returns>
-        ///
+        /// <param name="optionName">Name of option.</param>
+        /// <returns>SigningOption.</returns>
         private static SigningOption GetSigningOption(string optionName)
         {
             foreach (SigningOptionInfo si in s_sigOptionInfo)
             {
-                if (String.Equals(optionName, si.optionName,
+                if (string.Equals(optionName, si.optionName,
                                   StringComparison.OrdinalIgnoreCase))
                 {
                     return si.option;

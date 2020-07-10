@@ -1,21 +1,20 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Globalization;
-using System.Text;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
     #region get-date
 
-    /// <summary> 
-    /// implementation for the get-date command 
-    /// </summary> 
-    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = "net", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113313")]
+    /// <summary>
+    /// Implementation for the get-date command.
+    /// </summary>
+    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = "net", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096615")]
     [OutputType(typeof(string), ParameterSetName = new string[] { "UFormat", "net" })]
     [OutputType(typeof(DateTime), ParameterSetName = new string[] { "net" })]
     public sealed class GetDateCommand : Cmdlet
@@ -23,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// Allows user to override the date/time object that will be processed
+        /// Allows user to override the date/time object that will be processed.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("LastWriteTime")]
@@ -33,18 +32,25 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _date;
             }
+
             set
             {
                 _date = value;
                 _dateSpecified = true;
             }
         }
+
+        /// <summary>
+        /// Gets or sets whether to treat a numeric input as ticks, or unix time.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter FromUnixTime;
+
         private DateTime _date;
         private bool _dateSpecified;
 
-
         /// <summary>
-        /// Allows the user to override the year
+        /// Allows the user to override the year.
         /// </summary>
         [Parameter]
         [ValidateRangeAttribute(1, 9999)]
@@ -54,18 +60,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _year;
             }
+
             set
             {
                 _year = value;
                 _yearSpecified = true;
             }
         }
+
         private int _year;
         private bool _yearSpecified;
 
-
         /// <summary>
-        /// Allows the user to override the month
+        /// Allows the user to override the month.
         /// </summary>
         [Parameter]
         [ValidateRangeAttribute(1, 12)]
@@ -75,18 +82,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _month;
             }
+
             set
             {
                 _month = value;
                 _monthSpecified = true;
             }
         }
+
         private int _month;
         private bool _monthSpecified;
 
-
         /// <summary>
-        /// Allows the user to override the day
+        /// Allows the user to override the day.
         /// </summary>
         [Parameter]
         [ValidateRangeAttribute(1, 31)]
@@ -96,18 +104,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _day;
             }
+
             set
             {
                 _day = value;
                 _daySpecified = true;
             }
         }
+
         private int _day;
         private bool _daySpecified;
 
-
         /// <summary>
-        /// Allows the user to override the hour
+        /// Allows the user to override the hour.
         /// </summary>
         [Parameter]
         [ValidateRangeAttribute(0, 23)]
@@ -117,18 +126,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _hour;
             }
+
             set
             {
                 _hour = value;
                 _hourSpecified = true;
             }
         }
+
         private int _hour;
         private bool _hourSpecified;
 
-
         /// <summary>
-        /// Allows the user to override the minute
+        /// Allows the user to override the minute.
         /// </summary>
         [Parameter]
         [ValidateRangeAttribute(0, 59)]
@@ -138,18 +148,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _minute;
             }
+
             set
             {
                 _minute = value;
                 _minuteSpecified = true;
             }
         }
+
         private int _minute;
         private bool _minuteSpecified;
 
-
         /// <summary>
-        /// Allows the user to override the second
+        /// Allows the user to override the second.
         /// </summary>
         [Parameter]
         [ValidateRangeAttribute(0, 59)]
@@ -159,17 +170,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _second;
             }
+
             set
             {
                 _second = value;
                 _secondSpecified = true;
             }
         }
+
         private int _second;
         private bool _secondSpecified;
 
         /// <summary>
-        /// Allows the user to override the millisecond
+        /// Allows the user to override the millisecond.
         /// </summary>
         [Parameter]
         [ValidateRangeAttribute(0, 999)]
@@ -179,42 +192,49 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _millisecond;
             }
+
             set
             {
                 _millisecond = value;
                 _millisecondSpecified = true;
             }
         }
+
         private int _millisecond;
         private bool _millisecondSpecified;
 
         /// <summary>
-        /// This option determines the default output format used to display the object get-date emits
+        /// This option determines the default output format used to display the object get-date emits.
         /// </summary>
         [Parameter]
         public DisplayHintType DisplayHint { get; set; } = DisplayHintType.DateTime;
 
-
         /// <summary>
-        /// Unix format string
-        /// </summary> 
+        /// Unix format string.
+        /// </summary>
         [Parameter(ParameterSetName = "UFormat")]
+        [ValidateNotNullOrEmpty]
         public string UFormat { get; set; }
 
-
         /// <summary>
-        /// Unix format string
-        /// </summary> 
+        /// Unix format string.
+        /// </summary>
         [Parameter(ParameterSetName = "net")]
+        [ArgumentCompletions("FileDate", "FileDateUniversal", "FileDateTime", "FileDateTimeUniversal")]
         public string Format { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value that converts date to UTC before formatting.
+        /// </summary>
+        [Parameter(ParameterSetName = "net")]
+        public SwitchParameter AsUTC { get; set; }
         #endregion
 
         #region methods
 
         /// <summary>
-        /// get the time
-        /// </summary> 
+        /// Get the time.
+        /// </summary>
         protected override void ProcessRecord()
         {
             DateTime dateToUse = DateTime.Now;
@@ -223,52 +243,59 @@ namespace Microsoft.PowerShell.Commands
             // use passed date object if specified
             if (_dateSpecified)
             {
-                dateToUse = Date;
+                if (FromUnixTime.IsPresent)
+                {
+                    dateToUse = DateTimeOffset.FromUnixTimeSeconds(Date.Ticks).UtcDateTime;
+                }
+                else
+                {
+                    dateToUse = Date;
+                }
             }
 
-            //use passed year if specified
+            // use passed year if specified
             if (_yearSpecified)
             {
                 offset = Year - dateToUse.Year;
                 dateToUse = dateToUse.AddYears(offset);
             }
 
-            //use passed month if specified
+            // use passed month if specified
             if (_monthSpecified)
             {
                 offset = Month - dateToUse.Month;
                 dateToUse = dateToUse.AddMonths(offset);
             }
 
-            //use passed day if specified
+            // use passed day if specified
             if (_daySpecified)
             {
                 offset = Day - dateToUse.Day;
                 dateToUse = dateToUse.AddDays(offset);
             }
 
-            //use passed hour if specified
+            // use passed hour if specified
             if (_hourSpecified)
             {
                 offset = Hour - dateToUse.Hour;
                 dateToUse = dateToUse.AddHours(offset);
             }
 
-            //use passed minute if specified
+            // use passed minute if specified
             if (_minuteSpecified)
             {
                 offset = Minute - dateToUse.Minute;
                 dateToUse = dateToUse.AddMinutes(offset);
             }
 
-            //use passed second if specified
+            // use passed second if specified
             if (_secondSpecified)
             {
                 offset = Second - dateToUse.Second;
                 dateToUse = dateToUse.AddSeconds(offset);
             }
 
-            //use passed millisecond if specified
+            // use passed millisecond if specified
             if (_millisecondSpecified)
             {
                 offset = Millisecond - dateToUse.Millisecond;
@@ -276,33 +303,38 @@ namespace Microsoft.PowerShell.Commands
                 dateToUse = dateToUse.Subtract(TimeSpan.FromTicks(dateToUse.Ticks % 10000));
             }
 
+            if (AsUTC)
+            {
+                dateToUse = dateToUse.ToUniversalTime();
+            }
+
             if (UFormat != null)
             {
-                //format according to UFormat string
+                // format according to UFormat string
                 WriteObject(UFormatDateString(dateToUse));
             }
             else if (Format != null)
             {
-                //format according to Format string
+                // format according to Format string
 
                 // Special case built-in primitives: FileDate, FileDateTime.
                 // These are the ISO 8601 "basic" formats, dropping dashes and colons
                 // so that they can be used in file names
 
-                if (String.Equals("FileDate", Format, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals("FileDate", Format, StringComparison.OrdinalIgnoreCase))
                 {
                     Format = "yyyyMMdd";
                 }
-                else if (String.Equals("FileDateUniversal", Format, StringComparison.OrdinalIgnoreCase))
+                else if (string.Equals("FileDateUniversal", Format, StringComparison.OrdinalIgnoreCase))
                 {
                     dateToUse = dateToUse.ToUniversalTime();
                     Format = "yyyyMMddZ";
                 }
-                else if (String.Equals("FileDateTime", Format, StringComparison.OrdinalIgnoreCase))
+                else if (string.Equals("FileDateTime", Format, StringComparison.OrdinalIgnoreCase))
                 {
                     Format = "yyyyMMddTHHmmssffff";
                 }
-                else if (String.Equals("FileDateTimeUniversal", Format, StringComparison.OrdinalIgnoreCase))
+                else if (string.Equals("FileDateTimeUniversal", Format, StringComparison.OrdinalIgnoreCase))
                 {
                     dateToUse = dateToUse.ToUniversalTime();
                     Format = "yyyyMMddTHHmmssffffZ";
@@ -312,31 +344,31 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                //output DateTime object wrapped in an PSObject with DisplayHint attached
+                // output DateTime object wrapped in an PSObject with DisplayHint attached
                 PSObject outputObj = new PSObject(dateToUse);
                 PSNoteProperty note = new PSNoteProperty("DisplayHint", DisplayHint);
                 outputObj.Properties.Add(note);
 
                 WriteObject(outputObj);
             }
-        } // EndProcessing
+        }
 
+        private static readonly DateTime s_epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         /// <summary>
-        /// This is more an implementation of the UNIX strftime
+        /// This is more an implementation of the UNIX strftime.
         /// </summary>
         private string UFormatDateString(DateTime dateTime)
         {
-            DateTime epoch = DateTime.Parse("January 1, 1970", System.Globalization.CultureInfo.InvariantCulture);
             int offset = 0;
             StringBuilder sb = new StringBuilder();
 
-
-            // folks may include the "+" as part of the format string 
+            // folks may include the "+" as part of the format string
             if (UFormat[0] == '+')
             {
                 offset++;
             }
+
             for (int i = offset; i < UFormat.Length; i++)
             {
                 if (UFormat[i] == '%')
@@ -360,18 +392,12 @@ namespace Microsoft.PowerShell.Commands
                             sb.Append("{0:MMM}");
                             break;
 
-                        case 'h':
-                            sb.Append("{0:MMM}");
-                            break;
-
                         case 'C':
                             sb.Append(dateTime.Year / 100);
                             break;
 
                         case 'c':
-                            sb.Append("{0:ddd} {0:MMM} ");
-                            sb.Append(StringUtil.Format("{0,2} ", dateTime.Day));
-                            sb.Append("{0:HH}:{0:mm}:{0:ss} {0:yyyy}");
+                            sb.Append("{0:ddd} {0:dd} {0:MMM} {0:yyyy} {0:HH}:{0:mm}:{0:ss}");
                             break;
 
                         case 'D':
@@ -386,8 +412,24 @@ namespace Microsoft.PowerShell.Commands
                             sb.Append(StringUtil.Format("{0,2}", dateTime.Day));
                             break;
 
+                        case 'F':
+                            sb.Append("{0:yyyy}-{0:MM}-{0:dd}");
+                            break;
+
+                        case 'G':
+                            sb.Append("{0:yyyy}");
+                            break;
+
+                        case 'g':
+                            sb.Append("{0:yy}");
+                            break;
+
                         case 'H':
                             sb.Append("{0:HH}");
+                            break;
+
+                        case 'h':
+                            sb.Append("{0:MMM}");
                             break;
 
                         case 'I':
@@ -395,15 +437,15 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'j':
-                            sb.Append(dateTime.DayOfYear);
+                            sb.Append(StringUtil.Format("{0:000}", dateTime.DayOfYear));
                             break;
 
                         case 'k':
-                            sb.Append("{0:HH}");
+                            sb.Append(StringUtil.Format("{0,2:0}", dateTime.Hour));
                             break;
 
                         case 'l':
-                            sb.Append("{0:hh}");
+                            sb.Append("{0,2:%h}");
                             break;
 
                         case 'M':
@@ -435,14 +477,10 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 's':
-                            sb.Append(dateTime.Subtract(epoch).TotalSeconds);
+                            sb.Append(StringUtil.Format("{0:0}", dateTime.ToUniversalTime().Subtract(s_epoch).TotalSeconds));
                             break;
 
                         case 'T':
-                            sb.Append("{0:HH:mm:ss}");
-                            break;
-
-                        case 'X':
                             sb.Append("{0:HH:mm:ss}");
                             break;
 
@@ -450,24 +488,16 @@ namespace Microsoft.PowerShell.Commands
                             sb.Append("\t");
                             break;
 
-                        case 'u':
-                            sb.Append((int)dateTime.DayOfWeek);
-                            break;
-
                         case 'U':
                             sb.Append(dateTime.DayOfYear / 7);
                             break;
 
+                        case 'u':
+                            sb.Append((int)dateTime.DayOfWeek);
+                            break;
+
                         case 'V':
-                            sb.Append((dateTime.DayOfYear / 7) + 1);
-                            break;
-
-                        case 'G':
-                            sb.Append("{0:yyyy}");
-                            break;
-
-                        case 'g':
-                            sb.Append("{0:yy}");
+                            sb.Append(StringUtil.Format("{0:00}", ISOWeek.GetWeekOfYear(dateTime)));
                             break;
 
                         case 'W':
@@ -478,16 +508,20 @@ namespace Microsoft.PowerShell.Commands
                             sb.Append((int)dateTime.DayOfWeek);
                             break;
 
+                        case 'X':
+                            sb.Append("{0:HH:mm:ss}");
+                            break;
+
                         case 'x':
                             sb.Append("{0:MM/dd/yy}");
                             break;
 
-                        case 'y':
-                            sb.Append("{0:yy}");
-                            break;
-
                         case 'Y':
                             sb.Append("{0:yyyy}");
+                            break;
+
+                        case 'y':
+                            sb.Append("{0:yy}");
                             break;
 
                         case 'Z':
@@ -507,35 +541,32 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return StringUtil.Format(sb.ToString(), dateTime);
-        } // UFormatDateString
+        }
 
         #endregion
-    } // GetDateCommand
+    }
 
     #endregion
 
     #region DisplayHintType enum
 
     /// <summary>
-    /// Display Hint type
+    /// Display Hint type.
     /// </summary>
     public enum DisplayHintType
     {
         /// <summary>
-        /// Display prerence Date-Only
+        /// Display preference Date-Only.
         /// </summary>
         Date,
         /// <summary>
-        /// Display prerence Time-Only
+        /// Display preference Time-Only.
         /// </summary>
         Time,
         /// <summary>
-        /// Display prerence Date and Time
+        /// Display preference Date and Time.
         /// </summary>
         DateTime
     }
-
     #endregion
-} // namespace Microsoft.PowerShell.Commands
-
-
+}

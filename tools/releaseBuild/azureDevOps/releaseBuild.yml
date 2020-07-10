@@ -1,0 +1,165 @@
+name: UnifiedPackageBuild-$(Build.BuildId)
+trigger:
+  branches:
+    include:
+    - master
+    - release*
+pr:
+  branches:
+    include:
+    - master
+    - release*
+
+variables:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+
+# Set AzDevOps Agent to clean the machine after the end of the build
+resources:
+- repo: self
+  clean: true
+
+jobs:
+- template: templates/checkAzureContainer.yml
+
+- template: templates/linux.yml
+  parameters:
+    buildName: deb
+    parentJob: DeleteBlob
+
+- template: templates/linux.yml
+  parameters:
+    buildName: rpm
+    uploadDisplayName: Upload and Sign
+    parentJob: DeleteBlob
+
+- template: templates/linux.yml
+  parameters:
+    buildName: fxdependent
+    parentJob: DeleteBlob
+
+- template: templates/linux.yml
+  parameters:
+    buildName: alpine
+    parentJob: DeleteBlob
+
+- template: templates/mac.yml
+  parameters:
+    parentJob: DeleteBlob
+
+- template: templates/windows-hosted-build.yml
+  parameters:
+    Architecture: x64
+    parentJob: DeleteBlob
+
+- template: templates/windows-hosted-build.yml
+  parameters:
+    Architecture: x86
+    parentJob: DeleteBlob
+
+- template: templates/windows-hosted-build.yml
+  parameters:
+    Architecture: arm
+    parentJob: DeleteBlob
+
+- template: templates/windows-hosted-build.yml
+  parameters:
+    Architecture: arm64
+    parentJob: DeleteBlob
+
+- template: templates/windows-hosted-build.yml
+  parameters:
+    Architecture: fxdependent
+    parentJob: DeleteBlob
+
+- template: templates/windows-hosted-build.yml
+  parameters:
+    Architecture: fxdependentWinDesktop
+    parentJob: DeleteBlob
+
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: x64
+    parentJob: build_windows_x64
+
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: x86
+    parentJob: build_windows_x86
+
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: arm
+    parentJob: build_windows_arm
+
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: arm64
+    parentJob: build_windows_arm64
+
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: fxdependent
+    parentJob: build_windows_fxdependent
+
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: fxdependentWinDesktop
+    parentJob: build_windows_fxdependentWinDesktop
+
+- template: templates/windows-package-signing.yml
+  parameters:
+    parentJobs:
+      - sign_windows_x64
+      - sign_windows_x86
+      - sign_windows_arm
+      - sign_windows_arm64
+      - sign_windows_fxdependent
+      - sign_windows_fxdependentWinDesktop
+
+- template: templates/mac-package-signing.yml
+
+- template: templates/compliance.yml
+  parameters:
+    parentJobs:
+      - build_windows_x64
+      - build_windows_x86
+      - build_windows_fxdependent
+      - build_windows_fxdependentWinDesktop
+
+- template: templates/nuget.yml
+  parameters:
+    parentJobs:
+      - WinPackageSigningJob
+      - upload_deb
+      - upload_rpm
+      - upload_alpine
+      - build_macOS
+
+- template: templates/json.yml
+  parameters:
+    parentJobs:
+      - WinPackageSigningJob
+      - upload_deb
+      - upload_rpm
+      - upload_alpine
+      - MacPackageSigningJob
+
+- template: templates/testartifacts.yml
+
+- job: release_json
+  displayName: Create and Upload release.json
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - template: templates/SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - powershell: |
+      $metadata = Get-Content '$(Build.SourcesDirectory)/tools/metadata.json' -Raw | ConvertFrom-Json
+      $LTS = $metadata.LTSRelease
+      @{ ReleaseVersion = "$(Version)"; LTSRelease = $LTS } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
+      Get-Content "$(Build.StagingDirectory)\release.json"
+      Write-Host "##vso[artifact.upload containerfolder=metadata;artifactname=metadata]$(Build.StagingDirectory)\release.json"
+    displayName: Create and upload release.json file to build artifact

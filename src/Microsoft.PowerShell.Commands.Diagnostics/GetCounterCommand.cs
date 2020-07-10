@@ -1,44 +1,42 @@
-//
-// Copyright (c) 2008 Microsoft Corporation. All rights reserved.
-// 
-
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
-using System.Text;
-using System.IO;
-using System.Xml;
-using System.Net;
-using System.Management.Automation;
-using System.ComponentModel;
-using System.Reflection;
-using System.Globalization;
-using System.Management.Automation.Runspaces;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
+using System.Net;
+using System.Reflection;
+using System.Resources;
 using System.Security;
 using System.Security.Principal;
-using System.Resources;
+using System.Text;
 using System.Threading;
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.Powershell.Commands.GetCounter.PdhNative;
-using Microsoft.PowerShell.Commands.GetCounter;
-using Microsoft.PowerShell.Commands.Diagnostics.Common;
+using System.Xml;
 
+using Microsoft.PowerShell.Commands.Diagnostics.Common;
+using Microsoft.PowerShell.Commands.GetCounter;
+using Microsoft.Powershell.Commands.GetCounter.PdhNative;
 
 namespace Microsoft.PowerShell.Commands
 {
-    /// 
+    ///
     /// Class that implements the Get-Counter cmdlet.
-    /// 
-    [Cmdlet(VerbsCommon.Get, "Counter", DefaultParameterSetName = "GetCounterSet", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=138335")]
+    ///
+    [Cmdlet(VerbsCommon.Get, "Counter", DefaultParameterSetName = "GetCounterSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2109647")]
     public sealed class GetCounterCommand : PSCmdlet
     {
         //
         // ListSet parameter
-        //  
+        //
         [Parameter(
                 Position = 0,
                 Mandatory = true,
@@ -55,14 +53,15 @@ namespace Microsoft.PowerShell.Commands
         public string[] ListSet
         {
             get { return _listSet; }
+
             set { _listSet = value; }
         }
-        private string[] _listSet = { "*" };
 
+        private string[] _listSet = { "*" };
 
         //
         // Counter parameter
-        //  
+        //
         [Parameter(
                 Position = 0,
                 ParameterSetName = "GetCounterSet",
@@ -77,22 +76,24 @@ namespace Microsoft.PowerShell.Commands
         public string[] Counter
         {
             get { return _counter; }
+
             set
             {
                 _counter = value;
                 _defaultCounters = false;
             }
         }
+
         private string[] _counter = {@"\network interface(*)\bytes total/sec",
                                  @"\processor(_total)\% processor time",
                                  @"\memory\% committed bytes in use",
                                  @"\memory\cache faults/sec",
                                  @"\physicaldisk(_total)\% disk time",
                                  @"\physicaldisk(_total)\current disk queue length"};
+
         private bool _defaultCounters = true;
 
         private List<string> _accumulatedCounters = new List<string>();
-
 
         //
         // SampleInterval parameter.
@@ -107,15 +108,17 @@ namespace Microsoft.PowerShell.Commands
         public int SampleInterval
         {
             get { return _sampleInterval; }
+
             set { _sampleInterval = value; }
         }
-        private int _sampleInterval = 1;
 
+        private int _sampleInterval = 1;
 
         //
         // MaxSamples parameter
         //
         private const Int64 KEEP_ON_SAMPLING = -1;
+
         [Parameter(
                 ParameterSetName = "GetCounterSet",
                 ValueFromPipeline = false,
@@ -125,15 +128,16 @@ namespace Microsoft.PowerShell.Commands
         public Int64 MaxSamples
         {
             get { return _maxSamples; }
+
             set
             {
                 _maxSamples = value;
                 _maxSamplesSpecified = true;
             }
         }
+
         private Int64 _maxSamples = 1;
         private bool _maxSamplesSpecified = false;
-
 
         //
         // Continuous switch
@@ -142,10 +146,11 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Continuous
         {
             get { return _continuous; }
+
             set { _continuous = value; }
         }
-        private bool _continuous = false;
 
+        private bool _continuous = false;
 
         //
         // ComputerName parameter
@@ -165,9 +170,11 @@ namespace Microsoft.PowerShell.Commands
         public string[] ComputerName
         {
             get { return _computerName; }
+
             set { _computerName = value; }
         }
-        private string[] _computerName = new string[0];
+
+        private string[] _computerName = Array.Empty<string>();
 
         private ResourceManager _resourceMgr = null;
 
@@ -175,17 +182,17 @@ namespace Microsoft.PowerShell.Commands
 
         private EventWaitHandle _cancelEventArrived = new EventWaitHandle(false, EventResetMode.ManualReset);
 
-        // Culture identifier(s) 
-        private const int FrenchCultureId = 0x040C;
+        // Culture identifier(s)
+        private const string FrenchCultureId = "fr-FR";
         // The localized Pdh resource strings might use Unicode characters that are different from
         // what the user can type with the keyboard to represent a special character.
         //
-        // e.g. the apostrophe in Frence UI culture: it's [char]39 from keyboard, but it's [char]8217
+        // e.g. the apostrophe in French UI culture: it's [char]39 from keyboard, but it's [char]8217
         // in the resource strings.
         //
         // With this dictionary, we can add special mapping if we find other special cases in the future.
-        private readonly Dictionary<int, List<Tuple<char, char>>> _cultureAndSpecialCharacterMap =
-            new Dictionary<int, List<Tuple<char, char>>>()
+        private readonly Dictionary<string, List<Tuple<char, char>>> _cultureAndSpecialCharacterMap =
+            new Dictionary<string, List<Tuple<char, char>>>()
                 {
                    {
                        FrenchCultureId, new List<Tuple<char, char>>()
@@ -205,16 +212,21 @@ namespace Microsoft.PowerShell.Commands
         //
         protected override void BeginProcessing()
         {
+            if (Platform.IsIoT)
+            {
+                // IoT does not have the '$env:windir\System32\pdh.dll' assembly which is required by this cmdlet.
+                throw new PlatformNotSupportedException();
+            }
+
+            _pdhHelper = new PdhHelper();
             _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
 
-            _pdhHelper = new PdhHelper(System.Environment.OSVersion.Version.Major < 6);
             uint res = _pdhHelper.ConnectToDataSource();
             if (res != 0)
             {
                 ReportPdhError(res, true);
                 return;
             }
-
 
             if (Continuous.IsPresent && _maxSamplesSpecified)
             {
@@ -236,10 +248,9 @@ namespace Microsoft.PowerShell.Commands
             _pdhHelper.Dispose();
         }
 
-
-        // 
+        //
         // Handle Control-C
-        // 
+        //
         protected override void StopProcessing()
         {
             _cancelEventArrived.Set();
@@ -249,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // ProcessRecord() override.
         // This is the main entry point for the cmdlet.
-        //       
+        //
         protected override void ProcessRecord()
         {
             try
@@ -265,7 +276,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
 
                     default:
-                        Debug.Assert(false, string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", ParameterSetName));
+                        Debug.Fail(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", ParameterSetName));
                         break;
                 }
             }
@@ -286,7 +297,7 @@ namespace Microsoft.PowerShell.Commands
 
         //
         // ProcessListSet() does the work to process ListSet parameter set.
-        //       
+        //
         private void ProcessListSet()
         {
             if (_computerName.Length == 0)
@@ -310,18 +321,18 @@ namespace Microsoft.PowerShell.Commands
             uint res = _pdhHelper.EnumObjects(machine, ref counterSets);
             if (res != 0)
             {
-                //add an error message
+                // add an error message
                 string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("NoCounterSetsOnComputer"), machine, res);
                 Exception exc = new Exception(msg);
                 WriteError(new ErrorRecord(exc, "NoCounterSetsOnComputer", ErrorCategory.InvalidResult, machine));
                 return;
             }
 
-            CultureInfo culture = Thread.CurrentThread.CurrentUICulture;
+            CultureInfo culture = GetCurrentCulture();
             List<Tuple<char, char>> characterReplacementList = null;
             StringCollection validPaths = new StringCollection();
 
-            _cultureAndSpecialCharacterMap.TryGetValue(culture.LCID, out characterReplacementList);
+            _cultureAndSpecialCharacterMap.TryGetValue(culture.Name, out characterReplacementList);
 
             foreach (string pattern in _listSet)
             {
@@ -381,10 +392,7 @@ namespace Microsoft.PowerShell.Commands
                     Dictionary<string, string[]> counterInstanceMapping = new Dictionary<string, string[]>();
                     foreach (string counter in counterSetCounters)
                     {
-                        if (!counterInstanceMapping.ContainsKey(counter))
-                        {
-                            counterInstanceMapping.Add(counter, instanceArray);
-                        }
+                        counterInstanceMapping.TryAdd(counter, instanceArray);
                     }
 
                     PerformanceCounterCategoryType categoryType = PerformanceCounterCategoryType.Unknown;
@@ -392,7 +400,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         categoryType = PerformanceCounterCategoryType.MultiInstance;
                     }
-                    else //if (counterSetInstances.Count == 1) //???
+                    else // if (counterSetInstances.Count == 1) //???
                     {
                         categoryType = PerformanceCounterCategoryType.SingleInstance;
                     }
@@ -417,25 +425,24 @@ namespace Microsoft.PowerShell.Commands
         //
         // ProcessGetCounter()
         // Does the work to process GetCounterSet parameter set.
-        //      
+        //
         private void ProcessGetCounter()
         {
             // 1. Combine machine names with paths, if needed, to construct full paths
             // 2. Translate default paths into current locale
             // 3. Expand wildcards and validate the paths and write errors for any invalid paths
             // 4. OpenQuery/ AddCounters
-            // 5. Skip the first reading       
+            // 5. Skip the first reading
 
-            CultureInfo culture = Thread.CurrentThread.CurrentUICulture;
+            CultureInfo culture = GetCurrentCulture();
             List<Tuple<char, char>> characterReplacementList = null;
             List<string> paths = CombineMachinesAndCounterPaths();
             uint res = 0;
 
             if (!_defaultCounters)
             {
-                _cultureAndSpecialCharacterMap.TryGetValue(culture.LCID, out characterReplacementList);
+                _cultureAndSpecialCharacterMap.TryGetValue(culture.Name, out characterReplacementList);
             }
-
 
             StringCollection allExpandedPaths = new StringCollection();
             foreach (string path in paths)
@@ -480,9 +487,11 @@ namespace Microsoft.PowerShell.Commands
 
                         continue;
                     }
+
                     allExpandedPaths.Add(expandedPath);
                 }
             }
+
             if (allExpandedPaths.Count == 0)
             {
                 return;
@@ -493,6 +502,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ReportPdhError(res, false);
             }
+
             res = _pdhHelper.AddCounters(ref allExpandedPaths, true);
             if (res != 0)
             {
@@ -518,14 +528,14 @@ namespace Microsoft.PowerShell.Commands
 
                 if (res == 0)
                 {
-                    //Display valid data
+                    // Display valid data
                     if (!bSkip)
                     {
                         WriteSampleSetObject(nextSet);
                         sampleReads++;
                     }
 
-                    //Don't need to skip anymore
+                    // Don't need to skip anymore
                     bSkip = false;
                 }
                 else if (res == PdhResults.PDH_NO_DATA || res == PdhResults.PDH_INVALID_DATA)
@@ -568,6 +578,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterApiError"), res);
             }
+
             Exception exc = new Exception(msg);
             if (bTerminate)
             {
@@ -579,12 +590,11 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         //
         // CombineMachinesAndCounterPaths() helper.
         // For paths that do not contain machine names, creates a path for each machine in machineNames.
         // Paths already containing a machine name will be preserved.
-        //      
+        //
         private List<string> CombineMachinesAndCounterPaths()
         {
             List<string> retColl = new List<string>();
@@ -597,7 +607,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string path in _accumulatedCounters)
             {
-                if (path.StartsWith("\\\\", StringComparison.OrdinalIgnoreCase)) //NOTE: can we do anything smarter here?
+                if (path.StartsWith("\\\\", StringComparison.OrdinalIgnoreCase)) // NOTE: can we do anything smarter here?
                 {
                     retColl.Add(path);
                 }
@@ -622,9 +632,9 @@ namespace Microsoft.PowerShell.Commands
 
         //
         // WriteSampleSetObject() helper.
-        // In addition to writing the PerformanceCounterSampleSet object, 
+        // In addition to writing the PerformanceCounterSampleSet object,
         // it writes a single error if one of the samples has an invalid (non-zero) status.
-        //      
+        //
         private void WriteSampleSetObject(PerformanceCounterSampleSet set)
         {
             foreach (PerformanceCounterSample sample in set.CounterSamples)
@@ -637,7 +647,13 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
             }
+
             WriteObject(set);
+        }
+
+        private static CultureInfo GetCurrentCulture()
+        {
+            return Thread.CurrentThread.CurrentUICulture;
         }
     }
 }

@@ -1,25 +1,23 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Cmdlet used to write a collection of formatting directives to
-    /// an XML file
+    /// Cmdlet used to write a collection of formatting directives to an XML file.
     /// </summary>
-    [Cmdlet("Export", "FormatData", DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144302")]
+    [Cmdlet(VerbsData.Export, "FormatData", DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096834")]
     public class ExportFormatDataCommand : PSCmdlet
     {
         private ExtendedTypeDefinition[] _typeDefinition;
 
         /// <summary>
-        /// type definition to include in export
+        /// Type definition to include in export.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -29,6 +27,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _typeDefinition;
             }
+
             set
             {
                 _typeDefinition = value;
@@ -38,16 +37,17 @@ namespace Microsoft.PowerShell.Commands
         private string _filepath;
 
         /// <summary>
-        /// Path of the XML file
+        /// Path of the XML file.
         /// </summary>
         [Parameter(ParameterSetName = "ByPath", Mandatory = true)]
         [Alias("FilePath")]
-        public String Path
+        public string Path
         {
             get
             {
                 return _filepath;
             }
+
             set
             {
                 _filepath = value;
@@ -55,22 +55,24 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Literal path of the XML file
+        /// Literal path of the XML file.
         /// </summary>
         [Parameter(ParameterSetName = "ByLiteralPath", Mandatory = true)]
-        [Alias("PSPath")]
-        public String LiteralPath
+        [Alias("PSPath", "LP")]
+        public string LiteralPath
         {
             get
             {
                 return _filepath;
             }
+
             set
             {
                 _filepath = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         private List<ExtendedTypeDefinition> _typeDefinitions = new List<ExtendedTypeDefinition>();
@@ -78,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _force;
 
         /// <summary>
-        /// Force writing a file
+        /// Force writing a file.
         /// </summary>
         [Parameter()]
         public SwitchParameter Force
@@ -87,6 +89,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
@@ -94,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Do not overwrite file if exists
+        /// Do not overwrite file if exists.
         /// </summary>
         [Parameter()]
         [Alias("NoOverwrite")]
@@ -104,15 +107,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _noclobber;
             }
+
             set
             {
                 _noclobber = value;
             }
         }
+
         private bool _noclobber;
 
         /// <summary>
-        /// Include scriptblocks for export
+        /// Include scriptblocks for export.
         /// </summary>
         [Parameter()]
         public SwitchParameter IncludeScriptBlock
@@ -121,15 +126,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _includescriptblock;
             }
+
             set
             {
                 _includescriptblock = value;
             }
         }
+
         private bool _includescriptblock;
 
         /// <summary>
-        /// Adds the type to the collection
+        /// Adds the type to the collection.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -140,8 +147,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// writes out the formatting directives from the 
-        /// collection to the specified XML file
+        /// Writes out the formatting directives from the
+        /// collection to the specified XML file.
         /// </summary>
         protected override void EndProcessing()
         {

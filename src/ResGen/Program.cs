@@ -1,4 +1,7 @@
-﻿using System;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -10,12 +13,30 @@ namespace ConsoleApplication
     {
         public static void Main(string[] args)
         {
-            // we are assuming resgen is run with 'dotnet run'
-            // so we can use relative paths
-        	foreach (string folder in Directory.EnumerateDirectories(".."))
+            IEnumerable<string> dirs;
+            string fileFilter;
+
+            if (args.Length == 1)
+            {
+                // We are assuming resgen is run with 'dotnet run pathToResxFile.resx'.
+                fileFilter = Path.GetFileName(args[0]);
+                string moduleDirectory = Path.GetDirectoryName(Path.GetDirectoryName(args[0]));
+                dirs = new List<string>() { moduleDirectory };
+            }
+            else
+            {
+                // We are assuming resgen is run with 'dotnet run'
+                // so we can use relative path to get a parent directory
+                // to process all *.resx files in all project subdirectories.
+                fileFilter = "*.resx";
+                dirs = Directory.EnumerateDirectories("..");
+            }
+
+            foreach (string folder in dirs)
             {
                 string moduleName = Path.GetFileName(folder);
                 string resourcePath = Path.Combine(folder, "resources");
+
                 if (Directory.Exists(resourcePath))
                 {
                     string genFolder = Path.Combine(folder, "gen");
@@ -24,10 +45,17 @@ namespace ConsoleApplication
                         Directory.CreateDirectory(genFolder);
                     }
 
-                    foreach (string resxPath in Directory.EnumerateFiles(resourcePath, "*.resx"))
+                    foreach (string resxPath in Directory.EnumerateFiles(resourcePath, fileFilter))
                     {
+                        string accessModifier = "internal";
                         string className = Path.GetFileNameWithoutExtension(resxPath);
-                        string sourceCode = GetStronglyTypeCsFileForResx(resxPath, moduleName, className);
+                        if (className.StartsWith("public.", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            accessModifier = "public";
+                            className = className.Substring(className.IndexOf(".") + 1);
+                        }
+
+                        string sourceCode = GetStronglyTypeCsFileForResx(resxPath, moduleName, className, accessModifier);
                         string outPath = Path.Combine(genFolder, className + ".cs");
                         Console.WriteLine("ResGen for " + outPath);
                         File.WriteAllText(outPath, sourceCode);
@@ -36,14 +64,13 @@ namespace ConsoleApplication
             }
         }
 
-        private static string GetStronglyTypeCsFileForResx(string xmlPath, string moduleName, string className)
+        private static string GetStronglyTypeCsFileForResx(string xmlPath, string moduleName, string className, string accessModifier)
         {
             // Example
             //
             // className = Full.Name.Of.The.ClassFoo
             // shortClassName = ClassFoo
             // namespaceName = Full.Name.Of.The
-            
             string shortClassName = className;
             string namespaceName = null;
             int lastIndexOfDot = className.LastIndexOf('.');
@@ -59,10 +86,10 @@ namespace ConsoleApplication
             {
                 string value = data.Value.Replace("\n", "\n    ///");
                 string name = data.Attribute("name").Value.Replace(' ', '_');
-                entries.AppendFormat(ENTRY, name, value);
+                entries.AppendFormat(ENTRY, name, value, accessModifier);
             }
 
-            string bodyCode = string.Format(BODY, shortClassName, moduleName, entries.ToString(), className);
+            string bodyCode = string.Format(BODY, shortClassName, moduleName, entries.ToString(), className, accessModifier, accessModifier.Equals("public", StringComparison.InvariantCultureIgnoreCase) ? "public." : string.Empty);
             if (namespaceName != null)
             {
                 bodyCode = string.Format(NAMESPACE, namespaceName, bodyCode);
@@ -91,6 +118,7 @@ namespace {0} {{
 {1}
 }}
 ";
+
         private static readonly string BODY = @"
 using System;
 using System.Reflection;
@@ -102,26 +130,28 @@ using System.Reflection;
 [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
 [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 
-internal class {0} {{
+{4} class {0} {{
 
     private static global::System.Resources.ResourceManager resourceMan;
 
     private static global::System.Globalization.CultureInfo resourceCulture;
 
+    /// <summary>constructor</summary>
     [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute(""Microsoft.Performance"", ""CA1811:AvoidUncalledPrivateCode"")]
-    internal {0}() {{
+    {4} {0}() {{
     }}
 
     /// <summary>
     ///   Returns the cached ResourceManager instance used by this class.
     /// </summary>
     [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-    internal static global::System.Resources.ResourceManager ResourceManager {{
+    {4} static global::System.Resources.ResourceManager ResourceManager {{
         get {{
-            if (object.ReferenceEquals(resourceMan, null)) {{
-                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager(""{1}.resources.{3}"", typeof({0}).GetTypeInfo().Assembly);
+            if (resourceMan is null) {{
+                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager(""{1}.resources.{5}{3}"", typeof({0}).Assembly);
                 resourceMan = temp;
             }}
+
             return resourceMan;
         }}
     }}
@@ -131,10 +161,11 @@ internal class {0} {{
     ///   resource lookups using this strongly typed resource class.
     /// </summary>
     [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-    internal static global::System.Globalization.CultureInfo Culture {{
+    {4} static global::System.Globalization.CultureInfo Culture {{
         get {{
             return resourceCulture;
         }}
+
         set {{
             resourceCulture = value;
         }}
@@ -148,12 +179,11 @@ internal class {0} {{
     /// <summary>
     ///   Looks up a localized string similar to {1}
     /// </summary>
-    internal static string {0} {{
+    {2} static string {0} {{
         get {{
             return ResourceManager.GetString(""{0}"", resourceCulture);
         }}
     }}
 ";
-
     }
 }

@@ -1,15 +1,16 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
+
 using Microsoft.Management.Infrastructure;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Job wrapping invocation of a CreateInstance intrinsic CIM method
+    /// Job wrapping invocation of a CreateInstance intrinsic CIM method.
     /// </summary>
     internal class CreateInstanceJob : PropertySettingJob<CimInstance>
     {
@@ -75,7 +76,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             else
             {
 #if DEBUG
-                Dbg.Assert(_createInstanceOperationGotStarted == true, "GetInstance should be started *after* CreateInstance");
+                Dbg.Assert(_createInstanceOperationGotStarted, "GetInstance should be started *after* CreateInstance");
                 Dbg.Assert(_getInstanceOperationGotStarted == false, "Should not start GetInstance operation twice");
                 Dbg.Assert(_resultFromGetInstance == null, "GetInstance operation shouldn't happen twice");
                 _getInstanceOperationGotStarted = true;
@@ -103,7 +104,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             if (this.DidUserSuppressTheOperation)
             {
                 // If user suppressed CreateInstance operation, then no instance should be returned by the cmdlet
-                // If the provider's CreateInstance implemenration doesn't post an instance and returns a success, then WMI infra will error out to flag an incorrect implementation of CreateInstance (by design)
+                // If the provider's CreateInstance implementation doesn't post an instance and returns a success, then WMI infra will error out to flag an incorrect implementation of CreateInstance (by design)
                 // Therefore cmdletization layer has to suppress the error and treat this as normal/successful completion
                 this.OnCompleted();
             }

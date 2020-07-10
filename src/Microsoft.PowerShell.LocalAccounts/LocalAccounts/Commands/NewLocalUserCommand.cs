@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 #region Using directives
 using System;
 using System.Management.Automation;
@@ -8,7 +11,6 @@ using System.Management.Automation.SecurityAccountsManager.Extensions;
 using Microsoft.PowerShell.LocalAccounts;
 #endregion
 
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -17,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.New, "LocalUser",
             DefaultParameterSetName = "Password",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717981")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717981")]
     [Alias("nlu")]
     public class NewLocalUserCommand : PSCmdlet
     {
@@ -48,8 +50,10 @@ namespace Microsoft.PowerShell.Commands
         public System.DateTime AccountExpires
         {
             get { return this.accountexpires;}
+
             set { this.accountexpires = value; }
         }
+
         private System.DateTime accountexpires;
 
         // This parameter added by hand (copied from SetLocalUserCommand), not by Cmdlet Designer
@@ -61,24 +65,27 @@ namespace Microsoft.PowerShell.Commands
         public System.Management.Automation.SwitchParameter AccountNeverExpires
         {
             get { return this.accountneverexpires;}
+
             set { this.accountneverexpires = value; }
         }
+
         private System.Management.Automation.SwitchParameter accountneverexpires;
 
         /// <summary>
         /// The following is the definition of the input parameter "Description".
-        /// A descriptive comment for this user account (48 characters).
+        /// A descriptive comment for this user account.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNull]
-        [ValidateLength(0, 48)]
         public string Description
         {
             get { return this.description;}
+
             set { this.description = value; }
         }
+
         private string description;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "Disabled".
         /// Specifies whether this user account is enabled or disabled.
@@ -87,13 +94,15 @@ namespace Microsoft.PowerShell.Commands
         public System.Management.Automation.SwitchParameter Disabled
         {
             get { return this.disabled;}
+
             set { this.disabled = value; }
         }
+
         private System.Management.Automation.SwitchParameter disabled;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "FullName".
-        /// Specifies the full name of the user account. This is different from the 
+        /// Specifies the full name of the user account. This is different from the
         /// username of the user account.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -101,13 +110,15 @@ namespace Microsoft.PowerShell.Commands
         public string FullName
         {
             get { return this.fullname;}
+
             set { this.fullname = value; }
         }
+
         private string fullname;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "Name".
-        /// Specifies the user name for the local user account. This can be a local user 
+        /// Specifies the user name for the local user account. This can be a local user
         /// account or a local user account that is connected to a Microsoft Account.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -119,13 +130,15 @@ namespace Microsoft.PowerShell.Commands
         public string Name
         {
             get { return this.name;}
+
             set { this.name = value; }
         }
+
         private string name;
 
         /// <summary>
         /// The following is the definition of the input parameter "Password".
-        /// Specifies the password for the local user account. A password can contain up 
+        /// Specifies the password for the local user account. A password can contain up
         /// to 127 characters.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -135,8 +148,10 @@ namespace Microsoft.PowerShell.Commands
         public System.Security.SecureString Password
         {
             get { return this.password;}
+
             set { this.password = value; }
         }
+
         private System.Security.SecureString password;
 
         /// <summary>
@@ -149,8 +164,10 @@ namespace Microsoft.PowerShell.Commands
         public System.Management.Automation.SwitchParameter NoPassword
         {
             get { return this.nopassword; }
+
             set { this.nopassword = value; }
         }
+
         private System.Management.Automation.SwitchParameter nopassword;
 
         /// <summary>
@@ -162,26 +179,28 @@ namespace Microsoft.PowerShell.Commands
         public System.Management.Automation.SwitchParameter PasswordNeverExpires
         {
             get { return this.passwordneverexpires; }
+
             set { this.passwordneverexpires = value; }
         }
+
         private System.Management.Automation.SwitchParameter passwordneverexpires;
 
         /// <summary>
         /// The following is the definition of the input parameter "UserMayNotChangePassword".
-        /// Specifies whether the user is allowed to change the password on this 
+        /// Specifies whether the user is allowed to change the password on this
         /// account. The default value is True.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public System.Management.Automation.SwitchParameter UserMayNotChangePassword
         {
             get { return this.usermaynotchangepassword;}
+
             set { this.usermaynotchangepassword = value; }
         }
+
         private System.Management.Automation.SwitchParameter usermaynotchangepassword;
         #endregion Parameter Properties
-      
-      
-      
+
         #region Cmdlet Overrides
         /// <summary>
         /// BeginProcessing method.
@@ -193,9 +212,9 @@ namespace Microsoft.PowerShell.Commands
                 InvalidParametersException ex = new InvalidParametersException("AccountExpires", "AccountNeverExpires");
                 ThrowTerminatingError(ex.MakeErrorRecord());
             }
+
             sam = new Sam();
         }
-
 
         /// <summary>
         /// ProcessRecord method.
@@ -251,7 +270,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        
         /// <summary>
         /// EndProcessing method.
         /// </summary>
@@ -271,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(target, Strings.ActionNewUser);
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

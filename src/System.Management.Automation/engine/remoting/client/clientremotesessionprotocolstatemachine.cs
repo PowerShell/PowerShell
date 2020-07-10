@@ -1,9 +1,9 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using System.Threading;
 using System.Collections.Generic;
+using System.Threading;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
@@ -11,19 +11,19 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This class implements a Finite State Machine (FSM) to control the remote connection on the client side.
     /// There is a similar but not identical FSM on the server side for this connection.
-    /// 
-    /// The FSM's states and events are defined to be the same for both the client FSM and the server FSM. 
+    ///
+    /// The FSM's states and events are defined to be the same for both the client FSM and the server FSM.
     /// This design allows the client and server FSM's to
     /// be as similar as possible, so that the complexity of maintaining them is minimized.
-    /// 
+    ///
     /// This FSM only controls the remote connection state. States related to runspace and pipeline are managed by runspace
     /// pipeline themselves.
-    /// 
+    ///
     /// This FSM defines an event handling matrix, which is filled by the event handlers.
-    /// The state transitions can only be performed by these event handlers, which are private 
+    /// The state transitions can only be performed by these event handlers, which are private
     /// to this class. The event handling is done by a single thread, which makes this
     /// implementation solid and thread safe.
-    /// 
+    ///
     /// This implementation of the FSM does not allow the remote session to be reused for a connection
     /// after it is been closed. This design decision is made to simplify the implementation.
     /// However, the design can be easily modified to allow the reuse of the remote session
@@ -36,13 +36,13 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Event handling matrix. It defines what action to take when an event occur.
-        /// [State,Event]=>Action
+        /// [State,Event]=>Action.
         /// </summary>
         private EventHandler<RemoteSessionStateMachineEventArgs>[,] _stateMachineHandle;
         private Queue<RemoteSessionStateEventArgs> _clientRemoteSessionStateChangeQueue;
 
         /// <summary>
-        /// Current state of session
+        /// Current state of session.
         /// </summary>
         private RemoteSessionState _state;
 
@@ -63,28 +63,28 @@ namespace System.Management.Automation.Remoting
         // and processed
 
         /// <summary>
-        /// Timer to be used for key exchange
+        /// Timer to be used for key exchange.
         /// </summary>
         private Timer _keyExchangeTimer;
 
         /// <summary>
-        /// indicates that the client has previously completed the session key exchange
+        /// Indicates that the client has previously completed the session key exchange.
         /// </summary>
         private bool _keyExchanged = false;
 
         /// <summary>
-        /// this is to queue up a disconnect request when a key exchange is in process
+        /// This is to queue up a disconnect request when a key exchange is in process
         /// the session will be disconnect once the exchange is complete
-        /// intermediate disconnect requests are tracked by this flag
+        /// intermediate disconnect requests are tracked by this flag.
         /// </summary>
         private bool _pendingDisconnect = false;
 
         /// <summary>
-        /// processes events in the queue. If there are no 
+        /// Processes events in the queue. If there are no
         /// more events to process, then sets eventsInProcess
         /// variable to false. This will ensure that another
         /// thread which raises an event can then take control
-        /// of processing the events
+        /// of processing the events.
         /// </summary>
         private void ProcessEvents()
         {
@@ -99,6 +99,7 @@ namespace System.Management.Automation.Remoting
                         _eventsInProcess = false;
                         break;
                     }
+
                     eventArgs = _processPendingEventsQueue.Dequeue();
                 }
 
@@ -125,7 +126,7 @@ namespace System.Management.Automation.Remoting
         private void HandleFatalError(Exception ex)
         {
             // Event handlers should not throw exceptions.  But if they do we need to
-            // handle them here to prevent the state machine from hanging when there are pending
+            // handle them here to prevent the state machine from not responding when there are pending
             // events to process.
 
             // Enqueue a fatal error event if such an exception occurs; clear all existing events.. we are going to terminate the session
@@ -141,8 +142,8 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Raises the StateChanged events which are queued
         /// All StateChanged events will be raised once the
-        /// processing of the State Machine events are 
-        /// complete
+        /// processing of the State Machine events are
+        /// complete.
         /// </summary>
         private void RaiseStateMachineEvents()
         {
@@ -158,18 +159,18 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Unique identifier for this state machine. Used
-        /// in tracing
+        /// in tracing.
         /// </summary>
         private Guid _id;
 
         /// <summary>
         /// Handler to be used in cases, where setting the state is the
         /// only task being performed. This method also asserts
-        /// if the specified event is valid for the current state of 
-        /// the state machine
+        /// if the specified event is valid for the current state of
+        /// the state machine.
         /// </summary>
-        /// <param name="sender">sender of this event</param>
-        /// <param name="eventArgs">event args</param>
+        /// <param name="sender">Sender of this event.</param>
+        /// <param name="eventArgs">Event args.</param>
         private void SetStateHandler(object sender, RemoteSessionStateMachineEventArgs eventArgs)
         {
             switch (eventArgs.StateEvent)
@@ -180,6 +181,7 @@ namespace System.Management.Automation.Remoting
                             "State can be set to Established only when current state is NegotiationReceived");
                         SetState(RemoteSessionState.Established, null);
                     }
+
                     break;
 
                 case RemoteSessionEvent.NegotiationReceived:
@@ -188,11 +190,12 @@ namespace System.Management.Automation.Remoting
                             "State can be set to NegotiationReceived only when RemoteSessionCapability is not null");
                         if (eventArgs.RemoteSessionCapability == null)
                         {
-                            throw PSTraceSource.NewArgumentException("eventArgs");
+                            throw PSTraceSource.NewArgumentException(nameof(eventArgs));
                         }
 
                         SetState(RemoteSessionState.NegotiationReceived, null);
                     }
+
                     break;
 
                 case RemoteSessionEvent.NegotiationSendCompleted:
@@ -202,6 +205,7 @@ namespace System.Management.Automation.Remoting
 
                         SetState(RemoteSessionState.NegotiationSent, null);
                     }
+
                     break;
 
                 case RemoteSessionEvent.ConnectFailed:
@@ -211,18 +215,21 @@ namespace System.Management.Automation.Remoting
 
                         SetState(RemoteSessionState.ClosingConnection, eventArgs.Reason);
                     }
+
                     break;
 
                 case RemoteSessionEvent.CloseFailed:
                     {
                         SetState(RemoteSessionState.Closed, eventArgs.Reason);
                     }
+
                     break;
 
                 case RemoteSessionEvent.CloseCompleted:
                     {
                         SetState(RemoteSessionState.Closed, eventArgs.Reason);
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeyRequested:
@@ -235,12 +242,13 @@ namespace System.Management.Automation.Remoting
                             SetState(RemoteSessionState.EstablishedAndKeyRequested, eventArgs.Reason);
                         }
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeyReceived:
                     {
                         Dbg.Assert(_state == RemoteSessionState.EstablishedAndKeySent,
-                            "Key Receving can only be raised after reaching the Established state");
+                            "Key Receiving can only be raised after reaching the Established state");
 
                         if (_state == RemoteSessionState.EstablishedAndKeySent)
                         {
@@ -255,12 +263,13 @@ namespace System.Management.Automation.Remoting
 
                             if (_pendingDisconnect)
                             {
-                                //session key exchange is complete, if there is a disconnect pending, process it now
+                                // session key exchange is complete, if there is a disconnect pending, process it now
                                 _pendingDisconnect = false;
                                 DoDisconnect(sender, eventArgs);
                             }
                         }
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeySent:
@@ -279,6 +288,7 @@ namespace System.Management.Automation.Remoting
                             _keyExchangeTimer = new Timer(HandleKeyExchangeTimeout, null, BaseTransportManager.ClientDefaultOperationTimeoutMs, Timeout.Infinite);
                         }
                     }
+
                     break;
                 case RemoteSessionEvent.DisconnectCompleted:
                     {
@@ -290,6 +300,7 @@ namespace System.Management.Automation.Remoting
                             SetState(RemoteSessionState.Disconnected, eventArgs.Reason);
                         }
                     }
+
                     break;
                 case RemoteSessionEvent.DisconnectFailed:
                     {
@@ -298,9 +309,10 @@ namespace System.Management.Automation.Remoting
 
                         if (_state == RemoteSessionState.Disconnecting)
                         {
-                            SetState(RemoteSessionState.Disconnected, eventArgs.Reason); //set state to disconnected even TODO. Put some ETW event describing the disconnect process failure
+                            SetState(RemoteSessionState.Disconnected, eventArgs.Reason); // set state to disconnected even TODO. Put some ETW event describing the disconnect process failure
                         }
                     }
+
                     break;
                 case RemoteSessionEvent.ReconnectCompleted:
                     {
@@ -312,14 +324,15 @@ namespace System.Management.Automation.Remoting
                             SetState(RemoteSessionState.Established, eventArgs.Reason);
                         }
                     }
+
                     break;
-            } // switch...
+            }
         }
 
         /// <summary>
-        /// Handles the timeout for key exchange
+        /// Handles the timeout for key exchange.
         /// </summary>
-        /// <param name="sender">sender of this event</param>
+        /// <param name="sender">Sender of this event.</param>
         private void HandleKeyExchangeTimeout(object sender)
         {
             Dbg.Assert(_state == RemoteSessionState.EstablishedAndKeySent, "timeout should only happen when waiting for a key");
@@ -334,16 +347,16 @@ namespace System.Management.Automation.Remoting
                 new PSRemotingDataStructureException(RemotingErrorIdStrings.ClientKeyExchangeFailed);
 
             RaiseEvent(new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.KeyReceiveFailed, exception));
-        } // SetStateHandler
+        }
 
         /// <summary>
-        /// Handler to be used in cases, where raising an event to 
+        /// Handler to be used in cases, where raising an event to
         /// the state needs to be performed. This method also
         /// asserts if the specified event is valid for
-        /// the current state of the state machine
+        /// the current state of the state machine.
         /// </summary>
-        /// <param name="sender">sender of this event</param>
-        /// <param name="eventArgs">event args</param>
+        /// <param name="sender">Sender of this event.</param>
+        /// <param name="eventArgs">Event args.</param>
         private void SetStateToClosedHandler(object sender, RemoteSessionStateMachineEventArgs eventArgs)
         {
             Dbg.Assert(_state == RemoteSessionState.NegotiationReceived &&
@@ -370,17 +383,17 @@ namespace System.Management.Automation.Remoting
             // raise an event to close the state machine
             RaiseEvent(new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close,
                             eventArgs.Reason));
-        } //SetStateToClosedHandler
+        }
 
         #region constructor
         /// <summary>
-        /// Creates an instance of ClientRemoteSessionDSHandlerStateMachine
+        /// Creates an instance of ClientRemoteSessionDSHandlerStateMachine.
         /// </summary>
         internal ClientRemoteSessionDSHandlerStateMachine()
         {
             _clientRemoteSessionStateChangeQueue = new Queue<RemoteSessionStateEventArgs>();
 
-            //Initialize the state machine event handling matrix
+            // Initialize the state machine event handling matrix
             _stateMachineHandle = new EventHandler<RemoteSessionStateMachineEventArgs>[(int)RemoteSessionState.MaxState, (int)RemoteSessionEvent.MaxEvent];
             for (int i = 0; i < _stateMachineHandle.GetLength(0); i++)
             {
@@ -419,7 +432,7 @@ namespace System.Management.Automation.Remoting
 
             _stateMachineHandle[(int)RemoteSessionState.Established, (int)RemoteSessionEvent.DisconnectStart] += DoDisconnect;
             _stateMachineHandle[(int)RemoteSessionState.Disconnecting, (int)RemoteSessionEvent.DisconnectCompleted] += SetStateHandler;
-            _stateMachineHandle[(int)RemoteSessionState.Disconnecting, (int)RemoteSessionEvent.DisconnectFailed] += SetStateHandler; //dont close
+            _stateMachineHandle[(int)RemoteSessionState.Disconnecting, (int)RemoteSessionEvent.DisconnectFailed] += SetStateHandler; // dont close
             _stateMachineHandle[(int)RemoteSessionState.Disconnected, (int)RemoteSessionEvent.ReconnectStart] += DoReconnect;
             _stateMachineHandle[(int)RemoteSessionState.Reconnecting, (int)RemoteSessionEvent.ReconnectCompleted] += SetStateHandler;
             _stateMachineHandle[(int)RemoteSessionState.Reconnecting, (int)RemoteSessionEvent.ReconnectFailed] += SetStateToClosedHandler;
@@ -429,7 +442,7 @@ namespace System.Management.Automation.Remoting
             _stateMachineHandle[(int)RemoteSessionState.Established, (int)RemoteSessionEvent.RCDisconnectStarted] += DoRCDisconnectStarted;
             _stateMachineHandle[(int)RemoteSessionState.RCDisconnecting, (int)RemoteSessionEvent.DisconnectCompleted] += SetStateHandler;
 
-            //Disconnect during key exchange process
+            // Disconnect during key exchange process
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeySent, (int)RemoteSessionEvent.DisconnectStart] += DoDisconnectDuringKeyExchange;
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyRequested, (int)RemoteSessionEvent.DisconnectStart] += DoDisconnectDuringKeyExchange;
 
@@ -441,8 +454,7 @@ namespace System.Management.Automation.Remoting
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeySent, (int)RemoteSessionEvent.KeyReceiveFailed] += SetStateToClosedHandler; //
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyRequested, (int)RemoteSessionEvent.KeySendFailed] += SetStateToClosedHandler;
 
-
-            //TODO: All these are potential unexpected state transitions.. should have a way to track these calls.. 
+            // TODO: All these are potential unexpected state transitions.. should have a way to track these calls..
             // should atleast put a dbg assert in this handler
             for (int i = 0; i < _stateMachineHandle.GetLength(0); i++)
             {
@@ -478,7 +490,7 @@ namespace System.Management.Automation.Remoting
                     _state == RemoteSessionState.EstablishedAndKeyReceived ||   // TODO - Client session would never get into this state... to be removed
                     _state == RemoteSessionState.EstablishedAndKeySent ||
                     _state == RemoteSessionState.Disconnecting ||               // There can be input data until disconnect has been completed
-                    _state == RemoteSessionState.Disconnected)                  // Data can arrive while state machine is transitioning to disconnected, in a race.
+                    _state == RemoteSessionState.Disconnected)                  // Data can arrive while state machine is transitioning to disconnected
                 {
                     return true;
                 }
@@ -498,7 +510,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="clearQueuedEvents">
         /// optional bool indicating whether to clear currently queued events
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter is null.
         /// </exception>
@@ -506,11 +517,12 @@ namespace System.Management.Automation.Remoting
         {
             lock (_syncObject)
             {
-                s_trace.WriteLine("Event recieved : {0} for {1}", arg.StateEvent, _id);
+                s_trace.WriteLine("Event received : {0} for {1}", arg.StateEvent, _id);
                 if (clearQueuedEvents)
                 {
                     _processPendingEventsQueue.Clear();
                 }
+
                 _processPendingEventsQueue.Enqueue(arg);
 
                 if (!_eventsInProcess)
@@ -527,7 +539,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This is the private version of raising a FSM event. 
+        /// This is the private version of raising a FSM event.
         /// It can only be called by the dedicated thread that processes the event queue.
         /// It calls the event handler
         /// in the right position of the event handling matrix.
@@ -535,7 +547,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// The parameter contains the actual FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter is null.
         /// </exception>
@@ -543,7 +554,7 @@ namespace System.Management.Automation.Remoting
         {
             if (arg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("arg");
+                throw PSTraceSource.NewArgumentNullException(nameof(arg));
             }
 
             EventHandler<RemoteSessionStateMachineEventArgs> handler = _stateMachineHandle[(int)State, (int)arg.StateEvent];
@@ -577,7 +588,7 @@ namespace System.Management.Automation.Remoting
         #region Event Handlers
 
         /// <summary>
-        /// This is the handler for CreateSession event of the FSM. This is the begining of everything
+        /// This is the handler for CreateSession event of the FSM. This is the beginning of everything
         /// else. From this moment on, the FSM will proceeds step by step to eventually reach
         /// Established state or Closed state.
         /// </summary>
@@ -585,7 +596,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="PSArgumentNullException">
         /// If the parameter <paramref name="arg"/> is null.
         /// </exception>
@@ -610,9 +620,8 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-
         /// <summary>
-        /// This is the handler for ConnectSession event of the FSM. This is the begining of everything
+        /// This is the handler for ConnectSession event of the FSM. This is the beginning of everything
         /// else. From this moment on, the FSM will proceeds step by step to eventually reach
         /// Established state or Closed state.
         /// </summary>
@@ -620,7 +629,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="PSArgumentNullException">
         /// If the parameter <paramref name="arg"/> is null.
         /// </exception>
@@ -633,8 +641,8 @@ namespace System.Management.Automation.Remoting
 
                 if (State == RemoteSessionState.Idle)
                 {
-                    //We need to send negotiotion and connect algorithm related info 
-                    //Change state to let other DSHandlers add appropriate messages to be piggybacked on transport's Create payload
+                    // We need to send negotiation and connect algorithm related info
+                    // Change state to let other DSHandlers add appropriate messages to be piggybacked on transport's Create payload
                     RemoteSessionStateMachineEventArgs sendingArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSendingOnConnect);
                     RaiseEvent(sendingArg);
                 }
@@ -642,7 +650,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This is the handler for NegotiationSending event. 
+        /// This is the handler for NegotiationSending event.
         /// It sets the new state to be NegotiationSending and
         /// calls data structure handler to send the negotiation packet.
         /// </summary>
@@ -650,7 +658,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="arg"/> is null.
         /// </exception>
@@ -672,7 +679,7 @@ namespace System.Management.Automation.Remoting
 
         private void DoDisconnectDuringKeyExchange(object sender, RemoteSessionStateMachineEventArgs arg)
         {
-            //set flag to indicate Disconnect request queue up
+            // set flag to indicate Disconnect request queue up
             _pendingDisconnect = true;
         }
 
@@ -696,13 +703,12 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This is the handler for Close event. 
+        /// This is the handler for Close event.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="arg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="arg"/> is null.
         /// </exception>
@@ -725,7 +731,7 @@ namespace System.Management.Automation.Remoting
                     case RemoteSessionState.Connecting:
                     case RemoteSessionState.Connected:
                     case RemoteSessionState.Established:
-                    case RemoteSessionState.EstablishedAndKeyReceived:  //TODO - Client session would never get into this state... to be removed
+                    case RemoteSessionState.EstablishedAndKeyReceived:  // TODO - Client session would never get into this state... to be removed
                     case RemoteSessionState.EstablishedAndKeySent:
                     case RemoteSessionState.NegotiationReceived:
                     case RemoteSessionState.NegotiationSent:
@@ -752,10 +758,10 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Handles a fatal error message. Throws a well defined error message,
         /// which contains the reason for the fatal error as an inner exception.
-        /// This way the internal details are not surfaced to the user
+        /// This way the internal details are not surfaced to the user.
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
-        /// <param name="eventArgs">arguments describing this event</param>
+        /// <param name="sender">Sender of this event, unused.</param>
+        /// <param name="eventArgs">Arguments describing this event.</param>
         private void DoFatal(object sender, RemoteSessionStateMachineEventArgs eventArgs)
         {
             PSRemotingDataStructureException fatalError =
@@ -774,11 +780,11 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Sets the state of the state machine. Since only 
+        /// Sets the state of the state machine. Since only
         /// one thread can be manipulating the state at a time
-        /// the state is not synchronized
+        /// the state is not synchronized.
         /// </summary>
-        /// <param name="newState">new state of the state machine</param>
+        /// <param name="newState">New state of the state machine.</param>
         /// <param name="reason">reason why the state machine is set
         /// to the new state</param>
         private void SetState(RemoteSessionState newState, Exception reason)

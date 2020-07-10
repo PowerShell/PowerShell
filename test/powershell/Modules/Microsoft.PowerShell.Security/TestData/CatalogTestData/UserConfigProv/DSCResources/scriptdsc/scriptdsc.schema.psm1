@@ -1,7 +1,8 @@
-
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 
 configuration  scriptdsc
-{ 
+{
     param ($one, $two, $three)
 
     Import-DscResource -ModuleName UserConfigProv

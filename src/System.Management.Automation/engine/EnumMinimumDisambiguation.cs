@@ -1,9 +1,9 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Text;
+
 using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
@@ -21,7 +21,7 @@ namespace System.Management.Automation
         static EnumMinimumDisambiguation()
         {
             // Add special minimum disambiguation cases here for certain enum types.
-            // The current implementation assumes that special names in each type can be 
+            // The current implementation assumes that special names in each type can be
             // differentiated by their first letter.
             s_specialDisambiguateCases.Add(
                 typeof(System.IO.FileAttributes),
@@ -31,9 +31,9 @@ namespace System.Management.Automation
         #endregion
 
         /// <summary>
-        /// Perform disambiguation on enum names
+        /// Perform disambiguation on enum names.
         /// </summary>
-        /// <returns>complete enum name after disambiguation</returns>
+        /// <returns>Complete enum name after disambiguation.</returns>
         internal static string EnumDisambiguate(string text, Type enumType)
         {
             // Get all enum names in the given enum type
@@ -49,7 +49,7 @@ namespace System.Management.Automation
                 }
             }
 
-            // Throw error when no match is found. 
+            // Throw error when no match is found.
             if (namesWithMatchingPrefix.Count == 0)
             {
                 throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
@@ -81,9 +81,9 @@ namespace System.Management.Automation
                         {
                             return tName;
                         }
-                    }//foreach
-                }//if
-                // No special cases match, throw error for multiple matches. 
+                    }
+                }
+                // No special cases match, throw error for multiple matches.
                 StringBuilder matchListSB = new StringBuilder(namesWithMatchingPrefix[0]);
                 string separator = ", ";
                 for (int i = 1; i < namesWithMatchingPrefix.Count; i++)
@@ -91,6 +91,7 @@ namespace System.Management.Automation
                     matchListSB.Append(separator);
                     matchListSB.Append(namesWithMatchingPrefix[i]);
                 }
+
                 throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                     null, "MultipleEnumNameMatch", EnumExpressionEvaluatorStrings.MultipleEnumNameMatch,
                     text, matchListSB.ToString());
@@ -98,7 +99,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Produces a string that contains all the enumerator names in an enum type. 
+        /// Produces a string that contains all the enumerator names in an enum type.
         /// </summary>
         /// <param name="enumType"></param>
         /// <returns></returns>
@@ -114,8 +115,10 @@ namespace System.Management.Automation
                     returnValue.Append(names[i]);
                     returnValue.Append(separator);
                 }
+
                 returnValue.Remove(returnValue.Length - separator.Length, separator.Length);
             }
+
             return returnValue.ToString();
         }
 

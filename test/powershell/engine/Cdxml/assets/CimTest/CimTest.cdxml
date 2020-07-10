@@ -1,0 +1,128 @@
+<PowerShellMetadata xmlns="http://schemas.microsoft.com/cmdlets-over-objects/2009/11">
+  <Class ClassName="ROOT/default/PSCore_Test1">
+    <Version>1.0.0.0</Version>
+    <DefaultNoun>CimTest</DefaultNoun>
+    <InstanceCmdlets>
+      <!--
+
+      //
+      // Get-CimTest
+      //
+
+      -->
+      <GetCmdletParameters DefaultCmdletParameterSet="Id">
+        <QueryableProperties>
+          <Property PropertyName="Id">
+            <Type PSType="System.String" />
+            <RegularQuery>
+              <CmdletParameterMetadata ValueFromPipelineByPropertyName="true" CmdletParameterSets="Id" />
+            </RegularQuery>
+          </Property>
+          <Property PropertyName="DateTime">
+            <Type PSType="System.DateTime" />
+            <RegularQuery>
+              <CmdletParameterMetadata PSName="DateTime" ValueFromPipelineByPropertyName="false" CmdletParameterSets="DateTime" />
+            </RegularQuery>
+          </Property>
+        </QueryableProperties>
+      </GetCmdletParameters>
+
+      <Cmdlet>
+        <CmdletMetadata Verb="Remove" ConfirmImpact="Medium" />
+        <Method MethodName="cim:DeleteInstance">
+          <Parameters>
+            <Parameter ParameterName="cim:operationOption:SourceCaller" DefaultValue="Microsoft.PowerShell">
+              <Type PSType="System.String" />
+            </Parameter>
+          </Parameters>
+        </Method>
+        <GetCmdletParameters DefaultCmdletParameterSet="Id">
+          <QueryableProperties>
+            <Property PropertyName="Id">
+              <Type PSType="System.String" />
+              <RegularQuery>
+                <CmdletParameterMetadata Position="0" IsMandatory="true" ValueFromPipelineByPropertyName="true" CmdletParameterSets="Id" />
+              </RegularQuery>
+            </Property>
+          </QueryableProperties>
+        </GetCmdletParameters>
+      </Cmdlet>
+
+    <!-- Set-CimTest -->
+      <Cmdlet>
+        <CmdletMetadata Verb="Set" ConfirmImpact="Medium" Aliases="scimt"/>
+        <Method MethodName="cim:ModifyInstance">
+          <Parameters>
+            <Parameter ParameterName="field1">
+              <Type PSType="string" />
+              <CmdletParameterMetadata ValueFromPipelineByPropertyName="true">
+                <AllowEmptyString />
+                <ValidateNotNull />
+              </CmdletParameterMetadata>
+            </Parameter>
+            <Parameter ParameterName="field2">
+              <Type PSType="Uint32" />
+              <CmdletParameterMetadata ValueFromPipelineByPropertyName="true">
+                <ValidateNotNull />
+                <ValidateNotNullOrEmpty />
+              </CmdletParameterMetadata>
+            </Parameter>
+          </Parameters>
+        </Method>
+        <GetCmdletParameters>
+          <QueryableProperties>   
+            <Property PropertyName="Id">
+              <Type PSType="string" />
+              <RegularQuery AllowGlobbing="false">
+                <CmdletParameterMetadata IsMandatory="true" Position="1" ValueFromPipelineByPropertyName="true" CmdletParameterSets="Query">
+                  <ValidateNotNull />
+                  <ValidateNotNullOrEmpty />
+                </CmdletParameterMetadata>
+              </RegularQuery>
+            </Property>
+          </QueryableProperties>
+        </GetCmdletParameters>
+      </Cmdlet>
+
+    </InstanceCmdlets>
+    <StaticCmdlets>
+      <Cmdlet>
+        <CmdletMetadata Verb="New" ConfirmImpact="Medium" />
+        <Method MethodName="cim:CreateInstance">
+
+          <Parameters>
+            <Parameter ParameterName="Id">
+              <Type PSType="string" />
+              <CmdletParameterMetadata PSName="Id" />
+            </Parameter>
+
+            <Parameter ParameterName="field1">
+              <Type PSType="string" />
+              <CmdletParameterMetadata PSName="field1" />
+            </Parameter>
+
+            <Parameter ParameterName="field2">
+              <Type PSType="int32" />
+              <CmdletParameterMetadata PSName="field2" />
+            </Parameter>
+
+          </Parameters>
+        </Method>
+      </Cmdlet>
+    </StaticCmdlets>
+  <CmdletAdapterPrivateData>
+    <Data Name="ClientSideShouldProcess" />
+  </CmdletAdapterPrivateData>
+  </Class>
+  <Enums>
+    <Enum EnumName="CimTest.field2enum" UnderlyingType="System.Int32">
+      <Value Name="Default" Value="0" />
+      <Value Name="Value1"  Value="1" />
+      <Value Name="Value2"  Value="2" />
+      <Value Name="Value3"  Value="3" />
+      <Value Name="Value4"  Value="4" />
+      <Value Name="Value5"  Value="5" />
+      <Value Name="Value6"  Value="6" />
+    </Enum>
+  </Enums>
+</PowerShellMetadata>

@@ -1,8 +1,8 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 /*
- * The registry wrapper provides a common interface to both the transacted 
+ * The registry wrapper provides a common interface to both the transacted
  * and non-transacted registry APIs.  It is used exclusively by the registry provider
  * to perform registry operations.  In most cases, the wrapper simply forwards the
  * call to the appropriate registry API.
@@ -14,7 +14,6 @@ using Microsoft.Win32;
 using System.Security.AccessControl;
 using System.Management.Automation.Provider;
 using Microsoft.PowerShell.Commands.Internal;
-
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -31,11 +30,15 @@ namespace Microsoft.PowerShell.Commands
         object GetValue(string name);
         object GetValue(string name, object defaultValue, RegistryValueOptions options);
         RegistryValueKind GetValueKind(string name);
+
         object RegistryKey { get; }
+
         void SetAccessControl(ObjectSecurity securityDescriptor);
         ObjectSecurity GetAccessControl(AccessControlSections includeSections);
         void Close();
+
         string Name { get; }
+
         int SubKeyCount { get; }
     }
 

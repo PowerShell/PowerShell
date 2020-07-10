@@ -13,13 +13,13 @@ CompatiblePSEditions = @('Core')
 GUID = '508bb97f-de2e-482e-aae2-01caec0be8c7'
 
 # Author of this module
-Author = 'Microsoft'
+Author = 'PowerShell'
 
 # Company or vendor of this module
-CompanyName = 'Unknown'
+CompanyName = 'Microsoft Corporation'
 
 # Copyright statement for this module
-Copyright = '(c) 2016 Microsoft. All rights reserved.'
+Copyright = 'Copyright (c) Microsoft Corporation.'
 
 # Description of the functionality provided by this module
 Description = 'Sample module for managing CronTab'

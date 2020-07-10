@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.ObjectModel;
@@ -8,12 +7,12 @@ using System.Collections.ObjectModel;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// FormObjectColletion used in HtmlWebResponseObject
+    /// FormObjectCollection used in HtmlWebResponseObject.
     /// </summary>
     public class FormObjectCollection : Collection<FormObject>
     {
         /// <summary>
-        /// Gets the FormObject from the key
+        /// Gets the FormObject from the key.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -30,6 +29,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
                 }
+
                 return (form);
             }
         }

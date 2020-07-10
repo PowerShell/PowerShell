@@ -1,14 +1,15 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Options;
 using Microsoft.PowerShell.Cim;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
@@ -105,6 +106,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     result = MergeOptions(result, instanceRelatedToThisOperation);
                 }
             }
+
             return result;
         }
 
@@ -115,7 +117,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     }
 
     /// <summary>
-    /// CimQuery supports building of queries against CIM object model
+    /// CimQuery supports building of queries against CIM object model.
     /// </summary>
     internal static class CimOperationOptionsHelper
     {

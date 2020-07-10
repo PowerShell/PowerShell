@@ -1,27 +1,27 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
+using System.Collections.Generic;
+using System.Management.Automation;
+
+using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Management.Automation;
-    using Microsoft.PowerShell.Commands.Internal.Format;
-
     internal class ExpressionColumnInfo : ColumnInfo
     {
-        private MshExpression _expression;
+        private PSPropertyExpression _expression;
 
-        internal ExpressionColumnInfo(string staleObjectPropertyName, string displayName, MshExpression expression)
+        internal ExpressionColumnInfo(string staleObjectPropertyName, string displayName, PSPropertyExpression expression)
             : base(staleObjectPropertyName, displayName)
         {
             _expression = expression;
         }
 
-        internal override Object GetValue(PSObject liveObject)
+        internal override object GetValue(PSObject liveObject)
         {
-            List<MshExpressionResult> resList = _expression.GetValues(liveObject);
+            List<PSPropertyExpressionResult> resList = _expression.GetValues(liveObject);
 
             if (resList.Count == 0)
             {
@@ -29,14 +29,14 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Only first element is used.
-            MshExpressionResult result = resList[0];
+            PSPropertyExpressionResult result = resList[0];
             if (result.Exception != null)
             {
                 return null;
             }
 
             object objectResult = result.Result;
-            return objectResult == null ? String.Empty : ColumnInfo.LimitString(objectResult.ToString());
+            return objectResult == null ? string.Empty : ColumnInfo.LimitString(objectResult.ToString());
         }
     }
 }

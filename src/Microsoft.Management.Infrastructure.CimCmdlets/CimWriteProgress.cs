@@ -1,7 +1,5 @@
-/*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
- *============================================================================
- */
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #region Using directives
 
@@ -20,7 +18,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimWriteProgress : CimBaseAction
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="activity">
         ///  Activity identifier of the given activity
@@ -48,14 +46,15 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.activity = theActivity;
             this.activityID = theActivityID;
             this.currentOperation = theCurrentOperation;
-            if (String.IsNullOrEmpty(theStatusDescription))
+            if (string.IsNullOrEmpty(theStatusDescription))
             {
-                this.statusDescription = Strings.DefaultStatusDescription;
+                this.statusDescription = CimCmdletStrings.DefaultStatusDescription;
             }
             else
             {
                 this.statusDescription = theStatusDescription;
             }
+
             this.percentageCompleted = thePercentageCompleted;
             this.secondsRemaining = theSecondsRemaining;
         }
@@ -91,32 +90,32 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region members
 
         /// <summary>
-        /// Activity of the given activity
+        /// Activity of the given activity.
         /// </summary>
         private string activity;
 
         /// <summary>
-        /// Activity identifier of the given activity
+        /// Activity identifier of the given activity.
         /// </summary>
         private int activityID;
 
         /// <summary>
-        /// current operation text of the given activity
+        /// Current operation text of the given activity.
         /// </summary>
         private string currentOperation;
 
         /// <summary>
-        /// status description of the given activity
+        /// Status description of the given activity.
         /// </summary>
         private string statusDescription;
 
         /// <summary>
-        /// percentage completed of the given activity
+        /// Percentage completed of the given activity.
         /// </summary>
         private UInt32 percentageCompleted;
 
         /// <summary>
-        /// how many seconds remained for the given activity
+        /// How many seconds remained for the given activity.
         /// </summary>
         private UInt32 secondsRemaining;
 
@@ -151,5 +150,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

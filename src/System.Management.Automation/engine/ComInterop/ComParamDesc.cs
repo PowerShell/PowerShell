@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #if !SILVERLIGHT // ComObject
 
@@ -12,36 +11,36 @@ using VarEnum = System.Runtime.InteropServices.VarEnum;
 namespace System.Management.Automation.ComInterop
 {
     /// <summary>
-    /// The parameter description of a method defined in a type library
+    /// The parameter description of a method defined in a type library.
     /// </summary>
     internal class ComParamDesc
     {
-        # region private fields
+        #region private fields
 
         private readonly VarEnum _vt;
         private readonly string _name;
 
-        # endregion
+        #endregion
 
-        # region ctor
+        #region ctor
 
         /// <summary>
-        /// Creates a representation for the paramter of a COM method
+        /// Creates a representation for the parameter of a COM method.
         /// </summary>
         internal ComParamDesc(ref ELEMDESC elemDesc, string name)
         {
-            // Ensure _defaultValue is set to DBNull.Value regardless of whether or not the 
+            // Ensure _defaultValue is set to DBNull.Value regardless of whether or not the
             // default value is extracted from the parameter description.  Failure to do so
             // yields a runtime exception in the ToString() function.
             DefaultValue = DBNull.Value;
 
-            if (!String.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(name))
             {
                 // This is a parameter, not a return value
                 IsOut = (elemDesc.desc.paramdesc.wParamFlags & PARAMFLAG.PARAMFLAG_FOUT) != 0;
                 IsOptional = (elemDesc.desc.paramdesc.wParamFlags & PARAMFLAG.PARAMFLAG_FOPT) != 0;
                 // TODO: The PARAMDESCEX struct has a memory issue that needs to be resolved.  For now, we ignore it.
-                //_defaultValue = PARAMDESCEX.GetDefaultValue(ref elemDesc.desc.paramdesc);
+                // _defaultValue = PARAMDESCEX.GetDefaultValue(ref elemDesc.desc.paramdesc);
             }
 
             _name = name;
@@ -79,10 +78,10 @@ namespace System.Management.Automation.ComInterop
 
         /// <summary>
         /// Creates a representation for the return value of a COM method
-        /// TODO: Return values should be represented by a different type
+        /// TODO: Return values should be represented by a different type.
         /// </summary>
         internal ComParamDesc(ref ELEMDESC elemDesc)
-            : this(ref elemDesc, String.Empty)
+            : this(ref elemDesc, string.Empty)
         {
         }
 
@@ -123,9 +122,9 @@ namespace System.Management.Automation.ComInterop
             return result.ToString();
         }
 
-        # endregion
+        #endregion
 
-        # region properties
+        #region properties
 
         public bool IsOut { get; }
 
@@ -138,11 +137,11 @@ namespace System.Management.Automation.ComInterop
         public Type ParameterType { get; }
 
         /// <summary>
-        /// DBNull.Value if there is no default value
+        /// DBNull.Value if there is no default value.
         /// </summary>
         internal object DefaultValue { get; }
 
-        # endregion
+        #endregion
     }
 }
 

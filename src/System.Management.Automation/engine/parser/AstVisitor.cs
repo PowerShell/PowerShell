@@ -1,17 +1,14 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 using System.Reflection.Emit;
 
 namespace System.Management.Automation.Language
 {
     /// <summary>
-    /// 
     /// </summary>
     public interface ICustomAstVisitor
     {
@@ -153,6 +150,8 @@ namespace System.Management.Automation.Language
     /// <summary/>
     public interface ICustomAstVisitor2 : ICustomAstVisitor
     {
+        private object DefaultVisit(Ast ast) => null;
+
         /// <summary/>
         object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst);
 
@@ -173,10 +172,16 @@ namespace System.Management.Automation.Language
 
         /// <summary/>
         object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst);
+
+        /// <summary/>
+        object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) => DefaultVisit(ternaryExpressionAst);
+
+        /// <summary/>
+        object VisitPipelineChain(PipelineChainAst statementChainAst) => DefaultVisit(statementChainAst);
     }
 
 #if DEBUG
-    class CheckAllParentsSet : AstVisitor2
+    internal class CheckAllParentsSet : AstVisitor2
     {
         internal CheckAllParentsSet(Ast root)
         {
@@ -191,89 +196,155 @@ namespace System.Management.Automation.Language
             {
                 Diagnostics.Assert(ast.Parent != null, "Parent not set");
             }
+
             return AstVisitAction.Continue;
         }
+
         public override AstVisitAction VisitErrorStatement(ErrorStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitErrorExpression(ErrorExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitScriptBlock(ScriptBlockAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitParamBlock(ParamBlockAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitNamedBlock(NamedBlockAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitTypeConstraint(TypeConstraintAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitAttribute(AttributeAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitParameter(ParameterAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitTypeExpression(TypeExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitFunctionDefinition(FunctionDefinitionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitStatementBlock(StatementBlockAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitIfStatement(IfStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitTrap(TrapStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitSwitchStatement(SwitchStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitDataStatement(DataStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitForEachStatement(ForEachStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitDoWhileStatement(DoWhileStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitForStatement(ForStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitWhileStatement(WhileStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitCatchClause(CatchClauseAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitTryStatement(TryStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitBreakStatement(BreakStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitContinueStatement(ContinueStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitReturnStatement(ReturnStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitExitStatement(ExitStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitThrowStatement(ThrowStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitDoUntilStatement(DoUntilStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitAssignmentStatement(AssignmentStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitPipeline(PipelineAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitCommand(CommandAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitCommandExpression(CommandExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitCommandParameter(CommandParameterAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitMergingRedirection(MergingRedirectionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitFileRedirection(FileRedirectionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitBinaryExpression(BinaryExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitUnaryExpression(UnaryExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitConvertExpression(ConvertExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitConstantExpression(ConstantExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitStringConstantExpression(StringConstantExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitSubExpression(SubExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitUsingExpression(UsingExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitVariableExpression(VariableExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitMemberExpression(MemberExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitInvokeMemberExpression(InvokeMemberExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitArrayExpression(ArrayExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitArrayLiteral(ArrayLiteralAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitHashtable(HashtableAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitParenExpression(ParenExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitExpandableStringExpression(ExpandableStringExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitIndexExpression(IndexExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitAttributedExpression(AttributedExpressionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitBlockStatement(BlockStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitNamedAttributeArgument(NamedAttributeArgumentAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitTypeDefinition(TypeDefinitionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitFunctionMember(FunctionMemberAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitPropertyMember(PropertyMemberAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitUsingStatement(UsingStatementAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitConfigurationDefinition(ConfigurationDefinitionAst ast) { return CheckParent(ast); }
+
         public override AstVisitAction VisitDynamicKeywordStatement(DynamicKeywordStatementAst ast) { return CheckParent(ast); }
+
+        public override AstVisitAction VisitTernaryExpression(TernaryExpressionAst ast) => CheckParent(ast);
+
+        public override AstVisitAction VisitPipelineChain(PipelineChainAst ast) => CheckParent(ast);
     }
 
     /// <summary>
-    /// Check if <see cref="TypeConstraintAst"/> contains <see cref="TypeBuilder "/> type
+    /// Check if <see cref="TypeConstraintAst"/> contains <see cref="TypeBuilder "/> type.
     /// </summary>
-    class CheckTypeBuilder : AstVisitor2
+    internal class CheckTypeBuilder : AstVisitor2
     {
         public override AstVisitAction VisitTypeConstraint(TypeConstraintAst ast)
         {
             Type type = ast.TypeName.GetReflectionType();
             if (type != null)
             {
-                Diagnostics.Assert(!(type.GetTypeInfo() is TypeBuilder), "ReflectionType can never be TypeBuilder");
+                Diagnostics.Assert(!(type is TypeBuilder), "ReflectionType can never be TypeBuilder");
             }
+
             return AstVisitAction.Continue;
         }
     }
 #endif
 
     /// <summary>
-    /// Searches an AST, using the evaluation function provided by either of the constructors
+    /// Searches an AST, using the evaluation function provided by either of the constructors.
     /// </summary>
     internal class AstSearcher : AstVisitor2
     {
@@ -303,7 +374,7 @@ namespace System.Management.Automation.Language
 
             var searcher = new AstSearcher(predicate, stopOnFirst: true, searchNestedScriptBlocks: searchNestedScriptBlocks);
             ast.InternalVisit(searcher);
-            return searcher.Results.FirstOrDefault() != null;
+            return searcher.Results.Any();
         }
 
         internal static bool IsUsingDollarInput(Ast ast)
@@ -319,6 +390,7 @@ namespace System.Management.Automation.Language
                                varAst.VariablePath.UnqualifiedPath.Equals(SpecialVariables.Input,
                                                                           StringComparison.OrdinalIgnoreCase);
                     }
+
                     return false;
                 },
                 searchNestedScriptBlocks: false));
@@ -349,6 +421,7 @@ namespace System.Management.Automation.Language
                     return AstVisitAction.StopVisit;
                 }
             }
+
             return AstVisitAction.Continue;
         }
 
@@ -359,73 +432,137 @@ namespace System.Management.Automation.Language
             {
                 action = AstVisitAction.SkipChildren;
             }
+
             return action;
         }
 
         public override AstVisitAction VisitErrorStatement(ErrorStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitErrorExpression(ErrorExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitScriptBlock(ScriptBlockAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitParamBlock(ParamBlockAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitNamedBlock(NamedBlockAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitTypeConstraint(TypeConstraintAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitAttribute(AttributeAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitParameter(ParameterAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitTypeExpression(TypeExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitFunctionDefinition(FunctionDefinitionAst ast) { return CheckScriptBlock(ast); }
+
         public override AstVisitAction VisitStatementBlock(StatementBlockAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitIfStatement(IfStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitTrap(TrapStatementAst ast) { return CheckScriptBlock(ast); }
+
         public override AstVisitAction VisitSwitchStatement(SwitchStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitDataStatement(DataStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitForEachStatement(ForEachStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitDoWhileStatement(DoWhileStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitForStatement(ForStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitWhileStatement(WhileStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitCatchClause(CatchClauseAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitTryStatement(TryStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitBreakStatement(BreakStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitContinueStatement(ContinueStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitReturnStatement(ReturnStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitExitStatement(ExitStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitThrowStatement(ThrowStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitDoUntilStatement(DoUntilStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitAssignmentStatement(AssignmentStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitPipeline(PipelineAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitCommand(CommandAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitCommandExpression(CommandExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitCommandParameter(CommandParameterAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitMergingRedirection(MergingRedirectionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitFileRedirection(FileRedirectionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitBinaryExpression(BinaryExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitUnaryExpression(UnaryExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitConvertExpression(ConvertExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitConstantExpression(ConstantExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitStringConstantExpression(StringConstantExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitSubExpression(SubExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitUsingExpression(UsingExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitVariableExpression(VariableExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitMemberExpression(MemberExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitInvokeMemberExpression(InvokeMemberExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitArrayExpression(ArrayExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitArrayLiteral(ArrayLiteralAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitHashtable(HashtableAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst ast) { return CheckScriptBlock(ast); }
+
         public override AstVisitAction VisitParenExpression(ParenExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitExpandableStringExpression(ExpandableStringExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitIndexExpression(IndexExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitAttributedExpression(AttributedExpressionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitNamedAttributeArgument(NamedAttributeArgumentAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitTypeDefinition(TypeDefinitionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitPropertyMember(PropertyMemberAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitFunctionMember(FunctionMemberAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitUsingStatement(UsingStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitBlockStatement(BlockStatementAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitConfigurationDefinition(ConfigurationDefinitionAst ast) { return Check(ast); }
+
         public override AstVisitAction VisitDynamicKeywordStatement(DynamicKeywordStatementAst ast) { return Check(ast); }
+
+        public override AstVisitAction VisitTernaryExpression(TernaryExpressionAst ast) { return Check(ast); }
+
+        public override AstVisitAction VisitPipelineChain(PipelineChainAst ast) { return Check(ast); }
     }
 
     /// <summary>
-    /// Default implementation of <see cref="ICustomAstVisitor"/> interface
+    /// Default implementation of <see cref="ICustomAstVisitor"/> interface.
     /// </summary>
     public abstract class DefaultCustomAstVisitor : ICustomAstVisitor
     {
@@ -540,7 +677,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// Default implementation of <see cref="ICustomAstVisitor2"/> interface
+    /// Default implementation of <see cref="ICustomAstVisitor2"/> interface.
     /// </summary>
     public abstract class DefaultCustomAstVisitor2 : DefaultCustomAstVisitor, ICustomAstVisitor2
     {
@@ -558,5 +695,9 @@ namespace System.Management.Automation.Language
         public virtual object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) { return null; }
         /// <summary/>
         public virtual object VisitFunctionMember(FunctionMemberAst functionMemberAst) { return null; }
+        /// <summary/>
+        public virtual object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) { return null; }
+        /// <summary/>
+        public virtual object VisitPipelineChain(PipelineChainAst statementChainAst) { return null; }
     }
 }

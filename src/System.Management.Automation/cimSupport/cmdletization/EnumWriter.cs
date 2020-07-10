@@ -1,13 +1,13 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Globalization;
+using System.Management.Automation;
 using System.Reflection;
 using System.Reflection.Emit;
+
 using Microsoft.PowerShell.Cmdletization.Xml;
-using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Cmdletization
 {
@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Cmdletization
             }
             else
             {
-                underlyingType = typeof(Int32);
+                underlyingType = typeof(int);
             }
 
             ModuleBuilder mb = s_moduleBuilder.Value;
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Cmdletization
 
             if (enumMetadata.BitwiseFlagsSpecified && enumMetadata.BitwiseFlags)
             {
-                var cab = new CustomAttributeBuilder(typeof(FlagsAttribute).GetConstructor(PSTypeExtensions.EmptyTypes), new object[0]);
+                var cab = new CustomAttributeBuilder(typeof(FlagsAttribute).GetConstructor(Type.EmptyTypes), Array.Empty<object>());
                 eb.SetCustomAttribute(cab);
             }
 
@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 eb.DefineLiteral(name, integerValue);
             }
 
-            ClrFacade.CreateEnumType(eb);
+            eb.CreateTypeInfo();
         }
     }
 }

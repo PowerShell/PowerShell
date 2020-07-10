@@ -1,11 +1,11 @@
 /* ****************************************************************************
  *
- * Copyright (c) Microsoft Corporation. 
+ * Copyright (c) Microsoft Corporation.
  *
- * This source code is subject to terms and conditions of the Apache License, Version 2.0. A 
- * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Apache License, Version 2.0, please send an email to 
- * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
+ * This source code is subject to terms and conditions of the Apache License, Version 2.0. A
+ * copy of the license can be found in the License.html file at the root of this distribution. If
+ * you cannot locate the Apache License, Version 2.0, please send an email to
+ * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Apache License, Version 2.0.
  *
  * You must not remove this notice, or any other, from this software.
@@ -20,9 +20,10 @@ namespace System.Management.Automation.Interpreter
     internal abstract class EqualInstruction : Instruction
     {
         // Perf: EqualityComparer<T> but is 3/2 to 2 times slower.
-        private static Instruction s_reference,s_boolean,s_SByte,s_int16,s_char,s_int32,s_int64,s_byte,s_UInt16,s_UInt32,s_UInt64,s_single,s_double;
+        private static Instruction s_reference, s_boolean, s_SByte, s_int16, s_char, s_int32, s_int64, s_byte, s_UInt16, s_UInt32, s_UInt64, s_single, s_double;
 
         public override int ConsumedStack { get { return 2; } }
+
         public override int ProducedStack { get { return 1; } }
 
         private EqualInstruction()
@@ -33,7 +34,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((Boolean)frame.Pop()) == ((Boolean)frame.Pop()));
+                frame.Push(((bool)frame.Pop()) == ((bool)frame.Pop()));
                 return +1;
             }
         }
@@ -42,7 +43,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((SByte)frame.Pop()) == ((SByte)frame.Pop()));
+                frame.Push(((sbyte)frame.Pop()) == ((sbyte)frame.Pop()));
                 return +1;
             }
         }
@@ -60,7 +61,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((Char)frame.Pop()) == ((Char)frame.Pop()));
+                frame.Push(((char)frame.Pop()) == ((char)frame.Pop()));
                 return +1;
             }
         }
@@ -87,7 +88,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((Byte)frame.Pop()) == ((Byte)frame.Pop()));
+                frame.Push(((byte)frame.Pop()) == ((byte)frame.Pop()));
                 return +1;
             }
         }
@@ -132,7 +133,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((Double)frame.Pop()) == ((Double)frame.Pop()));
+                frame.Push(((double)frame.Pop()) == ((double)frame.Pop()));
                 return +1;
             }
         }
@@ -149,9 +150,8 @@ namespace System.Management.Automation.Interpreter
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public static Instruction Create(Type type)
         {
-            var typeInfo = type.GetTypeInfo();
             // Boxed enums can be unboxed as their underlying types:
-            var typeToUse = typeInfo.IsEnum ? Enum.GetUnderlyingType(type) : type;
+            var typeToUse = type.IsEnum ? Enum.GetUnderlyingType(type) : type;
             switch (typeToUse.GetTypeCode())
             {
                 case TypeCode.Boolean: return s_boolean ?? (s_boolean = new EqualBoolean());
@@ -170,7 +170,7 @@ namespace System.Management.Automation.Interpreter
                 case TypeCode.Double: return s_double ?? (s_double = new EqualDouble());
 
                 case TypeCode.Object:
-                    if (!typeInfo.IsValueType)
+                    if (!type.IsValueType)
                     {
                         return s_reference ?? (s_reference = new EqualReference());
                     }

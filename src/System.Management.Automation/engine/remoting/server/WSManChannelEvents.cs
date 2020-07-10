@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation.  All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 namespace System.Management.Automation.Remoting.WSMan
 {
@@ -54,7 +53,7 @@ namespace System.Management.Automation.Remoting.WSMan
     }
 
     /// <summary>
-    /// Holds the event arguments when active sessions count changed
+    /// Holds the event arguments when active sessions count changed.
     /// </summary>
     public sealed class ActiveSessionsChangedEventArgs : EventArgs
     {
@@ -68,7 +67,7 @@ namespace System.Management.Automation.Remoting.WSMan
         }
 
         /// <summary>
-        /// ActiveSessionsCount
+        /// ActiveSessionsCount.
         /// </summary>
         public int ActiveSessionsCount
         {

@@ -1,6 +1,5 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Diagnostics;
@@ -10,12 +9,12 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Base class for Enable/Disable/Remove-PSBreakpoint 
+    /// Base class for Enable/Disable/Remove-PSBreakpoint.
     /// </summary>
     public abstract class PSBreakpointCommandBase : PSCmdlet
     {
         /// <summary>
-        /// the breakpoint to enable
+        /// The breakpoint to enable.
         /// </summary>
         [Parameter(ParameterSetName = "Breakpoint", ValueFromPipeline = true, Position = 0, Mandatory = true)]
         [ValidateNotNull]
@@ -25,15 +24,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _breakpoints;
             }
+
             set
             {
                 _breakpoints = value;
             }
         }
+
         private Breakpoint[] _breakpoints;
 
         /// <summary>
-        /// The Id of the breakpoint to enable
+        /// The Id of the breakpoint to enable.
         /// </summary>
         [Parameter(ParameterSetName = "Id", ValueFromPipelineByPropertyName = true, Position = 0, Mandatory = true)]
         [ValidateNotNull]
@@ -43,6 +44,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _ids;
             }
+
             set
             {
                 _ids = value;
@@ -52,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
         private int[] _ids;
 
         /// <summary>
-        /// Gathers the list of breakpoints to process and calls ProcessBreakpoints
+        /// Gathers the list of breakpoints to process and calls ProcessBreakpoints.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -94,14 +96,14 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process the given breakpoint
+        /// Process the given breakpoint.
         /// </summary>
         protected abstract void ProcessBreakpoint(Breakpoint breakpoint);
 
         private bool ShouldProcessInternal(string target)
         {
             // ShouldProcess should be called only if the WhatIf or Confirm parameters are passed in explicitly.
-            // It should *not* be called if we are in a nested debug prompt and the current running command was 
+            // It should *not* be called if we are in a nested debug prompt and the current running command was
             // run with -WhatIf or -Confirm, because this prevents the user from adding/removing breakpoints inside
             // a debugger stop.
             if (this.MyInvocation.BoundParameters.ContainsKey("WhatIf") || this.MyInvocation.BoundParameters.ContainsKey("Confirm"))
@@ -114,9 +116,9 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// This class implements Enable-PSBreakpoint 
+    /// This class implements Enable-PSBreakpoint.
     /// </summary>
-    [Cmdlet("Enable", "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = "Id", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113295")]
+    [Cmdlet(VerbsLifecycle.Enable, "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = "Id", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096700")]
     [OutputType(typeof(Breakpoint))]
     public class EnablePSBreakpointCommand : PSBreakpointCommandBase
     {
@@ -131,6 +133,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _passThru;
             }
+
             set
             {
                 _passThru = value;
@@ -140,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _passThru;
 
         /// <summary>
-        /// Enables the given breakpoint
+        /// Enables the given breakpoint.
         /// </summary>
         protected override void ProcessBreakpoint(Breakpoint breakpoint)
         {

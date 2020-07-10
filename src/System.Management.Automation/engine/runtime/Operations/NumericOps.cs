@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable RedundantCast
@@ -9,8 +8,8 @@ namespace System.Management.Automation
 {
     internal static class Boxed
     {
-        internal static object True = (object)true;
-        internal static object False = (object)false;
+        internal static readonly object True = (object)true;
+        internal static readonly object False = (object)false;
     }
 
     internal static class IntOps
@@ -22,6 +21,7 @@ namespace System.Management.Automation
             {
                 return (int)result;
             }
+
             return (double)result;
         }
 
@@ -32,6 +32,7 @@ namespace System.Management.Automation
             {
                 return (int)result;
             }
+
             return (double)result;
         }
 
@@ -42,6 +43,7 @@ namespace System.Management.Automation
             {
                 return (int)result;
             }
+
             return (double)result;
         }
 
@@ -93,19 +95,19 @@ namespace System.Management.Automation
         }
 
         internal static object CompareEq(int lhs, int rhs) { return (lhs == rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareNe(int lhs, int rhs) { return (lhs != rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareLt(int lhs, int rhs) { return (lhs < rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareLe(int lhs, int rhs) { return (lhs <= rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareGt(int lhs, int rhs) { return (lhs > rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareGe(int lhs, int rhs) { return (lhs >= rhs) ? Boxed.True : Boxed.False; }
 
         internal static object[] Range(int lower, int upper)
         {
-            if (lower == upper)
-            {
-                return new object[] { lower };
-            }
-
             int absRange = Math.Abs(checked(upper - lower));
 
             object[] ra = new object[absRange + 1];
@@ -135,6 +137,7 @@ namespace System.Management.Automation
             {
                 return (uint)result;
             }
+
             return (double)result;
         }
 
@@ -145,6 +148,7 @@ namespace System.Management.Automation
             {
                 return (uint)result;
             }
+
             return (double)result;
         }
 
@@ -155,6 +159,7 @@ namespace System.Management.Automation
             {
                 return (uint)result;
             }
+
             return (double)result;
         }
 
@@ -193,10 +198,15 @@ namespace System.Management.Automation
         }
 
         internal static object CompareEq(uint lhs, uint rhs) { return (lhs == rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareNe(uint lhs, uint rhs) { return (lhs != rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareLt(uint lhs, uint rhs) { return (lhs < rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareLe(uint lhs, uint rhs) { return (lhs <= rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareGt(uint lhs, uint rhs) { return (lhs > rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareGe(uint lhs, uint rhs) { return (lhs >= rhs) ? Boxed.True : Boxed.False; }
     }
 
@@ -209,6 +219,7 @@ namespace System.Management.Automation
             {
                 return (long)result;
             }
+
             return (double)result;
         }
 
@@ -219,6 +230,7 @@ namespace System.Management.Automation
             {
                 return (long)result;
             }
+
             return (double)result;
         }
 
@@ -232,6 +244,7 @@ namespace System.Management.Automation
             {
                 return (long)biResult;
             }
+
             return (double)biResult;
         }
 
@@ -284,10 +297,15 @@ namespace System.Management.Automation
         }
 
         internal static object CompareEq(long lhs, long rhs) { return (lhs == rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareNe(long lhs, long rhs) { return (lhs != rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareLt(long lhs, long rhs) { return (lhs < rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareLe(long lhs, long rhs) { return (lhs <= rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareGt(long lhs, long rhs) { return (lhs > rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareGe(long lhs, long rhs) { return (lhs >= rhs) ? Boxed.True : Boxed.False; }
     }
 
@@ -300,6 +318,7 @@ namespace System.Management.Automation
             {
                 return (ulong)result;
             }
+
             return (double)result;
         }
 
@@ -310,6 +329,7 @@ namespace System.Management.Automation
             {
                 return (ulong)result;
             }
+
             return (double)result;
         }
 
@@ -323,6 +343,7 @@ namespace System.Management.Automation
             {
                 return (ulong)biResult;
             }
+
             return (double)biResult;
         }
 
@@ -361,10 +382,15 @@ namespace System.Management.Automation
         }
 
         internal static object CompareEq(ulong lhs, ulong rhs) { return (lhs == rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareNe(ulong lhs, ulong rhs) { return (lhs != rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareLt(ulong lhs, ulong rhs) { return (lhs < rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareLe(ulong lhs, ulong rhs) { return (lhs <= rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareGt(ulong lhs, ulong rhs) { return (lhs > rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareGe(ulong lhs, ulong rhs) { return (lhs >= rhs) ? Boxed.True : Boxed.False; }
     }
 
@@ -478,6 +504,7 @@ namespace System.Management.Automation
                     return (long)(l | r);
                 }
             }
+
             return l | r;
         }
 
@@ -494,6 +521,7 @@ namespace System.Management.Automation
                     return (long)(l ^ r);
                 }
             }
+
             return l ^ r;
         }
 
@@ -510,6 +538,7 @@ namespace System.Management.Automation
                     return (long)(l & r);
                 }
             }
+
             return l & r;
         }
 
@@ -523,6 +552,7 @@ namespace System.Management.Automation
                 long lValue = LanguagePrimitives.ConvertTo<long>(val);
                 return unchecked((ulong)lValue);
             }
+
             return LanguagePrimitives.ConvertTo<ulong>(val);
         }
 
@@ -581,10 +611,15 @@ namespace System.Management.Automation
         }
 
         internal static object CompareEq(decimal lhs, decimal rhs) { return (lhs == rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareNe(decimal lhs, decimal rhs) { return (lhs != rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareLt(decimal lhs, decimal rhs) { return (lhs < rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareLe(decimal lhs, decimal rhs) { return (lhs <= rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareGt(decimal lhs, decimal rhs) { return (lhs > rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareGe(decimal lhs, decimal rhs) { return (lhs >= rhs) ? Boxed.True : Boxed.False; }
 
         private static object CompareWithDouble(decimal left, double right,
@@ -622,17 +657,27 @@ namespace System.Management.Automation
         }
 
         internal static object CompareEq1(double lhs, decimal rhs) { return CompareWithDouble(lhs, rhs, DoubleOps.CompareEq, CompareEq); }
+
         internal static object CompareNe1(double lhs, decimal rhs) { return CompareWithDouble(lhs, rhs, DoubleOps.CompareNe, CompareNe); }
+
         internal static object CompareLt1(double lhs, decimal rhs) { return CompareWithDouble(lhs, rhs, DoubleOps.CompareLt, CompareLt); }
+
         internal static object CompareLe1(double lhs, decimal rhs) { return CompareWithDouble(lhs, rhs, DoubleOps.CompareLe, CompareLe); }
+
         internal static object CompareGt1(double lhs, decimal rhs) { return CompareWithDouble(lhs, rhs, DoubleOps.CompareGt, CompareGt); }
+
         internal static object CompareGe1(double lhs, decimal rhs) { return CompareWithDouble(lhs, rhs, DoubleOps.CompareGe, CompareGe); }
 
         internal static object CompareEq2(decimal lhs, double rhs) { return CompareWithDouble(lhs, rhs, DoubleOps.CompareEq, CompareEq); }
+
         internal static object CompareNe2(decimal lhs, double rhs) { return CompareWithDouble(lhs, rhs, DoubleOps.CompareNe, CompareNe); }
+
         internal static object CompareLt2(decimal lhs, double rhs) { return CompareWithDouble(lhs, rhs, DoubleOps.CompareLt, CompareLt); }
+
         internal static object CompareLe2(decimal lhs, double rhs) { return CompareWithDouble(lhs, rhs, DoubleOps.CompareLe, CompareLe); }
+
         internal static object CompareGt2(decimal lhs, double rhs) { return CompareWithDouble(lhs, rhs, DoubleOps.CompareGt, CompareGt); }
+
         internal static object CompareGe2(decimal lhs, double rhs) { return CompareWithDouble(lhs, rhs, DoubleOps.CompareGe, CompareGe); }
     }
 
@@ -712,6 +757,7 @@ namespace System.Management.Automation
                     return (long)(l | r);
                 }
             }
+
             return l | r;
         }
 
@@ -728,6 +774,7 @@ namespace System.Management.Automation
                     return (long)(l ^ r);
                 }
             }
+
             return l ^ r;
         }
 
@@ -744,6 +791,7 @@ namespace System.Management.Automation
                     return (long)(l & r);
                 }
             }
+
             return l & r;
         }
 
@@ -757,6 +805,7 @@ namespace System.Management.Automation
                 long lValue = LanguagePrimitives.ConvertTo<long>(val);
                 return unchecked((ulong)lValue);
             }
+
             return LanguagePrimitives.ConvertTo<ulong>(val);
         }
 
@@ -821,10 +870,15 @@ namespace System.Management.Automation
         }
 
         internal static object CompareEq(double lhs, double rhs) { return (lhs == rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareNe(double lhs, double rhs) { return (lhs != rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareLt(double lhs, double rhs) { return (lhs < rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareLe(double lhs, double rhs) { return (lhs <= rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareGt(double lhs, double rhs) { return (lhs > rhs) ? Boxed.True : Boxed.False; }
+
         internal static object CompareGe(double lhs, double rhs) { return (lhs >= rhs) ? Boxed.True : Boxed.False; }
     }
 
@@ -862,6 +916,30 @@ namespace System.Management.Automation
             char firstAsUpper = char.ToUpperInvariant(lhs);
             char secondAsUpper = char.ToUpperInvariant(rhs);
             return firstAsUpper != secondAsUpper ? Boxed.True : Boxed.False;
+        }
+
+        internal static object[] Range(char start, char end)
+        {
+            int lower = (int)start;
+            int upper = (int)end;
+
+            int absRange = Math.Abs(checked(upper - lower));
+
+            object[] ra = new object[absRange + 1];
+            if (lower > upper)
+            {
+                // 3 .. 1 => 3 2 1
+                for (int offset = 0; offset < ra.Length; offset++)
+                    ra[offset] = (char)lower--;
+            }
+            else
+            {
+                // 1 .. 3 => 1 2 3
+                for (int offset = 0; offset < ra.Length; offset++)
+                    ra[offset] = (char)lower++;
+            }
+
+            return ra;
         }
     }
 }

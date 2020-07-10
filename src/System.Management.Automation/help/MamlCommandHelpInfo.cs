@@ -1,24 +1,21 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Globalization;
-using System.Xml;
 using System.Text;
+using System.Xml;
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Class MamlCommandHelpInfo keeps track of help information to be returned by 
+    /// Class MamlCommandHelpInfo keeps track of help information to be returned by
     /// command help provider.
-    /// 
     /// </summary>
     internal class MamlCommandHelpInfo : BaseCommandHelpInfo
     {
         /// <summary>
         /// Constructor for custom HelpInfo object construction
-        /// 
+        ///
         /// This is used by the CommandHelpProvider class to generate the
         /// default help UX when no help content is present.
         /// </summary>
@@ -37,10 +34,12 @@ namespace System.Management.Automation
             {
                 _component = helpObject.Properties["Component"].Value as string;
             }
+
             if (helpObject.Properties["Role"] != null)
             {
                 _role = helpObject.Properties["Role"].Value as string;
             }
+
             if (helpObject.Properties["Functionality"] != null)
             {
                 _functionality = helpObject.Properties["Functionality"].Value as string;
@@ -49,7 +48,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructor for MamlCommandHelpInfo. This constructor will call the corresponding
-        /// constructor in CommandHelpInfo so that xmlNode will be converted a mamlNode. 
+        /// constructor in CommandHelpInfo so that xmlNode will be converted a mamlNode.
         /// </summary>
         /// <remarks>
         /// This constructor is intentionally made private so that the only way to create
@@ -65,7 +64,7 @@ namespace System.Management.Automation
             this.Errors = mamlNode.Errors;
 
             // The type name hierarchy for mshObject doesn't necessary
-            // reflect the hierarchy in source code. From display's point of 
+            // reflect the hierarchy in source code. From display's point of
             // view MamlCommandHelpInfo is derived from HelpInfo.
 
             _fullHelpObject.TypeNames.Clear();
@@ -146,24 +145,23 @@ namespace System.Management.Automation
             }
         }
 
-
         #endregion
 
         #region Component, Role, Features
 
-        // Component, Role, Functionality are required by exchange for filtering 
+        // Component, Role, Functionality are required by exchange for filtering
         // help contents to be returned from help system.
         //
-        // Following is how this is going to work, 
+        // Following is how this is going to work,
         //    1. Each command will optionally include component, role and functionality
         //       information. This information is discovered from help content
-        //       from xml tags <component>, <role>, <functionality> respectively 
+        //       from xml tags <component>, <role>, <functionality> respectively
         //       as part of command metadata.
-        //    2. From command line, end user can request help for commands for 
+        //    2. From command line, end user can request help for commands for
         //       particular component, role and functionality using parameters like
         //       -component, -role, -functionality.
         //    3. At runtime, help engine will match against component/role/functionality
-        //       criteria before returing help results.
+        //       criteria before returning help results.
         //
 
         private string _component = null;
@@ -181,7 +179,7 @@ namespace System.Management.Automation
 
         private string _role = null;
         /// <summary>
-        /// Role for this command
+        /// Role for this command.
         /// </summary>
         /// <value></value>
         internal override string Role
@@ -194,7 +192,7 @@ namespace System.Management.Automation
 
         private string _functionality = null;
         /// <summary>
-        /// Functionality for this command
+        /// Functionality for this command.
         /// </summary>
         /// <value></value>
         internal override string Functionality
@@ -219,7 +217,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Add user-defined command help data to command help.
         /// </summary>
-        /// <param name="userDefinedData">User defined data object</param>
+        /// <param name="userDefinedData">User defined data object.</param>
         internal void AddUserDefinedData(UserDefinedHelpData userDefinedData)
         {
             if (userDefinedData == null)
@@ -248,19 +246,19 @@ namespace System.Management.Automation
 
         #endregion
 
-        #region Load 
+        #region Load
 
         /// <summary>
         /// Create a MamlCommandHelpInfo object from an XmlNode.
         /// </summary>
-        /// <param name="xmlNode">xmlNode that contains help info</param>
-        /// <param name="helpCategory">help category this maml object fits into</param>
-        /// <returns>MamlCommandHelpInfo object created</returns>
+        /// <param name="xmlNode">XmlNode that contains help info.</param>
+        /// <param name="helpCategory">Help category this maml object fits into.</param>
+        /// <returns>MamlCommandHelpInfo object created.</returns>
         internal static MamlCommandHelpInfo Load(XmlNode xmlNode, HelpCategory helpCategory)
         {
             MamlCommandHelpInfo mamlCommandHelpInfo = new MamlCommandHelpInfo(xmlNode, helpCategory);
 
-            if (String.IsNullOrEmpty(mamlCommandHelpInfo.Name))
+            if (string.IsNullOrEmpty(mamlCommandHelpInfo.Name))
                 return null;
 
             mamlCommandHelpInfo.AddCommonHelpProperties();
@@ -274,16 +272,16 @@ namespace System.Management.Automation
 
 #if V2
         /// <summary>
-        /// Merge the provider specific help with current command help. 
-        /// 
-        /// The cmdletHelp and dynamicParameterHelp is normally retrived from ProviderHelpProvider.
+        /// Merge the provider specific help with current command help.
+        ///
+        /// The cmdletHelp and dynamicParameterHelp is normally retrieved from ProviderHelpProvider.
         /// </summary>
         /// <remarks>
         /// A new MamlCommandHelpInfo is created to avoid polluting the provider help cache.
         /// </remarks>
-        /// <param name="cmdletHelp">provider-specific cmdletHelp to merge into current MamlCommandHelpInfo object</param>
-        /// <param name="dynamicParameterHelp">provider-specific dynamic parameter help to merge into current MamlCommandHelpInfo object</param>
-        /// <returns>merged command help info object</returns>
+        /// <param name="cmdletHelp">Provider-specific cmdletHelp to merge into current MamlCommandHelpInfo object.</param>
+        /// <param name="dynamicParameterHelp">Provider-specific dynamic parameter help to merge into current MamlCommandHelpInfo object.</param>
+        /// <returns>Merged command help info object.</returns>
         internal MamlCommandHelpInfo MergeProviderSpecificHelp(PSObject cmdletHelp, PSObject[] dynamicParameterHelp)
         {
             if (this._fullHelpObject == null)
@@ -292,7 +290,7 @@ namespace System.Management.Automation
             MamlCommandHelpInfo result = (MamlCommandHelpInfo)this.MemberwiseClone();
 
             // We will need to use a deep clone of _fullHelpObject
-            // to avoid _fullHelpObject being get tarminated. 
+            // to avoid _fullHelpObject being get terminated.
             result._fullHelpObject = this._fullHelpObject.Copy();
 
             if (cmdletHelp != null)
@@ -310,9 +308,9 @@ namespace System.Management.Automation
         #region Helper Methods and Overloads
 
         /// <summary>
-        /// Extracts text for a given property from the full help object
+        /// Extracts text for a given property from the full help object.
         /// </summary>
-        /// <param name="psObject">FullHelp object</param>
+        /// <param name="psObject">FullHelp object.</param>
         /// <param name="propertyName">
         /// Name of the property for which text needs to be extracted.
         /// </param>
@@ -333,14 +331,14 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Given a PSObject, this method will traverse through the objects properties,
-        /// extracts content from properities that are of type System.String, appends them
+        /// extracts content from properties that are of type System.String, appends them
         /// together and returns.
         /// </summary>
         /// <param name="psObject"></param>
         /// <returns></returns>
         private string ExtractText(PSObject psObject)
         {
-            if (null == psObject)
+            if (psObject == null)
             {
                 return string.Empty;
             }
@@ -373,6 +371,7 @@ namespace System.Management.Automation
                         {
                             result.Append(ExtractText(item));
                         }
+
                         break;
                     case "system.management.automation.psobject":
                         result.Append(ExtractText(PSObject.AsPSObject(propertyInfo.Value)));
@@ -388,17 +387,17 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns true if help content in help info matches the
-        /// pattern contained in <paramref name="pattern"/>. 
+        /// pattern contained in <paramref name="pattern"/>.
         /// The underlying code will usually run pattern.IsMatch() on
         /// content it wants to search.
-        /// Cmdlet help info looks for pattern in Synopsis and 
-        /// DetailedDescription
+        /// Cmdlet help info looks for pattern in Synopsis and
+        /// DetailedDescription.
         /// </summary>
         /// <param name="pattern"></param>
         /// <returns></returns>
         internal override bool MatchPatternInContent(WildcardPattern pattern)
         {
-            System.Management.Automation.Diagnostics.Assert(null != pattern, "pattern cannot be null");
+            System.Management.Automation.Diagnostics.Assert(pattern != null, "pattern cannot be null");
 
             string synopsis = Synopsis;
             if ((!string.IsNullOrEmpty(synopsis)) && (pattern.IsMatch(synopsis)))

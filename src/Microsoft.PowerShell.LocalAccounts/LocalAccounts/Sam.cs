@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
-using System.ComponentModel;
 
 using Microsoft.PowerShell.Commands;
 using System.Management.Automation.SecurityAccountsManager.Extensions;
@@ -35,7 +38,7 @@ namespace System.Management.Automation.SecurityAccountsManager
     internal class SamRidEnumeration
     {
 #region Original struct members
-        public String Name;
+        public string Name;
         public UInt32 RelativeId;
 #endregion Original struct members
 
@@ -43,7 +46,6 @@ namespace System.Management.Automation.SecurityAccountsManager
         public IntPtr domainHandle;     // The domain handle used to acquire the data.
 #endregion Additional members
     }
-
 
     /// <summary>
     /// Provides methods for manipulating local Users and Groups.
@@ -62,7 +64,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Defines a set of flags, each coresponding to a member of LocalUser,
+        /// Defines a set of flags, each corresponding to a member of LocalUser,
         /// which indicate fields to be updated.
         /// </summary>
         /// <remarks>
@@ -176,7 +178,6 @@ namespace System.Management.Automation.SecurityAccountsManager
             Max         = Win32.MAXIMUM_ALLOWED
         }
 
-
         /// <summary>
         /// The operation under way. Used in the <see cref="Context"/> class.
         /// </summary>
@@ -217,7 +218,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         {
             public ContextOperation operation;
             public ContextObjectType type;
-            public Object target;
+            public object target;
             public string objectId;
             public string memberId;
 
@@ -257,7 +258,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
 
             /// <summary>
-            /// Default constructor
+            /// Default constructor.
             /// </summary>
             public Context()
             {
@@ -368,7 +369,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         private IntPtr localDomainHandle = IntPtr.Zero;
         private IntPtr builtinDomainHandle = IntPtr.Zero;
         private Context context = null;
-        private string machineName = String.Empty;
+        private string machineName = string.Empty;
 #endregion Instance Data
 
 #region Construction
@@ -394,7 +395,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 #region Local Groups
         /// <summary>
-        /// Retrieve a named local group
+        /// Retrieve a named local group.
         /// </summary>
         /// <param name="groupName">Name of the desired local group.</param>
         /// <returns>
@@ -416,7 +417,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Retrieve a local group by SID
+        /// Retrieve a local group by SID.
         /// </summary>
         /// <param name="sid">
         /// A <see cref="SecurityIdentifier"/> object identifying the desired group.
@@ -461,7 +462,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Update a local group with new property values
+        /// Update a local group with new property values.
         /// </summary>
         /// <param name="group">
         /// A <see cref="LocalGroup"/> object representing the group to be updated.
@@ -745,7 +746,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
 #region Local Users
         /// <summary>
-        /// Retrieve a named local user
+        /// Retrieve a named local user.
         /// </summary>
         /// <param name="userName">Name of the desired local user.</param>
         /// <returns>
@@ -767,7 +768,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Retrieve a local user by SID
+        /// Retrieve a local user by SID.
         /// </summary>
         /// <param name="sid">
         /// A <see cref="SecurityIdentifier"/> object identifying the desired user.
@@ -791,7 +792,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Create a local user
+        /// Create a local user.
         /// </summary>
         /// <param name="user">A <see cref="LocalUser"/> object containing
         /// information about the local user to be created.
@@ -855,7 +856,6 @@ namespace System.Management.Automation.SecurityAccountsManager
             RemoveUser(user.SID);
         }
 
-
         /// <summary>
         /// Rename a local user.
         /// </summary>
@@ -900,7 +900,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Enable or disable a Local User
+        /// Enable or disable a Local User.
         /// </summary>
         /// <param name="sid">
         /// A <see cref="SecurityIdentifier"/> object identifying the user to enable or disable.
@@ -920,7 +920,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Enable or disable a Local User
+        /// Enable or disable a Local User.
         /// </summary>
         /// <param name="user">
         /// A <see cref="LocalUser"/> object representing the user to enable or disable.
@@ -1053,7 +1053,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                 lsaHandle = IntPtr.Zero;
 
-                domainInfo = ClrFacade.PtrToStructure<POLICY_PRIMARY_DOMAIN_INFO>(pInfo);
+                domainInfo = Marshal.PtrToStructure<POLICY_PRIMARY_DOMAIN_INFO>(pInfo);
 
                 status = SamApi.SamConnect(ref systemName, out samHandle, SamApi.SAM_SERVER_LOOKUP_DOMAIN, ref oa);
                 ThrowOnFailure(status);
@@ -1065,7 +1065,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 // Open the "BuiltIn" domain
                 SecurityIdentifier sid = new SecurityIdentifier("S-1-5-32");
                 byte[] bSid = new byte[sid.BinaryLength];
-                int size = ClrFacade.SizeOf<byte>() * bSid.Length;
+                int size = Marshal.SizeOf<byte>() * bSid.Length;
 
                 pSid = Marshal.AllocHGlobal(size);
 
@@ -1173,7 +1173,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     {
                         SAM_RID_ENUMERATION sre;
 
-                        sre = ClrFacade.PtrToStructure<SAM_RID_ENUMERATION>(buffer);
+                        sre = Marshal.PtrToStructure<SAM_RID_ENUMERATION>(buffer);
 
                         SamApi.SamFreeMemory(buffer);
                         buffer = IntPtr.Zero;
@@ -1252,7 +1252,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     out userHandle,
                     out grantedAccess,
                     out relativeId);
-                ClrFacade.DestroyStructure<UNICODE_STRING>(buffer);
+                Marshal.DestroyStructure<UNICODE_STRING>(buffer);
                 Marshal.FreeHGlobal(buffer);
                 buffer = IntPtr.Zero;
                 ThrowOnFailure(status);
@@ -1271,6 +1271,15 @@ namespace System.Management.Automation.SecurityAccountsManager
                                             },
                                             userHandle);
             }
+            catch (Exception)
+            {
+                if (IntPtr.Zero != userHandle)
+                {
+                    SamApi.SamDeleteUser(userHandle);
+                }
+
+                throw;
+            }
             finally
             {
                 if (buffer != IntPtr.Zero)
@@ -1281,7 +1290,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Remove a group identified by SID
+        /// Remove a group identified by SID.
         /// </summary>
         /// <param name="sid">
         /// A <see cref="SecurityIdentifier"/> object identifying the
@@ -1363,9 +1372,10 @@ namespace System.Management.Automation.SecurityAccountsManager
             {
                 if (buffer != IntPtr.Zero)
                 {
-                    ClrFacade.DestroyStructure<ALIAS_NAME_INFORMATION>(buffer);
+                    Marshal.DestroyStructure<ALIAS_NAME_INFORMATION>(buffer);
                     Marshal.FreeHGlobal(buffer);
                 }
+
                 if (aliasHandle != IntPtr.Zero)
                     status = SamApi.SamCloseHandle(aliasHandle);
             }
@@ -1416,7 +1426,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                 type = context.type
                                             }
                                             );
-                    
+
             }
             finally
             {
@@ -1513,7 +1523,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             var rv = new List<Exception>();
             Exception ex = null;
             try
-            {                
+            {
                 var sid = member.SID;
                 var binarySid = new byte[sid.BinaryLength];
 
@@ -1597,7 +1607,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                         USER_INFORMATION_CLASS.UserAllInformation,
                                                         out buffer);
                 ThrowOnFailure(status);
-                allInfo = ClrFacade.PtrToStructure<USER_ALL_INFORMATION>(buffer);
+                allInfo = Marshal.PtrToStructure<USER_ALL_INFORMATION>(buffer);
 
                 var userSid = RidToSid(sre.domainHandle, sre.RelativeId);
                 LocalUser user = new LocalUser()
@@ -1609,12 +1619,12 @@ namespace System.Management.Automation.SecurityAccountsManager
                                         FullName = allInfo.FullName.ToString(),
                                         Description = allInfo.AdminComment.ToString(),
 
-                                        //TODO: why is this coming up as 864000000000 (number of ticks per day)?
+                                        // TODO: why is this coming up as 864000000000 (number of ticks per day)?
                                         PasswordChangeableDate = DateTimeFromSam(allInfo.PasswordCanChange.QuadPart),
 
                                         PasswordExpires = DateTimeFromSam(allInfo.PasswordMustChange.QuadPart),
 
-                                        //TODO: why is this coming up as 0X7FFFFFFFFFFFFFFF (largest signed 64-bit, and well out of range of DateTime)?
+                                        // TODO: why is this coming up as 0X7FFFFFFFFFFFFFFF (largest signed 64-bit, and well out of range of DateTime)?
                                         AccountExpires = DateTimeFromSam(allInfo.AccountExpires.QuadPart),
                                         LastLogon = DateTimeFromSam(allInfo.LastLogon.QuadPart),
                                         PasswordLastSet = DateTimeFromSam(allInfo.PasswordLastSet.QuadPart),
@@ -1668,7 +1678,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                         USER_INFORMATION_CLASS.UserAllInformation,
                                                         out buffer);
                 ThrowOnFailure(status);
-                info = ClrFacade.PtrToStructure<USER_ALL_INFORMATION>(buffer);
+                info = Marshal.PtrToStructure<USER_ALL_INFORMATION>(buffer);
                 status = SamApi.SamFreeMemory(buffer);
                 buffer = IntPtr.Zero;
 
@@ -1692,7 +1702,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     status = SamApi.SamSetInformationUser(userHandle,
                                                           USER_INFORMATION_CLASS.UserAllInformation,
                                                           buffer);
-                    ClrFacade.DestroyStructure<USER_ALL_INFORMATION>(buffer);
+                    Marshal.DestroyStructure<USER_ALL_INFORMATION>(buffer);
                     Marshal.FreeHGlobal(buffer);
                     buffer = IntPtr.Zero;
                     ThrowOnFailure(status);
@@ -1752,9 +1762,10 @@ namespace System.Management.Automation.SecurityAccountsManager
             {
                 if (buffer != IntPtr.Zero)
                 {
-                    ClrFacade.DestroyStructure<USER_ACCOUNT_NAME_INFORMATION>(buffer);
+                    Marshal.DestroyStructure<USER_ACCOUNT_NAME_INFORMATION>(buffer);
                     Marshal.FreeHGlobal(buffer);
                 }
+
                 if (userHandle != IntPtr.Zero)
                     status = SamApi.SamCloseHandle(userHandle);
             }
@@ -1828,7 +1839,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     {
                         SAM_RID_ENUMERATION sre;
 
-                        sre = ClrFacade.PtrToStructure<SAM_RID_ENUMERATION>(buffer);
+                        sre = Marshal.PtrToStructure<SAM_RID_ENUMERATION>(buffer);
 
                         SamApi.SamFreeMemory(buffer);
                         buffer = IntPtr.Zero;
@@ -1895,7 +1906,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                        Win32.MAXIMUM_ALLOWED,
                                                        out aliasHandle,
                                                        out relativeId);
-                ClrFacade.DestroyStructure<UNICODE_STRING>(buffer);
+                Marshal.DestroyStructure<UNICODE_STRING>(buffer);
                 Marshal.FreeHGlobal(buffer);
                 buffer = IntPtr.Zero;
                 ThrowOnFailure(status);
@@ -1912,7 +1923,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                            ALIAS_INFORMATION_CLASS.AliasAdminCommentInformation,
                                                            buffer);
 
-                    ClrFacade.DestroyStructure<ALIAS_ADM_COMMENT_INFORMATION>(buffer);
+                    Marshal.DestroyStructure<ALIAS_ADM_COMMENT_INFORMATION>(buffer);
                     Marshal.FreeHGlobal(buffer);
                     buffer = IntPtr.Zero;
                     ThrowOnFailure(status);
@@ -1987,9 +1998,10 @@ namespace System.Management.Automation.SecurityAccountsManager
             {
                 if (buffer != IntPtr.Zero)
                 {
-                    ClrFacade.DestroyStructure<ALIAS_ADM_COMMENT_INFORMATION>(buffer);
+                    Marshal.DestroyStructure<ALIAS_ADM_COMMENT_INFORMATION>(buffer);
                     Marshal.FreeHGlobal(buffer);
                 }
+
                 if (aliasHandle != IntPtr.Zero)
                     status = SamApi.SamCloseHandle(aliasHandle);
             }
@@ -2053,7 +2065,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                          ALIAS_INFORMATION_CLASS.AliasGeneralInformation,
                                                          out buffer);
                 ThrowOnFailure(status);
-                generalInfo = ClrFacade.PtrToStructure<ALIAS_GENERAL_INFORMATION>(buffer);
+                generalInfo = Marshal.PtrToStructure<ALIAS_GENERAL_INFORMATION>(buffer);
 
                 LocalGroup group = new LocalGroup()
                                     {
@@ -2192,11 +2204,13 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                  ? sourceUser.AccountExpires.Value.ToFileTime()
                                                  : 0L;
                 }
+
                 if (setFlags.HasFlag(UserProperties.Description))
                 {
                     which |= SamApi.USER_ALL_ADMINCOMMENT;
                     info.AdminComment = new UNICODE_STRING(sourceUser.Description);
                 }
+
                 if (setFlags.HasFlag(UserProperties.Enabled))
                 {
                     which |= SamApi.USER_ALL_USERACCOUNTCONTROL;
@@ -2205,6 +2219,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     else
                         uac |= SamApi.USER_ACCOUNT_DISABLED;
                 }
+
                 if (setFlags.HasFlag(UserProperties.FullName))
                 {
                     which |= SamApi.USER_ALL_FULLNAME;
@@ -2239,8 +2254,8 @@ namespace System.Management.Automation.SecurityAccountsManager
                     if ((which & SamApi.USER_ALL_USERACCOUNTCONTROL) != 0)
                         info.UserAccountControl = uac;
 
-                    buffer = Marshal.AllocHGlobal(ClrFacade.SizeOf<USER_ALL_INFORMATION>());
-                    ClrFacade.StructureToPtr<USER_ALL_INFORMATION>(info, buffer, false);
+                    buffer = Marshal.AllocHGlobal(Marshal.SizeOf<USER_ALL_INFORMATION>());
+                    Marshal.StructureToPtr<USER_ALL_INFORMATION>(info, buffer, false);
 
                     status = SamApi.SamSetInformationUser(userHandle,
                                                           USER_INFORMATION_CLASS.UserAllInformation,
@@ -2260,7 +2275,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             {
                 if (buffer != IntPtr.Zero)
                 {
-                    ClrFacade.DestroyStructure<USER_ALL_INFORMATION>(buffer);
+                    Marshal.DestroyStructure<USER_ALL_INFORMATION>(buffer);
                     Marshal.FreeHGlobal(buffer);
                 }
             }
@@ -2288,7 +2303,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                         USER_INFORMATION_CLASS.UserLogonInformation,
                                                         out buffer);
                 ThrowOnFailure(status);
-                info = ClrFacade.PtrToStructure<USER_LOGON_INFORMATION>(buffer);
+                info = Marshal.PtrToStructure<USER_LOGON_INFORMATION>(buffer);
                 status = SamApi.SamFreeMemory(buffer);
                 buffer = IntPtr.Zero;
 
@@ -2322,7 +2337,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 status = SamApi.SamQuerySecurityObject(objectHandle, Win32.DACL_SECURITY_INFORMATION, out securityObject);
                 ThrowOnFailure(status);
 
-                SECURITY_DESCRIPTOR sd = ClrFacade.PtrToStructure<SECURITY_DESCRIPTOR>(securityObject);
+                SECURITY_DESCRIPTOR sd = Marshal.PtrToStructure<SECURITY_DESCRIPTOR>(securityObject);
 
                 bool daclPresent;
                 bool daclDefaulted;
@@ -2340,7 +2355,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                 if (daclPresent)
                 {
-                    ACL acl = ClrFacade.PtrToStructure<ACL>(dacl);
+                    ACL acl = Marshal.PtrToStructure<ACL>(dacl);
 
                     if (acl.AclSize != 0)
                     {
@@ -2357,6 +2372,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 if (IntPtr.Zero != securityObject)
                     status = SamApi.SamFreeMemory(securityObject);
             }
+
             return rv;
         }
 
@@ -2381,11 +2397,11 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                 // create a new security descriptor
                 var sd = new SECURITY_DESCRIPTOR() { Revision = 1 };
-                ipsd = Marshal.AllocHGlobal(ClrFacade.SizeOf<SECURITY_DESCRIPTOR>());
+                ipsd = Marshal.AllocHGlobal(Marshal.SizeOf<SECURITY_DESCRIPTOR>());
 
                 if (rawAcl != null && rawAcl.BinaryLength > 0)
                 {
-                    ClrFacade.StructureToPtr<SECURITY_DESCRIPTOR>(sd, ipsd, false);
+                    Marshal.StructureToPtr<SECURITY_DESCRIPTOR>(sd, ipsd, false);
 
                     // put the DACL into unmanaged memory
                     var length = rawAcl.BinaryLength;
@@ -2397,7 +2413,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     present = true;
                 }
 
-                // set the DACL into our new sescurity descriptor
+                // set the DACL into our new security descriptor
                 var ok = Win32.SetSecurityDescriptorDacl(ipsd, present, ipDacl, false);
                 if (!ok)
                 {
@@ -2536,7 +2552,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                             USER_INFORMATION_CLASS.UserAllInformation,
                                                             out buffer);
                 ThrowOnFailure(status);
-                info = ClrFacade.PtrToStructure<USER_ALL_INFORMATION>(buffer);
+                info = Marshal.PtrToStructure<USER_ALL_INFORMATION>(buffer);
                 status = SamApi.SamFreeMemory(buffer);
                 buffer = IntPtr.Zero;
 
@@ -2593,7 +2609,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     info.PasswordExpired = setPwExpire;
 
                     buffer = Marshal.AllocHGlobal(Marshal.SizeOf(info));
-                    ClrFacade.StructureToPtr<USER_SET_PASSWORD_INFORMATION>(info, buffer, false);
+                    Marshal.StructureToPtr<USER_SET_PASSWORD_INFORMATION>(info, buffer, false);
 
                     var status = SamApi.SamSetInformationUser(userHandle,
                                                               USER_INFORMATION_CLASS.UserSetPasswordInformation,
@@ -2604,7 +2620,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 {
                     if (buffer != IntPtr.Zero)
                     {
-                        ClrFacade.DestroyStructure<USER_SET_PASSWORD_INFORMATION>(buffer);
+                        Marshal.DestroyStructure<USER_SET_PASSWORD_INFORMATION>(buffer);
                         Marshal.FreeHGlobal(buffer);
                     }
                 }
@@ -2649,6 +2665,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 if (IntPtr.Zero != sidBytes)
                     status = SamApi.SamFreeMemory(sidBytes);
             }
+
             return sid;
         }
 
@@ -2660,7 +2677,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// to look up.
         /// </param>
         /// <returns>
-        /// A <see cref="AccountInfo"/> object containg information about the
+        /// A <see cref="AccountInfo"/> object contains information about the
         /// account, or null if no matching account was found.
         /// </returns>
         private AccountInfo LookupAccountInfo(SecurityIdentifier sid)
@@ -2718,7 +2735,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// A string containing the name of the account to look up.
         /// </param>
         /// <returns>
-        /// A <see cref="AccountInfo"/> object containg information about the
+        /// A <see cref="AccountInfo"/> object contains information about the
         /// account, or null if no matching account was found.
         /// </returns>
         private AccountInfo LookupAccountInfo(string accountName)
@@ -2760,9 +2777,9 @@ namespace System.Management.Automation.SecurityAccountsManager
             if (error == Win32.ERROR_SUCCESS)
             {
                 // Bug: 7407413 :
-                // If accountname is in the format domain1\user1, 
-                //then AccountName.ToString() will return domain1\domain1\user1
-                // Ideally , accountname should be processed to hold only accout name (without domain)
+                // If accountname is in the format domain1\user1,
+                // then AccountName.ToString() will return domain1\domain1\user1
+                // Ideally , accountname should be processed to hold only account name (without domain)
                 // as we are keeping the domain in 'DomainName' variable.
 
                 int index = accountName.IndexOf("\\", StringComparison.CurrentCultureIgnoreCase);
@@ -2770,6 +2787,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 {
                     accountName = accountName.Substring(index + 1);
                 }
+
                 return new AccountInfo
                 {
                     AccountName = accountName,
@@ -2810,7 +2828,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             switch (info.Use)
             {
-                case SID_NAME_USE.SidTypeAlias:     //TODO: is this the right thing to do???
+                case SID_NAME_USE.SidTypeAlias:     // TODO: is this the right thing to do???
                 case SID_NAME_USE.SidTypeGroup:
                 case SID_NAME_USE.SidTypeWellKnownGroup:
                     rv.ObjectClass = Strings.ObjectClassGroup;
@@ -2930,8 +2948,8 @@ namespace System.Management.Automation.SecurityAccountsManager
                     return new UserNotFoundException(context.ObjectName, context.target);
 
                 case NtStatus.STATUS_SPECIAL_GROUP:     // The group specified is a special group and cannot be operated on in the requested fashion.
-                //case NtStatus.STATUS_SPECIAL_ALIAS: // referred to in source for SAM api, but not in ntstatus.h!!!
-                                                    
+                // case NtStatus.STATUS_SPECIAL_ALIAS: // referred to in source for SAM api, but not in ntstatus.h!!!
+
                     return new InvalidOperationException(StringUtil.Format(Strings.InvalidForGroup, context.ObjectName));
 
                 case NtStatus.STATUS_SPECIAL_USER:  // The user specified is a special user and cannot be operated on in the requested fashion.
@@ -2966,7 +2984,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 case NtStatus.STATUS_PASSWORD_RESTRICTION:
                     return new InvalidPasswordException(Native.Win32.RtlNtStatusToDosError(ntStatus));
 
-                //TODO: do we want to handle these?
+                // TODO: do we want to handle these?
                 //      they appear to be returned only in functions we are not calling
                 case NtStatus.STATUS_INVALID_SID:       // member sid is corrupted
                 case NtStatus.STATUS_INVALID_MEMBER:    // member has wrong account type
@@ -3015,7 +3033,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             // Use LsaLookupUserAccountType for Windows 10 and later.
             // Earlier versions of the OS will leave the property NULL because
-            // it is too error prone to attempt to replicate the decisions of 
+            // it is too error prone to attempt to replicate the decisions of
             // LsaLookupUserAccountType.
             var os = GetOperatingSystem();
             if (os.Version.Major >= 10)
@@ -3113,11 +3131,11 @@ namespace System.Management.Automation.SecurityAccountsManager
 
         [DllImport(PInvokeDllNames.GetVersionExDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern bool GetVersionEx(ref OSVERSIONINFOEX osVerEx);
-        
+
         private static volatile OperatingSystem localOs;
 
         /// <summary>
-        /// It only contains the properties that get used in powershell
+        /// It only contains the properties that get used in powershell.
         /// </summary>
         internal sealed class OperatingSystem
         {
@@ -3135,7 +3153,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
 
             /// <summary>
-            /// OS version
+            /// OS version.
             /// </summary>
             public Version Version
             {
@@ -3143,7 +3161,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
 
             /// <summary>
-            /// VersionString
+            /// VersionString.
             /// </summary>
             public string VersionString
             {
@@ -3188,6 +3206,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 Version ver = new Version(osviex.MajorVersion, osviex.MinorVersion, osviex.BuildNumber, (osviex.ServicePackMajor << 16) | osviex.ServicePackMinor);
                 localOs = new OperatingSystem(ver, osviex.CSDVersion);
             }
+
             return localOs;
 #else
             return Environment.OSVersion;

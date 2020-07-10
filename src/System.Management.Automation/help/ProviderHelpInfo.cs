@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Xml;
@@ -8,15 +7,13 @@ using System.Xml;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Class ProviderHelpInfo keeps track of help information to be returned by 
+    /// Class ProviderHelpInfo keeps track of help information to be returned by
     /// command help provider.
-    /// 
     /// </summary>
     internal class ProviderHelpInfo : HelpInfo
     {
         /// <summary>
-        /// Constructor for HelpProvider
+        /// Constructor for HelpProvider.
         /// </summary>
         private ProviderHelpInfo(XmlNode xmlNode)
         {
@@ -40,24 +37,24 @@ namespace System.Management.Automation
             get
             {
                 if (_fullHelpObject == null)
-                    return "";
+                    return string.Empty;
 
                 if (_fullHelpObject.Properties["Name"] == null)
-                    return "";
+                    return string.Empty;
 
                 if (_fullHelpObject.Properties["Name"].Value == null)
-                    return "";
+                    return string.Empty;
 
                 string name = _fullHelpObject.Properties["Name"].Value.ToString();
                 if (name == null)
-                    return "";
+                    return string.Empty;
 
                 return name.Trim();
             }
         }
 
         /// <summary>
-        /// Synopsis in the provider help info
+        /// Synopsis in the provider help info.
         /// </summary>
         /// <value>Synopsis in the provider help info</value>
         internal override string Synopsis
@@ -65,24 +62,24 @@ namespace System.Management.Automation
             get
             {
                 if (_fullHelpObject == null)
-                    return "";
+                    return string.Empty;
 
                 if (_fullHelpObject.Properties["Synopsis"] == null)
-                    return "";
+                    return string.Empty;
 
                 if (_fullHelpObject.Properties["Synopsis"].Value == null)
-                    return "";
+                    return string.Empty;
 
                 string synopsis = _fullHelpObject.Properties["Synopsis"].Value.ToString();
                 if (synopsis == null)
-                    return "";
+                    return string.Empty;
 
                 return synopsis.Trim();
             }
         }
 
         /// <summary>
-        /// Detailed description in the provider help info
+        /// Detailed description in the provider help info.
         /// </summary>
         /// <value>Detailed description in the provider help info</value>
         internal string DetailedDescription
@@ -90,18 +87,18 @@ namespace System.Management.Automation
             get
             {
                 if (this.FullHelp == null)
-                    return "";
+                    return string.Empty;
 
                 if (this.FullHelp.Properties["DetailedDescription"] == null ||
                     this.FullHelp.Properties["DetailedDescription"].Value == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 IList descriptionItems = FullHelp.Properties["DetailedDescription"].Value as IList;
                 if (descriptionItems == null || descriptionItems.Count == 0)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 // I think every provider description should atleast have 400 characters...
@@ -111,9 +108,9 @@ namespace System.Management.Automation
                 foreach (object descriptionItem in descriptionItems)
                 {
                     PSObject descriptionObject = PSObject.AsPSObject(descriptionItem);
-                    if ((null == descriptionObject) ||
-                        (null == descriptionObject.Properties["Text"]) ||
-                        (null == descriptionObject.Properties["Text"].Value))
+                    if ((descriptionObject == null) ||
+                        (descriptionObject.Properties["Text"] == null) ||
+                        (descriptionObject.Properties["Text"].Value == null))
                     {
                         continue;
                     }
@@ -128,7 +125,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Help category for this provider help info, which is constantly HelpCategory.Provider
+        /// Help category for this provider help info, which is constantly HelpCategory.Provider.
         /// </summary>
         /// <value>Help category for this provider help info</value>
         internal override HelpCategory HelpCategory
@@ -142,7 +139,7 @@ namespace System.Management.Automation
         private PSObject _fullHelpObject;
 
         /// <summary>
-        /// Full help object for this provider help info
+        /// Full help object for this provider help info.
         /// </summary>
         /// <value>Full help object for this provider help info</value>
         internal override PSObject FullHelp
@@ -153,30 +150,29 @@ namespace System.Management.Automation
             }
         }
 
-
         /// <summary>
         /// Returns true if help content in help info matches the
-        /// pattern contained in <paramref name="pattern"/>. 
+        /// pattern contained in <paramref name="pattern"/>.
         /// The underlying code will usually run pattern.IsMatch() on
         /// content it wants to search.
-        /// Provider help info looks for pattern in Synopsis and 
-        /// DetailedDescription
+        /// Provider help info looks for pattern in Synopsis and
+        /// DetailedDescription.
         /// </summary>
         /// <param name="pattern"></param>
         /// <returns></returns>
         internal override bool MatchPatternInContent(WildcardPattern pattern)
         {
-            Diagnostics.Assert(null != pattern, "pattern cannot be null");
+            Diagnostics.Assert(pattern != null, "pattern cannot be null");
 
             string synopsis = Synopsis;
             string detailedDescription = DetailedDescription;
 
-            if (null == synopsis)
+            if (synopsis == null)
             {
                 synopsis = string.Empty;
             }
 
-            if (null == detailedDescription)
+            if (detailedDescription == null)
             {
                 detailedDescription = string.Empty;
             }
@@ -192,13 +188,13 @@ namespace System.Management.Automation
         private Hashtable _cmdletHelps;
 
         /// <summary>
-        /// Return the provider-specific cmdlet help based on input cmdletName
+        /// Return the provider-specific cmdlet help based on input cmdletName.
         /// </summary>
-        /// <param name="cmdletName">cmdletName on which to get provider-specific help</param>
-        /// <returns>An mshObject that contains provider-specific commandlet help</returns>
+        /// <param name="cmdletName">CmdletName on which to get provider-specific help.</param>
+        /// <returns>An mshObject that contains provider-specific commandlet help.</returns>
         internal PSObject GetCmdletHelp(string cmdletName)
         {
-            if (String.IsNullOrEmpty(cmdletName))
+            if (string.IsNullOrEmpty(cmdletName))
                 return null;
 
             LoadCmdletHelps();
@@ -210,7 +206,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Load provider-specific commandlet helps from xmlNode stored in _fullHelpObject. 
+        /// Load provider-specific commandlet helps from xmlNode stored in _fullHelpObject.
         /// Result will be stored in a hashtable.
         /// </summary>
         private void LoadCmdletHelps()
@@ -231,7 +227,7 @@ namespace System.Management.Automation
             if (cmdlets == null)
                 return;
 
-            if (cmdlets.Properties["Cmdlet"] == null || 
+            if (cmdlets.Properties["Cmdlet"] == null ||
                 cmdlets.Properties["Cmdlet"].Value == null)
                 return;
 
@@ -263,10 +259,10 @@ namespace System.Management.Automation
         private Hashtable _dynamicParameterHelps;
 
         /// <summary>
-        /// Return the provider-specific dynamic paramter help based on input parameter name
+        /// Return the provider-specific dynamic parameter help based on input parameter name.
         /// </summary>
-        /// <param name="parameters">an array of parameters to retrieve help</param>
-        /// <returns>an array of mshObject that contains the parameter help</returns>
+        /// <param name="parameters">An array of parameters to retrieve help.</param>
+        /// <returns>An array of mshObject that contains the parameter help.</returns>
         internal PSObject[] GetDynamicParameterHelp(string[] parameters)
         {
             if (parameters == null || parameters.Length == 0)
@@ -291,7 +287,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Load provider-specific dynamic parameter helps from xmlNode stored in _fullHelpObject. 
+        /// Load provider-specific dynamic parameter helps from xmlNode stored in _fullHelpObject.
         /// Result will be stored in a hashtable.
         /// </summary>
         private void LoadDynamicParameterHelps()
@@ -347,15 +343,15 @@ namespace System.Management.Automation
         #region Load Help
 
         /// <summary>
-        /// Create providerHelpInfo from an xmlNode
+        /// Create providerHelpInfo from an xmlNode.
         /// </summary>
-        /// <param name="xmlNode">xml node that contains the provider help info</param>
-        /// <returns>the providerHelpInfo object created</returns>
+        /// <param name="xmlNode">Xml node that contains the provider help info.</param>
+        /// <returns>The providerHelpInfo object created.</returns>
         internal static ProviderHelpInfo Load(XmlNode xmlNode)
         {
             ProviderHelpInfo providerHelpInfo = new ProviderHelpInfo(xmlNode);
 
-            if (String.IsNullOrEmpty(providerHelpInfo.Name))
+            if (string.IsNullOrEmpty(providerHelpInfo.Name))
                 return null;
 
             providerHelpInfo.AddCommonHelpProperties();

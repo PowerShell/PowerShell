@@ -1,11 +1,11 @@
 /* ****************************************************************************
  *
- * Copyright (c) Microsoft Corporation. 
+ * Copyright (c) Microsoft Corporation.
  *
- * This source code is subject to terms and conditions of the Apache License, Version 2.0. A 
- * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Apache License, Version 2.0, please send an email to 
- * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
+ * This source code is subject to terms and conditions of the Apache License, Version 2.0. A
+ * copy of the license can be found in the License.html file at the root of this distribution. If
+ * you cannot locate the Apache License, Version 2.0, please send an email to
+ * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Apache License, Version 2.0.
  *
  * You must not remove this notice, or any other, from this software.
@@ -40,7 +40,7 @@ namespace System.Management.Automation.Interpreter
         // The blocks where this label is defined. If it has more than one item,
         // the blocks can't be jumped to except from a child block
         // If there's only 1 block (the common case) it's stored here, if there's multiple blocks it's stored
-        // as a HashSet<LabelScopeInfo> 
+        // as a HashSet<LabelScopeInfo>
         private object _definitions;
 
         // Blocks that jump to this block
@@ -80,7 +80,7 @@ namespace System.Management.Automation.Interpreter
             {
                 if (j.ContainsTarget(_node))
                 {
-                    throw new InvalidOperationException(String.Format(CultureInfo.InvariantCulture, "Label target already defined: {0}", _node.Name));
+                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Label target already defined: {0}", _node.Name));
                 }
             }
 
@@ -121,6 +121,7 @@ namespace System.Management.Automation.Interpreter
                     // found it, jump is valid!
                     return;
                 }
+
                 if (j.Kind == LabelScopeKind.Filter)
                 {
                     break;
@@ -131,7 +132,7 @@ namespace System.Management.Automation.Interpreter
 
             if (HasMultipleDefinitions)
             {
-                throw new InvalidOperationException(String.Format(CultureInfo.InvariantCulture, "Ambiguous jump {0}", _node.Name));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Ambiguous jump {0}", _node.Name));
             }
 
             // We didn't find an outward jump. Look for a jump across blocks
@@ -147,7 +148,7 @@ namespace System.Management.Automation.Interpreter
                 }
             }
 
-            // Valdiate that we aren't jumping into a catch or an expression
+            // Validate that we aren't jumping into a catch or an expression
             for (LabelScopeInfo j = def; j != common; j = j.Parent)
             {
                 if (!j.CanJumpInto)
@@ -193,6 +194,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return definitions.Contains(scope);
             }
+
             return false;
         }
 
@@ -211,6 +213,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return scope;
             }
+
             return ((HashSet<LabelScopeInfo>)_definitions).First();
         }
 
@@ -227,6 +230,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     _definitions = set = new HashSet<LabelScopeInfo>() { (LabelScopeInfo)_definitions };
                 }
+
                 set.Add(scope);
             }
         }
@@ -246,11 +250,13 @@ namespace System.Management.Automation.Interpreter
             {
                 return first;
             }
+
             var set = new HashSet<T>(cmp);
             for (T t = first; t != null; t = parent(t))
             {
                 set.Add(t);
             }
+
             for (T t = second; t != null; t = parent(t))
             {
                 if (set.Contains(t))
@@ -258,6 +264,7 @@ namespace System.Management.Automation.Interpreter
                     return t;
                 }
             }
+
             return null;
         }
     }
@@ -308,7 +315,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Returns true if we can jump into this node
+        /// Returns true if we can jump into this node.
         /// </summary>
         internal bool CanJumpInto
         {
@@ -322,10 +329,10 @@ namespace System.Management.Automation.Interpreter
                     case LabelScopeKind.Lambda:
                         return true;
                 }
+
                 return false;
             }
         }
-
 
         internal bool ContainsTarget(LabelTarget target)
         {

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\Test.Common.props"/>
+
+  <PropertyGroup>
+    <Description>Very simple little console class that you can use to for testing PowerShell interaction with native commands</Description>
+    <AssemblyName>testexe</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <TieredCompilation>true</TieredCompilation>
+    <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
+    <RuntimeIdentifiers>win7-x86;win7-x64;osx-x64;linux-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+</Project>

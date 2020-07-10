@@ -1,16 +1,15 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Management.Automation;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Threading;
 using System.Management;
+using System.Management.Automation;
 using System.Text;
+using System.Threading;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -18,48 +17,47 @@ namespace Microsoft.PowerShell.Commands
     /// Registers for an event on an object.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Register, "WmiEvent", DefaultParameterSetName = "class",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135245", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135245", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class RegisterWmiEventCommand : ObjectEventRegistrationBase
     {
         #region parameters
 
         /// <summary>
-        /// The WMI namespace to use
+        /// The WMI namespace to use.
         /// </summary>
         [Parameter]
         [Alias("NS")]
         public string Namespace { get; set; } = "root\\cimv2";
 
         /// <summary>
-        /// The credential to use
+        /// The credential to use.
         /// </summary>
         [Parameter]
         [Credential()]
         public PSCredential Credential { get; set; }
 
         /// <summary>
-        /// The ComputerName in which to query
+        /// The ComputerName in which to query.
         /// </summary>
         [Parameter]
         [Alias("Cn")]
         [ValidateNotNullOrEmpty]
         public string ComputerName { get; set; } = "localhost";
 
-
         /// <summary>
-        /// The WMI class to use
+        /// The WMI class to use.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "class")]
         public string Class { get; set; } = null;
 
         /// <summary>
-        /// The query string to search for objects
+        /// The query string to search for objects.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "query")]
         public string Query { get; set; } = null;
 
         /// <summary>
-        /// Timeout in milliseconds
+        /// Timeout in milliseconds.
         /// </summary>
         [Parameter]
         [Alias("TimeoutMSec")]
@@ -69,6 +67,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _timeOut;
             }
+
             set
             {
                 _timeOut = value;
@@ -87,6 +86,7 @@ namespace Microsoft.PowerShell.Commands
             returnValue.Append(objectName);
             return returnValue.ToString();
         }
+
         private string GetScopeString(string computer, string namespaceParameter)
         {
             StringBuilder returnValue = new StringBuilder("\\\\");
@@ -95,28 +95,27 @@ namespace Microsoft.PowerShell.Commands
             returnValue.Append(namespaceParameter);
             return returnValue.ToString();
         }
-        #endregion helper funtions
-
+        #endregion helper functions
 
         /// <summary>
-        /// Returns the object that generates events to be monitored
+        /// Returns the object that generates events to be monitored.
         /// </summary>
-        protected override Object GetSourceObject()
+        protected override object GetSourceObject()
         {
             string wmiQuery = this.Query;
             if (this.Class != null)
             {
-                //Validate class format
+                // Validate class format
                 for (int i = 0; i < this.Class.Length; i++)
                 {
-                    if (Char.IsLetterOrDigit(this.Class[i]) || this.Class[i].Equals('_'))
+                    if (char.IsLetterOrDigit(this.Class[i]) || this.Class[i].Equals('_'))
                     {
                         continue;
                     }
 
                     ErrorRecord errorRecord = new ErrorRecord(
                         new ArgumentException(
-                            String.Format(
+                            string.Format(
                                 Thread.CurrentThread.CurrentCulture,
                                 "Class", this.Class)),
                         "INVALID_QUERY_IDENTIFIER",
@@ -135,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
             if (this.Credential != null)
             {
                 System.Net.NetworkCredential cred = this.Credential.GetNetworkCredential();
-                if (String.IsNullOrEmpty(cred.Domain))
+                if (string.IsNullOrEmpty(cred.Domain))
                 {
                     conOptions.Username = cred.UserName;
                 }
@@ -143,6 +142,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     conOptions.Username = cred.Domain + "\\" + cred.UserName;
                 }
+
                 conOptions.Password = cred.Password;
             }
 
@@ -159,9 +159,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns the event name to be monitored on the input object
+        /// Returns the event name to be monitored on the input object.
         /// </summary>
-        protected override String GetSourceObjectEventName()
+        protected override string GetSourceObjectEventName()
         {
             return "EventArrived";
         }

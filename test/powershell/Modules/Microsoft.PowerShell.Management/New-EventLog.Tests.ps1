@@ -1,47 +1,55 @@
-﻿if ($IsWindows -and !$IsCoreCLR) {
-    #check to see whether we're running as admin in Windows...
-    $windowsIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
-    $windowsPrincipal = new-object 'Security.Principal.WindowsPrincipal' $windowsIdentity
-    if ($windowsPrincipal.IsInRole("Administrators") -eq $true) {
-        $NonWinAdmin=$false
-    } else {$NonWinAdmin=$true}
-  Describe "New-EventLog cmdlet tests" -Tags "CI" {
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+Describe "New-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
+
+    BeforeAll {
+        $defaultParamValues = $PSDefaultParameterValues.Clone()
+        $IsNotSkipped = ($IsWindows -and !$IsCoreCLR)
+        $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $defaultParamValues
+    }
+
     BeforeEach {
-      Remove-EventLog -LogName TestLog -ea Ignore
+        if ($IsNotSkipped) {
+            Remove-EventLog -LogName TestLog -ErrorAction Ignore
+        }
     }
-    It "should be able to create a New-EventLog with a -Source paramter" -Skip:($True -Or $NonWinAdmin) {
-      {New-EventLog -LogName TestLog -Source TestSource -ea stop} | Should Not Throw
-      {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ea stop} | Should Not Throw
+
+    It "should be able to create a New-EventLog with a -Source parameter" -Skip:($true) {
+      {New-EventLog -LogName TestLog -Source TestSource -ErrorAction Stop} | Should -Not -Throw
+      {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventId 1 -ErrorAction Stop} | Should -Not -Throw
       $result=Get-EventLog -LogName TestLog
-      $result.Count   | Should be 1
+      $result.Count   | Should -Be 1
     }
-    It "should be able to create a New-EventLog with a -ComputerName paramter" -Skip:($True -Or $NonWinAdmin) {
-      {New-EventLog -LogName TestLog -Source TestSource -ComputerName $env:COMPUTERNAME -ea stop} | Should Not Throw
-      {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ea stop} | Should Not Throw
+    It "should be able to create a New-EventLog with a -ComputerName parameter" -Skip:($true) {
+      {New-EventLog -LogName TestLog -Source TestSource -ComputerName $env:COMPUTERNAME -ErrorAction Stop} | Should -Not -Throw
+      {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventId 1 -ErrorAction Stop} | Should -Not -Throw
       $result=Get-EventLog -LogName TestLog
-      $result.Count   | Should be 1
-      $result.EventID | Should be 1
+      $result.Count   | Should -Be 1
+      $result.EventID | Should -Be 1
     }
-    It "should be able to create a New-EventLog with a -CategoryResourceFile paramter" -Skip:($True -Or $NonWinAdmin) {
-      {New-EventLog -LogName TestLog -Source TestSource -CategoryResourceFile "CategoryMessageFile" -ea stop} | Should Not Throw
-      {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 2 -ea stop} | Should Not Throw
+    It "should be able to create a New-EventLog with a -CategoryResourceFile parameter" -Skip:($true) {
+      {New-EventLog -LogName TestLog -Source TestSource -CategoryResourceFile "CategoryMessageFile" -ErrorAction Stop} | Should -Not -Throw
+      {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventId 2 -ErrorAction Stop} | Should -Not -Throw
       $result=Get-EventLog -LogName TestLog
-      $result.Count   | Should be 1
-      $result.EventID | Should be 2
+      $result.Count   | Should -Be 1
+      $result.EventID | Should -Be 2
     }
-    It "should be able to create a New-EventLog with a -MessageResourceFile paramter" -Skip:($True -Or $NonWinAdmin) {
-      {New-EventLog -LogName TestLog -Source TestSource -MessageResourceFile "ResourceMessageFile" -ea stop} | Should Not Throw
-      {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 3 -ea stop} | Should Not Throw
+    It "should be able to create a New-EventLog with a -MessageResourceFile parameter" -Skip:($true) {
+      {New-EventLog -LogName TestLog -Source TestSource -MessageResourceFile "ResourceMessageFile" -ErrorAction Stop} | Should -Not -Throw
+      {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventId 3 -ErrorAction Stop} | Should -Not -Throw
       $result=Get-EventLog -LogName TestLog
-      $result.Count   | Should be 1
-      $result.EventID | Should be 3
+      $result.Count   | Should -Be 1
+      $result.EventID | Should -Be 3
     }
-    It "should be able to create a New-EventLog with a -ParameterResourceFile paramter" -Skip:($True -Or $NonWinAdmin) {
-      {New-EventLog -LogName TestLog -Source TestSource -ParameterResourceFile "ParameterMessageFile" -ea stop} | Should Not Throw
-      {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 4 -ea stop} | Should Not Throw
+    It "should be able to create a New-EventLog with a -ParameterResourceFile parameter" -Skip:($true) {
+      {New-EventLog -LogName TestLog -Source TestSource -ParameterResourceFile "ParameterMessageFile" -ErrorAction Stop} | Should -Not -Throw
+      {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventId 4 -ErrorAction Stop} | Should -Not -Throw
       $result=Get-EventLog -LogName TestLog
-      $result.Count   | Should be 1
-      $result.EventID | Should be 4
+      $result.Count   | Should -Be 1
+      $result.EventID | Should -Be 4
     }
-  } 
 }

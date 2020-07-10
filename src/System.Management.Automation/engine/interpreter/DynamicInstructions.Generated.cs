@@ -1,18 +1,17 @@
 /* ****************************************************************************
  *
- * Copyright (c) Microsoft Corporation. 
+ * Copyright (c) Microsoft Corporation.
  *
- * This source code is subject to terms and conditions of the Apache License, Version 2.0. A 
- * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Apache License, Version 2.0, please send an email to 
- * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
+ * This source code is subject to terms and conditions of the Apache License, Version 2.0. A
+ * copy of the license can be found in the License.html file at the root of this distribution. If
+ * you cannot locate the Apache License, Version 2.0, please send an email to
+ * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Apache License, Version 2.0.
  *
  * You must not remove this notice, or any other, from this software.
  *
  *
  * ***************************************************************************/
-
 
 using System;
 using System.Linq;
@@ -55,7 +54,7 @@ namespace System.Management.Automation.Interpreter {
                 default:
                     throw Assert.Unreachable;
             }
-            
+
             return genericType.MakeGenericType(newArgTypes);
         }
 
@@ -86,7 +85,7 @@ namespace System.Management.Automation.Interpreter {
                 // *** END GENERATED CODE ***
 
                 #endregion
-                
+
                 default: return null;
             }
         }
@@ -109,6 +108,7 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return 0; } }
 
         public override int Run(InterpretedFrame frame) {
@@ -134,6 +134,7 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame) {
@@ -158,6 +159,7 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return 2; } }
 
         public override int Run(InterpretedFrame frame) {
@@ -183,6 +185,7 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return 3; } }
 
         public override int Run(InterpretedFrame frame) {
@@ -208,6 +211,7 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return 4; } }
 
         public override int Run(InterpretedFrame frame) {
@@ -233,6 +237,7 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return 5; } }
 
         public override int Run(InterpretedFrame frame) {
@@ -258,6 +263,7 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return 6; } }
 
         public override int Run(InterpretedFrame frame) {
@@ -283,6 +289,7 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return 7; } }
 
         public override int Run(InterpretedFrame frame) {
@@ -308,6 +315,7 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return 8; } }
 
         public override int Run(InterpretedFrame frame) {
@@ -333,6 +341,7 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return 9; } }
 
         public override int Run(InterpretedFrame frame) {
@@ -358,6 +367,7 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return 10; } }
 
         public override int Run(InterpretedFrame frame) {
@@ -383,6 +393,7 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return 11; } }
 
         public override int Run(InterpretedFrame frame) {
@@ -408,6 +419,7 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return 12; } }
 
         public override int Run(InterpretedFrame frame) {
@@ -433,6 +445,7 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return 13; } }
 
         public override int Run(InterpretedFrame frame) {
@@ -458,6 +471,7 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return 14; } }
 
         public override int Run(InterpretedFrame frame) {
@@ -483,6 +497,7 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public override int ProducedStack { get { return 1; } }
+
         public override int ConsumedStack { get { return 15; } }
 
         public override int Run(InterpretedFrame frame) {
@@ -496,10 +511,8 @@ namespace System.Management.Automation.Interpreter {
         }
     }
 
-
     // *** END GENERATED CODE ***
 
     #endregion
-
 
 }

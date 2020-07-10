@@ -1,11 +1,10 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 namespace System.Management.Automation.Language
 {
     /// <summary>
-    /// This type is introduced to provide a way to pass null into a .NET method that has a string parameter
+    /// This type is introduced to provide a way to pass null into a .NET method that has a string parameter.
     /// </summary>
     public class NullString
     {
@@ -18,7 +17,7 @@ namespace System.Management.Automation.Language
         #region public_property
 
         /// <summary>
-        /// This overrides ToString() method and returns null. 
+        /// This overrides ToString() method and returns null.
         /// </summary>
         public override string ToString()
         {
@@ -26,7 +25,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// This returns the singleton instance of NullString
+        /// This returns the singleton instance of NullString.
         /// </summary>
         public static NullString Value { get; } = new NullString();
 

@@ -1,7 +1,7 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
+#if !UNIX
 using System;
 using System.Collections;
 using System.Reflection;
@@ -14,29 +14,30 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// Contains auxilliary ToString CodeMethod implementations for some types
+    /// Contains auxiliary ToString CodeMethod implementations for some types.
     /// </summary>
     public static partial class ToStringCodeMethods
     {
         /// <summary>
-        /// ToString implementation for PropertyValueCollection
+        /// ToString implementation for PropertyValueCollection.
         /// </summary>
-        /// <param name="instance">instance of PSObject wrapping a PropertyValueCollection</param>
+        /// <param name="instance">Instance of PSObject wrapping a PropertyValueCollection.</param>
         public static string PropertyValueCollection(PSObject instance)
         {
             if (instance == null)
-                return String.Empty;
+                return string.Empty;
 
             var values = (PropertyValueCollection)instance.BaseObject;
             if (values == null)
-                return String.Empty;
+                return string.Empty;
 
             if (values.Count == 1)
             {
                 if (values[0] == null)
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
+
                 return (PSObject.AsPSObject(values[0]).ToString());
             }
 
@@ -46,7 +47,7 @@ namespace Microsoft.PowerShell
 
     /// <summary>
     /// Contains CodeMethod implementations for some adapted types like:
-    /// 
+    ///
     /// 1. DirectoryEntry Related Code Methods
     ///    (a) Convert from DE LargeInteger to Int64.
     ///    (b) Convert from DE Dn-With-Binary to string.
@@ -58,15 +59,15 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Converts instance of LargeInteger to .net Int64.
         /// </summary>
-        /// <param name="deInstance">Instance of PSObject wrapping DirectoryEntry object</param>
-        /// <param name="largeIntegerInstance">Instance of PSObject wrapping LargeInteger instance</param>
+        /// <param name="deInstance">Instance of PSObject wrapping DirectoryEntry object.</param>
+        /// <param name="largeIntegerInstance">Instance of PSObject wrapping LargeInteger instance.</param>
         /// <returns>Converted Int64.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "integer")]
         public static Int64 ConvertLargeIntegerToInt64(PSObject deInstance, PSObject largeIntegerInstance)
         {
-            if (null == largeIntegerInstance)
+            if (largeIntegerInstance == null)
             {
-                throw PSTraceSource.NewArgumentException("largeIntegerInstance");
+                throw PSTraceSource.NewArgumentException(nameof(largeIntegerInstance));
             }
 
             object largeIntObject = (object)largeIntegerInstance.BaseObject;
@@ -74,13 +75,13 @@ namespace Microsoft.PowerShell
 
             // the following code might throw exceptions,
             // engine will catch these exceptions
-            Int32 highPart = (Int32)largeIntType.InvokeMember("HighPart",
+            int highPart = (int)largeIntType.InvokeMember("HighPart",
                 BindingFlags.GetProperty | BindingFlags.Public,
                 null,
                 largeIntObject,
                 null,
                 CultureInfo.InvariantCulture);
-            Int32 lowPart = (Int32)largeIntType.InvokeMember("LowPart",
+            int lowPart = (int)largeIntType.InvokeMember("LowPart",
                 BindingFlags.GetProperty | BindingFlags.Public,
                 null,
                 largeIntObject,
@@ -100,17 +101,17 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Converts instance of DN-With-Binary to .net String
+        /// Converts instance of DN-With-Binary to .net String.
         /// </summary>
-        /// <param name="deInstance">Instance of PSObject wrapping DirectoryEntry object</param>
-        /// <param name="dnWithBinaryInstance">Instance of PSObject wrapping DN-With-Binary object</param>
+        /// <param name="deInstance">Instance of PSObject wrapping DirectoryEntry object.</param>
+        /// <param name="dnWithBinaryInstance">Instance of PSObject wrapping DN-With-Binary object.</param>
         /// <returns>Converted string.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "dn", Justification = "DN represents valid prefix w.r.t Active Directory.")]
         public static string ConvertDNWithBinaryToString(PSObject deInstance, PSObject dnWithBinaryInstance)
         {
-            if (null == dnWithBinaryInstance)
+            if (dnWithBinaryInstance == null)
             {
-                throw PSTraceSource.NewArgumentException("dnWithBinaryInstance");
+                throw PSTraceSource.NewArgumentException(nameof(dnWithBinaryInstance));
             }
 
             object dnWithBinaryObject = (object)dnWithBinaryInstance.BaseObject;
@@ -131,3 +132,4 @@ namespace Microsoft.PowerShell
         #endregion
     }
 }
+#endif

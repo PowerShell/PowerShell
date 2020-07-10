@@ -1,9 +1,11 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 /*============================================================
 **
 **
-** Purpose: 
-** This internal class is a SafeHandle implementation over a 
+** Purpose:
+** This internal class is a SafeHandle implementation over a
 ** native CoTaskMem allocated via SecureStringToCoTaskMemUnicode.
 **
 ============================================================*/
@@ -39,7 +41,6 @@ namespace System.Diagnostics.Eventing.Reader
         {
             return handle;
         }
-
 
         public override bool IsInvalid
         {

@@ -1,11 +1,11 @@
 /* ****************************************************************************
  *
- * Copyright (c) Microsoft Corporation. 
+ * Copyright (c) Microsoft Corporation.
  *
- * This source code is subject to terms and conditions of the Apache License, Version 2.0. A 
- * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Apache License, Version 2.0, please send an email to 
- * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
+ * This source code is subject to terms and conditions of the Apache License, Version 2.0. A
+ * copy of the license can be found in the License.html file at the root of this distribution. If
+ * you cannot locate the Apache License, Version 2.0, please send an email to
+ * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Apache License, Version 2.0.
  *
  * You must not remove this notice, or any other, from this software.
@@ -28,6 +28,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         public override int ConsumedStack { get { return _creator.Interpreter.ClosureSize; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame)
@@ -63,7 +64,9 @@ namespace System.Management.Automation.Interpreter
             _constructor = constructor;
             _argCount = constructor.GetParameters().Length;
         }
+
         public override int ConsumedStack { get { return _argCount; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame)
@@ -84,6 +87,7 @@ namespace System.Management.Automation.Interpreter
                 ExceptionHelpers.UpdateForRethrow(e.InnerException);
                 throw e.InnerException;
             }
+
             frame.Push(ret);
             return +1;
         }
@@ -99,6 +103,7 @@ namespace System.Management.Automation.Interpreter
         internal DefaultValueInstruction() { }
 
         public override int ConsumedStack { get { return 0; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame)
@@ -118,6 +123,7 @@ namespace System.Management.Automation.Interpreter
         internal TypeIsInstruction() { }
 
         public override int ConsumedStack { get { return 1; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame)
@@ -138,6 +144,7 @@ namespace System.Management.Automation.Interpreter
         internal TypeAsInstruction() { }
 
         public override int ConsumedStack { get { return 1; } }
+
         public override int ProducedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame)
@@ -152,6 +159,7 @@ namespace System.Management.Automation.Interpreter
             {
                 frame.Push(null);
             }
+
             return +1;
         }
 
@@ -166,6 +174,7 @@ namespace System.Management.Automation.Interpreter
         public static readonly TypeEqualsInstruction Instance = new TypeEqualsInstruction();
 
         public override int ConsumedStack { get { return 2; } }
+
         public override int ProducedStack { get { return 1; } }
 
         private TypeEqualsInstruction()

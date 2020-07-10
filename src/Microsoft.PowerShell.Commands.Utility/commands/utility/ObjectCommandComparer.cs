@@ -1,13 +1,12 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #region Using directives
 
 using System;
 using System.Collections;
-using System.Management.Automation;
 using System.Globalization;
+using System.Management.Automation;
 
 #endregion
 
@@ -17,8 +16,8 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Keeps the property value of inputObject. Because the value of a non-existing property is null,
-    ///  isExistingProperty is needed to distinguish whether a property exists and its value is null or
-    ///  the property does not exist at all.
+    /// isExistingProperty is needed to distinguish whether a property exists and its value is null or
+    /// the property does not exist at all.
     /// </summary>
     internal class ObjectCommandPropertyValue
     {
@@ -43,13 +42,12 @@ namespace Microsoft.PowerShell.Commands
             this.cultureInfo = cultureInfo;
         }
 
-
         internal object PropertyValue { get; }
 
         internal bool IsExistingProperty { get; }
 
         /// <summary>
-        /// Indicates if the Property Value comparion has to be Case sensitive or not.
+        /// Indicates if the Property Value comparison has to be Case sensitive or not.
         /// </summary>
         internal SwitchParameter CaseSensitive
         {
@@ -77,35 +75,35 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="inputObject">Input Object.</param>
         /// <returns>True if both the objects are same or else returns false.</returns>
-        public override bool Equals(Object inputObject)
+        public override bool Equals(object inputObject)
         {
             ObjectCommandPropertyValue objectCommandPropertyValueObject = inputObject as ObjectCommandPropertyValue;
             if (objectCommandPropertyValueObject == null)
+            {
                 return false;
+            }
 
             object baseObject = PSObject.Base(PropertyValue);
             object inComingbaseObjectPropertyValue = PSObject.Base(objectCommandPropertyValueObject.PropertyValue);
 
-            IComparable baseObjectComparable = baseObject as IComparable;
-
-            if (baseObjectComparable != null)
+            if (baseObject is IComparable)
             {
-                return (LanguagePrimitives.Compare(baseObject, inComingbaseObjectPropertyValue, CaseSensitive, Culture) == 0);
+                var success = LanguagePrimitives.TryCompare(baseObject, inComingbaseObjectPropertyValue, CaseSensitive, Culture, out int result);
+                return success && result == 0;
             }
-            else
-            {
-                if (baseObject == null && inComingbaseObjectPropertyValue == null)
-                {
-                    return true;
-                }
-                if (baseObject != null && inComingbaseObjectPropertyValue != null)
-                {
-                    return baseObject.ToString().Equals(inComingbaseObjectPropertyValue.ToString(), StringComparison.OrdinalIgnoreCase);
-                }
 
-                // One of the property values being compared is null.
-                return false;
+            if (baseObject == null && inComingbaseObjectPropertyValue == null)
+            {
+                return true;
             }
+
+            if (baseObject != null && inComingbaseObjectPropertyValue != null)
+            {
+                return baseObject.ToString().Equals(inComingbaseObjectPropertyValue.ToString(), StringComparison.OrdinalIgnoreCase);
+            }
+
+            // One of the property values being compared is null.
+            return false;
         }
 
         /// <summary>
@@ -115,12 +113,17 @@ namespace Microsoft.PowerShell.Commands
         public override int GetHashCode()
         {
             if (PropertyValue == null)
+            {
                 return 0;
+            }
 
             object baseObject = PSObject.Base(PropertyValue);
-            IComparable baseObjectComparable = baseObject as IComparable;
+            if (baseObject == null)
+            {
+                return 0;
+            }
 
-            if (baseObjectComparable != null)
+            if (baseObject is IComparable)
             {
                 return baseObject.GetHashCode();
             }
@@ -132,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// 
+    /// ObjectCommandComparer class.
     /// </summary>
     internal class ObjectCommandComparer : IComparer
     {
@@ -154,7 +157,6 @@ namespace Microsoft.PowerShell.Commands
             return (val == null);
         }
 
-
         internal int Compare(ObjectCommandPropertyValue first, ObjectCommandPropertyValue second)
         {
             if (first.IsExistingProperty && second.IsExistingProperty)
@@ -162,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
                 return Compare(first.PropertyValue, second.PropertyValue);
             }
             // if first.IsExistingProperty, !second.IsExistingProperty; otherwise the
-            // first branch if would return. Regardless of key orders non existing property 
+            // first branch if would return. Regardless of key orders non existing property
             // will be considered greater than others
             if (first.IsExistingProperty)
             {
@@ -173,57 +175,50 @@ namespace Microsoft.PowerShell.Commands
             {
                 return 1;
             }
-            //both are nonexisting
+            // both are nonexisting
             return 0;
         }
 
         /// <summary>
-        /// Main method that will compare first and second by
-        /// their keys considering case and order
+        /// Main method that will compare first and second by their keys considering case and order.
         /// </summary>
         /// <param name="first">
-        /// first object to extract value
+        /// First object to extract value.
         /// </param>
         /// <param name="second">
-        /// second object to extract value
+        /// Second object to extract value.
         /// </param>
-        /// <returns> 
-        /// 0 if they are the same, less than 0 if first is smaller, more than 0 if first is greater
+        /// <returns>
+        /// 0 if they are the same, less than 0 if first is smaller, more than 0 if first is greater.
         ///</returns>
         public int Compare(object first, object second)
         {
             // This method will never throw exceptions, two null
             // objects are considered the same
-            if (IsValueNull(first) && IsValueNull(second)) return 0;
+            if (IsValueNull(first) && IsValueNull(second))
+            {
+                return 0;
+            }
 
-
-            PSObject firstMsh = first as PSObject;
-            if (firstMsh != null)
+            if (first is PSObject firstMsh)
             {
                 first = firstMsh.BaseObject;
             }
 
-            PSObject secondMsh = second as PSObject;
-            if (secondMsh != null)
+            if (second is PSObject secondMsh)
             {
                 second = secondMsh.BaseObject;
             }
 
-            try
+            if (LanguagePrimitives.TryCompare(first, second, !_caseSensitive, _cultureInfo, out int result))
             {
-                return LanguagePrimitives.Compare(first, second, !_caseSensitive, _cultureInfo) * (_ascendingOrder ? 1 : -1);
-            }
-            catch (InvalidCastException)
-            {
-            }
-            catch (ArgumentException)
-            {
-                // Note that this will occur if the objects do not support
-                // IComparable.  We fall back to comparing as strings.
+                return result * (_ascendingOrder ? 1 : -1);
             }
 
+            // Note that this will occur if the objects do not support
+            // IComparable.  We fall back to comparing as strings.
+
             // being here means the first object doesn't support ICompare
-            // or an Exception was raised win Compare
             string firstString = PSObject.AsPSObject(first).ToString();
             string secondString = PSObject.AsPSObject(second).ToString();
 
@@ -236,7 +231,5 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _caseSensitive = false;
     }
-
     #endregion
 }
-

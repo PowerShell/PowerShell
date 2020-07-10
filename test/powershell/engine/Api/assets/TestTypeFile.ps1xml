@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Types>
+  <Type>
+    <Name>System.Array</Name>
+    <Members>
+      <AliasProperty>
+        <Name>Counts</Name>
+        <ReferencedMemberName>Length</ReferencedMemberName>
+      </AliasProperty>
+    </Members>
+  </Type>
+</Types>

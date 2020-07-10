@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,41 +26,41 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -119,7 +119,7 @@
   </resheader>
   <data name="CannotFindJobDefinition" xml:space="preserve">
     <value>Cannot find scheduled job {0}.</value>
-    <comment>{0} is the scheduled job defintion name that cannot be found.</comment>
+    <comment>{0} is the scheduled job definition name that cannot be found.</comment>
   </data>
   <data name="CannotFindTaskId" xml:space="preserve">
     <value>Cannot find scheduled job definition {0} in the Task Scheduler.</value>
@@ -134,7 +134,7 @@
     <value>There is no entry in Task Scheduler for scheduled job definition {0}.  A new Task Scheduler entry has been created for this scheduled job definition.</value>
   </data>
   <data name="CantLoadDefinitionFromStore" xml:space="preserve">
-    <value>Cannot get the {0} scheduled job because it is corrupted or in an irresolvable state. Because it cannot run, Windows PowerShell has deleted {0} and its results from the computer. To recreate the scheduled job, use the Register-ScheduledJob cmdlet. For more information about corrupted scheduled jobs, see about_Scheduled_Jobs_Troubleshooting.</value>
+    <value>Cannot get the {0} scheduled job because it is corrupted or in an irresolvable state. Because it cannot run, PowerShell has deleted {0} and its results from the computer. To recreate the scheduled job, use the Register-ScheduledJob cmdlet. For more information about corrupted scheduled jobs, see about_Scheduled_Jobs_Troubleshooting.</value>
     <comment>{0} is the name of the scheduled job definition.</comment>
   </data>
   <data name="CantLoadJobRunFromStore" xml:space="preserve">
@@ -174,7 +174,7 @@
     <value>Only one JobTrigger type can be specified: AtStartup, AtLogon, Once, Daily, or Weekly.</value>
   </data>
   <data name="DefinitionAlreadyExistsInLocal" xml:space="preserve">
-    <value>A scheduled job defintion object {0} already exists in the local scheduled job repository having this Global ID {1}.</value>
+    <value>A scheduled job definition object {0} already exists in the local scheduled job repository having this Global ID {1}.</value>
   </data>
   <data name="DefinitionNotFoundByGlobalId" xml:space="preserve">
     <value>A scheduled job definition object with Global ID {0} could not be found.</value>
@@ -192,7 +192,7 @@
     <value>Scheduled job definition {0}.</value>
   </data>
   <data name="DirectoryNotFoundError" xml:space="preserve">
-    <value>A directory not found error occurred while registering scheduled job definition {0}.  Make sure you are running Windows PowerShell with elevated privileges.</value>
+    <value>A directory not found error occurred while registering scheduled job definition {0}.  Make sure you are running PowerShell with elevated privileges.</value>
   </data>
   <data name="ErrorRegisteringDefinitionStore" xml:space="preserve">
     <value>An error occurred while registering scheduled job definition {0}. Cannot add this definition object to the job store.</value>
@@ -231,7 +231,7 @@
     <value>The FilePath parameter is not valid.</value>
   </data>
   <data name="InvalidFilePathFile" xml:space="preserve">
-    <value>Only Windows PowerShell script files are allowed for FilePath parameter. Specify a file with .ps1 extension.</value>
+    <value>Only PowerShell script files are allowed for FilePath parameter. Specify a file with .ps1 extension.</value>
   </data>
   <data name="InvalidIdleDuration" xml:space="preserve">
     <value>The IdleDuration parameter cannot have a negative value.</value>
@@ -255,7 +255,7 @@
     <value>The WeeksInterval parameter value must be greater than zero.</value>
   </data>
   <data name="IOFailureOnSetJobDefinition" xml:space="preserve">
-    <value>An I/O failure occurred while updating the scheduled job definition {0}.  This could mean a file is missing or corrupted, either in Task Scheduler or in the Windows PowerShell scheduled job store. You might need to create the scheduled job definition again.</value>
+    <value>An I/O failure occurred while updating the scheduled job definition {0}.  This could mean a file is missing or corrupted, either in Task Scheduler or in the PowerShell scheduled job store. You might need to create the scheduled job definition again.</value>
     <comment>{0} is the scheduled job definition name</comment>
   </data>
   <data name="JobAlreadyRunning" xml:space="preserve">
@@ -283,7 +283,7 @@
     <value>No Frequency type has been specified for this job trigger. One of the following job trigger frequencies must be specified: AtStartup, AtLogon, Once, Daily, Weekly.</value>
   </data>
   <data name="NoAccessOnSetJobDefinition" xml:space="preserve">
-    <value>An access denied error occurred while updating the scheduled job definition {0}.  Try running Windows PowerShell with elevated user rights; that is, Run as Administrator.</value>
+    <value>An access denied error occurred while updating the scheduled job definition {0}.  Try running PowerShell with elevated user rights; that is, Run as Administrator.</value>
     <comment>{0} is the scheduled job definition name</comment>
   </data>
   <data name="NoAssociatedJobDefinitionForOption" xml:space="preserve">
@@ -320,7 +320,7 @@
     <value>Weekly</value>
   </data>
   <data name="UnauthorizedAccessError" xml:space="preserve">
-    <value>An access denied error occurred when registering scheduled job definition {0}.  Try running Windows PowerShell with elevated user rights; that is, Run As Administrator.</value>
+    <value>An access denied error occurred when registering scheduled job definition {0}.  Try running PowerShell with elevated user rights; that is, Run As Administrator.</value>
   </data>
   <data name="UnknownTriggerFrequency" xml:space="preserve">
     <value>Cannot convert a ScheduledJobTrigger object with TriggerFrequency value of {0}.</value>
@@ -331,10 +331,10 @@
   <data name="CannotSerializeData" xml:space="preserve">
     <value>The scheduled job definition {0} could not be saved because one of the values in the ArgumentList parameter cannot be converted to XML. If possible, change the ArgumentList values to types that are easily converted to XML, such as strings, integers, and hash tables. {1}</value>
     <comment>{0} is the name of the scheduled job definition that cannot be registered
-{1} is the inner exception message from .Net serialization, or emtpy if no exception message.</comment>
+{1} is the inner exception message from .Net serialization, or empty if no exception message.</comment>
   </data>
   <data name="UnsupportedHostFunction" xml:space="preserve">
-    <value>Commands that interact with the host program, such as Write-Host, cannot be included in Windows PowerShell scheduled jobs because scheduled jobs do not interact with the host program.  Use an alternate command that does not interact with the host program, such as Write-Output or Out-File.</value>
+    <value>Commands that interact with the host program, such as Write-Host, cannot be included in PowerShell scheduled jobs because scheduled jobs do not interact with the host program.  Use an alternate command that does not interact with the host program, such as Write-Output or Out-File.</value>
   </data>
   <data name="InvalidRepetitionInterval" xml:space="preserve">
     <value>The RepetitionInterval parameter value must be less than or equal to the RepetitionDuration parameter value.</value>
@@ -355,10 +355,10 @@
     <value>The RepetitionInterval parameter cannot have a value of zero unless the RepetitionDuration parameter also has a zero value. A zero value removes repetition behavior from the Job trigger.</value>
   </data>
   <data name="ErrorRenamingScheduledJob" xml:space="preserve">
-    <value>An error occured while attempting to rename scheduled job from {0} to {1}.</value>
+    <value>An error occurred while attempting to rename scheduled job from {0} to {1}.</value>
   </data>
   <data name="ErrorRenamingScheduledJobWithMessage" xml:space="preserve">
-    <value>An error occured while attempting to rename scheduled job from {0} to {1} with error message: {2}.</value>
+    <value>An error occurred while attempting to rename scheduled job from {0} to {1} with error message: {2}.</value>
   </data>
   <data name="BrokenRenamingScheduledJob" xml:space="preserve">
     <value>An unrecoverable error occurred while renaming the scheduled job from {0} to {1}. The scheduled job will be removed.</value>
@@ -367,10 +367,10 @@
     <value>An unrecoverable error occurred while renaming the scheduled job from {0} to {1} with message {2}. The scheduled job will be removed.</value>
   </data>
   <data name="ErrorRunningAsTask" xml:space="preserve">
-    <value>An error occurred while running scheduled job defintion {0} from the Task Scheduler.</value>
+    <value>An error occurred while running scheduled job definition {0} from the Task Scheduler.</value>
   </data>
   <data name="ErrorRunningAsTaskWithReason" xml:space="preserve">
-    <value>An error occurred while running scheduled job defintion {0} from the Task Scheduler because {1}.</value>
+    <value>An error occurred while running scheduled job definition {0} from the Task Scheduler because {1}.</value>
   </data>
   <data name="InvalidRepeatIndefinitelyParams" xml:space="preserve">
     <value>You cannot specify the RepetitionDuration and RepeatIndefinitely parameters in the same command.</value>

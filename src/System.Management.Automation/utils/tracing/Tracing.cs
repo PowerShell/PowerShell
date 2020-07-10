@@ -1,18 +1,18 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 #if !UNIX
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+
 using System.Text;
 
 namespace System.Management.Automation.Tracing
 {
     /// <summary>
-    /// Tracer
+    /// Tracer.
     /// </summary>
     public sealed partial class Tracer : System.Management.Automation.Tracing.EtwActivity
     {
         /// <summary>
-        /// DebugMessage
+        /// DebugMessage.
         /// </summary>
         [EtwEvent(0xc000)]
         public void DebugMessage(Exception exception)
@@ -38,6 +38,7 @@ namespace System.Management.Automation.Tracing
             {
                 exception = exception.InnerException;
             }
+
             return sb.ToString();
         }
 

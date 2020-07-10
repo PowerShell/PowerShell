@@ -1,11 +1,11 @@
 /* ****************************************************************************
  *
- * Copyright (c) Microsoft Corporation. 
+ * Copyright (c) Microsoft Corporation.
  *
- * This source code is subject to terms and conditions of the Apache License, Version 2.0. A 
- * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Apache License, Version 2.0, please send an email to 
- * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
+ * This source code is subject to terms and conditions of the Apache License, Version 2.0. A
+ * copy of the license can be found in the License.html file at the root of this distribution. If
+ * you cannot locate the Apache License, Version 2.0, please send an email to
+ * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Apache License, Version 2.0.
  *
  * You must not remove this notice, or any other, from this software.
@@ -14,15 +14,15 @@
  * ***************************************************************************/
 
 using System.Diagnostics;
-using System.Reflection;
 
 namespace System.Management.Automation.Interpreter
 {
     internal abstract class AddInstruction : Instruction
     {
-        private static Instruction s_int16,s_int32,s_int64,s_UInt16,s_UInt32,s_UInt64,s_single,s_double;
+        private static Instruction s_int16, s_int32, s_int64, s_UInt16, s_UInt32, s_UInt64, s_single, s_double;
 
         public override int ConsumedStack { get { return 2; } }
+
         public override int ProducedStack { get { return 1; } }
 
         private AddInstruction()
@@ -119,7 +119,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Double)l + (Double)r;
+                frame.Data[frame.StackIndex - 2] = (double)l + (double)r;
                 frame.StackIndex--;
                 return +1;
             }
@@ -127,7 +127,7 @@ namespace System.Management.Automation.Interpreter
 
         public static Instruction Create(Type type)
         {
-            Debug.Assert(!type.GetTypeInfo().IsEnum);
+            Debug.Assert(!type.IsEnum);
             switch (type.GetTypeCode())
             {
                 case TypeCode.Int16: return s_int16 ?? (s_int16 = new AddInt16());
@@ -152,9 +152,10 @@ namespace System.Management.Automation.Interpreter
 
     internal abstract class AddOvfInstruction : Instruction
     {
-        private static Instruction s_int16,s_int32,s_int64,s_UInt16,s_UInt32,s_UInt64,s_single,s_double;
+        private static Instruction s_int16, s_int32, s_int64, s_UInt16, s_UInt32, s_UInt64, s_single, s_double;
 
         public override int ConsumedStack { get { return 2; } }
+
         public override int ProducedStack { get { return 1; } }
 
         private AddOvfInstruction()
@@ -251,7 +252,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Double)l + (Double)r;
+                frame.Data[frame.StackIndex - 2] = (double)l + (double)r;
                 frame.StackIndex--;
                 return +1;
             }
@@ -259,7 +260,7 @@ namespace System.Management.Automation.Interpreter
 
         public static Instruction Create(Type type)
         {
-            Debug.Assert(!type.GetTypeInfo().IsEnum);
+            Debug.Assert(!type.IsEnum);
             switch (type.GetTypeCode())
             {
                 case TypeCode.Int16: return s_int16 ?? (s_int16 = new AddOvfInt16());

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #if !SILVERLIGHT // ComObject
 #if !CLR2
@@ -145,21 +144,20 @@ namespace System.Management.Automation.ComInterop
             return base.BindGetMember(binder);
         }
 
-
         private DynamicMetaObject BindGetMember(ComMethodDesc method, bool canReturnCallables)
         {
             if (method.IsDataMember)
             {
                 if (method.ParamCount == 0)
                 {
-                    return BindComInvoke(DynamicMetaObject.EmptyMetaObjects, method, new CallInfo(0), Utils.EmptyArray<bool>(), null, null);
+                    return BindComInvoke(DynamicMetaObject.EmptyMetaObjects, method, new CallInfo(0), Array.Empty<bool>(), null, null);
                 }
             }
 
             // ComGetMemberBinder does not expect callables. Try to call always.
             if (!canReturnCallables)
             {
-                return BindComInvoke(DynamicMetaObject.EmptyMetaObjects, method, new CallInfo(0), Utils.EmptyArray<bool>(), null, null);
+                return BindComInvoke(DynamicMetaObject.EmptyMetaObjects, method, new CallInfo(0), Array.Empty<bool>(), null, null);
             }
 
             return new DynamicMetaObject(

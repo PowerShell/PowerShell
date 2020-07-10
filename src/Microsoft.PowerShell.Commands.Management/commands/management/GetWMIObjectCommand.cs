@@ -1,59 +1,60 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
-using System.Globalization;
-using System.Management.Automation;
-using System.Management;
-using System.Text;
 using System.Collections;
+using System.Globalization;
+using System.Management;
+using System.Management.Automation;
+using System.Text;
 using System.Threading;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to get WMI Objects
+    /// A command to get WMI Objects.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "WmiObject", DefaultParameterSetName = "query",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113337", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113337", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class GetWmiObjectCommand : WmiBaseCmdlet
     {
         #region Parameters
 
-
         /// <summary>
-        /// The WMI class to query
+        /// The WMI class to query.
         /// </summary>
         [Alias("ClassName")]
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "query")]
         [Parameter(Position = 1, ParameterSetName = "list")]
+        [ValidateNotNullOrEmpty()]
         public string Class { get; set; }
 
         /// <summary>
-        /// To specify whether to get the results recursively
+        /// To specify whether to get the results recursively.
         /// </summary>
         [Parameter(ParameterSetName = "list")]
         public SwitchParameter Recurse { get; set; } = false;
 
         /// <summary>
-        /// The WMI properties to retrieve
+        /// The WMI properties to retrieve.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = "query")]
+        [ValidateNotNullOrEmpty()]
         public string[] Property
         {
             get { return (string[])_property.Clone(); }
+
             set { _property = value; }
         }
 
         /// <summary>
-        /// The filter to be used in the search
+        /// The filter to be used in the search.
         /// </summary>
         [Parameter(ParameterSetName = "query")]
         public string Filter { get; set; }
 
         /// <summary>
-        /// If Amended qualifier to use
+        /// If Amended qualifier to use.
         /// </summary>
         [Parameter]
         public SwitchParameter Amended { get; set; }
@@ -66,13 +67,13 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter DirectRead { get; set; }
 
         /// <summary>
-        /// The list of classes
+        /// The list of classes.
         /// </summary>
         [Parameter(ParameterSetName = "list")]
         public SwitchParameter List { get; set; } = false;
 
         /// <summary>
-        /// The query string to search for objects
+        /// The query string to search for objects.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "WQLQuery")]
         public string Query { get; set; }
@@ -88,19 +89,20 @@ namespace Microsoft.PowerShell.Commands
         #region Command code
 
         /// <summary>
-        /// Uses this.filter, this.wmiClass and this.property to retrieve the filter
+        /// Uses this.filter, this.wmiClass and this.property to retrieve the filter.
         /// </summary>
         internal string GetQueryString()
         {
             StringBuilder returnValue = new StringBuilder("select ");
-            returnValue.Append(String.Join(", ", _property));
+            returnValue.Append(string.Join(", ", _property));
             returnValue.Append(" from ");
             returnValue.Append(Class);
-            if (!String.IsNullOrEmpty(Filter))
+            if (!string.IsNullOrEmpty(Filter))
             {
                 returnValue.Append(" where ");
                 returnValue.Append(Filter);
             }
+
             return returnValue.ToString();
         }
         /// <summary>
@@ -108,8 +110,8 @@ namespace Microsoft.PowerShell.Commands
         ///            Character   Description Example Match   Comment
         ///             *   Matches zero or more characters starting at the specified position  A*  A,ag,Apple  Supported by PowerShell.
         ///              ?   Matches any character at the specified position ?n  An,in,on (does not match ran)   Supported by PowerShell.
-        ///              _   Matches any character at the specified position    _n  An,in,on (does not match ran)   Supperted by WMI
-        ///             %   Matches zero or more characters starting at the specified position   A%  A,ag,Apple  Supperted by WMI
+        ///              _   Matches any character at the specified position    _n  An,in,on (does not match ran)   Supported by WMI
+        ///             %   Matches zero or more characters starting at the specified position   A%  A,ag,Apple  Supported by WMI
         ///             []  Matches a range of characters  [a-l]ook    Book,cook,look (does not match took)    Supported by WMI and powershell
         ///              []  Matches specified characters   [bc]ook Book,cook, (does not match look)    Supported by WMI and powershell
         ///              ^   Does not Match specified characters. [^bc]ook    Look, took (does not match book, cook)  Supported by WMI.
@@ -124,6 +126,7 @@ namespace Microsoft.PowerShell.Commands
             filterClass = filterClass.Replace('?', '_');
             return filterClass;
         }
+
         internal bool IsLocalizedNamespace(string sNamespace)
         {
             bool toReturn = false;
@@ -131,8 +134,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 toReturn = true;
             }
+
             return toReturn;
         }
+
         internal bool ValidateClassFormat()
         {
             string filterClass = this.Class;
@@ -141,7 +146,7 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder newClassName = new StringBuilder();
             for (int i = 0; i < filterClass.Length; i++)
             {
-                if (Char.IsLetterOrDigit(filterClass[i]) ||
+                if (char.IsLetterOrDigit(filterClass[i]) ||
                     filterClass[i].Equals('[') || filterClass[i].Equals(']') ||
                     filterClass[i].Equals('*') || filterClass[i].Equals('?') ||
                     filterClass[i].Equals('-'))
@@ -156,14 +161,16 @@ namespace Microsoft.PowerShell.Commands
                     newClassName.Append(']');
                     continue;
                 }
+
                 return false;
             }
+
             this.Class = newClassName.ToString();
             return true;
         }
 
         /// <summary>
-        /// Gets the ManagementObjectSearcher object
+        /// Gets the ManagementObjectSearcher object.
         /// </summary>
         internal ManagementObjectSearcher GetObjectList(ManagementScope scope)
         {
@@ -181,6 +188,7 @@ namespace Microsoft.PowerShell.Commands
                 queryStringBuilder.Append(filterClass);
                 queryStringBuilder.Append("'");
             }
+
             ObjectQuery classQuery = new ObjectQuery(queryStringBuilder.ToString());
 
             EnumerationOptions enumOptions = new EnumerationOptions();
@@ -190,7 +198,7 @@ namespace Microsoft.PowerShell.Commands
             return searcher;
         }
         /// <summary>
-        /// Gets the properties of an item at the specified path
+        /// Gets the properties of an item at the specified path.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -208,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ErrorRecord errorRecord = new ErrorRecord(
                        new ArgumentException(
-                           String.Format(
+                           string.Format(
                                Thread.CurrentThread.CurrentCulture,
                                "Class", this.Class)),
                        "INVALID_QUERY_IDENTIFIER",
@@ -219,6 +227,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(errorRecord);
                         return;
                     }
+
                     foreach (string name in ComputerName)
                     {
                         if (this.Recurse.IsPresent)
@@ -325,6 +334,7 @@ namespace Microsoft.PowerShell.Commands
                                 WriteError(errorRecord);
                                 continue;
                             }
+
                             ManagementObjectSearcher searcher = this.GetObjectList(scope);
                             if (searcher == null)
                                 continue;
@@ -334,14 +344,15 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
+
                     return;
                 }
 
                 // When -List is not specified and -Recurse is specified, we need the -Class parameter to compose the right query string
                 if (this.Recurse.IsPresent && string.IsNullOrEmpty(Class))
                 {
-                    string errormMsg = string.Format(CultureInfo.InvariantCulture, WmiResources.WmiParameterMissing, "-Class");
-                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(errormMsg), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                    string errorMsg = string.Format(CultureInfo.InvariantCulture, WmiResources.WmiParameterMissing, "-Class");
+                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(errorMsg), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
@@ -369,19 +380,19 @@ namespace Microsoft.PowerShell.Commands
                         if (e.ErrorCode.Equals(ManagementStatus.InvalidClass))
                         {
                             string className = GetClassNameFromQuery(queryString);
-                            string errorMsg = String.Format(CultureInfo.InvariantCulture, WmiResources.WmiQueryFailure,
+                            string errorMsg = string.Format(CultureInfo.InvariantCulture, WmiResources.WmiQueryFailure,
                                                         e.Message, className);
                             errorRecord = new ErrorRecord(new ManagementException(errorMsg), "GetWMIManagementException", ErrorCategory.InvalidType, null);
                         }
                         else if (e.ErrorCode.Equals(ManagementStatus.InvalidQuery))
                         {
-                            string errorMsg = String.Format(CultureInfo.InvariantCulture, WmiResources.WmiQueryFailure,
+                            string errorMsg = string.Format(CultureInfo.InvariantCulture, WmiResources.WmiQueryFailure,
                                                         e.Message, queryString);
                             errorRecord = new ErrorRecord(new ManagementException(errorMsg), "GetWMIManagementException", ErrorCategory.InvalidArgument, null);
                         }
                         else if (e.ErrorCode.Equals(ManagementStatus.InvalidNamespace))
                         {
-                            string errorMsg = String.Format(CultureInfo.InvariantCulture, WmiResources.WmiQueryFailure,
+                            string errorMsg = string.Format(CultureInfo.InvariantCulture, WmiResources.WmiQueryFailure,
                                                         e.Message, this.Namespace);
                             errorRecord = new ErrorRecord(new ManagementException(errorMsg), "GetWMIManagementException", ErrorCategory.InvalidArgument, null);
                         }
@@ -399,12 +410,12 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(errorRecord);
                         continue;
                     }
-                } // foreach computerName
+                }
             }
-        } // BeginProcessing
+        }
 
         /// <summary>
-        /// Get the class name from a query string
+        /// Get the class name from a query string.
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
@@ -425,6 +436,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Command code
-    } // GetWmiObjectCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

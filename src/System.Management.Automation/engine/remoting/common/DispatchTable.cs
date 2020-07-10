@@ -1,9 +1,9 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Threading;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
@@ -104,7 +104,7 @@ namespace System.Management.Automation.Remoting
 
             // return caller specified value in case there is no response
             // from remote end.
-            if (null == remoteHostResponse)
+            if (remoteHostResponse == null)
             {
                 return defaultValue;
             }

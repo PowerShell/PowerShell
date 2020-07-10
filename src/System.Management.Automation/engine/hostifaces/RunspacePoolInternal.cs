@@ -1,20 +1,20 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Security;
 using System.Management.Automation.Tracing;
 using System.Threading;
-using PSHost = System.Management.Automation.Host.PSHost;
-using System.Management.Automation.Security;
+
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Management.Automation.Internal;
-using System.Collections.ObjectModel;
+using PSHost = System.Management.Automation.Host.PSHost;
 
 namespace System.Management.Automation.Runspaces.Internal
 {
     /// <summary>
-    /// Class which supports pooling local powerShell runspaces. 
+    /// Class which supports pooling local powerShell runspaces.
     /// </summary>
     internal class RunspacePoolInternal
     {
@@ -31,7 +31,6 @@ namespace System.Management.Automation.Runspaces.Internal
         // pool services on this queue.
         protected Queue<GetRunspaceAsyncResult> ultimateRequestQueue;
         protected RunspacePoolStateInfo stateInfo;
-        protected RunspaceConfiguration rsConfig;
         protected InitialSessionState _initialSessionState;
         protected PSHost host;
         protected Guid instanceId;
@@ -49,14 +48,11 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// Constructor which creates a RunspacePool using the
-        /// supplied <paramref name="configuration"/>, <paramref name="minRunspaces"/> 
+        /// supplied <paramref name="configuration"/>, <paramref name="minRunspaces"/>
         /// and <paramref name="maxRunspaces"/>
         /// </summary>
-        /// <param name="runspaceConfiguration">
-        /// RunspaceConfiguration to use when creating a new Runspace.
-        /// </param>
         /// <param name="maxRunspaces">
-        /// The maximum number of Runspaces that can exist in this pool. 
+        /// The maximum number of Runspaces that can exist in this pool.
         /// Should be greater than or equal to 1.
         /// </param>
         /// <param name="minRunspaces">
@@ -64,10 +60,9 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Should be greater than or equal to 1.
         /// </param>
         /// <param name="host">
-        /// The explicit PSHost implementation. 
+        /// The explicit PSHost implementation.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// RunspaceConfiguration is null.
         /// Host is null.
         /// </exception>
         /// <exception cref="ArgumentException">
@@ -76,37 +71,31 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </exception>
         public RunspacePoolInternal(int minRunspaces,
                 int maxRunspaces,
-                RunspaceConfiguration runspaceConfiguration,
                 PSHost host)
             : this(minRunspaces, maxRunspaces)
         {
-            if (runspaceConfiguration == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("runspaceConfiguration");
-            }
-
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
-            rsConfig = runspaceConfiguration;
             this.host = host;
             pool = new Stack<Runspace>();
             runspaceRequestQueue = new Queue<GetRunspaceAsyncResult>();
             ultimateRequestQueue = new Queue<GetRunspaceAsyncResult>();
+            _initialSessionState = InitialSessionState.CreateDefault();
         }
 
         /// <summary>
         /// Constructor which creates a RunspacePool using the
-        /// supplied <paramref name="configuration"/>, <paramref name="minRunspaces"/> 
+        /// supplied <paramref name="configuration"/>, <paramref name="minRunspaces"/>
         /// and <paramref name="maxRunspaces"/>
         /// </summary>
         /// <param name="initialSessionState">
         /// InitialSessionState to use when creating a new Runspace.
         /// </param>
         /// <param name="maxRunspaces">
-        /// The maximum number of Runspaces that can exist in this pool. 
+        /// The maximum number of Runspaces that can exist in this pool.
         /// Should be greater than or equal to 1.
         /// </param>
         /// <param name="minRunspaces">
@@ -114,7 +103,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Should be greater than or equal to 1.
         /// </param>
         /// <param name="host">
-        /// The explicit PSHost implementation. 
+        /// The explicit PSHost implementation.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// initialSessionState is null.
@@ -132,21 +121,18 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (initialSessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("initialSessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
             _initialSessionState = initialSessionState.Clone();
             this.host = host;
             ThreadOptions = initialSessionState.ThreadOptions;
-#if !CORECLR
-            // No ApartmentState In CoreCLR
             this.ApartmentState = initialSessionState.ApartmentState;
-#endif
             pool = new Stack<Runspace>();
             runspaceRequestQueue = new Queue<GetRunspaceAsyncResult>();
             ultimateRequestQueue = new Queue<GetRunspaceAsyncResult>();
@@ -154,10 +140,10 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// Constructor for doing common initialization between
-        /// this class and its derivatives
+        /// this class and its derivatives.
         /// </summary>
         /// <param name="maxRunspaces">
-        /// The maximum number of Runspaces that can exist in this pool. 
+        /// The maximum number of Runspaces that can exist in this pool.
         /// Should be greater than or equal to 1.
         /// </param>
         /// <param name="minRunspaces">
@@ -168,17 +154,17 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (maxRunspaces < 1)
             {
-                throw PSTraceSource.NewArgumentException("maxRunspaces", RunspacePoolStrings.MaxPoolLessThan1);
+                throw PSTraceSource.NewArgumentException(nameof(maxRunspaces), RunspacePoolStrings.MaxPoolLessThan1);
             }
 
             if (minRunspaces < 1)
             {
-                throw PSTraceSource.NewArgumentException("minRunspaces", RunspacePoolStrings.MinPoolLessThan1);
+                throw PSTraceSource.NewArgumentException(nameof(minRunspaces), RunspacePoolStrings.MinPoolLessThan1);
             }
 
             if (minRunspaces > maxRunspaces)
             {
-                throw PSTraceSource.NewArgumentException("minRunspaces", RunspacePoolStrings.MinPoolGreaterThanMaxPool);
+                throw PSTraceSource.NewArgumentException(nameof(minRunspaces), RunspacePoolStrings.MinPoolGreaterThanMaxPool);
             }
 
             maxPoolSz = maxRunspaces;
@@ -192,7 +178,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// default constructor
+        /// Default constructor.
         /// </summary>
         internal RunspacePoolInternal() { }
 
@@ -201,7 +187,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Public Properties
 
         /// <summary>
-        /// Get unqiue id for this instance of runspace pool. It is primarily used 
+        /// Get unique id for this instance of runspace pool. It is primarily used
         /// for logging purposes.
         /// </summary>
         public Guid InstanceId
@@ -224,7 +210,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Gets State of the current runpsace pool.
+        /// Gets State of the current runspace pool.
         /// </summary>
         public RunspacePoolStateInfo RunspacePoolStateInfo
         {
@@ -235,8 +221,8 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Private data to be used by applications built on top of PowerShell.  
-        /// 
+        /// Private data to be used by applications built on top of PowerShell.
+        ///
         /// Local runspace pool is created with application private data set to an empty <see cref="PSPrimitiveDictionary"/>.
         /// </summary>
         internal virtual PSPrimitiveDictionary GetApplicationPrivateData()
@@ -263,18 +249,6 @@ namespace System.Management.Automation.Runspaces.Internal
         private PSPrimitiveDictionary _applicationPrivateData;
 
         /// <summary>
-        /// Gets the RunspaceConfiguration object that this pool uses
-        /// to create the runspaces.
-        /// </summary>
-        public RunspaceConfiguration RunspaceConfiguration
-        {
-            get
-            {
-                return rsConfig;
-            }
-        }
-
-        /// <summary>
         /// Gets the InitialSessionState object that this pool uses
         /// to create the runspaces.
         /// </summary>
@@ -287,7 +261,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// the connection associated with this runspace pool
+        /// The connection associated with this runspace pool.
         /// </summary>
         public virtual RunspaceConnectionInfo ConnectionInfo
         {
@@ -303,6 +277,7 @@ namespace System.Management.Automation.Runspaces.Internal
         public TimeSpan CleanupInterval
         {
             get { return _cleanupInterval; }
+
             set
             {
                 lock (this.syncObject)
@@ -331,16 +306,16 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// Event raised when RunspacePoolState changes.
-        /// </summary>        
+        /// </summary>
         public event EventHandler<RunspacePoolStateChangedEventArgs> StateChanged;
 
         /// <summary>
-        /// Event raised when one of the runspaces in the pool forwards an event to this instance
-        /// </summary>        
+        /// Event raised when one of the runspaces in the pool forwards an event to this instance.
+        /// </summary>
         public event EventHandler<PSEventArgs> ForwardEvent;
 
         /// <summary>
-        /// Event rasied when a new Runspace is created by the pool.
+        /// Event raised when a new Runspace is created by the pool.
         /// </summary>
         internal event EventHandler<RunspaceCreatedEventArgs> RunspaceCreated;
 
@@ -405,7 +380,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Creates an array of PowerShell objects that are in the Disconnected state for 
+        /// Creates an array of PowerShell objects that are in the Disconnected state for
         /// all currently disconnected running commands associated with this runspace pool.
         /// </summary>
         /// <returns></returns>
@@ -417,7 +392,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Returns RunspacePool capabilities.
         /// </summary>
-        /// <returns>RunspacePoolCapability</returns>
+        /// <returns>RunspacePoolCapability.</returns>
         public virtual RunspacePoolCapability GetCapabilities()
         {
             return RunspacePoolCapability.Default;
@@ -432,7 +407,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// runspace.
         /// This is currently supported *only* for remote runspaces.
         /// </summary>
-        /// <returns>True if successful</returns>
+        /// <returns>True if successful.</returns>
         internal virtual bool ResetRunspaceState()
         {
             throw new PSNotSupportedException();
@@ -440,7 +415,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// Sets the maximum number of Runspaces that can be active concurrently
-        /// in the pool. All requests above that number remain queued until 
+        /// in the pool. All requests above that number remain queued until
         /// runspaces become available.
         /// </summary>
         /// <param name="maxRunspaces">
@@ -450,7 +425,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// true if the change is successful; otherwise, false.
         /// </returns>
         /// <remarks>
-        /// You cannot set the number of runspaces to a number smaller than 
+        /// You cannot set the number of runspaces to a number smaller than
         /// the minimum runspaces.
         /// </remarks>
         internal virtual bool SetMaxRunspaces(int maxRunspaces)
@@ -475,8 +450,8 @@ namespace System.Management.Automation.Runspaces.Internal
                     // of the pool.
                     while (pool.Count > maxRunspaces)
                     {
-                        Runspace rsToDestory = pool.Pop();
-                        DestroyRunspace(rsToDestory);
+                        Runspace rsToDestroy = pool.Pop();
+                        DestroyRunspace(rsToDestroy);
                     }
                 }
 
@@ -515,7 +490,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// true if the change is successful; otherwise, false.
         /// </returns>
         /// <remarks>
-        /// You cannot set the number of idle runspaces to a number smaller than 
+        /// You cannot set the number of idle runspaces to a number smaller than
         /// 1 or greater than maximum number of active runspaces.
         /// </remarks>
         internal virtual bool SetMinRunspaces(int minRunspaces)
@@ -546,7 +521,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// Retrieves the number of runspaces available at the time of calling
-        /// this method. 
+        /// this method.
         /// </summary>
         /// <exception cref="ArgumentException">
         /// If the RunspacePool failed or has been closed
@@ -574,13 +549,13 @@ namespace System.Management.Automation.Runspaces.Internal
                     int unUsedCapacity = (maxPoolSz - totalRunspaces) < 0 ? 0 : (maxPoolSz - totalRunspaces);
                     return (pool.Count + unUsedCapacity);
                 }
-                else if (stateInfo.State != RunspacePoolState.BeforeOpen && stateInfo.State != RunspacePoolState.Opening)
-                {
-                    throw new InvalidOperationException(HostInterfaceExceptionsStrings.RunspacePoolNotOpened);
-                }
                 else if (stateInfo.State == RunspacePoolState.Disconnected)
                 {
                     throw new InvalidOperationException(RunspacePoolStrings.CannotWhileDisconnected);
+                }
+                else if (stateInfo.State != RunspacePoolState.BeforeOpen && stateInfo.State != RunspacePoolState.Opening)
+                {
+                    throw new InvalidOperationException(HostInterfaceExceptionsStrings.RunspacePoolNotOpened);
                 }
                 else
                 {
@@ -590,7 +565,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Opens the runspacepool synchronously. RunspacePool must 
+        /// Opens the runspacepool synchronously. RunspacePool must
         /// be opened before it can be used.
         /// </summary>
         /// <exception cref="InvalidRunspacePoolStateException">
@@ -624,7 +599,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Waits for the pending asynchronous BeginOpen to complete. 
+        /// Waits for the pending asynchronous BeginOpen to complete.
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// asyncResult is a null reference.
@@ -641,18 +616,18 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         public void EndOpen(IAsyncResult asyncResult)
         {
-            if (null == asyncResult)
+            if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
-            if ((null == rsAsyncResult) ||
+            if ((rsAsyncResult == null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (!rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginOpen");
@@ -697,7 +672,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Waits for the pending asynchronous BeginClose to complete. 
+        /// Waits for the pending asynchronous BeginClose to complete.
         /// </summary>
         /// <exception cref="ArgumentException">
         /// asyncResult object was not created by calling BeginClose
@@ -708,18 +683,18 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         public virtual void EndClose(IAsyncResult asyncResult)
         {
-            if (null == asyncResult)
+            if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
-            if ((null == rsAsyncResult) ||
+            if ((rsAsyncResult == null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginClose");
@@ -737,7 +712,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// An opened Runspace.
         /// </returns>
         /// <exception cref="InvalidRunspacePoolStateException">
-        /// Cannot perform operation because RunspacePool is 
+        /// Cannot perform operation because RunspacePool is
         /// not in the opened state.
         /// </exception>
         public Runspace GetRunspace()
@@ -750,7 +725,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             // throw the exception that occurred while
             // processing the async operation
-            if (null != asyncResult.Exception)
+            if (asyncResult.Exception != null)
             {
                 throw asyncResult.Exception;
             }
@@ -772,14 +747,14 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Runspool is not in Opened state.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// Cannot release the runspace to this pool as the runspace 
+        /// Cannot release the runspace to this pool as the runspace
         /// doesn't belong to this pool.
         /// </exception>
         public void ReleaseRunspace(Runspace runspace)
         {
-            if (null == runspace)
+            if (runspace == null)
             {
-                throw PSTraceSource.NewArgumentNullException("runspace");
+                throw PSTraceSource.NewArgumentNullException(nameof(runspace));
             }
 
             AssertPoolIsOpen();
@@ -839,7 +814,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Dispose off the current runspace pool
+        /// Dispose off the current runspace pool.
         /// </summary>
         /// <param name="disposing">
         /// true to release all the internal resources.
@@ -855,6 +830,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     _initialSessionState = null;
                     host = null;
                 }
+
                 _isDisposed = true;
             }
         }
@@ -864,7 +840,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Internal Methods
 
         /// <summary>
-        /// The value of this property is propagated to all the Runspaces in this pool; 
+        /// The value of this property is propagated to all the Runspaces in this pool;
         /// it determines whether a new thread is create when a pipeline is executed.
         /// </summary>
         /// <remarks>
@@ -872,15 +848,13 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         internal PSThreadOptions ThreadOptions { get; set; } = PSThreadOptions.Default;
 
-#if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
-        /// The value of this property is propagated to all the Runspaces in this pool
+        /// The value of this property is propagated to all the Runspaces in this pool.
         /// </summary>
         /// <remarks>
         /// Any updates to the value of this property must be done before the RunspacePool is opened
         /// </remarks>
         internal ApartmentState ApartmentState { get; set; } = Runspace.DefaultApartmentState;
-#endif
 
         /// <summary>
         /// Gets Runspace asynchronously from the runspace pool. The caller
@@ -917,17 +891,17 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </param>
         internal void CancelGetRunspace(IAsyncResult asyncResult)
         {
-            if (null == asyncResult)
+            if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             GetRunspaceAsyncResult grsAsyncResult =
                 asyncResult as GetRunspaceAsyncResult;
 
-            if ((null == grsAsyncResult) || (grsAsyncResult.OwnerId != instanceId))
+            if ((grsAsyncResult == null) || (grsAsyncResult.OwnerId != instanceId))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginGetRunspace");
@@ -937,7 +911,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Waits for the pending asynchronous BegineGetRunspace to complete. 
+        /// Waits for the pending asynchronous BeginGetRunspace to complete.
         /// </summary>
         /// <param name="asyncResult">
         /// </param>
@@ -956,17 +930,17 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         internal Runspace EndGetRunspace(IAsyncResult asyncResult)
         {
-            if (null == asyncResult)
+            if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             GetRunspaceAsyncResult grsAsyncResult =
                 asyncResult as GetRunspaceAsyncResult;
 
-            if ((null == grsAsyncResult) || (grsAsyncResult.OwnerId != instanceId))
+            if ((grsAsyncResult == null) || (grsAsyncResult.OwnerId != instanceId))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginGetRunspace");
@@ -977,7 +951,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Opens the runspacepool synchronously / asynchronously. 
+        /// Opens the runspacepool synchronously / asynchronously.
         /// Runspace pool must be opened before it can be used.
         /// </summary>
         /// <param name="isAsync">
@@ -991,7 +965,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// with.
         /// </param>
         /// <returns>
-        /// asyncResult object to monitor status of the async 
+        /// asyncResult object to monitor status of the async
         /// open operation. This is returned only if <paramref name="isAsync"/>
         /// is true.
         /// </returns>
@@ -1000,7 +974,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// the BeforeOpen state.
         /// </exception>
         /// <exception cref="OutOfMemoryException">
-        /// There is not enough memory available to start this asynchronously. 
+        /// There is not enough memory available to start this asynchronously.
         /// </exception>
         protected virtual IAsyncResult CoreOpen(bool isAsync, AsyncCallback callback,
             object asyncState)
@@ -1019,7 +993,7 @@ namespace System.Management.Automation.Runspaces.Internal
             if (isAsync)
             {
                 AsyncResult asyncResult = new RunspacePoolAsyncResult(instanceId, callback, asyncState, true);
-                //Open pool in another thread
+                // Open pool in another thread
                 ThreadPool.QueueUserWorkItem(new WaitCallback(OpenThreadProc), asyncResult);
                 return asyncResult;
             }
@@ -1030,7 +1004,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Creates a Runspace + opens it synchronously and 
+        /// Creates a Runspace + opens it synchronously and
         /// pushes it into the stack.
         /// </summary>
         /// <remarks>
@@ -1043,13 +1017,12 @@ namespace System.Management.Automation.Runspaces.Internal
                 PSEtwLog.SetActivityIdForCurrentThread(this.InstanceId);
                 // Create a Runspace and store it in the pool
                 // for future use. This will validate whether
-                // a runspace can be created + opened successfully            
+                // a runspace can be created + opened successfully
                 Runspace rs = CreateRunspace();
                 pool.Push(rs);
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
                 SetStateToBroken(exception);
                 // rethrow the exception
                 throw;
@@ -1099,7 +1072,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Starting point for asynchronous thread
+        /// Starting point for asynchronous thread.
         /// </summary>
         /// <remarks>
         /// asyncResult object
@@ -1108,7 +1081,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             Dbg.Assert(o is AsyncResult, "OpenThreadProc expects AsyncResult");
             // Since this is an internal method, we can safely cast the
-            // object to AsyncResult object.           
+            // object to AsyncResult object.
             AsyncResult asyncObject = (AsyncResult)o;
             // variable to keep track of exceptions.
             Exception exception = null;
@@ -1119,7 +1092,6 @@ namespace System.Management.Automation.Runspaces.Internal
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 // report non-severe exceptions to the user via the
                 // asyncresult object
                 exception = e;
@@ -1131,7 +1103,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Closes the runspacepool synchronously / asynchronously. 
+        /// Closes the runspacepool synchronously / asynchronously.
         /// </summary>
         /// <param name="isAsync">
         /// true to close asynchronously
@@ -1144,7 +1116,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// with.
         /// </param>
         /// <returns>
-        /// asyncResult object to monitor status of the async 
+        /// asyncResult object to monitor status of the async
         /// open operation. This is returned only if <paramref name="isAsync"/>
         /// is true.
         /// </returns>
@@ -1179,7 +1151,7 @@ namespace System.Management.Automation.Runspaces.Internal
             if (isAsync)
             {
                 RunspacePoolAsyncResult asyncResult = new RunspacePoolAsyncResult(instanceId, callback, asyncState, false);
-                //Open pool in another thread
+                // Open pool in another thread
                 ThreadPool.QueueUserWorkItem(new WaitCallback(CloseThreadProc), asyncResult);
                 return asyncResult;
             }
@@ -1206,7 +1178,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             Dbg.Assert(o is AsyncResult, "CloseThreadProc expects AsyncResult");
             // Since this is an internal method, we can safely cast the
-            // object to AsyncResult object.           
+            // object to AsyncResult object.
             AsyncResult asyncObject = (AsyncResult)o;
             // variable to keep track of exceptions.
             Exception exception = null;
@@ -1217,7 +1189,6 @@ namespace System.Management.Automation.Runspaces.Internal
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 // report non-severe exceptions to the user via the
                 // asyncresult object
                 exception = e;
@@ -1234,9 +1205,9 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// Raise state changed event based on the StateInfo
-        /// object
+        /// object.
         /// </summary>
-        /// <param name="stateInfo">state information object</param>
+        /// <param name="stateInfo">State information object.</param>
         protected void RaiseStateChangeEvent(RunspacePoolStateInfo stateInfo)
         {
             StateChanged.SafeInvoke(this,
@@ -1248,7 +1219,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// If not throws an exception.
         /// </summary>
         /// <exception cref="InvalidRunspacePoolStateException">
-        /// Cannot perform operation because RunspacePool is 
+        /// Cannot perform operation because RunspacePool is
         /// not in the opened state.
         /// </exception>
         internal void AssertPoolIsOpen()
@@ -1275,36 +1246,20 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         protected Runspace CreateRunspace()
         {
+            Dbg.Assert(_initialSessionState != null, "_initialSessionState should not be null");
             // TODO: exceptions thrown here need to be documented
             // runspace.Open() did not document all the exceptions.
-            Runspace result = null;
-
-            // if host is null we are already throwing an
-            // exception, hence a check is not required at this
-            // point
-            if (rsConfig != null)
-            {
-                result = RunspaceFactory.CreateRunspace(host, rsConfig);
-            }
-            else
-            {
-                result = RunspaceFactory.CreateRunspaceFromSessionStateNoClone(host, _initialSessionState);
-            }
+            Runspace result = RunspaceFactory.CreateRunspaceFromSessionStateNoClone(host, _initialSessionState);
 
             result.ThreadOptions = this.ThreadOptions == PSThreadOptions.Default ? PSThreadOptions.ReuseThread : this.ThreadOptions;
-#if !CORECLR // No ApartmentState In CoreCLR
             result.ApartmentState = this.ApartmentState;
-#endif
 
             this.PropagateApplicationPrivateData(result);
 
             result.Open();
 
             // Enforce the system lockdown policy if one is defined.
-            if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
-            {
-                result.ExecutionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
-            }
+            Utils.EnforceSystemLockDownLanguageMode(result.ExecutionContext);
 
             result.Events.ForwardEvent += OnRunspaceForwardEvent; // this must be done after open since open initializes the ExecutionContext
 
@@ -1327,14 +1282,14 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Cleans/Closes the runspace
+        /// Cleans/Closes the runspace.
         /// </summary>
         /// <param name="runspace">
         /// Runspace to be closed/cleaned
         /// </param>
         protected void DestroyRunspace(Runspace runspace)
         {
-            Dbg.Assert(null != runspace, "Runspace cannot be null");
+            Dbg.Assert(runspace != null, "Runspace cannot be null");
             runspace.Events.ForwardEvent -= OnRunspaceForwardEvent; // this must be done after open since open initializes the ExecutionContext
             runspace.Close();
             runspace.Dispose();
@@ -1377,7 +1332,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 Runspace runspaceToDestroy = null;
                 lock (pool)
                 {
-                    if (pool.Count <= 0)
+                    if (pool.Count == 0)
                     {
                         break; // break from while
                     }
@@ -1403,7 +1358,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Close all the runspaces in the pool
+        /// Close all the runspaces in the pool.
         /// </summary>
         private void InternalClearAllResources()
         {
@@ -1441,7 +1396,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 runspaceList.Clear();
             }
 
-            //Start from the most recent runspace.
+            // Start from the most recent runspace.
             for (int index = runspaceListCopy.Count - 1; index >= 0; index--)
             {
                 // close runspaces suppress exceptions
@@ -1452,9 +1407,8 @@ namespace System.Management.Automation.Runspaces.Internal
                     runspaceListCopy[index].Close();
                     runspaceListCopy[index].Dispose();
                 }
-                catch (InvalidRunspaceStateException e)
+                catch (InvalidRunspaceStateException)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
 
@@ -1530,12 +1484,12 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Releases any readers in the reader queue waiting for 
+        /// Releases any readers in the reader queue waiting for
         /// Runspace.
         /// </summary>
         /// <param name="useCallingThreadState">
         /// This is of type object..because this method is called from a ThreadPool
-        /// Thread. 
+        /// Thread.
         /// true, if calling thread should be used to assign a runspace.
         /// </param>
         protected void ServicePendingRequests(object useCallingThreadState)
@@ -1584,7 +1538,7 @@ namespace System.Management.Automation.Runspaces.Internal
                                 {
                                     // TODO: how to handle exceptions if runspace
                                     // creation fails.
-                                    // Create a new runspace..since the max limit is 
+                                    // Create a new runspace..since the max limit is
                                     // not reached.
                                     result = CreateRunspace();
                                 }
@@ -1592,7 +1546,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
                             // Dequeue a runspace request
                             runspaceRequester = ultimateRequestQueue.Dequeue();
-                            // if the runspace is not active send the runspace back to 
+                            // if the runspace is not active send the runspace back to
                             // the pool and process other requests
                             if (!runspaceRequester.IsActive)
                             {
@@ -1607,10 +1561,10 @@ namespace System.Management.Automation.Runspaces.Internal
                             // release readers waiting for runspace on a thread pool
                             // thread.
                             runspaceRequester.Runspace = result;
-                            // release the async operation on a thread pool thread.    
+                            // release the async operation on a thread pool thread.
                             if (useCallingThread)
                             {
-                                // call DoComplete outside of the lock..as the 
+                                // call DoComplete outside of the lock..as the
                                 // DoComplete handler may handle the runspace
                                 // in the same thread thereby blocking future
                                 // servicing requests.
@@ -1621,7 +1575,7 @@ namespace System.Management.Automation.Runspaces.Internal
                                 ThreadPool.QueueUserWorkItem(new WaitCallback(runspaceRequester.DoComplete));
                             }
                         }
-                    } // end lock(ultimateRequestQueue)
+                    }
 
                     lock (runspaceRequestQueue)
                     {
@@ -1650,9 +1604,9 @@ namespace System.Management.Automation.Runspaces.Internal
                 }
             }
 
-            if ((useCallingThread) && (null != runspaceRequester))
+            if ((useCallingThread) && (runspaceRequester != null))
             {
-                // call DoComplete outside of the lock and finally..as the 
+                // call DoComplete outside of the lock and finally..as the
                 // DoComplete handler may handle the runspace in the same
                 // thread thereby blocking future servicing requests.
                 runspaceRequester.DoComplete(null);
@@ -1661,13 +1615,13 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// Throws an exception if the runspace state is not
-        /// BeforeOpen
+        /// BeforeOpen.
         /// </summary>
         protected void AssertIfStateIsBeforeOpen()
         {
             if (stateInfo.State != RunspacePoolState.BeforeOpen)
             {
-                //Call fails if RunspacePoolState is not BeforeOpen. 
+                // Call fails if RunspacePoolState is not BeforeOpen.
                 InvalidRunspacePoolStateException e =
                     new InvalidRunspacePoolStateException
                     (
@@ -1679,10 +1633,10 @@ namespace System.Management.Automation.Runspaces.Internal
                     );
                 throw e;
             }
-        } // AssertIfStateIsBeforeOpen
+        }
 
         /// <summary>
-        /// Raises the ForwardEvent event
+        /// Raises the ForwardEvent event.
         /// </summary>
         protected virtual void OnForwardEvent(PSEventArgs e)
         {
@@ -1695,7 +1649,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Forward runspace events to the pool's event queue
+        /// Forward runspace events to the pool's event queue.
         /// </summary>
         private void OnRunspaceForwardEvent(object sender, PSEventArgs e)
         {

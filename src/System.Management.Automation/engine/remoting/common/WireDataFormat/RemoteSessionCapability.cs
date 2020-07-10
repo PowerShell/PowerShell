@@ -1,15 +1,11 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal.Host;
-
-#if !CORECLR
-using BinaryFormatter = System.Runtime.Serialization.Formatters.Binary.BinaryFormatter;
-#endif
+using System.Runtime.Serialization.Formatters.Binary;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -23,16 +19,35 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class RemoteSessionCapability
     {
-        internal Version ProtocolVersion { get; set; }
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
-        internal Version PSVersion { get; }
-        internal Version SerializationVersion { get; }
-        internal RemotingDestination RemotingDestination { get; }
+        private Version _psversion;
+        private Version _serversion;
+        private Version _protocolVersion;
+        private RemotingDestination _remotingDestination;
+        private static byte[] _timeZoneInByteFormat;
+        private TimeZoneInfo _timeZone;
 
-#if !CORECLR // TimeZone Not In CoreCLR
-#endif
+        #endregion
 
-        private static byte[] s_timeZoneInByteFormat;
+        internal Version ProtocolVersion
+        {
+            get
+            {
+                return _protocolVersion;
+            }
+
+            set
+            {
+                _protocolVersion = value;
+            }
+        }
+
+        internal Version PSVersion { get { return _psversion; } }
+
+        internal Version SerializationVersion { get { return _serversion; } }
+
+        internal RemotingDestination RemotingDestination { get { return _remotingDestination; } }
 
         /// <summary>
         /// Constructor for RemoteSessionCapability.
@@ -41,13 +56,13 @@ namespace System.Management.Automation.Remoting
         /// </remarks>
         internal RemoteSessionCapability(RemotingDestination remotingDestination)
         {
-            ProtocolVersion = RemotingConstants.ProtocolVersion;
+            _protocolVersion = RemotingConstants.ProtocolVersion;
             // PS Version 3 is fully backward compatible with Version 2
             // In the remoting protocol sense, nothing is changing between PS3 and PS2
             // For negotiation to succeed with old client/servers we have to use 2.
-            PSVersion = new Version(2, 0); //PSVersionInfo.PSVersion;
-            SerializationVersion = PSVersionInfo.SerializationVersion;
-            RemotingDestination = remotingDestination;
+            _psversion = new Version(2, 0); // PSVersionInfo.PSVersion;
+            _serversion = PSVersionInfo.SerializationVersion;
+            _remotingDestination = remotingDestination;
         }
 
         internal RemoteSessionCapability(RemotingDestination remotingDestination,
@@ -55,17 +70,11 @@ namespace System.Management.Automation.Remoting
             Version psVersion,
             Version serVersion)
         {
-            ProtocolVersion = protocolVersion;
-            PSVersion = psVersion;
-            SerializationVersion = serVersion;
-            RemotingDestination = remotingDestination;
+            _protocolVersion = protocolVersion;
+            _psversion = psVersion;
+            _serversion = serVersion;
+            _remotingDestination = remotingDestination;
         }
-
-        /// <summary>
-        /// Added to enable ClrFacade.GetUninitializedObject to instantiate an uninitialized version of this class.
-        /// </summary>
-        internal RemoteSessionCapability()
-        { }
 
         /// <summary>
         /// Create client capability.
@@ -85,27 +94,24 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This is static property which gets Current TimeZone in byte format
-        /// by using ByteFormatter. 
+        /// by using ByteFormatter.
         /// This is static to make client generate this only once.
         /// </summary>
         internal static byte[] GetCurrentTimeZoneInByteFormat()
         {
-            if (null == s_timeZoneInByteFormat)
+            if (_timeZoneInByteFormat == null)
             {
-#if CORECLR //TODO:CORECLR 'BinaryFormatter' is not in CORE CLR. Since this is TimeZone related and TimeZone is not available on CORE CLR so wait until we solve TimeZone issue.
-                s_timeZoneInByteFormat = Utils.EmptyArray<byte>();
-#else
                 Exception e = null;
                 try
                 {
                     BinaryFormatter formatter = new BinaryFormatter();
                     using (MemoryStream stream = new MemoryStream())
                     {
-                        formatter.Serialize(stream, TimeZone.CurrentTimeZone);
+                        formatter.Serialize(stream, TimeZoneInfo.Local);
                         stream.Seek(0, SeekOrigin.Begin);
                         byte[] result = new byte[stream.Length];
                         stream.Read(result, 0, (int)stream.Length);
-                        s_timeZoneInByteFormat = result;
+                        _timeZoneInByteFormat = result;
                     }
                 }
                 catch (ArgumentNullException ane)
@@ -123,23 +129,24 @@ namespace System.Management.Automation.Remoting
 
                 // if there is any exception serializing the timezone information
                 // ignore it and dont try to serialize again.
-                if (null != e)
+                if (e != null)
                 {
-                    s_timeZoneInByteFormat = Utils.EmptyArray<byte>();
+                    _timeZoneInByteFormat = Array.Empty<byte>();
                 }
-#endif
             }
 
-            return s_timeZoneInByteFormat;
+            return _timeZoneInByteFormat;
         }
 
-#if !CORECLR // TimeZone Not In CoreCLR
         /// <summary>
-        /// Gets the TimeZone of the destination machine. This may be null
+        /// Gets the TimeZone of the destination machine. This may be null.
         /// </summary>
-        internal TimeZone TimeZone { get; set; }
-#endif
+        internal TimeZoneInfo TimeZone
+        {
+            get { return _timeZone; }
 
+            set { _timeZone = value; }
+        }
     }
 
     /// <summary>
@@ -167,8 +174,12 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Data.
         /// </summary>
-        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting
+
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+
         private Dictionary<HostDefaultDataId, object> data;
+
+        #endregion
 
         /// <summary>
         /// Private constructor to force use of Create.
@@ -234,9 +245,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.ForegroundColor, hostRawUI.ForegroundColor);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set BackgroundColor.
@@ -244,9 +254,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.BackgroundColor, hostRawUI.BackgroundColor);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set CursorPosition.
@@ -254,9 +263,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.CursorPosition, hostRawUI.CursorPosition);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set WindowPosition.
@@ -264,9 +272,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.WindowPosition, hostRawUI.WindowPosition);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set CursorSize.
@@ -274,9 +281,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.CursorSize, hostRawUI.CursorSize);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set BufferSize.
@@ -284,9 +290,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.BufferSize, hostRawUI.BufferSize);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set WindowSize.
@@ -294,9 +299,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.WindowSize, hostRawUI.WindowSize);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set MaxWindowSize.
@@ -304,9 +308,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.MaxWindowSize, hostRawUI.MaxWindowSize);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set MaxPhysicalWindowSize.
@@ -314,9 +317,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.MaxPhysicalWindowSize, hostRawUI.MaxPhysicalWindowSize);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set WindowTitle.
@@ -324,9 +326,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.WindowTitle, hostRawUI.WindowTitle);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             return hostDefaultData;
@@ -377,9 +378,12 @@ namespace System.Management.Automation.Remoting
 
         private readonly bool _isHostNull;
 
-        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+
         private readonly HostDefaultData _hostDefaultData;
         private bool _useRunspaceHost;
+
+        #endregion
 
         /// <summary>
         /// Is host raw ui null.
@@ -398,6 +402,7 @@ namespace System.Management.Automation.Remoting
         internal bool UseRunspaceHost
         {
             get { return _useRunspaceHost; }
+
             set { _useRunspaceHost = value; }
         }
 
@@ -415,12 +420,6 @@ namespace System.Management.Automation.Remoting
                 _hostDefaultData = HostDefaultData.Create(host.UI.RawUI);
             }
         }
-
-        /// <summary>
-        /// Added to enable ClrFacade.GetUninitializedObject to instantiate an uninitialized version of this class.
-        /// </summary>
-        internal HostInfo()
-        { }
 
         /// <summary>
         /// Check host chain.
@@ -449,10 +448,12 @@ namespace System.Management.Automation.Remoting
 
             // Verify that the UI is not null.
             if (host.UI == null) { return; }
+
             isHostUINull = false;
 
             // Verify that the raw UI is not null.
             if (host.UI.RawUI == null) { return; }
+
             isHostRawUINull = false;
         }
     }

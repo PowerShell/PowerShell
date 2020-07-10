@@ -1,0 +1,122 @@
+pwsh(1) -- PowerShell command-line shell and .NET REPL
+=================================================
+
+## SYNOPSIS
+
+`pwsh` [`-NoLogo`] [`-NoExit`] [`-NoProfile`] [`-NonInteractive`]
+[`-InputFormat` {Text | XML}] [`-OutputFormat` {Text | XML}]
+[`-EncodedCommand` <Base64EncodedCommand>]
+[`-File` <filePath> <args>] [`-ExecutionPolicy` <ExecutionPolicy>]
+[`-Command` { `-` | <script-block> [`-args` <arg-array>] | <string> [<CommandParameters>] } ]
+
+## DESCRIPTION
+
+PowerShell is an automation and configuration management platform.
+It consists of a cross-platform (Windows, Linux and macOS)
+command-line shell and associated scripting language.
+
+## OPTIONS
+
+PowerShell accepts both `-` and `--` prefixed arguments.
+
+* `-NoLogo`:
+  Hides the copyright banner at startup.
+
+* `-NoExit`:
+  Does not exit after running startup commands.
+
+* `-NoProfile`:
+  Does not load the PowerShell profile.
+
+* `-NonInteractive`:
+  Does not present an interactive prompt to the user.
+
+* `-InputFormat`:
+  Describes the format of data sent to PowerShell.
+  Valid values are "Text" (text strings) or "XML" (serialized CLIXML format).
+
+* `-OutputFormat`:
+  Determines how output from PowerShell is formatted.
+  Valid values are "Text" (text strings) or "XML" (serialized CLIXML format).
+
+* `-EncodedCommand`:
+  Accepts a base-64-encoded string version of a command.
+  Use this parameter to submit commands to PowerShell that
+  require complex quotation marks or curly braces.
+
+* `-File`:
+  Runs the specified script in the local scope ("dot-sourced"),
+  so that the functions and variables that the script creates are available in the current session.
+  Enter the script file path and any parameters.
+  File must be the last parameter in the command,
+  because all characters typed after the File parameter name are
+  interpreted as the script file path followed by the script parameters.
+
+* `-ExecutionPolicy`:
+  Sets the default execution policy for the current session and saves it in the
+  $env:PSExecutionPolicyPreference environment variable.
+  This parameter does not change the PowerShell execution policy that is set in the registry.
+
+* `-Command`:
+  Executes the specified commands (and any parameters) as though they were typed at the PowerShell command prompt,
+  and then exits, unless NoExit is specified.
+  The value of Command can be `-`, a string or a script block.
+  If the value of Command is `-`, the command text is read from standard input.
+  If the value of Command is a script block, the script block must be enclosed in braces (`{}`).
+  You can specify a script block only when running PowerShell in PowerShell.
+  The results of the script block are returned to the parent shell as deserialized XML objects, not live objects.
+  If the value of Command is a string, Command must be the last parameter in the command,
+  because any characters typed after the command are interpreted as the command arguments.
+
+  To write a string that runs a PowerShell command,
+  use the format: `& {<command>}` where the quotation marks indicate a string and the
+  invoke operator (`&`) causes the command to be executed.
+
+* `-Help`, `-?`, `/?`:
+  Shows this message.
+
+## FILES
+
+* `~/.config/powershell/Microsoft.PowerShell_profile.ps1`
+  User profile.
+
+* `~/.local/share/powershell/Modules`
+  User modules.
+
+* `~/.local/share/powershell/PSReadLine/ConsoleHost_history.txt`
+  User PSReadLine history file.
+
+## ENVIRONMENT
+
+These are environment variables used by PowerShell.
+
+* `$PSModulePath`:
+  A colon (`:`) separated load path for PowerShell modules.
+
+## AUTOMATIC VARIABLES
+
+These are automatically defined PowerShell-language variables.
+
+* `$PSHOME`:
+  This is the location of all the system PowerShell binaries, modules, configuration, etc.
+
+* `$PROFILE`:
+  Location for user configuration file.
+
+* `$HOST`:
+  Contains an object that represents the program that is hosting PowerShell (similar to `Get-Host`).
+
+* `$LASTEXITCODE`:
+  Contains the exit code of the last native process that ran in PowerShell (not cmdlets, as those are in-process).
+
+* `$PWD`:
+  Contains an object that represents the current working location (similar to `Get-Location`).
+
+## SEE ALSO
+
+* https://microsoft.com/powershell
+* https://github.com/PowerShell/PowerShell
+
+## COPYRIGHT
+
+Copyright (c) Microsoft Corporation.

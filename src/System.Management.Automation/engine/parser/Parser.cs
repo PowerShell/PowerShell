@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -9,14 +8,10 @@ using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-#if !CORECLR
-using Microsoft.CodeAnalysis;
-#endif
 
 namespace System.Management.Automation.Language
 {
@@ -32,7 +27,7 @@ namespace System.Management.Automation.Language
 
     /// <summary>
     /// The parser that parses PowerShell script and returns a <see cref="ScriptBlockAst"/>, tokens, and error messages
-    /// if the script cannot be parsed successfullly.
+    /// if the script cannot be parsed successfully.
     /// </summary>
     public sealed class Parser
     {
@@ -43,8 +38,8 @@ namespace System.Management.Automation.Language
         private bool _inConfiguration;
         private ParseMode _parseMode;
 
-        //private bool _v3FeatureUsed;
         internal string _fileName;
+
         internal bool ProduceV2Tokens { get; set; }
 
         internal const string VERBATIM_ARGUMENT = "--%";
@@ -74,7 +69,7 @@ namespace System.Management.Automation.Language
             var parser = new Parser();
             if (!string.IsNullOrEmpty(fileName) && fileName.Length > scriptSchemaExtension.Length && fileName.EndsWith(scriptSchemaExtension, StringComparison.OrdinalIgnoreCase))
             {
-                parser._keywordModuleName = Path.GetFileName(fileName.Substring(0, fileName.Length - scriptSchemaExtension.Length));
+                parser._keywordModuleName = Path.GetFileName(fileName.AsSpan(0, fileName.Length - scriptSchemaExtension.Length)).ToString();
                 parseDscResource = true;
             }
 
@@ -89,7 +84,7 @@ namespace System.Management.Automation.Language
                 var emptyExtent = new EmptyScriptExtent();
                 var errorMsg = string.Format(CultureInfo.CurrentCulture, ParserStrings.FileReadError, e.Message);
                 errors = new[] { new ParseError(emptyExtent, "FileReadError", errorMsg) };
-                tokens = Utils.EmptyArray<Token>();
+                tokens = Array.Empty<Token>();
                 return new ScriptBlockAst(emptyExtent, null, new StatementBlockAst(emptyExtent, null, null), false);
             }
 
@@ -101,6 +96,7 @@ namespace System.Management.Automation.Language
                 {
                     DynamicKeyword.Push();
                 }
+
                 result = parser.Parse(fileName, scriptContents, tokenList, out errors, ParseMode.Default);
             }
             catch (Exception e)
@@ -118,8 +114,8 @@ namespace System.Management.Automation.Language
             tokens = tokenList.ToArray();
             return result;
         }
-        private string _keywordModuleName;
 
+        private string _keywordModuleName;
 
         /// <summary>
         /// Parse input that does not come from a file.
@@ -214,7 +210,9 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    ReportError(_tokenizer.CurrentExtent(), () => ParserStrings.ScriptTooComplicated);
+                    ReportError(_tokenizer.CurrentExtent(),
+                        nameof(ParserStrings.ScriptTooComplicated),
+                        ParserStrings.ScriptTooComplicated);
                 }
             }
 
@@ -223,7 +221,7 @@ namespace System.Management.Automation.Language
         }
 
         // This helper routine is used from the runtime to convert a string to a number.
-        internal static object ScanNumber(string str, Type toType)
+        internal static object ScanNumber(string str, Type toType, bool shouldTryCoercion = true)
         {
             str = str.Trim();
             if (str.Length == 0)
@@ -247,11 +245,17 @@ namespace System.Management.Automation.Language
 
             if (token == null || !tokenizer.IsAtEndOfScript(token.Extent))
             {
-                // We call ConvertTo, primarily because we expect it will throw an exception,
-                // but it's possible it could succeed, e.g. if the string had commas, our lexer
-                // will fail, but Convert.ChangeType could succeed.
-
-                return LanguagePrimitives.ConvertTo(str, toType, CultureInfo.InvariantCulture);
+                if (shouldTryCoercion)
+                {
+                    // We call ConvertTo, primarily because we expect it will throw an exception,
+                    // but it's possible it could succeed, e.g. if the string had commas, our lexer
+                    // will fail, but Convert.ChangeType could succeed.
+                    return LanguagePrimitives.ConvertTo(str, toType, CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    throw new ParseException();
+                }
             }
 
             return token.Value;
@@ -276,6 +280,7 @@ namespace System.Management.Automation.Language
             {
                 result = null;
             }
+
             return result;
         }
 
@@ -290,6 +295,7 @@ namespace System.Management.Automation.Language
             {
                 throw new ParseException(parser.ErrorList.ToArray());
             }
+
             return ast;
         }
 
@@ -330,7 +336,6 @@ namespace System.Management.Automation.Language
             }
         }
 
-        //public bool V3FeatureUsed { get { return _v3FeatureUsed; } }
         internal List<ParseError> ErrorList { get; }
 
         #region Utilities
@@ -340,18 +345,7 @@ namespace System.Management.Automation.Language
             if (_ungotToken == null || _ungotToken.Kind == TokenKind.NewLine)
             {
                 _ungotToken = null;
-                _tokenizer.SkipNewlines(false, false);
-            }
-        }
-
-        // Same as SkipNewlines, but remembers is used when we skip lines differently in
-        // V3.
-        private void V3SkipNewlines()
-        {
-            if (_ungotToken == null || _ungotToken.Kind == TokenKind.NewLine)
-            {
-                _ungotToken = null;
-                _tokenizer.SkipNewlines(false, true);
+                _tokenizer.SkipNewlines(skipSemis: false);
             }
         }
 
@@ -360,7 +354,7 @@ namespace System.Management.Automation.Language
             if (_ungotToken == null || _ungotToken.Kind == TokenKind.NewLine || _ungotToken.Kind == TokenKind.Semi)
             {
                 _ungotToken = null;
-                _tokenizer.SkipNewlines(true, false);
+                _tokenizer.SkipNewlines(skipSemis: true);
             }
         }
 
@@ -383,8 +377,10 @@ namespace System.Management.Automation.Language
                             {
                                 UngetToken(token);
                             }
+
                             return;
                         }
+
                         break;
 
                     case TokenKind.LCurly: ++curlies; break;
@@ -396,8 +392,10 @@ namespace System.Management.Automation.Language
                             {
                                 UngetToken(token);
                             }
+
                             return;
                         }
+
                         break;
 
                     case TokenKind.LBracket: ++braces; break;
@@ -409,12 +407,14 @@ namespace System.Management.Automation.Language
                             {
                                 UngetToken(token);
                             }
+
                             return;
                         }
+
                         break;
 
                     case TokenKind.EndOfInput:
-                        // Never consume <EOF>, but return it so caller
+                        // Never consume <EOF>, but return it to caller
                         UngetToken(token);
                         return;
                 }
@@ -465,6 +465,7 @@ namespace System.Management.Automation.Language
                 // If _ungotToken is not null, we're in some sort of error state, don't return the token.
                 return null;
             }
+
             return _tokenizer.GetLBracket();
         }
 
@@ -475,6 +476,7 @@ namespace System.Management.Automation.Language
                 _ungotToken = null;
                 return _tokenizer.GetVerbatimCommandArgument();
             }
+
             return null;
         }
 
@@ -525,6 +527,7 @@ namespace System.Management.Automation.Language
                 }
 #endif
             }
+
             _tokenizer.Mode = mode;
         }
 
@@ -547,12 +550,6 @@ namespace System.Management.Automation.Language
             return parameter.StartsWith(paramToken.ParameterName, StringComparison.OrdinalIgnoreCase);
         }
 
-        internal void NoteV3FeatureUsed()
-        {
-            //_v3FeatureUsed = true;
-        }
-
-
         internal void RequireStatementTerminator()
         {
             var terminatorToken = PeekToken();
@@ -562,7 +559,9 @@ namespace System.Management.Automation.Language
             }
             else if (terminatorToken.Kind != TokenKind.EndOfInput)
             {
-                ReportIncompleteInput(terminatorToken.Extent, () => ParserStrings.MissingStatementTerminator);
+                ReportIncompleteInput(terminatorToken.Extent,
+                    nameof(ParserStrings.MissingStatementTerminator),
+                    ParserStrings.MissingStatementTerminator);
             }
         }
 
@@ -605,6 +604,7 @@ namespace System.Management.Automation.Language
             {
                 offset = 0;
             }
+
             return new InternalScriptExtent(scriptExtent.PositionHelper, offset, offset);
         }
 
@@ -636,21 +636,32 @@ namespace System.Management.Automation.Language
                     return (IScriptExtent)obj;
                 }
             }
+
             Diagnostics.Assert(false, "One of the objects must not be null");
             return PositionUtilities.EmptyExtent;
         }
 
         internal static IScriptExtent ExtentOf(Token first, Token last) { return ExtentOf(first.Extent, last.Extent); }
+
         internal static IScriptExtent ExtentOf(Ast first, Ast last) { return ExtentOf(first.Extent, last.Extent); }
+
         internal static IScriptExtent ExtentOf(Ast first, Token last) { return ExtentOf(first.Extent, last.Extent); }
+
         internal static IScriptExtent ExtentOf(Token first, Ast last) { return ExtentOf(first.Extent, last.Extent); }
+
         internal static IScriptExtent ExtentOf(IScriptExtent first, Ast last) { return ExtentOf(first, last.Extent); }
+
         internal static IScriptExtent ExtentOf(IScriptExtent first, Token last) { return ExtentOf(first, last.Extent); }
+
         internal static IScriptExtent ExtentOf(Ast first, IScriptExtent last) { return ExtentOf(first.Extent, last); }
+
         internal static IScriptExtent ExtentOf(Token first, IScriptExtent last) { return ExtentOf(first.Extent, last); }
-        //private static IScriptExtent Before(Ast ast) { return Before(ast.Extent); }
+        // private static IScriptExtent Before(Ast ast) { return Before(ast.Extent); }
+
         internal static IScriptExtent Before(Token token) { return Before(token.Extent); }
+
         internal static IScriptExtent After(Ast ast) { return After(ast.Extent); }
+
         internal static IScriptExtent After(Token token) { return After(token.Extent); }
 
         private static IEnumerable<Ast> GetNestedErrorAsts(params object[] asts)
@@ -687,16 +698,16 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Parses the specified constant hashtable string into a Hashtable object
+        /// Parses the specified constant hashtable string into a Hashtable object.
         /// </summary>
-        /// <param name="input">The Hashtable string</param>
-        /// <param name="result">the Hashtable object</param>
+        /// <param name="input">The Hashtable string.</param>
+        /// <param name="result">The Hashtable object.</param>
         /// <returns></returns>
         internal static bool TryParseAsConstantHashtable(string input, out Hashtable result)
         {
             result = null;
 
-            if (String.IsNullOrWhiteSpace(input))
+            if (string.IsNullOrWhiteSpace(input))
             {
                 return false;
             }
@@ -762,12 +773,12 @@ namespace System.Management.Automation.Language
 
         private ScriptBlockAst ScriptBlockRule(Token lCurly, bool isFilter, StatementAst predefinedStatementAst)
         {
-            //G  script-block:
-            //G      using-statements:opt   param-block:opt   statement-terminators:opt   script-block-body:opt
-            //G
-            //G  using-statements:
-            //G      using-statement
-            //G      using-statements   using-statement
+            // G  script-block:
+            // G      using-statements:opt   param-block:opt   statement-terminators:opt   script-block-body:opt
+            // G
+            // G  using-statements:
+            // G      using-statement
+            // G      using-statements   using-statement
 
             // We could set the mode here, but we can avoid rescanning keywords if the caller
             // sets the mode before skipping newlines.
@@ -788,6 +799,7 @@ namespace System.Management.Automation.Language
                 // mean something different, such as a type literal expression, or a cast.)
                 Resync(restorePoint);
             }
+
             SkipNewlinesAndSemicolons();
 
             return ScriptBlockBodyRule(lCurly, usingStatements, paramBlock, isFilter, predefinedStatementAst);
@@ -809,13 +821,15 @@ namespace System.Management.Automation.Language
                     {
                         result = new List<UsingStatementAst>();
                     }
+
                     var usingStatement = statement as UsingStatementAst;
-                    // otherwise returned statement is ErrorStatementAst. 
+                    // otherwise returned statement is ErrorStatementAst.
                     // We ignore it here, because error already reported to the parser.
                     if (usingStatement != null)
                     {
                         result.Add(usingStatement);
                     }
+
                     continue;
                 }
 
@@ -830,9 +844,9 @@ namespace System.Management.Automation.Language
 
         private ParamBlockAst ParamBlockRule()
         {
-            //G  param-block:
-            //G      new-lines:opt   attribute-list:opt   new-lines:opt   'param'   new-lines:opt
-            //G              '('   parameter-list:opt   new-lines:opt   ')'
+            // G  param-block:
+            // G      new-lines:opt   attribute-list:opt   new-lines:opt   'param'   new-lines:opt
+            // G              '('   parameter-list:opt   new-lines:opt   ')'
 
             SkipNewlines();
             List<AttributeBaseAst> candidateAttributes = AttributeListRule(false);
@@ -851,7 +865,7 @@ namespace System.Management.Automation.Language
             {
                 UngetToken(lparen);
 
-                //This is not an error, we'll end up trying to invoke a command named 'param'.
+                // This is not an error, we'll end up trying to invoke a command named 'param'.
                 return null;
             }
 
@@ -866,8 +880,9 @@ namespace System.Management.Automation.Language
 
                 UngetToken(rParen);
                 endExtent = Before(rParen);
-                ReportIncompleteInput(After(parameters != null && parameters.Any() ? parameters.Last().Extent : lparen.Extent),
-                    () => ParserStrings.MissingEndParenthesisInFunctionParameterList);
+                ReportIncompleteInput(After(parameters != null && parameters.Count > 0 ? parameters.Last().Extent : lparen.Extent),
+                    nameof(ParserStrings.MissingEndParenthesisInFunctionParameterList),
+                    ParserStrings.MissingEndParenthesisInFunctionParameterList);
             }
 
             List<AttributeAst> attributes = new List<AttributeAst>();
@@ -885,7 +900,10 @@ namespace System.Management.Automation.Language
                         // ErrorRecovery: nothing to do, this is a semantic error that is caught in the parser
                         // because the ast only allows attributes, no type constraints.
 
-                        ReportError(attr.Extent, () => ParserStrings.TypeNotAllowedBeforeParam, attr.TypeName.FullName);
+                        ReportError(attr.Extent,
+                            nameof(ParserStrings.TypeNotAllowedBeforeParam),
+                            ParserStrings.TypeNotAllowedBeforeParam,
+                            attr.TypeName.FullName);
                     }
                 }
             }
@@ -895,9 +913,9 @@ namespace System.Management.Automation.Language
 
         private List<ParameterAst> ParameterListRule()
         {
-            //G  parameter-list:
-            //G      script-parameter
-            //G      parameter-list   new-lines:opt   ','   script-parameter
+            // G  parameter-list:
+            // G      script-parameter
+            // G      parameter-list   new-lines:opt   ','   script-parameter
 
             List<ParameterAst> parameters = new List<ParameterAst>();
             Token commaToken = null;
@@ -910,11 +928,15 @@ namespace System.Management.Automation.Language
                     {
                         // ErrorRecovery: ??
 
-                        ReportIncompleteInput(After(commaToken), () => ParserStrings.MissingExpressionAfterToken,
-                                              commaToken.Kind.Text());
+                        ReportIncompleteInput(After(commaToken),
+                            nameof(ParserStrings.MissingExpressionAfterToken),
+                            ParserStrings.MissingExpressionAfterToken,
+                            commaToken.Kind.Text());
                     }
+
                     break;
                 }
+
                 parameters.Add(parameter);
                 SkipNewlines();
                 commaToken = PeekToken();
@@ -922,6 +944,7 @@ namespace System.Management.Automation.Language
                 {
                     break;
                 }
+
                 SkipToken();
             }
 
@@ -930,10 +953,10 @@ namespace System.Management.Automation.Language
 
         private ParameterAst ParameterRule()
         {
-            //G  script-parameter:
-            //G      new-lines:opt   attribute-list:opt   new-lines:opt   variable   script-parameter-default:opt
-            //G  script-parameter-default:
-            //G      new-lines:opt   '='   new-lines:opt   expression
+            // G  script-parameter:
+            // G      new-lines:opt   attribute-list:opt   new-lines:opt   variable   script-parameter-default:opt
+            // G  script-parameter-default:
+            // G      new-lines:opt   '='   new-lines:opt   expression
 
             List<AttributeBaseAst> attributes;
             VariableToken variableToken;
@@ -957,7 +980,9 @@ namespace System.Management.Automation.Language
                     {
                         // ErrorRecovery: skip to closing paren because returning null signals the last parameter.
 
-                        ReportIncompleteInput(After(attributes.Last()), () => ParserStrings.InvalidFunctionParameter);
+                        ReportIncompleteInput(After(attributes.Last()),
+                            nameof(ParserStrings.InvalidFunctionParameter),
+                            ParserStrings.InvalidFunctionParameter);
                         SyncOnError(true, TokenKind.RParen);
 
                         // Even though we don't have a complete parameter, we do have attributes.  Intellisense
@@ -965,6 +990,7 @@ namespace System.Management.Automation.Language
                         var extent = ExtentOf(attributes[0].Extent, attributes[attributes.Count - 1].Extent);
                         return new ParameterAst(extent, new VariableExpressionAst(extent, "__error__", false), attributes, null);
                     }
+
                     return null;
                 }
 
@@ -979,7 +1005,10 @@ namespace System.Management.Automation.Language
                     defaultValue = ExpressionRule();
                     if (defaultValue == null)
                     {
-                        ReportIncompleteInput(After(equalsToken), () => ParserStrings.MissingExpressionAfterToken, equalsToken.Kind.Text());
+                        ReportIncompleteInput(After(equalsToken),
+                            nameof(ParserStrings.MissingExpressionAfterToken),
+                            ParserStrings.MissingExpressionAfterToken,
+                            equalsToken.Kind.Text());
                     }
                 }
             }
@@ -997,9 +1026,9 @@ namespace System.Management.Automation.Language
 
         private List<AttributeBaseAst> AttributeListRule(bool inExpressionMode)
         {
-            //G  attribute-list:
-            //G      attribute
-            //G      attribute-list   attribute
+            // G  attribute-list:
+            // G      attribute
+            // G      attribute-list   attribute
 
             List<AttributeBaseAst> attributes = new List<AttributeBaseAst>();
             AttributeBaseAst attribute = AttributeRule();
@@ -1010,6 +1039,7 @@ namespace System.Management.Automation.Language
                 {
                     SkipNewlines();
                 }
+
                 attribute = AttributeRule();
             }
 
@@ -1023,10 +1053,10 @@ namespace System.Management.Automation.Language
 
         private AttributeBaseAst AttributeRule()
         {
-            //G  attribute:
-            //G      '['   attribute-name   '('   attribute-arguments   ')'   ']'
-            //G  attribute-name:
-            //G      type-spec
+            // G  attribute:
+            // G      '['   attribute-name   '('   attribute-arguments   ')'   ']'
+            // G  attribute-name:
+            // G      type-spec
 
             var lBracket = NextLBracket();
             if (lBracket == null)
@@ -1034,7 +1064,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            V3SkipNewlines();
+            SkipNewlines();
 
             Token firstTypeNameToken;
             ITypeName typeName = TypeNameRule(allowAssemblyQualifiedNames: true, firstTypeNameToken: out firstTypeNameToken);
@@ -1043,7 +1073,9 @@ namespace System.Management.Automation.Language
                 // ErrorRecovery: Return null so we stop looking for attributes.
 
                 Resync(lBracket);  // TypeNameRule might have consumed some tokens
-                ReportIncompleteInput(After(lBracket), () => ParserStrings.MissingTypename);
+                ReportIncompleteInput(After(lBracket),
+                    nameof(ParserStrings.MissingTypename),
+                    ParserStrings.MissingTypename);
                 return null;
             }
 
@@ -1075,8 +1107,11 @@ namespace System.Management.Automation.Language
 
                     UngetToken(rParen);
                     rParen = null;
-                    ReportIncompleteInput(After(lastItemExtent), () => ParserStrings.MissingEndParenthesisInExpression);
+                    ReportIncompleteInput(After(lastItemExtent),
+                        nameof(ParserStrings.MissingEndParenthesisInExpression),
+                        ParserStrings.MissingEndParenthesisInExpression);
                 }
+
                 SkipNewlines();
                 Token rBracket = NextToken();
                 if (rBracket.Kind != TokenKind.RBracket)
@@ -1088,7 +1123,9 @@ namespace System.Management.Automation.Language
                     // Don't bother reporting a missing ']' if we reported a missing ')'.
                     if (rParen != null)
                     {
-                        ReportIncompleteInput(After(rParen), () => ParserStrings.EndSquareBracketExpectedAtEndOfAttribute);
+                        ReportIncompleteInput(After(rParen),
+                            nameof(ParserStrings.EndSquareBracketExpectedAtEndOfAttribute),
+                            ParserStrings.EndSquareBracketExpectedAtEndOfAttribute);
                     }
                 }
 
@@ -1106,7 +1143,9 @@ namespace System.Management.Automation.Language
             if (lParenOrRBracket.Kind != TokenKind.RBracket)
             {
                 UngetToken(lParenOrRBracket);
-                ReportError(Before(lParenOrRBracket), () => ParserStrings.EndSquareBracketExpectedAtEndOfAttribute);
+                ReportError(Before(lParenOrRBracket),
+                    nameof(ParserStrings.EndSquareBracketExpectedAtEndOfAttribute),
+                    ParserStrings.EndSquareBracketExpectedAtEndOfAttribute);
                 lParenOrRBracket = null;
             }
 
@@ -1117,12 +1156,12 @@ namespace System.Management.Automation.Language
                                             ICollection<NamedAttributeArgumentAst> namedArguments,
                                             ref IScriptExtent lastItemExtent)
         {
-            //G  attribute-arguments:
-            //G      attribute-argument
-            //G      attribute-argument   new-lines:opt   ','   attribute-arguments
-            //G  attribute-argument:
-            //G      new-lines:opt   expression
-            //G      new-lines:opt   property-name   '='   new-lines:opt   expression
+            // G  attribute-arguments:
+            // G      attribute-argument
+            // G      attribute-argument   new-lines:opt   ','   attribute-arguments
+            // G  attribute-argument:
+            // G      new-lines:opt   expression
+            // G      new-lines:opt   property-name   '='   new-lines:opt   expression
 
             bool oldDisableCommaOperator = _disableCommaOperator;
             Token commaToken = null;
@@ -1153,10 +1192,14 @@ namespace System.Management.Automation.Language
                                 // ErrorRecovery: ?
 
                                 IScriptExtent errorPosition = After(token);
-                                ReportIncompleteInput(errorPosition, () => ParserStrings.MissingExpressionInNamedArgument);
+                                ReportIncompleteInput(
+                                    errorPosition,
+                                    nameof(ParserStrings.MissingExpressionInNamedArgument),
+                                    ParserStrings.MissingExpressionInNamedArgument);
                                 expr = new ErrorExpressionAst(errorPosition);
                                 SyncOnError(true, TokenKind.Comma, TokenKind.RParen, TokenKind.RBracket, TokenKind.NewLine);
                             }
+
                             lastItemExtent = expr.Extent;
                         }
                         else
@@ -1165,7 +1208,6 @@ namespace System.Management.Automation.Language
                             // and record that it was defaulted for better error messages.
                             expr = new ConstantExpressionAst(name.Extent, true);
                             expressionOmitted = true;
-                            NoteV3FeatureUsed();
                         }
                     }
                     else
@@ -1179,7 +1221,10 @@ namespace System.Management.Automation.Language
                         {
                             // ErrorRecovery: this is a semantic error, so just keep parsing.
 
-                            ReportError(name.Extent, () => ParserStrings.DuplicateNamedArgument, name.Value);
+                            ReportError(name.Extent,
+                                nameof(ParserStrings.DuplicateNamedArgument),
+                                ParserStrings.DuplicateNamedArgument,
+                                name.Value);
                         }
                         else
                         {
@@ -1197,7 +1242,10 @@ namespace System.Management.Automation.Language
                         // ErrorRecovery: Pretend we saw the argument and keep going.
 
                         IScriptExtent errorExtent = After(commaToken);
-                        ReportIncompleteInput(errorExtent, () => ParserStrings.MissingExpressionAfterToken,
+                        ReportIncompleteInput(
+                            errorExtent,
+                            nameof(ParserStrings.MissingExpressionAfterToken),
+                            ParserStrings.MissingExpressionAfterToken,
                             commaToken.Kind.Text());
                         positionalArguments.Add(new ErrorExpressionAst(errorExtent));
                         lastItemExtent = errorExtent;
@@ -1222,37 +1270,37 @@ namespace System.Management.Automation.Language
 
         private ITypeName TypeNameRule(bool allowAssemblyQualifiedNames, out Token firstTypeNameToken)
         {
-            //G  type-spec:
-            //G      array-type-name    dimension:opt   ']'
-            //G      generic-type-name   generic-type-arguments   ']'
-            //G      type-name
-            //G  array-type-name:
-            //G      type-name   '['
-            //G  generic-type-name:
-            //G      type-name   '['
-            //G  dimension:
-            //G      ','
-            //G      dimension   ','
-            //G  generic-type-arguments:
-            //G      type-spec
-            //G      generic-type-arguments   ','   type-spec
-            //G  type-name:
-            //G      namespace-type-name
-            //G      namespace-type-name   ','   assembly-name-spec
-            //G  namespace-type-name:
-            //G      nested-type-name
-            //G      namespace-spec   '.'   nested-type-name
-            //G  nested-type-name:
-            //G      type-name-identifier
-            //G      nested-type-name   '+'   type-name-identifier
-            //G  namespace-spec:
-            //G      type-name-identifier
-            //G      type-name-identifier   '.'   type-name-identifier
-            //G  type-name-identifier:
-            //G      type-name-identifier-char
-            //G      type-name-identifier   type-name-identifier-char
-            //G  type-name-identifier-char:
-            //G      any letter, digit, '.', '`', or '_'.
+            // G  type-spec:
+            // G      array-type-name    dimension:opt   ']'
+            // G      generic-type-name   generic-type-arguments   ']'
+            // G      type-name
+            // G  array-type-name:
+            // G      type-name   '['
+            // G  generic-type-name:
+            // G      type-name   '['
+            // G  dimension:
+            // G      ','
+            // G      dimension   ','
+            // G  generic-type-arguments:
+            // G      type-spec
+            // G      generic-type-arguments   ','   type-spec
+            // G  type-name:
+            // G      namespace-type-name
+            // G      namespace-type-name   ','   assembly-name-spec
+            // G  namespace-type-name:
+            // G      nested-type-name
+            // G      namespace-spec   '.'   nested-type-name
+            // G  nested-type-name:
+            // G      type-name-identifier
+            // G      nested-type-name   '+'   type-name-identifier
+            // G  namespace-spec:
+            // G      type-name-identifier
+            // G      type-name-identifier   '.'   type-name-identifier
+            // G  type-name-identifier:
+            // G      type-name-identifier-char
+            // G      type-name-identifier   type-name-identifier-char
+            // G  type-name-identifier-char:
+            // G      any letter, digit, '.', '`', or '_'.
 
             // The above grammar is specified by the CLR.  We don't attempt to implement the above grammar precisely, e.g.
             // we would permit 'a+b.c'.  The above grammar would disallow this.
@@ -1292,7 +1340,7 @@ namespace System.Management.Automation.Language
 
                 // Array or generic
                 SkipToken();
-                V3SkipNewlines();
+                SkipNewlines();
                 token = NextToken();
                 switch (token.Kind)
                 {
@@ -1310,14 +1358,20 @@ namespace System.Management.Automation.Language
 
                         if (token.Kind != TokenKind.EndOfInput)
                         {
-                            ReportError(token.Extent, () => ParserStrings.UnexpectedToken, token.Text);
+                            ReportError(token.Extent,
+                                nameof(ParserStrings.UnexpectedToken),
+                                ParserStrings.UnexpectedToken,
+                                token.Text);
                             SyncOnError(true, TokenKind.RBracket);
                         }
                         else
                         {
                             UngetToken(token);
-                            ReportIncompleteInput(After(lbracket), () => ParserStrings.MissingTypename);
+                            ReportIncompleteInput(After(lbracket),
+                                nameof(ParserStrings.MissingTypename),
+                                ParserStrings.MissingTypename);
                         }
+
                         return new TypeName(typeName.Extent, typeName.Text);
                 }
             }
@@ -1328,9 +1382,12 @@ namespace System.Management.Automation.Language
                 string assemblyNameSpec = _tokenizer.GetAssemblyNameSpec();
                 if (string.IsNullOrWhiteSpace(assemblyNameSpec))
                 {
-                    ReportError(After(token), () => ParserStrings.MissingAssemblyNameSpecification);
+                    ReportError(After(token),
+                        nameof(ParserStrings.MissingAssemblyNameSpecification),
+                        ParserStrings.MissingAssemblyNameSpecification);
                     return new TypeName(typeName.Extent, typeName.Text);
                 }
+
                 return new TypeName(ExtentOf(typeName.Extent, _tokenizer.CurrentExtent()), typeName.Text, assemblyNameSpec);
             }
 
@@ -1350,7 +1407,9 @@ namespace System.Management.Automation.Language
             if (token.Kind != TokenKind.Identifier)
             {
                 UngetToken(token);
-                ReportIncompleteInput(After(token), () => ParserStrings.MissingTypename);
+                ReportIncompleteInput(After(token),
+                    nameof(ParserStrings.MissingTypename),
+                    ParserStrings.MissingTypename);
                 return new TypeName(firstToken.Extent, ":ErrorTypeName:");
             }
 
@@ -1363,7 +1422,9 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: pretend we saw the closing bracket.
 
                     UngetToken(rBracket);
-                    ReportIncompleteInput(Before(rBracket), () => ParserStrings.EndSquareBracketExpectedAtEndOfType);
+                    ReportIncompleteInput(Before(rBracket),
+                        nameof(ParserStrings.EndSquareBracketExpectedAtEndOfType),
+                        ParserStrings.EndSquareBracketExpectedAtEndOfType);
                 }
             }
 
@@ -1383,13 +1444,14 @@ namespace System.Management.Automation.Language
             Token token;
             while (true)
             {
-                V3SkipNewlines();
+                SkipNewlines();
                 commaOrRBracketToken = NextToken();
                 if (commaOrRBracketToken.Kind != TokenKind.Comma)
                 {
                     break;
                 }
-                V3SkipNewlines();
+
+                SkipNewlines();
 
                 token = PeekToken();
                 if (token.Kind == TokenKind.Identifier || token.Kind == TokenKind.LBracket)
@@ -1399,9 +1461,12 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    ReportIncompleteInput(After(commaOrRBracketToken), () => ParserStrings.MissingTypename);
+                    ReportIncompleteInput(After(commaOrRBracketToken),
+                        nameof(ParserStrings.MissingTypename),
+                        ParserStrings.MissingTypename);
                     typeName = new TypeName(commaOrRBracketToken.Extent, ":ErrorTypeName:");
                 }
+
                 genericArguments.Add(typeName);
             }
 
@@ -1411,7 +1476,8 @@ namespace System.Management.Automation.Language
 
                 UngetToken(commaOrRBracketToken);
                 ReportIncompleteInput(Before(commaOrRBracketToken),
-                    () => ParserStrings.EndSquareBracketExpectedAtEndOfAttribute);
+                    nameof(ParserStrings.EndSquareBracketExpectedAtEndOfAttribute),
+                    ParserStrings.EndSquareBracketExpectedAtEndOfAttribute);
                 commaOrRBracketToken = null;
             }
 
@@ -1424,19 +1490,23 @@ namespace System.Management.Automation.Language
                 SkipToken();
                 return CompleteArrayTypeName(result, openGenericType, NextToken());
             }
+
             if (token.Kind == TokenKind.Comma && !unBracketedGenericArg)
             {
                 SkipToken();
                 string assemblyNameSpec = _tokenizer.GetAssemblyNameSpec();
                 if (string.IsNullOrEmpty(assemblyNameSpec))
                 {
-                    ReportError(After(token), () => ParserStrings.MissingAssemblyNameSpecification);
+                    ReportError(After(token),
+                        nameof(ParserStrings.MissingAssemblyNameSpecification),
+                        ParserStrings.MissingAssemblyNameSpecification);
                 }
                 else
                 {
                     openGenericType.AssemblyName = assemblyNameSpec;
                 }
             }
+
             return result;
         }
 
@@ -1463,7 +1533,9 @@ namespace System.Management.Automation.Language
                             // ErrorRecovery: just pretend we saw a ']'.
 
                             UngetToken(token);
-                            ReportError(After(lastComma), () => ParserStrings.EndSquareBracketExpectedAtEndOfAttribute);
+                            ReportError(After(lastComma),
+                                nameof(ParserStrings.EndSquareBracketExpectedAtEndOfAttribute),
+                                ParserStrings.EndSquareBracketExpectedAtEndOfAttribute);
                         }
 
                         elementType = new ArrayTypeName(ExtentOf(elementType.Extent, token.Extent), elementType, dim);
@@ -1475,13 +1547,18 @@ namespace System.Management.Automation.Language
 
                     case TokenKind.EndOfInput:
                         UngetToken(firstTokenAfterLBracket);
-                        ReportError(Before(firstTokenAfterLBracket), () => ParserStrings.EndSquareBracketExpectedAtEndOfAttribute);
+                        ReportError(Before(firstTokenAfterLBracket),
+                            nameof(ParserStrings.EndSquareBracketExpectedAtEndOfAttribute),
+                            ParserStrings.EndSquareBracketExpectedAtEndOfAttribute);
                         break;
 
                     default:
                         // ErrorRecovery: sync to ']', and return null to avoid cascading errors.
 
-                        ReportError(firstTokenAfterLBracket.Extent, () => ParserStrings.UnexpectedToken, firstTokenAfterLBracket.Text);
+                        ReportError(firstTokenAfterLBracket.Extent,
+                            nameof(ParserStrings.UnexpectedToken),
+                            ParserStrings.UnexpectedToken,
+                            firstTokenAfterLBracket.Text);
                         SyncOnError(true, TokenKind.RBracket);
                         break;
                 }
@@ -1493,12 +1570,15 @@ namespace System.Management.Automation.Language
                     var assemblyName = _tokenizer.GetAssemblyNameSpec();
                     if (string.IsNullOrEmpty(assemblyName))
                     {
-                        ReportError(After(token), () => ParserStrings.MissingAssemblyNameSpecification);
+                        ReportError(After(token),
+                            nameof(ParserStrings.MissingAssemblyNameSpecification),
+                            ParserStrings.MissingAssemblyNameSpecification);
                     }
                     else
                     {
                         typeForAssemblyQualification.AssemblyName = assemblyName;
                     }
+
                     break;
                 }
 
@@ -1529,7 +1609,10 @@ namespace System.Management.Automation.Language
 
                     UngetToken(rCurly);
                     endScriptBlock = bodyExtent ?? lCurly.Extent;
-                    ReportIncompleteInput(lCurly.Extent, rCurly.Extent, () => ParserStrings.MissingEndCurlyBrace);
+                    ReportIncompleteInput(lCurly.Extent,
+                        rCurly.Extent,
+                        nameof(ParserStrings.MissingEndCurlyBrace),
+                        ParserStrings.MissingEndCurlyBrace);
                 }
                 else
                 {
@@ -1541,6 +1624,7 @@ namespace System.Management.Automation.Language
                         bodyExtent = ExtentOf(After(lCurly), Before(rCurly));
                     }
                 }
+
                 fullBodyExtent = ExtentOf(lCurly, endScriptBlock);
             }
             else
@@ -1553,7 +1637,10 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: eat the unexpected token, and continue parsing to find more
                     // of the script.
 
-                    ReportError(token.Extent, () => ParserStrings.UnexpectedToken, token.Text);
+                    ReportError(token.Extent,
+                        nameof(ParserStrings.UnexpectedToken),
+                        ParserStrings.UnexpectedToken,
+                        token.Text);
                     return false;
                 }
             }
@@ -1563,9 +1650,9 @@ namespace System.Management.Automation.Language
 
         private ScriptBlockAst ScriptBlockBodyRule(Token lCurly, List<UsingStatementAst> usingStatements, ParamBlockAst paramBlockAst, bool isFilter, StatementAst predefinedStatementAst)
         {
-            //G  script-block-body:
-            //G      named-block-list
-            //G      statement-list
+            // G  script-block-body:
+            // G      named-block-list
+            // G      statement-list
 
             Token token = PeekToken();
 
@@ -1580,6 +1667,7 @@ namespace System.Management.Automation.Language
             {
                 statements.Add(predefinedStatementAst);
             }
+
             IScriptExtent statementListExtent = paramBlockAst != null ? paramBlockAst.Extent : null;
             IScriptExtent scriptBlockExtent;
 
@@ -1607,13 +1695,13 @@ namespace System.Management.Automation.Language
 
         private ScriptBlockAst NamedBlockListRule(Token lCurly, List<UsingStatementAst> usingStatements, ParamBlockAst paramBlockAst)
         {
-            //G  named-block-list:
-            //G      named-block
-            //G      named-block-list   named-block
-            //G  named-block:
-            //G      statement-terminators:opt   block-name   statement-block
-            //G  block-name:  one of
-            //G      'dynamicparam'   'begin'   'process'    'end'
+            // G  named-block-list:
+            // G      named-block
+            // G      named-block-list   named-block
+            // G  named-block:
+            // G      statement-terminators:opt   block-name   statement-block
+            // G  block-name:  one of
+            // G      'dynamicparam'   'begin'   'process'    'end'
 
             NamedBlockAst dynamicParamBlock = null;
             NamedBlockAst beginBlock = null;
@@ -1623,7 +1711,8 @@ namespace System.Management.Automation.Language
                                             ? lCurly.Extent
                                             : (paramBlockAst != null) ? paramBlockAst.Extent : null;
             IScriptExtent endExtent = null;
-            IScriptExtent extent;
+            IScriptExtent extent = null;
+            IScriptExtent scriptBlockExtent = null;
 
             while (true)
             {
@@ -1631,7 +1720,31 @@ namespace System.Management.Automation.Language
                 switch (blockNameToken.Kind)
                 {
                     default:
+                        // Next token is unexpected.
+                        // ErrorRecovery: if 'lCurly' is present, pretend we saw a closing curly; otherwise, eat the unexpected token.
+                        if (lCurly != null)
+                        {
+                            UngetToken(blockNameToken);
+                            scriptBlockExtent = ExtentOf(startExtent, endExtent);
+                        }
+                        else
+                        {
+                            // If "lCurly == null", then it's a ps1/psm1 file, and thus the extent is the whole file.
+                            scriptBlockExtent = _tokenizer.GetScriptExtent();
+                        }
+
+                        // Report error about the unexpected token.
+                        ReportError(blockNameToken.Extent,
+                            nameof(ParserStrings.MissingNamedBlocks),
+                            ParserStrings.MissingNamedBlocks,
+                            blockNameToken.Text);
+                        goto return_script_block_ast;
+
+                    case TokenKind.RCurly:
+                    case TokenKind.EndOfInput:
+                        // If the next token is RCurly or <eof>, handle it in 'CompleteScriptBlockBody'.
                         UngetToken(blockNameToken);
+                        extent = ExtentOf(startExtent, endExtent);
                         goto finished_named_block_list;
 
                     case TokenKind.Dynamicparam:
@@ -1645,6 +1758,7 @@ namespace System.Management.Automation.Language
                 {
                     startExtent = blockNameToken.Extent;
                 }
+
                 endExtent = blockNameToken.Extent;
 
                 StatementBlockAst statementBlock = StatementBlockRule();
@@ -1654,8 +1768,10 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: Eat the block name and keep going, there might be a valid block next.
 
                     ReportIncompleteInput(After(blockNameToken.Extent),
-                        () => ParserStrings.MissingNamedStatementBlock, blockNameToken.Kind.Text());
-                    statementBlock = new StatementBlockAst(blockNameToken.Extent, Utils.EmptyArray<StatementAst>(), null);
+                        nameof(ParserStrings.MissingNamedStatementBlock),
+                        ParserStrings.MissingNamedStatementBlock,
+                        blockNameToken.Kind.Text());
+                    statementBlock = new StatementBlockAst(blockNameToken.Extent, Array.Empty<StatementAst>(), null);
                 }
                 else
                 {
@@ -1684,25 +1800,26 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: this is a semantic error, we can keep parsing w/o trouble.
 
                     ReportError(extent,
-                        () => ParserStrings.DuplicateScriptCommandClause, blockNameToken.Kind.Text());
+                        nameof(ParserStrings.DuplicateScriptCommandClause),
+                        ParserStrings.DuplicateScriptCommandClause,
+                        blockNameToken.Kind.Text());
                 }
 
                 SkipNewlinesAndSemicolons();
             }
-        finished_named_block_list:
 
-            IScriptExtent scriptBlockExtent;
-            extent = ExtentOf(startExtent, endExtent);
+        finished_named_block_list:
             CompleteScriptBlockBody(lCurly, ref extent, out scriptBlockExtent);
 
+        return_script_block_ast:
             return new ScriptBlockAst(scriptBlockExtent, usingStatements, paramBlockAst, beginBlock, processBlock, endBlock,
                 dynamicParamBlock);
         }
 
         private StatementBlockAst StatementBlockRule()
         {
-            //G  statement-block:
-            //G      new-lines:opt   '{'   statement-list:opt   new-lines:opt   '}'
+            // G  statement-block:
+            // G      new-lines:opt   '{'   statement-list:opt   new-lines:opt   '}'
 
             SkipNewlines();
             Token lCurly = NextToken();
@@ -1724,7 +1841,10 @@ namespace System.Management.Automation.Language
 
                 UngetToken(rCurly);
                 endBlock = statementListExtent ?? lCurly.Extent;
-                ReportIncompleteInput(lCurly.Extent, rCurly.Extent, () => ParserStrings.MissingEndCurlyBrace);
+                ReportIncompleteInput(lCurly.Extent,
+                    rCurly.Extent,
+                    nameof(ParserStrings.MissingEndCurlyBrace),
+                    ParserStrings.MissingEndCurlyBrace);
             }
             else
             {
@@ -1736,9 +1856,9 @@ namespace System.Management.Automation.Language
 
         private IScriptExtent StatementListRule(List<StatementAst> statements, List<TrapStatementAst> traps)
         {
-            //G  statement-list:
-            //G      statement
-            //G      statement-list   statement
+            // G  statement-list:
+            // G      statement
+            // G      statement-list   statement
 
             StatementAst firstStatement = null;
             StatementAst lastStatement = null;
@@ -1771,6 +1891,7 @@ namespace System.Management.Automation.Language
                 {
                     firstStatement = statement;
                 }
+
                 lastStatement = statement;
 
                 SkipNewlinesAndSemicolons();
@@ -1791,33 +1912,33 @@ namespace System.Management.Automation.Language
         /// <returns>A statement ast.  Never returns null, always returns PipelineAst.EmptyPipeline if there was no statement.</returns>
         private StatementAst StatementRule()
         {
-            //G  statement:
-            //G      if-statement
-            //G      label:opt   labeled-statement
-            //G      function-statement
-            //G      flow-control-statement   statement-terminator
-            //G      trap-statement
-            //G      try-statement
-            //G      data-statement
-            //G      pipeline   statement-terminator
-            //G
-            //G  labeled-statement:
-            //G      switch-statement
-            //G      foreach-statement
-            //G      for-statement
-            //G      while-statement
-            //G      do-statement
-            //G
-            //G  flow-control-statement:
-            //G      'break'   label-expression:opt
-            //G      'continue'   label-expression:opt
-            //G      'throw'    pipeline:opt
-            //G      'return'   pipeline:opt
-            //G      'exit'   pipeline:opt
-            //G
-            //G  statement-terminator:
-            //G      ';'
-            //G      new-line-character
+            // G  statement:
+            // G      if-statement
+            // G      label:opt   labeled-statement
+            // G      function-statement
+            // G      flow-control-statement   statement-terminator
+            // G      trap-statement
+            // G      try-statement
+            // G      data-statement
+            // G      pipeline-chain   statement-terminator
+            // G
+            // G  labeled-statement:
+            // G      switch-statement
+            // G      foreach-statement
+            // G      for-statement
+            // G      while-statement
+            // G      do-statement
+            // G
+            // G  flow-control-statement:
+            // G      'break'   label-expression:opt
+            // G      'continue'   label-expression:opt
+            // G      'throw'    pipeline:opt
+            // G      'return'   pipeline:opt
+            // G      'exit'   pipeline:opt
+            // G
+            // G  statement-terminator:
+            // G      ';'
+            // G      new-line-character
             RuntimeHelpers.EnsureSufficientExecutionStack();
             int restorePoint = 0;
 
@@ -1844,7 +1965,9 @@ namespace System.Management.Automation.Language
                         }
                         else
                         {
-                            ReportError(attributes[0].Extent, () => ParserStrings.UnexpectedAttribute,
+                            ReportError(attributes[0].Extent,
+                                nameof(ParserStrings.UnexpectedAttribute),
+                                ParserStrings.UnexpectedAttribute,
                                 attributes[0].TypeName.FullName);
                         }
                     }
@@ -1852,7 +1975,9 @@ namespace System.Management.Automation.Language
                     {
                         foreach (var attr in attributes.Where(attr => !(attr is AttributeAst)))
                         {
-                            ReportError(attr.Extent, () => ParserStrings.TypeNotAllowedBeforeStatement,
+                            ReportError(attr.Extent,
+                                nameof(ParserStrings.TypeNotAllowedBeforeStatement),
+                                ParserStrings.TypeNotAllowedBeforeStatement,
                                 attr.TypeName.FullName);
                             break;
                         }
@@ -1864,7 +1989,6 @@ namespace System.Management.Automation.Language
                     }
                 }
             }
-
 
             switch (token.Kind)
             {
@@ -1925,7 +2049,10 @@ namespace System.Management.Automation.Language
                 case TokenKind.From:
                 case TokenKind.Define:
                 case TokenKind.Var:
-                    ReportError(token.Extent, () => ParserStrings.ReservedKeywordNotAllowed, token.Kind.Text());
+                    ReportError(token.Extent,
+                        nameof(ParserStrings.ReservedKeywordNotAllowed),
+                        ParserStrings.ReservedKeywordNotAllowed,
+                        token.Kind.Text());
                     statement = new ErrorStatementAst(token.Extent);
                     break;
                 case TokenKind.Label:
@@ -1936,13 +2063,14 @@ namespace System.Management.Automation.Language
                     if (attributes != null)
                     {
                         Resync(restorePoint);
-                        statement = PipelineRule();
+                        statement = PipelineChainRule();
                     }
                     else
                     {
                         UngetToken(token);
                         statement = null;
                     }
+
                     break;
                 case TokenKind.Else:
                 case TokenKind.ElseIf:
@@ -1956,6 +2084,7 @@ namespace System.Management.Automation.Language
                         SkipNewlines();
                         return StatementRule();
                     }
+
                     goto default;
                 case TokenKind.DynamicKeyword:
                     DynamicKeyword keywordData = DynamicKeyword.GetKeyword(token.Text);
@@ -1970,7 +2099,9 @@ namespace System.Management.Automation.Language
                 case TokenKind.Using:
                     statement = UsingStatementRule(token);
                     // Report an error - usings must appear before anything else in the script, but parse it anyway
-                    ReportError(statement.Extent, () => ParserStrings.UsingMustBeAtStartOfScript);
+                    ReportError(statement.Extent,
+                        nameof(ParserStrings.UsingMustBeAtStartOfScript),
+                        ParserStrings.UsingMustBeAtStartOfScript);
                     break;
 
                 default:
@@ -1982,7 +2113,8 @@ namespace System.Management.Automation.Language
                     {
                         UngetToken(token);
                     }
-                    statement = PipelineRule();
+
+                    statement = PipelineChainRule();
                     break;
             }
 
@@ -2022,12 +2154,12 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst LabelOrKeyRule()
         {
-            //G  label-expression:
-            //G      simple-name
-            //G      unary-expression
-            //G  key-expression:
-            //G      simple-name
-            //G      unary-expression
+            // G  label-expression:
+            // G      simple-name
+            // G      unary-expression
+            // G  key-expression:
+            // G      simple-name
+            // G      unary-expression
 
             var simpleName = SimpleNameRule();
             if (simpleName != null)
@@ -2049,6 +2181,7 @@ namespace System.Management.Automation.Language
                 {
                     _disableCommaOperator = disableCommaOperator;
                 }
+
                 if (labelExpr != null)
                 {
                     return labelExpr;
@@ -2065,8 +2198,8 @@ namespace System.Management.Automation.Language
 
         private BreakStatementAst BreakStatementRule(Token breakToken)
         {
-            //G  flow-control-statement:
-            //G      'break'   label-expression:opt
+            // G  flow-control-statement:
+            // G      'break'   label-expression:opt
 
             ExpressionAst labelExpr = LabelOrKeyRule();
             IScriptExtent extent = (labelExpr != null)
@@ -2078,8 +2211,8 @@ namespace System.Management.Automation.Language
 
         private ContinueStatementAst ContinueStatementRule(Token continueToken)
         {
-            //G  flow-control-statement:
-            //G      'continue'   label-expression:opt
+            // G  flow-control-statement:
+            // G      'continue'   label-expression:opt
 
             ExpressionAst labelExpr = LabelOrKeyRule();
             IScriptExtent extent = (labelExpr != null)
@@ -2091,10 +2224,10 @@ namespace System.Management.Automation.Language
 
         private ReturnStatementAst ReturnStatementRule(Token token)
         {
-            //G  flow-control-statement:
-            //G      'return'   pipeline:opt
+            // G  flow-control-statement:
+            // G      'return'   pipeline-chain:opt
 
-            PipelineBaseAst pipeline = PipelineRule();
+            PipelineBaseAst pipeline = PipelineChainRule();
             IScriptExtent extent = (pipeline != null)
                 ? ExtentOf(token, pipeline)
                 : token.Extent;
@@ -2103,10 +2236,10 @@ namespace System.Management.Automation.Language
 
         private ExitStatementAst ExitStatementRule(Token token)
         {
-            //G  flow-control-statement:
-            //G      'exit'   pipeline:opt
+            // G  flow-control-statement:
+            // G      'exit'   pipeline-chain:opt
 
-            PipelineBaseAst pipeline = PipelineRule();
+            PipelineBaseAst pipeline = PipelineChainRule();
             IScriptExtent extent = (pipeline != null)
                 ? ExtentOf(token, pipeline)
                 : token.Extent;
@@ -2115,27 +2248,29 @@ namespace System.Management.Automation.Language
 
         private ThrowStatementAst ThrowStatementRule(Token token)
         {
-            //G  flow-control-statement:
-            //G      'throw'    pipeline:opt
+            // G  flow-control-statement:
+            // G      'throw'    pipeline:opt
 
-            PipelineBaseAst pipeline = PipelineRule();
+            PipelineBaseAst pipeline = PipelineChainRule();
             IScriptExtent extent = (pipeline != null)
                 ? ExtentOf(token, pipeline)
                 : token.Extent;
+
             return new ThrowStatementAst(extent, pipeline);
         }
 
         private StatementAst LabeledStatementRule(LabelToken label)
         {
-            //G  statement:
-            //G      label:opt   labeled-statement
-            //G
-            //G  labeled-statement:
-            //G      switch-statement
-            //G      foreach-statement
-            //G      for-statement
-            //G      while-statement
-            //G      do-statement
+            // G  statement:
+            // G      label:opt   labeled-statement
+            // G
+            // G  labeled-statement:
+            // G      switch-statement
+            // G      foreach-statement
+            // G      for-statement
+            // G      while-statement
+            // G      do-statement
+            // G      pipeline-chain
 
             StatementAst statement;
             Token token = NextToken();
@@ -2159,7 +2294,7 @@ namespace System.Management.Automation.Language
                 default:
                     // We can only unget 1 token, but have 2 to unget, so resync on the label.
                     Resync(label);
-                    statement = PipelineRule();
+                    statement = PipelineChainRule();
                     break;
             }
 
@@ -2168,15 +2303,18 @@ namespace System.Management.Automation.Language
 
         private StatementAst BlockStatementRule(Token kindToken)
         {
-            //G block-statement
-            //G      keyword    statement-block
+            // G block-statement
+            // G      keyword    statement-block
 
             StatementBlockAst body = StatementBlockRule();
 
             // ErrorRecovery: nothing more to look for, so just return the error statement.
             if (body == null)
             {
-                ReportIncompleteInput(After(kindToken.Extent), () => ParserStrings.MissingStatementAfterKeyword, kindToken.Text);
+                ReportIncompleteInput(After(kindToken.Extent),
+                    nameof(ParserStrings.MissingStatementAfterKeyword),
+                    ParserStrings.MissingStatementAfterKeyword,
+                    kindToken.Text);
                 return new ErrorStatementAst(ExtentOf(kindToken, kindToken));
             }
 
@@ -2184,7 +2322,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Handle the InlineScript syntax in the script workflow
+        /// Handle the InlineScript syntax in the script workflow.
         /// </summary>
         /// <param name="inlineScriptToken"></param>
         /// <param name="elements"></param>
@@ -2194,8 +2332,8 @@ namespace System.Management.Automation.Language
         /// </returns>
         private bool InlineScriptRule(Token inlineScriptToken, List<CommandElementAst> elements)
         {
-            //G Command
-            //G      InlineScript    scriptblock-expression
+            // G Command
+            // G      InlineScript    scriptblock-expression
 
             Diagnostics.Assert(elements != null && elements.Count == 0, "The CommandElement list should be empty");
             var commandName = new StringConstantExpressionAst(inlineScriptToken.Extent, inlineScriptToken.Text, StringConstantType.BareWord);
@@ -2210,7 +2348,10 @@ namespace System.Management.Automation.Language
                 // ErrorRecovery: If there is no opening curly, assume it hasn't been entered yet and don't consume anything.
 
                 UngetToken(lCurly);
-                ReportIncompleteInput(After(inlineScriptToken), () => ParserStrings.MissingStatementAfterKeyword, inlineScriptToken.Text);
+                ReportIncompleteInput(After(inlineScriptToken),
+                    nameof(ParserStrings.MissingStatementAfterKeyword),
+                    ParserStrings.MissingStatementAfterKeyword,
+                    inlineScriptToken.Text);
                 return false;
             }
 
@@ -2221,15 +2362,15 @@ namespace System.Management.Automation.Language
 
         private StatementAst IfStatementRule(Token ifToken)
         {
-            //G  if-statement:
-            //G      'if'   new-lines:opt   '('   pipeline-statement   ')'   statement-block   elseif-clauses:opt   else-clause:opt
-            //G  elseif-clauses:
-            //G      elseif-clause
-            //G      elseif-clauses   elseif-clause
-            //G  elseif-clause:
-            //G      'elseif'   new-lines:opt   '('   pipeline-statement   ')'   statement-block
-            //G  else-clause:
-            //G      'else'   statement-block
+            // G  if-statement:
+            // G      'if'   new-lines:opt   '('   pipeline-chain   ')'   statement-block   elseif-clauses:opt   else-clause:opt
+            // G  elseif-clauses:
+            // G      elseif-clause
+            // G      elseif-clauses   elseif-clause
+            // G  elseif-clause:
+            // G      'elseif'   new-lines:opt   '('   pipeline-chain   ')'   statement-block
+            // G  else-clause:
+            // G      'else'   statement-block
 
             List<IfClause> clauses = new List<IfClause>();
             List<Ast> componentAsts = new List<Ast>();
@@ -2247,20 +2388,25 @@ namespace System.Management.Automation.Language
 
                     UngetToken(lParen);
                     ReportIncompleteInput(After(keyword),
-                        () => ParserStrings.MissingOpenParenthesisInIfStatement, keyword.Text);
+                        nameof(ParserStrings.MissingOpenParenthesisInIfStatement),
+                        ParserStrings.MissingOpenParenthesisInIfStatement,
+                        keyword.Text);
                     return new ErrorStatementAst(ExtentOf(ifToken, keyword), componentAsts);
                 }
 
                 SkipNewlines();
-                PipelineBaseAst condition = PipelineRule();
+                PipelineBaseAst condition = PipelineChainRule();
                 if (condition == null)
                 {
                     // ErrorRecovery: assume pipeline just hasn't been entered yet, continue hoping
                     // to find a close paren and statement block.
 
                     IScriptExtent errorPosition = After(lParen);
-                    ReportIncompleteInput(errorPosition,
-                        () => ParserStrings.IfStatementMissingCondition, keyword.Text);
+                    ReportIncompleteInput(
+                        errorPosition,
+                        nameof(ParserStrings.IfStatementMissingCondition),
+                        ParserStrings.IfStatementMissingCondition,
+                        keyword.Text);
                     condition = new ErrorStatementAst(errorPosition);
                 }
                 else
@@ -2280,8 +2426,11 @@ namespace System.Management.Automation.Language
                     if (!(condition is ErrorStatementAst))
                     {
                         ReportIncompleteInput(rParen.Extent,
-                            () => ParserStrings.MissingEndParenthesisAfterStatement, keyword.Text);
+                            nameof(ParserStrings.MissingEndParenthesisAfterStatement),
+                            ParserStrings.MissingEndParenthesisAfterStatement,
+                            keyword.Text);
                     }
+
                     return new ErrorStatementAst(ExtentOf(ifToken, Before(rParen)), componentAsts);
                 }
 
@@ -2292,7 +2441,10 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: assume the next token is a newline or part of something else,
                     // so stop parsing the statement and try parsing something else.
 
-                    ReportIncompleteInput(rParen.Extent, () => ParserStrings.MissingStatementBlock, keyword.Text);
+                    ReportIncompleteInput(rParen.Extent,
+                        nameof(ParserStrings.MissingStatementBlock),
+                        ParserStrings.MissingStatementBlock,
+                        keyword.Text);
                     return new ErrorStatementAst(ExtentOf(ifToken, rParen), componentAsts);
                 }
 
@@ -2300,6 +2452,17 @@ namespace System.Management.Automation.Language
 
                 clauses.Add(new IfClause(condition, body));
 
+                // Save a restore point here. In case there is no 'elseif' or 'else' following,
+                // we should resync back here to preserve the possible new lines. The new lines
+                // could be important for the following parsing. For example, in case we are in
+                // a HashExpression, a new line might be needed for parsing the key-value that
+                // is following the if statement:
+                //    @{
+                //       a = if (1) {}
+                //       b = 10
+                //    }
+
+                int restorePoint = _ungotToken == null ? _tokenizer.GetRestorePoint() : _ungotToken.Extent.StartOffset;
                 SkipNewlines();
                 keyword = PeekToken();
 
@@ -2308,8 +2471,7 @@ namespace System.Management.Automation.Language
                     SkipToken();
                     continue;
                 }
-
-                if (keyword.Kind == TokenKind.Else)
+                else if (keyword.Kind == TokenKind.Else)
                 {
                     SkipToken();
                     SkipNewlines();
@@ -2319,10 +2481,18 @@ namespace System.Management.Automation.Language
                         // ErrorRecovery: assume the next token is a newline or part of something else,
                         // so stop parsing the statement and try parsing something else.
 
-                        ReportIncompleteInput(After(keyword), () => ParserStrings.MissingStatementBlockAfterElse);
+                        ReportIncompleteInput(After(keyword),
+                            nameof(ParserStrings.MissingStatementBlockAfterElse),
+                            ParserStrings.MissingStatementBlockAfterElse);
                         return new ErrorStatementAst(ExtentOf(ifToken, keyword), componentAsts);
                     }
                 }
+                else
+                {
+                    // There is no 'elseif' or 'else' following, so resync back to the possible new lines.
+                    Resync(restorePoint);
+                }
+
                 break;
             }
 
@@ -2335,33 +2505,33 @@ namespace System.Management.Automation.Language
 
         private StatementAst SwitchStatementRule(LabelToken labelToken, Token switchToken)
         {
-            //G  switch-statement:
-            //G      'switch'   new-lines:opt   switch-parameters:opt   switch-condition   switch-body
-            //G  switch-parameters:
-            //G      switch-parameter
-            //G      switch-parameters   switch-parameter
-            //G  switch-parameter:
-            //G      '-regex'
-            //G      '-wildcard'
-            //G      '-exact'
-            //G      '-casesensitive'
-            //G      '-parallel'
-            //G  switch-condition:
-            //G      '('   new-lines:opt   pipeline   new-lines:opt   ')'
-            //G      -file   new-lines:opt   switch-filename
-            //G  switch-filename:
-            //G      command-argument
-            //G      primary-expression
-            //G  switch-body:
-            //G      new-lines:opt   '{'   new-lines:opt   switch-clauses   '}'
-            //G  switch-clauses:
-            //G      switch-clause
-            //G      switch-clauses   switch-clause
-            //G  switch-clause:
-            //G      switch-clause-condition   statement-block   statement-terminators:opt
-            //G  switch-clause-condition:
-            //G      command-argument
-            //G      primary-expression
+            // G  switch-statement:
+            // G      'switch'   new-lines:opt   switch-parameters:opt   switch-condition   switch-body
+            // G  switch-parameters:
+            // G      switch-parameter
+            // G      switch-parameters   switch-parameter
+            // G  switch-parameter:
+            // G      '-regex'
+            // G      '-wildcard'
+            // G      '-exact'
+            // G      '-casesensitive'
+            // G      '-parallel'
+            // G  switch-condition:
+            // G      '('   new-lines:opt   pipeline   new-lines:opt   ')'
+            // G      -file   new-lines:opt   switch-filename
+            // G  switch-filename:
+            // G      command-argument
+            // G      primary-expression
+            // G  switch-body:
+            // G      new-lines:opt   '{'   new-lines:opt   switch-clauses   '}'
+            // G  switch-clauses:
+            // G      switch-clause
+            // G      switch-clauses   switch-clause
+            // G  switch-clause:
+            // G      switch-clause-condition   statement-block   statement-terminators:opt
+            // G  switch-clause-condition:
+            // G      command-argument
+            // G      primary-expression
 
             IScriptExtent startExtent = (labelToken ?? switchToken).Extent;
             IScriptExtent endErrorStatement = startExtent;
@@ -2440,7 +2610,9 @@ namespace System.Management.Automation.Language
                         // ErrorRecovery: pretend we saw the filename and continue.
 
                         isError = true;
-                        isIncompleteError = ReportIncompleteInput(After(switchParameterToken), () => ParserStrings.MissingFilenameOption);
+                        isIncompleteError = ReportIncompleteInput(After(switchParameterToken),
+                            nameof(ParserStrings.MissingFilenameOption),
+                            ParserStrings.MissingFilenameOption);
 
                         if (!specifiedFlags.ContainsKey("file"))
                         {
@@ -2451,7 +2623,7 @@ namespace System.Management.Automation.Language
                     {
                         endErrorStatement = fileNameExpr.Extent;
                         condition = new PipelineAst(fileNameExpr.Extent,
-                                                    new CommandExpressionAst(fileNameExpr.Extent, fileNameExpr, null));
+                                                    new CommandExpressionAst(fileNameExpr.Extent, fileNameExpr, null), background: false);
 
                         if (!specifiedFlags.ContainsKey("file"))
                         {
@@ -2464,7 +2636,9 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: just ignore the token, continue parsing.
 
                     isError = true;
-                    ReportError(switchParameterToken.Extent, () => ParserStrings.InvalidSwitchFlag,
+                    ReportError(switchParameterToken.Extent,
+                        nameof(ParserStrings.InvalidSwitchFlag),
+                        ParserStrings.InvalidSwitchFlag,
                         ((ParameterToken)switchParameterToken).ParameterName);
                 }
 
@@ -2488,18 +2662,22 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: nothing special this is a semantic error.
 
                     isError = true;
-                    ReportError(lParen.Extent, () => ParserStrings.PipelineValueRequired);
+                    ReportError(lParen.Extent,
+                        nameof(ParserStrings.PipelineValueRequired),
+                        ParserStrings.PipelineValueRequired);
                 }
 
                 needErrorCondition = true; // need to add condition ast to the error statement if the parsing fails
                 SkipNewlines();
-                condition = PipelineRule();
+                condition = PipelineChainRule();
                 if (condition == null)
                 {
                     // ErrorRecovery: pretend we saw the condition and keep parsing.
 
                     isError = true;
-                    isIncompleteError = ReportIncompleteInput(After(lParen), () => ParserStrings.PipelineValueRequired);
+                    isIncompleteError = ReportIncompleteInput(After(lParen),
+                        nameof(ParserStrings.PipelineValueRequired),
+                        ParserStrings.PipelineValueRequired);
                 }
                 else
                 {
@@ -2518,7 +2696,8 @@ namespace System.Management.Automation.Language
                         isError = true;
                         isIncompleteError =
                             ReportIncompleteInput(After(endErrorStatement),
-                                                  () => ParserStrings.MissingEndParenthesisInSwitchStatement);
+                                                  nameof(ParserStrings.MissingEndParenthesisInSwitchStatement),
+                                                  ParserStrings.MissingEndParenthesisInSwitchStatement);
                     }
                 }
                 else
@@ -2532,7 +2711,8 @@ namespace System.Management.Automation.Language
                 {
                     isError = true;
                     isIncompleteError = ReportIncompleteInput(After(endErrorStatement),
-                                                              () => ParserStrings.PipelineValueRequired);
+                                                              nameof(ParserStrings.PipelineValueRequired),
+                                                              ParserStrings.PipelineValueRequired);
                 }
                 else
                 {
@@ -2554,7 +2734,9 @@ namespace System.Management.Automation.Language
                 if (!isIncompleteError)
                 {
                     isError = true;
-                    ReportIncompleteInput(After(endErrorStatement), () => ParserStrings.MissingCurlyBraceInSwitchStatement);
+                    ReportIncompleteInput(After(endErrorStatement),
+                        nameof(ParserStrings.MissingCurlyBraceInSwitchStatement),
+                        ParserStrings.MissingCurlyBraceInSwitchStatement);
                 }
             }
             else
@@ -2564,24 +2746,42 @@ namespace System.Management.Automation.Language
 
                 while (true)
                 {
-                    ExpressionAst clauseCondition = GetSingleCommandArgument(CommandArgumentContext.SwitchCondition);
-                    if (clauseCondition == null)
-                    {
-                        // ErrorRecovery: if we don't have anything that looks like a condition, we won't
-                        // find a body (because a body is just a script block, which works as a condition.)
-                        // So don't look for a body, hope we find the '}' next.
+                    Token token = PeekToken();
+                    bool isDefaultClause = token.Kind == TokenKind.Default;
+                    ExpressionAst clauseCondition = null;
 
-                        isError = true;
-                        ReportIncompleteInput(After(endErrorStatement), () => ParserStrings.MissingSwitchConditionExpression);
-                        // Consume a closing curly, if there is one, to avoid an extra error
-                        if (PeekToken().Kind == TokenKind.RCurly)
-                        {
-                            SkipToken();
-                        }
-                        break;
+                    if (isDefaultClause)
+                    {
+                        // Consume the 'default' token.
+                        SkipToken();
+                        clauseCondition = new StringConstantExpressionAst(token.Extent, token.Text, StringConstantType.BareWord);
                     }
+                    else
+                    {
+                        clauseCondition = GetSingleCommandArgument(CommandArgumentContext.SwitchCondition);
+                        if (clauseCondition == null)
+                        {
+                            // ErrorRecovery: if we don't have anything that looks like a condition, we won't
+                            // find a body (because a body is just a script block, which works as a condition.)
+                            // So don't look for a body, hope we find the '}' next.
+                            isError = true;
+                            ReportIncompleteInput(After(endErrorStatement),
+                                nameof(ParserStrings.MissingSwitchConditionExpression),
+                                ParserStrings.MissingSwitchConditionExpression);
+
+                            // Consume a closing curly, if there is one, to avoid an extra error
+                            if (PeekToken().Kind == TokenKind.RCurly)
+                            {
+                                SkipToken();
+                            }
+
+                            break;
+                        }
+                    }
+
                     errorAsts.Add(clauseCondition);
                     endErrorStatement = clauseCondition.Extent;
+
                     StatementBlockAst clauseBody = StatementBlockRule();
                     if (clauseBody == null)
                     {
@@ -2589,26 +2789,26 @@ namespace System.Management.Automation.Language
 
                         isError = true;
                         isIncompleteError = ReportIncompleteInput(After(endErrorStatement),
-                                                                  () => ParserStrings.MissingSwitchStatementClause);
+                                                                  nameof(ParserStrings.MissingSwitchStatementClause),
+                                                                  ParserStrings.MissingSwitchStatementClause);
                     }
                     else
                     {
                         errorAsts.Add(clauseBody);
                         endErrorStatement = clauseBody.Extent;
 
-                        var clauseConditionString = clauseCondition as StringConstantExpressionAst;
-
-                        if (clauseConditionString != null &&
-                            clauseConditionString.StringConstantType == StringConstantType.BareWord &&
-                            clauseConditionString.Value.Equals("default", StringComparison.OrdinalIgnoreCase))
+                        if (isDefaultClause)
                         {
                             if (@default != null)
                             {
                                 // ErrorRecovery: just report the error and continue, forget the previous default clause.
 
                                 isError = true;
-                                ReportError(clauseCondition.Extent, () => ParserStrings.MultipleSwitchDefaultClauses);
+                                ReportError(clauseCondition.Extent,
+                                    nameof(ParserStrings.MultipleSwitchDefaultClauses),
+                                    ParserStrings.MultipleSwitchDefaultClauses);
                             }
+
                             @default = clauseBody;
                         }
                         else
@@ -2616,22 +2816,28 @@ namespace System.Management.Automation.Language
                             clauses.Add(new SwitchClause(clauseCondition, clauseBody));
                         }
                     }
+
                     SkipNewlinesAndSemicolons();
 
-                    Token token = PeekToken();
+                    token = PeekToken();
                     if (token.Kind == TokenKind.RCurly)
                     {
                         rCurly = token;
                         SkipToken();
                         break;
                     }
+
                     if (token.Kind == TokenKind.EndOfInput)
                     {
                         if (!isIncompleteError)
                         {
                             isError = true;
-                            ReportIncompleteInput(lCurly.Extent, token.Extent, () => ParserStrings.MissingEndCurlyBrace);
+                            ReportIncompleteInput(lCurly.Extent,
+                                token.Extent,
+                                nameof(ParserStrings.MissingEndCurlyBrace),
+                                ParserStrings.MissingEndCurlyBrace);
                         }
+
                         break;
                     }
                 }
@@ -2649,11 +2855,11 @@ namespace System.Management.Automation.Language
 
         private StatementAst ConfigurationStatementRule(IEnumerable<AttributeAst> customAttributes, Token configurationToken)
         {
-            //G  configuration-statement:
-            //G      'configuration'   new-lines:opt  singleNameExpression  new-lines:opt statement-block
-            //G  singleNameExpression:
-            //G      command-argument
-            //G      primary-expression
+            // G  configuration-statement:
+            // G      'configuration'   new-lines:opt  singleNameExpression  new-lines:opt statement-block
+            // G  singleNameExpression:
+            // G      command-argument
+            // G      primary-expression
 
             IScriptExtent startExtent = configurationToken.Extent;
             IScriptExtent endErrorStatement = startExtent;
@@ -2670,7 +2876,9 @@ namespace System.Management.Automation.Language
 
             if (configurationNameToken.Kind == TokenKind.LCurly)
             {
-                ReportError(After(startExtent), () => ParserStrings.MissingConfigurationName);
+                ReportError(After(startExtent),
+                    nameof(ParserStrings.MissingConfigurationName),
+                    ParserStrings.MissingConfigurationName);
 
                 // Try reading the configuration body - this should keep the parse in sync - but we won't return it
                 ScriptBlockExpressionRule(configurationNameToken);
@@ -2682,7 +2890,8 @@ namespace System.Management.Automation.Language
                 UngetToken(configurationNameToken);
 
                 ReportIncompleteInput(After(configurationNameToken.Extent),
-                                      () => ParserStrings.MissingConfigurationName);
+                                      nameof(ParserStrings.MissingConfigurationName),
+                                      ParserStrings.MissingConfigurationName);
                 return null;
             }
 
@@ -2694,7 +2903,9 @@ namespace System.Management.Automation.Language
             if (configurationName == null)
             {
                 isError = true;
-                ReportIncompleteInput(configurationNameToken.Extent, () => ParserStrings.MissingConfigurationName);
+                ReportIncompleteInput(configurationNameToken.Extent,
+                    nameof(ParserStrings.MissingConfigurationName),
+                    ParserStrings.MissingConfigurationName);
             }
             else
             {
@@ -2708,7 +2919,10 @@ namespace System.Management.Automation.Language
                         // This is actually a semantics check, the syntax is fine at this point.
                         // Continue parsing to get as much information as possible
                         isError = true;
-                        ReportError(configurationName.Extent, () => ParserStrings.InvalidConfigurationName, simpleConfigurationNameValue ?? string.Empty);
+                        ReportError(configurationName.Extent,
+                            nameof(ParserStrings.InvalidConfigurationName),
+                            ParserStrings.InvalidConfigurationName,
+                            simpleConfigurationNameValue ?? string.Empty);
                     }
                 }
             }
@@ -2737,7 +2951,8 @@ namespace System.Management.Automation.Language
                 if (PsUtils.IsRunningOnProcessorArchitectureARM() || Runspace.DefaultRunspace.ExecutionContext.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {
                     ReportError(configurationToken.Extent,
-                                () => ParserStrings.ConfigurationNotAllowedInConstrainedLanguage,
+                                nameof(ParserStrings.ConfigurationNotAllowedInConstrainedLanguage),
+                                ParserStrings.ConfigurationNotAllowedInConstrainedLanguage,
                                 configurationToken.Kind.Text());
                     return null;
                 }
@@ -2746,7 +2961,8 @@ namespace System.Management.Automation.Language
                 if (Utils.IsWinPEHost())
                 {
                     ReportError(configurationToken.Extent,
-                                () => ParserStrings.ConfigurationNotAllowedOnWinPE,
+                                nameof(ParserStrings.ConfigurationNotAllowedOnWinPE),
+                                ParserStrings.ConfigurationNotAllowedOnWinPE,
                                 configurationToken.Kind.Text());
                     return null;
                 }
@@ -2808,7 +3024,10 @@ namespace System.Management.Automation.Language
                     {
                         // This shouldn't happen - the system classes should always be good, but just in case,
                         // we'll catch the exception and report it as an error.
-                        ReportError(configurationKeywordToken.Extent, () => e.ToString());
+                        ReportError(configurationKeywordToken.Extent,
+                            nameof(ParserStrings.ParserError),
+                            ParserStrings.ParserError,
+                            e.ToString());
                         return null;
                     }
                 }
@@ -2825,11 +3044,12 @@ namespace System.Management.Automation.Language
                     Runspaces.Runspace.DefaultRunspace.ExecutionContext.Engine.EngineParser = currentParser;
                 }
 
-
                 Token lCurly = NextToken();
                 if (lCurly.Kind != TokenKind.LCurly)
                 {
-                    ReportIncompleteInput(After(lCurly.Extent), () => ParserStrings.MissingCurlyInConfigurationStatement);
+                    ReportIncompleteInput(After(lCurly.Extent),
+                        nameof(ParserStrings.MissingCurlyInConfigurationStatement),
+                        ParserStrings.MissingCurlyInConfigurationStatement);
                     isError = true;
                     UngetToken(lCurly);
                 }
@@ -2845,9 +3065,12 @@ namespace System.Management.Automation.Language
                     {
                         _inConfiguration = oldInConfiguration;
                     }
+
                     if (configurationBodyScriptBlock == null)
                     {
-                        ReportError(After(lCurly.Extent), () => ParserStrings.ConfigurationBodyEmpty);
+                        ReportError(After(lCurly.Extent),
+                            nameof(ParserStrings.ConfigurationBodyEmpty),
+                            ParserStrings.ConfigurationBodyEmpty);
                         return null;
                     }
                 }
@@ -2856,7 +3079,6 @@ namespace System.Management.Automation.Language
                 {
                     return new ErrorStatementAst(ExtentOf(startExtent, endErrorStatement), configurationToken);
                 }
-
 
                 #region "Add Configuration Keywords"
 
@@ -2913,6 +3135,7 @@ namespace System.Management.Automation.Language
                                             keywordProp.TypeConstraint = typeConstraint.TypeName.Name;
                                             continue;
                                         }
+
                                         var aAst = attr as AttributeAst;
                                         if (aAst != null)
                                         {
@@ -2943,6 +3166,7 @@ namespace System.Management.Automation.Language
                                         }
                                     }
                                 }
+
                                 keywordToAddForThisConfigurationStatement.Properties.Add(keywordProp.Name, keywordProp);
                             }
                         }
@@ -2976,6 +3200,7 @@ namespace System.Management.Automation.Language
                          attribute => (attribute.TypeName.GetReflectionAttributeType() != null) &&
                                       (attribute.TypeName.GetReflectionAttributeType() == typeof(DscLocalConfigurationManagerAttribute)));
                 }
+
                 ScriptBlockExpressionAst bodyAst = configurationBodyScriptBlock as ScriptBlockExpressionAst;
                 IScriptExtent configurationExtent = ExtentOf(startExtent, bodyAst);
                 return new ConfigurationDefinitionAst(configurationExtent,
@@ -2991,10 +3216,11 @@ namespace System.Management.Automation.Language
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // In theory this should never happen so if it does, we'll report the actual exception rather than introducing a new message
-                ReportError(configurationKeywordToken.Extent, () => "ConfigurationStatementToken: " + e);
+                ReportError(configurationKeywordToken.Extent,
+                    nameof(ParserStrings.ParserError),
+                    ParserStrings.ParserError,
+                    "ConfigurationStatementToken: " + e);
                 return null;
             }
             finally
@@ -3017,7 +3243,7 @@ namespace System.Management.Automation.Language
                     System.Management.Automation.Language.DynamicKeyword.Reset();
                 }
 
-                // Finally resync the tokenizer at the current position 
+                // Finally resync the tokenizer at the current position
                 // this will flush any cached dynamic keyword tokens.
                 var restorePoint = _tokenizer.GetRestorePoint();
                 Resync(restorePoint);
@@ -3028,9 +3254,9 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// Reads an argument expression for a keyword or keyword parameter.
-        /// This can be either a bare word or an expression
+        /// This can be either a bare word or an expression.
         /// </summary>
-        /// <param name="keywordToken">the token of the associated keyword</param>
+        /// <param name="keywordToken">The token of the associated keyword.</param>
         private ExpressionAst GetWordOrExpression(Token keywordToken)
         {
             Token nameToken = NextToken();
@@ -3039,7 +3265,9 @@ namespace System.Management.Automation.Language
             {
                 // ErrorRecovery: report incomplete statement and return
                 UngetToken(nameToken);
-                ReportIncompleteInput(After(keywordToken), () => ParserStrings.RequiredNameOrExpressionMissing);
+                ReportIncompleteInput(After(keywordToken),
+                    nameof(ParserStrings.RequiredNameOrExpressionMissing),
+                    ParserStrings.RequiredNameOrExpressionMissing);
                 return null;
             }
 
@@ -3047,26 +3275,30 @@ namespace System.Management.Automation.Language
             if (argument == null)
             {
                 var extent = keywordToken.Extent;
-                ReportError(After(extent), () => ParserStrings.ParameterRequiresArgument, keywordToken.Text);
+                ReportError(After(extent),
+                    nameof(ParserStrings.ParameterRequiresArgument),
+                    ParserStrings.ParameterRequiresArgument,
+                    keywordToken.Text);
             }
+
             return argument;
         }
 
         private StatementAst ForeachStatementRule(LabelToken labelToken, Token forEachToken)
         {
-            //G  foreach-statement:
-            //G      'foreach'   new-lines:opt   foreach-parameters:opt   new-lines:opt   '('
-            //G          new-lines:opt   variable   new-lines:opt   'in'   new-lines:opt   pipeline  
-            //G          new-lines:opt   ')'   statement-block
-            //G  foreach-parameters:
-            //G      foreach-parameter
-            //G      foreach-parameters   foreach-parameter
-            //G  foreach-parameter:
-            //G      '-parallel'
-            //G      '-throttlelimit' new-lines:opt   foreach-throttlelimit
-            //G  foreach-throttlelimit:
-            //G      command-argument
-            //G      primary-expression
+            // G  foreach-statement:
+            // G      'foreach'   new-lines:opt   foreach-parameters:opt   new-lines:opt   '('
+            // G          new-lines:opt   variable   new-lines:opt   'in'   new-lines:opt   pipeline
+            // G          new-lines:opt   ')'   statement-block
+            // G  foreach-parameters:
+            // G      foreach-parameter
+            // G      foreach-parameters   foreach-parameter
+            // G  foreach-parameter:
+            // G      '-parallel'
+            // G      '-throttlelimit' new-lines:opt   foreach-throttlelimit
+            // G  foreach-throttlelimit:
+            // G      command-argument
+            // G      primary-expression
 
             IScriptExtent startOfStatement = labelToken != null ? labelToken.Extent : forEachToken.Extent;
             IScriptExtent endErrorStatement = null;
@@ -3094,7 +3326,9 @@ namespace System.Management.Automation.Language
                     {
                         // ErrorRecovery: pretend we saw the throttle limit and continue.
 
-                        ReportIncompleteInput(After(foreachParameterToken), () => ParserStrings.MissingThrottleLimit);
+                        ReportIncompleteInput(After(foreachParameterToken),
+                            nameof(ParserStrings.MissingThrottleLimit),
+                            ParserStrings.MissingThrottleLimit);
                     }
                 }
                 else
@@ -3102,7 +3336,9 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: just ignore the token, continue parsing.
 
                     endErrorStatement = foreachParameterToken.Extent;
-                    ReportError(foreachParameterToken.Extent, () => ParserStrings.InvalidForeachFlag,
+                    ReportError(foreachParameterToken.Extent,
+                        nameof(ParserStrings.InvalidForeachFlag),
+                        ParserStrings.InvalidForeachFlag,
                         ((ParameterToken)foreachParameterToken).ParameterName);
                 }
 
@@ -3118,9 +3354,12 @@ namespace System.Management.Automation.Language
                 UngetToken(lParen);
                 endErrorStatement = forEachToken.Extent;
                 ReportIncompleteInput(After(endErrorStatement),
-                    () => ParserStrings.MissingOpenParenthesisAfterKeyword, forEachToken.Kind.Text());
+                    nameof(ParserStrings.MissingOpenParenthesisAfterKeyword),
+                    ParserStrings.MissingOpenParenthesisAfterKeyword,
+                    forEachToken.Kind.Text());
                 return new ErrorStatementAst(ExtentOf(startOfStatement, endErrorStatement));
             }
+
             SkipNewlines();
 
             Token token = NextToken();
@@ -3130,7 +3369,9 @@ namespace System.Management.Automation.Language
 
                 UngetToken(token);
                 endErrorStatement = lParen.Extent;
-                ReportIncompleteInput(After(endErrorStatement), () => ParserStrings.MissingVariableNameAfterForeach);
+                ReportIncompleteInput(After(endErrorStatement),
+                    nameof(ParserStrings.MissingVariableNameAfterForeach),
+                    ParserStrings.MissingVariableNameAfterForeach);
                 return new ErrorStatementAst(ExtentOf(startOfStatement, endErrorStatement));
             }
 
@@ -3146,18 +3387,22 @@ namespace System.Management.Automation.Language
 
                 UngetToken(inToken);
                 endErrorStatement = variableAst.Extent;
-                ReportIncompleteInput(After(endErrorStatement), () => ParserStrings.MissingInInForeach);
+                ReportIncompleteInput(After(endErrorStatement),
+                    nameof(ParserStrings.MissingInInForeach),
+                    ParserStrings.MissingInInForeach);
             }
             else
             {
                 SkipNewlines();
-                pipeline = PipelineRule();
+                pipeline = PipelineChainRule();
                 if (pipeline == null)
                 {
                     // ErrorRecovery: assume the rest of the statement is missing.
 
                     endErrorStatement = inToken.Extent;
-                    ReportIncompleteInput(After(endErrorStatement), () => ParserStrings.MissingForeachExpression);
+                    ReportIncompleteInput(After(endErrorStatement),
+                        nameof(ParserStrings.MissingForeachExpression),
+                        ParserStrings.MissingForeachExpression);
                 }
                 else
                 {
@@ -3169,7 +3414,9 @@ namespace System.Management.Automation.Language
 
                         UngetToken(rParen);
                         endErrorStatement = pipeline.Extent;
-                        ReportIncompleteInput(After(endErrorStatement), () => ParserStrings.MissingEndParenthesisAfterForeach);
+                        ReportIncompleteInput(After(endErrorStatement),
+                            nameof(ParserStrings.MissingEndParenthesisAfterForeach),
+                            ParserStrings.MissingEndParenthesisAfterForeach);
                     }
                     else
                     {
@@ -3179,7 +3426,9 @@ namespace System.Management.Automation.Language
                             // ErrorRecovery: nothing more to look for, so just return the error statement.
 
                             endErrorStatement = rParen.Extent;
-                            ReportIncompleteInput(After(endErrorStatement), () => ParserStrings.MissingForeachStatement);
+                            ReportIncompleteInput(After(endErrorStatement),
+                                nameof(ParserStrings.MissingForeachStatement),
+                                ParserStrings.MissingForeachStatement);
                         }
                     }
                 }
@@ -3199,25 +3448,25 @@ namespace System.Management.Automation.Language
 
         private StatementAst ForStatementRule(LabelToken labelToken, Token forToken)
         {
-            //G  for-statement:
-            //G      'for'   new-lines:opt   '('
-            //G            new-lines:opt   for-initializer:opt   statement-terminator
-            //G            new-lines:opt   for-condition:opt   statement-terminator
-            //G            new-lines:opt   for-iterator:opt
-            //G            new-lines:opt   ')'   statement-block
-            //G      'for'   new-lines:opt   '('
-            //G            new-lines:opt   for-initializer:opt   statement-terminator
-            //G            new-lines:opt   for-condition:opt
-            //G            new-lines:opt   ')'   statement-block
-            //G      'for'   new-lines:opt   '('
-            //G            new-lines:opt   for-initializer:opt
-            //G            new-lines:opt   ')'   statement-block
-            //G  for-initializer:
-            //G      pipeline
-            //G  for-condition:
-            //G      pipeline
-            //G  for-iterator:
-            //G      pipeline
+            // G  for-statement:
+            // G      'for'   new-lines:opt   '('
+            // G            new-lines:opt   for-initializer:opt   statement-terminator
+            // G            new-lines:opt   for-condition:opt   statement-terminator
+            // G            new-lines:opt   for-iterator:opt
+            // G            new-lines:opt   ')'   statement-block
+            // G      'for'   new-lines:opt   '('
+            // G            new-lines:opt   for-initializer:opt   statement-terminator
+            // G            new-lines:opt   for-condition:opt
+            // G            new-lines:opt   ')'   statement-block
+            // G      'for'   new-lines:opt   '('
+            // G            new-lines:opt   for-initializer:opt
+            // G            new-lines:opt   ')'   statement-block
+            // G  for-initializer:
+            // G      pipeline-chain
+            // G  for-condition:
+            // G      pipeline-chain
+            // G  for-iterator:
+            // G      pipeline-chain
 
             IScriptExtent endErrorStatement = null;
             SkipNewlines();
@@ -3229,35 +3478,43 @@ namespace System.Management.Automation.Language
                 UngetToken(lParen);
                 endErrorStatement = forToken.Extent;
                 ReportIncompleteInput(After(endErrorStatement),
-                    () => ParserStrings.MissingOpenParenthesisAfterKeyword, forToken.Kind.Text());
+                    nameof(ParserStrings.MissingOpenParenthesisAfterKeyword),
+                    ParserStrings.MissingOpenParenthesisAfterKeyword,
+                    forToken.Kind.Text());
                 return new ErrorStatementAst(ExtentOf(labelToken ?? forToken, endErrorStatement));
             }
+
             SkipNewlines();
-            PipelineBaseAst initializer = PipelineRule();
+            PipelineBaseAst initializer = PipelineChainRule();
             if (initializer != null)
             {
                 endErrorStatement = initializer.Extent;
             }
+
             if (PeekToken().Kind == TokenKind.Semi)
             {
                 endErrorStatement = NextToken().Extent;
             }
+
             SkipNewlines();
-            PipelineBaseAst condition = PipelineRule();
+            PipelineBaseAst condition = PipelineChainRule();
             if (condition != null)
             {
                 endErrorStatement = condition.Extent;
             }
+
             if (PeekToken().Kind == TokenKind.Semi)
             {
                 endErrorStatement = NextToken().Extent;
             }
+
             SkipNewlines();
-            PipelineBaseAst iterator = PipelineRule();
+            PipelineBaseAst iterator = PipelineChainRule();
             if (iterator != null)
             {
                 endErrorStatement = iterator.Extent;
             }
+
             SkipNewlines();
             Token rParen = NextToken();
             StatementBlockAst body = null;
@@ -3270,8 +3527,11 @@ namespace System.Management.Automation.Language
                 {
                     endErrorStatement = lParen.Extent;
                 }
+
                 ReportIncompleteInput(After(endErrorStatement),
-                    () => ParserStrings.MissingEndParenthesisAfterStatement, forToken.Kind.Text());
+                    nameof(ParserStrings.MissingEndParenthesisAfterStatement),
+                    ParserStrings.MissingEndParenthesisAfterStatement,
+                    forToken.Kind.Text());
             }
             else
             {
@@ -3281,7 +3541,9 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: return an error statement.
                     endErrorStatement = rParen.Extent;
                     ReportIncompleteInput(After(endErrorStatement),
-                                          () => ParserStrings.MissingLoopStatement, forToken.Kind.Text());
+                                          nameof(ParserStrings.MissingLoopStatement),
+                                          ParserStrings.MissingLoopStatement,
+                                          forToken.Kind.Text());
                 }
             }
 
@@ -3297,8 +3559,11 @@ namespace System.Management.Automation.Language
 
         private StatementAst WhileStatementRule(LabelToken labelToken, Token whileToken)
         {
-            //G  while-statement:
-            //G      'while '  new-lines:opt   '('   new-lines:opt   while-condition   new-lines:opt   ')'   statement-block
+            // G  while-statement:
+            // G      'while '  new-lines:opt   '('   new-lines:opt   while-condition   new-lines:opt   ')'   statement-block
+            // G
+            // G   while-condition:
+            // G       pipeline-chain
 
             SkipNewlines();
 
@@ -3310,12 +3575,14 @@ namespace System.Management.Automation.Language
 
                 UngetToken(lParen);
                 ReportIncompleteInput(After(whileToken),
-                    () => ParserStrings.MissingOpenParenthesisAfterKeyword, whileToken.Text);
+                    nameof(ParserStrings.MissingOpenParenthesisAfterKeyword),
+                    ParserStrings.MissingOpenParenthesisAfterKeyword,
+                    whileToken.Text);
                 return new ErrorStatementAst(ExtentOf(labelToken ?? whileToken, whileToken));
             }
 
             SkipNewlines();
-            PipelineBaseAst condition = PipelineRule();
+            PipelineBaseAst condition = PipelineChainRule();
             PipelineBaseAst errorCondition = null;
             if (condition == null)
             {
@@ -3323,8 +3590,11 @@ namespace System.Management.Automation.Language
                 // to find a close paren and statement block.
 
                 IScriptExtent errorPosition = After(lParen);
-                ReportIncompleteInput(errorPosition,
-                    () => ParserStrings.MissingExpressionAfterKeyword, whileToken.Kind.Text());
+                ReportIncompleteInput(
+                    errorPosition,
+                    nameof(ParserStrings.MissingExpressionAfterKeyword),
+                    ParserStrings.MissingExpressionAfterKeyword,
+                    whileToken.Kind.Text());
                 condition = new ErrorStatementAst(errorPosition);
             }
             else
@@ -3344,8 +3614,11 @@ namespace System.Management.Automation.Language
                 if (!(condition is ErrorStatementAst))
                 {
                     ReportIncompleteInput(After(condition),
-                        () => ParserStrings.MissingEndParenthesisAfterStatement, whileToken.Kind.Text());
+                        nameof(ParserStrings.MissingEndParenthesisAfterStatement),
+                        ParserStrings.MissingEndParenthesisAfterStatement,
+                        whileToken.Kind.Text());
                 }
+
                 return new ErrorStatementAst(ExtentOf(labelToken ?? whileToken, condition), GetNestedErrorAsts(errorCondition));
             }
 
@@ -3356,7 +3629,9 @@ namespace System.Management.Automation.Language
                 // ErrorRecovery: assume the next token is a newline or part of something else.
 
                 ReportIncompleteInput(After(rParen),
-                    () => ParserStrings.MissingLoopStatement, whileToken.Kind.Text());
+                    nameof(ParserStrings.MissingLoopStatement),
+                    ParserStrings.MissingLoopStatement,
+                    whileToken.Kind.Text());
                 return new ErrorStatementAst(ExtentOf(labelToken ?? whileToken, rParen), GetNestedErrorAsts(errorCondition));
             }
 
@@ -3369,14 +3644,14 @@ namespace System.Management.Automation.Language
         ///     keyword [parameters] [name] { a=1; b=2; } # constructor with properties
         /// or
         ///     keyword [parameters] [name] { ... }  # constructor with a simple body.
-        /// or keywordcommand parameters 
+        /// or keywordcommand parameters
         /// This custom keyword does not introduce a new AST node type. Instead it generates a
         /// CommandAst that calls a PowerShell command to implement the keyword's logic.
         /// This command has one of two signatures:
-        ///     keywordImplCommand
+        ///     keywordImplCommand.
         /// </summary>
-        /// <param name="functionName">The name of the function to invoke</param>
-        /// <param name="keywordData">The data for this keyword definition</param>
+        /// <param name="functionName">The name of the function to invoke.</param>
+        /// <param name="keywordData">The data for this keyword definition.</param>
         /// <returns></returns>
         private StatementAst DynamicKeywordStatementRule(Token functionName, DynamicKeyword keywordData)
         {
@@ -3398,7 +3673,10 @@ namespace System.Management.Automation.Language
                 }
                 catch (Exception e)
                 {
-                    ReportError(functionName.Extent, () => ParserStrings.DynamicKeywordPreParseException, keywordData.ResourceName, e.ToString());
+                    ReportError(functionName.Extent,
+                        nameof(ParserStrings.DynamicKeywordPreParseException),
+                        ParserStrings.DynamicKeywordPreParseException,
+                        keywordData.ResourceName, e.ToString());
                     return null;
                 }
             }
@@ -3406,14 +3684,20 @@ namespace System.Management.Automation.Language
             if (keywordData.IsReservedKeyword)
             {
                 // ErrorRecovery: eat the token
-                ReportError(functionName.Extent, () => ParserStrings.UnsupportedReservedKeyword, keywordData.Keyword);
+                ReportError(functionName.Extent,
+                    nameof(ParserStrings.UnsupportedReservedKeyword),
+                    ParserStrings.UnsupportedReservedKeyword,
+                    keywordData.Keyword);
                 return null;
             }
 
             if (keywordData.HasReservedProperties)
             {
                 // ErrorRecovery: eat the token
-                ReportError(functionName.Extent, () => ParserStrings.UnsupportedReservedProperty, "'Require', 'Trigger', 'Notify', 'Before', 'After' and 'Subscribe'");
+                ReportError(functionName.Extent,
+                    nameof(ParserStrings.UnsupportedReservedProperty),
+                    ParserStrings.UnsupportedReservedProperty,
+                    "'Require', 'Trigger', 'Notify', 'Before', 'After' and 'Subscribe'");
                 return null;
             }
 
@@ -3441,13 +3725,18 @@ namespace System.Management.Automation.Language
 
                     if (keywordData.NameMode == DynamicKeywordNameMode.NameRequired || keywordData.NameMode == DynamicKeywordNameMode.SimpleNameRequired)
                     {
-                        ReportIncompleteInput(After(functionName), () => ParserStrings.RequiredNameOrExpressionMissing);
+                        ReportIncompleteInput(After(functionName),
+                            nameof(ParserStrings.RequiredNameOrExpressionMissing),
+                            ParserStrings.RequiredNameOrExpressionMissing);
                     }
                     else
                     {
                         // Name not required so report missing brace
-                        ReportIncompleteInput(After(functionName.Extent), () => ParserStrings.MissingBraceInObjectDefinition);
+                        ReportIncompleteInput(After(functionName.Extent),
+                            nameof(ParserStrings.MissingBraceInObjectDefinition),
+                            ParserStrings.MissingBraceInObjectDefinition);
                     }
+
                     return null;
                 }
 
@@ -3458,7 +3747,9 @@ namespace System.Management.Automation.Language
                     lCurly = nameToken;
                     if (keywordData.NameMode == DynamicKeywordNameMode.NameRequired || keywordData.NameMode == DynamicKeywordNameMode.SimpleNameRequired)
                     {
-                        ReportError(After(functionName), () => ParserStrings.RequiredNameOrExpressionMissing);
+                        ReportError(After(functionName),
+                            nameof(ParserStrings.RequiredNameOrExpressionMissing),
+                            ParserStrings.RequiredNameOrExpressionMissing);
                         UngetToken(nameToken);
                         return null;
                     }
@@ -3467,7 +3758,11 @@ namespace System.Management.Automation.Language
                 {
                     if (keywordData.NameMode == DynamicKeywordNameMode.NoName)
                     {
-                        ReportError(After(functionName), () => ParserStrings.UnexpectedNameForType, functionName.Text, nameToken.Text);
+                        ReportError(After(functionName),
+                            nameof(ParserStrings.UnexpectedNameForType),
+                            ParserStrings.UnexpectedNameForType,
+                            functionName.Text,
+                            nameToken.Text);
                         UngetToken(nameToken);
                         return null;
                     }
@@ -3478,7 +3773,9 @@ namespace System.Management.Automation.Language
                     // If only a simple name is allowed, then the string must be non-null.
                     if ((keywordData.NameMode == DynamicKeywordNameMode.SimpleNameRequired || keywordData.NameMode == DynamicKeywordNameMode.SimpleOptionalName) && string.IsNullOrEmpty(elementName))
                     {
-                        ReportIncompleteInput(After(functionName), () => ParserStrings.RequiredNameOrExpressionMissing);
+                        ReportIncompleteInput(After(functionName),
+                            nameof(ParserStrings.RequiredNameOrExpressionMissing),
+                            ParserStrings.RequiredNameOrExpressionMissing);
                         UngetToken(nameToken);
                         return null;
                     }
@@ -3493,20 +3790,30 @@ namespace System.Management.Automation.Language
                     {
                         if (keywordData.NameMode == DynamicKeywordNameMode.SimpleNameRequired || keywordData.NameMode == DynamicKeywordNameMode.SimpleOptionalName)
                         {
-                            ReportError(After(functionName), () => ParserStrings.RequiredNameOrExpressionMissing);
+                            ReportError(After(functionName),
+                                nameof(ParserStrings.RequiredNameOrExpressionMissing),
+                                ParserStrings.RequiredNameOrExpressionMissing);
                         }
                         else
                         {
                             // It wasn't an '{' and it wasn't a name expression so it's a unexpected token.
-                            ReportError(After(functionName), () => ParserStrings.UnexpectedToken, nameToken.Text);
+                            ReportError(After(functionName),
+                                nameof(ParserStrings.UnexpectedToken),
+                                ParserStrings.UnexpectedToken,
+                                nameToken.Text);
                         }
+
                         return null;
                     }
 
                     // Ok, we got a name expression, but we're expecting no name, so it's and error.
                     if (keywordData.NameMode == DynamicKeywordNameMode.NoName)
                     {
-                        ReportError(After(functionName), () => ParserStrings.UnexpectedNameForType, functionName.Text, instanceName.ToString());
+                        ReportError(After(functionName),
+                            nameof(ParserStrings.UnexpectedNameForType),
+                            ParserStrings.UnexpectedNameForType,
+                            functionName.Text,
+                            instanceName.ToString());
                         return null;
                     }
 
@@ -3514,7 +3821,10 @@ namespace System.Management.Automation.Language
                     if (keywordData.NameMode == DynamicKeywordNameMode.SimpleNameRequired || keywordData.NameMode == DynamicKeywordNameMode.SimpleOptionalName)
                     {
                         // If no match, then this is an incomplete token BUGBUG fix message
-                        ReportError(nameToken.Extent, () => ParserStrings.UnexpectedToken, nameToken.Text);
+                        ReportError(nameToken.Extent,
+                            nameof(ParserStrings.UnexpectedToken),
+                            ParserStrings.UnexpectedToken,
+                            nameToken.Text);
                         return null;
                     }
                 }
@@ -3542,7 +3852,9 @@ namespace System.Management.Automation.Language
                     if (lCurly.Kind == TokenKind.EndOfInput)
                     {
                         UngetToken(lCurly);
-                        ReportIncompleteInput(After(functionName.Extent), () => ParserStrings.MissingBraceInObjectDefinition);
+                        ReportIncompleteInput(After(functionName.Extent),
+                            nameof(ParserStrings.MissingBraceInObjectDefinition),
+                            ParserStrings.MissingBraceInObjectDefinition);
 
                         // Preserve the name expression for tab completion
                         return originalInstanceName == null
@@ -3569,11 +3881,17 @@ namespace System.Management.Automation.Language
                             // the last condition checks that there is no space between "method" name and '{'
                             instanceInvokeMemberExpressionAst.Member.Extent.EndOffset == instanceInvokeMemberExpressionAst.Arguments[0].Extent.StartOffset)
                         {
-                            ReportError(LastCharacterOf(instanceInvokeMemberExpressionAst.Member.Extent), () => ParserStrings.UnexpectedTokenInDynamicKeyword, functionName.Text);
+                            ReportError(LastCharacterOf(instanceInvokeMemberExpressionAst.Member.Extent),
+                                nameof(ParserStrings.UnexpectedTokenInDynamicKeyword),
+                                ParserStrings.UnexpectedTokenInDynamicKeyword,
+                                functionName.Text);
                         }
                         else
                         {
-                            ReportError(lCurly.Extent, () => ParserStrings.UnexpectedToken, lCurly.Text);
+                            ReportError(lCurly.Extent,
+                                nameof(ParserStrings.UnexpectedToken),
+                                ParserStrings.UnexpectedToken,
+                                lCurly.Text);
                         }
 
                         if (lCurly.Kind == TokenKind.Dot && originalInstanceName != null && lCurly.Extent.StartOffset == originalInstanceName.Extent.EndOffset)
@@ -3604,7 +3922,7 @@ namespace System.Management.Automation.Language
                 ExpressionAst body = null;
                 if (keywordData.BodyMode == DynamicKeywordBodyMode.ScriptBlock)
                 {
-                    var oldInConfiguraiton = _inConfiguration;
+                    var oldInConfiguration = _inConfiguration;
                     try
                     {
                         _inConfiguration = false;
@@ -3612,13 +3930,13 @@ namespace System.Management.Automation.Language
                     }
                     finally
                     {
-                        _inConfiguration = oldInConfiguraiton;
+                        _inConfiguration = oldInConfiguration;
                     }
                 }
                 else if (keywordData.BodyMode == DynamicKeywordBodyMode.Hashtable)
                 {
                     // Resource property value could be set to nested DSC resources except Script resource
-                    bool isScriptResource = String.Compare(functionName.Text, @"Script", StringComparison.OrdinalIgnoreCase) == 0;
+                    bool isScriptResource = string.Equals(functionName.Text, @"Script", StringComparison.OrdinalIgnoreCase);
                     try
                     {
                         if (isScriptResource)
@@ -3636,7 +3954,10 @@ namespace System.Management.Automation.Language
                 if (body == null)
                 {
                     // Failed to read the statement body
-                    ReportIncompleteInput(After(lCurly), () => ParserStrings.MissingStatementAfterKeyword, keywordData.Keyword);
+                    ReportIncompleteInput(After(lCurly),
+                        nameof(ParserStrings.MissingStatementAfterKeyword),
+                        ParserStrings.MissingStatementAfterKeyword,
+                        keywordData.Keyword);
 
                     // Preserve the name expression for tab completion
                     return originalInstanceName == null
@@ -3691,7 +4012,11 @@ namespace System.Management.Automation.Language
                 }
                 catch (Exception e)
                 {
-                    ReportError(functionName.Extent, () => ParserStrings.DynamicKeywordPostParseException, keywordData.Keyword, e.ToString());
+                    ReportError(functionName.Extent,
+                        nameof(ParserStrings.DynamicKeywordPostParseException),
+                        ParserStrings.DynamicKeywordPostParseException,
+                        keywordData.Keyword,
+                        e.ToString());
                     return null;
                 }
             }
@@ -3709,12 +4034,12 @@ namespace System.Management.Automation.Language
 
         private StatementAst DoWhileStatementRule(LabelToken labelToken, Token doToken)
         {
-            //G  do-statement:
-            //G      'do'   statement-block  new-lines:opt   'while'   new-lines:opt   '('   while-condition   new-lines:opt   ')'
-            //G      'do'   statement-block   new-lines:opt   'until'   new-lines:opt   '('   while-condition   new-lines:opt   ')'
-            //G
-            //G  while-condition:
-            //G      new-lines:opt   pipeline
+            // G  do-statement:
+            // G      'do'   statement-block  new-lines:opt   'while'   new-lines:opt   '('   while-condition   new-lines:opt   ')'
+            // G      'do'   statement-block   new-lines:opt   'until'   new-lines:opt   '('   while-condition   new-lines:opt   ')'
+            // G
+            // G  while-condition:
+            // G      new-lines:opt   pipeline
 
             IScriptExtent startExtent = (labelToken ?? doToken).Extent;
             IScriptExtent endErrorStatement = null;
@@ -3729,7 +4054,10 @@ namespace System.Management.Automation.Language
                 // comes next.
 
                 endErrorStatement = doToken.Extent;
-                ReportIncompleteInput(After(endErrorStatement), () => ParserStrings.MissingLoopStatement, TokenKind.Do.Text());
+                ReportIncompleteInput(After(endErrorStatement),
+                    nameof(ParserStrings.MissingLoopStatement),
+                    ParserStrings.MissingLoopStatement,
+                    TokenKind.Do.Text());
             }
             else
             {
@@ -3741,7 +4069,9 @@ namespace System.Management.Automation.Language
 
                     UngetToken(whileOrUntilToken);
                     endErrorStatement = body.Extent;
-                    ReportIncompleteInput(After(endErrorStatement), () => ParserStrings.MissingWhileOrUntilInDoWhile);
+                    ReportIncompleteInput(After(endErrorStatement),
+                        nameof(ParserStrings.MissingWhileOrUntilInDoWhile),
+                        ParserStrings.MissingWhileOrUntilInDoWhile);
                 }
                 else
                 {
@@ -3754,20 +4084,25 @@ namespace System.Management.Automation.Language
                         UngetToken(lParen);
                         endErrorStatement = whileOrUntilToken.Extent;
                         ReportIncompleteInput(After(endErrorStatement),
-                            () => ParserStrings.MissingOpenParenthesisAfterKeyword, whileOrUntilToken.Kind.Text());
+                            nameof(ParserStrings.MissingOpenParenthesisAfterKeyword),
+                            ParserStrings.MissingOpenParenthesisAfterKeyword,
+                            whileOrUntilToken.Kind.Text());
                     }
                     else
                     {
                         SkipNewlines();
-                        condition = PipelineRule();
+                        condition = PipelineChainRule();
                         if (condition == null)
                         {
                             // ErrorRecovery: try to get the matching close paren, then return an error statement.
 
                             endErrorStatement = lParen.Extent;
                             ReportIncompleteInput(After(endErrorStatement),
-                                () => ParserStrings.MissingExpressionAfterKeyword, whileOrUntilToken.Kind.Text());
+                                nameof(ParserStrings.MissingExpressionAfterKeyword),
+                                ParserStrings.MissingExpressionAfterKeyword,
+                                whileOrUntilToken.Kind.Text());
                         }
+
                         SkipNewlines();
                         rParen = NextToken();
                         if (rParen.Kind != TokenKind.RParen)
@@ -3781,7 +4116,9 @@ namespace System.Management.Automation.Language
                             {
                                 endErrorStatement = condition.Extent;
                                 ReportIncompleteInput(After(endErrorStatement),
-                                    () => ParserStrings.MissingEndParenthesisAfterStatement, whileOrUntilToken.Kind.Text());
+                                    nameof(ParserStrings.MissingEndParenthesisAfterStatement),
+                                    ParserStrings.MissingEndParenthesisAfterStatement,
+                                    whileOrUntilToken.Kind.Text());
                             }
                         }
                     }
@@ -3799,32 +4136,47 @@ namespace System.Management.Automation.Language
             {
                 return new DoUntilStatementAst(extent, label, condition, body);
             }
+
             return new DoWhileStatementAst(extent, label, condition, body);
         }
 
         private StatementAst ClassDefinitionRule(List<AttributeBaseAst> customAttributes, Token classToken)
         {
-            //G  class-statement:
-            //G      'class'   new-lines:opt   class-name   new-lines:opt  '{'   class-member-list   '}'
-            //G      'class'   new-lines:opt   class-name   new-lines:opt  ':'  base-type-list  '{'  new-lines:opt  class-member-list:opt  '}'
-            //G
-            //G  class-name:
-            //G      simple-name
-            //G 
-            //G  base-type-list:
-            //G      new-lines:opt   type-name   new-lines:opt
-            //G      base-class-list  ','   new-lines:opt   type-name   new-lines:opt
-            //G
-            //G  class-member-list:
-            //G      class-member  new-lines:opt
-            //G      class-member-list   class-member
+            // G  class-statement:
+            // G      attribute-list:opt   'class'   new-lines:opt   class-name   new-lines:opt  '{'   class-member-list   '}'
+            // G      attribute-list:opt   'class'   new-lines:opt   class-name   new-lines:opt  ':'  base-type-list  '{'  new-lines:opt  class-member-list:opt  '}'
+            // G
+            // G  class-name:
+            // G      simple-name
+            // G
+            // G  base-type-list:
+            // G      new-lines:opt   type-name   new-lines:opt
+            // G      base-class-list  ','   new-lines:opt   type-name   new-lines:opt
+            // G
+            // G  class-member-list:
+            // G      class-member  new-lines:opt
+            // G      class-member-list   class-member
+
+            // PowerShell classes are not supported in ConstrainedLanguage
+            if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            {
+                ReportError(classToken.Extent,
+                            nameof(ParserStrings.ClassesNotAllowedInConstrainedLanguage),
+                            ParserStrings.ClassesNotAllowedInConstrainedLanguage,
+                            classToken.Kind.Text());
+
+                return null;
+            }
 
             SkipNewlines();
             Token classNameToken;
             var name = SimpleNameRule(out classNameToken);
             if (name == null)
             {
-                ReportIncompleteInput(After(classToken), () => ParserStrings.MissingNameAfterKeyword, classToken.Text);
+                ReportIncompleteInput(After(classToken),
+                    nameof(ParserStrings.MissingNameAfterKeyword),
+                    ParserStrings.MissingNameAfterKeyword,
+                    classToken.Text);
                 return new ErrorStatementAst(classToken.Extent);
             }
 
@@ -3853,7 +4205,9 @@ namespace System.Management.Automation.Language
                         superClass = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out unused);
                         if (superClass == null)
                         {
-                            ReportIncompleteInput(After(ExtentFromFirstOf(commaToken, colonToken)), () => ParserStrings.TypeNameExpected);
+                            ReportIncompleteInput(After(ExtentFromFirstOf(commaToken, colonToken)),
+                                nameof(ParserStrings.TypeNameExpected),
+                                ParserStrings.TypeNameExpected);
                             break;
                         }
 
@@ -3879,7 +4233,10 @@ namespace System.Management.Automation.Language
 
                     UngetToken(lCurly);
                     var lastElement = (superClassesList.Count > 0) ? (Ast)superClassesList[superClassesList.Count - 1] : name;
-                    ReportIncompleteInput(After(lastElement), () => ParserStrings.MissingTypeBody, classToken.Kind.Text());
+                    ReportIncompleteInput(After(lastElement),
+                        nameof(ParserStrings.MissingTypeBody),
+                        ParserStrings.MissingTypeBody,
+                        classToken.Kind.Text());
                     return new ErrorStatementAst(ExtentOf(classToken, lastElement), superClassesList);
                 }
 
@@ -3896,12 +4253,14 @@ namespace System.Management.Automation.Language
                         members.Add(member);
                         lastExtent = member.Extent;
                     }
+
                     if (astsOnError != null && astsOnError.Count > 0)
                     {
                         if (nestedAsts == null)
                         {
                             nestedAsts = new List<Ast>();
                         }
+
                         nestedAsts.AddRange(astsOnError);
                         lastExtent = astsOnError.Last().Extent;
                     }
@@ -3911,7 +4270,11 @@ namespace System.Management.Automation.Language
                 if (rCurly.Kind != TokenKind.RCurly)
                 {
                     UngetToken(rCurly);
-                    ReportIncompleteInput(lastExtent, () => ParserStrings.MissingEndCurlyBrace);
+                    ReportIncompleteInput(
+                        After(lCurly),
+                        rCurly.Extent,
+                        nameof(ParserStrings.MissingEndCurlyBrace),
+                        ParserStrings.MissingEndCurlyBrace);
                 }
                 else
                 {
@@ -3929,7 +4292,7 @@ namespace System.Management.Automation.Language
                     {
                         nestedAsts = new List<Ast>();
                     }
-                    //no need to report error since the error is reported in method StatementRule
+                    // no need to report error since the error is reported in method StatementRule
                     nestedAsts.AddRange(customAttributes.OfType<TypeConstraintAst>());
                     nestedAsts.Add(classDefn);
                 }
@@ -3949,24 +4312,25 @@ namespace System.Management.Automation.Language
 
         private MemberAst ClassMemberRule(string className, out List<Ast> astsOnError)
         {
-            //G  class-member:
-            //G      method-member
-            //G      property-member
-            //G
-            //G  method-member:
-            //G      member-attribute-list:opt function-statement
-            //G
-            //G  property-member:
-            //G      member-attribute-list:opt  variable
-            //G      member-attribute-list:opt  variable  '='  expression
-            //G
-            //G  member-attribute-list:
-            //G      member-attribute
-            //G      member-attribute-list  member-attribute
-            //G
-            //G  member-attribute:
-            //G      attribute
-            //G      'static'
+            // G  class-member:
+            // G      method-member
+            // G      property-member
+            // G
+            // G  method-member:
+            // G      member-attribute-list:opt function-statement
+            // G
+            // G  property-member:
+            // G      member-attribute-list:opt  variable
+            // G      member-attribute-list:opt  variable  '='  expression
+            // G
+            // G  member-attribute-list:
+            // G      member-attribute
+            // G      member-attribute-list  member-attribute
+            // G
+            // G  member-attribute:
+            // G      attribute
+            // G      'static'
+            // G      'hidden'
 
             IScriptExtent startExtent = null;
             var attributeList = new List<AttributeAst>();
@@ -4007,8 +4371,9 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        ReportError(attribute.Extent, () => ParserStrings.TooManyTypes);
+                        ReportError(attribute.Extent, nameof(ParserStrings.TooManyTypes), ParserStrings.TooManyTypes);
                     }
+
                     continue;
                 }
 
@@ -4021,38 +4386,60 @@ namespace System.Management.Automation.Language
                 switch (token.Kind)
                 {
 #if SUPPORT_PUBLIC_PRIVATE
-                case TokenKind.Public:
-                    if (publicToken != null)
-                    {
-                        ReportError(token.Extent, () => ParserStrings.DuplicateQualifier, token.Text);
-                    }
-                    if (privateToken != null)
-                    {
-                        ReportError(token.Extent, () => ParserStrings.ModifiersCannotBeCombined, privateToken.Text, token.Text);
-                    }
-                    publicToken = token;
-                    SkipToken();
-                    break;
+                    case TokenKind.Public:
+                        if (publicToken != null)
+                        {
+                            ReportError(token.Extent,
+                                nameof(ParserStrings.DuplicateQualifier),
+                                ParserStrings.DuplicateQualifier,
+                                token.Text);
+                        }
 
-                case TokenKind.Private:
-                    if (privateToken != null)
-                    {
-                        ReportError(token.Extent, () => ParserStrings.DuplicateQualifier, token.Text);
-                    }
-                    if (publicToken != null)
-                    {
-                        ReportError(token.Extent, () => ParserStrings.ModifiersCannotBeCombined, publicToken.Text, token.Text);
-                    }
-                    privateToken = token;
-                    SkipToken();
-                    break;
+                        if (privateToken != null)
+                        {
+                            ReportError(token.Extent,
+                                nameof(ParserStrings.ModifiersCannotBeCombined),
+                                ParserStrings.ModifiersCannotBeCombined,
+                                privateToken.Text,
+                                token.Text);
+                        }
+
+                        publicToken = token;
+                        SkipToken();
+                        break;
+
+                    case TokenKind.Private:
+                        if (privateToken != null)
+                        {
+                            ReportError(token.Extent,
+                                nameof(ParserStrings.DuplicateQualifier),
+                                ParserStrings.DuplicateQualifier,
+                                token.Text);
+                        }
+
+                        if (publicToken != null)
+                        {
+                            ReportError(token.Extent,
+                                nameof(ParserStrings.ModifiersCannotBeCombined),
+                                ParserStrings.ModifiersCannotBeCombined,
+                                publicToken.Text,
+                                token.Text);
+                        }
+
+                        privateToken = token;
+                        SkipToken();
+                        break;
 #endif
 
                     case TokenKind.Hidden:
                         if (hiddenToken != null)
                         {
-                            ReportError(token.Extent, () => ParserStrings.DuplicateQualifier, token.Text);
+                            ReportError(token.Extent,
+                                nameof(ParserStrings.DuplicateQualifier),
+                                ParserStrings.DuplicateQualifier,
+                                token.Text);
                         }
+
                         hiddenToken = token;
                         lastAttribute = token;
                         SkipToken();
@@ -4061,8 +4448,12 @@ namespace System.Management.Automation.Language
                     case TokenKind.Static:
                         if (staticToken != null)
                         {
-                            ReportError(token.Extent, () => ParserStrings.DuplicateQualifier, token.Text);
+                            ReportError(token.Extent,
+                                nameof(ParserStrings.DuplicateQualifier),
+                                ParserStrings.DuplicateQualifier,
+                                token.Text);
                         }
+
                         staticToken = token;
                         lastAttribute = token;
                         SkipToken();
@@ -4098,6 +4489,7 @@ namespace System.Management.Automation.Language
                 {
                     attributes |= PropertyAttributes.Static;
                 }
+
                 if (hiddenToken != null)
                 {
                     attributes |= PropertyAttributes.Hidden;
@@ -4107,8 +4499,11 @@ namespace System.Management.Automation.Language
                 Token terminatorToken = PeekToken();
                 if (terminatorToken.Kind != TokenKind.NewLine && terminatorToken.Kind != TokenKind.Semi && terminatorToken.Kind != TokenKind.RCurly)
                 {
-                    ReportIncompleteInput(After(endExtent), () => ParserStrings.MissingPropertyTerminator);
+                    ReportIncompleteInput(After(endExtent),
+                        nameof(ParserStrings.MissingPropertyTerminator),
+                        ParserStrings.MissingPropertyTerminator);
                 }
+
                 SkipNewlinesAndSemicolons();
 
                 // Include the semicolon in the extent but not newline or rcurly as that will look weird, e.g. if an error is reported on the full extent
@@ -4117,7 +4512,7 @@ namespace System.Management.Automation.Language
                     endExtent = terminatorToken.Extent;
                 }
 
-                if (!String.IsNullOrEmpty(varToken.Name))
+                if (!string.IsNullOrEmpty(varToken.Name))
                 {
                     return new PropertyMemberAst(ExtentOf(startExtent, endExtent), varToken.Name,
                         typeConstraint, attributeList, attributes, initialValueAst);
@@ -4126,7 +4521,7 @@ namespace System.Management.Automation.Language
                 {
                     // Incompleted input like:
                     // class foo { $private: }
-                    // Error message already emmited by tokenizer ScanVariable
+                    // Error message already emitted by tokenizer ScanVariable
 
                     RecordErrorAsts(attributeList, ref astsOnError);
                     RecordErrorAsts(typeConstraint, ref astsOnError);
@@ -4135,7 +4530,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (token.Kind == TokenKind.Identifier)
+            if (TryUseTokenAsSimpleName(token))
             {
                 SkipToken();
                 var functionDefinition = MethodDeclarationRule(token, className, staticToken != null) as FunctionDefinitionAst;
@@ -4150,7 +4545,7 @@ namespace System.Management.Automation.Language
                     return null;
                 }
 
-#if FALSE
+#if SUPPORT_PUBLIC_PRIVATE
                 MethodAttributes attributes = privateToken != null ? MethodAttributes.Private : MethodAttributes.Public;
 #else
                 MethodAttributes attributes = MethodAttributes.Public;
@@ -4159,22 +4554,39 @@ namespace System.Management.Automation.Language
                 {
                     attributes |= MethodAttributes.Static;
                 }
+
                 if (hiddenToken != null)
                 {
                     attributes |= MethodAttributes.Hidden;
                 }
+
                 return new FunctionMemberAst(ExtentOf(startExtent, functionDefinition), functionDefinition, typeConstraint, attributeList, attributes);
             }
 
             if (lastAttribute != null)
             {
                 // We have the start of a member, but didn't see a variable or 'def'.
-                ReportIncompleteInput(After(ExtentFromFirstOf(lastAttribute)), () => ParserStrings.IncompleteMemberDefinition);
+                ReportIncompleteInput(After(ExtentFromFirstOf(lastAttribute)),
+                    nameof(ParserStrings.IncompleteMemberDefinition),
+                    ParserStrings.IncompleteMemberDefinition);
                 RecordErrorAsts(attributeList, ref astsOnError);
                 RecordErrorAsts(typeConstraint, ref astsOnError);
             }
 
             return null;
+        }
+
+        private bool TryUseTokenAsSimpleName(Token token)
+        {
+            if (token.Kind == TokenKind.Identifier
+                || token.Kind == TokenKind.DynamicKeyword
+                || token.TokenFlags.HasFlag(TokenFlags.Keyword))
+            {
+                token.TokenFlags = TokenFlags.None;
+                return true;
+            }
+
+            return false;
         }
 
         private void RecordErrorAsts(Ast errAst, ref List<Ast> astsOnError)
@@ -4188,6 +4600,7 @@ namespace System.Management.Automation.Language
             {
                 astsOnError = new List<Ast>();
             }
+
             astsOnError.Add(errAst);
         }
 
@@ -4202,6 +4615,7 @@ namespace System.Management.Automation.Language
             {
                 astsOnError = new List<Ast>();
             }
+
             astsOnError.AddRange(errAsts);
         }
 
@@ -4219,6 +4633,7 @@ namespace System.Management.Automation.Language
                     UngetToken(typeName);
                     return null;
                 }
+
                 return typeName;
             }
             finally
@@ -4231,73 +4646,132 @@ namespace System.Management.Automation.Language
         {
             //G  enum-statement:
             //G      'enum'   new-lines:opt   enum-name   '{'   enum-member-list   '}'
+            //G      'enum'   new-lines:opt   enum-name   ':'  enum-underlying-type  '{'   enum-member-list   '}'
             //G
             //G  enum-name:
             //G      simple-name
+            //G
+            //G  enum-underlying-type:
+            //G      new-lines:opt   valid-type-name   new-lines:opt
             //G
             //G  enum-member-list:
             //G      enum-member  new-lines:opt
             //G      enum-member-list   enum-member
 
+            const TypeCode ValidUnderlyingTypeCodes = TypeCode.Byte | TypeCode.Int16 | TypeCode.Int32 | TypeCode.Int64 | TypeCode.SByte | TypeCode.UInt16 | TypeCode.UInt32 | TypeCode.UInt64;
+
             SkipNewlines();
             var name = SimpleNameRule();
             if (name == null)
             {
-                ReportIncompleteInput(After(enumToken), () => ParserStrings.MissingNameAfterKeyword, enumToken.Text);
+                ReportIncompleteInput(
+                    After(enumToken),
+                    nameof(ParserStrings.MissingNameAfterKeyword),
+                    ParserStrings.MissingNameAfterKeyword,
+                    enumToken.Text);
                 return new ErrorStatementAst(enumToken.Extent);
             }
 
-            SkipNewlines();
-            Token lCurly = NextToken();
-            if (lCurly.Kind != TokenKind.LCurly)
+            TypeConstraintAst underlyingTypeConstraint = null;
+            var oldTokenizerMode = _tokenizer.Mode;
+            try
             {
-                // ErrorRecovery: If there is no opening curly, assume it hasn't been entered yet and don't consume anything.
+                SetTokenizerMode(TokenizerMode.Signature);
+                Token colonToken = PeekToken();
+                if (colonToken.Kind == TokenKind.Colon)
+                {
+                    this.SkipToken();
+                    SkipNewlines();
+                    ITypeName underlyingType;
+                    Token unused;
+                    underlyingType = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out unused);
+                    if (underlyingType == null)
+                    {
+                        ReportIncompleteInput(
+                            After(colonToken),
+                            nameof(ParserStrings.TypeNameExpected),
+                            ParserStrings.TypeNameExpected);
+                    }
+                    else
+                    {
+                        var resolvedType = underlyingType.GetReflectionType();
+                        if (resolvedType == null || !ValidUnderlyingTypeCodes.HasFlag(resolvedType.GetTypeCode()))
+                        {
+                            ReportError(
+                                underlyingType.Extent,
+                                nameof(ParserStrings.InvalidUnderlyingType),
+                                ParserStrings.InvalidUnderlyingType,
+                                underlyingType.Name);
+                        }
+                        underlyingTypeConstraint = new TypeConstraintAst(underlyingType.Extent, underlyingType);
+                    }
+                }
 
-                UngetToken(lCurly);
-                ReportIncompleteInput(After(name), () => ParserStrings.MissingTypeBody, enumToken.Kind.Text());
-                return new ErrorStatementAst(ExtentOf(enumToken, name));
+                SkipNewlines();
+                Token lCurly = NextToken();
+                if (lCurly.Kind != TokenKind.LCurly)
+                {
+                    // ErrorRecovery: If there is no opening curly, assume it hasn't been entered yet and don't consume anything.
+
+                    UngetToken(lCurly);
+                    ReportIncompleteInput(
+                        After(name),
+                        nameof(ParserStrings.MissingTypeBody),
+                        ParserStrings.MissingTypeBody,
+                        enumToken.Kind.Text());
+                    return new ErrorStatementAst(ExtentOf(enumToken, name));
+                }
+
+                IScriptExtent lastExtent = lCurly.Extent;
+                MemberAst member;
+                List<MemberAst> members = new List<MemberAst>();
+                while ((member = EnumMemberRule()) != null)
+                {
+                    members.Add(member);
+                    lastExtent = member.Extent;
+                }
+
+                var rCurly = NextToken();
+                if (rCurly.Kind != TokenKind.RCurly)
+                {
+                    UngetToken(rCurly);
+                    ReportIncompleteInput(
+                        After(lCurly),
+                        rCurly.Extent,
+                        nameof(ParserStrings.MissingEndCurlyBrace),
+                        ParserStrings.MissingEndCurlyBrace);
+                }
+
+                var startExtent = customAttributes != null && customAttributes.Count > 0
+                                          ? customAttributes[0].Extent
+                                          : enumToken.Extent;
+                var extent = ExtentOf(startExtent, rCurly);
+                var enumDefn = new TypeDefinitionAst(extent, name.Value, customAttributes == null ? null : customAttributes.OfType<AttributeAst>(), members, TypeAttributes.Enum, underlyingTypeConstraint == null ? null : new[] { underlyingTypeConstraint });
+                if (customAttributes != null && customAttributes.OfType<TypeConstraintAst>().Any())
+                {
+                    // No need to report error since there is error reported in method StatementRule
+                    List<Ast> nestedAsts = new List<Ast>();
+                    nestedAsts.AddRange(customAttributes.OfType<TypeConstraintAst>());
+                    nestedAsts.Add(enumDefn);
+                    return new ErrorStatementAst(startExtent, nestedAsts);
+                }
+
+                return enumDefn;
             }
-
-            IScriptExtent lastExtent = lCurly.Extent;
-            MemberAst member;
-            List<MemberAst> members = new List<MemberAst>();
-            while ((member = EnumMemberRule()) != null)
+            finally
             {
-                members.Add(member);
-                lastExtent = member.Extent;
+                SetTokenizerMode(oldTokenizerMode);
             }
-
-            var rCurly = NextToken();
-            if (rCurly.Kind != TokenKind.RCurly)
-            {
-                UngetToken(rCurly);
-                ReportIncompleteInput(After(lastExtent), () => ParserStrings.MissingEndCurlyBrace);
-            }
-
-            var startExtent = customAttributes != null && customAttributes.Count > 0
-                                      ? customAttributes[0].Extent
-                                      : enumToken.Extent;
-            var extent = ExtentOf(startExtent, rCurly);
-            var enumDefn = new TypeDefinitionAst(extent, name.Value, customAttributes == null ? null : customAttributes.OfType<AttributeAst>(), members, TypeAttributes.Enum, null);
-            if (customAttributes != null && customAttributes.OfType<TypeConstraintAst>().Any())
-            {
-                //no need to report error since there is error reported in method StatementRule
-                List<Ast> nestedAsts = new List<Ast>();
-                nestedAsts.AddRange(customAttributes.OfType<TypeConstraintAst>());
-                nestedAsts.Add(enumDefn);
-                return new ErrorStatementAst(startExtent, nestedAsts);
-            }
-            return enumDefn;
         }
 
         private MemberAst EnumMemberRule()
         {
-            //G  enum-member:
-            //G      enum-member-name
-            //G      enum-member-name  '='  expression
-            //G
-            //G  enum-member-name:
-            //G      simple-name
+            // G  enum-member:
+            // G      enum-member-name
+            // G      enum-member-name  '='  expression
+            // G
+            // G  enum-member-name:
+            // G      simple-name
 
             const PropertyAttributes enumMemberAttributes =
                 PropertyAttributes.Public | PropertyAttributes.Static | PropertyAttributes.Literal;
@@ -4311,22 +4785,35 @@ namespace System.Management.Automation.Language
 
             IScriptExtent endExtent = enumeratorName.Extent;
             ExpressionAst initialValueAst = null;
-            var assignToken = PeekToken();
             var missingInitializer = false;
-            if (assignToken.Kind == TokenKind.Equals)
+            var oldTokenizerMode = _tokenizer.Mode;
+            Token assignToken = null;
+            try
             {
-                SkipToken();
-                initialValueAst = ExpressionRule();
-                if (initialValueAst == null)
+                SetTokenizerMode(TokenizerMode.Expression);
+                assignToken = PeekToken();
+                if (assignToken.Kind == TokenKind.Equals)
                 {
-                    ReportError(After(assignToken), () => ParserStrings.ExpectedValueExpression, assignToken.Kind.Text());
-                    endExtent = assignToken.Extent;
-                    missingInitializer = true;
+                    SkipToken();
+                    initialValueAst = ExpressionRule();
+                    if (initialValueAst == null)
+                    {
+                        ReportError(After(assignToken),
+                            nameof(ParserStrings.ExpectedValueExpression),
+                            ParserStrings.ExpectedValueExpression,
+                            assignToken.Kind.Text());
+                        endExtent = assignToken.Extent;
+                        missingInitializer = true;
+                    }
+                    else
+                    {
+                        endExtent = initialValueAst.Extent;
+                    }
                 }
-                else
-                {
-                    endExtent = initialValueAst.Extent;
-                }
+            }
+            finally
+            {
+                SetTokenizerMode(oldTokenizerMode);
             }
 
             Token terminatorToken = PeekToken();
@@ -4335,9 +4822,12 @@ namespace System.Management.Automation.Language
                 // If the initializer is missing, no sense in reporting another error about a missing terminator
                 if (!missingInitializer)
                 {
-                    ReportIncompleteInput(After(endExtent), () => ParserStrings.MissingPropertyTerminator);
+                    ReportIncompleteInput(After(endExtent),
+                        nameof(ParserStrings.MissingPropertyTerminator),
+                        ParserStrings.MissingPropertyTerminator);
                 }
             }
+
             SkipNewlinesAndSemicolons();
 
             // Include the semicolon in the extent but not newline or rcurly as that will look weird, e.g. if an error is reported on the full extent
@@ -4351,16 +4841,16 @@ namespace System.Management.Automation.Language
 
         private StatementAst UsingStatementRule(Token usingToken)
         {
-            //G  using-statement:
-            //G      'using'   'namespace'   identifier
-            //G      'using'   'namespace'   identifier   '='   identifier
-            //G      'using'   'module'   identifier
-            //G      'using'   'module'   identifier   '='   identifier
-            //G      'using'   'module'   hashtable
-            //G      'using'   'module'   identifier   '='   hashtable
-            //G      'using'   'type'   identifier   '='   identifier
-            //G      'using'   'assembly'   identifier
-            //G      'using'   'command'   identifier   '='   identifier
+            // G  using-statement:
+            // G      'using'   'namespace'   identifier
+            // G      'using'   'namespace'   identifier   '='   identifier
+            // G      'using'   'module'   identifier
+            // G      'using'   'module'   identifier   '='   identifier
+            // G      'using'   'module'   hashtable
+            // G      'using'   'module'   identifier   '='   hashtable
+            // G      'using'   'type'   identifier   '='   identifier
+            // G      'using'   'assembly'   identifier
+            // G      'using'   'command'   identifier   '='   identifier
 
             // in case of aliasing (=), first identifier is alias name, second identifier is alias value (the real name).
 
@@ -4397,7 +4887,9 @@ namespace System.Management.Automation.Language
 
                 default:
                     UngetToken(directiveToken);
-                    ReportIncompleteInput(After(usingToken), () => ParserStrings.MissingUsingStatementDirective);
+                    ReportIncompleteInput(After(usingToken),
+                        nameof(ParserStrings.MissingUsingStatementDirective),
+                        ParserStrings.MissingUsingStatementDirective);
                     return new ErrorStatementAst(usingToken.Extent);
             }
 
@@ -4406,10 +4898,15 @@ namespace System.Management.Automation.Language
             {
                 case TokenKind.EndOfInput:
                 case TokenKind.NewLine:
-                // Example, using module ,FooBar
+                // Example: 'using module ,exampleModuleName'
+                // GetCommandArgument will successfully return an argument for a unary array argument
+                // but we don't want to allow that syntax with a using statement.
                 case TokenKind.Comma:
+                case TokenKind.Semi:
                     {
-                        ReportIncompleteInput(After(directiveToken), () => ParserStrings.MissingUsingItemName);
+                        ReportIncompleteInput(After(directiveToken),
+                            nameof(ParserStrings.MissingUsingItemName),
+                            ParserStrings.MissingUsingItemName);
                         return new ErrorStatementAst(ExtentOf(usingToken, directiveToken));
                     }
             }
@@ -4417,12 +4914,21 @@ namespace System.Management.Automation.Language
             var itemAst = GetCommandArgument(CommandArgumentContext.CommandArgument, itemToken);
             if (itemAst == null)
             {
-                ReportError(itemToken.Extent, () => ParserStrings.InvalidValueForUsingItemName, itemToken.Text);
+                ReportError(itemToken.Extent,
+                    nameof(ParserStrings.InvalidValueForUsingItemName),
+                    ParserStrings.InvalidValueForUsingItemName,
+                    itemToken.Text);
+                // ErrorRecovery: If there is no identifier, skip whole 'using' line
+                SyncOnError(true, TokenKind.Semi, TokenKind.NewLine);
+                return new ErrorStatementAst(ExtentOf(usingToken, itemToken.Extent));
             }
 
             if (!(itemAst is StringConstantExpressionAst) && (kind != UsingStatementKind.Module || !(itemAst is HashtableAst)))
             {
-                ReportError(ExtentOf(usingToken, ExtentFromFirstOf(itemAst, itemToken)), () => ParserStrings.InvalidValueForUsingItemName, itemAst.Extent.Text);
+                ReportError(ExtentFromFirstOf(itemAst, itemToken),
+                    nameof(ParserStrings.InvalidValueForUsingItemName),
+                    ParserStrings.InvalidValueForUsingItemName,
+                    itemAst.Extent.Text);
                 return new ErrorStatementAst(ExtentOf(usingToken, ExtentFromFirstOf(itemAst, itemToken)));
             }
 
@@ -4449,7 +4955,9 @@ namespace System.Management.Automation.Language
                     if (aliasToken.Kind == TokenKind.EndOfInput)
                     {
                         UngetToken(aliasToken);
-                        ReportIncompleteInput(After(equalsToken), () => ParserStrings.MissingNamespaceAlias);
+                        ReportIncompleteInput(After(equalsToken),
+                            nameof(ParserStrings.MissingNamespaceAlias),
+                            ParserStrings.MissingNamespaceAlias);
                         return new ErrorStatementAst(ExtentOf(usingToken, equalsToken));
                     }
 
@@ -4484,7 +4992,9 @@ namespace System.Management.Automation.Language
 
                 if (aliasRequired)
                 {
-                    ReportIncompleteInput(After(itemToken), () => ParserStrings.MissingEqualsInUsingAlias);
+                    ReportIncompleteInput(After(itemToken),
+                        nameof(ParserStrings.MissingEqualsInUsingAlias),
+                        ParserStrings.MissingEqualsInUsingAlias);
                     return new ErrorStatementAst(ExtentOf(usingToken, itemAst), new Ast[] { itemAst });
                 }
             }
@@ -4511,13 +5021,19 @@ namespace System.Management.Automation.Language
             {
                 if (uri.IsUnc)
                 {
-                    ReportError(name.Extent, () => ParserStrings.CannotLoadAssemblyFromUncPath, assemblyName);
+                    ReportError(name.Extent,
+                        nameof(ParserStrings.CannotLoadAssemblyFromUncPath),
+                        ParserStrings.CannotLoadAssemblyFromUncPath,
+                        assemblyName);
                 }
 
                 // don't allow things like 'using assembly http://microsoft.com'
                 if (uri.Scheme != "file")
                 {
-                    ReportError(name.Extent, () => ParserStrings.CannotLoadAssemblyWithUriSchema, uri.Scheme);
+                    ReportError(name.Extent,
+                        nameof(ParserStrings.CannotLoadAssemblyWithUriSchema),
+                        ParserStrings.CannotLoadAssemblyWithUriSchema,
+                        uri.Scheme);
                 }
             }
             else
@@ -4533,8 +5049,8 @@ namespace System.Management.Automation.Language
                         {
                             // We are in REPL, or Invoke-Expression, or ScriptBlock.Create, etc.
                             // It's legal to use '.\foo.dll', and we should do lookup in $pwd.
-                            // We resolving it in parse time to avoid difference in script behavior, 
-                            // when script execution is delayed from parsing, i.e. 
+                            // We resolving it in parse time to avoid difference in script behavior,
+                            // when script execution is delayed from parsing, i.e.
                             // $script = [scriptblock]::Create('using assembly .\foo.dll; [Foo].foo()')
                             // # using assembly behavior should be the same in these two cases:
                             // cd A; $script.Invoke()
@@ -4553,6 +5069,7 @@ namespace System.Management.Automation.Language
                         {
                             workingDirectory = Path.GetDirectoryName(scriptFileName);
                         }
+
                         assemblyFileName = workingDirectory + @"\" + assemblyFileName;
                     }
 
@@ -4569,7 +5086,10 @@ namespace System.Management.Automation.Language
 
                 if (assemblyFileName == null || !File.Exists(assemblyFileName))
                 {
-                    ReportError(name.Extent, () => ParserStrings.ErrorLoadingAssembly, assemblyName);
+                    ReportError(name.Extent,
+                        nameof(ParserStrings.ErrorLoadingAssembly),
+                        ParserStrings.ErrorLoadingAssembly,
+                        assemblyName);
                 }
                 else
                 {
@@ -4582,14 +5102,14 @@ namespace System.Management.Automation.Language
 
         private StatementAst MethodDeclarationRule(Token functionNameToken, string className, bool isStaticMethod)
         {
-            //G  method-statement:
-            //G      new-lines:opt   function-name   function-parameter-declaration   base-ctor-call:opt  '{'   script-block   '}'
-            //G
-            //G  base-ctor-call: // can be present only if function-name == className
-            //G      ':'    new-lines:opt   'base'   new-lines:opt   parenthesized-expression   new-lines:opt
-            //G
-            //G  function-name:
-            //G      command-argument
+            // G  method-statement:
+            // G      new-lines:opt   function-name   function-parameter-declaration   base-ctor-call:opt  '{'   script-block   '}'
+            // G
+            // G  base-ctor-call: // can be present only if function-name == className
+            // G      ':'    new-lines:opt   'base'   new-lines:opt   parenthesized-expression   new-lines:opt
+            // G
+            // G  function-name:
+            // G      command-argument
 
             var functionName = functionNameToken.Text;
             List<ParameterAst> parameters;
@@ -4604,7 +5124,9 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.ReportIncompleteInput(After(functionNameToken), () => ParserStrings.MissingMethodParameterList);
+                this.ReportIncompleteInput(After(functionNameToken),
+                    nameof(ParserStrings.MissingMethodParameterList),
+                    ParserStrings.MissingMethodParameterList);
                 parameters = new List<ParameterAst>();
             }
 
@@ -4644,13 +5166,17 @@ namespace System.Management.Automation.Language
                             else
                             {
                                 endErrorStatement = baseToken.Extent;
-                                ReportIncompleteInput(After(baseToken), () => ParserStrings.MissingMethodParameterList);
+                                ReportIncompleteInput(After(baseToken),
+                                    nameof(ParserStrings.MissingMethodParameterList),
+                                    ParserStrings.MissingMethodParameterList);
                             }
                         }
                         else
                         {
                             endErrorStatement = colonToken.Extent;
-                            ReportIncompleteInput(After(colonToken), () => ParserStrings.MissingBaseCtorCall);
+                            ReportIncompleteInput(After(colonToken),
+                                nameof(ParserStrings.MissingBaseCtorCall),
+                                ParserStrings.MissingBaseCtorCall);
                         }
                     }
                 }
@@ -4675,7 +5201,9 @@ namespace System.Management.Automation.Language
                 if (endErrorStatement == null)
                 {
                     endErrorStatement = ExtentFromFirstOf(rParen, functionNameToken);
-                    ReportIncompleteInput(After(endErrorStatement), () => ParserStrings.MissingFunctionBody);
+                    ReportIncompleteInput(After(endErrorStatement),
+                        nameof(ParserStrings.MissingFunctionBody),
+                        ParserStrings.MissingFunctionBody);
                 }
             }
 
@@ -4699,6 +5227,7 @@ namespace System.Management.Automation.Language
                     baseCallExtent = PositionUtilities.EmptyExtent;
                     baseKeywordExtent = PositionUtilities.EmptyExtent;
                 }
+
                 var invokeMemberAst = new BaseCtorInvokeMemberExpressionAst(baseKeywordExtent, baseCallExtent, baseCtorCallParams);
                 baseCtorCallStatement = new CommandExpressionAst(invokeMemberAst.Extent, invokeMemberAst, null);
             }
@@ -4721,13 +5250,13 @@ namespace System.Management.Automation.Language
 
         private StatementAst FunctionDeclarationRule(Token functionToken)
         {
-            //G  function-statement:
-            //G      'function'   new-lines:opt   function-name   function-parameter-declaration:opt   '{'   script-block   '}'
-            //G      'filter'   new-lines:opt   function-name   function-parameter-declaration:opt   '{'   script-block   '}'
-            //G      'workflow'   new-lines:opt   function-name   function-parameter-declaration:opt   '{'   script-block   '}'
-            //G
-            //G  function-name:
-            //G      command-argument
+            // G  function-statement:
+            // G      'function'   new-lines:opt   function-name   function-parameter-declaration:opt   '{'   script-block   '}'
+            // G      'filter'   new-lines:opt   function-name   function-parameter-declaration:opt   '{'   script-block   '}'
+            // G      'workflow'   new-lines:opt   function-name   function-parameter-declaration:opt   '{'   script-block   '}'
+            // G
+            // G  function-name:
+            // G      command-argument
 
             SkipNewlines();
 
@@ -4761,7 +5290,10 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: Don't continue, assume the function isn't there yet.
 
                     UngetToken(functionNameToken);
-                    ReportIncompleteInput(After(functionToken), () => ParserStrings.MissingNameAfterKeyword, functionToken.Text);
+                    ReportIncompleteInput(After(functionToken),
+                        nameof(ParserStrings.MissingNameAfterKeyword),
+                        ParserStrings.MissingNameAfterKeyword,
+                        functionToken.Text);
                     return new ErrorStatementAst(functionToken.Extent);
             }
 
@@ -4781,7 +5313,9 @@ namespace System.Management.Automation.Language
                 if (endErrorStatement == null)
                 {
                     endErrorStatement = ExtentFromFirstOf(rParen, functionNameToken);
-                    ReportIncompleteInput(After(endErrorStatement), () => ParserStrings.MissingFunctionBody);
+                    ReportIncompleteInput(After(endErrorStatement),
+                        nameof(ParserStrings.MissingFunctionBody),
+                        ParserStrings.MissingFunctionBody);
                 }
             }
 
@@ -4815,8 +5349,8 @@ namespace System.Management.Automation.Language
 
         private List<ParameterAst> FunctionParameterDeclarationRule(out IScriptExtent endErrorStatement, out Token rParen)
         {
-            //G  function-parameter-declaration:
-            //G      new-lines:opt   '('   parameter-list   new-lines:opt   ')'
+            // G  function-parameter-declaration:
+            // G      new-lines:opt   '('   parameter-list   new-lines:opt   ')'
 
             List<ParameterAst> parameters = null;
             endErrorStatement = null;
@@ -4835,18 +5369,22 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: assume a body follows, so just keep parsing.
 
                     UngetToken(rParen);
-                    endErrorStatement = parameters.Any() ? parameters.Last().Extent : lParen.Extent;
-                    ReportIncompleteInput(After(endErrorStatement), () => ParserStrings.MissingEndParenthesisInFunctionParameterList);
+                    endErrorStatement = parameters.Count > 0 ? parameters.Last().Extent : lParen.Extent;
+                    ReportIncompleteInput(After(endErrorStatement),
+                        nameof(ParserStrings.MissingEndParenthesisInFunctionParameterList),
+                        ParserStrings.MissingEndParenthesisInFunctionParameterList);
                 }
+
                 SkipNewlines();
             }
+
             return parameters;
         }
 
         private StatementAst TrapStatementRule(Token trapToken)
         {
-            //G  trap-statement:
-            //G      'trap'  new-lines:opt   type-literal:opt   statement-block
+            // G  trap-statement:
+            // G      'trap'  new-lines:opt   type-literal:opt   statement-block
 
             var restorePoint = _tokenizer.GetRestorePoint();
             SkipNewlines();
@@ -4868,7 +5406,9 @@ namespace System.Management.Automation.Language
                 // ErrorRecovery: just return an error statement.
 
                 IScriptExtent endErrorStatement = ExtentFromFirstOf(typeConstraintAst, trapToken);
-                ReportIncompleteInput(After(endErrorStatement), () => ParserStrings.MissingTrapStatement);
+                ReportIncompleteInput(After(endErrorStatement),
+                    nameof(ParserStrings.MissingTrapStatement),
+                    ParserStrings.MissingTrapStatement);
                 return new ErrorStatementAst(ExtentOf(trapToken, endErrorStatement), GetNestedErrorAsts(typeConstraintAst));
             }
 
@@ -4888,11 +5428,11 @@ namespace System.Management.Automation.Language
         /// <returns>A catch clause, or null there is no catch or there was some error.</returns>
         private CatchClauseAst CatchBlockRule(ref IScriptExtent endErrorStatement, ref List<TypeConstraintAst> errorAsts)
         {
-            //G  catch-clause:
-            //G      new-lines:opt   'catch'   catch-type-list:opt   statement-block
-            //G  catch-type-list:
-            //G      new-lines:opt   type-literal
-            //G      catch-type-list   new-lines:opt   ','   new-lines:opt   type-literal
+            // G  catch-clause:
+            // G      new-lines:opt   'catch'   catch-type-list:opt   statement-block
+            // G  catch-type-list:
+            // G      new-lines:opt   type-literal
+            // G      catch-type-list   new-lines:opt   ','   new-lines:opt   type-literal
 
             SkipNewlines();
             Token catchToken = NextToken();
@@ -4917,8 +5457,11 @@ namespace System.Management.Automation.Language
                         // ErrorRecovery: Just consume the comma, pretend it wasn't there and look for the handler block.
 
                         endErrorStatement = commaToken.Extent;
-                        ReportIncompleteInput(After(endErrorStatement), () => ParserStrings.MissingTypeLiteralToken);
+                        ReportIncompleteInput(After(endErrorStatement),
+                            nameof(ParserStrings.MissingTypeLiteralToken),
+                            ParserStrings.MissingTypeLiteralToken);
                     }
+
                     break;
                 }
 
@@ -4939,6 +5482,7 @@ namespace System.Management.Automation.Language
                 {
                     exceptionTypes = new List<TypeConstraintAst>();
                 }
+
                 exceptionTypes.Add(typeConstraintAst);
 
                 SkipNewlines();
@@ -4947,6 +5491,7 @@ namespace System.Management.Automation.Language
                 {
                     break;
                 }
+
                 SkipToken();
             } while (true);
 
@@ -4960,8 +5505,11 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: just use the "missing" block in the result ast.
 
                     endErrorStatement = exceptionTypes != null ? exceptionTypes.Last().Extent : catchToken.Extent;
-                    ReportIncompleteInput(After(endErrorStatement), () => ParserStrings.MissingCatchHandlerBlock);
+                    ReportIncompleteInput(After(endErrorStatement),
+                        nameof(ParserStrings.MissingCatchHandlerBlock),
+                        ParserStrings.MissingCatchHandlerBlock);
                 }
+
                 if (exceptionTypes != null)
                 {
                     if (errorAsts == null)
@@ -4970,10 +5518,10 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        errorAsts.Concat(exceptionTypes);
+                        errorAsts.AddRange(exceptionTypes);
                     }
-                    // REVIEW: seems like some code is missing here, errorAsts isn't used
                 }
+
                 return null;
             }
 
@@ -4982,20 +5530,20 @@ namespace System.Management.Automation.Language
 
         private StatementAst TryStatementRule(Token tryToken)
         {
-            //G  try-statement:
-            //G      'try'   statement-block   catch-clauses
-            //G      'try'   statement-block   finally-clause
-            //G      'try'   statement-block   catch-clauses   finally-clause
-            //G  catch-clauses:
-            //G      catch-clause
-            //G      catch-clauses   catch-clause
-            //G  catch-clause:
-            //G      new-lines:opt   'catch'   catch-type-list:opt   statement-block
-            //G  catch-type-list:
-            //G      new-lines:opt   type-literal
-            //G      catch-type-list   new-lines:opt   ','   new-lines:opt   type-literal
-            //G  finally-clause:
-            //G      new-lines:opt   'finally'   statement-block
+            // G  try-statement:
+            // G      'try'   statement-block   catch-clauses
+            // G      'try'   statement-block   finally-clause
+            // G      'try'   statement-block   catch-clauses   finally-clause
+            // G  catch-clauses:
+            // G      catch-clause
+            // G      catch-clauses   catch-clause
+            // G  catch-clause:
+            // G      new-lines:opt   'catch'   catch-type-list:opt   statement-block
+            // G  catch-type-list:
+            // G      new-lines:opt   type-literal
+            // G      catch-type-list   new-lines:opt   ','   new-lines:opt   type-literal
+            // G  finally-clause:
+            // G      new-lines:opt   'finally'   statement-block
 
             SkipNewlines();
 
@@ -5004,7 +5552,9 @@ namespace System.Management.Automation.Language
             {
                 // ErrorRecovery: don't parse more, return an error statement.
 
-                ReportIncompleteInput(After(tryToken), () => ParserStrings.MissingTryStatementBlock);
+                ReportIncompleteInput(After(tryToken),
+                    nameof(ParserStrings.MissingTryStatementBlock),
+                    ParserStrings.MissingTryStatementBlock);
                 return new ErrorStatementAst(tryToken.Extent);
             }
 
@@ -5032,7 +5582,9 @@ namespace System.Management.Automation.Language
 
                     endErrorStatement = finallyToken.Extent;
                     ReportIncompleteInput(After(endErrorStatement),
-                                          () => ParserStrings.MissingFinallyStatementBlock, finallyToken.Kind.Text());
+                                          nameof(ParserStrings.MissingFinallyStatementBlock),
+                                          ParserStrings.MissingFinallyStatementBlock,
+                                          finallyToken.Kind.Text());
                 }
             }
 
@@ -5041,7 +5593,9 @@ namespace System.Management.Automation.Language
                 // ErrorRecovery: don't parse more, return an error statement.
 
                 endErrorStatement = body.Extent;
-                ReportIncompleteInput(After(endErrorStatement), () => ParserStrings.MissingCatchOrFinally);
+                ReportIncompleteInput(After(endErrorStatement),
+                    nameof(ParserStrings.MissingCatchOrFinally),
+                    ParserStrings.MissingCatchOrFinally);
             }
 
             if (endErrorStatement != null)
@@ -5055,17 +5609,17 @@ namespace System.Management.Automation.Language
 
         private StatementAst DataStatementRule(Token dataToken)
         {
-            //G  data-statement:
-            //G      'data'    new-lines:opt   data-name   data-commands-allowed:opt   statement-block
-            //G  data-name:
-            //G      simple-name
-            //G  data-commands-allowed:
-            //G      new-lines:opt   '-supportedcommand'   data-commands-list
-            //G  data-commands-list:
-            //G      new-lines:opt   data-command
-            //G      data-commands-list   ','   new-lines:opt   data-command
-            //G  data-command:
-            //G      command-name-expr
+            // G  data-statement:
+            // G      'data'    new-lines:opt   data-name   data-commands-allowed:opt   statement-block
+            // G  data-name:
+            // G      simple-name
+            // G  data-commands-allowed:
+            // G      new-lines:opt   '-supportedcommand'   data-commands-list
+            // G  data-commands-list:
+            // G      new-lines:opt   data-command
+            // G      data-commands-list   ','   new-lines:opt   data-command
+            // G  data-command:
+            // G      command-name-expr
 
             IScriptExtent endErrorStatement = null;
             SkipNewlines();
@@ -5084,7 +5638,9 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: Assume the parameter is just misspelled, look for command names next
 
                     endErrorStatement = supportedCommandToken.Extent;
-                    ReportError(endErrorStatement, () => ParserStrings.InvalidParameterForDataSectionStatement,
+                    ReportError(endErrorStatement,
+                        nameof(ParserStrings.InvalidParameterForDataSectionStatement),
+                        ParserStrings.InvalidParameterForDataSectionStatement,
                         ((ParameterToken)supportedCommandToken).ParameterName);
                 }
 
@@ -5102,8 +5658,10 @@ namespace System.Management.Automation.Language
                         if (endErrorStatement == null)
                         {
                             ReportIncompleteInput(After(commaToken ?? supportedCommandToken),
-                                () => ParserStrings.MissingValueForSupportedCommandInDataSectionStatement);
+                                nameof(ParserStrings.MissingValueForSupportedCommandInDataSectionStatement),
+                                ParserStrings.MissingValueForSupportedCommandInDataSectionStatement);
                         }
+
                         endErrorStatement = commaToken != null ? commaToken.Extent : supportedCommandToken.Extent;
                         break;
                     }
@@ -5133,7 +5691,8 @@ namespace System.Management.Automation.Language
                                             ? commands.Last().Extent
                                             : ExtentFromFirstOf(dataVariableNameAst, dataToken);
                     ReportIncompleteInput(After(endErrorStatement),
-                        () => ParserStrings.MissingStatementBlockForDataSection);
+                        nameof(ParserStrings.MissingStatementBlockForDataSection),
+                        ParserStrings.MissingStatementBlockForDataSection);
                 }
             }
 
@@ -5149,51 +5708,262 @@ namespace System.Management.Automation.Language
 
         #region Pipelines
 
-        private PipelineBaseAst PipelineRule()
+        private PipelineBaseAst PipelineChainRule()
         {
-            //G  pipeline:
-            //G      assignment-expression
-            //G      expression   redirections:opt  pipeline-tail:opt
-            //G      command   pipeline-tail:opt
-            //G
-            //G  assignment-expression:
-            //G      expression   assignment-operator   statement
-            //G
-            //G  pipeline-tail:
-            //G      '|'   new-lines:opt   command
-            //G      '|'   new-lines:opt   command   pipeline-tail
+            // G  pipeline-chain:
+            // G      pipeline
+            // G      pipeline-chain chain-operator pipeline
+            // G
+            // G  chain-operator:
+            // G      '||'
+            // G      '&&'
 
+            // If this feature is not enabled,
+            // just look for pipelines as before.
+            RuntimeHelpers.EnsureSufficientExecutionStack();
+
+            // First look for assignment, since PipelineRule once handled that and this supercedes that.
+            // We may end up with an expression here as a result,
+            // in which case we hang on to it to pass it into the first pipeline rule call.
+            Token assignToken = null;
+            ExpressionAst expr;
+
+            // Look for an expression,
+            // which could either be a variable to assign to,
+            // or the first expression in a pipeline: "Hi" | % { $_ }
+            var oldTokenizerMode = _tokenizer.Mode;
+            try
+            {
+                SetTokenizerMode(TokenizerMode.Expression);
+                expr = ExpressionRule();
+                if (expr != null)
+                {
+                    // We peek here because we are in expression mode, otherwise =0 will get scanned
+                    // as a single token.
+                    var token = PeekToken();
+                    if (token.Kind.HasTrait(TokenFlags.AssignmentOperator))
+                    {
+                        SkipToken();
+                        assignToken = token;
+                    }
+                }
+            }
+            finally
+            {
+                SetTokenizerMode(oldTokenizerMode);
+            }
+
+            // If we have an assign token, deal with assignment
+            if (expr != null && assignToken != null)
+            {
+                SkipNewlines();
+                StatementAst statement = StatementRule();
+
+                if (statement == null)
+                {
+                    // ErrorRecovery: we are very likely at EOF because pretty much anything should result in some
+                    // pipeline, so just keep parsing.
+                    IScriptExtent errorExtent = After(assignToken);
+                    ReportIncompleteInput(
+                        errorExtent,
+                        nameof(ParserStrings.ExpectedValueExpression),
+                        ParserStrings.ExpectedValueExpression,
+                        assignToken.Kind.Text());
+                    statement = new ErrorStatementAst(errorExtent);
+                }
+
+                return new AssignmentStatementAst(
+                    ExtentOf(expr, statement),
+                    expr,
+                    assignToken.Kind,
+                    statement,
+                    assignToken.Extent);
+            }
+
+            // Start scanning for a pipeline chain,
+            // possibly starting with the expression from earlier
+            ExpressionAst startExpression = expr;
+            ChainableAst currentPipelineChain = null;
+            Token currentChainOperatorToken = null;
+            Token nextToken = null;
+            bool background = false;
+            while (true)
+            {
+                // Look for the next pipeline in the chain,
+                // at this point we should already have parsed all assignments
+                // in enclosing calls to PipelineChainRule
+                PipelineAst nextPipeline;
+                Token firstPipelineToken = null;
+                if (startExpression != null)
+                {
+                    nextPipeline = (PipelineAst)PipelineRule(startExpression);
+                    startExpression = null;
+                }
+                else
+                {
+                    // Remember the token for error reporting,
+                    // since erroneous results in the rules still consume tokens
+                    firstPipelineToken = PeekToken();
+                    nextPipeline = (PipelineAst)PipelineRule();
+                }
+
+                if (nextPipeline == null)
+                {
+                    if (currentChainOperatorToken == null)
+                    {
+                        // We haven't seen a chain token, so the caller is responsible
+                        // for expecting a pipeline and must manage this
+                        return null;
+                    }
+
+                    // See if we are responsible for reporting the issue
+                    switch (firstPipelineToken.Kind)
+                    {
+                        case TokenKind.EndOfInput:
+                            // If we're at EOF, we should allow input to complete
+                            ReportIncompleteInput(
+                                After(currentChainOperatorToken),
+                                nameof(ParserStrings.EmptyPipelineChainElement),
+                                ParserStrings.EmptyPipelineChainElement,
+                                currentChainOperatorToken.Text);
+                            break;
+
+                        case TokenKind.Dot:
+                        case TokenKind.Ampersand:
+                            // If something like 'command && &' or 'command && .' was provided,
+                            // CommandRule has already reported the error.
+                            break;
+
+                        default:
+                            ReportError(
+                                ExtentOf(currentChainOperatorToken, firstPipelineToken),
+                                nameof(ParserStrings.EmptyPipelineChainElement),
+                                ParserStrings.EmptyPipelineChainElement,
+                                currentChainOperatorToken.Text);
+                            break;
+                    }
+
+                    return new ErrorStatementAst(
+                        ExtentOf(currentPipelineChain, currentChainOperatorToken),
+                        currentChainOperatorToken,
+                        new[] { currentPipelineChain });
+                }
+
+                // Look ahead for a chain operator
+                nextToken = PeekToken();
+                switch (nextToken.Kind)
+                {
+                    case TokenKind.AndAnd:
+                    case TokenKind.OrOr:
+                        SkipToken();
+                        SkipNewlines();
+                        break;
+
+                    // Background operators may also occur here
+                    case TokenKind.Ampersand:
+                        SkipToken();
+                        nextToken = PeekToken();
+
+                        switch (nextToken.Kind)
+                        {
+                            case TokenKind.AndAnd:
+                            case TokenKind.OrOr:
+                                SkipToken();
+                                ReportError(nextToken.Extent, nameof(ParserStrings.BackgroundOperatorInPipelineChain), ParserStrings.BackgroundOperatorInPipelineChain);
+                                return new ErrorStatementAst(ExtentOf(currentPipelineChain ?? nextPipeline, nextToken.Extent));
+                        }
+
+                        background = true;
+                        goto default;
+
+                    // No more chain operators -- return
+                    default:
+                        // If we haven't seen a chain yet, pass through the pipeline
+                        // Simplifies the AST and prevents allocation
+                        if (currentPipelineChain == null)
+                        {
+                            if (!background)
+                            {
+                                return nextPipeline;
+                            }
+
+                            // Set background on the pipeline AST
+                            nextPipeline.Background = true;
+                            return nextPipeline;
+                        }
+
+                        return new PipelineChainAst(
+                            ExtentOf(currentPipelineChain.Extent, nextPipeline.Extent),
+                            currentPipelineChain,
+                            nextPipeline,
+                            currentChainOperatorToken.Kind,
+                            background);
+                }
+
+                // Assemble the new chain statement AST
+                currentPipelineChain = currentPipelineChain == null
+                    ? (ChainableAst)nextPipeline
+                    : new PipelineChainAst(
+                        ExtentOf(currentPipelineChain.Extent, nextPipeline.Extent),
+                        currentPipelineChain,
+                        nextPipeline,
+                        currentChainOperatorToken.Kind);
+
+                // Remember the last operator to chain the coming pipeline
+                currentChainOperatorToken = nextToken;
+
+                // Look ahead to report incomplete input if needed
+                if (PeekToken().Kind == TokenKind.EndOfInput)
+                {
+                    ReportIncompleteInput(
+                        After(nextToken),
+                        nameof(ParserStrings.EmptyPipelineChainElement),
+                        ParserStrings.EmptyPipelineChainElement);
+
+                    return currentPipelineChain;
+                }
+            }
+        }
+
+        private PipelineBaseAst PipelineRule(
+            ExpressionAst startExpression = null,
+            bool allowBackground = false)
+        {
+            // G  pipeline:
+            // G      assignment-expression
+            // G      expression   redirections:opt  pipeline-tail:opt
+            // G      command   pipeline-tail:opt
+            // G
+            // G  assignment-expression:
+            // G      expression   assignment-operator   statement
+            // G
+            // G  pipeline-tail:
+            // G      new-lines:opt   '|'   new-lines:opt   command   pipeline-tail:opt
+            //
             var pipelineElements = new List<CommandBaseAst>();
             IScriptExtent startExtent = null;
 
-            Token pipeToken = null;
+            Token nextToken = null;
             bool scanning = true;
+            bool background = false;
+            ExpressionAst expr = startExpression;
             while (scanning)
             {
                 CommandBaseAst commandAst;
-                Token assignToken = null;
-                ExpressionAst expr;
 
-                var oldTokenizerMode = _tokenizer.Mode;
-                try
+                if (expr == null)
                 {
-                    SetTokenizerMode(TokenizerMode.Expression);
-                    expr = ExpressionRule();
-                    if (expr != null)
+                    // Look for an expression at the beginning of a pipeline
+                    var oldTokenizerMode = _tokenizer.Mode;
+                    try
                     {
-                        // We peek here because we are in expression mode, otherwise =0 will get scanned
-                        // as a single token.
-                        var token = PeekToken();
-                        if (token.Kind.HasTrait(TokenFlags.AssignmentOperator))
-                        {
-                            SkipToken();
-                            assignToken = token;
-                        }
+                        SetTokenizerMode(TokenizerMode.Expression);
+                        expr = ExpressionRule();
                     }
-                }
-                finally
-                {
-                    SetTokenizerMode(oldTokenizerMode);
+                    finally
+                    {
+                        SetTokenizerMode(oldTokenizerMode);
+                    }
                 }
 
                 if (expr != null)
@@ -5201,27 +5971,10 @@ namespace System.Management.Automation.Language
                     if (pipelineElements.Count > 0)
                     {
                         // ErrorRecovery: this is a semantic error, so just keep parsing.
-
-                        ReportError(expr.Extent, () => ParserStrings.ExpressionsMustBeFirstInPipeline);
-                    }
-
-                    if (assignToken != null)
-                    {
-                        SkipNewlines();
-                        StatementAst statement = StatementRule();
-
-                        if (statement == null)
-                        {
-                            // ErrorRecovery: we are very likely at EOF because pretty much anything should result in some
-                            // pipeline, so just keep parsing.
-
-                            IScriptExtent errorExtent = After(assignToken);
-                            ReportIncompleteInput(errorExtent, () => ParserStrings.ExpectedValueExpression, assignToken.Kind.Text());
-                            statement = new ErrorStatementAst(errorExtent);
-                        }
-
-                        return new AssignmentStatementAst(ExtentOf(expr, statement),
-                            expr, assignToken.Kind, statement, assignToken.Extent);
+                        ReportError(
+                            expr.Extent,
+                            nameof(ParserStrings.ExpressionsMustBeFirstInPipeline),
+                            ParserStrings.ExpressionsMustBeFirstInPipeline);
                     }
 
                     RedirectionAst[] redirections = null;
@@ -5235,6 +5988,7 @@ namespace System.Management.Automation.Language
                         {
                             redirections = new RedirectionAst[CommandBaseAst.MaxRedirections];
                         }
+
                         IScriptExtent unused = null;
                         lastRedirection = RedirectionRule(redirectionToken, redirections, ref unused);
 
@@ -5242,8 +5996,10 @@ namespace System.Management.Automation.Language
                     }
 
                     var exprExtent = lastRedirection != null ? ExtentOf(expr, lastRedirection) : expr.Extent;
-                    commandAst = new CommandExpressionAst(exprExtent, expr,
-                                                          redirections != null ? redirections.Where(r => r != null) : null);
+                    commandAst = new CommandExpressionAst(
+                        exprExtent,
+                        expr,
+                        redirections?.Where(r => r != null));
                 }
                 else
                 {
@@ -5256,6 +6012,7 @@ namespace System.Management.Automation.Language
                     {
                         startExtent = commandAst.Extent;
                     }
+
                     pipelineElements.Add(commandAst);
                 }
                 else if (pipelineElements.Count > 0 || PeekToken().Kind == TokenKind.Pipe)
@@ -5264,46 +6021,75 @@ namespace System.Management.Automation.Language
                     // If the first pipe element is null, the position points to the pipe (ideally it would
                     // point before, but the pipe could be the first character), otherwise the empty element
                     // is after the pipe character.
-                    IScriptExtent errorPosition = pipeToken != null ? After(pipeToken) : PeekToken().Extent;
-                    ReportIncompleteInput(errorPosition, () => ParserStrings.EmptyPipeElement);
+                    IScriptExtent errorPosition = nextToken != null ? After(nextToken) : PeekToken().Extent;
+                    ReportIncompleteInput(
+                        errorPosition,
+                        nameof(ParserStrings.EmptyPipeElement),
+                        ParserStrings.EmptyPipeElement);
                 }
 
-                pipeToken = PeekToken();
+                // Reset the expression for the next loop
+                expr = null;
+                nextToken = PeekToken();
 
-                switch (pipeToken.Kind)
+                // Skip newlines before pipe tokens to support (pipe)line continuation when pipe
+                // tokens start the next line of script
+                if (nextToken.Kind == TokenKind.NewLine && _tokenizer.IsPipeContinuation(nextToken.Extent))
+                {
+                    SkipNewlines();
+                    nextToken = PeekToken();
+                }
+
+                switch (nextToken.Kind)
                 {
                     case TokenKind.Semi:
                     case TokenKind.NewLine:
                     case TokenKind.RParen:
                     case TokenKind.RCurly:
                     case TokenKind.EndOfInput:
+                        // Handled by invoking rule
                         scanning = false;
                         continue;
+
+                    case TokenKind.AndAnd:
+                    case TokenKind.OrOr:
+                        scanning = false;
+                        continue;
+
+                    case TokenKind.Ampersand:
+                        if (!allowBackground)
+                        {
+                            // Handled by invoking rule
+                            scanning = false;
+                            continue;
+                        }
+
+                        SkipToken();
+                        scanning = false;
+                        background = true;
+                        break;
+
                     case TokenKind.Pipe:
                         SkipToken();
                         SkipNewlines();
                         if (PeekToken().Kind == TokenKind.EndOfInput)
                         {
                             scanning = false;
-                            ReportIncompleteInput(After(pipeToken), () => ParserStrings.EmptyPipeElement);
+                            ReportIncompleteInput(
+                                After(nextToken),
+                                nameof(ParserStrings.EmptyPipeElement),
+                                ParserStrings.EmptyPipeElement);
                         }
-                        break;
-                    case TokenKind.AndAnd:
-                    case TokenKind.OrOr:
-                        // Parse in a manner similar to a pipe, but issue an error (for now, but should implement this for V3.)
-                        SkipToken();
-                        SkipNewlines();
-                        ReportError(pipeToken.Extent, () => ParserStrings.InvalidEndOfLine, pipeToken.Text);
-                        if (PeekToken().Kind == TokenKind.EndOfInput)
-                        {
-                            scanning = false;
-                        }
+
                         break;
 
                     default:
                         // ErrorRecovery: don't eat the token, assume it belongs to something else.
-
-                        ReportError(pipeToken.Extent, () => ParserStrings.UnexpectedToken, pipeToken.Text);
+                        ReportError(
+                            nextToken.Extent,
+                            nameof(ParserStrings.UnexpectedToken),
+                            ParserStrings.UnexpectedToken,
+                            nextToken.Text);
                         scanning = false;
                         break;
                 }
@@ -5314,20 +6100,20 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            return new PipelineAst(ExtentOf(startExtent, pipelineElements[pipelineElements.Count - 1]), pipelineElements);
+            return new PipelineAst(ExtentOf(startExtent, pipelineElements[pipelineElements.Count - 1]), pipelineElements, background);
         }
 
         private RedirectionAst RedirectionRule(RedirectionToken redirectionToken, RedirectionAst[] redirections, ref IScriptExtent extent)
         {
-            //G  redirections:
-            //G      redirection
-            //G      redirections   redirection
-            //G  redirection:
-            //G      merging-redirection-operator
-            //G      file-redirection-operator   redirected-file-name
-            //G  redirected-file-name:
-            //G      command-argument
-            //G      primary-expression
+            // G  redirections:
+            // G      redirection
+            // G      redirections   redirection
+            // G  redirection:
+            // G      merging-redirection-operator
+            // G      file-redirection-operator   redirected-file-name
+            // G  redirected-file-name:
+            // G      command-argument
+            // G      primary-expression
 
             RedirectionAst result;
 
@@ -5340,14 +6126,19 @@ namespace System.Management.Automation.Language
                 {
                     // ErrorRecovery: Just pretend we have a filename and continue parsing.
 
-                    ReportError(After(redirectionToken), () => ParserStrings.MissingFileSpecification);
+                    ReportError(After(redirectionToken),
+                        nameof(ParserStrings.MissingFileSpecification),
+                        ParserStrings.MissingFileSpecification);
                     filename = new ErrorExpressionAst(redirectionToken.Extent);
                 }
 
                 if (fileRedirectionToken == null)
                 {
                     // Must be an input redirection
-                    ReportError(redirectionToken.Extent, () => ParserStrings.RedirectionNotSupported, redirectionToken.Text);
+                    ReportError(redirectionToken.Extent,
+                        nameof(ParserStrings.RedirectionNotSupported),
+                        ParserStrings.RedirectionNotSupported,
+                        redirectionToken.Text);
                     extent = ExtentOf(redirectionToken, filename);
                     return null;
                 }
@@ -5366,7 +6157,10 @@ namespace System.Management.Automation.Language
                     // Have we seen something like 1>&2 or 2>&3
                     // ErrorRecovery: This is just a semantic error, so no special recovery.
 
-                    ReportError(redirectionToken.Extent, () => ParserStrings.RedirectionNotSupported, mergingRedirectionToken.Text);
+                    ReportError(redirectionToken.Extent,
+                        nameof(ParserStrings.RedirectionNotSupported),
+                        ParserStrings.RedirectionNotSupported,
+                        mergingRedirectionToken.Text);
                     toStream = RedirectionStream.Output;
                 }
                 else if (fromStream == toStream)
@@ -5374,7 +6168,10 @@ namespace System.Management.Automation.Language
                     // Make sure 1>&1, 2>&2, etc. is an error.
                     // ErrorRecovery: This is just a semantic error, so no special recovery.
 
-                    ReportError(redirectionToken.Extent, () => ParserStrings.RedirectionNotSupported, mergingRedirectionToken.Text);
+                    ReportError(redirectionToken.Extent,
+                        nameof(ParserStrings.RedirectionNotSupported),
+                        ParserStrings.RedirectionNotSupported,
+                        mergingRedirectionToken.Text);
                 }
 
                 result = new MergingRedirectionAst(mergingRedirectionToken.Extent, mergingRedirectionToken.FromStream, toStream);
@@ -5399,7 +6196,11 @@ namespace System.Management.Automation.Language
                     default:
                         throw PSTraceSource.NewArgumentOutOfRangeException("result.FromStream", result.FromStream);
                 }
-                ReportError(result.Extent, () => ParserStrings.StreamAlreadyRedirected, errorStream);
+
+                ReportError(result.Extent,
+                    nameof(ParserStrings.StreamAlreadyRedirected),
+                    ParserStrings.StreamAlreadyRedirected,
+                    errorStream);
             }
 
             extent = result.Extent;
@@ -5472,8 +6273,11 @@ namespace System.Management.Automation.Language
 
                         // ErrorRecovery: stop looking for additional arguments, exclude the trailing comma
 
-                        ReportIncompleteInput(After(commaToken), () => ParserStrings.MissingExpression, ",");
-                        return new ErrorExpressionAst(ExtentOf(commandArgs.First(), commaToken), commandArgs);
+                        ReportIncompleteInput(After(commaToken),
+                            nameof(ParserStrings.MissingExpression),
+                            ParserStrings.MissingExpression,
+                            ",");
+                        return new ErrorExpressionAst(ExtentOf(commandArgs[0], commaToken), commandArgs);
 
                     case TokenKind.SplattedVariable:
                     case TokenKind.Variable:
@@ -5513,11 +6317,12 @@ namespace System.Management.Automation.Language
                             exprAst = new StringConstantExpressionAst(genericToken.Extent, genericToken.Value, StringConstantType.BareWord);
 
                             // If this is a verbatim argument, then don't continue peeking
-                            if (String.Equals(genericToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
+                            if (string.Equals(genericToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
                             {
                                 foundVerbatimArgument = true;
                             }
                         }
+
                         break;
 
                     default:
@@ -5538,6 +6343,7 @@ namespace System.Management.Automation.Language
                                 token.SetIsCommandArgument();
                                 break;
                         }
+
                         break;
                 }
 
@@ -5556,11 +6362,13 @@ namespace System.Management.Automation.Language
                 {
                     break;
                 }
+
                 commaToken = token;
                 if (commandArgs == null)
                 {
                     commandArgs = new List<ExpressionAst>();
                 }
+
                 commandArgs.Add(exprAst);
 
                 SkipToken();
@@ -5582,30 +6390,30 @@ namespace System.Management.Automation.Language
 
         internal Ast CommandRule(bool forDynamicKeyword)
         {
-            //G  command:
-            //G      command-name   command-elements:opt
-            //G      command-invocation-operator   command-module:opt  command-name-expr   command-elements:opt
-            //G  command-invocation-operator:  one of
-            //G      '&'   '.'
-            //G  command-module:
-            //G      primary-expression
-            //G  command-name:
-            //G      generic-token
-            //G      generic-token-with-subexpr
-            //G  generic-token-with-subexpr: No whitespace is allowed between ) and command-name.
-            //G      generic-token-with-subexpr-start   statement-list:opt   )   command-name
-            //G  command-name-expr:
-            //G      command-name
-            //G      primary-expression
-            //G  command-elements:
-            //G      command-element
-            //G      command-elements   command-element
-            //G  command-element:
-            //G      command-parameter
-            //G      command-argument
-            //G      redirection
-            //G  command-argument:
-            //G      command-name-expr
+            // G  command:
+            // G      command-name   command-elements:opt
+            // G      command-invocation-operator   command-module:opt  command-name-expr   command-elements:opt
+            // G  command-invocation-operator:  one of
+            // G      '&'   '.'
+            // G  command-module:
+            // G      primary-expression
+            // G  command-name:
+            // G      generic-token
+            // G      generic-token-with-subexpr
+            // G  generic-token-with-subexpr: No whitespace is allowed between ) and command-name.
+            // G      generic-token-with-subexpr-start   statement-list:opt   )   command-name
+            // G  command-name-expr:
+            // G      command-name
+            // G      primary-expression
+            // G  command-elements:
+            // G      command-element
+            // G      command-elements   command-element
+            // G  command-element:
+            // G      command-parameter
+            // G      command-argument
+            // G      redirection
+            // G  command-argument:
+            // G      command-name-expr
 
             Token firstToken;
             bool dotSource, ampersand;
@@ -5658,15 +6466,10 @@ namespace System.Management.Automation.Language
                         case TokenKind.Semi:
                         case TokenKind.AndAnd:
                         case TokenKind.OrOr:
+                        case TokenKind.Ampersand:
                             UngetToken(token);
                             scanning = false;
                             continue;
-
-                        case TokenKind.Ampersand:
-                            // ErrorRecovery: just ignore the token.
-                            endExtent = token.Extent;
-                            ReportError(token.Extent, () => ParserStrings.AmpersandNotAllowed);
-                            break;
 
                         case TokenKind.MinusMinus:
                             endExtent = token.Extent;
@@ -5680,7 +6483,9 @@ namespace System.Management.Automation.Language
 
                         case TokenKind.Comma:
                             endExtent = token.Extent;
-                            ReportError(token.Extent, () => ParserStrings.MissingArgument);
+                            ReportError(token.Extent,
+                                nameof(ParserStrings.MissingArgument),
+                                ParserStrings.MissingArgument);
                             SkipNewlines();
                             break;
 
@@ -5693,6 +6498,7 @@ namespace System.Management.Automation.Language
                                 elements.Add(commandName);
                                 break;
                             }
+
                             var parameterToken = (ParameterToken)token;
                             ExpressionAst parameterArgs;
                             IScriptExtent extent;
@@ -5704,7 +6510,10 @@ namespace System.Management.Automation.Language
                                 if (parameterArgs == null)
                                 {
                                     extent = parameterToken.Extent;
-                                    ReportError(After(extent), () => ParserStrings.ParameterRequiresArgument, parameterToken.Text);
+                                    ReportError(After(extent),
+                                        nameof(ParserStrings.ParameterRequiresArgument),
+                                        ParserStrings.ParameterRequiresArgument,
+                                        parameterToken.Text);
                                 }
                                 else
                                 {
@@ -5730,6 +6539,7 @@ namespace System.Management.Automation.Language
                                 {
                                     redirections = new RedirectionAst[CommandBaseAst.MaxRedirections];
                                 }
+
                                 RedirectionRule((RedirectionToken)token, redirections, ref endExtent);
                             }
                             else
@@ -5741,6 +6551,7 @@ namespace System.Management.Automation.Language
                                 endExtent = token.Extent;
                                 elements.Add(new StringConstantExpressionAst(token.Extent, token.Text, StringConstantType.BareWord));
                             }
+
                             break;
 
                         default:
@@ -5758,7 +6569,7 @@ namespace System.Management.Automation.Language
 
                                 // If this is the special verbatim argument syntax, look for the next element
                                 StringToken argumentToken = token as StringToken;
-                                if ((argumentToken != null) && String.Equals(argumentToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
+                                if ((argumentToken != null) && string.Equals(argumentToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
                                 {
                                     elements.Add(ast);
                                     endExtent = ast.Extent;
@@ -5779,6 +6590,7 @@ namespace System.Management.Automation.Language
                                 endExtent = ast.Extent;
                                 elements.Add(ast);
                             }
+
                             break;
                     }
 
@@ -5801,8 +6613,12 @@ namespace System.Management.Automation.Language
                 if (dotSource || ampersand)
                 {
                     IScriptExtent extent = firstToken.Extent;
-                    ReportError(extent, () => ParserStrings.MissingExpression, firstToken.Text);
+                    ReportError(extent,
+                        nameof(ParserStrings.MissingExpression),
+                        ParserStrings.MissingExpression,
+                        firstToken.Text);
                 }
+
                 return null;
             }
 
@@ -5821,45 +6637,154 @@ namespace System.Management.Automation.Language
 
         #region Expressions
 
-        private ExpressionAst ExpressionRule()
+        /// <summary>Parse an expression.</summary>
+        /// <param name="endNumberOnTernaryOpChars">
+        /// When it's known for sure that we are expecting an expression, allowing a generic token like '12?' or '12:' is
+        /// not useful. In those cases, we force to start a new token upon seeing '?' and ':' when scanning for a number
+        /// by setting this parameter to true, hoping to find a ternary expression.
+        /// </param>
+        private ExpressionAst ExpressionRule(bool endNumberOnTernaryOpChars = false)
         {
-            //G  expression:
-            //G      logical-expression
-            //G
-            //G  logical-expression:
-            //G      bitwise-expression
-            //G      logical-expression   '-and'   new-lines:opt   bitwise-expression
-            //G      logical-expression   '-or'   new-lines:opt   bitwise-expression
-            //G      logical-expression   '-xor'   new-lines:opt   bitwise-expression
-            //G
-            //G  bitwise-expression:
-            //G      comparison-expression
-            //G      bitwise-expression   '-band'   new-lines:opt   comparison-expression
-            //G      bitwise-expression   '-bor'   new-lines:opt   comparison-expression
-            //G      bitwise-expression   '-bxor'   new-lines:opt   comparison-expression
-            //G
-            //G  comparison-expression:
-            //G      additive-expression
-            //G      comparison-expression   comparison-operator   new-lines:opt   additive-expression
-            //G
-            //G  additive-expression:
-            //G      multiplicative-expression
-            //G      additive-expression   '+'   new-lines:opt   multiplicative-expression
-            //G      additive-expression   dash   new-lines:opt   multiplicative-expression
-            //G
-            //G  multiplicative-expression:
-            //G      format-expression
-            //G      multiplicative-expression   '*'   new-lines:opt   format-expression
-            //G      multiplicative-expression   '/'   new-lines:opt   format-expression
-            //G      multiplicative-expression   '%'   new-lines:opt   format-expression
-            //G
-            //G  format-expression:
-            //G      range-expression
-            //G      format-expression   format-operator    new-lines:opt   range-expression
-            //G
-            //G  range-expression:
-            //G      array-literal-expression
-            //G      range-expression   '..'   new-lines:opt   array-literal-expression
+            // G  expression:
+            // G      logical-expression
+            // G
+            // G  logical-expression:
+            // G      binary-expression
+            // G      ternary-expression
+            // G
+            // G  ternary-expression:
+            // G      binary-expression   '?'   new-lines:opt   ternary-expression   new-lines:opt   ':'   new-lines:opt   ternary-expression
+
+            RuntimeHelpers.EnsureSufficientExecutionStack();
+            var oldTokenizerMode = _tokenizer.Mode;
+            try
+            {
+                SetTokenizerMode(TokenizerMode.Expression);
+
+                ExpressionAst condition = BinaryExpressionRule(endNumberOnTernaryOpChars);
+                if (condition == null)
+                {
+                    return null;
+                }
+
+                Token token = PeekToken();
+
+                if (token.Kind != TokenKind.QuestionMark)
+                {
+                    return condition;
+                }
+
+                SkipToken();
+                SkipNewlines();
+
+                // We have seen the ternary operator '?' and now expecting the 'IfFalse' expression.
+                ExpressionAst ifTrue = ExpressionRule(endNumberOnTernaryOpChars: true);
+                if (ifTrue == null)
+                {
+                    // ErrorRecovery: create an error expression to fill out the ast and keep parsing.
+                    IScriptExtent extent = After(token);
+
+                    ReportIncompleteInput(
+                        extent,
+                        nameof(ParserStrings.ExpectedValueExpression),
+                        ParserStrings.ExpectedValueExpression,
+                        token.Text);
+                    ifTrue = new ErrorExpressionAst(extent);
+                }
+
+                SkipNewlines();
+
+                token = NextToken();
+                if (token.Kind != TokenKind.Colon)
+                {
+                    var componentAsts = new List<Ast>() { condition };
+
+                    // ErrorRecovery: we have done the expression parsing and should try parsing something else.
+                    UngetToken(token);
+
+                    // Don't bother reporting this error if we already reported an empty 'IfTrue' operand error.
+                    if (!(ifTrue is ErrorExpressionAst))
+                    {
+                        componentAsts.Add(ifTrue);
+                        ReportIncompleteInput(
+                            token.Extent,
+                            nameof(ParserStrings.MissingColonInTernaryExpression),
+                            ParserStrings.MissingColonInTernaryExpression);
+                    }
+
+                    return new ErrorExpressionAst(ExtentOf(condition, Before(token)), componentAsts);
+                }
+
+                SkipNewlines();
+
+                ExpressionAst ifFalse = ExpressionRule(endNumberOnTernaryOpChars: true);
+                if (ifFalse == null)
+                {
+                    // ErrorRecovery: create an error expression to fill out the ast and keep parsing.
+                    IScriptExtent extent = After(token);
+
+                    ReportIncompleteInput(
+                        extent,
+                        nameof(ParserStrings.ExpectedValueExpression),
+                        ParserStrings.ExpectedValueExpression,
+                        token.Text);
+                    ifFalse = new ErrorExpressionAst(extent);
+                }
+
+                return new TernaryExpressionAst(ExtentOf(condition, ifFalse), condition, ifTrue, ifFalse);
+            }
+            finally
+            {
+                SetTokenizerMode(oldTokenizerMode);
+            }
+        }
+
+        /// <summary>Parse a binary expression.</summary>
+        /// <param name="endNumberOnTernaryOpChars">
+        /// When it's known for sure that we are expecting an expression, allowing a generic token like '12?' or '12:' is
+        /// not useful. In those cases, we force to start a new token upon seeing '?' and ':' when scanning for a number
+        /// by setting this parameter to true, hoping to find a ternary expression.
+        /// </param>
+        private ExpressionAst BinaryExpressionRule(bool endNumberOnTernaryOpChars = false)
+        {
+            // G  binary-expression:
+            // G      bitwise-expression
+            // G      binary-expression   '-and'   new-lines:opt   bitwise-expression
+            // G      binary-expression   '-or'   new-lines:opt   bitwise-expression
+            // G      binary-expression   '-xor'   new-lines:opt   bitwise-expression
+            // G
+            // G  bitwise-expression:
+            // G      comparison-expression
+            // G      bitwise-expression   '-band'   new-lines:opt   comparison-expression
+            // G      bitwise-expression   '-bor'   new-lines:opt   comparison-expression
+            // G      bitwise-expression   '-bxor'   new-lines:opt   comparison-expression
+            // G
+            // G  comparison-expression:
+            // G      nullcoalesce-expression
+            // G      comparison-expression   comparison-operator   new-lines:opt   nullcoalesce-expression
+            // G
+            // G  nullcoalesce-expression:
+            // G      additive-expression
+            // G      nullcoalesce-expression   '??'   new-lines:opt   additive-expression
+            // G
+            // G  additive-expression:
+            // G      multiplicative-expression
+            // G      additive-expression   '+'   new-lines:opt   multiplicative-expression
+            // G      additive-expression   dash   new-lines:opt   multiplicative-expression
+            // G
+            // G  multiplicative-expression:
+            // G      format-expression
+            // G      multiplicative-expression   '*'   new-lines:opt   format-expression
+            // G      multiplicative-expression   '/'   new-lines:opt   format-expression
+            // G      multiplicative-expression   '%'   new-lines:opt   format-expression
+            // G
+            // G  format-expression:
+            // G      range-expression
+            // G      format-expression   format-operator    new-lines:opt   range-expression
+            // G
+            // G  range-expression:
+            // G      array-literal-expression
+            // G      range-expression   '..'   new-lines:opt   array-literal-expression
             RuntimeHelpers.EnsureSufficientExecutionStack();
             var oldTokenizerMode = _tokenizer.Mode;
             try
@@ -5867,7 +6792,7 @@ namespace System.Management.Automation.Language
                 SetTokenizerMode(TokenizerMode.Expression);
 
                 ExpressionAst lhs, rhs;
-                ExpressionAst expr = ArrayLiteralRule();
+                ExpressionAst expr = ArrayLiteralRule(endNumberOnTernaryOpChars);
 
                 if (expr == null)
                 {
@@ -5883,6 +6808,11 @@ namespace System.Management.Automation.Language
                     {
                         return ErrorRecoveryParameterInExpression(paramToken, expr);
                     }
+
+                    return expr;
+                }
+                else if (token.Kind == TokenKind.AndAnd || token.Kind == TokenKind.OrOr)
+                {
                     return expr;
                 }
 
@@ -5899,17 +6829,24 @@ namespace System.Management.Automation.Language
                 {
                     SkipNewlines();
 
-                    expr = ArrayLiteralRule();
+                    // We have seen a binary operator token and now expecting the right-hand-side expression.
+                    expr = ArrayLiteralRule(endNumberOnTernaryOpChars: true);
                     if (expr == null)
                     {
                         // ErrorRecovery: create an error expression to fill out the ast and keep parsing.
-
                         IScriptExtent extent = After(token);
+
                         // Use token.Text, not token.Kind.Text() b/c the kind might not match the actual operator used
                         // when a case insensitive operator is used.
-                        ReportIncompleteInput(extent, () => ParserStrings.ExpectedValueExpression, token.Text);
+                        ReportIncompleteInput(
+                            extent,
+                            nameof(ParserStrings.ExpectedValueExpression),
+                            ParserStrings.ExpectedValueExpression,
+                            token.Text);
+
                         expr = new ErrorExpressionAst(extent);
                     }
+
                     operandStack.Push(expr);
 
                     token = NextToken();
@@ -5930,12 +6867,16 @@ namespace System.Management.Automation.Language
                         Token op = operatorStack.Pop();
                         operandStack.Push(new BinaryExpressionAst(ExtentOf(lhs, rhs), lhs, op.Kind, rhs, op.Extent));
                         if (operatorStack.Count == 0)
+                        {
                             break;
+                        }
                         precedence = operatorStack.Peek().Kind.GetBinaryPrecedence();
                     }
+
                     operatorStack.Push(token);
                     precedence = newPrecedence;
                 }
+
                 rhs = operandStack.Pop();
                 Diagnostics.Assert(operandStack.Count == operatorStack.Count, "Stacks out of sync");
                 while (operandStack.Count > 0)
@@ -5964,7 +6905,10 @@ namespace System.Management.Automation.Language
             // that it's an incomplete operator.  This simplifies analysis later, e.g. trying to autocomplete
             // operators.
 
-            ReportError(paramToken.Extent, () => ParserStrings.UnexpectedToken, paramToken.Text);
+            ReportError(paramToken.Extent,
+                nameof(ParserStrings.UnexpectedToken),
+                ParserStrings.UnexpectedToken,
+                paramToken.Text);
             SkipToken();
             return new ErrorExpressionAst(ExtentOf(expr, paramToken),
                 new Ast[] {
@@ -5972,13 +6916,23 @@ namespace System.Management.Automation.Language
                     new CommandParameterAst(paramToken.Extent, paramToken.ParameterName, null, paramToken.Extent)});
         }
 
-        private ExpressionAst ArrayLiteralRule()
+        /// <summary>Parse an array literal expression.</summary>
+        /// <param name="endNumberOnTernaryOpChars">
+        /// When it's known for sure that we are expecting an expression, allowing a generic token like '12?' or '12:' is
+        /// not useful. In those cases, we force to start a new token upon seeing '?' and ':' when scanning for a number
+        /// by setting this parameter to true, hoping to find a ternary expression.
+        /// </param>
+        private ExpressionAst ArrayLiteralRule(bool endNumberOnTernaryOpChars = false)
         {
-            //G  array-literal-expression:
-            //G      unary-expression
-            //G      unary-expression   ','    new-lines:opt   array-literal-expression
+            // G  array-literal-expression:
+            // G      unary-expression
+            // G      unary-expression   ','    new-lines:opt   array-literal-expression
+            ExpressionAst lastExpr = UnaryExpressionRule(endNumberOnTernaryOpChars);
+            if (lastExpr == null)
+            {
+                return null;
+            }
 
-            ExpressionAst lastExpr = UnaryExpressionRule();
             ExpressionAst firstExpr = lastExpr;
 
             Token commaToken = PeekToken();
@@ -5994,16 +6948,20 @@ namespace System.Management.Automation.Language
                 SkipToken();
                 SkipNewlines();
 
-                lastExpr = UnaryExpressionRule();
+                // We have seen a comma token and now expecting an expression as an array element.
+                lastExpr = UnaryExpressionRule(endNumberOnTernaryOpChars: true);
                 if (lastExpr == null)
                 {
                     // ErrorRecovery: create an error expression for the ast and break.
-
-                    ReportIncompleteInput(After(commaToken), () => ParserStrings.MissingExpressionAfterToken, commaToken.Text);
+                    ReportIncompleteInput(After(commaToken),
+                        nameof(ParserStrings.MissingExpressionAfterToken),
+                        ParserStrings.MissingExpressionAfterToken,
+                        commaToken.Text);
                     lastExpr = new ErrorExpressionAst(commaToken.Extent);
                     arrayValues.Add(lastExpr);
                     break;
                 }
+
                 arrayValues.Add(lastExpr);
 
                 commaToken = PeekToken();
@@ -6012,43 +6970,64 @@ namespace System.Management.Automation.Language
             return new ArrayLiteralAst(ExtentOf(firstExpr, lastExpr), arrayValues);
         }
 
-        private ExpressionAst UnaryExpressionRule()
+        /// <summary>Parse an unary expression.</summary>
+        /// <param name="endNumberOnTernaryOpChars">
+        /// When it's known for sure that we are expecting an expression, allowing a generic token like '12?' or '12:' is
+        /// not useful. In those cases, we force to start a new token upon seeing '?' and ':' when scanning for a number
+        /// by setting this parameter to true, hoping to find a ternary expression.
+        /// </param>
+        private ExpressionAst UnaryExpressionRule(bool endNumberOnTernaryOpChars = false)
         {
-            //G  unary-expression:
-            //G      primary-expression
-            //G      expression-with-unary-operator
-            //G
-            //G  expression-with-unary-operator:
-            //G      ','   new-lines:opt   unary-expression
-            //G      '-not'   new-lines:opt   unary-expression
-            //G      '!'   new-lines:opt   unary-expression
-            //G      '-bnot'   new-lines:opt   unary-expression
-            //G      '+'   new-lines:opt   unary-expression
-            //G      dash   new-lines:opt   unary-expression
-            //G      pre-increment-expression
-            //G      pre-decrement-expression
-            //G      cast-expression
-            //G      '-split'   new-lines:opt   unary-expression
-            //G      '-join'   new-lines:opt   unary-expression
-            //G
-            //G  pre-increment-expression:
-            //G      '++'   new-lines:opt   unary-expression
-            //G
-            //G  pre-decrement-expression:
-            //G      dashdash   new-lines:opt   unary-expression
-            //G
-            //G  cast-expression:
-            //G      type-literal   unary-expression
+            // G  unary-expression:
+            // G      primary-expression
+            // G      expression-with-unary-operator
+            // G
+            // G  expression-with-unary-operator:
+            // G      ','   new-lines:opt   unary-expression
+            // G      '-not'   new-lines:opt   unary-expression
+            // G      '!'   new-lines:opt   unary-expression
+            // G      '-bnot'   new-lines:opt   unary-expression
+            // G      '+'   new-lines:opt   unary-expression
+            // G      dash   new-lines:opt   unary-expression
+            // G      pre-increment-expression
+            // G      pre-decrement-expression
+            // G      cast-expression
+            // G      '-split'   new-lines:opt   unary-expression
+            // G      '-join'   new-lines:opt   unary-expression
+            // G
+            // G  pre-increment-expression:
+            // G      '++'   new-lines:opt   unary-expression
+            // G
+            // G  pre-decrement-expression:
+            // G      dashdash   new-lines:opt   unary-expression
+            // G
+            // G  cast-expression:
+            // G      type-literal   unary-expression
             RuntimeHelpers.EnsureSufficientExecutionStack();
             ExpressionAst expr = null;
             Token token;
             bool oldAllowSignedNumbers = _tokenizer.AllowSignedNumbers;
+            bool oldForceEndNumberOnTernaryOperators = _tokenizer.ForceEndNumberOnTernaryOpChars;
             try
             {
                 _tokenizer.AllowSignedNumbers = true;
-                if (_ungotToken != null && _ungotToken.Kind == TokenKind.Minus)
+                _tokenizer.ForceEndNumberOnTernaryOpChars = endNumberOnTernaryOpChars;
+
+                if (_ungotToken != null)
                 {
-                    Resync(_ungotToken);
+                    // Possibly a signed number. Need to resync.
+                    bool needResync = _ungotToken.Kind == TokenKind.Minus;
+
+                    if (!needResync)
+                    {
+                        // A generic token possibly composed of numbers and ternary operator chars. Need to resync.
+                        needResync = endNumberOnTernaryOpChars && _ungotToken.Kind == TokenKind.Generic;
+                    }
+
+                    if (needResync)
+                    {
+                        Resync(_ungotToken);
+                    }
                 }
 
                 token = PeekToken();
@@ -6056,6 +7035,7 @@ namespace System.Management.Automation.Language
             finally
             {
                 _tokenizer.AllowSignedNumbers = oldAllowSignedNumbers;
+                _tokenizer.ForceEndNumberOnTernaryOpChars = oldForceEndNumberOnTernaryOperators;
             }
 
             ExpressionAst child;
@@ -6068,7 +7048,9 @@ namespace System.Management.Automation.Language
 
                 SkipToken();
                 SkipNewlines();
-                child = UnaryExpressionRule();
+
+                // We have seen a unary operator token and now expecting an expression.
+                child = UnaryExpressionRule(endNumberOnTernaryOpChars: true);
                 if (child != null)
                 {
                     if (token.Kind == TokenKind.Comma)
@@ -6084,10 +7066,15 @@ namespace System.Management.Automation.Language
                 {
                     // ErrorRecovery: don't bother constructing a unary expression, but we know we must have
                     // some sort of expression, so return an error expression.
-
+                    //
                     // Use token.Text, not token.Kind.Text() b/c the kind might not match the actual operator used
                     // when a case insensitive operator is used.
-                    ReportIncompleteInput(After(token), () => ParserStrings.MissingExpressionAfterOperator, token.Text);
+                    ReportIncompleteInput(
+                        After(token),
+                        nameof(ParserStrings.MissingExpressionAfterOperator),
+                        ParserStrings.MissingExpressionAfterOperator,
+                        token.Text);
+
                     return new ErrorExpressionAst(token.Extent);
                 }
             }
@@ -6104,41 +7091,51 @@ namespace System.Management.Automation.Language
                 if (lastAttribute is AttributeAst)
                 {
                     SkipNewlines();
-                    child = UnaryExpressionRule();
+
+                    // We are now expecting a child expression.
+                    child = UnaryExpressionRule(endNumberOnTernaryOpChars: true);
                     if (child == null)
                     {
                         // ErrorRecovery: We have a list of attributes, and we know it's not before a param statement,
                         // so we know we must have some sort of expression.  Return an error expression then.
+                        ReportIncompleteInput(
+                            lastAttribute.Extent,
+                            nameof(ParserStrings.UnexpectedAttribute),
+                            ParserStrings.UnexpectedAttribute,
+                            lastAttribute.TypeName.FullName);
 
-                        ReportIncompleteInput(lastAttribute.Extent,
-                            () => ParserStrings.UnexpectedAttribute, lastAttribute.TypeName.FullName);
                         return new ErrorExpressionAst(ExtentOf(token, lastAttribute));
                     }
+
                     expr = new AttributedExpressionAst(ExtentOf(lastAttribute, child), lastAttribute, child);
                 }
                 else
                 {
-                    Diagnostics.Assert(_ungotToken == null || ErrorList.Count > 0,
-                                        "Unexpected lookahead from AttributeListRule.");
+                    Diagnostics.Assert(
+                        _ungotToken == null || ErrorList.Count > 0,
+                        "Unexpected lookahead from AttributeListRule.");
+
                     // If we've looked ahead, don't go looking for a member access token, we've already issued an error,
                     // just assume we're not trying to access a member.
                     var memberAccessToken = _ungotToken != null ? null : NextMemberAccessToken(false);
                     if (memberAccessToken != null)
                     {
-                        expr = CheckPostPrimaryExpressionOperators(memberAccessToken,
-                                                                   new TypeExpressionAst(lastAttribute.Extent,
-                                                                                         lastAttribute.TypeName));
+                        expr = CheckPostPrimaryExpressionOperators(
+                            memberAccessToken,
+                            new TypeExpressionAst(lastAttribute.Extent, lastAttribute.TypeName));
                     }
                     else
                     {
                         token = PeekToken();
                         if (token.Kind != TokenKind.NewLine && token.Kind != TokenKind.Comma)
                         {
-                            child = UnaryExpressionRule();
+                            // We are now expecting a child expression.
+                            child = UnaryExpressionRule(endNumberOnTernaryOpChars: true);
                             if (child != null)
                             {
-                                expr = new ConvertExpressionAst(ExtentOf(lastAttribute, child),
-                                                                (TypeConstraintAst)lastAttribute, child);
+                                expr = new ConvertExpressionAst(
+                                    ExtentOf(lastAttribute, child),
+                                    (TypeConstraintAst)lastAttribute, child);
                             }
                         }
                     }
@@ -6183,22 +7180,22 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst PrimaryExpressionRule(bool withMemberAccess)
         {
-            //G  primary-expression:
-            //G      value
-            //G      member-access
-            //G      element-access
-            //G      invocation-expression
-            //G      post-increment-expression
-            //G      post-decrement-expression
-            //G  value:
-            //G      parenthesized-expression
-            //G      sub-expression
-            //G      array-expression
-            //G      script-block-expression
-            //G      hash-literal-expression
-            //G      literal
-            //G      type-literal
-            //G      variable
+            // G  primary-expression:
+            // G      value
+            // G      member-access
+            // G      element-access
+            // G      invocation-expression
+            // G      post-increment-expression
+            // G      post-decrement-expression
+            // G  value:
+            // G      parenthesized-expression
+            // G      sub-expression
+            // G      array-expression
+            // G      script-block-expression
+            // G      hash-literal-expression
+            // G      literal
+            // G      type-literal
+            // G      variable
 
             ExpressionAst expr;
             Token token = NextToken();
@@ -6250,6 +7247,7 @@ namespace System.Management.Automation.Language
             {
                 return expr;
             }
+
             return CheckPostPrimaryExpressionOperators(NextMemberAccessToken(true), expr);
         }
 
@@ -6267,6 +7265,7 @@ namespace System.Management.Automation.Language
 
                 return new UsingExpressionAst(childExpr.Extent, childExpr);
             }
+
             return new VariableExpressionAst(variableToken);
         }
 
@@ -6275,16 +7274,17 @@ namespace System.Management.Automation.Language
             while (token != null)
             {
                 // To support fluent style programming, allow newlines after the member access operator.
-                V3SkipNewlines();
+                SkipNewlines();
 
-                if (token.Kind == TokenKind.Dot || token.Kind == TokenKind.ColonColon)
+                if (token.Kind == TokenKind.Dot || token.Kind == TokenKind.ColonColon || token.Kind == TokenKind.QuestionDot)
                 {
                     expr = MemberAccessRule(expr, token);
                 }
-                else if (token.Kind == TokenKind.LBracket)
+                else if (token.Kind == TokenKind.LBracket || token.Kind == TokenKind.QuestionLBracket)
                 {
                     expr = ElementAccessRule(expr, token);
                 }
+
                 token = NextMemberAccessToken(true);
             }
 
@@ -6293,14 +7293,14 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst HashExpressionRule(Token atCurlyToken, bool parsingSchemaElement)
         {
-            //G  hash-literal-expression:
-            //G      '@{'   new-lines:opt   hash-literal-body:opt   new-lines:opt   '}'
-            //G  hash-literal-body:
-            //G      hash-entry
-            //G      hash-literal-body   statement-terminators   hash-entry
-            //G  statement-terminators:
-            //G      statement-terminator
-            //G      statement-terminators   statement-terminator
+            // G  hash-literal-expression:
+            // G      '@{'   new-lines:opt   hash-literal-body:opt   new-lines:opt   '}'
+            // G  hash-literal-body:
+            // G      hash-entry
+            // G      hash-literal-body   statement-terminators   hash-entry
+            // G  statement-terminators:
+            // G      statement-terminator
+            // G      statement-terminators   statement-terminator
 
             SkipNewlines();
 
@@ -6312,6 +7312,7 @@ namespace System.Management.Automation.Language
                 {
                     break;
                 }
+
                 keyValuePairs.Add(pair);
 
                 Token token = PeekToken();
@@ -6328,11 +7329,20 @@ namespace System.Management.Automation.Language
             if (rCurly.Kind != TokenKind.RCurly)
             {
                 UngetToken(rCurly);
-                // Note -  the error handling function inspects the error message body to extra the ParserStrings property name. It uses this value as the errorid.
-                var errorMessageExpression = parsingSchemaElement ?
-                    (Expression<Func<string>>)(() => ParserStrings.IncompletePropertyAssignmentBlock)
-                    : (Expression<Func<string>>)(() => ParserStrings.IncompleteHashLiteral);
-                ReportIncompleteInput(keyValuePairs.Any() ? After(keyValuePairs.Last().Item2) : After(atCurlyToken), rCurly.Extent, errorMessageExpression);
+                string errorId;
+                string errorMsg;
+                if (parsingSchemaElement)
+                {
+                    errorId = nameof(ParserStrings.IncompletePropertyAssignmentBlock);
+                    errorMsg = ParserStrings.IncompletePropertyAssignmentBlock;
+                }
+                else
+                {
+                    errorId = nameof(ParserStrings.MissingEndCurlyBrace);
+                    errorMsg = ParserStrings.MissingEndCurlyBrace;
+                }
+
+                ReportIncompleteInput(After(atCurlyToken), rCurly.Extent, errorId, errorMsg);
                 endExtent = Before(rCurly);
             }
             else
@@ -6347,8 +7357,8 @@ namespace System.Management.Automation.Language
 
         private KeyValuePair GetKeyValuePair(bool parsingSchemaElement)
         {
-            //G  hash-entry:
-            //G      key-expression   '='   new-lines:opt   statement
+            // G  hash-entry:
+            // G      key-expression   '='   new-lines:opt   statement
 
             Token equals;
             ExpressionAst key;
@@ -6376,12 +7386,22 @@ namespace System.Management.Automation.Language
 
                 UngetToken(equals);
                 IScriptExtent errorExtent = After(key);
-                // Note -  the error handling function inspects the error message body to extra the ParserStrings property name. It uses this value as the errorid.
-                var errorMessageExpression = parsingSchemaElement
-                    ? (() => (ParserStrings.MissingEqualsInPropertyAssignmentBlock))
-                    : (Expression<Func<string>>)(() => ParserStrings.MissingEqualsInHashLiteral);
-                ReportError(errorExtent, errorMessageExpression);
-                SyncOnError(true, TokenKind.RCurly, TokenKind.Semi, TokenKind.NewLine);
+
+                string errorId;
+                string errorMsg;
+                if (parsingSchemaElement)
+                {
+                    errorId = nameof(ParserStrings.MissingEqualsInPropertyAssignmentBlock);
+                    errorMsg = ParserStrings.MissingEqualsInPropertyAssignmentBlock;
+                }
+                else
+                {
+                    errorId = nameof(ParserStrings.MissingEqualsInHashLiteral);
+                    errorMsg = ParserStrings.MissingEqualsInHashLiteral;
+                }
+
+                ReportError(errorExtent, errorId, errorMsg);
+                SyncOnError(false, TokenKind.RCurly, TokenKind.Semi, TokenKind.NewLine);
                 return new KeyValuePair(key, new ErrorStatementAst(errorExtent));
             }
 
@@ -6397,11 +7417,21 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: pretend we saw a statement and keep parsing.
 
                     IScriptExtent errorExtent = After(equals);
-                    // Note -  the error handling function inspects the error message body to extra the ParserStrings property name. It uses this value as the errorid.
-                    var errorMessageExpression = parsingSchemaElement ?
-                        (Expression<Func<string>>)(() => ParserStrings.MissingEqualsInPropertyAssignmentBlock)
-                        : (Expression<Func<string>>)(() => ParserStrings.MissingStatementInHashLiteral);
-                    ReportIncompleteInput(errorExtent, errorMessageExpression);
+
+                    string errorId;
+                    string errorMsg;
+                    if (parsingSchemaElement)
+                    {
+                        errorId = nameof(ParserStrings.MissingEqualsInPropertyAssignmentBlock);
+                        errorMsg = ParserStrings.MissingEqualsInPropertyAssignmentBlock;
+                    }
+                    else
+                    {
+                        errorId = nameof(ParserStrings.MissingStatementInHashLiteral);
+                        errorMsg = ParserStrings.MissingStatementInHashLiteral;
+                    }
+
+                    ReportIncompleteInput(errorExtent, errorId, errorMsg);
                     statement = new ErrorStatementAst(errorExtent);
                 }
             }
@@ -6415,8 +7445,8 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst ScriptBlockExpressionRule(Token lCurly)
         {
-            //G  script-block-expression:
-            //G      '{'   new-lines:opt   script-block   new-lines:opt   '}'
+            // G  script-block-expression:
+            // G      '{'   new-lines:opt   script-block   new-lines:opt   '}'
 
             ScriptBlockAst scriptBlockAst;
 
@@ -6441,10 +7471,10 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst SubExpressionRule(Token firstToken)
         {
-            //G  array-expression:
-            //G      '@('   new-lines:opt   statement-list:opt   new-lines:opt   ')'
-            //G  sub-expression:
-            //G      '$('   new-lines:opt   statement-list:opt   new-lines:opt   ')'
+            // G  array-expression:
+            // G      '@('   new-lines:opt   statement-list:opt   new-lines:opt   ')'
+            // G  sub-expression:
+            // G      '$('   new-lines:opt   statement-list:opt   new-lines:opt   ')'
 
             IScriptExtent statementListExtent;
             List<TrapStatementAst> traps = new List<TrapStatementAst>();
@@ -6467,7 +7497,9 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: Assume only the closing paren is missing, continue as though it was present.
 
                     UngetToken(rParen);
-                    ReportIncompleteInput(rParen.Extent, () => ParserStrings.MissingEndParenthesisInSubexpression);
+                    ReportIncompleteInput(rParen.Extent,
+                        nameof(ParserStrings.MissingEndParenthesisInSubexpression),
+                        ParserStrings.MissingEndParenthesisInSubexpression);
                 }
             }
             finally
@@ -6493,8 +7525,8 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst ParenthesizedExpressionRule(Token lParen)
         {
-            //G  parenthesized-expression:
-            //G      '('   new-lines:opt   pipeline   new-lines:opt   ')'
+            // G  parenthesized-expression:
+            // G      '('   new-lines:opt   pipeline-chain   new-lines:opt   ')'
             Token rParen;
             PipelineBaseAst pipelineAst;
 
@@ -6506,13 +7538,17 @@ namespace System.Management.Automation.Language
                 _disableCommaOperator = false;
 
                 SkipNewlines();
-                pipelineAst = PipelineRule();
+                pipelineAst = PipelineChainRule();
                 if (pipelineAst == null)
                 {
                     IScriptExtent errorPosition = After(lParen);
-                    ReportIncompleteInput(errorPosition, () => ParserStrings.ExpectedExpression);
+                    ReportIncompleteInput(
+                        errorPosition,
+                        nameof(ParserStrings.ExpectedExpression),
+                        ParserStrings.ExpectedExpression);
                     pipelineAst = new ErrorStatementAst(errorPosition);
                 }
+
                 SkipNewlines();
                 rParen = NextToken();
                 if (rParen.Kind != TokenKind.RParen)
@@ -6520,7 +7556,9 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: Assume only the closing paren is missing, continue as though it was present.
 
                     UngetToken(rParen);
-                    ReportIncompleteInput(After(pipelineAst), () => ParserStrings.MissingEndParenthesisInExpression);
+                    ReportIncompleteInput(After(pipelineAst),
+                        nameof(ParserStrings.MissingEndParenthesisInExpression),
+                        ParserStrings.MissingEndParenthesisInExpression);
                     rParen = null;
                 }
             }
@@ -6539,7 +7577,7 @@ namespace System.Management.Automation.Language
             List<Token> newNestedTokens = _savingTokens ? new List<Token>() : null;
             foreach (var token in expandableStringToken.NestedTokens)
             {
-                Diagnostics.Assert(!token.HasError || ErrorList.Any(), "No nested tokens should have unreported errors.");
+                Diagnostics.Assert(!token.HasError || ErrorList.Count > 0, "No nested tokens should have unreported errors.");
 
                 ExpressionAst exprAst;
                 var varToken = token as VariableToken;
@@ -6551,15 +7589,15 @@ namespace System.Management.Automation.Language
                 }
                 // Enable if we decide we still need to support
                 //     "${}"  or "$var:"
-                //else if (token.Kind == TokenKind.Unknown)
-                //{
-                //    //Diagnostics.Assert(token.Text.Equals("${}", StringComparison.OrdinalIgnoreCase),
+                // else if (token.Kind == TokenKind.Unknown)
+                // {
+                //    // Diagnostics.Assert(token.Text.Equals("${}", StringComparison.OrdinalIgnoreCase),
                 //    //    "The unknown token is only used in an expandable string when it's an empty variable name.");
                 //    // TODO: Need strict-mode check at runtime.
                 //    // TODO: in V2, "${}" expanded to '$', but "$var:" expanded to the empty string
                 //    exprAst = new StringConstantExpressionAst(token.Extent, "$", StringConstantType.BareWord);
                 //    if (_savingTokens) { newNestedTokens.Add(token); }
-                //}
+                // }
                 else
                 {
                     TokenizerState ts = null;
@@ -6577,17 +7615,19 @@ namespace System.Management.Automation.Language
                         _tokenizer.FinishNestedScan(ts);
                     }
                 }
+
                 nestedExpressions.Add(exprAst);
             }
 
             if (_savingTokens) { expandableStringToken.NestedTokens = new ReadOnlyCollection<Token>(newNestedTokens); }
+
             return nestedExpressions;
         }
 
         private ExpressionAst ExpandableStringRule(StringExpandableToken strToken)
         {
-            //G  value:
-            //G      literal
+            // G  value:
+            // G      literal
 
             ExpressionAst expr;
             // We need to scan the nested tokens even if there was some error. This is used by the tab completion: "pshome is $psh<tab>
@@ -6600,17 +7640,18 @@ namespace System.Management.Automation.Language
             {
                 expr = new StringConstantExpressionAst(strToken);
             }
+
             return expr;
         }
 
         private ExpressionAst MemberNameRule()
         {
-            //G  member-name:
-            //G      simple-name
-            //G      string-literal
-            //G      string-literal-with-subexpression
-            //G      expression-with-unary-operator
-            //G      value
+            // G  member-name:
+            // G      simple-name
+            // G      string-literal
+            // G      string-literal-with-subexpression
+            // G      expression-with-unary-operator
+            // G      value
 
             ExpressionAst simpleName = SimpleNameRule();
             if (simpleName != null)
@@ -6629,9 +7670,9 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst MemberAccessRule(ExpressionAst targetExpr, Token operatorToken)
         {
-            //G  member-access: No whitespace is allowed between terms in these productions.
-            //G      primary-expression   '.'   member-name
-            //G      primary-expression   '::'   member-name
+            // G  member-access: No whitespace is allowed between terms in these productions.
+            // G      primary-expression   '.'   member-name
+            // G      primary-expression   '::'   member-name
 
             // On entry, we've verified that operatorToken is not preceded by whitespace.
 
@@ -6642,7 +7683,9 @@ namespace System.Management.Automation.Language
                 // ErrorRecovery: pretend we saw a property name, don't bother looking for an invocation,
                 // and keep parsing.
 
-                ReportIncompleteInput(After(operatorToken), () => ParserStrings.MissingPropertyName);
+                ReportIncompleteInput(After(operatorToken),
+                    nameof(ParserStrings.MissingPropertyName),
+                    ParserStrings.MissingPropertyName);
                 member = GetSingleCommandArgument(CommandArgumentContext.CommandArgument) ??
                     new ErrorExpressionAst(ExtentOf(targetExpr, operatorToken));
             }
@@ -6658,17 +7701,21 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            return new MemberExpressionAst(ExtentOf(targetExpr, member),
-                targetExpr, member, operatorToken.Kind == TokenKind.ColonColon);
+            return new MemberExpressionAst(
+                    ExtentOf(targetExpr, member),
+                    targetExpr,
+                    member,
+                    @static: operatorToken.Kind == TokenKind.ColonColon,
+                    nullConditional: operatorToken.Kind == TokenKind.QuestionDot);
         }
 
         private ExpressionAst MemberInvokeRule(ExpressionAst targetExpr, Token lBracket, Token operatorToken, CommandElementAst member)
         {
-            //G  invocation-expression: target-expression passed as a parameter. lBracket can be '(' or '{'.
-            //G      target-expression   member-name   invoke-param-list
-            //G  invoke-param-list:
-            //G      '('   invoke-param-paren-list
-            //G      script-block 
+            // G  invocation-expression: target-expression passed as a parameter. lBracket can be '(' or '{'.
+            // G      target-expression   member-name   invoke-param-list
+            // G  invoke-param-list:
+            // G      '('   invoke-param-paren-list
+            // G      script-block
 
             IScriptExtent lastExtent = null;
 
@@ -6687,20 +7734,26 @@ namespace System.Management.Automation.Language
                 lastExtent = argument.Extent;
             }
 
-            return new InvokeMemberExpressionAst(ExtentOf(targetExpr, lastExtent), targetExpr, member, arguments, operatorToken.Kind == TokenKind.ColonColon);
+            return new InvokeMemberExpressionAst(
+                ExtentOf(targetExpr, lastExtent),
+                targetExpr,
+                member,
+                arguments,
+                operatorToken.Kind == TokenKind.ColonColon,
+                operatorToken.Kind == TokenKind.QuestionDot);
         }
 
         private List<ExpressionAst> InvokeParamParenListRule(Token lParen, out IScriptExtent lastExtent)
         {
-            //G  argument-list: '(' is passed in lParen
-            //G      argument-expression-list:opt   new-lines:opt   ')'
-            //G  argument-expression-list:
-            //G      argument-expression
-            //G      argument-expression   new-lines:opt   ','   argument-expression-list
-            //G  argument-expression:
-            //G      See grammar for expression - the only difference is that an
-            //G      array-literal-expression is not allowed - the comma is used
-            //G      to separate argument-expressions.
+            // G  argument-list: '(' is passed in lParen
+            // G      argument-expression-list:opt   new-lines:opt   ')'
+            // G  argument-expression-list:
+            // G      argument-expression
+            // G      argument-expression   new-lines:opt   ','   argument-expression-list
+            // G  argument-expression:
+            // G      See grammar for expression - the only difference is that an
+            // G      array-literal-expression is not allowed - the comma is used
+            // G      to separate argument-expressions.
 
             List<ExpressionAst> arguments = new List<ExpressionAst>();
             Token comma = null;
@@ -6724,11 +7777,15 @@ namespace System.Management.Automation.Language
                             // ErrorRecovery: sync at closing paren or newline.
 
                             ReportIncompleteInput(After(comma),
-                                () => ParserStrings.MissingExpressionAfterToken, TokenKind.Comma.Text());
+                                nameof(ParserStrings.MissingExpressionAfterToken),
+                                ParserStrings.MissingExpressionAfterToken,
+                                TokenKind.Comma.Text());
                             reportedError = true;
                         }
+
                         break;
                     }
+
                     arguments.Add(argument);
 
                     SkipNewlines();
@@ -6740,6 +7797,7 @@ namespace System.Management.Automation.Language
                         break;
                     }
                 }
+
                 SkipNewlines();
                 rParen = NextToken();
                 if (rParen.Kind != TokenKind.RParen)
@@ -6749,9 +7807,11 @@ namespace System.Management.Automation.Language
                     UngetToken(rParen);
                     if (!reportedError)
                     {
-                        ReportIncompleteInput(arguments.Any() ? After(arguments.Last()) : After(lParen),
-                            () => ParserStrings.MissingEndParenthesisInMethodCall);
+                        ReportIncompleteInput(arguments.Count > 0 ? After(arguments.Last()) : After(lParen),
+                            nameof(ParserStrings.MissingEndParenthesisInMethodCall),
+                            ParserStrings.MissingEndParenthesisInMethodCall);
                     }
+
                     rParen = null;
                 }
             }
@@ -6759,14 +7819,15 @@ namespace System.Management.Automation.Language
             {
                 _disableCommaOperator = oldDisableCommaOperator;
             }
+
             lastExtent = ExtentFromFirstOf(rParen, comma, arguments.LastOrDefault(), lParen);
             return arguments;
         }
 
         private ExpressionAst ElementAccessRule(ExpressionAst primaryExpression, Token lBracket)
         {
-            //G  element-access:
-            //G      primary-expression   '['   new-lines:opt   expression   new-lines:opt   ']'
+            // G  element-access:
+            // G      primary-expression   '['   new-lines:opt   expression   new-lines:opt   ']'
 
             SkipNewlines();
             ExpressionAst indexExpr = ExpressionRule();
@@ -6776,7 +7837,10 @@ namespace System.Management.Automation.Language
                 // the closing bracket, but build an expression that can't compile.
 
                 var errorExtent = After(lBracket);
-                ReportIncompleteInput(errorExtent, () => ParserStrings.MissingArrayIndexExpression);
+                ReportIncompleteInput(
+                    errorExtent,
+                    nameof(ParserStrings.MissingArrayIndexExpression),
+                    ParserStrings.MissingArrayIndexExpression);
                 indexExpr = new ErrorExpressionAst(lBracket.Extent);
             }
 
@@ -6790,12 +7854,15 @@ namespace System.Management.Automation.Language
                 // Skip reporting the error if we've already reported a missing index.
                 if (!(indexExpr is ErrorExpressionAst))
                 {
-                    ReportIncompleteInput(After(indexExpr), () => ParserStrings.MissingEndSquareBracket);
+                    ReportIncompleteInput(After(indexExpr),
+                        nameof(ParserStrings.MissingEndSquareBracket),
+                        ParserStrings.MissingEndSquareBracket);
                 }
+
                 rBracket = null;
             }
 
-            return new IndexExpressionAst(ExtentOf(primaryExpression, ExtentFromFirstOf(rBracket, indexExpr)), primaryExpression, indexExpr);
+            return new IndexExpressionAst(ExtentOf(primaryExpression, ExtentFromFirstOf(rBracket, indexExpr)), primaryExpression, indexExpr, lBracket.Kind == TokenKind.QuestionLBracket);
         }
 
         #endregion Expressions
@@ -6804,47 +7871,29 @@ namespace System.Management.Automation.Language
 
         private void SaveError(ParseError error)
         {
-            if (ErrorList.Any())
+            if (ErrorList.Count > 0)
             {
-                // Avoiding adding duplicate errors - can happen when the tokenizer resyncs.
-                if (ErrorList.Any(err => err.ErrorId.Equals(error.ErrorId, StringComparison.Ordinal)
-                                          && err.Extent.EndColumnNumber == error.Extent.EndColumnNumber
-                                          && err.Extent.EndLineNumber == error.Extent.EndLineNumber
-                                          && err.Extent.StartColumnNumber == error.Extent.StartColumnNumber
-                                          && err.Extent.StartLineNumber == error.Extent.StartLineNumber))
+                foreach (ParseError err in ErrorList)
                 {
-                    return;
+                    if (err.ErrorId.Equals(error.ErrorId, StringComparison.Ordinal)
+                        && err.Extent.EndColumnNumber == error.Extent.EndColumnNumber
+                        && err.Extent.EndLineNumber == error.Extent.EndLineNumber
+                        && err.Extent.StartColumnNumber == error.Extent.StartColumnNumber
+                        && err.Extent.StartLineNumber == error.Extent.StartLineNumber)
+                    {
+                        return;
+                    }
                 }
             }
 
             ErrorList.Add(error);
         }
 
-        private void SaveError(IScriptExtent extent, Expression<Func<string>> errorExpr, bool incompleteInput, params object[] args)
+        private void SaveError(IScriptExtent extent, string errorId, string errorMsg, bool incompleteInput, params object[] args)
         {
-            string errorMsg = null;
-            string errorId = null;
-            var memberExpression = errorExpr.Body as MemberExpression;
-            if (memberExpression != null)
-            {
-                var propertyInfo = memberExpression.Member as PropertyInfo;
-                if (propertyInfo != null)
-                {
-                    var getter = propertyInfo.GetMethod;
-                    if (getter != null && getter.IsStatic && getter.ReturnType == typeof(string))
-                    {
-                        errorMsg = (string)getter.Invoke(null, null);
-                        errorId = propertyInfo.Name;
-                    }
-                }
-            }
-            if (errorMsg == null)
-            {
-                errorMsg = errorExpr.Compile().Invoke();
-                errorId = "ParserError";
-            }
+            AssertErrorIdCorrespondsToMsgString(errorId, errorMsg);
 
-            if (args != null && args.Any())
+            if (args != null && args.Length > 0)
             {
                 errorMsg = string.Format(CultureInfo.CurrentCulture, errorMsg, args);
             }
@@ -6853,10 +7902,47 @@ namespace System.Management.Automation.Language
             SaveError(errorToSave);
         }
 
+        /// <summary>
+        /// Debug assertion to ensure that all errors saved by the parser come
+        /// from resource (.resx) files.
+        /// </summary>
+        /// <param name="errorId">The error ID string (.resx key).</param>
+        /// <param name="errorMsg">The error message, which may be a template string (.resx value).</param>
+        [System.Diagnostics.Conditional("DEBUG")]
+        [System.Diagnostics.Conditional("ASSERTIONS_TRACE")]
+        private static void AssertErrorIdCorrespondsToMsgString(string errorId, string errorMsg)
+        {
+            // These types are the ones known to contain
+            // strings used by the parser as errors
+            Type[] resxTypes = new[]
+            {
+                typeof(ParserStrings),
+                typeof(DiscoveryExceptions),
+                typeof(ExtendedTypeSystem),
+                typeof(MshSnapInCmdletResources),
+                typeof(ParameterBinderStrings)
+            };
+
+            // Go through each resource type and see if the errorId key is in it, and whether the value corresponds to the errorMsg
+            bool msgCorrespondsToString = false;
+            foreach (Type resxType in resxTypes)
+            {
+                string resxErrorBody = resxType.GetProperty(errorId, BindingFlags.Static | BindingFlags.NonPublic)?.GetValue(null) as string;
+                if (string.Equals(errorMsg, resxErrorBody, StringComparison.Ordinal))
+                {
+                    msgCorrespondsToString = true;
+                    break;
+                }
+            }
+
+            Diagnostics.Assert(msgCorrespondsToString, string.Format("Parser error ID \"{0}\" must correspond to the error message \"{1}\"", errorId, errorMsg));
+        }
+
         private static object[] arrayOfOneArg
         {
             get { return t_arrayOfOneArg ?? (t_arrayOfOneArg = new object[1]); }
         }
+
         [ThreadStatic]
         private static object[] t_arrayOfOneArg;
 
@@ -6864,61 +7950,63 @@ namespace System.Management.Automation.Language
         {
             get { return t_arrayOfTwoArgs ?? (t_arrayOfTwoArgs = new object[2]); }
         }
+
         [ThreadStatic]
         private static object[] t_arrayOfTwoArgs;
 
-        internal bool ReportIncompleteInput(IScriptExtent extent, Expression<Func<string>> errorExpr)
+        internal bool ReportIncompleteInput(IScriptExtent extent, string errorId, string errorMsg)
         {
             // If the error position isn't at the end of the input, then we don't want to mark the error
             // as incomplete input.
             bool incompleteInput = _tokenizer.IsAtEndOfScript(extent, checkCommentsAndWhitespace: true);
-            SaveError(extent, errorExpr, incompleteInput, null);
+            SaveError(extent, errorId, errorMsg, incompleteInput, null);
             return incompleteInput;
         }
 
-        internal bool ReportIncompleteInput(IScriptExtent extent, Expression<Func<string>> errorExpr, object arg)
+        internal bool ReportIncompleteInput(IScriptExtent extent, string errorId, string errorMsg, object arg)
         {
             // If the error position isn't at the end of the input, then we don't want to mark the error
             // as incomplete input.
             bool incompleteInput = _tokenizer.IsAtEndOfScript(extent, checkCommentsAndWhitespace: true);
             arrayOfOneArg[0] = arg;
-            SaveError(extent, errorExpr, incompleteInput, arrayOfOneArg);
+            SaveError(extent, errorId, errorMsg, incompleteInput, arrayOfOneArg);
             return incompleteInput;
         }
 
         internal bool ReportIncompleteInput(IScriptExtent errorPosition,
                                             IScriptExtent errorDetectedPosition,
-                                            Expression<Func<string>> errorExpr,
+                                            string errorId,
+                                            string errorMsg,
                                             params object[] args)
         {
             // If the error position isn't at the end of the input, then we don't want to mark the error
             // as incomplete input.
             bool incompleteInput = _tokenizer.IsAtEndOfScript(errorDetectedPosition, checkCommentsAndWhitespace: true);
-            SaveError(errorPosition, errorExpr, incompleteInput, args);
+            SaveError(errorPosition, errorId, errorMsg, incompleteInput, args);
             return incompleteInput;
         }
 
-        internal void ReportError(IScriptExtent extent, Expression<Func<string>> errorExpr)
+        internal void ReportError(IScriptExtent extent, string errorId, string errorMsg)
         {
-            SaveError(extent, errorExpr, false, null);
+            SaveError(extent, errorId, errorMsg, false, null);
         }
 
-        internal void ReportError(IScriptExtent extent, Expression<Func<string>> errorExpr, object arg)
+        internal void ReportError(IScriptExtent extent, string errorId, string errorMsg, object arg)
         {
             arrayOfOneArg[0] = arg;
-            SaveError(extent, errorExpr, false, arrayOfOneArg);
+            SaveError(extent, errorId, errorMsg, false, arrayOfOneArg);
         }
 
-        internal void ReportError(IScriptExtent extent, Expression<Func<string>> errorExpr, object arg1, object arg2)
+        internal void ReportError(IScriptExtent extent, string errorId, string errorMsg, object arg1, object arg2)
         {
             arrayOfTwoArgs[0] = arg1;
             arrayOfTwoArgs[1] = arg2;
-            SaveError(extent, errorExpr, false, arrayOfTwoArgs);
+            SaveError(extent, errorId, errorMsg, false, arrayOfTwoArgs);
         }
 
-        internal void ReportError(IScriptExtent extent, Expression<Func<string>> errorExpr, params object[] args)
+        internal void ReportError(IScriptExtent extent, string errorId, string errorMsg, params object[] args)
         {
-            SaveError(extent, errorExpr, false, args);
+            SaveError(extent, errorId, errorMsg, false, args);
         }
 
         internal void ReportError(ParseError error)
@@ -6947,7 +8035,6 @@ namespace System.Management.Automation.Language
     #region Error related classes
 
     /// <summary>
-    /// 
     /// </summary>
     public class ParseError
     {
@@ -6975,31 +8062,26 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
-            return PositionUtilities.VerboseMessage(Extent) + "\n" + Message;
+            return PositionUtilities.VerboseMessage(Extent) + Environment.NewLine + Message;
         }
 
         /// <summary>
-        /// 
         /// </summary>
         public IScriptExtent Extent { get; }
 
         /// <summary>
-        /// 
         /// </summary>
         public string ErrorId { get; }
 
         /// <summary>
-        /// 
         /// </summary>
         public string Message { get; }
 
         /// <summary>
-        /// 
         /// </summary>
         public bool IncompleteInput { get; }
     }
@@ -7007,26 +8089,37 @@ namespace System.Management.Automation.Language
     #endregion Error related classes
 
     // Guid is {eba789d9-533b-58d4-cd1f-2e6520e3a9c2}
+
     [EventSource(Name = "Microsoft-PowerShell-Parser")]
     internal class ParserEventSource : EventSource
     {
-        internal static ParserEventSource Log = new ParserEventSource();
+        internal static readonly ParserEventSource Log = new ParserEventSource();
+
         internal const int MaxScriptLengthToLog = 50;
 
         public void ParseStart(string FileName, int Length) { WriteEvent(1, FileName, Length); }
+
         public void ParseStop() { WriteEvent(2); }
+
         public void ResolveSymbolsStart() { WriteEvent(3); }
+
         public void ResolveSymbolsStop() { WriteEvent(4); }
+
         public void SemanticChecksStart() { WriteEvent(5); }
+
         public void SemanticChecksStop() { WriteEvent(6); }
+
         public void CheckSecurityStart(string FileName) { WriteEvent(7, FileName); }
+
         public void CheckSecurityStop(string FileName) { WriteEvent(8, FileName); }
+
         public void CompileStart(string FileName, int Length, bool Optimized) { WriteEvent(9, FileName, Length, Optimized); }
+
         public void CompileStop() { WriteEvent(10); }
 
         internal static string GetFileOrScript(string fileName, string input)
         {
-            return fileName ?? input.Substring(0, Math.Min(256, input.Length)).Trim();
+            return fileName ?? input.AsSpan(0, Math.Min(256, input.Length)).Trim().ToString();
         }
     }
 }

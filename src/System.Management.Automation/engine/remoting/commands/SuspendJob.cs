@@ -1,6 +1,5 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -19,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
 #if !CORECLR
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsLifecycle.Suspend, "Job", SupportsShouldProcess = true, DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210613")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210613")]
     [OutputType(typeof(Job))]
 #endif
     public class SuspendJobCommand : JobCmdletBase, IDisposable
@@ -27,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
         /// <summary>
         /// Specifies the Jobs objects which need to be
-        /// suspended
+        /// suspended.
         /// </summary>
         [Parameter(Mandatory = true,
                    Position = 0,
@@ -42,17 +41,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _jobs;
             }
+
             set
             {
                 _jobs = value;
             }
         }
+
         private Job[] _jobs;
 
         /// <summary>
-        /// 
         /// </summary>
-        public override String[] Command
+        public override string[] Command
         {
             get
             {
@@ -76,15 +76,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force = false;
 
         /// <summary>
-        /// 
         /// </summary>
         [Parameter()]
         public SwitchParameter Wait
@@ -93,13 +94,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _wait;
             }
+
             set
             {
                 _wait = value;
             }
         }
-        private bool _wait = false;
 
+        private bool _wait = false;
 
         #endregion Parameters
 
@@ -110,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            //List of jobs to suspend
+            // List of jobs to suspend
             List<Job> jobsToSuspend = null;
 
             switch (ParameterSetName)
@@ -119,36 +121,42 @@ namespace Microsoft.PowerShell.Commands
                     {
                         jobsToSuspend = FindJobsMatchingByName(true, false, true, false);
                     }
+
                     break;
 
                 case InstanceIdParameterSet:
                     {
                         jobsToSuspend = FindJobsMatchingByInstanceId(true, false, true, false);
                     }
+
                     break;
 
                 case SessionIdParameterSet:
                     {
                         jobsToSuspend = FindJobsMatchingBySessionId(true, false, true, false);
                     }
+
                     break;
 
                 case StateParameterSet:
                     {
                         jobsToSuspend = FindJobsMatchingByState(false);
                     }
+
                     break;
 
                 case FilterParameterSet:
                     {
                         jobsToSuspend = FindJobsMatchingByFilter(false);
                     }
+
                     break;
 
                 default:
                     {
                         jobsToSuspend = CopyJobsToList(_jobs, false, false);
                     }
+
                     break;
             }
 
@@ -201,7 +209,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    // there could be possiblility that the job gets completed befor or after the 
+                    // there could be possibility that the job gets completed before or after the
                     // subscribing to nowait_job2_statechanged event so checking it again.
                     if (!_wait && (job2.IsFinishedState(job2.JobStateInfo.State) || job2.JobStateInfo.State == JobState.Suspending || job2.JobStateInfo.State == JobState.Suspended))
                     {
@@ -262,10 +270,11 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // there could be a possiblity of race condiftion where this fucntion is getting called twice
+                    // there could be a possibility of race condition where this function is getting called twice
                     // so if job doesn't present in the _pendingJobs then just return
                     return;
                 }
+
                 if (_needToCheckForWaitingJobs && _pendingJobs.Count == 0)
                     releaseWait = true;
             }
@@ -329,7 +338,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         protected override void StopProcessing()
         {
@@ -341,7 +349,6 @@ namespace Microsoft.PowerShell.Commands
         #region Dispose
 
         /// <summary>
-        /// 
         /// </summary>
         public void Dispose()
         {
@@ -350,7 +357,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)
@@ -360,6 +366,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 pair.Key.SuspendJobCompleted -= pair.Value;
             }
+
             _waitForJobs.Dispose();
         }
         #endregion Dispose

@@ -1,13 +1,12 @@
-//
-// Copyright (c) 2008 Microsoft Corporation. All rights reserved.
-// 
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands.GetCounter
 {
@@ -32,6 +31,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
                     _machineName = @"\\" + _machineName;
                 }
             }
+
             _counterSetType = categoryType;
             _description = setHelp;
             _counterInstanceMapping = counterInstanceMapping;
@@ -44,7 +44,8 @@ namespace Microsoft.PowerShell.Commands.GetCounter
                 return _counterSetName;
             }
         }
-        private string _counterSetName = "";
+
+        private string _counterSetName = string.Empty;
 
         public string MachineName
         {
@@ -53,6 +54,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
                 return _machineName;
             }
         }
+
         private string _machineName = ".";
 
         public PerformanceCounterCategoryType CounterSetType
@@ -62,8 +64,8 @@ namespace Microsoft.PowerShell.Commands.GetCounter
                 return _counterSetType;
             }
         }
-        private PerformanceCounterCategoryType _counterSetType;
 
+        private PerformanceCounterCategoryType _counterSetType;
 
         public string Description
         {
@@ -72,7 +74,8 @@ namespace Microsoft.PowerShell.Commands.GetCounter
                 return _description;
             }
         }
-        private string _description = "";
+
+        private string _description = string.Empty;
 
         internal Dictionary<string, string[]> CounterInstanceMapping
         {
@@ -81,6 +84,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
                 return _counterInstanceMapping;
             }
         }
+
         private Dictionary<string, string[]> _counterInstanceMapping;
 
         public StringCollection Paths
@@ -103,6 +107,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
                          ("\\" + _counterSetName + "\\" + counterName) :
                          (_machineName + "\\" + _counterSetName + "\\" + counterName);
                     }
+
                     retColl.Add(path);
                 }
 
@@ -125,6 +130,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
                         retColl.Add(path);
                     }
                 }
+
                 return retColl;
             }
         }

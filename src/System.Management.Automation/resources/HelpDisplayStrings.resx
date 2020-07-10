@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,41 +26,41 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -192,8 +192,8 @@
   <data name="BaseCmdletInformation" xml:space="preserve">
     <value>    This cmdlet supports the common parameters: Verbose, Debug,
     ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-    OutBuffer, PipelineVariable, and OutVariable. For more information, see 
-    about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216). </value>
+    OutBuffer, PipelineVariable, and OutVariable. For more information, see
+    about_CommonParameters (https://go.microsoft.com/fwlink/?LinkID=113216). </value>
   </data>
   <data name="ParameterRequired" xml:space="preserve">
     <value>Required?                    </value>
@@ -276,7 +276,7 @@
   <data name="GetLatestHelpContent" xml:space="preserve">
     <value>Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial help.
     -- To download and install Help files for the module that includes this cmdlet, use Update-Help.
-    -- To view the Help topic for this cmdlet online, type: "Get-Help {0} -Online" or 
+    -- To view the Help topic for this cmdlet online, type: "Get-Help {0} -Online" or
        go to {1}.</value>
   </data>
   <data name="None" xml:space="preserve">
@@ -334,10 +334,10 @@
     <value>(All)</value>
   </data>
   <data name="CannotMatchModulePattern" xml:space="preserve">
-    <value>No Windows PowerShell modules were found that match the following pattern: {0}. Verify the pattern and then try the command again.</value>
+    <value>No PowerShell modules were found that match the following pattern: {0}. Verify the pattern and then try the command again.</value>
   </data>
   <data name="ModuleNotFoundWithFullyQualifiedName" xml:space="preserve">
-    <value>No Windows PowerShell modules were found that match the specified FullyQualifiedModule {0}. Verify the FullyQualifiedModule value and then try the command again.</value>
+    <value>No PowerShell modules were found that match the specified FullyQualifiedModule {0}. Verify the FullyQualifiedModule value and then try the command again.</value>
   </data>
   <data name="HelpContentNotFound" xml:space="preserve">
     <value>Help content cannot be found. Make sure the server is available and the help content location is properly defined in the HelpInfo XML.</value>
@@ -376,7 +376,7 @@
     <value>The Help content XSD file cannot be found in {0}. Verify that the XSD file exists at the specified location, and then retry the command.</value>
   </data>
   <data name="FailedToUpdateHelpForModule" xml:space="preserve">
-    <value>Failed to update Help for the module(s) : 
+    <value>Failed to update Help for the module(s) :
 '{0}'
 {1}</value>
   </data>
@@ -390,10 +390,12 @@
     <value>Failed to save Help for the module(s) '{0}' : {1}</value>
   </data>
   <data name="FailedToSaveHelpForModuleWithCulture" xml:space="preserve">
-    <value>Failed to save Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}</value>
+    <value>Failed to save Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}.
+English-US help content is available and can be saved using: Save-Help -UICulture en-US.</value>
   </data>
   <data name="FailedToUpdateHelpForModuleWithCulture" xml:space="preserve">
-    <value>Failed to update Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}</value>
+    <value>Failed to update Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}.
+English-US help content is available and can be installed using: Update-Help -UICulture en-US.</value>
   </data>
   <data name="FalseShort" xml:space="preserve">
     <value>false</value>
@@ -411,11 +413,11 @@
     <value>No UI culture was found that matches the following pattern: {0}. Verify the pattern and then try the command again.</value>
   </data>
   <data name="UseForceToSaveHelp" xml:space="preserve">
-    <value>Help was not saved for the module {0}, because the Save-Help command was run on this computer within the last 24 hours. 
+    <value>Help was not saved for the module {0}, because the Save-Help command was run on this computer within the last 24 hours.
 To save help again, add the Force parameter to your command.</value>
   </data>
   <data name="UseForceToUpdateHelp" xml:space="preserve">
-    <value>Help was not updated for the module {0}, because the Update-Help command was run on this computer within the last 24 hours. 
+    <value>Help was not updated for the module {0}, because the Update-Help command was run on this computer within the last 24 hours.
 To update help again, add the Force parameter to your command.</value>
   </data>
   <data name="NewestContentAlreadyInstalled" xml:space="preserve">
@@ -443,33 +445,11 @@ To update help again, add the Force parameter to your command.</value>
   <data name="SavedHelpContent" xml:space="preserve">
     <value>Saved {0}</value>
   </data>
-  <data name="CommonWorkflowParameters" xml:space="preserve">
-    <value>&lt;WorkflowCommonParameters&gt;</value>
-  </data>
-  <data name="BaseWorkflowCmdletInformation" xml:space="preserve">
-    <value>    This cmdlet supports the workflow common parameters:
-    PSComputerName, JobName, PSApplicationName, PSCredential,
-    PSPort, PSConfigurationName, PSConnectionURI, PSSessionOption,
-    PSAuthentication, PSAuthenticationLevel,
-    PSCertificateThumbprint, PSConnectionRetryCount,
-    PSConnectionRetryIntervalSec, PSRunningTimeoutSec,
-    PSElapsedTimeoutSec, PSPersist,
-    PSPrivateMetadata, InputObject,
-    PSParameterCollection, AsJob, PSUseSSL, and PSAllowRedirection.
-    For more information, see about_Workflow_Common_Parameters
-    (http://go.microsoft.com/fwlink/?LinkID=222527).</value>
-  </data>
   <data name="InvalidHelpInfoUriFormat" xml:space="preserve">
     <value>The HelpInfoURI {0} does not start with HTTP.</value>
   </data>
   <data name="RootElementMustBeHelpItems" xml:space="preserve">
     <value>The root level element of the help content must be "helpItems".</value>
-  </data>
-  <data name="UpdateHelpPromptBody" xml:space="preserve">
-    <value>The Update-Help cmdlet downloads the most current Help files for Windows PowerShell modules, and installs them on your computer. For more information about the Update-Help cmdlet, see http://go.microsoft.com/fwlink/?LinkId=210614.</value>
-  </data>
-  <data name="UpdateHelpPromptTitle" xml:space="preserve">
-    <value>Do you want to run Update-Help?</value>
   </data>
   <data name="SaveProgressActivityForModule" xml:space="preserve">
     <value>Saving Help for module {0}</value>

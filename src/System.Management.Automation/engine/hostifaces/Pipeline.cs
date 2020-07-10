@@ -1,31 +1,26 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.ObjectModel;
-using System.Threading;
-using System.Runtime.Serialization;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Internal;
+using System.Runtime.Serialization;
+using System.Threading;
 
-#if CORECLR
-// Use stub for SerializableAttribute, SystemException, ThreadAbortException and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Runspaces
 {
     #region Exceptions
     /// <summary>
-    /// Defines exception which is thrown when state of the pipeline is different 
+    /// Defines exception which is thrown when state of the pipeline is different
     /// from expected state.
-    /// </summary>     
+    /// </summary>
     [Serializable]
     public class InvalidPipelineStateException : SystemException
     {
         /// <summary>
-        /// Initializes a new instance of the InvalidPipelineStateException class 
+        /// Initializes a new instance of the InvalidPipelineStateException class.
         /// </summary>
         public InvalidPipelineStateException()
             : base(StringUtil.Format(RunspaceStrings.InvalidPipelineStateStateGeneral))
@@ -33,8 +28,8 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Initializes a new instance of the InvalidPipelineStateException class 
-        /// with a specified error message
+        /// Initializes a new instance of the InvalidPipelineStateException class
+        /// with a specified error message.
         /// </summary>
         /// <param name="message">
         /// The error message that explains the reason for the exception.
@@ -45,11 +40,11 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Initializes a new instance of the InvalidPipelineStateException class 
-        /// with a specified error message and a reference to the inner exception that is the cause of this exception. 
+        /// Initializes a new instance of the InvalidPipelineStateException class
+        /// with a specified error message and a reference to the inner exception that is the cause of this exception.
         /// </summary>
         /// <param name="message">
-        /// The error message that explains the reason for the exception. 
+        /// The error message that explains the reason for the exception.
         /// </param>
         /// <param name="innerException">
         /// The exception that is the cause of the current exception.
@@ -60,13 +55,13 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Initializes a new instance of the InvalidPipelineStateException and defines value of 
-        /// CurrentState and ExpectedState
+        /// Initializes a new instance of the InvalidPipelineStateException and defines value of
+        /// CurrentState and ExpectedState.
         /// </summary>
-        /// <param name="message">The error message that explains the reason for the exception. 
+        /// <param name="message">The error message that explains the reason for the exception.
         /// </param>
-        /// <param name="currentState">Current state of pipeline</param>
-        /// <param name="expectedState">Expected state of pipeline</param>
+        /// <param name="currentState">Current state of pipeline.</param>
+        /// <param name="expectedState">Expected state of pipeline.</param>
         internal InvalidPipelineStateException(string message, PipelineState currentState, PipelineState expectedState)
         : base(message)
         {
@@ -84,11 +79,11 @@ namespace System.Management.Automation.Runspaces
         ///  class with serialized data.
         /// </summary>
         /// <param name="info">
-        /// The <see cref="SerializationInfo"/> that holds the serialized object 
+        /// The <see cref="SerializationInfo"/> that holds the serialized object
         /// data about the exception being thrown.
         /// </param>
         /// <param name="context">
-        /// The <see cref="StreamingContext"/> that contains contextual information 
+        /// The <see cref="StreamingContext"/> that contains contextual information
         /// about the source or destination.
         /// </param>
         private InvalidPipelineStateException(SerializationInfo info, StreamingContext context)
@@ -99,7 +94,7 @@ namespace System.Management.Automation.Runspaces
         #endregion
 
         /// <summary>
-        /// Gets CurrentState of the pipeline
+        /// Gets CurrentState of the pipeline.
         /// </summary>
         public PipelineState CurrentState
         {
@@ -107,7 +102,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Gets ExpectedState of the pipeline
+        /// Gets ExpectedState of the pipeline.
         /// </summary>
         public PipelineState ExpectedState
         {
@@ -115,7 +110,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// State of pipleine when exception was thrown.
+        /// State of pipeline when exception was thrown.
         /// </summary>
         [NonSerialized]
         private PipelineState _currentState = 0;
@@ -132,16 +127,16 @@ namespace System.Management.Automation.Runspaces
     #region PipelineState
 
     /// <summary>
-    /// Enumerated type defining the state of the Pipeline
+    /// Enumerated type defining the state of the Pipeline.
     /// </summary>
     public enum PipelineState
     {
         /// <summary>
-        /// The pipeline has not been started
+        /// The pipeline has not been started.
         /// </summary>
         NotStarted = 0,
         /// <summary>
-        /// The pipeline is executing
+        /// The pipeline is executing.
         /// </summary>
         Running = 1,
         /// <summary>
@@ -167,8 +162,8 @@ namespace System.Management.Automation.Runspaces
     }
 
     /// <summary>
-    /// Type which has information about PipelineState and Exception 
-    /// associated with PipelineState
+    /// Type which has information about PipelineState and Exception
+    /// associated with PipelineState.
     /// </summary>
     public sealed class PipelineStateInfo
     {
@@ -177,7 +172,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor for state changes not resulting from an error.
         /// </summary>
-        /// <param name="state">Execution state</param>
+        /// <param name="state">Execution state.</param>
         internal PipelineStateInfo(PipelineState state)
             : this(state, null)
         {
@@ -187,7 +182,7 @@ namespace System.Management.Automation.Runspaces
         /// Constructor for state changes with an optional error.
         /// </summary>
         /// <param name="state">The new state.</param>
-        /// <param name="reason">A non-null exception if the state change was 
+        /// <param name="reason">A non-null exception if the state change was
         /// caused by an error,otherwise; null.
         /// </param>
         internal PipelineStateInfo(PipelineState state, Exception reason)
@@ -197,9 +192,9 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Copy constructor to support cloning
+        /// Copy constructor to support cloning.
         /// </summary>
-        /// <param name="pipelineStateInfo">source information</param>
+        /// <param name="pipelineStateInfo">Source information.</param>
         /// <throws>
         /// ArgumentNullException when <paramref name="pipelineStateInfo"/> is null.
         /// </throws>
@@ -210,7 +205,6 @@ namespace System.Management.Automation.Runspaces
             State = pipelineStateInfo.State;
             Reason = pipelineStateInfo.Reason;
         }
-
 
         #endregion constructors
 
@@ -228,8 +222,8 @@ namespace System.Management.Automation.Runspaces
         /// The reason for the state change, if caused by an error.
         /// </summary>
         /// <remarks>
-        /// The value of this property is non-null if the state 
-        /// changed due to an error. Otherwise, the value of this 
+        /// The value of this property is non-null if the state
+        /// changed due to an error. Otherwise, the value of this
         /// property is null.
         /// </remarks>
         public Exception Reason { get; }
@@ -237,9 +231,9 @@ namespace System.Management.Automation.Runspaces
         #endregion public_properties
 
         /// <summary>
-        /// Clones this object
+        /// Clones this object.
         /// </summary>
-        /// <returns>Cloned object</returns>
+        /// <returns>Cloned object.</returns>
         internal PipelineStateInfo Clone()
         {
             return new PipelineStateInfo(this);
@@ -255,9 +249,9 @@ namespace System.Management.Automation.Runspaces
         #region constructors
 
         /// <summary>
-        /// Constructor PipelineStateEventArgs from PipelineStateInfo
+        /// Constructor PipelineStateEventArgs from PipelineStateInfo.
         /// </summary>
-        /// <param name="pipelineStateInfo">The current state of the 
+        /// <param name="pipelineStateInfo">The current state of the
         /// pipeline.</param>
         /// <throws>
         /// ArgumentNullException when <paramref name="pipelineStateInfo"/> is null.
@@ -289,7 +283,7 @@ namespace System.Management.Automation.Runspaces
         #region constructor
 
         /// <summary>
-        /// Explicit default constructor
+        /// Explicit default constructor.
         /// </summary>
         internal Pipeline(Runspace runspace)
             : this(runspace, new CommandCollection())
@@ -311,11 +305,11 @@ namespace System.Management.Automation.Runspaces
         {
             if (runspace == null)
             {
-                PSTraceSource.NewArgumentNullException("runspace");
+                PSTraceSource.NewArgumentNullException(nameof(runspace));
             }
             // This constructor is used only internally.
             // Caller should make sure the input is valid
-            Dbg.Assert(null != command, "Command cannot be null");
+            Dbg.Assert(command != null, "Command cannot be null");
             InstanceId = runspace.GeneratePipelineId();
             Commands = command;
 
@@ -329,7 +323,7 @@ namespace System.Management.Automation.Runspaces
         #region properties
 
         /// <summary>
-        /// gets the runspace this pipeline is created on.
+        /// Gets the runspace this pipeline is created on.
         /// </summary>
         public abstract Runspace Runspace { get; }
 
@@ -340,7 +334,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Gets the property which indicates if this pipeline is a child pipeline.
-        /// 
+        ///
         /// IsChild flag makes it possible for the pipeline to differentiate between
         /// a true v1 nested pipeline and the cmdlets calling cmdlets case. See bug
         /// 211462.
@@ -348,11 +342,12 @@ namespace System.Management.Automation.Runspaces
         internal virtual bool IsChild
         {
             get { return false; }
+
             set { }
         }
 
         /// <summary>
-        /// gets input writer for this pipeline.
+        /// Gets input writer for this pipeline.
         /// </summary>
         /// <remarks>
         /// When the caller calls Input.Write(), the caller writes to the
@@ -374,13 +369,13 @@ namespace System.Management.Automation.Runspaces
         public abstract PipelineReader<PSObject> Output { get; }
 
         /// <summary>
-        /// gets the error output reader for this pipeline.
+        /// Gets the error output reader for this pipeline.
         /// </summary>
         /// <remarks>
         /// When the caller calls Error.Read(), the caller reads from the
         /// output of the pipeline.  Thus, <paramref name="Error"/>
         /// is a PipelineReader or "thing which can be read from".
-        /// 
+        ///
         /// This is the non-terminating error stream from the command.
         /// In this release, the objects read from this PipelineReader
         /// are PSObjects wrapping ErrorRecords.
@@ -397,7 +392,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// True if pipeline execution encountered and error.
-        /// It will alwys be true if _reason is non-null
+        /// It will always be true if _reason is non-null
         /// since an exception occurred. For other error types,
         /// It has to be set manually.
         /// </summary>
@@ -405,6 +400,7 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _hadErrors; }
         }
+
         private bool _hadErrors;
 
         internal void SetHadErrors(bool status)
@@ -413,13 +409,13 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// gets the unique identifier for this pipeline. This indentifier is unique with in
+        /// Gets the unique identifier for this pipeline. This identifier is unique with in
         /// the scope of Runspace.
         /// </summary>
         public long InstanceId { get; }
 
         /// <summary>
-        /// gets the collection of commands for this pipeline.
+        /// Gets the collection of commands for this pipeline.
         /// </summary>
         public CommandCollection Commands { get; private set; }
 
@@ -435,18 +431,18 @@ namespace System.Management.Automation.Runspaces
         internal PSInvocationSettings InvocationSettings { get; set; }
 
         /// <summary>
-        /// If this flag is true, the commands in this Pipeline will redirect the global error output pipe 
+        /// If this flag is true, the commands in this Pipeline will redirect the global error output pipe
         /// (ExecutionContext.ShellFunctionErrorOutputPipe) to the command's error output pipe.
-        /// 
-        /// When the global error output pipe is not set, $ErrorActionPreference is not checked and all 
-        /// errors are treated as terminating errors. 
-        /// 
-        /// On V1, the global error output pipe is redirected to the command's error output pipe only when 
+        ///
+        /// When the global error output pipe is not set, $ErrorActionPreference is not checked and all
+        /// errors are treated as terminating errors.
+        ///
+        /// On V1, the global error output pipe is redirected to the command's error output pipe only when
         /// it has already been redirected. The command-line host achieves this redirection by merging the
-        /// error output into the output pipe so it checks $ErrorActionPreference all right. However, when 
-        /// the Pipeline class is used programatically the global error output pipe is not set and the first
+        /// error output into the output pipe so it checks $ErrorActionPreference all right. However, when
+        /// the Pipeline class is used programmatically the global error output pipe is not set and the first
         /// error terminates the pipeline.
-        /// 
+        ///
         /// This flag is used to force the redirection. By default it is false to maintain compatibility with
         /// V1, but the V2 hosting interface (PowerShell class) sets this flag to true to ensure the global
         /// error output pipe is always set and $ErrorActionPreference when invoking the Pipeline.
@@ -466,13 +462,12 @@ namespace System.Management.Automation.Runspaces
 
         #region methods
 
-
         /// <summary>
         /// Invoke the pipeline, synchronously, returning the results as an array of
         /// objects.
         /// </summary>
         /// <remarks>If using synchronous invoke, do not close
-        /// input objectWriter. Synchronous invoke will always close the input 
+        /// input objectWriter. Synchronous invoke will always close the input
         /// objectWriter.
         /// </remarks>
         /// <exception cref="InvalidOperationException">
@@ -482,9 +477,9 @@ namespace System.Management.Automation.Runspaces
         /// PipelineState is not NotStarted.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// 1) A pipeline is already executing. Pipeline cannot execute 
+        /// 1) A pipeline is already executing. Pipeline cannot execute
         /// concurrently.
-        /// 2) Attempt is made to invoke a nested pipeline directly. Nested 
+        /// 2) Attempt is made to invoke a nested pipeline directly. Nested
         /// pipeline must be invoked from a running pipeline.
         /// </exception>
         /// <exception cref="InvalidRunspaceStateException">
@@ -500,10 +495,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the pipeline was executing was aborted.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// Pipeline.Invoke can throw a variety of exceptions derived
@@ -541,9 +533,9 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="input">an array of input objects to pass to the pipeline.
         /// Array may be empty but may not be null</param>
-        /// <returns>An array of zero or more result objects</returns>
+        /// <returns>An array of zero or more result objects.</returns>
         /// <remarks>If using synchronous exectute, do not close
-        /// input objectWriter. Synchronous invoke will always close the input 
+        /// input objectWriter. Synchronous invoke will always close the input
         /// objectWriter.
         /// </remarks>
         /// <exception cref="InvalidOperationException">
@@ -553,9 +545,9 @@ namespace System.Management.Automation.Runspaces
         /// PipelineState is not NotStarted.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// 1) A pipeline is already executing. Pipeline cannot execute 
+        /// 1) A pipeline is already executing. Pipeline cannot execute
         /// concurrently.
-        /// 2) Attempt is made to invoke a nested pipeline directly. Nested 
+        /// 2) Attempt is made to invoke a nested pipeline directly. Nested
         /// pipeline must be invoked from a running pipeline.
         /// </exception>
         /// <exception cref="InvalidRunspaceStateException">
@@ -571,10 +563,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the pipeline was executing was aborted.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// Pipeline.Invoke can throw a variety of exceptions derived
@@ -605,7 +594,7 @@ namespace System.Management.Automation.Runspaces
         public abstract Collection<PSObject> Invoke(IEnumerable input);
 
         /// <summary>
-        /// Invoke the pipeline asynchronously
+        /// Invoke the pipeline asynchronously.
         /// </summary>
         /// <remarks>
         /// 1) Results are returned through the <see cref="Pipeline.Output"/> reader.
@@ -613,7 +602,7 @@ namespace System.Management.Automation.Runspaces
         /// finish until Input to pipeline is closed. Caller of InvokeAsync must close
         /// the input pipe after all input has been written to input pipe. Input pipe
         /// is closed by calling Pipeline.Input.Close();
-        /// 
+        ///
         /// If you want this pipeline to execute as a standalone command
         /// (that is, using command-line parameters only),
         /// be sure to call Pipeline.Input.Close() before calling
@@ -628,9 +617,9 @@ namespace System.Management.Automation.Runspaces
         /// PipelineState is not NotStarted.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// 1) A pipeline is already executing. Pipeline cannot execute 
+        /// 1) A pipeline is already executing. Pipeline cannot execute
         /// concurrently.
-        /// 2) InvokeAsync is called on nested pipeline. Nested pipeline 
+        /// 2) InvokeAsync is called on nested pipeline. Nested pipeline
         /// cannot be executed Asynchronously.
         /// </exception>
         /// <exception cref="InvalidRunspaceStateException">
@@ -672,7 +661,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Sets the command collection.
         /// </summary>
-        /// <param name="commands">command collection to set</param>
+        /// <param name="commands">Command collection to set.</param>
         /// <remarks>called by ClientRemotePipeline</remarks>
         internal void SetCommandCollection(CommandCollection commands)
         {
@@ -680,10 +669,10 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Sets the history string to the one that is specified
+        /// Sets the history string to the one that is specified.
         /// </summary>
-        /// <param name="historyString">history string to set</param>
-        internal abstract void SetHistoryString(String historyString);
+        /// <param name="historyString">History string to set.</param>
+        internal abstract void SetHistoryString(string historyString);
 
         /// <summary>
         /// Invokes a remote command and immediately disconnects if
@@ -725,7 +714,7 @@ namespace System.Management.Automation.Runspaces
         #region IDisposable Members
 
         /// <summary>
-        /// Disposes the pipeline. If pipeline is running, dispose first 
+        /// Disposes the pipeline. If pipeline is running, dispose first
         /// stops the pipeline.
         /// </summary>
         public
@@ -749,5 +738,4 @@ namespace System.Management.Automation.Runspaces
         #endregion IDisposable Members
     }
 }
-
 

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xml:lang="en">
+  <xs:element name="Types">
+    <xs:annotation>
+      <xs:documentation>The `&lt;Types&gt;` tag encloses all of the types that are defined in the file. There should be only one pair of `&lt;Types&gt;` tags.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Type" maxOccurs="unbounded" type="Type">
+          <xs:annotation>
+            <xs:documentation>Each .NET Framework type mentioned in the file should be represented by a pair of `&lt;Type&gt;` tags.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="Type">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>A pair of `&lt;Name&gt;` tags that enclose the name of the affected .NET Framework type.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Members" type="Members" />
+      <xs:element minOccurs="0" name="TypeConverter" type="TypeConverter" />
+      <xs:element minOccurs="0" name="TypeAdapter" type="TypeAdapter" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Members">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element minOccurs="0" name="NoteProperty" maxOccurs="unbounded" type="NoteProperty">
+        <xs:annotation>
+          <xs:documentation>Defines a property with a static value.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="AliasProperty" maxOccurs="unbounded" type="AliasProperty">
+        <xs:annotation>
+          <xs:documentation>Defines a new name for an existing property.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="ScriptProperty" maxOccurs="unbounded" type="ScriptProperty">
+        <xs:annotation>
+          <xs:documentation>Defines a property whose value is the output of a script.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CodeProperty" maxOccurs="unbounded" type="CodeProperty">
+        <xs:annotation>
+          <xs:documentation>References a static method of a .NET Framework class.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="ScriptMethod" maxOccurs="unbounded" type="ScriptMethod">
+        <xs:annotation>
+          <xs:documentation>Defines a method whose value is the output of a script.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CodeMethod" maxOccurs="unbounded" type="CodeMethod">
+        <xs:annotation>
+          <xs:documentation> References a static method of a .NET Framework class.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="PropertySet" maxOccurs="unbounded" type="PropertySet">
+        <xs:annotation>
+          <xs:documentation>Defines a collection of properties of the object.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="MemberSet" maxOccurs="unbounded" type="MemberSet">
+        <xs:annotation>
+          <xs:documentation>Defines a collection of members (properties and methods).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="TypeConverter">
+    <xs:sequence>
+      <xs:element name="TypeName" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="TypeAdapter">
+    <xs:sequence>
+      <xs:element name="TypeName" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="NoteProperty">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element name="Value" type="xs:string" />
+      <xs:element minOccurs="0" name="TypeName" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="IsHidden" type="xs:boolean" />
+  </xs:complexType>
+  <xs:complexType name="AliasProperty">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element name="ReferencedMemberName" type="xs:string" />
+      <xs:element minOccurs="0" name="TypeName" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="IsHidden" type="xs:boolean" />
+  </xs:complexType>
+  <xs:complexType name="ScriptProperty">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element minOccurs="0" name="GetScriptBlock" type="xs:string" />
+      <xs:element minOccurs="0" name="SetScriptBlock" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="IsHidden" type="xs:boolean" />
+  </xs:complexType>
+  <xs:complexType name="CodeProperty">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element name="GetCodeReference" type="GetCodeReference" />
+      <xs:element minOccurs="0" name="SetCodeReference" type="SetCodeReference" />
+    </xs:sequence>
+    <xs:attribute name="IsHidden" type="xs:boolean" />
+  </xs:complexType>
+  <xs:complexType name="GetCodeReference">
+    <xs:sequence>
+      <xs:element name="TypeName" type="xs:string" />
+      <xs:element name="MethodName" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="SetCodeReference">
+    <xs:sequence>
+      <xs:element name="TypeName" type="xs:string" />
+      <xs:element name="MethodName" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ScriptMethod">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element name="Script" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CodeMethod">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element name="CodeReference" type="CodeReference" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CodeReference">
+    <xs:sequence>
+      <xs:element name="TypeName" type="xs:string" />
+      <xs:element name="MethodName" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PropertySet">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element name="ReferencedProperties" type="ReferencedProperties" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ReferencedProperties">
+    <xs:sequence>
+      <xs:element name="Name" maxOccurs="unbounded" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MemberSet">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element minOccurs="0" name="InheritMembers" type="xs:boolean" />
+      <xs:element name="Members" type="Members">
+        <xs:annotation>
+          <xs:documentation>A pair of `&lt;Members&gt;` tags that enclose the tags for the new properties and methods that are defined for the .NET Framework type.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -1,7 +1,5 @@
-/*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
- *============================================================================
- */
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #region Using directives
 using Microsoft.Management.Infrastructure.Options;
@@ -24,14 +22,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimPromptUser : CimSyncAction
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public CimPromptUser(string message,
             CimPromptType prompt)
         {
             this.message = message;
             this.prompt = prompt;
-        }      
+        }
 
         /// <summary>
         /// <para>
@@ -77,13 +75,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     catch
                     {
                         this.responseType = CimResponseType.NoToAll;
-                        throw;                        
+                        throw;
                     }
                     finally
                     {
                         // unblocking the waiting thread
                         this.OnComplete();
-                    }                    
+                    }
+
                     break;
                 case CimPromptType.Normal:
                     try
@@ -101,39 +100,42 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     catch
                     {
                         this.responseType = CimResponseType.NoToAll;
-                        throw;                        
+                        throw;
                     }
                     finally
                     {
                         // unblocking the waiting thread
                         this.OnComplete();
-                    }                     
+                    }
+
                     break;
                 default:
                     break;
             }
+
             this.OnComplete();
-        }  
+        }
 
         #region members
 
         /// <summary>
-        /// prompt message
+        /// Prompt message.
         /// </summary>
-        public string Message 
-	{
+        public string Message
+        {
             get
             {
                 return message;
             }
         }
+
         private string message;
 
         /// <summary>
-        /// prompt type -Normal or Critical
+        /// Prompt type -Normal or Critical.
         /// </summary>
         private CimPromptType prompt;
 
         #endregion
-    }//End Class
-}//End namespace
+    }
+}

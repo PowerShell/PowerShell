@@ -1,86 +1,35 @@
-﻿Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "Feature" {
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
 
     It "Validates error on a missing path" {
-
-        $foundError = ""
-        try
-        {
-            Import-PowerShellDataFile -Path /SomeMissingDirectory -ErrorAction Stop
-        }
-        catch
-        {
-            $foundError = $_.FullyQualifiedErrorId
-        }
-        
-        $foundError | Should be "PathNotFound,Microsoft.PowerShell.Commands.ResolvePathCommand"
+        { Import-PowerShellDataFile -Path /SomeMissingDirectory -ErrorAction Stop } |
+            Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
     }
 
     It "Validates error on a directory" {
+        { Import-PowerShellDataFile ${TESTDRIVE} -ErrorAction Stop } |
+            Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
 
-        $foundError = ""
-        try
-        {
-            Import-PowerShellDataFile ${TESTDRIVE} -ErrorAction Stop
-        }
-        catch
-        {
-            $foundError = $_.FullyQualifiedErrorId
-        }
-        
-        $foundError | Should be "CouldNotParseAsPowerShellDataFile,Import-PowerShellDataFile"
     }
 
     It "Generates a good error on an insecure file" {
 
-        $path = New-TemporaryFile
-        Set-Content $path '@{ Foo = Get-Process }'
-        
-        $foundError = ""
-        try
-        {
-            Import-PowerShellDataFile $path -ErrorAction Stop
-        }
-        catch
-        {
-            $foundError = $_.FullyQualifiedErrorId
-        }
-        finally
-        {
-            Remove-Item $path
-        }
-        
-        $foundError | Should be "InvalidOperationException,Import-PowerShellDataFile"
+        $path = Setup -f insecure.psd1 -Content '@{ Foo = Get-Process }' -pass
+        { Import-PowerShellDataFile $path -ErrorAction Stop } |
+            Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
     }
 
     It "Generates a good error on a file that isn't a PowerShell Data File (missing the hashtable root)" {
-
-        $path = New-TemporaryFile
-        Set-Content $path '"Hello World"'
-        
-        $foundError = ""
-        try
-        {
-            Import-PowerShellDataFile $path -ErrorAction Stop
-        }
-        catch
-        {
-            $foundError = $_.FullyQualifiedErrorId
-        }
-        finally
-        {
-            Remove-Item $path
-        }
-        
-        $foundError | Should be "CouldNotParseAsPowerShellDataFileNoHashtableRoot,Import-PowerShellDataFile"
+        $path = Setup -f NotAPSDataFile -Content '"Hello World"' -Pass
+        { Import-PowerShellDataFile $path -ErrorAction Stop } |
+            Should -Throw -ErrorId "CouldNotParseAsPowerShellDataFileNoHashtableRoot,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
     }
 
     It "Can parse a PowerShell Data File (detailed tests are in AST.SafeGetValue tests)" {
-
-        $path = New-TemporaryFile
-        Set-Content $path '@{ "Hello" = "World" }'
-        
+        $path = Setup -F gooddatafile -Content '@{ "Hello" = "World" }' -pass
         $result = Import-PowerShellDataFile $path -ErrorAction Stop
-        $result.Hello | Should be "World"
+        $result.Hello | Should -BeExactly "World"
     }
-    
+
 }

@@ -1,4 +1,7 @@
-﻿#region find, install, update, uninstall the PowerShell scripts from an online repository.
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+#region find, install, update, uninstall the PowerShell scripts from an online repository.
 # Value: equivalent of pypi
 
 # List of PowerShellGet commands
@@ -49,7 +52,7 @@ Update-Module
 
 #endregion
 
-#region Using PowerShellGet with tags 
+#region Using PowerShellGet with tags
 
 # Look for all the scripts we'll be demoing today
 Find-Script -Tag 'PowerShellCore_Demo'

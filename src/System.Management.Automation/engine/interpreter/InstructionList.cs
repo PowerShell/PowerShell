@@ -1,11 +1,11 @@
 /* ****************************************************************************
  *
- * Copyright (c) Microsoft Corporation. 
+ * Copyright (c) Microsoft Corporation.
  *
- * This source code is subject to terms and conditions of the Apache License, Version 2.0. A 
- * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Apache License, Version 2.0, please send an email to 
- * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
+ * This source code is subject to terms and conditions of the Apache License, Version 2.0. A
+ * copy of the license can be found in the License.html file at the root of this distribution. If
+ * you cannot locate the Apache License, Version 2.0, please send an email to
+ * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Apache License, Version 2.0.
  *
  * You must not remove this notice, or any other, from this software.
@@ -63,7 +63,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public InstructionList.DebugView.InstructionView[]/*!*/ A0
+            public InstructionList.DebugView.InstructionView[] A0
             {
                 get
                 {
@@ -109,7 +109,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public InstructionView[]/*!*/ A0
+            public InstructionView[] A0
             {
                 get
                 {
@@ -130,7 +130,7 @@ namespace System.Management.Automation.Interpreter
                 int stackDepth = 0;
                 int continuationsDepth = 0;
 
-                var cookieEnumerator = (debugCookies ?? Automation.Utils.EmptyArray<KeyValuePair<int, object>>()).GetEnumerator();
+                var cookieEnumerator = (debugCookies ?? Array.Empty<KeyValuePair<int, object>>()).GetEnumerator();
                 var hasCookie = cookieEnumerator.MoveNext();
 
                 for (int i = 0; i < instructions.Count; i++)
@@ -151,6 +151,7 @@ namespace System.Management.Automation.Interpreter
                     stackDepth += stackDiff;
                     continuationsDepth += contDiff;
                 }
+
                 return result.ToArray();
             }
 
@@ -166,8 +167,8 @@ namespace System.Management.Automation.Interpreter
                 internal string GetName()
                 {
                     return _index +
-                        (_continuationsDepth == 0 ? "" : " C(" + _continuationsDepth + ")") +
-                        (_stackDepth == 0 ? "" : " S(" + _stackDepth + ")");
+                        (_continuationsDepth == 0 ? string.Empty : " C(" + _continuationsDepth + ")") +
+                        (_stackDepth == 0 ? string.Empty : " S(" + _stackDepth + ")");
                 }
 
                 internal string GetValue()
@@ -302,6 +303,7 @@ namespace System.Management.Automation.Interpreter
                     if (!_instances.TryGetValue(name, out dict)) {
                         _instances[name] = dict = new Dictionary<object, bool>();
                     }
+
                     dict[instr] = true;
                 });
             }
@@ -355,7 +357,7 @@ namespace System.Management.Automation.Interpreter
                 return;
             }
 
-            if (type == null || type.GetTypeInfo().IsValueType)
+            if (type == null || type.IsValueType)
             {
                 if (value is bool)
                 {
@@ -372,6 +374,7 @@ namespace System.Management.Automation.Interpreter
                         {
                             s_ints = new Instruction[PushIntMaxCachedValue - PushIntMinCachedValue + 1];
                         }
+
                         i -= PushIntMinCachedValue;
                         Emit(s_ints[i] ?? (s_ints[i] = new LoadObjectInstruction(value)));
                         return;
@@ -625,7 +628,7 @@ namespace System.Management.Automation.Interpreter
             {
                 Emit(new InitializeLocalInstruction.ImmutableValue(index, value));
             }
-            else if (type.GetTypeInfo().IsValueType)
+            else if (type.IsValueType)
             {
                 Emit(new InitializeLocalInstruction.MutableValue(index, type));
             }
@@ -712,8 +715,7 @@ namespace System.Management.Automation.Interpreter
         public void EmitGetArrayItem(Type arrayType)
         {
             var elementType = arrayType.GetElementType();
-            var elementTypeInfo = elementType.GetTypeInfo();
-            if (elementTypeInfo.IsClass || elementTypeInfo.IsInterface)
+            if (elementType.IsClass || elementType.IsInterface)
             {
                 Emit(InstructionFactory<object>.Factory.GetArrayItem());
             }
@@ -726,8 +728,7 @@ namespace System.Management.Automation.Interpreter
         public void EmitSetArrayItem(Type arrayType)
         {
             var elementType = arrayType.GetElementType();
-            var elementTypeInfo = elementType.GetTypeInfo();
-            if (elementTypeInfo.IsClass || elementTypeInfo.IsInterface)
+            if (elementType.IsClass || elementType.IsInterface)
             {
                 Emit(InstructionFactory<object>.Factory.SetArrayItem());
             }
@@ -749,7 +750,28 @@ namespace System.Management.Automation.Interpreter
 
         public void EmitNewArrayInit(Type elementType, int elementCount)
         {
-            Emit(InstructionFactory.GetFactory(elementType).NewArrayInit(elementCount));
+            // To avoid lock contention in InstructionFactory.GetFactory, we special case the most common
+            // types of arrays that the compiler creates.
+            if (elementType == typeof(CommandParameterInternal))
+            {
+                Emit(InstructionFactory<CommandParameterInternal>.Factory.NewArrayInit(elementCount));
+            }
+            else if (elementType == typeof(CommandParameterInternal[]))
+            {
+                Emit(InstructionFactory<CommandParameterInternal[]>.Factory.NewArrayInit(elementCount));
+            }
+            else if (elementType == typeof(object))
+            {
+                Emit(InstructionFactory<object>.Factory.NewArrayInit(elementCount));
+            }
+            else if (elementType == typeof(string))
+            {
+                Emit(InstructionFactory<string>.Factory.NewArrayInit(elementCount));
+            }
+            else
+            {
+                Emit(InstructionFactory.GetFactory(elementType).NewArrayInit(elementCount));
+            }
         }
 
         #endregion
@@ -918,8 +940,10 @@ namespace System.Management.Automation.Interpreter
                     {
                         instruction = new LoadFieldInstruction(field);
                     }
+
                     s_loadFields.Add(field, instruction);
                 }
+
                 return instruction;
             }
         }
@@ -1035,7 +1059,6 @@ namespace System.Management.Automation.Interpreter
             Emit(DynamicInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TRet>.Factory(binder));
         }
 
-
         // *** END GENERATED CODE ***
 
         #endregion
@@ -1070,6 +1093,7 @@ namespace System.Management.Automation.Interpreter
                     s_factories[delegateType] = factory;
                 }
             }
+
             return factory(binder);
         }
 

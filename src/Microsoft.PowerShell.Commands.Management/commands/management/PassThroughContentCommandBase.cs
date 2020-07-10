@@ -1,22 +1,22 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Management.Automation;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// The base class for the */content commands that also take
-    /// a passthrough parameter
+    /// a passthrough parameter.
     /// </summary>
     public class PassThroughContentCommandBase : ContentCommandBase
     {
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the passthrough parameter to the command
+        /// Gets or sets the passthrough parameter to the command.
         /// </summary>
         [Parameter]
         public SwitchParameter PassThru
@@ -24,16 +24,16 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _passThrough;
-            } // get
+            }
 
             set
             {
                 _passThrough = value;
-            } // set
-        } // PassThru
+            }
+        }
 
         /// <summary>
-        /// Determines if the provider for the specified path supports ShouldProcess
+        /// Determines if the provider for the specified path supports ShouldProcess.
         /// </summary>
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess
@@ -62,20 +62,18 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a CmdletProviderContext instance to the current context of
         /// the command.
         /// </summary>
-        /// 
         /// <returns>
         /// A CmdletProviderContext instance initialized to the context of the current
         /// command.
         /// </returns>
-        /// 
         internal CmdletProviderContext GetCurrentContext()
         {
             CmdletProviderContext currentCommandContext = CmdletProviderContext;
             currentCommandContext.PassThru = PassThru;
             return currentCommandContext;
-        } // GetCurrentContext
+        }
 
         #endregion protected members
-    } // PassThroughContentCommandBase
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

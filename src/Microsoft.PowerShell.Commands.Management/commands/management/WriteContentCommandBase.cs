@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -8,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -22,11 +22,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The value of the content to set.
         /// </summary>
-        ///
         /// <value>
         /// This value type is determined by the InvokeProvider.
         /// </value>
-        ///
         [Parameter(Mandatory = true, Position = 1, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [AllowNull]
         [AllowEmptyCollection]
@@ -35,13 +33,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _content;
-            } // get
+            }
 
             set
             {
                 _content = value;
             }
-        } // Value
+        }
 
         #endregion Parameters
 
@@ -57,10 +55,9 @@ namespace Microsoft.PowerShell.Commands
         #region private Data
 
         /// <summary>
-        /// This bool is used to determine if the path 
+        /// This bool is used to determine if the path
         /// parameter was specified on the command line or via the pipeline.
         /// </summary>
-        /// 
         private bool _pipingPaths;
 
         /// <summary>
@@ -77,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Determines if the paths are specified on the command line
-        /// or being piped in
+        /// or being piped in.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -102,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_content == null)
             {
-                _content = new object[0];
+                _content = Array.Empty<object>();
             }
 
             if (_pipingPaths)
@@ -119,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!_contentWritersOpen)
             {
-                // Since the paths are being pipelined in, we have 
+                // Since the paths are being pipelined in, we have
                 // to get new content writers for the new paths
                 string[] paths = GetAcceptedPaths(Path, currentContext);
 
@@ -147,7 +144,6 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (Exception e) // Catch-all OK. 3rd party callout
                         {
-                            CommandsCommon.CheckForSevereException(this, e);
                             ProviderInvocationException providerException =
                                new ProviderInvocationException(
                                    "ProviderContentWriteError",
@@ -189,16 +185,15 @@ namespace Microsoft.PowerShell.Commands
                     contentStreams = new List<ContentHolder>();
                 }
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
-        /// Closes all the content writers
+        /// Closes all the content writers.
         /// </summary>
-        /// 
         protected override void EndProcessing()
         {
             Dispose(true);
-        } // EndProcessing
+        }
 
         #endregion Command code
 
@@ -207,26 +202,22 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This method is called by the base class after getting the content writer
         /// from the provider. If the current position needs to be changed before writing
-        /// the content, this method should be overriden to do that.
+        /// the content, this method should be overridden to do that.
         /// </summary>
-        /// 
         /// <param name="contentHolders">
         /// The content holders that contain the writers to be moved.
         /// </param>
-        /// 
         internal virtual void SeekContentPosition(List<ContentHolder> contentHolders)
         {
-            // default does nothing.  
-        } // SeekContentPosition
+            // default does nothing.
+        }
 
         /// <summary>
-        /// Called by the base class before the streams are open for the path. 
+        /// Called by the base class before the streams are open for the path.
         /// </summary>
-        /// 
         /// <param name="paths">
         /// The path to the items that will be opened for writing content.
         /// </param>
-        /// 
         internal virtual void BeforeOpenStreams(string[] paths)
         {
         }
@@ -236,33 +227,29 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        /// 
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
             {
                 return InvokeProvider.Content.GetContentWriterDynamicParameters(Path[0], context);
             }
+
             return InvokeProvider.Content.GetContentWriterDynamicParameters(".", context);
         }
 
         /// <summary>
         /// Gets the IContentWriters for the current path(s)
         /// </summary>
-        /// 
         /// <returns>
         /// An array of IContentWriters for the current path(s)
         /// </returns>
-        /// 
         internal List<ContentHolder> GetContentWriters(
             string[] writerPaths,
             CmdletProviderContext currentCommandContext)
@@ -331,22 +318,22 @@ namespace Microsoft.PowerShell.Commands
                         results.Add(holder);
                     }
                 }
-            } // foreach pathInfo in pathInfos
+            }
 
             return results;
-        } // GetContentWriters
+        }
 
         /// <summary>
-        /// Gets the list of paths accepted by the user
+        /// Gets the list of paths accepted by the user.
         /// </summary>
-        /// <param name="unfilteredPaths">The list of unfiltered paths</param>
-        /// <param name="currentContext">The current context</param>
-        /// <returns>The list of paths accepted by the user</returns>
+        /// <param name="unfilteredPaths">The list of unfiltered paths.</param>
+        /// <param name="currentContext">The current context.</param>
+        /// <returns>The list of paths accepted by the user.</returns>
         private string[] GetAcceptedPaths(string[] unfilteredPaths, CmdletProviderContext currentContext)
         {
             Collection<PathInfo> pathInfos = ResolvePaths(unfilteredPaths, true, false, currentContext);
 
-            ArrayList paths = new ArrayList();
+            var paths = new List<string>();
 
             foreach (PathInfo pathInfo in pathInfos)
             {
@@ -356,9 +343,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return (string[])paths.ToArray(typeof(String));
+            return paths.ToArray();
         }
 
         #endregion protected members
-    } // WriteContentCommandBase
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

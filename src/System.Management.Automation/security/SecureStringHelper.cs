@@ -1,28 +1,26 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
-using System.IO;
-using System.Security;
-using System.Security.Cryptography;
-using System.Runtime.InteropServices;
 using System.Globalization;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Runtime.InteropServices;
+using System.Security;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// helper class for secure string related functionality
+    /// Helper class for secure string related functionality.
     /// </summary>
-    ///
     internal static class SecureStringHelper
     {
         // Some random hex characters to identify the beginning of a
         // V2-exported SecureString.
-        internal static string SecureStringExportHeader = "76492d1116743f0423413b16050a5345";
+        internal static readonly string SecureStringExportHeader = "76492d1116743f0423413b16050a5345";
 
         /// <summary>
         /// Create a new SecureString based on the specified binary data.
@@ -30,17 +28,14 @@ namespace Microsoft.PowerShell
         /// The binary data must be byte[] version of unicode char[],
         /// otherwise the results are unpredictable.
         /// </summary>
-        ///
-        /// <param name="data"> input data </param>
-        ///
-        /// <returns> a SecureString  </returns>
-        ///
+        /// <param name="data">Input data.</param>
+        /// <returns>A SecureString .</returns>
         private static SecureString New(byte[] data)
         {
             if ((data.Length % 2) != 0)
             {
                 // If the data is not an even length, they supplied an invalid key
-                String error = Serialization.InvalidKey;
+                string error = Serialization.InvalidKey;
                 throw new PSArgumentException(error);
             }
 
@@ -48,7 +43,7 @@ namespace Microsoft.PowerShell
             SecureString ss = new SecureString();
 
             //
-            // each unicode char is 2 bytes. 
+            // each unicode char is 2 bytes.
             //
             int len = data.Length / 2;
 
@@ -68,24 +63,21 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// get the contents of a SecureString as byte[]
+        /// Get the contents of a SecureString as byte[]
         /// </summary>
-        ///
-        /// <param name="s"> input string </param>
-        ///
-        /// <returns> contents of s (char[]) converted to byte[] </returns>
-        ///
+        /// <param name="s">Input string.</param>
+        /// <returns>Contents of s (char[]) converted to byte[].</returns>
         [ArchitectureSensitive]
         internal static byte[] GetData(SecureString s)
         {
             //
-            // each unicode char is 2 bytes. 
+            // each unicode char is 2 bytes.
             //
             byte[] data = new byte[s.Length * 2];
 
             if (s.Length > 0)
             {
-                IntPtr ptr = ClrFacade.SecureStringToCoTaskMemUnicode(s);
+                IntPtr ptr = Marshal.SecureStringToCoTaskMemUnicode(s);
 
                 try
                 {
@@ -107,11 +99,8 @@ namespace Microsoft.PowerShell
         /// method can be changed to use a better encoding
         /// such as base64.
         /// </summary>
-        ///
-        /// <param name="data"> binary data to encode  </param>
-        ///
-        /// <returns> a string representing encoded data </returns>
-        ///
+        /// <param name="data">Binary data to encode.</param>
+        /// <returns>A string representing encoded data.</returns>
         internal static string ByteArrayToString(byte[] data)
         {
             StringBuilder sb = new StringBuilder();
@@ -128,11 +117,8 @@ namespace Microsoft.PowerShell
         /// Convert a string obtained using ByteArrayToString()
         /// back to byte[] format.
         /// </summary>
-        ///
-        /// <param name="s"> encoded input string  </param>
-        ///
-        /// <returns> bin data as byte[] </returns>
-        ///
+        /// <param name="s">Encoded input string.</param>
+        /// <returns>Bin data as byte[].</returns>
         internal static byte[] ByteArrayFromString(string s)
         {
             //
@@ -145,7 +131,7 @@ namespace Microsoft.PowerShell
             {
                 for (int i = 0; i < dataLen; i++)
                 {
-                    data[i] = byte.Parse(s.Substring(2 * i, 2),
+                    data[i] = byte.Parse(s.AsSpan(2 * i, 2),
                                          NumberStyles.AllowHexSpecifier,
                                          System.Globalization.CultureInfo.InvariantCulture);
                 }
@@ -155,29 +141,31 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// return contents of the SecureString after encrypting
-        /// using DPAPI and encoding the encrypted blob as a string
+        /// Return contents of the SecureString after encrypting
+        /// using DPAPI and encoding the encrypted blob as a string.
         /// </summary>
-        ///
-        /// <param name="input"> SecureString to protect </param>
-        ///
-        /// <returns> a string (see summary)  </returns>
-        ///
+        /// <param name="input">SecureString to protect.</param>
+        /// <returns>A string (see summary) .</returns>
         internal static string Protect(SecureString input)
         {
             Utils.CheckSecureStringArg(input, "input");
 
-            string output = "";
+            string output = string.Empty;
             byte[] data = null;
             byte[] protectedData = null;
 
             data = GetData(input);
+#if UNIX
+            // DPAPI doesn't exist on UNIX so we simply use the string as a byte-array
+            protectedData = data;
+#else
             protectedData = ProtectedData.Protect(data, null,
                                                   DataProtectionScope.CurrentUser);
             for (int i = 0; i < data.Length; i++)
             {
                 data[i] = 0;
             }
+#endif
 
             output = ByteArrayToString(protectedData);
 
@@ -190,17 +178,14 @@ namespace Microsoft.PowerShell
         ///
         /// The string must be obtained earlier by a call to Protect()
         /// </summary>
-        ///
-        /// <param name="input"> encrypted string </param>
-        ///
-        /// <returns> SecureString  </returns>
-        ///
+        /// <param name="input">Encrypted string.</param>
+        /// <returns>SecureString .</returns>
         internal static SecureString Unprotect(string input)
         {
             Utils.CheckArgForNullOrEmpty(input, "input");
             if ((input.Length % 2) != 0)
             {
-                throw PSTraceSource.NewArgumentException("input", Serialization.InvalidEncryptedString, input);
+                throw PSTraceSource.NewArgumentException(nameof(input), Serialization.InvalidEncryptedString, input);
             }
 
             byte[] data = null;
@@ -209,27 +194,26 @@ namespace Microsoft.PowerShell
 
             protectedData = ByteArrayFromString(input);
 
+#if UNIX
+            // DPAPI isn't supported in UNIX, so we just translate the byte-array back to a string
+            data = protectedData;
+#else
             data = ProtectedData.Unprotect(protectedData, null,
                                            DataProtectionScope.CurrentUser);
 
+#endif
             s = New(data);
 
             return s;
         }
 
         /// <summary>
-        /// return contents of the SecureString after encrypting
-        /// using the specified key and encoding the encrypted blob as a string
+        /// Return contents of the SecureString after encrypting
+        /// using the specified key and encoding the encrypted blob as a string.
         /// </summary>
-        ///
-        /// <param name="input"> input string to encrypt </param>
-        ///
-        /// <param name="key"> encryption key </param>
-        ///
-        /// <returns> a string (see summary)  </returns>
-        ///
-        /// <remarks>  </remarks>
-        ///
+        /// <param name="input">Input string to encrypt.</param>
+        /// <param name="key">Encryption key.</param>
+        /// <returns>A string (see summary).</returns>
         internal static EncryptionResult Encrypt(SecureString input, SecureString key)
         {
             EncryptionResult output = null;
@@ -253,18 +237,12 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// return contents of the SecureString after encrypting
-        /// using the specified key and encoding the encrypted blob as a string
+        /// Return contents of the SecureString after encrypting
+        /// using the specified key and encoding the encrypted blob as a string.
         /// </summary>
-        ///
-        /// <param name="input"> input string to encrypt </param>
-        ///
-        /// <param name="key"> encryption key </param>
-        ///
-        /// <returns> a string (see summary)  </returns>
-        ///
-        /// <remarks>  </remarks>
-        ///
+        /// <param name="input">Input string to encrypt.</param>
+        /// <param name="key">Encryption key.</param>
+        /// <returns>A string (see summary).</returns>
         internal static EncryptionResult Encrypt(SecureString input, byte[] key)
         {
             return Encrypt(input, key, null);
@@ -326,15 +304,10 @@ namespace Microsoft.PowerShell
         ///
         /// The string must be obtained earlier by a call to Encrypt()
         /// </summary>
-        ///
-        /// <param name="input"> encrypted string </param>
-        ///
-        /// <param name="key"> encryption key </param>
-        ///
-        /// <param name="IV"> encryption initialization vector. If this is set to null, the method uses internally computed strong random number as IV </param>
-        ///
-        /// <returns> SecureString  </returns>
-        ///
+        /// <param name="input">Encrypted string.</param>
+        /// <param name="key">Encryption key.</param>
+        /// <param name="IV">Encryption initialization vector. If this is set to null, the method uses internally computed strong random number as IV.</param>
+        /// <returns>SecureString .</returns>
         internal static SecureString Decrypt(string input, SecureString key, byte[] IV)
         {
             SecureString output = null;
@@ -363,15 +336,10 @@ namespace Microsoft.PowerShell
         ///
         /// The string must be obtained earlier by a call to Encrypt()
         /// </summary>
-        ///
-        /// <param name="input"> encrypted string </param>
-        ///
-        /// <param name="key"> encryption key </param>
-        ///
-        /// <param name="IV"> encryption initialization vector. If this is set to null, the method uses internally computed strong random number as IV </param>
-        ///
-        /// <returns> SecureString  </returns>
-        ///
+        /// <param name="input">Encrypted string.</param>
+        /// <param name="key">Encryption key.</param>
+        /// <param name="IV">Encryption initialization vector. If this is set to null, the method uses internally computed strong random number as IV.</param>
+        /// <returns>SecureString .</returns>
         internal static SecureString Decrypt(string input, byte[] key, byte[] IV)
         {
             Utils.CheckArgForNullOrEmpty(input, "input");
@@ -421,9 +389,8 @@ namespace Microsoft.PowerShell
 
     /// <summary>
     /// Helper class to return encryption results, and the IV used to
-    /// do the encryption
+    /// do the encryption.
     /// </summary>
-    ///
     internal class EncryptionResult
     {
         internal EncryptionResult(string encrypted, string IV)
@@ -433,19 +400,19 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Gets the encrypted data
+        /// Gets the encrypted data.
         /// </summary>
-        internal String EncryptedData { get; }
+        internal string EncryptedData { get; }
 
         /// <summary>
-        /// Gets the IV used to encrypt the data
+        /// Gets the IV used to encrypt the data.
         /// </summary>
-        internal String IV { get; }
+        internal string IV { get; }
     }
 
-#if CORECLR
+#if !UNIX
 
-    // The DPAPIs implemented in this section are temporary workaround. 
+    // The DPAPIs implemented in this section are temporary workaround.
     // CoreCLR team will bring 'ProtectedData' type to Project K eventually.
 
     #region DPAPI
@@ -459,12 +426,14 @@ namespace Microsoft.PowerShell
     internal static class ProtectedData
     {
         /// <summary>
-        /// Protect
+        /// Protect.
         /// </summary>
         public static byte[] Protect(byte[] userData, byte[] optionalEntropy, DataProtectionScope scope)
         {
             if (userData == null)
-                throw new ArgumentNullException("userData");
+            {
+                throw new ArgumentNullException(nameof(userData));
+            }
 
             GCHandle pbDataIn = new GCHandle();
             GCHandle pOptionalEntropy = new GCHandle();
@@ -483,18 +452,20 @@ namespace Microsoft.PowerShell
                     entropy.cbData = (uint)optionalEntropy.Length;
                     entropy.pbData = pOptionalEntropy.AddrOfPinnedObject();
                 }
+
                 uint dwFlags = CAPI.CRYPTPROTECT_UI_FORBIDDEN;
                 if (scope == DataProtectionScope.LocalMachine)
                     dwFlags |= CAPI.CRYPTPROTECT_LOCAL_MACHINE;
                 unsafe
                 {
-                    if (!CAPI.CryptProtectData(new IntPtr(&dataIn),
-                                                String.Empty,
-                                                new IntPtr(&entropy),
-                                                IntPtr.Zero,
-                                                IntPtr.Zero,
-                                                dwFlags,
-                                                new IntPtr(&blob)))
+                    if (!CAPI.CryptProtectData(
+                        pDataIn: new IntPtr(&dataIn),
+                        szDataDescr: string.Empty,
+                        pOptionalEntropy: new IntPtr(&entropy),
+                        pvReserved: IntPtr.Zero,
+                        pPromptStruct: IntPtr.Zero,
+                        dwFlags: dwFlags,
+                        pDataBlob: new IntPtr(&blob)))
                     {
                         int lastWin32Error = Marshal.GetLastWin32Error();
 
@@ -515,7 +486,9 @@ namespace Microsoft.PowerShell
 
                 // In some cases, the API would fail due to OOM but simply return a null pointer.
                 if (blob.pbData == IntPtr.Zero)
+                {
                     throw new OutOfMemoryException();
+                }
 
                 byte[] encryptedData = new byte[(int)blob.cbData];
                 Marshal.Copy(blob.pbData, encryptedData, 0, encryptedData.Length);
@@ -525,9 +498,13 @@ namespace Microsoft.PowerShell
             finally
             {
                 if (pbDataIn.IsAllocated)
+                {
                     pbDataIn.Free();
+                }
                 if (pOptionalEntropy.IsAllocated)
+                {
                     pOptionalEntropy.Free();
+                }
                 if (blob.pbData != IntPtr.Zero)
                 {
                     CAPI.ZeroMemory(blob.pbData, blob.cbData);
@@ -537,12 +514,14 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Unprotect
+        /// Unprotect.
         /// </summary>
         public static byte[] Unprotect(byte[] encryptedData, byte[] optionalEntropy, DataProtectionScope scope)
         {
             if (encryptedData == null)
-                throw new ArgumentNullException("encryptedData");
+            {
+                throw new ArgumentNullException(nameof(encryptedData));
+            }
 
             GCHandle pbDataIn = new GCHandle();
             GCHandle pOptionalEntropy = new GCHandle();
@@ -561,24 +540,33 @@ namespace Microsoft.PowerShell
                     entropy.cbData = (uint)optionalEntropy.Length;
                     entropy.pbData = pOptionalEntropy.AddrOfPinnedObject();
                 }
+
                 uint dwFlags = CAPI.CRYPTPROTECT_UI_FORBIDDEN;
                 if (scope == DataProtectionScope.LocalMachine)
+                {
                     dwFlags |= CAPI.CRYPTPROTECT_LOCAL_MACHINE;
+                }
+
                 unsafe
                 {
-                    if (!CAPI.CryptUnprotectData(new IntPtr(&dataIn),
-                                                 IntPtr.Zero,
-                                                 new IntPtr(&entropy),
-                                                 IntPtr.Zero,
-                                                 IntPtr.Zero,
-                                                 dwFlags,
-                                                 new IntPtr(&userData)))
+                    if (!CAPI.CryptUnprotectData(
+                        pDataIn: new IntPtr(&dataIn),
+                        ppszDataDescr: IntPtr.Zero,
+                        pOptionalEntropy: new IntPtr(&entropy),
+                        pvReserved: IntPtr.Zero,
+                        pPromptStruct: IntPtr.Zero,
+                        dwFlags: dwFlags,
+                        pDataBlob: new IntPtr(&userData)))
+                    {
                         throw new CryptographicException(Marshal.GetLastWin32Error());
+                    }
                 }
 
                 // In some cases, the API would fail due to OOM but simply return a null pointer.
                 if (userData.pbData == IntPtr.Zero)
+                {
                     throw new OutOfMemoryException();
+                }
 
                 byte[] data = new byte[(int)userData.cbData];
                 Marshal.Copy(userData.pbData, data, 0, data.Length);
@@ -588,9 +576,13 @@ namespace Microsoft.PowerShell
             finally
             {
                 if (pbDataIn.IsAllocated)
+                {
                     pbDataIn.Free();
+                }
                 if (pOptionalEntropy.IsAllocated)
+                {
                     pOptionalEntropy.Free();
+                }
                 if (userData.pbData != IntPtr.Zero)
                 {
                     CAPI.ZeroMemory(userData.pbData, userData.cbData);
@@ -623,6 +615,7 @@ namespace Microsoft.PowerShell
         }
 
         [DllImport("CRYPT32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CryptProtectData(
                 [In]     IntPtr pDataIn,
                 [In]     string szDataDescr,
@@ -633,6 +626,7 @@ namespace Microsoft.PowerShell
                 [In, Out] IntPtr pDataBlob);
 
         [DllImport("CRYPT32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CryptUnprotectData(
                 [In]     IntPtr pDataIn,
                 [In]     IntPtr ppszDataDescr,

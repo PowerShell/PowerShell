@@ -1,27 +1,26 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Threading;
 using System.Management.Automation;
-using System.Management.Automation.Runspaces;
 using System.Management.Automation.Remoting.Internal;
+using System.Management.Automation.Runspaces;
+using System.Threading;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This cmdlet takes a Runspace object and checks to see if it is debuggable (i.e, if 
-    /// it is running a script or is currently stopped in the debugger.  If it
-    /// is debuggable then it breaks into the Runspace debugger in step mode.
+    /// This cmdlet takes a Runspace object and checks to see if it is debuggable (i.e, if
+    /// it is running a script or is currently stopped in the debugger.
+    /// If it is debuggable then it breaks into the Runspace debugger in step mode.
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsDiagnostic.Debug, "Runspace", SupportsShouldProcess = true, DefaultParameterSetName = DebugRunspaceCommand.RunspaceParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=403731")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096917")]
     public sealed class DebugRunspaceCommand : PSCmdlet
     {
         #region Strings
@@ -45,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         // Debugging to persist until Ctrl+C or Debugger 'Exit' stops cmdlet.
         private bool _debugging;
         private ManualResetEventSlim _newRunningScriptEvent = new ManualResetEventSlim(true);
-        private RunspaceAvailability _previousRunspaceAvailablity = RunspaceAvailability.None;
+        private RunspaceAvailability _previousRunspaceAvailability = RunspaceAvailability.None;
 
         #endregion
 
@@ -78,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The Id of a Runsapce to be debugged.
+        /// The Id of a Runspace to be debugged.
         /// </summary>
         [Parameter(Position = 0,
                    Mandatory = true,
@@ -100,6 +99,13 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
+
+        /// <summary>
+        /// Gets or sets a flag that tells PowerShell to automatically perform a BreakAll when the debugger is attached to the remote target.
+        /// </summary>
+        [Experimental("Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace", ExperimentAction.Show)]
+        [Parameter]
+        public SwitchParameter BreakAll { get; set; }
 
         #endregion
 
@@ -261,7 +267,7 @@ namespace Microsoft.PowerShell.Commands
                 _debugger.SetDebugMode(DebugModes.LocalScript | DebugModes.RemoteScript);
 
                 // Set up host script debugger to debug the runspace.
-                _debugger.DebugRunspace(_runspace);
+                _debugger.DebugRunspace(_runspace, breakAll: BreakAll);
 
                 while (_debugging)
                 {
@@ -330,7 +336,9 @@ namespace Microsoft.PowerShell.Commands
         {
             // Create new collection objects.
             if (_debugBlockingCollection != null) { _debugBlockingCollection.Dispose(); }
+
             if (_debugAccumulateCollection != null) { _debugAccumulateCollection.Dispose(); }
+
             _debugBlockingCollection = new PSDataCollection<PSStreamObject>();
             _debugBlockingCollection.BlockingEnumerator = true;
             _debugAccumulateCollection = new PSDataCollection<PSStreamObject>();
@@ -342,6 +350,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _runningPowerShell.OutputBuffer.DataAdding += HandlePowerShellOutputBufferDataAdding;
                 }
+
                 if (_runningPowerShell.ErrorBuffer != null)
                 {
                     _runningPowerShell.ErrorBuffer.DataAdding += HandlePowerShellErrorBufferDataAdding;
@@ -356,6 +365,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _runningPipeline.Output.DataReady += HandlePipelineOutputDataReady;
                     }
+
                     if (_runningPipeline.Error != null)
                     {
                         _runningPipeline.Error.DataReady += HandlePipelineErrorDataReady;
@@ -409,8 +419,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            RunspaceAvailability prevAvailability = _previousRunspaceAvailablity;
-            _previousRunspaceAvailablity = e.RunspaceAvailability;
+            RunspaceAvailability prevAvailability = _previousRunspaceAvailability;
+            _previousRunspaceAvailability = e.RunspaceAvailability;
 
             if ((e.RunspaceAvailability == RunspaceAvailability.Available) || (e.RunspaceAvailability == RunspaceAvailability.None))
             {

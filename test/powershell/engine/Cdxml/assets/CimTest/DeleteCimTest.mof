@@ -1,0 +1,5 @@
+#pragma namespace ("\\\\.\\root\\default")
+#pragma deleteclass("PSCore_Test1", NOFAIL)
+#pragma deleteclass("PSCore_Test2", NOFAIL)
+#pragma deleteclass("PSCore_subclass", NOFAIL)
+#pragma deleteclass("PSCore_Association", NOFAIL)

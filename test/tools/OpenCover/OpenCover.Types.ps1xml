@@ -1,0 +1,19 @@
+<Types>
+  <Type>
+    <Name>FileCoverage</Name>
+    <Members>
+      <AliasProperty>
+        <Name>Lines</Name>
+        <ReferencedMemberName>SequencePointCount</ReferencedMemberName>
+      </AliasProperty>
+      <ScriptProperty>
+        <Name>HitCount</Name>
+        <GetScriptBlock>$this.Hit.Count</GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>MissCount</Name>
+        <GetScriptBlock>$this.Miss.Count</GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+</Types>

@@ -1,32 +1,29 @@
-﻿//-----------------------------------------------------------------------
-//     Copyright © Microsoft Corporation.  All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands.ShowCommandExtension
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Management.Automation;
-
     /// <summary>
-    /// Implements a facade around CommandInfo and its deserialized counterpart
+    /// Implements a facade around CommandInfo and its deserialized counterpart.
     /// </summary>
     public class ShowCommandCommandInfo
     {
         /// <summary>
-        /// Creates an instance of the ShowCommandCommandInfo class based on a CommandInfo object
+        /// Creates an instance of the ShowCommandCommandInfo class based on a CommandInfo object.
         /// </summary>
-        /// 
         /// <param name="other">
         /// The object to wrap.
         /// </param>
         public ShowCommandCommandInfo(CommandInfo other)
         {
-            if (null == other)
+            if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             this.Name = other.Name;
@@ -65,17 +62,16 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
-        /// Creates an instance of the ShowCommandCommandInfo class based on a PSObject object
+        /// Creates an instance of the ShowCommandCommandInfo class based on a PSObject object.
         /// </summary>
-        /// 
         /// <param name="other">
         /// The object to wrap.
         /// </param>
         public ShowCommandCommandInfo(PSObject other)
         {
-            if (null == other)
+            if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             this.Name = other.Members["Name"].Value as string;
@@ -104,9 +100,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
-        /// Builds a strongly typed IEnumerable{object} out of an IEnumerable
+        /// Builds a strongly typed IEnumerable{object} out of an IEnumerable.
         /// </summary>
-        /// 
         /// <param name="enumerable">
         /// The object to enumerate.
         /// </param>

@@ -1,11 +1,11 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Management.Automation;
+
 using Microsoft.Management.Infrastructure.Options;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
@@ -27,13 +27,19 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         public string CmdletizationClassName { get; private set; }
+
         public string CmdletizationClassVersion { get; private set; }
+
         public Version CmdletizationModuleVersion { get; private set; }
+
         public bool SupportsShouldProcess { get; private set; }
+
         private readonly IDictionary<string, string> _privateData;
 
         private const string QueryLanguageKey = "QueryDialect";
+
         private bool? _useEnumerateInstancesInsteadOfWql;
+
         public bool UseEnumerateInstancesInsteadOfWql
         {
             get
@@ -48,8 +54,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     {
                         newValue = true;
                     }
+
                     _useEnumerateInstancesInsteadOfWql = newValue;
                 }
+
                 return _useEnumerateInstancesInsteadOfWql.Value;
             }
         }
@@ -106,6 +114,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private Uri _resourceUri;
         private bool _resourceUriHasBeenCalculated;
+
         public Uri ResourceUri
         {
             get
@@ -123,6 +132,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
                     _resourceUriHasBeenCalculated = true;
                 }
+
                 return _resourceUri;
             }
         }
@@ -133,6 +143,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         private CimOperationFlags? _schemaConformanceLevel;
+
         public CimOperationFlags SchemaConformanceLevel
         {
             get
@@ -165,6 +176,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
                     _schemaConformanceLevel = newSchemaConformanceLevel;
                 }
+
                 return _schemaConformanceLevel.Value;
             }
         }

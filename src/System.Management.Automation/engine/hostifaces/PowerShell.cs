@@ -1,25 +1,25 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
-using System.Threading;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;
-using System.Diagnostics.CodeAnalysis; // for fxcop.
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Diagnostics;
-using Microsoft.Management.Infrastructure;
+using System.Runtime.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 
-#if CORECLR
-// Use stub for SerializableAttribute, NoSerializedAttribute, SystemException, ThreadAbortException and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
+using Microsoft.Management.Infrastructure;
+using Microsoft.PowerShell.Telemetry;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
@@ -28,7 +28,7 @@ namespace System.Management.Automation
     #region Exceptions
 
     /// <summary>
-    /// Defines exception which is thrown when state of the PowerShell is different 
+    /// Defines exception which is thrown when state of the PowerShell is different
     /// from the expected state.
     /// </summary>
     [Serializable]
@@ -58,7 +58,7 @@ namespace System.Management.Automation
         /// Creates a new instance of InvalidPowershellStateException class.
         /// </summary>
         /// <param name="message">
-        /// The error message that explains the reason for the exception. 
+        /// The error message that explains the reason for the exception.
         /// </param>
         /// <param name="innerException">
         /// The exception that is the cause of the current exception.
@@ -69,10 +69,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the InvalidPowerShellStateException and defines value of 
+        /// Initializes a new instance of the InvalidPowerShellStateException and defines value of
         /// CurrentState.
         /// </summary>
-        /// <param name="currentState">Current state of powershell</param>
+        /// <param name="currentState">Current state of powershell.</param>
         internal InvalidPowerShellStateException(PSInvocationState currentState)
         : base
         (StringUtil.Format(PowerShellStrings.InvalidPowerShellStateGeneral))
@@ -90,11 +90,11 @@ namespace System.Management.Automation
         /// class with serialized data.
         /// </summary>
         /// <param name="info">
-        /// The <see cref="SerializationInfo"/> that holds the serialized object 
+        /// The <see cref="SerializationInfo"/> that holds the serialized object
         /// data about the exception being thrown.
         /// </param>
         /// <param name="context">
-        /// The <see cref="StreamingContext"/> that contains contextual information 
+        /// The <see cref="StreamingContext"/> that contains contextual information
         /// about the source or destination.
         /// </param>
         protected
@@ -106,7 +106,7 @@ namespace System.Management.Automation
         #endregion
 
         /// <summary>
-        /// Gets CurrentState of the powershell
+        /// Gets CurrentState of the powershell.
         /// </summary>
         public PSInvocationState CurrentState
         {
@@ -128,16 +128,16 @@ namespace System.Management.Automation
     #region PSInvocationState, PSInvocationStateInfo, PSInvocationStateChangedEventArgs
 
     /// <summary>
-    /// Enumerated type defining the state of the PowerShell
+    /// Enumerated type defining the state of the PowerShell.
     /// </summary>
     public enum PSInvocationState
     {
         /// <summary>
-        /// PowerShell has not been started
+        /// PowerShell has not been started.
         /// </summary>
         NotStarted = 0,
         /// <summary>
-        /// PowerShell is executing
+        /// PowerShell is executing.
         /// </summary>
         Running = 1,
         /// <summary>
@@ -163,24 +163,24 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Enumerated type defining runspace modes for nested pipeline
+    /// Enumerated type defining runspace modes for nested pipeline.
     /// </summary>
     public enum RunspaceMode
     {
         /// <summary>
-        /// Use current runspace from the current thread of execution
+        /// Use current runspace from the current thread of execution.
         /// </summary>
         CurrentRunspace = 0,
 
         /// <summary>
-        /// Create new runspace
+        /// Create new runspace.
         /// </summary>
         NewRunspace = 1
     }
 
     /// <summary>
-    /// Type which has information about InvocationState and Exception 
-    /// associated with InvocationState
+    /// Type which has information about InvocationState and Exception
+    /// associated with InvocationState.
     /// </summary>
     public sealed class PSInvocationStateInfo
     {
@@ -190,7 +190,7 @@ namespace System.Management.Automation
         /// Constructor for state changes with an optional error.
         /// </summary>
         /// <param name="state">The new state.</param>
-        /// <param name="reason">A non-null exception if the state change was 
+        /// <param name="reason">A non-null exception if the state change was
         /// caused by an error,otherwise; null.
         /// </param>
         internal PSInvocationStateInfo(PSInvocationState state, Exception reason)
@@ -200,7 +200,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Construct from PipelineStateInfo
+        /// Construct from PipelineStateInfo.
         /// </summary>
         /// <param name="pipelineStateInfo"></param>
         internal PSInvocationStateInfo(PipelineStateInfo pipelineStateInfo)
@@ -230,8 +230,8 @@ namespace System.Management.Automation
         /// The reason for the state change, if caused by an error.
         /// </summary>
         /// <remarks>
-        /// The value of this property is non-null if the state 
-        /// changed due to an error. Otherwise, the value of this 
+        /// The value of this property is non-null if the state
+        /// changed due to an error. Otherwise, the value of this
         /// property is null.
         /// </remarks>
         public Exception Reason
@@ -261,7 +261,7 @@ namespace System.Management.Automation
         #region Private data
 
         /// <summary>
-        /// The current execution state
+        /// The current execution state.
         /// </summary>
         private PSInvocationState _executionState;
 
@@ -282,7 +282,7 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Constructs PSInvocationStateChangedEventArgs from PSInvocationStateInfo
+        /// Constructs PSInvocationStateChangedEventArgs from PSInvocationStateInfo.
         /// </summary>
         /// <param name="psStateInfo">
         /// state to raise the event with.
@@ -330,9 +330,7 @@ namespace System.Management.Automation
         /// </summary>
         public PSInvocationSettings()
         {
-#if !CORECLR // No ApartmentState In CoreCLR
             this.ApartmentState = ApartmentState.Unknown;
-#endif
             _host = null;
             RemoteStreamOptions = 0;
             AddToHistory = false;
@@ -341,13 +339,11 @@ namespace System.Management.Automation
 
         #endregion
 
-#if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
         /// ApartmentState of the thread in which the command
         /// is executed.
         /// </summary>
         public ApartmentState ApartmentState { get; set; }
-#endif
 
         /// <summary>
         /// Host to use with the Runspace when the command is
@@ -359,29 +355,31 @@ namespace System.Management.Automation
             {
                 return _host;
             }
+
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Host");
                 }
+
                 _host = value;
             }
         }
 
         /// <summary>
-        /// Options for the Error, Warning, Verbose and Debug streams during remote calls
+        /// Options for the Error, Warning, Verbose and Debug streams during remote calls.
         /// </summary>
         public RemoteStreamOptions RemoteStreamOptions { get; set; }
 
         /// <summary>
-        /// Boolean which tells if the command is added to the history of the 
+        /// Boolean which tells if the command is added to the history of the
         /// Runspace the command is executing in. By default this is false.
         /// </summary>
         public bool AddToHistory { get; set; }
 
         /// <summary>
-        /// Determines how errors should be handled during batch command execution
+        /// Determines how errors should be handled during batch command execution.
         /// </summary>
         public ActionPreference? ErrorActionPreference { get; set; }
 
@@ -390,7 +388,7 @@ namespace System.Management.Automation
         /// Pipeline Execution Thread.
         /// </summary>
         /// <remarks>
-        /// Scenario: In the IIS hosting model, the calling thread is impersonated with a different 
+        /// Scenario: In the IIS hosting model, the calling thread is impersonated with a different
         /// identity than the process identity. However Pipeline Execution Thread always inherits
         /// process's identity and this will create problems related to security. In the IIS hosting
         /// model, we should honor calling threads identity.
@@ -400,7 +398,7 @@ namespace System.Management.Automation
         internal System.Security.Principal.WindowsIdentity WindowsIdentityToImpersonate { get; set; }
 
         /// <summary>
-        /// When true, allows an unhandled flow control exceptions to 
+        /// When true, allows an unhandled flow control exceptions to
         /// propagate to a caller invoking the PowerShell object.
         /// </summary>
         public bool ExposeFlowControlExceptions
@@ -410,21 +408,21 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Invokes a remote command and immediately disconnects, if the transport 
+        /// Invokes a remote command and immediately disconnects, if the transport
         /// layer supports this operation.
         /// </summary>
         internal bool InvokeAndDisconnect { get; set; }
     }
 
     /// <summary>
-    /// Batch execution context
+    /// Batch execution context.
     /// </summary>
     internal class BatchInvocationContext
     {
         private AutoResetEvent _completionEvent;
 
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         /// <param name="command"></param>
         /// <param name="output"></param>
@@ -436,17 +434,17 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Invocation output
+        /// Invocation output.
         /// </summary>
         internal PSDataCollection<PSObject> Output { get; }
 
         /// <summary>
-        /// Command to invoke
+        /// Command to invoke.
         /// </summary>
         internal PSCommand Command { get; }
 
         /// <summary>
-        /// Waits for the completion event
+        /// Waits for the completion event.
         /// </summary>
         internal void Wait()
         {
@@ -454,7 +452,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Signals the completion event
+        /// Signals the completion event.
         /// </summary>
         internal void Signal()
         {
@@ -463,34 +461,34 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// These flags control whether InvocationInfo is added to items in the Error, Warning, Verbose and Debug 
-    /// streams during remote calls
+    /// These flags control whether InvocationInfo is added to items in the Error, Warning, Verbose and Debug
+    /// streams during remote calls.
     /// </summary>
     [Flags]
     public enum RemoteStreamOptions
     {
         /// <summary>
-        /// If this flag is set, ErrorRecord will include an instance of InvocationInfo on remote calls
+        /// If this flag is set, ErrorRecord will include an instance of InvocationInfo on remote calls.
         /// </summary>
         AddInvocationInfoToErrorRecord = 0x01,
 
         /// <summary>
-        /// If this flag is set, WarningRecord will include an instance of InvocationInfo on remote calls
+        /// If this flag is set, WarningRecord will include an instance of InvocationInfo on remote calls.
         /// </summary>
         AddInvocationInfoToWarningRecord = 0x02,
 
         /// <summary>
-        /// If this flag is set, DebugRecord will include an instance of InvocationInfo on remote calls
+        /// If this flag is set, DebugRecord will include an instance of InvocationInfo on remote calls.
         /// </summary>
         AddInvocationInfoToDebugRecord = 0x04,
 
         /// <summary>
-        /// If this flag is set, VerboseRecord will include an instance of InvocationInfo on remote calls
+        /// If this flag is set, VerboseRecord will include an instance of InvocationInfo on remote calls.
         /// </summary>
         AddInvocationInfoToVerboseRecord = 0x08,
 
         /// <summary>
-        /// If this flag is set, ErrorRecord, WarningRecord, DebugRecord, and VerboseRecord will include an instance of InvocationInfo on remote calls
+        /// If this flag is set, ErrorRecord, WarningRecord, DebugRecord, and VerboseRecord will include an instance of InvocationInfo on remote calls.
         /// </summary>
         AddInvocationInfo = AddInvocationInfoToErrorRecord
                           | AddInvocationInfoToWarningRecord
@@ -511,13 +509,13 @@ namespace System.Management.Automation
         // a BeginStop operation.
 
         /// <summary>
-        /// true if AsyncResult monitors Async BeginInvoke().
-        /// false otherwise
+        /// True if AsyncResult monitors Async BeginInvoke().
+        /// false otherwise.
         /// </summary>
         internal bool IsAssociatedWithAsyncInvoke { get; }
 
         /// <summary>
-        /// The output buffer for the asynchronous invoke
+        /// The output buffer for the asynchronous invoke.
         /// </summary>
         internal PSDataCollection<PSObject> Output { get; }
 
@@ -526,10 +524,10 @@ namespace System.Management.Automation
         #region Constructor
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="ownerId">
-        /// Instace Id of the Powershell object creating this instance
+        /// Instance Id of the Powershell object creating this instance
         /// </param>
         /// <param name="callback">
         /// Callback to call when the async operation completes.
@@ -562,16 +560,16 @@ namespace System.Management.Automation
     /// Runspace(Pool) if provided, otherwise execute using a default
     /// Runspace. Provides access to different result buffers
     /// like output, error, debug, verbose, progress, warning, and information.
-    /// 
+    ///
     /// Provides a simple interface to execute a powershell command:
     /// <code>
-    ///    Powershell.Create("get-process").Invoke();
+    ///    Powershell.Create().AddScript("get-process").Invoke();
     /// </code>
-    /// The above statetement creates a local runspace using default
+    /// The above statement creates a local runspace using default
     /// configuration, executes the command and then closes the runspace.
-    /// 
+    ///
     /// Using RunspacePool property, the caller can provide the runspace
-    /// where the command / script is executed. 
+    /// where the command / script is executed.
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces", Justification = "PowerShell is a valid type in SMAR namespace.")]
     public sealed class PowerShell : IDisposable
@@ -601,12 +599,16 @@ namespace System.Management.Automation
         private bool _isBatching = false;
         private bool _stopBatchExecution = false;
 
+        // Delegates for asynchronous invocation/termination of PowerShell commands
+        private readonly Func<IAsyncResult, PSDataCollection<PSObject>> _endInvokeMethod;
+        private readonly Action<IAsyncResult> _endStopMethod;
+
         #endregion
 
         #region Internal Constructors
 
         /// <summary>
-        /// Constructs PowerShell
+        /// Constructs PowerShell.
         /// </summary>
         /// <param name="command">
         /// A PSCommand.
@@ -616,7 +618,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="rsConnection">
         /// A Runspace or RunspacePool to refer while invoking the command.
-        /// This can be null in which case a new runspace is created 
+        /// This can be null in which case a new runspace is created
         /// whenever Invoke* method is called.
         /// </param>
         private PowerShell(PSCommand command, Collection<PSCommand> extraCommands, object rsConnection)
@@ -636,10 +638,13 @@ namespace System.Management.Automation
             ErrorBufferOwner = true;
             InformationalBuffers = new PSInformationalBuffers(InstanceId);
             Streams = new PSDataStreams(this);
+            _endInvokeMethod = EndInvoke;
+            _endStopMethod = EndStop;
+            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.PowerShellCreate, "create");
         }
 
         /// <summary>
-        /// Constructs a PowerShell instance in the disconnected start state with 
+        /// Constructs a PowerShell instance in the disconnected start state with
         /// the provided remote command connect information and runspace(pool) objects.
         /// </summary>
         /// <param name="connectCmdInfo">Remote command connect information.</param>
@@ -666,12 +671,12 @@ namespace System.Management.Automation
             {
                 _runspacePool = (RunspacePool)rsConnection;
             }
+
             Dbg.Assert(_runspacePool != null, "Invalid rsConnection parameter>");
             RemotePowerShell = new ClientRemotePowerShell(this, _runspacePool.RemoteRunspacePoolInternal);
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="inputstream"></param>
         /// <param name="outputstream"></param>
@@ -698,6 +703,9 @@ namespace System.Management.Automation
             {
                 RemotePowerShell = new ClientRemotePowerShell(this, runspacePool.RemoteRunspacePoolInternal);
             }
+
+            _endInvokeMethod = EndInvoke;
+            _endStopMethod = EndStop;
         }
 
         /// <summary>
@@ -731,11 +739,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the command collection in this powershell
+        /// Sets the command collection in this powershell.
         /// </summary>
         /// <remarks>This method will be called by RemotePipeline
         /// before it begins execution. This method is used to set
-        /// the command collection of the remote pipeline as the 
+        /// the command collection of the remote pipeline as the
         /// command collection of the underlying powershell</remarks>
         internal void InitForRemotePipeline(CommandCollection command, ObjectStreamBase inputstream,
             ObjectStreamBase outputstream, ObjectStreamBase errorstream, PSInvocationSettings settings, bool redirectShellErrorOutputPipe)
@@ -812,7 +820,7 @@ namespace System.Management.Automation
         #region Construction Factory
 
         /// <summary>
-        /// Constructs an empty PowerShell instance; a script or command must be added before invoking this instance
+        /// Constructs an empty PowerShell instance; a script or command must be added before invoking this instance.
         /// </summary>
         /// <returns>
         /// An instance of PowerShell.
@@ -823,9 +831,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs an empty PowerShell instance; a script or command must be added before invoking this instance
+        /// Constructs an empty PowerShell instance; a script or command must be added before invoking this instance.
         /// </summary>
-        /// <param name="runspace">runspace mode</param>
+        /// <param name="runspace">Runspace mode.</param>
         /// <returns>An instance of PowerShell.</returns>
         public static PowerShell Create(RunspaceMode runspace)
         {
@@ -838,6 +846,7 @@ namespace System.Management.Automation
                     {
                         throw new InvalidOperationException(PowerShellStrings.NoDefaultRunspaceForPSCreate);
                     }
+
                     result = new PowerShell(new PSCommand(), null, Runspace.DefaultRunspace);
                     result.IsChild = true;
                     result.IsNested = true;
@@ -853,9 +862,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs an empty PowerShell instance; a script or command must be added before invoking this instance
+        /// Constructs an empty PowerShell instance; a script or command must be added before invoking this instance.
         /// </summary>
-        /// <param name="initialSessionState">InitialSessionState with which to create the runspace</param>
+        /// <param name="initialSessionState">InitialSessionState with which to create the runspace.</param>
         /// <returns>An instance of PowerShell.</returns>
         public static PowerShell Create(InitialSessionState initialSessionState)
         {
@@ -868,26 +877,52 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Constructs an empty PowerShell instance and associates it with the provided
+        /// Runspace; a script or command must be added before invoking this instance.
+        /// </summary>
+        /// <param name="runspace">Runspace in which to invoke commands.</param>
+        /// <returns>An instance of PowerShell.</returns>
+        /// <remarks>
+        /// The required Runspace argument is accepted no matter what state it is in.
+        /// Leaving Runspace state management to the caller allows them to open their
+        /// runspace in whatever manner is most appropriate for their application
+        /// (in another thread while this instance of the PowerShell class is being
+        /// instantiated, for example).
+        /// </remarks>
+        public static PowerShell Create(Runspace runspace)
+        {
+            if (runspace == null)
+            {
+                throw new PSArgumentNullException(nameof(runspace));
+            }
+
+            PowerShell result = Create();
+            result.Runspace = runspace;
+
+            return result;
+        }
+
+        /// <summary>
         /// Creates a nested powershell within the current instance.
         /// Nested PowerShell is used to do simple operations like checking state
         /// of a variable while another command is using the runspace.
-        /// 
+        ///
         /// Nested PowerShell should be invoked from the same thread as the parent
-        /// PowerShell invocation thread. So effectively the parent Powershell 
-        /// invocation thread is blocked until nested invoke() operation is 
+        /// PowerShell invocation thread. So effectively the parent Powershell
+        /// invocation thread is blocked until nested invoke() operation is
         /// complete.
-        /// 
+        ///
         /// Implement PSHost.EnterNestedPrompt to perform invoke() operation on the
         /// nested powershell.
         /// </summary>
         /// <exception cref="InvalidOperationException">
-        /// 1. State of powershell instance is not valid to create a nested powershell instance. 
+        /// 1. State of powershell instance is not valid to create a nested powershell instance.
         /// Nested PowerShell should be created only for a running powershell instance.
         /// </exception>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "ps", Justification = "ps represents PowerShell and is used at many places.")]
         public PowerShell CreateNestedPowerShell()
         {
-            if ((null != _worker) && (null != _worker.CurrentlyRunningPipeline))
+            if ((_worker != null) && (_worker.CurrentlyRunningPipeline != null))
             {
                 PowerShell result = new PowerShell(new PSCommand(),
                     null, _worker.CurrentlyRunningPipeline.Runspace);
@@ -899,11 +934,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Method needed when deserializing PowerShell object coming from a RemoteDataObject
+        /// Method needed when deserializing PowerShell object coming from a RemoteDataObject.
         /// </summary>
-        /// <param name="isNested">Indicates if PowerShell object is nested</param>
-        /// <param name="psCommand">Commands that the PowerShell pipeline is built of</param>
-        /// <param name="extraCommands">Extra commands to run</param>
+        /// <param name="isNested">Indicates if PowerShell object is nested.</param>
+        /// <param name="psCommand">Commands that the PowerShell pipeline is built of.</param>
+        /// <param name="extraCommands">Extra commands to run.</param>
         private static PowerShell Create(bool isNested, PSCommand psCommand, Collection<PSCommand> extraCommands)
         {
             PowerShell powerShell = new PowerShell(psCommand, extraCommands, null);
@@ -935,7 +970,7 @@ namespace System.Management.Automation
         /// cmdlet is null.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -976,7 +1011,7 @@ namespace System.Management.Automation
         /// cmdlet is null.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1015,7 +1050,7 @@ namespace System.Management.Automation
         /// command is null.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1057,7 +1092,7 @@ namespace System.Management.Automation
         /// command is null.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1092,7 +1127,7 @@ namespace System.Management.Automation
         /// command is null.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1113,7 +1148,7 @@ namespace System.Management.Automation
         /// <summary>
         /// CommandInfo object for the command to add.
         /// </summary>
-        /// <param name="commandInfo">The CommandInfo object for the command to add</param>
+        /// <param name="commandInfo">The CommandInfo object for the command to add.</param>
         /// <returns>
         /// A PSCommand instance with the command added.
         /// </returns>
@@ -1124,7 +1159,7 @@ namespace System.Management.Automation
         /// command is null.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1134,13 +1169,13 @@ namespace System.Management.Automation
         {
             if (commandInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
             }
+
             Command cmd = new Command(commandInfo);
             _psCommand.AddCommand(cmd);
             return this;
         }
-
 
         /// <summary>
         /// Add a parameter to the last added command.
@@ -1157,7 +1192,7 @@ namespace System.Management.Automation
         /// Value for the parameter.
         /// </param>
         /// <returns>
-        /// A PowerShell instance with <paramref name="parameterName"/> added 
+        /// A PowerShell instance with <paramref name="parameterName"/> added
         /// to the parameter list of the last command.
         /// </returns>
         /// <remarks>
@@ -1167,7 +1202,7 @@ namespace System.Management.Automation
         /// Name is non null and name length is zero after trimming whitespace.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1200,7 +1235,7 @@ namespace System.Management.Automation
         /// Name of the parameter.
         /// </param>
         /// <returns>
-        /// A PowerShell instance with <paramref name="parameterName"/> added 
+        /// A PowerShell instance with <paramref name="parameterName"/> added
         /// to the parameter list of the last command.
         /// </returns>
         /// <remarks>
@@ -1210,7 +1245,7 @@ namespace System.Management.Automation
         /// Name is non null and name length is zero after trimming whitespace.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1235,10 +1270,10 @@ namespace System.Management.Automation
         /// Adds a set of parameters to the last added command.
         /// </summary>
         /// <param name="parameters">
-        /// List of parameters. 
+        /// List of parameters.
         /// </param>
         /// <returns>
-        /// A PowerShell instance with the items in <paramref name="parameters"/> added 
+        /// A PowerShell instance with the items in <paramref name="parameters"/> added
         /// to the parameter list of the last command.
         /// </returns>
         /// <remarks>
@@ -1248,7 +1283,7 @@ namespace System.Management.Automation
         /// The function was given a null argument.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         public PowerShell AddParameters(IList parameters)
@@ -1257,7 +1292,7 @@ namespace System.Management.Automation
             {
                 if (parameters == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("parameters");
+                    throw PSTraceSource.NewArgumentNullException(nameof(parameters));
                 }
 
                 if (_psCommand.Commands.Count == 0)
@@ -1283,7 +1318,7 @@ namespace System.Management.Automation
         /// Dictionary of parameters. Each key-value pair corresponds to a parameter name and its value. Keys must strings.
         /// </param>
         /// <returns>
-        /// A PowerShell instance with the items in <paramref name="parameters"/> added 
+        /// A PowerShell instance with the items in <paramref name="parameters"/> added
         /// to the parameter list of the last command.
         /// </returns>
         /// <remarks>
@@ -1293,7 +1328,7 @@ namespace System.Management.Automation
         /// The function was given a null argument.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="PSArgumentException">
@@ -1305,7 +1340,7 @@ namespace System.Management.Automation
             {
                 if (parameters == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("parameters");
+                    throw PSTraceSource.NewArgumentNullException(nameof(parameters));
                 }
 
                 if (_psCommand.Commands.Count == 0)
@@ -1321,7 +1356,7 @@ namespace System.Management.Automation
 
                     if (parameterName == null)
                     {
-                        throw PSTraceSource.NewArgumentException("parameters", PowerShellStrings.KeyMustBeString);
+                        throw PSTraceSource.NewArgumentException(nameof(parameters), PowerShellStrings.KeyMustBeString);
                     }
 
                     _psCommand.AddParameter(parameterName, entry.Value);
@@ -1338,7 +1373,6 @@ namespace System.Management.Automation
         ///         PowerShell shell = PowerShell.Create("get-process").
         ///                                     AddCommand("select-object").AddParameter("name");
         ///     </code>
-        /// 
         /// This will add the value "name" to the positional parameter list of "select-object"
         /// cmdlet. When the command is invoked, this value will get bound to positional parameter 0
         /// of the "select-object" cmdlet which is "Property".
@@ -1347,7 +1381,7 @@ namespace System.Management.Automation
         /// Value for the parameter.
         /// </param>
         /// <returns>
-        /// A PSCommand instance parameter value <paramref name="value"/> added 
+        /// A PSCommand instance parameter value <paramref name="value"/> added
         /// to the parameter list of the last command.
         /// </returns>
         /// <remarks>
@@ -1370,12 +1404,12 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Adds an additional statement for execution
-        /// 
+        ///
         /// For example,
         ///     <code>
         ///         Runspace rs = RunspaceFactory.CreateRunspace();
         ///         PowerShell ps = PowerShell.Create();
-        /// 
+        ///
         ///         ps.Runspace = rs;
         ///         ps.AddCommand("Get-Process").AddArgument("idle");
         ///         ps.AddStatement().AddCommand("Get-Service").AddArgument("audiosrv");
@@ -1383,7 +1417,7 @@ namespace System.Management.Automation
         ///     </code>
         /// </summary>
         /// <returns>
-        /// A PowerShell instance with the items in <paramref name="parameters"/> added 
+        /// A PowerShell instance with the items in <paramref name="parameters"/> added
         /// to the parameter list of the last command.
         /// </returns>
         public PowerShell AddStatement()
@@ -1416,7 +1450,7 @@ namespace System.Management.Automation
         /// Cannot set to a null value.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1431,10 +1465,11 @@ namespace System.Management.Automation
 
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Command");
                 }
+
                 lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1445,19 +1480,19 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Streams generated by PowerShell invocations
+        /// Streams generated by PowerShell invocations.
         /// </summary>
         public PSDataStreams Streams { get; }
 
         /// <summary>
-        /// Gets or sets the error buffer. Powershell invocation writes 
+        /// Gets or sets the error buffer. Powershell invocation writes
         /// the error data into this buffer.
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// Cannot set to a null value.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1473,10 +1508,11 @@ namespace System.Management.Automation
 
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Error");
                 }
+
                 lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1487,11 +1523,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the progress buffer. Powershell invocation writes 
+        /// Gets or sets the progress buffer. Powershell invocation writes
         /// the progress data into this buffer. Can be null.
         /// </summary>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1507,10 +1543,11 @@ namespace System.Management.Automation
 
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Progress");
                 }
+
                 lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1520,11 +1557,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the verbose buffer. Powershell invocation writes 
+        /// Gets or sets the verbose buffer. Powershell invocation writes
         /// the verbose data into this buffer.  Can be null.
         /// </summary>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1540,10 +1577,11 @@ namespace System.Management.Automation
 
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Verbose");
                 }
+
                 lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1553,11 +1591,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the debug buffer. Powershell invocation writes 
+        /// Gets or sets the debug buffer. Powershell invocation writes
         /// the debug data into this buffer.  Can be null.
         /// </summary>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1573,10 +1611,11 @@ namespace System.Management.Automation
 
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Debug");
                 }
+
                 lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1586,14 +1625,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the warning buffer. Powershell invocation writes 
+        /// Gets or sets the warning buffer. Powershell invocation writes
         /// the warning data into this buffer. Can be null.
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// Cannot set to a null value.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1609,10 +1648,11 @@ namespace System.Management.Automation
 
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Warning");
                 }
+
                 lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1622,14 +1662,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the information buffer. Powershell invocation writes 
+        /// Gets or sets the information buffer. Powershell invocation writes
         /// the information data into this buffer. Can be null.
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// Cannot set to a null value.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1645,10 +1685,11 @@ namespace System.Management.Automation
 
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Information");
                 }
+
                 lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
@@ -1658,21 +1699,21 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the informational buffers
+        /// Gets the informational buffers.
         /// </summary>
         internal PSInformationalBuffers InformationalBuffers { get; }
 
         /// <summary>
-        /// If this flag is true, the commands in this Pipeline will redirect 
+        /// If this flag is true, the commands in this Pipeline will redirect
         /// the global error output pipe to the command's error output pipe.
-        /// 
-        /// (see the comment in Pipeline.RedirectShellErrorOutputPipe for an 
+        ///
+        /// (see the comment in Pipeline.RedirectShellErrorOutputPipe for an
         /// explanation of why this flag is needed)
         /// </summary>
         internal bool RedirectShellErrorOutputPipe { get; set; } = true;
 
         /// <summary>
-        /// Get unqiue id for this instance of runspace pool. It is primarily used 
+        /// Get unique id for this instance of runspace pool. It is primarily used
         /// for logging purposes.
         /// </summary>
         public Guid InstanceId { get; private set; }
@@ -1691,11 +1732,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the property which indicates if this PowerShell instance
         /// is a child instance.
-        /// 
+        ///
         /// IsChild flag makes it possible for the pipeline to differentiate between
         /// a true v1 nested pipeline and the cmdlets calling cmdlets case. See bug
         /// 211462.
-        /// 
         /// </summary>
         internal bool IsChild { get; private set; } = false;
 
@@ -1710,7 +1750,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Access to the EndInvoke AysncResult object.  Used by remote
+        /// Access to the EndInvoke AsyncResult object.  Used by remote
         /// debugging to invoke debugger commands on command thread.
         /// </summary>
         internal AsyncResult EndInvokeAsyncResult
@@ -1720,7 +1760,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Event rasied when PowerShell Execution State Changes.
+        /// Event raised when PowerShell Execution State Changes.
         /// </summary>
         public event EventHandler<PSInvocationStateChangedEventArgs> InvocationStateChanged;
 
@@ -1736,14 +1776,14 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Sets an associated Runspace for this PowerShell instance.
-        /// This can be null in which case a new runspace is created 
+        /// This can be null in which case a new runspace is created
         /// whenever Invoke* method is called.
         /// </summary>
         /// <remarks>
         /// This property and RunspacePool are mutually exclusive; setting one of them resets the other to null
         /// </remarks>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1789,7 +1829,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Internal method to set the Runspace property
+        /// Internal method to set the Runspace property.
         /// </summary>
         private void SetRunspace(Runspace runspace, bool owner)
         {
@@ -1808,6 +1848,7 @@ namespace System.Management.Automation
                     RemotePowerShell.Clear();
                     RemotePowerShell.Dispose();
                 }
+
                 RemotePowerShell = new ClientRemotePowerShell(this, remoteRunspace.RunspacePool.RemoteRunspacePoolInternal);
             }
 
@@ -1822,15 +1863,15 @@ namespace System.Management.Automation
         /// Sets an associated RunspacePool for this PowerShell instance.
         /// A Runspace from this pool is used whenever Invoke* method
         /// is called.
-        /// 
-        /// This can be null in which case a new runspace is created 
+        ///
+        /// This can be null in which case a new runspace is created
         /// whenever Invoke* method is called.
         /// </summary>
         /// <remarks>
         /// This property and Runspace are mutually exclusive; setting one of them resets the other to null
         /// </remarks>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1869,9 +1910,11 @@ namespace System.Management.Automation
                                 RemotePowerShell.Clear();
                                 RemotePowerShell.Dispose();
                             }
+
                             RemotePowerShell = new
                                 ClientRemotePowerShell(this, _runspacePool.RemoteRunspacePoolInternal);
                         }
+
                         _runspace = null;
                     }
                 }
@@ -1947,7 +1990,7 @@ namespace System.Management.Automation
         /// <param name="output">The output buffer to return from EndInvoke.</param>
         /// <param name="invocationCallback">An AsyncCallback to be called once the previous invocation has completed.</param>
         /// <param name="state">A user supplied state to call the <paramref name="invocationCallback"/> with.</param>
-        /// <returns>IAsyncResult</returns>
+        /// <returns>IAsyncResult.</returns>
         public IAsyncResult ConnectAsync(
             PSDataCollection<PSObject> output,
             AsyncCallback invocationCallback,
@@ -1989,6 +2032,7 @@ namespace System.Management.Automation
                         OutputBuffer = new PSDataCollection<PSObject>();
                         OutputBufferOwner = true;
                     }
+
                     streamToUse = OutputBuffer;
 
                     ObjectStreamBase outputStream = new PSDataCollectionStream<PSObject>(InstanceId, streamToUse);
@@ -2003,7 +2047,7 @@ namespace System.Management.Automation
             }
             else
             {
-                // If this is not a reconstruct scenario then this must be a PowerShell object that was 
+                // If this is not a reconstruct scenario then this must be a PowerShell object that was
                 // previously disconnected, and all state should be valid.
                 Dbg.Assert((_invokeAsyncResult != null && RemotePowerShell.Initialized),
                             "AsyncResult and RemotePowerShell objects must be valid here.");
@@ -2062,6 +2106,7 @@ namespace System.Management.Automation
                 {
                     throw poolException.ToInvalidRunspaceStateException();
                 }
+
                 throw;
             }
 
@@ -2108,19 +2153,19 @@ namespace System.Management.Automation
         #region Script Debugger Support
 
         /// <summary>
-        /// This method allows the script debugger first crack at evaluating the 
+        /// This method allows the script debugger first crack at evaluating the
         /// command in case it is a debugger command, otherwise the command is
         /// evaluated by PowerShell.
         /// If the debugger evaluated a command then DebuggerCommand.ResumeAction
         /// value will be set appropriately.
         /// </summary>
-        /// <param name="input">Input</param>
-        /// <param name="output">Output collection</param>
-        /// <param name="settings">PS invocation settings</param>
+        /// <param name="input">Input.</param>
+        /// <param name="output">Output collection.</param>
+        /// <param name="settings">PS invocation settings.</param>
         /// <param name="invokeMustRun">True if PowerShell Invoke must run regardless
         /// of whether debugger handles the command.
         /// </param>
-        /// <returns>DebuggerCommandResults</returns>
+        /// <returns>DebuggerCommandResults.</returns>
         internal void InvokeWithDebugger(
             IEnumerable<object> input,
             IList<PSObject> output,
@@ -2163,12 +2208,12 @@ namespace System.Management.Automation
                     Commands.Commands[0].CommandText);
             }
 
-            // Remote PowerShell Invoke must always run Invoke so that the 
+            // Remote PowerShell Invoke must always run Invoke so that the
             // command can complete.
             if (Commands.Commands.Count == 0 &&
                 invokeMustRun)
             {
-                Commands.Commands.AddScript("");
+                Commands.Commands.AddScript(string.Empty);
             }
 
             if (Commands.Commands.Count > 0)
@@ -2179,8 +2224,10 @@ namespace System.Management.Automation
                     {
                         settings = new PSInvocationSettings();
                     }
+
                     settings.AddToHistory = true;
                 }
+
                 Invoke<PSObject>(input, output, settings);
             }
         }
@@ -2200,7 +2247,7 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// Cannot perform the operation because the command is 
+        /// Cannot perform the operation because the command is
         /// already started.Stop the command and try the operation again.
         /// (or)
         /// No commands are specified.
@@ -2212,10 +2259,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2250,7 +2294,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Invoke the <see cref="Command"/> synchronously and return
-        /// the output PSObject collection. 
+        /// the output PSObject collection.
         /// </summary>
         /// <param name="input">
         /// Input to the command
@@ -2262,7 +2306,7 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// Cannot perform the operation because the command is 
+        /// Cannot perform the operation because the command is
         /// already started.Stop the command and try the operation again.
         /// (or)
         /// No commands are specified.
@@ -2274,10 +2318,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2327,7 +2368,7 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// Cannot perform the operation because the command is 
+        /// Cannot perform the operation because the command is
         /// already started.Stop the command and try the operation again.
         /// (or)
         /// No commands are specified.
@@ -2339,10 +2380,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2380,7 +2418,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Invoke the <see cref="Command"/> synchronously and return
-        /// the output. 
+        /// the output.
         /// </summary>
         /// <typeparam name="T">
         /// Type of output object(s) expected from the command invocation.
@@ -2389,7 +2427,7 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// Cannot perform the operation because the command is 
+        /// Cannot perform the operation because the command is
         /// already started.Stop the command and try the operation again.
         /// (or)
         /// No commands are specified.
@@ -2401,10 +2439,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2434,7 +2469,7 @@ namespace System.Management.Automation
         /// </exception>
         public Collection<T> Invoke<T>()
         {
-            // We should bind all the results to this instance except 
+            // We should bind all the results to this instance except
             // for output.
             Collection<T> result = new Collection<T>();
             Invoke<T>(null, result, null);
@@ -2455,7 +2490,7 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// Cannot perform the operation because the command is 
+        /// Cannot perform the operation because the command is
         /// already started.Stop the command and try the operation again.
         /// (or)
         /// No commands are specified.
@@ -2467,10 +2502,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2522,7 +2554,7 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// Cannot perform the operation because the command is 
+        /// Cannot perform the operation because the command is
         /// already started.Stop the command and try the operation again.
         /// (or)
         /// No commands are specified.
@@ -2534,10 +2566,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2592,7 +2621,7 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// Cannot perform the operation because the command is 
+        /// Cannot perform the operation because the command is
         /// already started.Stop the command and try the operation again.
         /// (or)
         /// No commands are specified.
@@ -2604,10 +2633,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2640,7 +2666,6 @@ namespace System.Management.Automation
             Invoke<T>(input, output, null);
         }
 
-
         /// <summary>
         /// Invoke the <see cref="Command"/> synchronously and collect
         /// output data into the buffer <paramref name="output"/>
@@ -2670,10 +2695,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2703,9 +2725,9 @@ namespace System.Management.Automation
         /// </exception>
         public void Invoke<T>(IEnumerable input, IList<T> output, PSInvocationSettings settings)
         {
-            if (null == output)
+            if (output == null)
             {
-                throw PSTraceSource.NewArgumentNullException("output");
+                throw PSTraceSource.NewArgumentNullException(nameof(output));
             }
             // use the above collection as the data store.
             PSDataCollection<T> listToWriteTo = new PSDataCollection<T>(output);
@@ -2744,10 +2766,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -2777,10 +2796,11 @@ namespace System.Management.Automation
         /// </exception>
         public void Invoke<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
-            if (null == output)
+            if (output == null)
             {
-                throw PSTraceSource.NewArgumentNullException("output");
+                throw PSTraceSource.NewArgumentNullException(nameof(output));
             }
+
             CoreInvoke<TInput, TOutput>(input, output, settings);
         }
 
@@ -2803,21 +2823,21 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Invoke the <see cref="Command"/> asynchronously. 
+        /// Invoke the <see cref="Command"/> asynchronously.
         /// Use EndInvoke() to obtain the output of the command.
         /// </summary>
         /// <remarks>
         /// When invoked using BeginInvoke, invocation doesn't
-        /// finish until Input is closed. Caller of BeginInvoke must 
+        /// finish until Input is closed. Caller of BeginInvoke must
         /// close the input buffer after all input has been written to
-        /// input buffer. Input buffer is closed by calling 
+        /// input buffer. Input buffer is closed by calling
         /// Close() method.
-        /// 
+        ///
         /// If you want this command to execute as a standalone cmdlet
         /// (that is, using command-line parameters only),
-        /// be sure to call Close() before calling BeginInvoke().  Otherwise, 
-        /// the command will be executed as though it had external input.  
-        /// If you observe that the command isn't doing anything, 
+        /// be sure to call Close() before calling BeginInvoke().  Otherwise,
+        /// the command will be executed as though it had external input.
+        /// If you observe that the command isn't doing anything,
         /// this may be the reason.
         /// </remarks>
         /// <typeparam name="T">
@@ -2846,16 +2866,16 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// When invoked using BeginInvoke, invocation doesn't
-        /// finish until Input is closed. Caller of BeginInvoke must 
+        /// finish until Input is closed. Caller of BeginInvoke must
         /// close the input buffer after all input has been written to
-        /// input buffer. Input buffer is closed by calling 
+        /// input buffer. Input buffer is closed by calling
         /// Close() method.
-        /// 
+        ///
         /// If you want this command to execute as a standalone cmdlet
         /// (that is, using command-line parameters only),
-        /// be sure to call Close() before calling BeginInvoke().  Otherwise, 
-        /// the command will be executed as though it had external input.  
-        /// If you observe that the command isn't doing anything, 
+        /// be sure to call Close() before calling BeginInvoke().  Otherwise,
+        /// the command will be executed as though it had external input.
+        /// If you observe that the command isn't doing anything,
         /// this may be the reason.
         /// </remarks>
         /// <typeparam name="T">
@@ -2869,6 +2889,9 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="callback">
         /// An AsyncCallback to call once the BeginInvoke completes.
+        /// Note: when using this API in script, don't pass in a delegate that is cast from a script block.
+        /// The callback could be invoked from a thread without a default Runspace and a delegate cast from
+        /// a script block would fail in that case.
         /// </param>
         /// <param name="state">
         /// A user supplied state to call the <paramref name="callback"/>
@@ -2916,16 +2939,16 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// When invoked using BeginInvoke, invocation doesn't
-        /// finish until Input is closed. Caller of BeginInvoke must 
+        /// finish until Input is closed. Caller of BeginInvoke must
         /// close the input buffer after all input has been written to
-        /// input buffer. Input buffer is closed by calling 
+        /// input buffer. Input buffer is closed by calling
         /// Close() method.
-        /// 
+        ///
         /// If you want this command to execute as a standalone cmdlet
         /// (that is, using command-line parameters only),
-        /// be sure to call Close() before calling BeginInvoke().  Otherwise, 
-        /// the command will be executed as though it had external input.  
-        /// If you observe that the command isn't doing anything, 
+        /// be sure to call Close() before calling BeginInvoke().  Otherwise,
+        /// the command will be executed as though it had external input.
+        /// If you observe that the command isn't doing anything,
         /// this may be the reason.
         /// </remarks>
         /// <typeparam name="TInput">
@@ -2939,7 +2962,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="output">
         /// A buffer supplied by the user where output is collected.
-        /// </param>        
+        /// </param>
         /// <exception cref="InvalidOperationException">
         /// Cannot perform the operation because the command is already started.
         /// Stop the command and try the operation again.
@@ -2961,16 +2984,16 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// When invoked using BeginInvoke, invocation doesn't
-        /// finish until Input is closed. Caller of BeginInvoke must 
+        /// finish until Input is closed. Caller of BeginInvoke must
         /// close the input buffer after all input has been written to
-        /// input buffer. Input buffer is closed by calling 
+        /// input buffer. Input buffer is closed by calling
         /// Close() method.
-        /// 
+        ///
         /// If you want this command to execute as a standalone cmdlet
         /// (that is, using command-line parameters only),
-        /// be sure to call Close() before calling BeginInvoke().  Otherwise, 
-        /// the command will be executed as though it had external input.  
-        /// If you observe that the command isn't doing anything, 
+        /// be sure to call Close() before calling BeginInvoke().  Otherwise,
+        /// the command will be executed as though it had external input.
+        /// If you observe that the command isn't doing anything,
         /// this may be the reason.
         /// </remarks>
         /// <typeparam name="TInput">
@@ -2990,6 +3013,9 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="callback">
         /// An AsyncCallback to call once the BeginInvoke completes.
+        /// Note: when using this API in script, don't pass in a delegate that is cast from a script block.
+        /// The callback could be invoked from a thread without a default Runspace and a delegate cast from
+        /// a script block would fail in that case.
         /// </param>
         /// <param name="state">
         /// A user supplied state to call the <paramref name="callback"/>
@@ -3006,9 +3032,9 @@ namespace System.Management.Automation
         /// </exception>
         public IAsyncResult BeginInvoke<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, AsyncCallback callback, object state)
         {
-            if (null == output)
+            if (output == null)
             {
-                throw PSTraceSource.NewArgumentNullException("output");
+                throw PSTraceSource.NewArgumentNullException(nameof(output));
             }
 
             DetermineIsBatching();
@@ -3022,7 +3048,231 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Begins a batch execution
+        /// Invoke a PowerShell command asynchronously.
+        /// Use await to wait for the command to complete and obtain the output of the command.
+        /// </summary>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Cannot perform the operation because the command is already started.
+        /// Stop the command and try the operation again.
+        /// (or)
+        /// No command is added.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// Object is disposed.
+        /// </exception>
+        public Task<PSDataCollection<PSObject>> InvokeAsync()
+            => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke(), _endInvokeMethod);
+
+        /// <summary>
+        /// Invoke a PowerShell command asynchronously.
+        /// Use await to wait for the command to complete and obtain the output of the command.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When invoked using InvokeAsync, invocation doesn't
+        /// finish until Input is closed. Caller of InvokeAsync must
+        /// close the input buffer after all input has been written to
+        /// input buffer. Input buffer is closed by calling
+        /// Close() method.
+        /// </para><para>
+        /// If you want this command to execute as a standalone cmdlet
+        /// (that is, using command-line parameters only),
+        /// be sure to call Close() before calling InvokeAsync().  Otherwise,
+        /// the command will be executed as though it had external input.
+        /// If you observe that the command isn't doing anything,
+        /// this may be the reason.
+        /// </para>
+        /// </remarks>
+        /// <typeparam name="T">
+        /// Type of the input buffer.
+        /// </typeparam>
+        /// <param name="input">
+        /// Input to the command. See remarks for more details.
+        /// </param>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Cannot perform the operation because the command is already started.
+        /// Stop the command and try the operation again.
+        /// (or)
+        /// No command is added.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// Object is disposed.
+        /// </exception>
+        public Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input)
+            => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input), _endInvokeMethod);
+
+        /// <summary>
+        /// Invoke a PowerShell command asynchronously.
+        /// Use await to wait for the command to complete and obtain the output of the command.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When invoked using InvokeAsync, invocation doesn't
+        /// finish until Input is closed. Caller of InvokeAsync must
+        /// close the input buffer after all input has been written to
+        /// input buffer. Input buffer is closed by calling
+        /// Close() method.
+        /// </para><para>
+        /// If you want this command to execute as a standalone cmdlet
+        /// (that is, using command-line parameters only),
+        /// be sure to call Close() before calling InvokeAsync().  Otherwise,
+        /// the command will be executed as though it had external input.
+        /// If you observe that the command isn't doing anything,
+        /// this may be the reason.
+        /// </para>
+        /// </remarks>
+        /// <typeparam name="T">
+        /// Type of the input buffer.
+        /// </typeparam>
+        /// <param name="input">
+        /// Input to the command. See remarks for more details.
+        /// </param>
+        /// <param name="settings">
+        /// Invocation Settings.
+        /// </param>
+        /// <param name="callback">
+        /// An AsyncCallback to call once the command is invoked.
+        /// Note: when using this API in script, don't pass in a delegate that is cast from a script block.
+        /// The callback could be invoked from a thread without a default Runspace and a delegate cast from
+        /// a script block would fail in that case.
+        /// </param>
+        /// <param name="state">
+        /// A user supplied state to call the <paramref name="callback"/>
+        /// with.
+        /// </param>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Cannot perform the operation because the command is already started.
+        /// Stop the command and try the operation again.
+        /// (or)
+        /// No command is added.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// Object is disposed.
+        /// </exception>
+        public Task<PSDataCollection<PSObject>> InvokeAsync<T>(PSDataCollection<T> input, PSInvocationSettings settings, AsyncCallback callback, object state)
+            => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<T>(input, settings, callback, state), _endInvokeMethod);
+
+        /// <summary>
+        /// Invoke a PowerShell command asynchronously.
+        /// Use await to wait for the command to complete and obtain the output of the command.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When invoked using InvokeAsync, invocation doesn't
+        /// finish until Input is closed. Caller of InvokeAsync must
+        /// close the input buffer after all input has been written to
+        /// input buffer. Input buffer is closed by calling
+        /// Close() method.
+        /// </para><para>
+        /// If you want this command to execute as a standalone cmdlet
+        /// (that is, using command-line parameters only),
+        /// be sure to call Close() before calling InvokeAsync().  Otherwise,
+        /// the command will be executed as though it had external input.
+        /// If you observe that the command isn't doing anything,
+        /// this may be the reason.
+        /// </para>
+        /// </remarks>
+        /// <typeparam name="TInput">
+        /// Type of input object(s) for the command invocation.
+        /// </typeparam>
+        /// <typeparam name="TOutput">
+        /// Type of output object(s) expected from the command invocation.
+        /// </typeparam>
+        /// <param name="input">
+        /// Input to the command. See remarks for more details.
+        /// </param>
+        /// <param name="output">
+        /// A buffer supplied by the user where output is collected.
+        /// </param>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke,
+        /// or null if the caller provided their own buffer.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Cannot perform the operation because the command is already started.
+        /// Stop the command and try the operation again.
+        /// (or)
+        /// No command is added.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// Object is disposed.
+        /// </exception>
+        public Task<PSDataCollection<PSObject>> InvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output)
+            => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output), _endInvokeMethod);
+
+        /// <summary>
+        /// Invoke a PowerShell command asynchronously and collect
+        /// output data into the buffer <paramref name="output"/>.
+        /// Use await to wait for the command to complete and obtain the output of the command.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When invoked using InvokeAsync, invocation doesn't
+        /// finish until Input is closed. Caller of InvokeAsync must
+        /// close the input buffer after all input has been written to
+        /// input buffer. Input buffer is closed by calling
+        /// Close() method.
+        /// </para><para>
+        /// If you want this command to execute as a standalone cmdlet
+        /// (that is, using command-line parameters only),
+        /// be sure to call Close() before calling InvokeAsync().  Otherwise,
+        /// the command will be executed as though it had external input.
+        /// If you observe that the command isn't doing anything,
+        /// this may be the reason.
+        /// </para>
+        /// </remarks>
+        /// <typeparam name="TInput">
+        /// Type of input object(s) for the command invocation.
+        /// </typeparam>
+        /// <typeparam name="TOutput">
+        /// Type of output object(s) expected from the command invocation.
+        /// </typeparam>
+        /// <param name="input">
+        /// Input to the command. See remarks for more details.
+        /// </param>
+        /// <param name="output">
+        /// A buffer supplied by the user where output is collected.
+        /// </param>
+        /// <param name="settings">
+        /// Invocation Settings.
+        /// </param>
+        /// <param name="callback">
+        /// An AsyncCallback to call once the command is invoked.
+        /// Note: when using this API in script, don't pass in a delegate that is cast from a script block.
+        /// The callback could be invoked from a thread without a default Runspace and a delegate cast from
+        /// a script block would fail in that case.
+        /// </param>
+        /// <param name="state">
+        /// A user supplied state to call the <paramref name="callback"/>
+        /// with.
+        /// </param>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke,
+        /// or null if the caller provided their own buffer.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Cannot perform the operation because the command is already started.
+        /// Stop the command and try the operation again.
+        /// (or)
+        /// No command is added.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// Object is disposed.
+        /// </exception>
+        public Task<PSDataCollection<PSObject>> InvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, AsyncCallback callback, object state)
+            => Task<PSDataCollection<PSObject>>.Factory.FromAsync(BeginInvoke<TInput, TOutput>(input, output, settings, callback, state), _endInvokeMethod);
+
+        /// <summary>
+        /// Begins a batch execution.
         /// </summary>
         /// <typeparam name="TInput">
         /// Type of input object(s) for the command invocation.
@@ -3070,7 +3320,7 @@ namespace System.Management.Automation
             }
 
             RunspacePool pool = _rsConnection as RunspacePool;
-            if ((null != pool) && (pool.IsRemote))
+            if ((pool != null) && (pool.IsRemote))
             {
                 // Server supports batch invocation, in this case, we just send everything to the server and return immediately
                 if (ServerSupportsBatchInvocation())
@@ -3102,9 +3352,8 @@ namespace System.Management.Automation
             return _batchAsyncResult;
         }
 
-
         /// <summary>
-        /// Batch invocation callback
+        /// Batch invocation callback.
         /// </summary>
         /// <param name="state"></param>
         private void BatchInvocationWorkItem(object state)
@@ -3142,12 +3391,10 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     SetHadErrors(true);
 
                     // Stop if necessarily
-                    if ((null != _batchInvocationSettings) && _batchInvocationSettings.ErrorActionPreference == ActionPreference.Stop)
+                    if ((_batchInvocationSettings != null) && _batchInvocationSettings.ErrorActionPreference == ActionPreference.Stop)
                     {
                         _stopBatchExecution = true;
                         AppendExceptionToErrorStream(e);
@@ -3196,7 +3443,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Batch invocation callback
+        /// Batch invocation callback.
         /// </summary>
         /// <param name="result"></param>
         private void BatchInvocationCallback(IAsyncResult result)
@@ -3226,7 +3473,6 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 RunningExtraCommands = false;
-                CommandProcessorBase.CheckForSevereException(e);
 
                 SetHadErrors(true);
 
@@ -3275,7 +3521,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Executes remaining batch commands
+        /// Executes remaining batch commands.
         /// </summary>
         private void DoRemainingBatchCommands(PSDataCollection<PSObject> objs)
         {
@@ -3291,7 +3537,7 @@ namespace System.Management.Automation
                     BatchInvocationContext context = new BatchInvocationContext(ExtraCommands[i], objs);
 
                     // Queue a batch work item here.
-                    // Calling CoreInvokeAsync / CoreInvoke here directly doesn't work and causes the thread to hang.
+                    // Calling CoreInvokeAsync / CoreInvoke here directly doesn't work and causes the thread to not respond.
                     ThreadPool.QueueUserWorkItem(new WaitCallback(BatchInvocationWorkItem), context);
                     context.Wait();
                 }
@@ -3299,7 +3545,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
         /// </summary>
         private void DetermineIsBatching()
         {
@@ -3316,7 +3561,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Prepare for async batch execution
+        /// Prepare for async batch execution.
         /// </summary>
         private void SetupAsyncBatchExecution()
         {
@@ -3352,7 +3597,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Ends an async batch execution
+        /// Ends an async batch execution.
         /// </summary>
         private void EndAsyncBatchExecution()
         {
@@ -3362,7 +3607,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Appends an exception to the error stream
+        /// Appends an exception to the error stream.
         /// </summary>
         /// <param name="e"></param>
         private void AppendExceptionToErrorStream(Exception e)
@@ -3381,7 +3626,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Waits for the pending asynchronous BeginInvoke to complete. 
+        /// Waits for the pending asynchronous BeginInvoke to complete.
         /// </summary>
         /// <param name="asyncResult">
         /// Instance of IAsyncResult returned by BeginInvoke.
@@ -3402,18 +3647,18 @@ namespace System.Management.Automation
             {
                 _commandInvokedSynchronously = true;
 
-                if (null == asyncResult)
+                if (asyncResult == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("asyncResult");
+                    throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
                 }
 
                 PowerShellAsyncResult psAsyncResult = asyncResult as PowerShellAsyncResult;
 
-                if ((null == psAsyncResult) ||
+                if ((psAsyncResult == null) ||
                     (psAsyncResult.OwnerId != InstanceId) ||
                     (psAsyncResult.IsAssociatedWithAsyncInvoke != true))
                 {
-                    throw PSTraceSource.NewArgumentException("asyncResult",
+                    throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                         PowerShellStrings.AsyncResultNotOwned, "IAsyncResult", "BeginInvoke");
                 }
 
@@ -3421,13 +3666,8 @@ namespace System.Management.Automation
                 psAsyncResult.EndInvoke();
                 EndInvokeAsyncResult = null;
 
-                if (OutputBufferOwner)
-                {
-                    // PowerShell no longer owns the output buffer when it is passed back to the caller.
-                    OutputBufferOwner = false;
-                    OutputBuffer = null;
-                }
-
+                // PowerShell no longer owns the output buffer when it is passed back to the caller.
+                ResetOutputBufferAsNeeded();
                 return psAsyncResult.Output;
             }
             catch (InvalidRunspacePoolStateException exception)
@@ -3437,6 +3677,7 @@ namespace System.Management.Automation
                 {
                     throw exception.ToInvalidRunspaceStateException();
                 }
+
                 throw;
             }
         }
@@ -3458,6 +3699,9 @@ namespace System.Management.Automation
                 IAsyncResult asyncResult = CoreStop(true, null, null);
                 // This is a sync call..Wait for the stop operation to complete.
                 asyncResult.AsyncWaitHandle.WaitOne();
+
+                // PowerShell no longer owns the output buffer when the pipeline is stopped by caller.
+                ResetOutputBufferAsNeeded();
             }
             catch (ObjectDisposedException)
             {
@@ -3469,12 +3713,15 @@ namespace System.Management.Automation
         /// Stop the currently running command asynchronously. If the command is not started,
         /// the state of PowerShell instance is changed to Stopped and corresponding events
         /// will be raised.
-        /// 
-        /// The returned IAsyncResult object can be used to wait for the stop operation 
+        ///
+        /// The returned IAsyncResult object can be used to wait for the stop operation
         /// to complete.
         /// </summary>
         /// <param name="callback">
         /// A AsyncCallback to call once the BeginStop completes.
+        /// Note: when using this API in script, don't pass in a delegate that is cast from a script block.
+        /// The callback could be invoked from a thread without a default Runspace and a delegate cast from
+        /// a script block would fail in that case.
         /// </param>
         /// <param name="state">
         /// A user supplied state to call the <paramref name="callback"/>
@@ -3489,7 +3736,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Waits for the pending asynchronous BeginStop to complete. 
+        /// Waits for the pending asynchronous BeginStop to complete.
         /// </summary>
         /// <param name="asyncResult">
         /// Instance of IAsyncResult returned by BeginStop.
@@ -3503,23 +3750,56 @@ namespace System.Management.Automation
         /// </exception>
         public void EndStop(IAsyncResult asyncResult)
         {
-            if (null == asyncResult)
+            if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             PowerShellAsyncResult psAsyncResult = asyncResult as PowerShellAsyncResult;
 
-            if ((null == psAsyncResult) ||
+            if ((psAsyncResult == null) ||
                 (psAsyncResult.OwnerId != InstanceId) ||
-                (psAsyncResult.IsAssociatedWithAsyncInvoke != false))
+                (psAsyncResult.IsAssociatedWithAsyncInvoke))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                     PowerShellStrings.AsyncResultNotOwned, "IAsyncResult", "BeginStop");
             }
 
             psAsyncResult.EndInvoke();
+
+            // PowerShell no longer owns the output buffer when the pipeline is stopped by caller.
+            ResetOutputBufferAsNeeded();
         }
+
+        /// <summary>
+        /// Stop a PowerShell command asynchronously.
+        /// Use await to wait for the command to stop.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// If the command is not started, the state of the PowerShell instance
+        /// is changed to Stopped and corresponding events will be raised.
+        /// </para>
+        /// </remarks>
+        /// <param name="callback">
+        /// An AsyncCallback to call once the command is invoked.
+        /// Note: when using this API in script, don't pass in a delegate that is cast from a script block.
+        /// The callback could be invoked from a thread without a default Runspace and a delegate cast from
+        /// a script block would fail in that case.
+        /// </param>
+        /// <param name="state">
+        /// A user supplied state to call the <paramref name="callback"/>
+        /// with.
+        /// </param>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke,
+        /// or null if the caller provided their own buffer.
+        /// </returns>
+        /// <exception cref="ObjectDisposedException">
+        /// Object is disposed.
+        /// </exception>
+        public Task StopAsync(AsyncCallback callback, object state)
+            => Task.Factory.FromAsync(BeginStop(callback, state), _endStopMethod);
 
         #endregion
 
@@ -3563,7 +3843,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Indicates if this PowerShell object is the owner of the
-        /// runspace or RunspacePool assigned to this object
+        /// runspace or RunspacePool assigned to this object.
         /// </summary>
         public bool IsRunspaceOwner { get; internal set; } = false;
 
@@ -3572,39 +3852,28 @@ namespace System.Management.Automation
         internal bool OutputBufferOwner { get; set; } = true;
 
         /// <summary>
-        /// OutputBuffer
+        /// OutputBuffer.
         /// </summary>
         internal PSDataCollection<PSObject> OutputBuffer { get; private set; }
 
         /// <summary>
-        /// This has been added as a work around for Windows8 bug 803461.
-        /// It should be used only for the PSJobProxy API.
-        /// 
-        /// Resets the instance ID of the command to a new guid.
-        /// If this is not done, then there is a race condition on the server
-        /// in the following circumstances:
-        /// 
-        ///   ps.BeginInvoke(...);
-        ///   ps.Stop()
-        ///   ps.Commands.Clear();
-        ///   ps.AddCommand("Foo");
-        ///   ps.Invoke();
-        ///   
-        /// In these conditions, stop returns before the server is done cleaning up.
-        /// The subsequent invoke will cause an error because the guid already
-        /// identifies a command in progress.
+        /// Reset the output buffer to null if it's owned by the current powershell instance.
         /// </summary>
-        internal void GenerateNewInstanceId()
+        private void ResetOutputBufferAsNeeded()
         {
-            InstanceId = Guid.NewGuid();
+            if (OutputBufferOwner)
+            {
+                OutputBufferOwner = false;
+                OutputBuffer = null;
+            }
         }
 
         /// <summary>
         /// Get a steppable pipeline object.
         /// </summary>
-        /// <returns>A steppable pipeline object</returns>
+        /// <returns>A steppable pipeline object.</returns>
         /// <exception cref="InvalidOperationException">An attempt was made to use the scriptblock outside of the engine.</exception>
-        internal SteppablePipeline GetSteppablePipeline()
+        public SteppablePipeline GetSteppablePipeline()
         {
             ExecutionContext context = GetContextFromTLS();
             SteppablePipeline spl = GetSteppablePipeline(context, CommandOrigin.Internal);
@@ -3646,11 +3915,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the steppable pipeline from the powershell object
+        /// Gets the steppable pipeline from the powershell object.
         /// </summary>
-        /// <param name="context">engine execution context</param>
-        /// <param name="commandOrigin">command origin</param>
-        /// <returns>steppable pipeline object</returns>
+        /// <param name="context">Engine execution context.</param>
+        /// <param name="commandOrigin">Command origin.</param>
+        /// <returns>Steppable pipeline object.</returns>
         private SteppablePipeline GetSteppablePipeline(ExecutionContext context, CommandOrigin commandOrigin)
         {
             // Check for an empty pipeline
@@ -3670,9 +3939,8 @@ namespace System.Management.Automation
                             cmd.CreateCommandProcessor
                             (
                                 Runspace.DefaultRunspace.ExecutionContext,
-                                ((LocalRunspace)Runspace.DefaultRunspace).CommandFactory,
                                 false,
-                                IsNested == true ? CommandOrigin.Internal : CommandOrigin.Runspace
+                                IsNested ? CommandOrigin.Internal : CommandOrigin.Runspace
                             );
 
                     commandProcessorBase.RedirectShellErrorOutputPipe = RedirectShellErrorOutputPipe;
@@ -3688,7 +3956,6 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 failed = true;
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new RuntimeException(PipelineStrings.CannotCreatePipeline, e);
             }
             finally
@@ -3705,7 +3972,7 @@ namespace System.Management.Automation
         internal bool IsGetCommandMetadataSpecialPipeline { get; set; }
 
         /// <summary>
-        /// Checks if the command is running
+        /// Checks if the command is running.
         /// </summary>
         /// <returns></returns>
         private bool IsCommandRunning()
@@ -3767,7 +4034,7 @@ namespace System.Management.Automation
         /// If changes are not allowed, throws an exception.
         /// </summary>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -3801,7 +4068,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Release all the resources. 
+        /// Release all the resources.
         /// </summary>
         /// <param name="disposing">
         /// if true, release all the managed objects.
@@ -3857,13 +4124,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Clear the internal elements
+        /// Clear the internal elements.
         /// </summary>
         private void InternalClearSuppressExceptions()
         {
             lock (_syncObject)
             {
-                if (null != _worker)
+                if (_worker != null)
                 {
                     _worker.InternalClearSuppressExceptions();
                 }
@@ -3904,7 +4171,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the state of this powershell instance.
         /// </summary>
-        /// <param name="stateInfo">the state info to set</param>
+        /// <param name="stateInfo">The state info to set.</param>
         internal void SetStateChanged(PSInvocationStateInfo stateInfo)
         {
             PSInvocationStateInfo copyStateInfo = stateInfo;
@@ -3933,13 +4200,14 @@ namespace System.Management.Automation
                     case PSInvocationState.Failed:
                     case PSInvocationState.Stopped:
                         // if the current state is already completed..then no need to process state
-                        // change requests. This will happen if another thread  calls BeginStop
+                        // change requests. This will happen if another thread calls BeginStop
                         return;
                     case PSInvocationState.Running:
                         if (stateInfo.State == PSInvocationState.Running)
                         {
                             return;
                         }
+
                         break;
                     case PSInvocationState.Stopping:
                         // We are in stopping state and we should not honor Running state
@@ -3954,6 +4222,7 @@ namespace System.Management.Automation
                         {
                             copyStateInfo = new PSInvocationStateInfo(PSInvocationState.Stopped, stateInfo.Reason);
                         }
+
                         break;
                     default:
                         break;
@@ -3990,7 +4259,7 @@ namespace System.Management.Automation
                     {
                         if (RunningExtraCommands)
                         {
-                            if (null != tempInvokeAsyncResult)
+                            if (tempInvokeAsyncResult != null)
                             {
                                 tempInvokeAsyncResult.SetAsCompleted(InvocationStateInfo.Reason);
                             }
@@ -4001,13 +4270,13 @@ namespace System.Management.Automation
                         {
                             RaiseStateChangeEvent(InvocationStateInfo.Clone());
 
-                            if (null != tempInvokeAsyncResult)
+                            if (tempInvokeAsyncResult != null)
                             {
                                 tempInvokeAsyncResult.SetAsCompleted(InvocationStateInfo.Reason);
                             }
                         }
 
-                        if (null != tempStopAsyncResult)
+                        if (tempStopAsyncResult != null)
                         {
                             tempStopAsyncResult.SetAsCompleted(null);
                         }
@@ -4023,11 +4292,12 @@ namespace System.Management.Automation
                     finally
                     {
                         // takes care exception occured with invokeAsyncResult
-                        if (isExceptionOccured && (null != tempStopAsyncResult))
+                        if (isExceptionOccured && (tempStopAsyncResult != null))
                         {
                             tempStopAsyncResult.Release();
                         }
                     }
+
                     break;
                 case PSInvocationState.Disconnected:
                     try
@@ -4047,15 +4317,15 @@ namespace System.Management.Automation
 
                         // This object can be disconnected even if "BeginStop" was called if it is a remote object
                         // and robust connections is retrying a failed network connection.
-                        // In this case release the stop wait handle to prevent hangs.
+                        // In this case release the stop wait handle to prevent not responding.
                         if (tempStopAsyncResult != null)
                         {
                             tempStopAsyncResult.SetAsCompleted(null);
                         }
 
                         // Only raise the Disconnected state changed event if the PowerShell state
-                        // actually transitions to Disconnected from some other state.  This condition 
-                        // can happen when the corresponding runspace disconnects/connects multiple 
+                        // actually transitions to Disconnected from some other state.  This condition
+                        // can happen when the corresponding runspace disconnects/connects multiple
                         // times with the command remaining in Disconnected state.
                         if (previousState != PSInvocationState.Disconnected)
                         {
@@ -4073,7 +4343,7 @@ namespace System.Management.Automation
                     finally
                     {
                         // takes care exception occured with invokeAsyncResult
-                        if (isExceptionOccured && (null != tempStopAsyncResult))
+                        if (isExceptionOccured && (tempStopAsyncResult != null))
                         {
                             tempStopAsyncResult.Release();
                         }
@@ -4098,7 +4368,7 @@ namespace System.Management.Automation
         {
             // If the previous state was disconnected and we are now running (reconnected),
             // and we reconnected synchronously with pending input, then we need to close
-            // the input buffer to allow the remote command to complete.  Otherwise the 
+            // the input buffer to allow the remote command to complete.  Otherwise the
             // synchronous Connect() method will wait indefinitely for the command to complete.
             if (previousState == PSInvocationState.Disconnected &&
                 _commandInvokedSynchronously &&
@@ -4111,13 +4381,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// clear the internal reference to remote powershell
+        /// Clear the internal reference to remote powershell.
         /// </summary>
         internal void ClearRemotePowerShell()
         {
             lock (_syncObject)
             {
-                if (null != RemotePowerShell)
+                if (RemotePowerShell != null)
                 {
                     RemotePowerShell.Clear();
                 }
@@ -4125,7 +4395,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets if the pipeline is nested, typically used by the remoting infrastructure
+        /// Sets if the pipeline is nested, typically used by the remoting infrastructure.
         /// </summary>
         /// <param name="isNested"></param>
         internal void SetIsNested(bool isNested)
@@ -4136,7 +4406,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Performs the actual synchronous command invocation. The caller 
+        /// Performs the actual synchronous command invocation. The caller
         /// should check if it safe to call this method.
         /// </summary>
         /// <typeparam name="TOutput">
@@ -4161,10 +4431,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the command was executing was aborted.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// PowerShell.Invoke can throw a variety of exceptions derived
@@ -4195,26 +4462,28 @@ namespace System.Management.Automation
         private void CoreInvoke<TOutput>(IEnumerable input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
             PSDataCollection<object> inputBuffer = null;
-            if (null != input)
+            if (input != null)
             {
                 inputBuffer = new PSDataCollection<object>();
                 foreach (object o in input)
                 {
                     inputBuffer.Add(o);
                 }
+
                 inputBuffer.Complete();
             }
+
             CoreInvoke(inputBuffer, output, settings);
         }
 
         /// <summary>
-        /// Core invocation helper method
+        /// Core invocation helper method.
         /// </summary>
         /// <typeparam name="TInput">input type</typeparam>
         /// <typeparam name="TOutput">output type</typeparam>
-        /// <param name="input">input objects</param>
-        /// <param name="output">output object</param>
-        /// <param name="settings">invocation settings</param>
+        /// <param name="input">Input objects.</param>
+        /// <param name="output">Output object.</param>
+        /// <param name="settings">Invocation settings.</param>
         private void CoreInvokeHelper<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
             RunspacePool pool = _rsConnection as RunspacePool;
@@ -4228,11 +4497,12 @@ namespace System.Management.Automation
                 Runspace rsToUse = null;
                 if (!IsNested)
                 {
-                    if (null != pool)
+                    if (pool != null)
                     {
-#if !CORECLR            // No ApartmentState In CoreCLR
+#if !UNIX
                         VerifyThreadSettings(settings, pool.ApartmentState, pool.ThreadOptions, false);
 #endif
+
                         // getting the runspace asynchronously so that Stop can be supported from a different
                         // thread.
                         _worker.GetRunspaceAsyncResult = pool.BeginGetRunspace(null, null);
@@ -4242,11 +4512,12 @@ namespace System.Management.Automation
                     else
                     {
                         rsToUse = _rsConnection as Runspace;
-                        if (null != rsToUse)
+                        if (rsToUse != null)
                         {
-#if !CORECLR                // No ApartmentState In CoreCLR
+#if !UNIX
                             VerifyThreadSettings(settings, rsToUse.ApartmentState, rsToUse.ThreadOptions, false);
 #endif
+
                             if (rsToUse.RunspaceStateInfo.State != RunspaceState.Opened)
                             {
                                 string message = StringUtil.Format(PowerShellStrings.InvalidRunspaceState, RunspaceState.Opened, rsToUse.RunspaceStateInfo.State);
@@ -4267,11 +4538,10 @@ namespace System.Management.Automation
                 else
                 {
                     rsToUse = _rsConnection as Runspace;
-                    Dbg.Assert(null != rsToUse,
+                    Dbg.Assert(rsToUse != null,
                         "Nested PowerShell can only work on a Runspace");
 
-
-                    // Peform work on the current thread. Nested Pipeline
+                    // Perform work on the current thread. Nested Pipeline
                     // should be invoked from the same thread that the parent
                     // pipeline is executing in.
                     _worker.ConstructPipelineAndDoWork(rsToUse, true);
@@ -4288,18 +4558,19 @@ namespace System.Management.Automation
                 {
                     throw poolException.ToInvalidRunspaceStateException();
                 }
+
                 throw;
             }
         }
 
         /// <summary>
-        /// Core invocation helper method for remoting
+        /// Core invocation helper method for remoting.
         /// </summary>
         /// <typeparam name="TInput">input type</typeparam>
         /// <typeparam name="TOutput">output type</typeparam>
-        /// <param name="input">input objects</param>
-        /// <param name="output">output object</param>
-        /// <param name="settings">invocation settings</param>
+        /// <param name="input">Input objects.</param>
+        /// <param name="output">Output object.</param>
+        /// <param name="settings">Invocation settings.</param>
         private void CoreInvokeRemoteHelper<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
             RunspacePool pool = _rsConnection as RunspacePool;
@@ -4318,7 +4589,7 @@ namespace System.Management.Automation
             EndInvokeAsyncResult = null;
 
             if ((PSInvocationState.Failed == InvocationStateInfo.State) &&
-                        (null != InvocationStateInfo.Reason))
+                        (InvocationStateInfo.Reason != null))
             {
                 throw InvocationStateInfo.Reason;
             }
@@ -4327,13 +4598,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Core invocation method
+        /// Core invocation method.
         /// </summary>
         /// <typeparam name="TInput">input type</typeparam>
         /// <typeparam name="TOutput">output type</typeparam>
-        /// <param name="input">input objects</param>
-        /// <param name="output">output object</param>
-        /// <param name="settings">invocation settings</param>
+        /// <param name="input">Input objects.</param>
+        /// <param name="output">Output object.</param>
+        /// <param name="settings">Invocation settings.</param>
         private void CoreInvoke<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
             bool isRemote = false;
@@ -4347,7 +4618,7 @@ namespace System.Management.Automation
 
             SetHadErrors(false);
             RunspacePool pool = _rsConnection as RunspacePool;
-            if ((null != pool) && (pool.IsRemote))
+            if ((pool != null) && (pool.IsRemote))
             {
                 if (ServerSupportsBatchInvocation())
                 {
@@ -4405,18 +4676,16 @@ namespace System.Management.Automation
                         }
                         catch (Exception e)
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
-
                             SetHadErrors(true);
 
                             // Stop if necessarily
-                            if ((null != settings) && settings.ErrorActionPreference == ActionPreference.Stop)
+                            if ((settings != null) && settings.ErrorActionPreference == ActionPreference.Stop)
                             {
                                 throw;
                             }
 
-                            // Ignore the exception if neccessary.
-                            if ((null != settings) && settings.ErrorActionPreference == ActionPreference.Ignore)
+                            // Ignore the exception if necessary.
+                            if ((settings != null) && settings.ErrorActionPreference == ActionPreference.Ignore)
                             {
                                 continue;
                             }
@@ -4443,11 +4712,7 @@ namespace System.Management.Automation
                 finally
                 {
                     RunningExtraCommands = false;
-
-                    if (_isBatching)
-                    {
-                        EndAsyncBatchExecution();
-                    }
+                    EndAsyncBatchExecution();
                 }
             }
             else
@@ -4466,7 +4731,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Performs the actual asynchronous command invocation. 
+        /// Performs the actual asynchronous command invocation.
         /// </summary>
         /// <typeparam name="TInput">Type of the input buffer</typeparam>
         /// <typeparam name="TOutput">Type of the output buffer</typeparam>
@@ -4474,7 +4739,7 @@ namespace System.Management.Automation
         /// input can be null
         /// </param>
         /// <param name="output"></param>
-        /// <param name="settings"></param>        
+        /// <param name="settings"></param>
         /// <param name="callback">
         /// A AsyncCallback to call once the BeginInvoke completes.
         /// </param>
@@ -4491,7 +4756,7 @@ namespace System.Management.Automation
         /// (or)
         /// No command is added.
         /// (or)
-        /// BeginInvoke is called on nested powershell. Nested  
+        /// BeginInvoke is called on nested powershell. Nested
         /// Powershell cannot be executed Asynchronously.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -4514,11 +4779,12 @@ namespace System.Management.Automation
                 // IsNested is true for the icm | % { icm } scenario
                 if (!IsNested || (pool != null && pool.IsRemote))
                 {
-                    if (null != pool)
+                    if (pool != null)
                     {
-#if !CORECLR            // No ApartmentState In CoreCLR
+#if !UNIX
                         VerifyThreadSettings(settings, pool.ApartmentState, pool.ThreadOptions, pool.IsRemote);
 #endif
+
                         pool.AssertPoolIsOpen();
 
                         // for executing in a remote runspace pool case
@@ -4528,7 +4794,7 @@ namespace System.Management.Automation
 
                             lock (_syncObject)
                             {
-                                // for remoting case, when the state is set to 
+                                // for remoting case, when the state is set to
                                 // Running, the message should have been sent
                                 // to the server. In order to ensure the same
                                 // all of the following are placed inside the
@@ -4537,7 +4803,7 @@ namespace System.Management.Automation
                                 //    2. create remotePowerShell
                                 //    3. Send message to server
 
-                                // set the execution state to running.. so changes 
+                                // set the execution state to running.. so changes
                                 // to the current instance of powershell
                                 // are blocked.
                                 AssertExecutionNotStarted();
@@ -4558,6 +4824,7 @@ namespace System.Management.Automation
                                         inputStream = new ObjectStream();
                                         inputStream.Close();
                                     }
+
                                     RemotePowerShell.Initialize(
                                         inputStream, new PSDataCollectionStream<TOutput>(InstanceId, output),
                                                 new PSDataCollectionStream<ErrorRecord>(InstanceId, _errorBuffer),
@@ -4569,6 +4836,7 @@ namespace System.Management.Automation
                                     {
                                         RemotePowerShell.InputStream = inputStream;
                                     }
+
                                     if (output != null)
                                     {
                                         RemotePowerShell.OutputStream =
@@ -4577,7 +4845,7 @@ namespace System.Management.Automation
                                 }
 
                                 pool.RemoteRunspacePoolInternal.CreatePowerShellOnServerAndInvoke(RemotePowerShell);
-                            } // lock
+                            }
 
                             RaiseStateChangeEvent(InvocationStateInfo.Clone());
                         }
@@ -4590,11 +4858,12 @@ namespace System.Management.Automation
                     else
                     {
                         LocalRunspace rs = _rsConnection as LocalRunspace;
-                        if (null != rs)
+                        if (rs != null)
                         {
-#if !CORECLR                // No ApartmentState In CoreCLR
+#if !UNIX
                             VerifyThreadSettings(settings, rs.ApartmentState, rs.ThreadOptions, false);
 #endif
+
                             if (rs.RunspaceStateInfo.State != RunspaceState.Opened)
                             {
                                 string message = StringUtil.Format(PowerShellStrings.InvalidRunspaceState, RunspaceState.Opened, rs.RunspaceStateInfo.State);
@@ -4606,6 +4875,7 @@ namespace System.Management.Automation
 
                                 throw e;
                             }
+
                             _worker.CreateRunspaceIfNeededAndDoWork(rs, false);
                         }
                         else
@@ -4635,15 +4905,17 @@ namespace System.Management.Automation
                 {
                     throw poolException.ToInvalidRunspaceStateException();
                 }
+
                 throw;
             }
 
             return _invokeAsyncResult;
         }
 
-#if !CORECLR // No ApartmentState In CoreCLR
+        // Apartment thread state does not apply to non-Windows platforms.
+#if !UNIX
         /// <summary>
-        /// Verifies the settings for ThreadOptions and ApartmentState
+        /// Verifies the settings for ThreadOptions and ApartmentState.
         /// </summary>
         private void VerifyThreadSettings(PSInvocationSettings settings, ApartmentState runspaceApartmentState, PSThreadOptions runspaceThreadOptions, bool isRemote)
         {
@@ -4679,7 +4951,6 @@ namespace System.Management.Automation
 #endif
 
         /// <summary>
-        /// 
         /// </summary>
         /// <typeparam name="TInput">Type for the input collection</typeparam>
         /// <typeparam name="TOutput">Type for the output collection</typeparam>
@@ -4696,11 +4967,11 @@ namespace System.Management.Automation
         /// </exception>
         private void Prepare<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, bool shouldCreateWorker)
         {
-            Dbg.Assert(null != output, "Output cannot be null");
+            Dbg.Assert(output != null, "Output cannot be null");
 
             lock (_syncObject)
             {
-                if ((null == _psCommand) || (null == _psCommand.Commands) || (0 == _psCommand.Commands.Count))
+                if ((_psCommand == null) || (_psCommand.Commands == null) || (0 == _psCommand.Commands.Count))
                 {
                     throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.NoCommandToInvoke);
                 }
@@ -4709,13 +4980,13 @@ namespace System.Management.Automation
 
                 if (shouldCreateWorker)
                 {
-                    // set the execution state to running.. so changes 
+                    // set the execution state to running.. so changes
                     // to the current instance of powershell
                     // are blocked.
                     InvocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Running, null);
 
                     // update settings for impersonation policy
-                    if ((null != settings) && (settings.FlowImpersonationPolicy))
+                    if ((settings != null) && (settings.FlowImpersonationPolicy))
                     {
                         // get the identity of the thread.
                         // false behavior: If the thread is impersonating the WindowsIdentity for the
@@ -4729,7 +5000,7 @@ namespace System.Management.Automation
                     // this way pipeline will not waste resources creating
                     // the same.
                     ObjectStreamBase inputStream;
-                    if (null != input)
+                    if (input != null)
                     {
                         inputStream = new PSDataCollectionStream<TInput>(InstanceId, input);
                     }
@@ -4759,7 +5030,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Called by both Sync Stop and Async Stop.
         /// If isSyncCall is false, then an IAsyncResult object is returned which
-        /// can be passed back to the user
+        /// can be passed back to the user.
         /// </summary>
         /// <param name="isSyncCall">
         /// true if pipeline to be stopped synchronously,
@@ -4780,8 +5051,8 @@ namespace System.Management.Automation
             // Acquire lock as we are going to change state here..
             lock (_syncObject)
             {
-                //BUGBUG: remote powershell appears to handle state change's differently
-                //Need to speak with remoting dev and resolve this.
+                // BUGBUG: remote powershell appears to handle state change's differently
+                // Need to speak with remoting dev and resolve this.
                 switch (InvocationStateInfo.State)
                 {
                     case PSInvocationState.NotStarted:
@@ -4809,6 +5080,7 @@ namespace System.Management.Automation
                             _stopAsyncResult = new PowerShellAsyncResult(InstanceId, callback, state, null, false);
                             _stopAsyncResult.SetAsCompleted(null);
                         }
+
                         return _stopAsyncResult;
 
                     case PSInvocationState.Running:
@@ -4828,7 +5100,7 @@ namespace System.Management.Automation
             }
 
             // If in the Disconnected state then stopping simply cuts loose the PowerShell object
-            // so that a new one can be connected.  The state is set to Failed since the command 
+            // so that a new one can be connected.  The state is set to Failed since the command
             // cannot complete with this object.
             if (isDisconnected)
             {
@@ -4837,6 +5109,7 @@ namespace System.Management.Automation
                     // Since object is stopped, allow result wait to end.
                     _invokeAsyncResult.SetAsCompleted(null);
                 }
+
                 _stopAsyncResult.SetAsCompleted(null);
 
                 // Raise event for failed state change.
@@ -4914,7 +5187,7 @@ namespace System.Management.Automation
             Dbg.Assert(events != null,
                 "StopImplementation expects a Queue<PSInvocationStateInfo> as parameter");
 
-            // Raise the events outside of the lock..this way 3rd party callback 
+            // Raise the events outside of the lock..this way 3rd party callback
             // cannot hold our lock.
             while (events.Count > 0)
             {
@@ -4937,7 +5210,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 // report non-severe exceptions to the user via the
                 // asyncresult object
                 exception = e;
@@ -4947,7 +5219,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// The client remote powershell associated with this
-        /// powershell object
+        /// powershell object.
         /// </summary>
         internal ClientRemotePowerShell RemotePowerShell { get; private set; }
 
@@ -4955,15 +5227,15 @@ namespace System.Management.Automation
         /// The history string to be used for displaying
         /// the history.
         /// </summary>
-        public String HistoryString { get; set; }
+        public string HistoryString { get; set; }
 
         /// <summary>
-        /// Extra commands to run in a single invocation
+        /// Extra commands to run in a single invocation.
         /// </summary>
         internal Collection<PSCommand> ExtraCommands { get; }
 
         /// <summary>
-        /// Currently running extra commands
+        /// Currently running extra commands.
         /// </summary>
         internal bool RunningExtraCommands { get; private set; }
 
@@ -5052,7 +5324,6 @@ namespace System.Management.Automation
             private object _syncObject = new object();
 
             /// <summary>
-            /// 
             /// </summary>
             /// <param name="inputStream"></param>
             /// <param name="outputStream"></param>
@@ -5072,7 +5343,7 @@ namespace System.Management.Automation
 
             /// <summary>
             /// Sets the async result object that monitors a
-            /// BeginGetRunspace async operation on the 
+            /// BeginGetRunspace async operation on the
             /// RunspacePool.
             /// </summary>
             internal IAsyncResult GetRunspaceAsyncResult { get; set; }
@@ -5104,7 +5375,7 @@ namespace System.Management.Automation
             /// false if InvokeAsync() should be used.
             /// </param>
             /// <remarks>
-            /// All exceptions are caught and reported via a 
+            /// All exceptions are caught and reported via a
             /// PipelineStateChanged event.
             /// </remarks>
             internal void CreateRunspaceIfNeededAndDoWork(Runspace rsToUse, bool isSync)
@@ -5114,7 +5385,7 @@ namespace System.Management.Automation
                 {
                     // Set the host for this local runspace if user specified one.
                     LocalRunspace rs = rsToUse as LocalRunspace;
-                    if (null == rs)
+                    if (rs == null)
                     {
                         lock (_shell._syncObject)
                         {
@@ -5126,7 +5397,7 @@ namespace System.Management.Automation
                             {
                                 Runspace runspace = null;
 
-                                if ((null != _settings) && (null != _settings.Host))
+                                if ((_settings != null) && (_settings.Host != null))
                                 {
                                     runspace = RunspaceFactory.CreateRunspace(_settings.Host);
                                 }
@@ -5149,7 +5420,7 @@ namespace System.Management.Automation
                 {
                     // PipelineStateChangedEvent is not raised
                     // if there is an exception calling BeginInvoke
-                    // So raise the event here and notify the caller.   
+                    // So raise the event here and notify the caller.
                     lock (_syncObject)
                     {
                         if (_isNotActive)
@@ -5162,13 +5433,7 @@ namespace System.Management.Automation
                                new PipelineStateInfo(PipelineState.Failed,
                                    e)));
 
-
-                    if (!isSync)
-                    {
-                        // eat the exception but check if it is severe.
-                        CommandProcessorBase.CheckForSevereException(e);
-                    }
-                    else
+                    if (isSync)
                     {
                         throw;
                     }
@@ -5179,13 +5444,13 @@ namespace System.Management.Automation
             /// <summary>
             /// This method gets called from a ThreadPool thread.
             /// This method gets called from a RunspacePool thread when a
-            /// Runsapce is available.
+            /// Runspace is available.
             /// </summary>
             /// <param name="asyncResult">
             /// AsyncResult object which monitors the asyncOperation.
             /// </param>
             /// <remarks>
-            /// All exceptions are caught and reported via a 
+            /// All exceptions are caught and reported via a
             /// PipelineStateChanged event.
             /// </remarks>
             internal void RunspaceAvailableCallback(IAsyncResult asyncResult)
@@ -5208,7 +5473,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     // PipelineStateChangedEvent is not raised
                     // if there is an exception calling BeginInvoke
                     // So raise the event here and notify the caller.
@@ -5218,6 +5482,7 @@ namespace System.Management.Automation
                             return;
                         _isNotActive = true;
                     }
+
                     _shell.PipelineStateChanged(this,
                             new PipelineStateEventArgs(
                                 new PipelineStateInfo(PipelineState.Failed,
@@ -5227,8 +5492,8 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Constructs a pipeline from the supplied runspace and invokes 
-            /// pipeline either synchronously or asynchronously identified by 
+            /// Constructs a pipeline from the supplied runspace and invokes
+            /// pipeline either synchronously or asynchronously identified by
             /// <paramref name="performSyncInvoke"/>.
             /// </summary>
             /// <param name="rs">
@@ -5239,7 +5504,7 @@ namespace System.Management.Automation
             /// BeginInvoke() otherwise.
             /// </param>
             /// <exception cref="InvalidOperationException">
-            /// 1.BeginInvoke is called on nested powershell. Nested  
+            /// 1.BeginInvoke is called on nested powershell. Nested
             /// Powershell cannot be executed Asynchronously.
             /// </exception>
             /// <returns>
@@ -5251,7 +5516,7 @@ namespace System.Management.Automation
                 Dbg.Assert(rs != null, "Runspace cannot be null in ConstructPipelineAndDoWork");
                 _shell.RunspaceAssigned.SafeInvoke(this, new PSEventArgs<Runspace>(rs));
 
-                // lock is needed until a pipeline is created to 
+                // lock is needed until a pipeline is created to
                 // make stop() cleanly release resources.
                 LocalRunspace lrs = rs as LocalRunspace;
 
@@ -5262,12 +5527,12 @@ namespace System.Management.Automation
                         return false;
                     }
 
-                    if (null != lrs)
+                    if (lrs != null)
                     {
                         LocalPipeline localPipeline = new LocalPipeline(
                             lrs,
                             _shell.Commands.Commands,
-                            ((null != _settings) && (_settings.AddToHistory)) ? true : false,
+                            ((_settings != null) && (_settings.AddToHistory)) ? true : false,
                             _shell.IsNested,
                             _inputStream,
                             _outputStream,
@@ -5276,7 +5541,7 @@ namespace System.Management.Automation
 
                         localPipeline.IsChild = _shell.IsChild;
 
-                        if (!String.IsNullOrEmpty(_shell.HistoryString))
+                        if (!string.IsNullOrEmpty(_shell.HistoryString))
                         {
                             localPipeline.SetHistoryString(_shell.HistoryString);
                         }
@@ -5285,7 +5550,7 @@ namespace System.Management.Automation
 
                         CurrentlyRunningPipeline = localPipeline;
                         // register for pipeline state changed events within a lock...so that if
-                        // stop is called before invoke, we can listen to state transition and 
+                        // stop is called before invoke, we can listen to state transition and
                         // take appropriate action.
                         CurrentlyRunningPipeline.StateChanged += _shell.PipelineStateChanged;
                     }
@@ -5326,7 +5591,7 @@ namespace System.Management.Automation
                     }
 
                     _isNotActive = true;
-                    if (null != CurrentlyRunningPipeline)
+                    if (CurrentlyRunningPipeline != null)
                     {
                         if (isSyncCall)
                         {
@@ -5336,10 +5601,11 @@ namespace System.Management.Automation
                         {
                             CurrentlyRunningPipeline.StopAsync();
                         }
+
                         return;
                     }
 
-                    if (null != GetRunspaceAsyncResult)
+                    if (GetRunspaceAsyncResult != null)
                     {
                         RunspacePool pool = _shell._rsConnection as RunspacePool;
                         Dbg.Assert(pool != null, "RunspaceConnection must be a runspace pool");
@@ -5370,7 +5636,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    if ((null != _settings) && (null != _settings.WindowsIdentityToImpersonate))
+                    if ((_settings != null) && (_settings.WindowsIdentityToImpersonate != null))
                     {
                         _settings.WindowsIdentityToImpersonate.Dispose();
                         _settings.WindowsIdentityToImpersonate = null;
@@ -5380,7 +5646,7 @@ namespace System.Management.Automation
                     _outputStream.Close();
                     _errorStream.Close();
 
-                    if (null == CurrentlyRunningPipeline)
+                    if (CurrentlyRunningPipeline == null)
                     {
                         return;
                     }
@@ -5389,7 +5655,7 @@ namespace System.Management.Automation
                     // and pipeline.dispose will not change powershell instances state
                     CurrentlyRunningPipeline.StateChanged -= _shell.PipelineStateChanged;
 
-                    if ((null == GetRunspaceAsyncResult) && (null == _shell._rsConnection))
+                    if ((GetRunspaceAsyncResult == null) && (_shell._rsConnection == null))
                     {
                         // user did not supply a runspace..Invoke* method created
                         // a new runspace..so close it.
@@ -5398,7 +5664,7 @@ namespace System.Management.Automation
                     else
                     {
                         RunspacePool pool = _shell._rsConnection as RunspacePool;
-                        if (null != pool)
+                        if (pool != null)
                         {
                             pool.ReleaseRunspace(CurrentlyRunningPipeline.Runspace);
                         }
@@ -5437,13 +5703,13 @@ namespace System.Management.Automation
         #region Serialization / deserialization for remoting
 
         /// <summary>
-        /// Creates a PowerShell object from a PSObject property bag. 
+        /// Creates a PowerShell object from a PSObject property bag.
         /// PSObject has to be in the format returned by ToPSObjectForRemoting method.
         /// </summary>
-        /// <param name="powerShellAsPSObject">PSObject to rehydrate</param>
+        /// <param name="powerShellAsPSObject">PSObject to rehydrate.</param>
         /// <returns>
         /// PowerShell rehydrated from a PSObject property bag
-        /// </returns>       
+        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if the PSObject is null.
         /// </exception>
@@ -5454,7 +5720,7 @@ namespace System.Management.Automation
         {
             if (powerShellAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("powerShellAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(powerShellAsPSObject));
             }
 
             Collection<PSCommand> extraCommands = null;
@@ -5513,7 +5779,7 @@ namespace System.Management.Automation
         /// Returns this object as a PSObject property bag
         /// that can be used in a remoting protocol data object.
         /// </summary>
-        /// <returns>This object as a PSObject property bag</returns>
+        /// <returns>This object as a PSObject property bag.</returns>
         internal PSObject ToPSObjectForRemoting()
         {
             PSObject powerShellAsPSObject = RemotingEncoder.CreateEmptyPSObject();
@@ -5620,55 +5886,6 @@ namespace System.Management.Automation
 
         #endregion
 
-        #region V3 Extensions
-
-        /// <summary>
-        /// Returns a job object which can be used to
-        /// control the invocation of the command with
-        /// AsJob Parameter
-        /// </summary>
-        /// <returns>Job object</returns>
-        public PSJobProxy AsJobProxy()
-        {
-            // if there are no commands added
-            // throw an invalid operation exception
-            if (this.Commands.Commands.Count == 0)
-            {
-                throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.GetJobForCommandRequiresACommand);
-            }
-
-            // if there is more than one command in the
-            // command collection throw an error
-            if (this.Commands.Commands.Count > 1)
-            {
-                throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.GetJobForCommandNotSupported);
-            }
-
-            // check if the AsJob parameter has already 
-            // been added. If not, add the same
-            bool found = false;
-            foreach (CommandParameter parameter in this.Commands.Commands[0].Parameters)
-            {
-                if (string.Compare(parameter.Name, "AsJob", StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    found = true;
-                }
-            }
-
-            if (!found)
-            {
-                AddParameter("AsJob");
-            }
-
-            // initialize the job invoker and return the same
-            PSJobProxy job = new PSJobProxy(this.Commands.Commands[0].CommandText);
-            job.InitializeJobProxy(this.Commands, this.Runspace, this.RunspacePool);
-
-            return job;
-        }
-
-        #endregion V3 Extensions
-
 #if !CORECLR // PSMI Not Supported On CSS
         #region Win Blue Extensions
 
@@ -5690,6 +5907,7 @@ namespace System.Management.Automation
             {
                 _worker.GetSettings(out addToHistoryValue, out noInputValue, out apartmentStateValue);
             }
+
             CimProperty addToHistoryProperty = InternalMISerializer.CreateCimProperty("AddToHistory",
                                                                                       addToHistoryValue,
                                                                                       Microsoft.Management.Infrastructure.CimType.Boolean);
@@ -5724,12 +5942,12 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Streams generated by PowerShell invocations
+    /// Streams generated by PowerShell invocations.
     /// </summary>
     public sealed class PSDataStreams
     {
         /// <summary>
-        /// PSDataStreams is the public interface to access the *Buffer properties in the PowerShell class
+        /// PSDataStreams is the public interface to access the *Buffer properties in the PowerShell class.
         /// </summary>
         internal PSDataStreams(PowerShell powershell)
         {
@@ -5737,14 +5955,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the error buffer. Powershell invocation writes 
+        /// Gets or sets the error buffer. Powershell invocation writes
         /// the error data into this buffer.
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// Cannot set to a null value.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -5765,11 +5983,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the progress buffer. Powershell invocation writes 
+        /// Gets or sets the progress buffer. Powershell invocation writes
         /// the progress data into this buffer. Can be null.
         /// </summary>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -5790,11 +6008,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the verbose buffer. Powershell invocation writes 
+        /// Gets or sets the verbose buffer. Powershell invocation writes
         /// the verbose data into this buffer.  Can be null.
         /// </summary>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -5815,11 +6033,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the debug buffer. Powershell invocation writes 
+        /// Gets or sets the debug buffer. Powershell invocation writes
         /// the debug data into this buffer.  Can be null.
         /// </summary>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -5840,14 +6058,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the warning buffer. Powershell invocation writes 
+        /// Gets or sets the warning buffer. Powershell invocation writes
         /// the warning data into this buffer. Can be null.
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// Cannot set to a null value.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -5868,14 +6086,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the information buffer. Powershell invocation writes 
+        /// Gets or sets the information buffer. Powershell invocation writes
         /// the warning data into this buffer. Can be null.
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// Cannot set to a null value.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -5896,7 +6114,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Removes all items from all the data streams
+        /// Removes all items from all the data streams.
         /// </summary>
         public void ClearStreams()
         {
@@ -5935,11 +6153,12 @@ namespace System.Management.Automation
         {
             if (context == null)
             {
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
             }
+
             if (powerShell == null)
             {
-                throw new ArgumentNullException("powerShell");
+                throw new ArgumentNullException(nameof(powerShell));
             }
 
             _powerShell = powerShell;

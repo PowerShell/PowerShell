@@ -1,6 +1,5 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -19,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
 #if !CORECLR
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsLifecycle.Resume, "Job", SupportsShouldProcess = true, DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210611")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210611")]
 #endif
     [OutputType(typeof(Job))]
     public class ResumeJobCommand : JobCmdletBase, IDisposable
@@ -27,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
         /// <summary>
         /// Specifies the Jobs objects which need to be
-        /// suspended
+        /// suspended.
         /// </summary>
         [Parameter(Mandatory = true,
                    Position = 0,
@@ -42,17 +41,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _jobs;
             }
+
             set
             {
                 _jobs = value;
             }
         }
+
         private Job[] _jobs;
 
         /// <summary>
-        /// 
         /// </summary>
-        public override String[] Command
+        public override string[] Command
         {
             get
             {
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            //List of jobs to resume
+            // List of jobs to resume
             List<Job> jobsToResume = null;
 
             switch (ParameterSetName)
@@ -85,42 +85,48 @@ namespace Microsoft.PowerShell.Commands
                     {
                         jobsToResume = FindJobsMatchingByName(true, false, true, false);
                     }
+
                     break;
 
                 case InstanceIdParameterSet:
                     {
                         jobsToResume = FindJobsMatchingByInstanceId(true, false, true, false);
                     }
+
                     break;
 
                 case SessionIdParameterSet:
                     {
                         jobsToResume = FindJobsMatchingBySessionId(true, false, true, false);
                     }
+
                     break;
 
                 case StateParameterSet:
                     {
                         jobsToResume = FindJobsMatchingByState(false);
                     }
+
                     break;
 
                 case FilterParameterSet:
                     {
                         jobsToResume = FindJobsMatchingByFilter(false);
                     }
+
                     break;
 
                 default:
                     {
                         jobsToResume = CopyJobsToList(_jobs, false, false);
                     }
+
                     break;
             }
 
             _allJobsToResume.AddRange(jobsToResume);
 
-            // Blue: 151804 When resuming a single suspended workfllow job, Resume-job cmdlet doesn't wait for the job to be in running state
+            // Blue: 151804 When resuming a single suspended workflow job, Resume-job cmdlet doesn't wait for the job to be in running state
             // Setting Wait to true so that this cmdlet will wait for the running job state.
             if (_allJobsToResume.Count == 1)
                 Wait = true;
@@ -205,6 +211,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _pendingJobs.Remove(job.InstanceId);
                 }
+
                 if (_needToCheckForWaitingJobs && _pendingJobs.Count == 0)
                     releaseWait = true;
             }
@@ -237,7 +244,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         protected override void StopProcessing()
         {
@@ -249,7 +255,6 @@ namespace Microsoft.PowerShell.Commands
         #region Dispose
 
         /// <summary>
-        /// 
         /// </summary>
         public void Dispose()
         {
@@ -258,7 +263,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)
@@ -268,6 +272,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 pair.Key.ResumeJobCompleted -= pair.Value;
             }
+
             _waitForJobs.Dispose();
         }
         #endregion Dispose

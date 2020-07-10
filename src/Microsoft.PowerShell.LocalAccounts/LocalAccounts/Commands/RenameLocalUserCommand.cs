@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 #region Using directives
 using System;
 using System.Management.Automation;
@@ -8,16 +11,15 @@ using System.Management.Automation.SecurityAccountsManager.Extensions;
 using Microsoft.PowerShell.LocalAccounts;
 #endregion
 
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Rename-LocalUser cmdlet renames a local user account in the Security 
+    /// The Rename-LocalUser cmdlet renames a local user account in the Security
     /// Accounts Manager.
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "LocalUser",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkID=717983")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkID=717983")]
     [Alias("rnlu")]
     public class RenameLocalUserCommand : Cmdlet
     {
@@ -28,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameter Properties
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
-        /// Specifies the of the local user account to rename in the local Security 
+        /// Specifies the of the local user account to rename in the local Security
         /// Accounts Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -40,13 +42,15 @@ namespace Microsoft.PowerShell.Commands
         public Microsoft.PowerShell.Commands.LocalUser InputObject
         {
             get { return this.inputobject;}
+
             set { this.inputobject = value; }
         }
+
         private Microsoft.PowerShell.Commands.LocalUser inputobject;
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
-        /// Specifies the local user account to be renamed in the local Security 
+        /// Specifies the local user account to be renamed in the local Security
         /// Accounts Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -58,13 +62,15 @@ namespace Microsoft.PowerShell.Commands
         public string Name
         {
             get { return this.name;}
+
             set { this.name = value; }
         }
+
         private string name;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "NewName".
-        /// Specifies the new name for the local user account in the Security Accounts 
+        /// Specifies the new name for the local user account in the Security Accounts
         /// Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -73,10 +79,12 @@ namespace Microsoft.PowerShell.Commands
         public string NewName
         {
             get { return this.newname;}
+
             set { this.newname = value; }
         }
+
         private string newname;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "SID".
         /// Specifies the local user to rename.
@@ -90,13 +98,13 @@ namespace Microsoft.PowerShell.Commands
         public System.Security.Principal.SecurityIdentifier SID
         {
             get { return this.sid;}
+
             set { this.sid = value; }
         }
+
         private System.Security.Principal.SecurityIdentifier sid;
         #endregion Parameter Properties
 
-      
-      
         #region Cmdlet Overrides
         /// <summary>
         /// BeginProcessing method.
@@ -105,7 +113,6 @@ namespace Microsoft.PowerShell.Commands
         {
             sam = new Sam();
         }
-
 
         /// <summary>
         /// ProcessRecord method.
@@ -124,7 +131,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        
         /// <summary>
         /// EndProcessing method.
         /// </summary>
@@ -140,7 +146,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
         /// <summary>
-        /// Process user requested by -Name
+        /// Process user requested by -Name.
         /// </summary>
         /// <remarks>
         /// Arguments to -Name will be treated as names,
@@ -163,7 +169,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process user requested by -SID
+        /// Process user requested by -SID.
         /// </summary>
         private void ProcessSid()
         {
@@ -182,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process group given through -InputObject
+        /// Process group given through -InputObject.
         /// </summary>
         private void ProcessUser()
         {
@@ -221,7 +227,7 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(userName, msg);
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

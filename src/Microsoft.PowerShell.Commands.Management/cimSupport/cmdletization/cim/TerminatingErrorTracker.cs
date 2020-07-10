@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -10,13 +9,15 @@ using System.Management.Automation;
 using System.Management.Automation.Remoting;
 using System.Runtime.CompilerServices;
 using System.Threading;
+
 using Microsoft.Management.Infrastructure;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Tracks (per-session) terminating errors in a given cmdlet invocation
+    /// Tracks (per-session) terminating errors in a given cmdlet invocation.
     /// </summary>
     internal class TerminatingErrorTracker
     {
@@ -44,10 +45,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             // Additionally in both instance and static cmdlets, if the pipeline object is a CimInstance, then it can affect the session acted against
             if (invocationInfo.ExpectingInput)
             {
-                // can get unlimited number of CimInstances through pipeline 
+                // can get unlimited number of CimInstances through pipeline
                 // - this translates into potentially unlimited number of CimSession we will work with
                 return int.MaxValue;
             }
+
             int maxNumberOfSessionsIndicatedByCimInstanceArguments = 1;
             foreach (object cmdletArgument in invocationInfo.BoundParameters.Values)
             {
@@ -63,6 +65,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                         numberOfSessionsAssociatedWithArgument);
                 }
             }
+
             return maxNumberOfSessionsIndicatedByCimInstanceArguments;
         }
 
@@ -111,6 +114,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return alreadyPassedConnectivityTest;
             }
+
             return false;
         }
 
@@ -206,7 +210,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                                                         cmdlet.WriteError(errorRecord);
                                                     }
 
-                                                    return false; // not really needed here, but required by CmdletMethodInvoker 
+                                                    return false; // not really needed here, but required by CmdletMethodInvoker
                                                 };
 
             return new CmdletMethodInvoker<bool>

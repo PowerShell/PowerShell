@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #if !SILVERLIGHT // ComObject
 #if !CLR2
@@ -34,7 +33,7 @@ namespace System.Management.Automation.ComInterop
         {
             // Decimal.ToOACurrency(parameter.WrappedObject)
             return Expression.Call(
-                typeof(Decimal).GetMethod("ToOACurrency"),
+                typeof(decimal).GetMethod("ToOACurrency"),
                 Marshal(parameter)
             );
         }
@@ -44,9 +43,9 @@ namespace System.Management.Automation.ComInterop
             // Decimal.FromOACurrency(value)
             return base.UnmarshalFromRef(
                 Expression.New(
-                    typeof(CurrencyWrapper).GetConstructor(new Type[] { typeof(Decimal) }),
+                    typeof(CurrencyWrapper).GetConstructor(new Type[] { typeof(decimal) }),
                     Expression.Call(
-                        typeof(Decimal).GetMethod("FromOACurrency"),
+                        typeof(decimal).GetMethod("FromOACurrency"),
                         value
                     )
                 )

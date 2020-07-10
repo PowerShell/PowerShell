@@ -1,17 +1,10 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Runtime.Serialization;
-
-#if !CORECLR
 using System.Security.Permissions;
-#else
-// Use stub for SerializableAttribute, SecurityPermissionAttribute and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
 
 namespace System.Management.Automation
 {
@@ -28,19 +21,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a ParameterBindingException.
         /// </summary>
-        /// 
         /// <param name="errorCategory">
         /// The category for the error.
         /// </param>
-        /// 
         /// <param name="invocationInfo">
         /// The information about the command that encountered the error.
-        /// 
         /// <!--
         /// InvocationInfo.MyCommand.Name == {0}
         /// -->
         /// </param>
-        /// 
         /// <param name="errorPosition">
         /// The position for the command or parameter that caused the error.
         /// If position is null, the one from the InvocationInfo is used.
@@ -49,43 +38,36 @@ namespace System.Management.Automation
         /// token.OffsetInLine == {5}
         /// -->
         /// </param>
-        /// 
         /// <param name="parameterName">
         /// The parameter on which binding caused the error.
         /// <!--
         /// parameterName == {1}
         /// -->
         /// </param>
-        /// 
         /// <param name="parameterType">
         /// The Type the parameter was expecting.
         /// <!--
         /// parameterType == {2}
         /// -->
         /// </param>
-        /// 
         /// <param name="typeSpecified">
         /// The Type that was attempted to be bound to the parameter.
         /// <!--
         /// typeSpecified == {3}
         /// -->
         /// </param>
-        /// 
         /// <param name="resourceString">
         /// The format string for the exception message.
         /// </param>
-        /// 
         /// <param name="errorId">
         /// The error ID.
         /// </param>
-        /// 
         /// <param name="args">
         /// Additional arguments to pass to the format string.
         /// <!--
         /// starts at {6}
         /// -->
         /// </param>
-        /// 
         /// <exception cref="ArgumentException">
         /// If <paramref name="resourceString"/> or <paramref name="errorId"/>
         /// is null or empty.
@@ -102,14 +84,14 @@ namespace System.Management.Automation
             params object[] args)
             : base(errorCategory, invocationInfo, errorPosition, errorId, null, null)
         {
-            if (String.IsNullOrEmpty(resourceString))
+            if (string.IsNullOrEmpty(resourceString))
             {
-                throw PSTraceSource.NewArgumentException("resourceString");
+                throw PSTraceSource.NewArgumentException(nameof(resourceString));
             }
 
-            if (String.IsNullOrEmpty(errorId))
+            if (string.IsNullOrEmpty(errorId))
             {
-                throw PSTraceSource.NewArgumentException("errorId");
+                throw PSTraceSource.NewArgumentException(nameof(errorId));
             }
 
             _invocationInfo = invocationInfo;
@@ -127,11 +109,13 @@ namespace System.Management.Automation
             {
                 errorPosition = invocationInfo.ScriptPosition;
             }
+
             if (errorPosition != null)
             {
                 _line = errorPosition.StartLineNumber;
                 _offset = errorPosition.StartColumnNumber;
             }
+
             _resourceString = resourceString;
             _errorId = errorId;
 
@@ -142,72 +126,59 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ParameterBindingException
+        /// Constructs a ParameterBindingException.
         /// </summary>
-        /// 
         /// <param name="innerException">
         /// The inner exception.
         /// </param>
-        /// 
         /// <param name="errorCategory">
         /// The category for the error.
         /// </param>
-        /// 
         /// <param name="invocationInfo">
         /// The information about the command that encountered the error.
-        /// 
+        ///
         /// InvocationInfo.MyCommand.Name == {0}
         /// </param>
-        /// 
         /// <param name="errorPosition">
         /// The position for the command or parameter that caused the error.
         /// If position is null, the one from the InvocationInfo is used.
-        /// 
+        ///
         /// token.LineNumber == {4}
         /// token.OffsetInLine == {5}
         /// </param>
-        /// 
         /// <param name="parameterName">
         /// The parameter on which binding caused the error.
-        /// 
+        ///
         /// parameterName == {1}
         /// </param>
-        /// 
         /// <param name="parameterType">
         /// The Type the parameter was expecting.
-        /// 
+        ///
         /// parameterType == {2}
         /// </param>
-        /// 
         /// <param name="typeSpecified">
         /// The Type that was attempted to be bound to the parameter.
-        /// 
+        ///
         /// typeSpecified == {3}
         /// </param>
-        /// 
         /// <param name="resourceString">
         /// The format string for the exception message.
         /// </param>
-        /// 
         /// <param name="errorId">
         /// The error ID.
         /// </param>
-        /// 
         /// <param name="args">
         /// Additional arguments to pass to the format string.
-        /// 
+        ///
         /// starts at {6}
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="invocationInfo"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ArgumentException">
         /// If <paramref name="resourceString"/> or <paramref name="errorId"/>
         /// is null or empty.
         /// </exception>
-        /// 
         internal ParameterBindingException(
             Exception innerException,
             ErrorCategory errorCategory,
@@ -223,17 +194,17 @@ namespace System.Management.Automation
         {
             if (invocationInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("invocationInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(invocationInfo));
             }
 
-            if (String.IsNullOrEmpty(resourceString))
+            if (string.IsNullOrEmpty(resourceString))
             {
-                throw PSTraceSource.NewArgumentException("resourceString");
+                throw PSTraceSource.NewArgumentException(nameof(resourceString));
             }
 
-            if (String.IsNullOrEmpty(errorId))
+            if (string.IsNullOrEmpty(errorId))
             {
-                throw PSTraceSource.NewArgumentException("errorId");
+                throw PSTraceSource.NewArgumentException(nameof(errorId));
             }
 
             _invocationInfo = invocationInfo;
@@ -246,6 +217,7 @@ namespace System.Management.Automation
             {
                 errorPosition = invocationInfo.ScriptPosition;
             }
+
             if (errorPosition != null)
             {
                 _line = errorPosition.StartLineNumber;
@@ -262,7 +234,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="innerException"></param>
         /// <param name="pbex"></param>
@@ -273,16 +244,16 @@ namespace System.Management.Automation
             ParameterBindingException pbex,
             string resourceString,
             params object[] args)
-            : base(String.Empty, innerException)
+            : base(string.Empty, innerException)
         {
             if (pbex == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pbex");
+                throw PSTraceSource.NewArgumentNullException(nameof(pbex));
             }
 
-            if (String.IsNullOrEmpty(resourceString))
+            if (string.IsNullOrEmpty(resourceString))
             {
-                throw PSTraceSource.NewArgumentException("resourceString");
+                throw PSTraceSource.NewArgumentException(nameof(resourceString));
             }
 
             _invocationInfo = pbex.CommandInvocation;
@@ -290,6 +261,7 @@ namespace System.Management.Automation
             {
                 _commandName = _invocationInfo.MyCommand.Name;
             }
+
             IScriptExtent errorPosition = null;
             if (_invocationInfo != null)
             {
@@ -324,13 +296,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructors a ParameterBindingException using serialized data.
         /// </summary>
-        /// 
-        /// <param name="info"> 
-        /// serialization information 
+        /// <param name="info">
+        /// serialization information
         /// </param>
-        /// 
-        /// <param name="context"> 
-        /// streaming context 
+        /// <param name="context">
+        /// streaming context
         /// </param>
         protected ParameterBindingException(
             SerializationInfo info,
@@ -344,22 +314,20 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Serializes the exception
+        /// Serializes the exception.
         /// </summary>
-        /// 
-        /// <param name="info"> 
-        /// serialization information 
+        /// <param name="info">
+        /// serialization information
         /// </param>
-        /// 
-        /// <param name="context"> 
-        /// streaming context 
+        /// <param name="context">
+        /// streaming context
         /// </param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -375,37 +343,31 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a ParameterBindingException.
         /// </summary>
-        /// 
         /// <remarks>
         /// DO NOT USE!!!
         /// </remarks>
-        public ParameterBindingException() : base() {; }
+        public ParameterBindingException() : base() { }
 
         /// <summary>
-        /// Constructors a ParameterBindingException
+        /// Constructors a ParameterBindingException.
         /// </summary>
-        /// 
-        /// <param name="message"> 
+        /// <param name="message">
         /// Message to be included in exception.
         /// </param>
-        /// 
         /// <remarks>
         /// DO NOT USE!!!
         /// </remarks>
         public ParameterBindingException(string message) : base(message) { _message = message; }
 
         /// <summary>
-        /// Constructs a ParameterBindingException
+        /// Constructs a ParameterBindingException.
         /// </summary>
-        /// 
         /// <param name="message">
         /// Message to be included in the exception.
         /// </param>
-        /// 
-        /// <param name="innerException"> 
-        /// exception that led to this exception 
+        /// <param name="innerException">
+        /// exception that led to this exception
         /// </param>
-        /// 
         /// <remarks>
         /// DO NOT USE!!!
         /// </remarks>
@@ -420,7 +382,7 @@ namespace System.Management.Automation
 
         #region Properties
         /// <summary>
-        /// Gets the message for the exception
+        /// Gets the message for the exception.
         /// </summary>
         public override string Message
         {
@@ -440,7 +402,8 @@ namespace System.Management.Automation
                 return _parameterName;
             }
         }
-        private string _parameterName = String.Empty;
+
+        private string _parameterName = string.Empty;
 
         /// <summary>
         /// Gets the type the parameter is expecting.
@@ -452,10 +415,11 @@ namespace System.Management.Automation
                 return _parameterType;
             }
         }
+
         private Type _parameterType;
 
         /// <summary>
-        /// Gets the Type that was specified as the parameter value
+        /// Gets the Type that was specified as the parameter value.
         /// </summary>
         public Type TypeSpecified
         {
@@ -464,10 +428,11 @@ namespace System.Management.Automation
                 return _typeSpecified;
             }
         }
+
         private Type _typeSpecified;
 
         /// <summary>
-        /// Gets the errorId of this ParameterBindingException
+        /// Gets the errorId of this ParameterBindingException.
         /// </summary>
         public string ErrorId
         {
@@ -476,6 +441,7 @@ namespace System.Management.Automation
                 return _errorId;
             }
         }
+
         private string _errorId;
 
         /// <summary>
@@ -488,6 +454,7 @@ namespace System.Management.Automation
                 return _line;
             }
         }
+
         private Int64 _line = Int64.MinValue;
 
         /// <summary>
@@ -500,6 +467,7 @@ namespace System.Management.Automation
                 return _offset;
             }
         }
+
         private Int64 _offset = Int64.MinValue;
 
         /// <summary>
@@ -512,18 +480,19 @@ namespace System.Management.Automation
                 return _invocationInfo;
             }
         }
+
         private InvocationInfo _invocationInfo;
         #endregion Properties
 
         #region private
 
         private string _resourceString;
-        private object[] _args = new object[0];
+        private object[] _args = Array.Empty<object>();
         private string _commandName;
 
         private string BuildMessage()
         {
-            object[] messageArgs = new object[0];
+            object[] messageArgs = Array.Empty<object>();
 
             if (_args != null)
             {
@@ -537,12 +506,13 @@ namespace System.Management.Automation
                 _args.CopyTo(messageArgs, 6);
             }
 
-            string result = String.Empty;
+            string result = string.Empty;
 
-            if (!String.IsNullOrEmpty(_resourceString))
+            if (!string.IsNullOrEmpty(_resourceString))
             {
                 result = StringUtil.Format(_resourceString, messageArgs);
             }
+
             return result;
         }
 
@@ -555,63 +525,52 @@ namespace System.Management.Automation
         #region Preferred constructors
 
         /// <summary>
-        /// Constructs a ParameterBindingValidationException
+        /// Constructs a ParameterBindingValidationException.
         /// </summary>
-        /// 
         /// <param name="errorCategory">
         /// The category for the error.
         /// </param>
-        /// 
         /// <param name="invocationInfo">
         /// The information about the command that encountered the error.
-        /// 
+        ///
         /// InvocationInfo.MyCommand.Name == {0}
         /// </param>
-        /// 
         /// <param name="errorPosition">
         /// The position for the command or parameter that caused the error.
-        /// 
+        ///
         /// token.LineNumber == {4}
         /// token.OffsetInLine == {5}
         /// </param>
-        /// 
         /// <param name="parameterName">
         /// The parameter on which binding caused the error.
-        /// 
+        ///
         /// parameterName == {1}
         /// </param>
-        /// 
         /// <param name="parameterType">
         /// The Type the parameter was expecting.
-        /// 
+        ///
         /// parameterType == {2}
         /// </param>
-        /// 
         /// <param name="typeSpecified">
         /// The Type that was attempted to be bound to the parameter.
-        /// 
+        ///
         /// typeSpecified == {3}
         /// </param>
-        /// 
         /// <param name="resourceString">
         /// The format string for the exception message.
         /// </param>
-        /// 
         /// <param name="errorId">
         /// The error ID.
         /// </param>
-        /// 
         /// <param name="args">
         /// Additional arguments to pass to the format string.
-        /// 
+        ///
         /// starts at {6}
         /// </param>
-        /// 
         /// <exception cref="ArgumentException">
         /// If <paramref name="resourceString"/> or <paramref name="errorId"/>
         /// is null or empty.
         /// </exception>
-        /// 
         internal ParameterBindingValidationException(
             ErrorCategory errorCategory,
             InvocationInfo invocationInfo,
@@ -636,71 +595,58 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ParameterBindingValidationException
+        /// Constructs a ParameterBindingValidationException.
         /// </summary>
-        /// 
         /// <param name="innerException">
         /// The inner exception.
         /// </param>
-        /// 
         /// <param name="errorCategory">
         /// The category for the error.
         /// </param>
-        /// 
         /// <param name="invocationInfo">
         /// The information about the command that encountered the error.
-        /// 
+        ///
         /// InvocationInfo.MyCommand.Name == {0}
         /// </param>
-        /// 
         /// <param name="errorPosition">
         /// The position for the command or parameter that caused the error.
-        /// 
+        ///
         /// token.LineNumber == {4}
         /// token.OffsetInLine == {5}
         /// </param>
-        /// 
         /// <param name="parameterName">
         /// The parameter on which binding caused the error.
-        /// 
+        ///
         /// parameterName == {1}
         /// </param>
-        /// 
         /// <param name="parameterType">
         /// The Type the parameter was expecting.
-        /// 
+        ///
         /// parameterType == {2}
         /// </param>
-        /// 
         /// <param name="typeSpecified">
         /// The Type that was attempted to be bound to the parameter.
-        /// 
+        ///
         /// typeSpecified == {3}
         /// </param>
-        /// 
         /// <param name="resourceString">
         /// The format string for the exception message.
         /// </param>
-        /// 
         /// <param name="errorId">
         /// The error ID.
         /// </param>
-        /// 
         /// <param name="args">
         /// Additional arguments to pass to the format string.
-        /// 
+        ///
         /// starts at {6}
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="invocationInfo"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ArgumentException">
         /// If <paramref name="resourceBaseName"/> or <paramref name="errorIdAndResourceId"/>
         /// is null or empty.
         /// </exception>
-        /// 
         internal ParameterBindingValidationException(
             Exception innerException,
             ErrorCategory errorCategory,
@@ -734,15 +680,13 @@ namespace System.Management.Automation
 
         #region serialization
         /// <summary>
-        /// Constructs a ParameterBindingValidationException from serialized data
+        /// Constructs a ParameterBindingValidationException from serialized data.
         /// </summary>
-        /// 
-        /// <param name="info"> 
-        /// serialization information 
+        /// <param name="info">
+        /// serialization information
         /// </param>
-        /// 
-        /// <param name="context"> 
-        /// streaming context 
+        /// <param name="context">
+        /// streaming context
         /// </param>
         protected ParameterBindingValidationException(
             SerializationInfo info,
@@ -758,7 +702,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Make the positional binding ignore this validation exception when it's set to true.
         /// </summary>
-        /// 
         /// <remarks>
         /// This property is only used internally in the positional binding phase
         /// </remarks>
@@ -766,6 +709,7 @@ namespace System.Management.Automation
         {
             get { return _swallowException; }
         }
+
         private readonly bool _swallowException = false;
 
         #endregion Property
@@ -777,63 +721,52 @@ namespace System.Management.Automation
         #region Preferred constructors
 
         /// <summary>
-        /// Constructs a ParameterBindingArgumentTransformationException
+        /// Constructs a ParameterBindingArgumentTransformationException.
         /// </summary>
-        /// 
         /// <param name="errorCategory">
         /// The category for the error.
         /// </param>
-        /// 
         /// <param name="invocationInfo">
         /// The information about the command that encountered the error.
-        /// 
+        ///
         /// InvocationInfo.MyCommand.Name == {0}
         /// </param>
-        /// 
         /// <param name="errorPosition">
         /// The position for the command or parameter that caused the error.
-        /// 
+        ///
         /// token.LineNumber == {4}
         /// token.OffsetInLine == {5}
         /// </param>
-        /// 
         /// <param name="parameterName">
         /// The parameter on which binding caused the error.
-        /// 
+        ///
         /// parameterName == {1}
         /// </param>
-        /// 
         /// <param name="parameterType">
         /// The Type the parameter was expecting.
-        /// 
+        ///
         /// parameterType == {2}
         /// </param>
-        /// 
         /// <param name="typeSpecified">
         /// The Type that was attempted to be bound to the parameter.
-        /// 
+        ///
         /// typeSpecified == {3}
         /// </param>
-        /// 
         /// <param name="resourceString">
         /// The format string for the exception message.
         /// </param>
-        /// 
         /// <param name="errorId">
         /// The error ID.
         /// </param>
-        /// 
         /// <param name="args">
         /// Additional arguments to pass to the format string.
-        /// 
+        ///
         /// starts at {6}
         /// </param>
-        /// 
         /// <exception cref="ArgumentException">
         /// If <paramref name="resourceString"/> or <paramref name="errorId"/>
         /// is null or empty.
         /// </exception>
-        /// 
         internal ParameterBindingArgumentTransformationException(
             ErrorCategory errorCategory,
             InvocationInfo invocationInfo,
@@ -858,71 +791,58 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ParameterBindingArgumentTransformationException
+        /// Constructs a ParameterBindingArgumentTransformationException.
         /// </summary>
-        /// 
         /// <param name="innerException">
         /// The inner exception.
         /// </param>
-        /// 
         /// <param name="errorCategory">
         /// The category for the error.
         /// </param>
-        /// 
         /// <param name="invocationInfo">
         /// The information about the command that encountered the error.
-        /// 
+        ///
         /// InvocationInfo.MyCommand.Name == {0}
         /// </param>
-        /// 
         /// <param name="errorPosition">
         /// The position for the command or parameter that caused the error.
-        /// 
+        ///
         /// token.LineNumber == {4}
         /// token.OffsetInLine == {5}
         /// </param>
-        /// 
         /// <param name="parameterName">
         /// The parameter on which binding caused the error.
-        /// 
+        ///
         /// parameterName == {1}
         /// </param>
-        /// 
         /// <param name="parameterType">
         /// The Type the parameter was expecting.
-        /// 
+        ///
         /// parameterType == {2}
         /// </param>
-        /// 
         /// <param name="typeSpecified">
         /// The Type that was attempted to be bound to the parameter.
-        /// 
+        ///
         /// typeSpecified == {3}
         /// </param>
-        /// 
         /// <param name="resourceString">
         /// The format string for the exception message.
         /// </param>
-        /// 
         /// <param name="errorId">
         /// The error ID.
         /// </param>
-        /// 
         /// <param name="args">
         /// Additional arguments to pass to the format string.
-        /// 
+        ///
         /// starts at {6}
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="invocationInfo"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ArgumentException">
         /// If <paramref name="resourceString"/> or <paramref name="errorId"/>
         /// is null or empty.
         /// </exception>
-        /// 
         internal ParameterBindingArgumentTransformationException(
             Exception innerException,
             ErrorCategory errorCategory,
@@ -950,15 +870,13 @@ namespace System.Management.Automation
         #endregion Preferred constructors
         #region serialization
         /// <summary>
-        /// Constructs a ParameterBindingArgumentTransformationException using serialized data
+        /// Constructs a ParameterBindingArgumentTransformationException using serialized data.
         /// </summary>
-        /// 
-        /// <param name="info"> 
-        /// serialization information 
+        /// <param name="info">
+        /// serialization information
         /// </param>
-        /// 
-        /// <param name="context"> 
-        /// streaming context 
+        /// <param name="context">
+        /// streaming context
         /// </param>
         protected ParameterBindingArgumentTransformationException(
             SerializationInfo info,
@@ -976,63 +894,52 @@ namespace System.Management.Automation
         #region Preferred constructors
 
         /// <summary>
-        /// Constructs a ParameterBindingParameterDefaultValueException
+        /// Constructs a ParameterBindingParameterDefaultValueException.
         /// </summary>
-        /// 
         /// <param name="errorCategory">
         /// The category for the error.
         /// </param>
-        /// 
         /// <param name="invocationInfo">
         /// The information about the command that encountered the error.
-        /// 
+        ///
         /// InvocationInfo.MyCommand.Name == {0}
         /// </param>
-        /// 
         /// <param name="errorPosition">
         /// The position for the command or parameter that caused the error.
-        /// 
+        ///
         /// token.LineNumber == {4}
         /// token.OffsetInLine == {5}
         /// </param>
-        /// 
         /// <param name="parameterName">
         /// The parameter on which binding caused the error.
-        /// 
+        ///
         /// parameterName == {1}
         /// </param>
-        /// 
         /// <param name="parameterType">
         /// The Type the parameter was expecting.
-        /// 
+        ///
         /// parameterType == {2}
         /// </param>
-        /// 
         /// <param name="typeSpecified">
         /// The Type that was attempted to be bound to the parameter.
-        /// 
+        ///
         /// typeSpecified == {3}
         /// </param>
-        /// 
         /// <param name="resourceString">
         /// The format string for the exception message.
         /// </param>
-        /// 
         /// <param name="errorId">
         /// The error ID.
         /// </param>
-        /// 
         /// <param name="args">
         /// Additional arguments to pass to the format string.
-        /// 
+        ///
         /// starts at {6}
         /// </param>
-        /// 
         /// <exception cref="ArgumentException">
         /// If <paramref name="resourceString"/> or <paramref name="errorId"/>
         /// is null or empty.
         /// </exception>
-        /// 
         internal ParameterBindingParameterDefaultValueException(
             ErrorCategory errorCategory,
             InvocationInfo invocationInfo,
@@ -1057,71 +964,58 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a ParameterBindingParameterDefaultValueException
+        /// Constructs a ParameterBindingParameterDefaultValueException.
         /// </summary>
-        /// 
         /// <param name="innerException">
         /// The inner exception.
         /// </param>
-        /// 
         /// <param name="errorCategory">
         /// The category for the error.
         /// </param>
-        /// 
         /// <param name="invocationInfo">
         /// The information about the command that encountered the error.
-        /// 
+        ///
         /// InvocationInfo.MyCommand.Name == {0}
         /// </param>
-        /// 
         /// <param name="errorPosition">
         /// The position for the command or parameter that caused the error.
-        /// 
+        ///
         /// token.LineNumber == {4}
         /// token.OffsetInLine == {5}
         /// </param>
-        /// 
         /// <param name="parameterName">
         /// The parameter on which binding caused the error.
-        /// 
+        ///
         /// parameterName == {1}
         /// </param>
-        /// 
         /// <param name="parameterType">
         /// The Type the parameter was expecting.
-        /// 
+        ///
         /// parameterType == {2}
         /// </param>
-        /// 
         /// <param name="typeSpecified">
         /// The Type that was attempted to be bound to the parameter.
-        /// 
+        ///
         /// typeSpecified == {3}
         /// </param>
-        /// 
         /// <param name="resourceString">
         /// The format string for the exception message.
         /// </param>
-        /// 
         /// <param name="errorId">
         /// The error ID.
         /// </param>
-        /// 
         /// <param name="args">
         /// Additional arguments to pass to the format string.
-        /// 
+        ///
         /// starts at {6}
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="invocationInfo"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ArgumentException">
         /// If <paramref name="resourceString"/> or <paramref name="errorId"/>
         /// is null or empty.
         /// </exception>
-        /// 
         internal ParameterBindingParameterDefaultValueException(
             Exception innerException,
             ErrorCategory errorCategory,
@@ -1150,15 +1044,13 @@ namespace System.Management.Automation
 
         #region serialization
         /// <summary>
-        /// Constructs a ParameterBindingParameterDefaultValueException using serialized data
+        /// Constructs a ParameterBindingParameterDefaultValueException using serialized data.
         /// </summary>
-        /// 
-        /// <param name="info"> 
-        /// serialization information 
+        /// <param name="info">
+        /// serialization information
         /// </param>
-        /// 
-        /// <param name="context"> 
-        /// streaming context 
+        /// <param name="context">
+        /// streaming context
         /// </param>
         protected ParameterBindingParameterDefaultValueException(
             SerializationInfo info,
@@ -1169,5 +1061,5 @@ namespace System.Management.Automation
 
         #endregion serialization
     }
-} // namespace System.Management.Automation
+}
 

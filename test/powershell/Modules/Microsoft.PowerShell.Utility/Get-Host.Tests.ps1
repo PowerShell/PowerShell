@@ -1,21 +1,9 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 Describe "Get-Host DRT Unit Tests" -Tags "CI" {
     It "Should works proper with get-host" {
-        $results = Get-Host 
-        $results | Should Be $Host
-        $results.GetType().Name | Should Be InternalHost
-    }
-}
-
-Describe "Get-Host" -Tags "CI" {
-    It "Should return a type of InternalHost for Get-Host cmdlet" {
-
-	(Get-Host).GetType().Name | Should Be InternalHost
-
-    }
-
-    It "Should have $ host variable be equivalent to Get-Host object" {
-
-	Get-Host | Should Be $host
-
+        $results = Get-Host
+        $results | Should -Be $Host
+        $results.PSObject.TypeNames[0] | Should -BeExactly "System.Management.Automation.Internal.Host.InternalHost"
     }
 }

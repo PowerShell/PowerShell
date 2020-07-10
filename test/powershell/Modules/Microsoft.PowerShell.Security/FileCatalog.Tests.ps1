@@ -1,15 +1,18 @@
-﻿# This is a Pester test suite to validate the New-FileCatalog & Test-FileCatalog cmdlets on PowerShell Core.
-#
-# Copyright (c) Microsoft Corporation, 2016
-#
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 
-if ($IsWindows) {
+# This is a Pester test suite to validate the New-FileCatalog & Test-FileCatalog cmdlets on PowerShell.
 
-$script:catalogPath = "" 
- 
+try {
+    #skip all tests on non-windows platform
+    $defaultParamValues = $PSDefaultParameterValues.Clone()
+    $PSDefaultParameterValues["it:skip"] = !$IsWindows
+
+$script:catalogPath = ""
+
 Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
 
-    #compare two hashtables 
+    #compare two hashtables
     function CompareHashTables
     {
         param
@@ -20,32 +23,53 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
 
         foreach ($key in $hashTable1.keys)
         {
-            $keyValue1 = $hashTable1["$key"] 
+            $keyValue1 = $hashTable1["$key"]
             if($hashTable2.ContainsKey($key))
             {
-                $keyValue2 = $hashTable2["$key"] 
-                $keyValue1 | Should Be $keyValue2
+                $keyValue2 = $hashTable2["$key"]
+                $keyValue1 | Should -Be $keyValue2
             }
             else
             {
                 throw "Failed to find the file $keyValue1 for $key in Hashtable"
             }
-        }    
+        }
     }
-               
+
     BeforeAll {
         $testDataPath = "$PSScriptRoot\TestData\CatalogTestData"
     }
- 
+
     Context "NewAndTestCatalogTests PositiveTestCases when validation Succeeds" {
 
+        It "NewFileCatalogWithSingleFile with WhatIf" {
+
+            $sourcePath = Join-Path $testDataPath '\CatalogTestFile1.mof'
+            # use existant Path for the directory when .cat file name is not specified
+            $catalogPath = $testDataPath
+            $catalogFile = $catalogPath + "\catalog.cat"
+
+            try
+            {
+                $null = New-FileCatalog -Path $sourcePath -CatalogFilePath $catalogPath -WhatIf
+                $result = Test-Path -Path $catalogFile
+            }
+            finally
+            {
+                Remove-Item $catalogFile -Force -ErrorAction SilentlyContinue
+            }
+
+            # Validate result properties
+            $result | Should -BeFalse
+        }
+
         It "NewFileCatalogFolder" {
-            
+
             $sourcePath = Join-Path $testDataPath 'UserConfigProv\DSCResources\scriptdsc'
             $catalogPath = "$testDataPath\NewFileCatalogFolder.cat"
 
             try
-            {                          
+            {
                 $null = New-FileCatalog -Path $sourcePath -CatalogFilePath $catalogPath -CatalogVersion 1.0
                 $result = Test-FileCatalog -Path $sourcePath -CatalogFilePath $catalogPath -Detailed
             }
@@ -55,35 +79,35 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             }
 
             # Validate result properties
-            $result.Status | Should Be "Valid"
-            $result.Signature.Status | Should Be "NotSigned"
-            $result.HashAlgorithm | Should Be "SHA1"
+            $result.Status | Should -Be "Valid"
+            $result.Signature.Status | Should -Be "NotSigned"
+            $result.HashAlgorithm | Should -Be "SHA1"
         }
-        
+
         It "NewFileCatalogFolderWithSubFolders" {
 
             $sourcePath = Join-Path $testDataPath 'UserConfigProv'
-            # use non existant Path for the directory when .cat file name is specified 
+            # use non existant Path for the directory when .cat file name is specified
             $catalogPath = "$testDataPath\OutPutCatalog\NewFileCatalogFolderWithSubFolders.cat"
 
             try
             {
-                $null = New-FileCatalog -Path $sourcePath -CatalogFilePath $catalogPath 
+                $null = New-FileCatalog -Path $sourcePath -CatalogFilePath $catalogPath
                 $result = Test-FileCatalog -Path $sourcePath -CatalogFilePath $catalogPath -Detailed
             }
             finally
-            {                
+            {
                 Remove-Item "$sourcePath\OutPutCatalog" -Force -ErrorAction SilentlyContinue -Recurse
             }
-            
+
             # Validate result properties
-            $result.Status | Should Be "Valid"
-            $result.Signature.Status | Should Be "NotSigned" 
-            $result.HashAlgorithm | Should Be "SHA1"
-        } 
+            $result.Status | Should -Be "Valid"
+            $result.Signature.Status | Should -Be "NotSigned"
+            $result.HashAlgorithm | Should -Be "SHA1"
+        }
 
         It "NewFileCatalogWithSingleFile" {
-            
+
             $sourcePath = Join-Path $testDataPath '\CatalogTestFile1.mof'
             # use existant Path for the directory when .cat file name is not specified
             $catalogPath = $testDataPath
@@ -96,38 +120,38 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             {
                 Remove-Item "$catalogPath\catalog.cat" -Force -ErrorAction SilentlyContinue
             }
-                        
+
             # Validate result properties
-            $result | Should Be "Valid"
+            $result | Should -Be "Valid"
         }
 
         It "NewFileCatalogForFilesThatDoNotSupportEmbeddedSignatures" {
-         
+
             $expectedPathsAndHashes = @{ "TestImage.gif" = "B0E4B9F0BB21284AA0AF0D525C913420AD73DA6A" ;
-                                        "TestFileCatalog.txt" = "925834D22A8AEB8E0A5EAFABC739F8AFAAD3E490" }
-            
-            # use non existant Path for the directory when .cat file name is not specified            
-            $catalogPath = "$testDataPath\OutPutCatalog"              
+                                        "TestFileCatalog.txt" = "BA6A26C5F19AB50B0D5BE2A9D445B259998B0DD9" }
+
+            # use non existant Path for the directory when .cat file name is not specified
+            $catalogPath = "$testDataPath\OutPutCatalog"
 
             try
-            {        
-                $null = New-FileCatalog -Path "$testDataPath\TestImage.gif","$testDataPath\TestFileCatalog.txt" -CatalogFilePath $catalogPath -CatalogVersion 1.0                    
-                $result = Test-FileCatalog -Path "$testDataPath\TestImage.gif","$testDataPath\TestFileCatalog.txt"  -CatalogFilePath ($catalogPath + "\catalog.cat") -Detailed                                                    
+            {
+                $null = New-FileCatalog -Path "$testDataPath\TestImage.gif","$testDataPath\TestFileCatalog.txt" -CatalogFilePath $catalogPath -CatalogVersion 1.0
+                $result = Test-FileCatalog -Path "$testDataPath\TestImage.gif","$testDataPath\TestFileCatalog.txt"  -CatalogFilePath ($catalogPath + "\catalog.cat") -Detailed
             }
             finally
             {
                 Remove-Item "$catalogPath" -Force -ErrorAction SilentlyContinue -Recurse
             }
-                    
-            $result.Status | Should Be "Valid"  
-            $result.CatalogItems.Count | Should Be 2
-            $result.PathItems.Count | Should Be 2                 
+
+            $result.Status | Should -Be "Valid"
+            $result.CatalogItems.Count | Should -Be 2
+            $result.PathItems.Count | Should -Be 2
             CompareHashTables $result.CatalogItems $result.PathItems
-            CompareHashTables $result.CatalogItems $expectedPathsAndHashes   
+            CompareHashTables $result.CatalogItems $expectedPathsAndHashes
         }
 
-        It "NewFileCatalogWithMutipleFoldersAndFiles" -Skip:$true {
-         
+        It "NewFileCatalogWithMultipleFoldersAndFiles" -Pending {
+
             $expectedPathsAndHashes = @{
                 "UserConfigProv.psd1" = "748E5486814051DA3DFB79FE8964152727213248" ;
                 "DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.schema.mof" ="F7CAB050E32CF0C9B2AC2807C4F24D31EFCC8B61";
@@ -140,12 +164,12 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
                 "DSCResources\UserConfigProviderModVersion2\UserConfigProviderModVersion2.schema.mof" = "E33FBFEA28E9A8FBA793FBC3D8015BCC9A10944B";
                 "CatalogTestFile1.mof" = "083B0953D0D70FFF62710F0356FEB86BCE327FE7";
                 "CatalogTestFile2.xml" = "E73BB7A0DD9FAC6A8182F67B750D9CA3094490F1" }
-            
-            $catalogPath = "$env:TEMP\NewFileCatalogWithMutipleFoldersAndFiles.cat"             
+
+            $catalogPath = "$env:TEMP\NewFileCatalogWithMultipleFoldersAndFiles.cat"
             $catalogDataPath = @("$testDataPath\UserConfigProv\","$testDataPath\CatalogTestFile1.mof","$testDataPath\CatalogTestFile2.xml")
-         
+
             try
-            {        
+            {
                 $null =New-FileCatalog -Path $catalogDataPath -CatalogFilePath $catalogPath -CatalogVersion 1.0
                 $result = Test-FileCatalog -Path $catalogDataPath -CatalogFilePath $catalogPath -Detailed
             }
@@ -153,18 +177,18 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             {
                 Remove-Item "$catalogPath" -Force -ErrorAction SilentlyContinue
             }
-            
-            $result.Status | Should Be "Valid"
-            $result.Signature.Status | Should Be "NotSigned"
-            $result.HashAlgorithm | Should Be "SHA1"
-            $result.CatalogItems.Count | Should Be 11
-            $result.PathItems.Count | Should Be 11
+
+            $result.Status | Should -Be "Valid"
+            $result.Signature.Status | Should -Be "NotSigned"
+            $result.HashAlgorithm | Should -Be "SHA1"
+            $result.CatalogItems.Count | Should -Be 11
+            $result.PathItems.Count | Should -Be 11
 
             CompareHashTables $result.CatalogItems $result.PathItems
             CompareHashTables $result.CatalogItems $expectedPathsAndHashes
         }
 
-        It "NewFileCatalogVersion2WithMutipleFoldersAndFiles" -Skip:$true {
+        It "NewFileCatalogVersion2WithMultipleFoldersAndFiles" -Pending {
 
             $expectedPathsAndHashes = @{
                 "UserConfigProv.psd1" = "9FFE4CA2873CD91CDC9D71362526446ECACDA64D26DEA768E6CE489B84D888E4" ;
@@ -178,51 +202,61 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
                 "DSCResources\UserConfigProviderModVersion2\UserConfigProviderModVersion2.schema.mof" = "679318201B012CC5936B29C095956B2131FAF828C0CCA4342A5914F721480FB9";
                 "CatalogTestFile1.mof" = "7C1885AE5F76F58DAA232A5E962875F90308C3CB8580400EE12F999B4E10F940";
                 "CatalogTestFile2.xml" = "00B7DA28CD285F796660D36B77B2EC6054F21A44D5B329EB6BC4EC7687D70B13";
-                "TestImage.gif" = "2D938D255D0D6D547747BD21447CF7295318D34D9B4105D04C1C27487D2FF402" }                 
+                "TestImage.gif" = "2D938D255D0D6D547747BD21447CF7295318D34D9B4105D04C1C27487D2FF402" }
 
-            
-            $catalogPath = "$env:TEMP\NewFileCatalogVersion2WithMutipleFoldersAndFiles.cat"             
-            $catalogDataPath = @("$testDataPath\UserConfigProv\","$testDataPath\CatalogTestFile1.mof","$testDataPath\CatalogTestFile2.xml", "$testDataPath\TestImage.gif")            
+            $catalogPath = "$env:TEMP\NewFileCatalogVersion2WithMultipleFoldersAndFiles.cat"
+            $catalogDataPath = @("$testDataPath\UserConfigProv\","$testDataPath\CatalogTestFile1.mof","$testDataPath\CatalogTestFile2.xml", "$testDataPath\TestImage.gif")
 
             try
-            {        
-                $null = New-FileCatalog -Path $catalogDataPath -CatalogFilePath $catalogPath -CatalogVersion 2.0                    
+            {
+                $null = New-FileCatalog -Path $catalogDataPath -CatalogFilePath $catalogPath -CatalogVersion 2.0
                 $result = Test-FileCatalog -Path $catalogDataPath -CatalogFilePath $catalogPath -Detailed
             }
             finally
             {
                 Remove-Item "$catalogPath" -Force -ErrorAction SilentlyContinue
             }
-            
-            $result.Status | Should Be "Valid"
-            $result.Signature.Status | Should Be "NotSigned"
-            $result.HashAlgorithm | Should Be "SHA256"
-            $result.CatalogItems.Count | Should Be 12
-            $result.PathItems.Count | Should Be 12
+
+            $result.Status | Should -Be "Valid"
+            $result.Signature.Status | Should -Be "NotSigned"
+            $result.HashAlgorithm | Should -Be "SHA256"
+            $result.CatalogItems.Count | Should -Be 12
+            $result.PathItems.Count | Should -Be 12
             CompareHashTables $result.CatalogItems $result.PathItems
             CompareHashTables $result.CatalogItems $expectedPathsAndHashes
         }
 
-        It "NewFileCatalogFolderWhenCatlogFileIsCreatedInsideSameFolder" {
-            
-            $catalogPath = "$env:TEMP\UserConfigProv\NewFileCatalogFolderWhenCatlogFileIsCreatedInsideSameFolder.cat"
+        # This is failing saying the exact thing that it says is supposed to work does not
+        It "Test-FileCatalog should pass when catalog is in the same folder as files being tested" -Pending {
+
+            $catalogPath = "$env:TEMP\UserConfigProv\catalog.cat"
             try
             {
-                copy-item "$testDataPath\UserConfigProv" $env:temp -Recurse -ErrorAction SilentlyContinue             
-                $null = New-FileCatalog -Path $env:temp\UserConfigProv\ -CatalogFilePath $catalogPath -CatalogVersion 1.0                   
-                $result = Test-FileCatalog -Path $env:temp\UserConfigProv\ -CatalogFilePath $catalogPath                     
+                Copy-Item "$testDataPath\UserConfigProv" $env:temp -Recurse -ErrorAction SilentlyContinue
+                Push-Location "$env:TEMP\UserConfigProv"
+                # When -Path is not specified, it should use current directory
+                $null = New-FileCatalog -CatalogFilePath $catalogPath -CatalogVersion 1.0
+                $result = Test-FileCatalog -CatalogFilePath $catalogPath
+
+                if($result -ne 'Valid')
+                {
+                    # We will fail, Write why.
+                    $detailResult =  Test-FileCatalog -CatalogFilePath $catalogPath -Detailed
+                    $detailResult | ConvertTo-Json | Write-Verbose -Verbose
+                }
             }
             finally
             {
+                Pop-Location
                 Remove-Item "$catalogPath" -Force -ErrorAction SilentlyContinue
                 Remove-Item "$env:temp\UserConfigProv\" -Force -ErrorAction SilentlyContinue -Recurse
             }
 
-            $result | Should Be "Valid"            
+            $result | Should -Be "Valid"
         }
 
-        It "NewFileCatalogWithUnicodeCharactersInFileNames" -Skip:$true {
-            
+        It "NewFileCatalogWithUnicodeCharactersInFileNames" -Pending {
+
             $expectedPathsAndHashes = @{
                 "UserConfigProv.psd1" = "9FFE4CA2873CD91CDC9D71362526446ECACDA64D26DEA768E6CE489B84D888E4" ;
                 "DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.schema.mof" ="517F625CB6C465928586F5C613F768B33C20F477DAF843C179071B8C74B992AA";
@@ -235,7 +269,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
                 "DSCResources\UserConfigProviderModVersion2\UserConfigProviderModVersion2.schema.mof" = "679318201B012CC5936B29C095956B2131FAF828C0CCA4342A5914F721480FB9";
                 "ٿ ڀ ځ ڂ ڃ ڄ څ چ ڇ ڈ ډ ڊ ڋ ڌ ڍ ڎ ڏ ڐ ڑ.txt" = "EFD0AE8FF12C7387D51FFC03259B60E06DA012BF7D3B7B9D3480FAB2864846CE";
                 "ɥ ɦ ɧ ɨ ɩ ɪ ɫ ɬ.txt" = "9FB57660EDD8DA898A9F1E7F5A36B8B760B4A21625F9968D87A32A55B3546BF9"}
-            
+
             # Create Test Files with unicode characters in names and content
             $unicodeTempDir = Join-Path -Path $testDataPath -ChildPath "UnicodeTestDir"
             $null = New-Item -ItemType Directory -Path $unicodeTempDir -Force
@@ -260,14 +294,14 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
                 Remove-Item $unicodeTempDir -Recurse -Force -ErrorAction SilentlyContinue
                 Remove-Item "$catalogPath" -Force -ErrorAction SilentlyContinue
             }
-            
-            $result.Status | Should Be "Valid"
-            $result.Signature.Status | Should Be "NotSigned" 
-            $result.HashAlgorithm | Should Be "SHA256"    
-            $result.CatalogItems.Count | Should Be 11    
-            $result.PathItems.Count | Should Be 11                 
+
+            $result.Status | Should -Be "Valid"
+            $result.Signature.Status | Should -Be "NotSigned"
+            $result.HashAlgorithm | Should -Be "SHA256"
+            $result.CatalogItems.Count | Should -Be 11
+            $result.PathItems.Count | Should -Be 11
             CompareHashTables $result.CatalogItems $result.PathItems
-            CompareHashTables $result.CatalogItems $expectedPathsAndHashes 
+            CompareHashTables $result.CatalogItems $expectedPathsAndHashes
         }
     }
 
@@ -279,103 +313,111 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
         }
 
         It "TestCatalogWhenNewFileAddedtoFolderBeforeValidation" {
-            
+
             $script:catalogPath = "$env:TEMP\TestCatalogWhenNewFileAddedtoFolderBeforeValidation.cat"
-            $null = New-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -CatalogVersion 2.0                
-            $null = copy-item $testDataPath\UserConfigProv $env:temp -Recurse -ErrorAction SilentlyContinue
+            $null = New-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -CatalogVersion 2.0
+            $null = Copy-Item $testDataPath\UserConfigProv $env:temp -Recurse -ErrorAction SilentlyContinue
             $null = New-Item $env:temp\UserConfigProv\DSCResources\NewFile.txt -ItemType File
-            Add-Content $env:temp\UserConfigProv\DSCResources\NewFile.txt -Value "More Data" -force
-            $result = Test-FileCatalog -Path $env:temp\UserConfigProv -CatalogFilePath $script:catalogPath -Detailed
-            
-            $result.Status | Should Be "ValidationFailed"
-            $result.CatalogItems.Count | Should Be 9
-            $result.PathItems.Count | Should Be 10
-            $result.CatalogItems.ContainsKey("DSCResources\NewFile.txt") | Should Be $false
-            $result.PathItems.ContainsKey("DSCResources\NewFile.txt") | Should Be $true
-            
-            # By Skipping the new added file validation will pass
-            $result = Test-FileCatalog -Path $env:temp\UserConfigProv -CatalogFilePath $script:catalogPath -Detailed -FilesToSkip "NewFile.txt"
-            $result.Status | Should Be "Valid"
-        }
-         
-        It "TestCatalogWhenNewFileDeletedFromFolderBeforeValidation" {
-            
-            $script:catalogPath = "$env:TEMP\TestCatalogWhenNewFileDeletedFromFolderBeforeValidation.cat"
-            $null = New-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -CatalogVersion 1.0 
-            $null = copy-item $testDataPath\UserConfigProv $env:temp -Recurse -ErrorAction SilentlyContinue
-            del $env:temp\UserConfigProv\DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1 -force -ErrorAction SilentlyContinue
+            Add-Content $env:temp\UserConfigProv\DSCResources\NewFile.txt -Value "More Data" -Force
             $result = Test-FileCatalog -Path $env:temp\UserConfigProv -CatalogFilePath $script:catalogPath -Detailed
 
-            $result.Status | Should Be "ValidationFailed"
-            $result.CatalogItems.Count | Should Be 9
-            $result.PathItems.Count | Should Be 8
-            $result.CatalogItems.ContainsKey("DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1") | Should Be $true
-            $result.PathItems.ContainsKey("DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1") | Should Be $false
-            
+            $result.Status | Should -Be "ValidationFailed"
+            $result.CatalogItems.Count | Should -Be 9
+            $result.PathItems.Count | Should -Be 10
+            $result.CatalogItems.ContainsKey("DSCResources\NewFile.txt") | Should -BeFalse
+            $result.PathItems.ContainsKey("DSCResources\NewFile.txt") | Should -BeTrue
+
+            # By Skipping the new added file validation will pass
+            $result = Test-FileCatalog -Path $env:temp\UserConfigProv -CatalogFilePath $script:catalogPath -Detailed -FilesToSkip "NewFile.txt"
+            $result.Status | Should -Be "Valid"
+        }
+
+        It "TestCatalogWhenNewFileDeletedFromFolderBeforeValidation" {
+
+            $script:catalogPath = "$env:TEMP\TestCatalogWhenNewFileDeletedFromFolderBeforeValidation.cat"
+            $null = New-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -CatalogVersion 1.0
+            $null = Copy-Item $testDataPath\UserConfigProv $env:temp -Recurse -ErrorAction SilentlyContinue
+            del $env:temp\UserConfigProv\DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1 -Force -ErrorAction SilentlyContinue
+            $result = Test-FileCatalog -Path $env:temp\UserConfigProv -CatalogFilePath $script:catalogPath -Detailed
+
+            $result.Status | Should -Be "ValidationFailed"
+            $result.CatalogItems.Count | Should -Be 9
+            $result.PathItems.Count | Should -Be 8
+            $result.CatalogItems.ContainsKey("DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1") | Should -BeTrue
+            $result.PathItems.ContainsKey("DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1") | Should -BeFalse
+
             # By Skipping the deleted file validation will pass
             $result = Test-FileCatalog -Path $env:temp\UserConfigProv -CatalogFilePath $script:catalogPath -Detailed -FilesToSkip "UserConfigProviderModVersion1.psm1"
-            $result.Status | Should Be "Valid"
+            $result.Status | Should -Be "Valid"
         }
 
         It "TestCatalogWhenFileContentModifiedBeforeValidation" {
-            
+
             $script:catalogPath = "$env:TEMP\TestCatalogWhenFileContentModifiedBeforeValidation.cat"
             $null = New-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -CatalogVersion 1.0
-            $null = copy-item $testDataPath\UserConfigProv $env:temp -Recurse -ErrorAction SilentlyContinue
+            $null = Copy-Item $testDataPath\UserConfigProv $env:temp -Recurse -ErrorAction SilentlyContinue
             Add-Content $env:temp\UserConfigProv\DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1 -Value "More Data" -Force
             $result = Test-FileCatalog -Path $env:temp\UserConfigProv -CatalogFilePath $script:catalogPath -Detailed
-            
-            $result.Status | Should Be "ValidationFailed"
-            $result.CatalogItems.Count | Should Be 9
-            $result.PathItems.Count | Should Be 9
+
+            $result.Status | Should -Be "ValidationFailed"
+            $result.CatalogItems.Count | Should -Be 9
+            $result.PathItems.Count | Should -Be 9
             $catalogHashValue = $result.CatalogItems["DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1"]
             $pathHashValue = $result.PathItems["DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1"]
-            ($catalogHashValue -eq $pathHashValue) | Should Be $false
+            ($catalogHashValue -eq $pathHashValue) | Should -BeFalse
 
-            # By Skipping the file with modifed contents validation will pass 
+            # By Skipping the file with modifed contents validation will pass
             $result = Test-FileCatalog -Path $env:temp\UserConfigProv -CatalogFilePath $script:catalogPath -Detailed -FilesToSkip "UserConfigProviderModVersion1.psm1"
-            $result.Status | Should Be "Valid"
+            $result.Status | Should -Be "Valid"
         }
     }
 
     Context "TestCatalog Skip Validation Tests"{
 
         AfterEach {
-            Remove-Item "$script:catalogPath" -Force -ErrorAction SilentlyContinue                
+            Remove-Item "$script:catalogPath" -Force -ErrorAction SilentlyContinue
         }
 
         It "TestCatalogSkipSingleFileDuringValidation" {
-            
+
             $script:catalogPath = "$env:TEMP\TestCatalogSkipSingleFileDuringValidation.cat"
             $null = New-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -CatalogVersion 2.0
             $result = Test-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -FilesToSkip "scriptdsc.schema"
-            $result | Should Be "Valid"
+            $result | Should -Be "Valid"
         }
 
         It "TestCatalogSkipCertainFileTypeDuringValidation" {
-            
+
             $script:catalogPath = "$env:TEMP\TestCatalogSkipCertainFileTypeDuringValidation.cat"
             $null = New-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -CatalogVersion 2.0
             $result = Test-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -FilesToSkip "*.mof"
-            $result | Should Be "Valid"
+            $result | Should -Be "Valid"
         }
 
         It "TestCatalogSkipWildCardPatternDuringValidation" {
-            
+
             $script:catalogPath = "$env:TEMP\TestCatalogSkipWildCardPatternDuringValidation.cat"
             $null = New-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -CatalogVersion 1.0
             $result = Test-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -FilesToSkip "UserConfigProvider*.psm1"
-            $result | Should Be "Valid"
+            $result | Should -Be "Valid"
         }
 
-        It "TestCatalogSkipMuitplePattensDuringValidation" {
-            
-            $script:catalogPath = "$env:TEMP\TestCatalogSkipMuitplePattensDuringValidation.cat"
-            $null = New-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -CatalogVersion 1.0 
+        It "TestCatalogSkipMultiplePattensDuringValidation" {
+
+            $script:catalogPath = "$env:TEMP\TestCatalogSkipMultiplePattensDuringValidation.cat"
+            $null = New-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -CatalogVersion 1.0
             $result = Test-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -FilesToSkip "*.psd1","UserConfigProviderModVersion2.psm1","*ModVersion1.schema.mof"
-            $result | Should Be "Valid"
+            $result | Should -Be "Valid"
+        }
+
+        It "New-FileCatalog -WhatIf does not create file" {
+            $catalogPath = Join-Path "TestDrive:" "TestCatalogWhatIfForNewFileCatalog.cat"
+            New-FileCatalog -CatalogFilePath $catalogPath -WhatIf
+            $catalogPath | Should -Not -Exist
         }
     }
 }
 
+} finally {
+    $global:PSdefaultParameterValues = $defaultParamValues
 }

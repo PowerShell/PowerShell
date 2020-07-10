@@ -1,33 +1,36 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using System.Globalization;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace System.Management.Automation.Help
 {
     /// <summary>
-    /// Updatable help system internal representation of the PSModuleInfo class
+    /// Updatable help system internal representation of the PSModuleInfo class.
     /// </summary>
     internal class UpdatableHelpModuleInfo
     {
+#if UNIX
+        internal static readonly string HelpContentZipName = "HelpContent.zip";
+#else
         internal static readonly string HelpContentZipName = "HelpContent.cab";
+#endif
         internal static readonly string HelpIntoXmlName = "HelpInfo.xml";
 
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
-        /// <param name="name">module name</param>
-        /// <param name="guid">module GUID</param>
-        /// <param name="path">module path</param>
-        /// <param name="uri">HelpInfo URI</param>
+        /// <param name="name">Module name.</param>
+        /// <param name="guid">Module GUID.</param>
+        /// <param name="path">Module path.</param>
+        /// <param name="uri">HelpInfo URI.</param>
         internal UpdatableHelpModuleInfo(string name, Guid guid, string path, string uri)
         {
-            Debug.Assert(!String.IsNullOrEmpty(name));
+            Debug.Assert(!string.IsNullOrEmpty(name));
             Debug.Assert(guid != null);
-            Debug.Assert(!String.IsNullOrEmpty(path));
-            Debug.Assert(!String.IsNullOrEmpty(uri));
+            Debug.Assert(!string.IsNullOrEmpty(path));
+            Debug.Assert(!string.IsNullOrEmpty(uri));
 
             ModuleName = name;
             _moduleGuid = guid;
@@ -36,12 +39,12 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Module name
+        /// Module name.
         /// </summary>
         internal string ModuleName { get; }
 
         /// <summary>
-        /// Module GUID
+        /// Module GUID.
         /// </summary>
         internal Guid ModuleGuid
         {
@@ -50,23 +53,24 @@ namespace System.Management.Automation.Help
                 return _moduleGuid;
             }
         }
+
         private Guid _moduleGuid;
 
         /// <summary>
-        /// Module path
+        /// Module path.
         /// </summary>
         internal string ModuleBase { get; }
 
         /// <summary>
-        /// HelpInfo URI
+        /// HelpInfo URI.
         /// </summary>
         internal string HelpInfoUri { get; }
 
         /// <summary>
-        /// Gets the combined HelpContent.zip name
+        /// Gets the combined HelpContent.zip name.
         /// </summary>
-        /// <param name="culture">current culture</param>
-        /// <returns>HelpContent name</returns>
+        /// <param name="culture">Current culture.</param>
+        /// <returns>HelpContent name.</returns>
         internal string GetHelpContentName(CultureInfo culture)
         {
             Debug.Assert(culture != null);
@@ -75,9 +79,9 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Gets the combined HelpInfo.xml name
+        /// Gets the combined HelpInfo.xml name.
         /// </summary>
-        /// <returns>HelpInfo name</returns>
+        /// <returns>HelpInfo name.</returns>
         internal string GetHelpInfoName()
         {
             return ModuleName + "_" + _moduleGuid.ToString() + "_" + HelpIntoXmlName;

@@ -1,13 +1,12 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
+using System.Collections.Generic;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Management.Automation;
-
     internal class HeaderInfo
     {
         private List<ColumnInfo> _columns = new List<ColumnInfo>();
@@ -27,12 +26,12 @@ namespace Microsoft.PowerShell.Commands
             string[] displayNames = new string[count];
             Type[] types = new Type[count];
 
-            count = 0; // Reuse this variabe to count cycles.
+            count = 0; // Reuse this variable to count cycles.
             foreach (ColumnInfo column in _columns)
             {
                 propertyNames[count] = column.StaleObjectPropertyName();
                 displayNames[count] = column.DisplayName();
-                Object columnValue = null;
+                object columnValue = null;
                 types[count] = column.GetValueType(liveObject, out columnValue);
 
                 // Add a property to the stale object since a column value has been evaluated to get column's type.
@@ -55,6 +54,7 @@ namespace Microsoft.PowerShell.Commands
                 staleObject.Properties.Add(new PSNoteProperty(column.StaleObjectPropertyName(),
                                            column.GetValue(liveObject)));
             }
+
             return staleObject;
         }
     }

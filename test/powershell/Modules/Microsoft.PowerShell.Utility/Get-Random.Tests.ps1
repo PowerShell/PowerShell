@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 Describe "Get-Random DRT Unit Tests" -Tags "CI" {
     $testData = @(
         @{ Name = 'no params'; Maximum = $null; Minimum = $null; GreaterThan = -1; LessThan = ([int32]::MaxValue); Type = 'System.Int32' }
@@ -15,7 +17,7 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
         @{ Name = 'maximum is Int64.MaxValue'; Maximum = ([int64]::MaxValue); Minimum = $null; GreaterThan = ([int64]-1); LessThan = ([int64]::MaxValue); Type = 'System.Int64' }
         @{ Name = 'maximum is a 64-bit integer'; Maximum = ([int64]100); Minimum = $null; GreaterThan = ([int64]-1); LessThan = ([int64]100); Type = 'System.Int64' }
         @{ Name = 'maximum set to a large integer greater than int32.MaxValue'; Maximum = 100000000000; Minimum = $null; GreaterThan = ([int64]-1); LessThan = ([int64]100000000000); Type = 'System.Int64' }
-        @{ Name = 'maximum set to 0, Minumum set to a negative 64-bit integer'; Maximum = ([int64]0); Minimum = ([int64]-100); GreaterThan = ([int64]-101); LessThan = ([int64]0); Type = 'System.Int64' }
+        @{ Name = 'maximum set to 0, Minimum set to a negative 64-bit integer'; Maximum = ([int64]0); Minimum = ([int64]-100); GreaterThan = ([int64]-101); LessThan = ([int64]0); Type = 'System.Int64' }
         @{ Name = 'maximum set to positive 64-bit number, min set to negative 64-bit number'; Maximum = ([int64]100); Minimum = ([int64]-100); GreaterThan = ([int64]-101); LessThan = ([int64]100); Type = 'System.Int64' }
         @{ Name = 'both are negative 64-bit number'; Maximum = ([int64]-100); Minimum = ([int64]-200); GreaterThan = ([int64]-201); LessThan = ([int64]-100); Type = 'System.Int64' }
         @{ Name = 'both are negative 64-bit number with parentheses'; Maximum = ([int64](-100)); Minimum = ([int64](-200)); GreaterThan = ([int64]-201); LessThan = ([int64]-100); Type = 'System.Int64' }
@@ -39,10 +41,9 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
         @{ Name = 'max set to a special double number'; Maximum = 20.; Minimum = 0.0; GreaterThan = -1.0; LessThan = 20.0; Type = 'System.Double' }
         @{ Name = 'max is double with quote'; Maximum = '20.'; Minimum = 0.0; GreaterThan = -1.0; LessThan = 20.0; Type = 'System.Double' }
         @{ Name = 'max is double with plus sign'; Maximum = +100.0; Minimum = 0; GreaterThan = -1.0; LessThan = 100.0; Type = 'System.Double' }
-        @{ Name = 'max is doulbe with plus sign and enclosed in quote'; Maximum = '+100.0'; Minimum = 0; GreaterThan = -1.0; LessThan = 100.0; Type = 'System.Double' }
+        @{ Name = 'max is double with plus sign and enclosed in quote'; Maximum = '+100.0'; Minimum = 0; GreaterThan = -1.0; LessThan = 100.0; Type = 'System.Double' }
         @{ Name = 'both set to the special numbers as 1.0e+xx '; Maximum = $null; Minimum = 1.0e+100; GreaterThan = 1.0e+99; LessThan = ([double]::MaxValue); Type = 'System.Double' }
         @{ Name = 'max is Double.MaxValue, min is Double.MinValue'; Maximum = ([double]::MaxValue); Minimum = ([double]::MinValue); GreaterThan = ([double]::MinValue); LessThan = ([double]::MaxValue); Type = 'System.Double' }
-
     )
 
     $testDataForError = @(
@@ -55,119 +56,148 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
         @{ Name = 'Min is greater than max and all are negative double-precision number'; Maximum = -20.0; Minimum = -10.0}
         @{ Name = 'Min and Max are same and all are negative double-precision number'; Maximum = -20.0; Minimum = -20.0}
         @{ Name = 'Max is a negative number, min is the default number '; Maximum = -10; Minimum = $null}
-
     )
 
     # minimum is always set to the actual low end of the range, details refer to closed issue #887.
-    It "get a correct random number for '<Name>'" -TestCases $testData {
+    It "Should return a correct random number for '<Name>'" -TestCases $testData {
         param($maximum, $minimum, $greaterThan, $lessThan, $type)
 
         $result = Get-Random -Maximum $maximum -Minimum $minimum
-        $result | Should BeGreaterThan $greaterThan
-        $result | Should BeLessThan $lessThan
-        $result.GetType().FullName | Should Be $type
-
+        $result | Should -BeGreaterThan $greaterThan
+        $result | Should -BeLessThan $lessThan
+        $result | Should -BeOfType $type
     }
-    
-    It "Should be able to throw error when '<Name>'" -TestCases $testDataForError {         
+
+    It "Should return correct random numbers for '<Name>' with Count specified" -TestCases $testData {
+        param($maximum, $minimum, $greaterThan, $lessThan, $type)
+
+        $result = Get-Random -Maximum $maximum -Minimum $minimum -Count 1
+        $result | Should -BeGreaterThan $greaterThan
+        $result | Should -BeLessThan $lessThan
+        $result | Should -BeOfType $type
+
+        $result = Get-Random -Maximum $maximum -Minimum $minimum -Count 3
+        foreach ($randomNumber in $result) {
+            $randomNumber | Should -BeGreaterThan $greaterThan
+            $randomNumber | Should -BeLessThan $lessThan
+            $randomNumber | Should -BeOfType $type
+        }
+    }
+
+    It "Should be able to throw error when '<Name>'" -TestCases $testDataForError {
         param($maximum, $minimum)
-        try
-        {
-            Get-Random -Minimum $minimum -Maximum $maximum
-            throw "OK"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be "MinGreaterThanOrEqualMax,Microsoft.PowerShell.Commands.GetRandomCommand"
-        }
+        { Get-Random -Minimum $minimum -Maximum $maximum } | Should -Throw -ErrorId "MinGreaterThanOrEqualMax,Microsoft.PowerShell.Commands.GetRandomCommand"
     }
 
     It "Tests for setting the seed" {
-        $result1 = (get-random -SetSeed 123), (get-random)
-        $result2 = (get-random -SetSeed 123), (get-random)
-        $result1 | Should Be $result2
+        $result1 = (Get-Random -SetSeed 123), (Get-Random)
+        $result2 = (Get-Random -SetSeed 123), (Get-Random)
+        $result1 | Should -Be $result2
     }
 }
 
 Describe "Get-Random" -Tags "CI" {
-    It "Should return a random number greater than -1 " {
-	Get-Random | Should BeGreaterThan -1
+    It "Should return a random number greater than -1" {
+        Get-Random | Should -BeGreaterThan -1
     }
-    It "Should return a random number less than 100 " {
-	Get-Random -Maximum 100 | Should BeLessThan 100
-	Get-Random -Maximum 100 | Should BeGreaterThan -1
+
+    It "Should return a random number less than 100" {
+        Get-Random -Maximum 100 | Should -BeLessThan 100
+        Get-Random -Maximum 100 | Should -BeGreaterThan -1
     }
 
     It "Should return a random number less than 100 and greater than -100 " {
-	$randomNumber = Get-Random -Minimum -100 -Maximum 100
-	$randomNumber | Should BeLessThan 100
-	$randomNumber | Should BeGreaterThan -101
+        $randomNumber = Get-Random -Minimum -100 -Maximum 100
+        $randomNumber | Should -BeLessThan 100
+        $randomNumber | Should -BeGreaterThan -101
     }
 
     It "Should return a random number less than 20.93 and greater than 10.7 " {
-	$randomNumber = Get-Random -Minimum 10.7 -Maximum 20.93
-	$randomNumber | Should BeLessThan 20.93
-	$randomNumber | Should BeGreaterThan 10.7
+        $randomNumber = Get-Random -Minimum 10.7 -Maximum 20.93
+        $randomNumber | Should -BeLessThan 20.93
+        $randomNumber | Should -BeGreaterThan 10.7
     }
 
     It "Should return same number for both Get-Random when switch SetSeed is used " {
-	$firstRandomNumber = Get-Random -Maximum 100 -SetSeed 23
-	$secondRandomNumber = Get-Random -Maximum 100 -SetSeed 23
-	$firstRandomNumber | Should be $secondRandomNumber
+        $firstRandomNumber = Get-Random -Maximum 100 -SetSeed 23
+        $secondRandomNumber = Get-Random -Maximum 100 -SetSeed 23
+        $firstRandomNumber | Should -Be $secondRandomNumber
     }
 
     It "Should return a number from 1,2,3,5,8,13 " {
-	$randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13
-	$randomNumber | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+        $randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13
+        $randomNumber | Should -BeIn 1, 2, 3, 5, 8, 13
     }
 
     It "Should return an array " {
-	$randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count 3
-	$randomNumber.GetType().BaseType | Should Be array
+        $randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count 3
+        $randomNumber.Count | Should -Be 3
+        ,$randomNumber | Should -BeOfType System.Array
     }
 
     It "Should return three random numbers for array of 1,2,3,5,8,13 " {
-	$randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count 3
-	$randomNumber[0] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[1] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[2] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[3] | Should BeNullOrEmpty
+        $randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count 3
+        $randomNumber.Count | Should -Be 3
+        $randomNumber[0] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[1] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[2] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[3] | Should -BeNullOrEmpty
     }
 
     It "Should return all the numbers for array of 1,2,3,5,8,13 in no particular order" {
-	$randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count ([int]::MaxValue)
-	$randomNumber[0] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[1] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[2] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[3] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[4] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[5] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[6] | Should BeNullOrEmpty
+        $randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count ([int]::MaxValue)
+        $randomNumber.Count | Should -Be 6
+        $randomNumber[0] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[1] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[2] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[3] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[4] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[5] | Should -BeIn 1, 2, 3, 5, 8, 13
+        $randomNumber[6] | Should -BeNullOrEmpty
+    }
+
+    It "Should return all the numbers for array of 1,2,3,5,8,13 in randomized order when the Shuffle switch is used" {
+        $randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Shuffle
+        $randomNumber.Count | Should -Be 6
+        $randomNumber | Should -BeIn 1, 2, 3, 5, 8, 13
     }
 
     It "Should return for a string collection " {
-	$randomNumber = Get-Random -InputObject "red", "yellow", "blue"
-	$randomNumber | Should Be ("red" -or "yellow" -or "blue")
+        $randomNumber = Get-Random -InputObject "red", "yellow", "blue"
+        $randomNumber | Should -Be ("red" -or "yellow" -or "blue")
     }
 
-    It "Should return a number for hexdecimal " {
-	$randomNumber = Get-Random 0x07FFFFFFFFF
-	$randomNumber | Should BeLessThan 549755813887
-	$randomNumber | Should BeGreaterThan 0
+    It "Should return a number for hexadecimal " {
+        $randomNumber = Get-Random 0x07FFFFFFFFF
+        $randomNumber | Should -BeLessThan 549755813887
+        $randomNumber | Should -BeGreaterThan 0
     }
 
     It "Should return false, check two random numbers are not equal when not using the SetSeed switch " {
-	$firstRandomNumber = Get-Random
-	$secondRandomNumber = Get-Random
-	$firstRandomNumber | Should Not Be $secondRandomNumber
+        $firstRandomNumber = Get-Random
+        $secondRandomNumber = Get-Random
+        $firstRandomNumber | Should -Not -Be $secondRandomNumber
     }
 
-    It "Should return the same number for hexidemical number and regular number when the switch SetSeed it used " {
-	$firstRandomNumber = Get-Random 0x07FFFFFFFF -SetSeed 20
-	$secondRandomNumber = Get-Random 34359738367 -SetSeed 20
-	$firstRandomNumber | Should Be @secondRandomNumber
+    It "Should return the same number for hexadecimal number and regular number when the switch SetSeed is used " {
+        $firstRandomNumber = Get-Random 0x07FFFFFFFF -SetSeed 20
+        $secondRandomNumber = Get-Random 34359738367 -SetSeed 20
+        $firstRandomNumber | Should -Be @secondRandomNumber
     }
-    It "Should throw an error because the hexidecial number is to large " {
-	{ Get-Random 0x07FFFFFFFFFFFFFFFF } | Should Throw "Value was either too large or too small for a UInt32"
+
+    It "Should throw an error because the hexadecimal number is to large " {
+        { Get-Random 0x07FFFFFFFFFFFFFFFF } | Should -Throw "Value was either too large or too small for a UInt32"
+    }
+
+    It "Should accept collection containing empty string for -InputObject" {
+        1..10 | ForEach-Object {
+            Get-Random -InputObject @('a','b','') | Should -BeIn 'a','b',''
+        }
+    }
+
+    It "Should accept `$null in collection for -InputObject" {
+        1..10 | ForEach-Object {
+            Get-Random -InputObject @('a','b',$null) | Should -BeIn 'a','b',$null
+        }
     }
 }

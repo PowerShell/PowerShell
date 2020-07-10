@@ -1,6 +1,5 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -9,16 +8,16 @@ using System.Threading;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Waits for a given event to arrive.  
+    /// Waits for a given event to arrive.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Wait, "Event", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135276")]
+    [Cmdlet(VerbsLifecycle.Wait, "Event", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097042")]
     [OutputType(typeof(PSEventArgs))]
     public class WaitEventCommand : PSCmdlet
     {
         #region parameters
 
         /// <summary>
-        /// An identifier for this event subscription
+        /// An identifier for this event subscription.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
         public string SourceIdentifier
@@ -27,12 +26,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _sourceIdentifier;
             }
+
             set
             {
                 _sourceIdentifier = value;
                 _matchPattern = WildcardPattern.Get(value, WildcardOptions.IgnoreCase);
             }
         }
+
         private string _sourceIdentifier = null;
 
         /// <summary>
@@ -48,22 +49,24 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _timeoutInSeconds;
             }
+
             set
             {
                 _timeoutInSeconds = value;
             }
         }
+
         private int _timeoutInSeconds = -1; // -1: infinite, this default is to wait for as long as it takes.
 
         #endregion parameters
 
         private AutoResetEvent _eventArrived = new AutoResetEvent(false);
         private PSEventArgs _receivedEvent = null;
-        private Object _receivedEventLock = new Object();
+        private object _receivedEventLock = new object();
         private WildcardPattern _matchPattern;
 
         /// <summary>
-        /// Wait for the event to arrive
+        /// Wait for the event to arrive.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -102,14 +105,14 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Handle Control-C
+        /// Handle Control-C.
         /// </summary>
         protected override void StopProcessing()
         {
             _eventArrived.Set();
         }
 
-        private void ReceivedEvents_PSEventReceived(Object sender, PSEventArgs e)
+        private void ReceivedEvents_PSEventReceived(object sender, PSEventArgs e)
         {
             // If they want to wait on just any event
             if (_sourceIdentifier == null)
@@ -122,7 +125,6 @@ namespace Microsoft.PowerShell.Commands
                 ScanEventQueue();
             }
         }
-
 
         // Go through all the received events. If one matches the subscription identifier,
         // break.

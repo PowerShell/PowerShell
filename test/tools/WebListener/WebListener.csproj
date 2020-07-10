@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <Import Project="..\..\Test.Common.props" />
+
+  <PropertyGroup>
+    <Description>A simple ASP.NET Core MVC app to provide an HTTP and HTTPS server for testing.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.0-preview.7.20356.7" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0-preview.7.20326.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.1.0-*" />
+  </ItemGroup>
+
+</Project>

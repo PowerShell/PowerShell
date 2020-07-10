@@ -1,18 +1,17 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
+
+using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Management.Automation;
-    using System.Management.Automation.Internal;
-    using System.Management.Automation.Runspaces;
-
-    using Microsoft.PowerShell.Commands.Internal.Format;
-
     /// <summary>
     /// Enum for SelectionMode parameter.
     /// </summary>
@@ -21,11 +20,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// None is the default and it means OK and Cancel will not be present
         /// and no objects will be written to the pipeline.
-        /// The selectionMode of the actual list will still be multiple
+        /// The selectionMode of the actual list will still be multiple.
         /// </summary>
         None,
         /// <summary>
-        /// Allow selection of one sinlge item to be written to the pipeline.
+        /// Allow selection of one single item to be written to the pipeline.
         /// </summary>
         Single,
         /// <summary>
@@ -35,17 +34,18 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Implementation for the Out-GridView command
+    /// Implementation for the Out-GridView command.
     /// </summary>
-    [Cmdlet("Out", "GridView", DefaultParameterSetName = "PassThru", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113364")]
+    [Cmdlet(VerbsData.Out, "GridView", DefaultParameterSetName = "PassThru", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2109378")]
     public class OutGridViewCommand : PSCmdlet, IDisposable
     {
         #region Properties
 
         private const string DataNotQualifiedForGridView = "DataNotQualifiedForGridView";
         private const string RemotingNotSupported = "RemotingNotSupported";
+
         private TypeInfoDataBase _typeInfoDataBase;
-        private MshExpressionFactory _expressionFactory;
+        private PSPropertyExpressionFactory _expressionFactory;
         private OutWindowProxy _windowProxy;
         private GridHeader _gridHeader;
 
@@ -54,18 +54,18 @@ namespace Microsoft.PowerShell.Commands
         #region Constructors
 
         /// <summary>
-        /// Constructor for OutGridView
+        /// Constructor for OutGridView.
         /// </summary>
         public OutGridViewCommand()
         {
         }
 
-        #endregion Contructors
+        #endregion Constructors
 
         #region Input Parameters
 
         /// <summary>
-        /// This parameter specifies the current pipeline object 
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { get; set; } = AutomationNull.Value;
@@ -78,32 +78,33 @@ namespace Microsoft.PowerShell.Commands
         public string Title { get; set; }
 
         /// <summary>
-        /// Get or sets a value indicating whether the cmdlet should wait for the window to be closed
+        /// Get or sets a value indicating whether the cmdlet should wait for the window to be closed.
         /// </summary>
         [Parameter(ParameterSetName = "Wait")]
         public SwitchParameter Wait { get; set; }
 
         /// <summary>
         /// Get or sets a value indicating whether the selected items should be written to the pipeline
-        /// and if it should be possible to select multiple or single list items
+        /// and if it should be possible to select multiple or single list items.
         /// </summary>
         [Parameter(ParameterSetName = "OutputMode")]
         public OutputModeOption OutputMode { set; get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the selected items should be written to the pipeline
-        /// Setting this to true is the same as setting the OutputMode to Multiple
+        /// Gets or sets a value indicating whether the selected items should be written to the pipeline.
+        /// Setting this to true is the same as setting the OutputMode to Multiple.
         /// </summary>
         [Parameter(ParameterSetName = "PassThru")]
         public SwitchParameter PassThru
         {
             set { this.OutputMode = value.IsPresent ? OutputModeOption.Multiple : OutputModeOption.None; }
+
             get { return OutputMode == OutputModeOption.Multiple ? new SwitchParameter(true) : new SwitchParameter(false); }
         }
 
         #endregion Input Parameters
 
-        #region Public Methods 
+        #region Public Methods
 
         /// <summary>
         /// Provides a one-time, pre-processing functionality for the cmdlet.
@@ -111,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // Set up the ExpressionFactory
-            _expressionFactory = new MshExpressionFactory();
+            _expressionFactory = new PSPropertyExpressionFactory();
 
             // If the value of the Title parameter is valid, use it as a window's title.
             if (this.Title != null)
@@ -129,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Blocks depending on the wait and selected 
+        /// Blocks depending on the wait and selected.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -182,7 +183,7 @@ namespace Microsoft.PowerShell.Commands
             IDictionary dictionary = InputObject.BaseObject as IDictionary;
             if (dictionary != null)
             {
-                // Dictionaries should be enumerated through because the pipeline does not enumerate through them. 
+                // Dictionaries should be enumerated through because the pipeline does not enumerate through them.
                 foreach (DictionaryEntry entry in dictionary)
                 {
                     ProcessObject(PSObjectHelper.AsPSObject(entry));
@@ -227,17 +228,18 @@ namespace Microsoft.PowerShell.Commands
                         liveObject)
                     );
             }
+
             return smartToString;
         }
 
-        #endregion Public Methods 
+        #endregion Public Methods
 
         #region Private Methods
 
         /// <summary>
-        /// Execute formatting on a single object
+        /// Execute formatting on a single object.
         /// </summary>
-        /// <param name="input">object to process</param>
+        /// <param name="input">Object to process.</param>
         private void ProcessObject(PSObject input)
         {
             // Make sure the OGV window is not closed.
@@ -250,10 +252,11 @@ namespace Microsoft.PowerShell.Commands
                     // Stop the pipeline cleanly.
                     pipeline.StopAsync();
                 }
+
                 return;
             }
 
-            Object baseObject = input.BaseObject;
+            object baseObject = input.BaseObject;
 
             // Throw a terminating error for types that are not supported.
             if (baseObject is ScriptBlock ||
@@ -282,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
                 _gridHeader.ProcessInputObject(input);
             }
 
-            // Some thread syncronization needed.
+            // Some thread synchronization needed.
             Exception exception = _windowProxy.GetLastException();
             if (exception != null)
             {
@@ -310,10 +313,11 @@ namespace Microsoft.PowerShell.Commands
             internal static GridHeader ConstructGridHeader(PSObject input, OutGridViewCommand parentCmd)
             {
                 if (DefaultScalarTypes.IsTypeInList(input.TypeNames) ||
-                    OutOfBandFormatViewManager.IsPropertyLessObject(input))
+                    !OutOfBandFormatViewManager.HasNonRemotingProperties(input))
                 {
                     return new ScalarTypeHeader(parentCmd, input);
                 }
+
                 return new NonscalarTypeHeader(parentCmd, input);
             }
 
@@ -377,11 +381,12 @@ namespace Microsoft.PowerShell.Commands
                     int index = 0;
                     foreach (string typeName in input.TypeNames)
                     {
-                        if (index > 0 && (typeName.Equals(typeof(Object).FullName, StringComparison.OrdinalIgnoreCase) ||
+                        if (index > 0 && (typeName.Equals(typeof(object).FullName, StringComparison.OrdinalIgnoreCase) ||
                             typeName.Equals(typeof(MarshalByRefObject).FullName, StringComparison.OrdinalIgnoreCase)))
                         {
                             break;
                         }
+
                         _appliesTo.AddAppliesToType(typeName);
                         index++;
                     }
@@ -464,9 +469,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Implements IDisposable logic
+        /// Implements IDisposable logic.
         /// </summary>
-        /// <param name="isDisposing">true if being called from Dispose</param>
+        /// <param name="isDisposing">True if being called from Dispose.</param>
         private void Dispose(bool isDisposing)
         {
             if (isDisposing)
@@ -480,7 +485,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Dispose method in IDisposeable
+        /// Dispose method in IDisposable.
         /// </summary>
         public void Dispose()
         {
@@ -489,7 +494,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Finalizer
+        /// Finalizer.
         /// </summary>
         ~OutGridViewCommand()
         {

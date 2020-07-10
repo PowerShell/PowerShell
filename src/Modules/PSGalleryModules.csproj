@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+
+  <Import Project="..\..\PowerShell.Common.props" />
+
+  <ItemGroup>
+    <PackageReference Include="PowerShellGet" Version="2.2.4" />
+    <PackageReference Include="PackageManagement" Version="1.4.7" />
+    <PackageReference Include="Microsoft.PowerShell.Archive" Version="1.2.5" />
+    <PackageReference Include="PSReadLine" Version="2.0.2" />
+    <PackageReference Include="ThreadJob" Version="2.0.3" />
+    <PackageReference Include="PSDesiredStateConfiguration" Version="2.0.5" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\PowerShell.Common.props"/>
+
+  <PropertyGroup>
+    <Description>PowerShell's Microsoft.PowerShell.LocalAccounts project</Description>
+    <AssemblyName>Microsoft.PowerShell.LocalAccounts</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
+  </ItemGroup>
+
+</Project>

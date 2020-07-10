@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 namespace System.Management.Automation.Internal
 {
@@ -10,7 +9,7 @@ namespace System.Management.Automation.Internal
     using System.Management.Automation.Runspaces;
 
     /// <summary>
-    /// A ObjectWriter for an ObjectStream
+    /// A ObjectWriter for an ObjectStream.
     /// </summary>
     /// <remarks>
     /// This class is not safe for multi-threaded operations.
@@ -18,27 +17,27 @@ namespace System.Management.Automation.Internal
     internal class ObjectWriter : PipelineWriter
     {
         /// <summary>
-        /// Construct with an existing ObjectStream
+        /// Construct with an existing ObjectStream.
         /// </summary>
-        /// <param name="stream">the stream to write</param>
-        /// <exception cref="ArgumentNullException">Thrown if the specified stream is null</exception>
+        /// <param name="stream">The stream to write.</param>
+        /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
         public ObjectWriter([In, Out] ObjectStreamBase stream)
         {
             if (stream == null)
             {
-                throw new ArgumentNullException("stream");
+                throw new ArgumentNullException(nameof(stream));
             }
 
             _stream = stream;
 #if (false)
             stream.WriteReady += new EventHandler (this.OnWriteReady);
-#endif                
+#endif
         }
 
         #region Properties
 
         /// <summary>
-        /// Waitable handle for caller's to block until buffer space is available in the underlying stream
+        /// Waitable handle for caller's to block until buffer space is available in the underlying stream.
         /// </summary>
         public override WaitHandle WaitHandle
         {
@@ -65,7 +64,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Returns the number of objects in the underlying stream
+        /// Returns the number of objects in the underlying stream.
         /// </summary>
         public override int Count
         {
@@ -76,7 +75,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Get the capacity of the stream
+        /// Get the capacity of the stream.
         /// </summary>
         /// <value>
         /// The capacity of the stream.
@@ -99,7 +98,7 @@ namespace System.Management.Automation.Internal
         #region Methods
 
         /// <summary>
-        /// Close the stream
+        /// Close the stream.
         /// </summary>
         /// <remarks>
         /// Causes subsequent calls to IsOpen to return false and calls to
@@ -129,9 +128,9 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Write a single object into the underlying stream
+        /// Write a single object into the underlying stream.
         /// </summary>
-        /// <param name="obj">The object to add to the stream</param>
+        /// <param name="obj">The object to add to the stream.</param>
         /// <returns>
         /// One, if the write was successful, otherwise;
         /// zero if the stream was closed before the object could be written,
@@ -149,17 +148,17 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Write objects to the underlying stream
+        /// Write objects to the underlying stream.
         /// </summary>
-        /// <param name="obj">object or enumeration to read from</param>
+        /// <param name="obj">Object or enumeration to read from.</param>
         /// <param name="enumerateCollection">
         /// If enumerateCollection is true, and <paramref name="obj"/>
         /// is an enumeration according to LanguagePrimitives.GetEnumerable,
         /// the objects in the enumeration will be unrolled and
-        /// written seperately.  Otherwise, <paramref name="obj"/>
+        /// written separately.  Otherwise, <paramref name="obj"/>
         /// will be written as a single object.
         /// </param>
-        /// <returns>The number of objects written</returns>
+        /// <returns>The number of objects written.</returns>
         /// <exception cref="PipelineClosedException">
         /// The underlying stream is closed
         /// </exception>
@@ -176,28 +175,28 @@ namespace System.Management.Automation.Internal
 
 #if (false)
         /// <summary>
-        /// Handle WriteReady events from the underlying stream
+        /// Handle WriteReady events from the underlying stream.
         /// </summary>
-        /// <param name="sender">The stream raising the event</param>
-        /// <param name="args">standard event args.</param>
+        /// <param name="sender">The stream raising the event.</param>
+        /// <param name="args">Standard event args.</param>
         private void OnWriteReady (object sender, EventArgs args)
         {
             if (WriteReady != null)
             {
-                // call any event handlers on this, replacing the 
+                // call any event handlers on this, replacing the
                 // ObjectStream sender with 'this' since receivers
                 // are expecting an PipelineWriter
                 WriteReady (this, args);
             }
         }
-#endif        
+#endif
 
         #endregion Methods
 
         #region Private fields
 
         /// <summary>
-        /// The underlying stream
+        /// The underlying stream.
         /// </summary>
         /// <remarks>Can never be null</remarks>
         private ObjectStreamBase _stream;
@@ -206,12 +205,12 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// A ObjectWriter for a PSDataCollection ObjectStream
+    /// A ObjectWriter for a PSDataCollection ObjectStream.
     /// </summary>
     /// <remarks>
     /// PSDataCollection is introduced after 1.0. PSDataCollection
     /// is used to store data from the last command in
-    /// the pipeline and hence the writer will not 
+    /// the pipeline and hence the writer will not
     /// support certain features like Flush().
     /// </remarks>
     internal class PSDataCollectionWriter<T> : ObjectWriter
@@ -219,9 +218,9 @@ namespace System.Management.Automation.Internal
         #region Constructors
 
         /// <summary>
-        /// Construct with an existing PSDataCollectionStream
+        /// Construct with an existing PSDataCollectionStream.
         /// </summary>
-        /// <param name="stream">the stream to write</param>
+        /// <param name="stream">The stream to write.</param>
         /// <exception cref="ArgumentNullException">
         /// Thrown if the specified stream is null
         /// </exception>

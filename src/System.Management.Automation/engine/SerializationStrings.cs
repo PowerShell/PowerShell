@@ -1,59 +1,57 @@
-
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// This class contains strings required for serialization
-    /// </summary>  
+    /// This class contains strings required for serialization.
+    /// </summary>
     internal static class SerializationStrings
     {
-        #region element tags        
+        #region element tags
 
         /// <summary>
-        /// Element tag for root node
+        /// Element tag for root node.
         /// </summary>
         internal const string RootElementTag = "Objs";
 
         #region PSObject
 
         /// <summary>
-        /// Element tag for PSObject
+        /// Element tag for PSObject.
         /// </summary>
         internal const string PSObjectTag = "Obj";
 
         /// <summary>
-        /// Element tag for properties
+        /// Element tag for properties.
         /// </summary>
         internal const string AdapterProperties = "Props";
 
         /// <summary>
-        /// TypeNames tag
+        /// TypeNames tag.
         /// </summary>
         internal const string TypeNamesTag = "TN";
         /// <summary>
-        /// Tag for type item in typeanmes
+        /// Tag for type item in typenames.
         /// </summary>
         internal const string TypeNamesItemTag = "T";
         /// <summary>
-        /// TypeName reference
+        /// TypeName reference.
         /// </summary>
         internal const string TypeNamesReferenceTag = "TNRef";
 
         /// <summary>
-        /// Memberset
+        /// Memberset.
         /// </summary>
         internal const string MemberSet = "MS";
 
         /// <summary>
-        /// Individual notes
+        /// Individual notes.
         /// </summary>
         internal const string NoteProperty = "N";
 
         /// <summary>
-        /// Tag for ToString value
+        /// Tag for ToString value.
         /// </summary>
         internal const string ToStringElementTag = "ToString";
 
@@ -67,37 +65,37 @@ namespace System.Management.Automation
         internal const string CollectionTag = "IE";
 
         /// <summary>
-        /// Element tag used for Dictionary
+        /// Element tag used for Dictionary.
         /// </summary>
         internal const string DictionaryTag = "DCT";
 
         /// <summary>
-        /// Element tag used for Dictionary entry
+        /// Element tag used for Dictionary entry.
         /// </summary>
         internal const string DictionaryEntryTag = "En";
 
         /// <summary>
-        /// Value of name attribute for dictionary key part in dictnary entry
+        /// Value of name attribute for dictionary key part in dictionary entry.
         /// </summary>
         internal const string DictionaryKey = "Key";
 
         /// <summary>
-        /// Value of name attribute for dictionary value part in dictnary entry
+        /// Value of name attribute for dictionary value part in dictionary entry.
         /// </summary>
         internal const string DictionaryValue = "Value";
 
         /// <summary>
-        /// Element tag used for Stack
+        /// Element tag used for Stack.
         /// </summary>
         internal const string StackTag = "STK";
 
         /// <summary>
-        /// Element tag used for Queue
+        /// Element tag used for Queue.
         /// </summary>
         internal const string QueueTag = "QUE";
 
         /// <summary>
-        /// Element tag used for List
+        /// Element tag used for List.
         /// </summary>
         internal const string ListTag = "LST";
 
@@ -105,153 +103,153 @@ namespace System.Management.Automation
 
         #region primitive known type tags
         /// <summary>
-        /// Element tag for char property. 
+        /// Element tag for char property.
         /// </summary>
         /// <remarks>This property is used for System.Char type</remarks>
         internal const string CharTag = "C";
 
         /// <summary>
-        /// Element tag for guid property. 
+        /// Element tag for guid property.
         /// </summary>
         /// <remarks>This property is used for System.Guid type</remarks>
         internal const string GuidTag = "G";
 
         /// <summary>
-        /// Element tag for boolean property. 
+        /// Element tag for boolean property.
         /// </summary>
         /// <remarks>This property is used for System.Boolean type</remarks>
         internal const string BooleanTag = "B";
 
         /// <summary>
-        /// Element tag for unsignedByte property. 
+        /// Element tag for unsignedByte property.
         /// </summary>
         /// <remarks>This property is used for System.Byte type</remarks>
         internal const string UnsignedByteTag = "By";
 
         /// <summary>
-        /// Element tag for dateTime property. 
+        /// Element tag for dateTime property.
         /// </summary>
         /// <remarks>This property is used for System.DateTime type</remarks>
         internal const string DateTimeTag = "DT";
 
         /// <summary>
-        /// Element tag for decimal property. 
+        /// Element tag for decimal property.
         /// </summary>
         /// <remarks>This property is used for System.Decimal type</remarks>
         internal const string DecimalTag = "D";
 
         /// <summary>
-        /// Element tag for double property. 
+        /// Element tag for double property.
         /// </summary>
         /// <remarks>This property is used for System.Double type</remarks>
         internal const string DoubleTag = "Db";
 
         /// <summary>
-        /// Element tag for duration property. 
+        /// Element tag for duration property.
         /// </summary>
         /// <remarks>This property is used for System.TimeSpan type</remarks>
         internal const string DurationTag = "TS";
 
         /// <summary>
-        /// Element tag for float property. 
+        /// Element tag for float property.
         /// </summary>
         /// <remarks>This property is used for System.Single type</remarks>
         internal const string FloatTag = "Sg";
 
         /// <summary>
-        /// Element tag for int property. 
+        /// Element tag for int property.
         /// </summary>
         /// <remarks>This property is used for System.Int32 type</remarks>
         internal const string IntTag = "I32";
 
         /// <summary>
-        /// Element tag for long property. 
+        /// Element tag for long property.
         /// </summary>
         /// <remarks>This property is used for System.Int64 type</remarks>
         internal const string LongTag = "I64";
 
         /// <summary>
-        /// Element tag for byte property. 
+        /// Element tag for byte property.
         /// </summary>
         /// <remarks>This property is used for System.SByte type</remarks>
         internal const string ByteTag = "SB";
 
         /// <summary>
-        /// Element tag for short property. 
+        /// Element tag for short property.
         /// </summary>
         /// <remarks>This property is used for System.Int16 type</remarks>
         internal const string ShortTag = "I16";
 
         /// <summary>
-        /// Element tag for base64Binary property. 
+        /// Element tag for base64Binary property.
         /// </summary>
         /// <remarks>This property is used for System.IO.Stream type</remarks>
         internal const string Base64BinaryTag = "BA";
 
         /// <summary>
-        /// Element tag for scriptblock property. 
+        /// Element tag for scriptblock property.
         /// </summary>
         /// <remarks>This property is used for System.Management.Automation.ScriptBlock type</remarks>
         internal const string ScriptBlockTag = "SBK";
 
         /// <summary>
-        /// Element tag for string property. 
+        /// Element tag for string property.
         /// </summary>
         /// <remarks>This property is used for System.String type</remarks>
         internal const string StringTag = "S";
 
         /// <summary>
-        /// Element tag for secure string property
+        /// Element tag for secure string property.
         /// </summary>
         /// <remarks>This property is used for System.Security.SecureString type</remarks>
         internal const string SecureStringTag = "SS";
 
         /// <summary>
-        /// Element tag for unsignedShort property. 
+        /// Element tag for unsignedShort property.
         /// </summary>
         /// <remarks>This property is used for System.UInt16 Stream type</remarks>
         internal const string UnsignedShortTag = "U16";
 
         /// <summary>
-        /// Element tag for unsignedInt property. 
+        /// Element tag for unsignedInt property.
         /// </summary>
         /// <remarks>This property is used for System.UInt32 type</remarks>
         internal const string UnsignedIntTag = "U32";
 
         /// <summary>
-        /// Element tag for unsignedLong property. 
+        /// Element tag for unsignedLong property.
         /// </summary>
         /// <remarks>This property is used for System.Long type</remarks>
         internal const string UnsignedLongTag = "U64";
 
         /// <summary>
-        /// Element tag for anyUri property. 
+        /// Element tag for anyUri property.
         /// </summary>
         /// <remarks>This property is used for System.Uri type</remarks>
         internal const string AnyUriTag = "URI";
 
         /// <summary>
-        /// Element tag for Version property
+        /// Element tag for Version property.
         /// </summary>
         internal const string VersionTag = "Version";
 
         /// <summary>
-        /// Element tag for SemanticVersion property
+        /// Element tag for SemanticVersion property.
         /// </summary>
         internal const string SemanticVersionTag = "SemanticVersion";
 
         /// <summary>
-        /// Element tag for XmlDocument
+        /// Element tag for XmlDocument.
         /// </summary>
         internal const string XmlDocumentTag = "XD";
 
         /// <summary>
-        /// Element tag for property whose value is null
+        /// Element tag for property whose value is null.
         /// </summary>
         internal const string NilTag = "Nil";
 
         /// <summary>
-        /// Element tag for PSObjectReference property. 
+        /// Element tag for PSObjectReference property.
         /// </summary>
         /// <remarks>This property is used for a reference to a property bag</remarks>
         internal const string ReferenceTag = "Ref";
@@ -276,22 +274,22 @@ namespace System.Management.Automation
 
         #region attribute tags
         /// <summary>
-        /// String for reference id attribute
+        /// String for reference id attribute.
         /// </summary>
         internal const string ReferenceIdAttribute = "RefId";
 
         /// <summary>
-        /// String for name attribute
+        /// String for name attribute.
         /// </summary>
         internal const string NameAttribute = "N";
 
         /// <summary>
-        /// String for version attribute
+        /// String for version attribute.
         /// </summary>
         internal const string VersionAttribute = "Version";
 
         /// <summary>
-        /// String for stream attribute
+        /// String for stream attribute.
         /// </summary>
         internal const string StreamNameAttribute = "S";
 
@@ -300,16 +298,16 @@ namespace System.Management.Automation
         #region namespace values
 
         /// <summary>
-        /// Monad namespace
+        /// Monad namespace.
         /// </summary>
         internal const string MonadNamespace = "http://schemas.microsoft.com/powershell/2004/04";
 
         /// <summary>
-        /// Prefix string for monad namespace
+        /// Prefix string for monad namespace.
         /// </summary>
         internal const string MonadNamespacePrefix = "ps";
 
-        #endregion namespace values     
+        #endregion namespace values
     };
 }
 

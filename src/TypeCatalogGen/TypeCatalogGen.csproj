@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Generates CorePsTypeCatalog.cs given powershell.inc</Description>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>TypeCatalogGen</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <TieredCompilation>true</TieredCompilation>
+    <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
+    <RuntimeIdentifiers>win7-x86;win7-x64;osx-x64;linux-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+</Project>

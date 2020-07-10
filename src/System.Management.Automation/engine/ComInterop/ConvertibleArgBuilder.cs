@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #if !SILVERLIGHT
 
@@ -27,7 +26,7 @@ namespace System.Management.Automation.ComInterop
 
         internal override Expression MarshalToRef(Expression parameter)
         {
-            //we are not supporting convertible InOut
+            // we are not supporting convertible InOut
             throw Assert.Unreachable;
         }
     }

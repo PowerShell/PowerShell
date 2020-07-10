@@ -1,0 +1,155 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+      The 'version' property is populated with the default value in 'Microsoft.NET.DefaultAssemblyInfo.targets'
+      *before* any targets get a chance to execute.
+      We need to *explicitly* re-assign the 'version' property and other version tags in this target.
+
+      In order for the versions assigned here to take effect, we need to execute this target at an early stage:
+        before 'Restore' target - '_GenerateRestoreProjectSpec'
+        before 'Pack' target    - 'GenerateNuspec'
+        before 'Build' target   - 'BeforeBuild'
+  -->
+  <Target Name="GetPSCoreVersionFromGit"
+    BeforeTargets="_GenerateRestoreProjectSpec;GenerateNuspec;BeforeBuild"
+  >
+
+    <Exec Command='git describe --abbrev=60 --long'
+          WorkingDirectory="$(MSBuildProjectDirectory)"
+          ConsoleToMSBuild="true"
+          StandardOutputImportance="Low">
+      <Output TaskParameter="ConsoleOutput" PropertyName="PowerShellVersion" />
+    </Exec>
+
+    <PropertyGroup Condition = "'$(ReleaseTag)' != ''">
+      <PSCoreBuildVersion>$(ReleaseTag)</PSCoreBuildVersion>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <RegexGitVersion>^v(.+)-(\d+)-g(.+)</RegexGitVersion>
+      <PSCoreBuildVersion Condition = "'$(PSCoreBuildVersion)' == ''">$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[1].Value)</PSCoreBuildVersion>
+      <PSCoreAdditionalCommits>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[2].Value)</PSCoreAdditionalCommits>
+      <PSCoreCommitSHA>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[3].Value)</PSCoreCommitSHA>
+
+      <!--
+            Caution! 'PSVersion' and 'GitCommitId' from 'PSVersionInfo.cs' depend on the format of this version string.
+      -->
+      <PSCoreFormattedVersion Condition = "'$(ReleaseTag)' != '' or '$(PSCoreAdditionalCommits)' == '0'">$(PSCoreBuildVersion) SHA: $(PSCoreCommitSHA)</PSCoreFormattedVersion>
+      <PSCoreFormattedVersion Condition = "'$(PSCoreFormattedVersion)' == ''">$(PSCoreBuildVersion) Commits: $(PSCoreAdditionalCommits) SHA: $(PSCoreCommitSHA)</PSCoreFormattedVersion>
+
+      <!-- Extract the major, minor and patch version numbers, as well as the preview label.
+           They are currently not used anywhere, so we comment them out for now.
+        <RegexSymVer>^((\d+).(\d+).(\d+))(?:-(.+))?</RegexSymVer>
+        <PSCorePrefixVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[1].Value)</PSCorePrefixVersion>
+        <PSCoreMajorVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[2].Value)</PSCoreMajorVersion>
+        <PSCoreMinorVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[3].Value)</PSCoreMinorVersion>
+        <PSCorePatchVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[4].Value)</PSCorePatchVersion>
+        <PSCoreLabelVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[5].Value)</PSCoreLabelVersion>
+      -->
+
+      <!--
+            Here we define explicitly 'Version' to set 'FileVersion' and 'AssemblyVersion' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
+            Here we define explicitly 'InformationalVersion' because by default it is defined as 'Version' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
+      -->
+      <Version>$(PSCoreBuildVersion)</Version>
+      <InformationalVersion>$(PSCoreFormattedVersion)</InformationalVersion>
+      <ProductVersion>$(PSCoreFormattedVersion)</ProductVersion>
+
+      <!--
+        We have to explicitly assign 'PackageVersion' here because we're changing 'Version' in a target.
+        Before any targets have run (during static evaluation), 'Version' will have defaulted to '1.0.0' and PackageVersion will have defaulted to 'Version'.
+        See https://github.com/dotnet/sdk/issues/1557
+      -->
+      <PackageVersion>$(PSCoreBuildVersion)</PackageVersion>
+
+      <ApplicationIcon Condition="$(ProductVersion.Contains('preview'))">..\..\assets\Powershell_av_colors.ico</ApplicationIcon>
+      <ApplicationIcon Condition="!$(ProductVersion.Contains('preview'))">..\..\assets\Powershell_black.ico</ApplicationIcon>
+
+    </PropertyGroup>
+
+    <!-- Output For Debugging
+      <WriteLinesToFile File="targetfile1.txt"
+        Lines="ReleaseTag=$(ReleaseTag);
+               PowerShellVersion=$(PowerShellVersion);
+               PSCoreBuildVersion = $(PSCoreBuildVersion);
+               PSCoreAdditionalCommits = $(PSCoreAdditionalCommits);
+               PSCoreCommitSHA = $(PSCoreCommitSHA);
+               PSCoreMajorVersion = $(PSCoreMajorVersion);
+               PSCoreMinorVersion = $(PSCoreMinorVersion);
+               PSCorePatchVersion = $(PSCorePatchVersion);
+               PSCoreLabelVersion = $(PSCoreLabelVersion);
+               RegexGitVersion = $(RegexGitVersion);
+               PSCoreFormattedVersion = $(PSCoreFormattedVersion);
+               ProductVersion = $(ProductVersion);
+               Version = $(Version);
+               ProjectVersion = '!$(ProjectVersion)!'
+               InformationalVersion = $(InformationalVersion);
+              "
+        Overwrite="true" />
+    -->
+
+  </Target>
+
+  <PropertyGroup>
+    <Product>PowerShell</Product>
+    <Company>Microsoft Corporation</Company>
+    <Copyright>(c) Microsoft Corporation.</Copyright>
+
+    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <PublishReadyToRun>true</PublishReadyToRun>
+
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+    <NeutralLanguage>en-US</NeutralLanguage>
+
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <HighEntropyVA>true</HighEntropyVA>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
+    <IsWindows Condition="'$(IsWindows)' =='true' or ( '$(IsWindows)' == '' and '$(OS)' == 'Windows_NT')">true</IsWindows>
+  </PropertyGroup>
+
+  <!-- Define non-windows, all configuration properties -->
+  <PropertyGroup Condition=" '$(IsWindows)' != 'true' ">
+    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Define all OS, debug configuration properties -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <!-- Define all OS, release configuration properties -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <!-- Define windows, release configuration properties -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' And '$(IsWindows)' == 'true' ">
+    <Optimize>true</Optimize>
+    <!-- This is required to be full for compliance tools !-->
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <!-- Define non-windows, release configuration properties -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' And '$(IsWindows)' != 'true' ">
+    <!-- Set-Date fails with optimize enabled in NonWindowsSetDate
+         Debugging the issues resolves the problem
+     -->
+    <Optimize>false</Optimize>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <!-- Define all OS, CodeCoverage configuration properties -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
+    <!-- This is required to be portable to Coverlet tool !-->
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+</Project>

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 Function Get-SystemDJournal {
     [CmdletBinding()]
     param (
@@ -8,7 +11,7 @@ Function Get-SystemDJournal {
         $Result = & $sudocmd $cmd $journalctlParameters -o json --no-pager
         Try
         {
-                  $JSONResult = $Result|ConvertFrom-JSON
+                  $JSONResult = $Result|ConvertFrom-Json
                   $JSONResult
         }
         Catch

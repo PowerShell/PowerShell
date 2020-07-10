@@ -1,11 +1,10 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
-using System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.ScheduledJob
 {
@@ -13,7 +12,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This cmdlet gets scheduled job definition objects from the local repository.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ScheduledJob", DefaultParameterSetName = GetScheduledJobCommand.DefinitionIdParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223923")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223923")]
     [OutputType(typeof(ScheduledJobDefinition))]
     public sealed class GetScheduledJobCommand : ScheduleJobCmdletBase
     {
@@ -23,30 +22,34 @@ namespace Microsoft.PowerShell.ScheduledJob
         private const string DefinitionNameParameterSet = "DefinitionName";
 
         /// <summary>
-        /// ScheduledJobDefintion Id.
+        /// ScheduledJobDefinition Id.
         /// </summary>
-        [Parameter(Position = 0, 
+        [Parameter(Position = 0,
                    ParameterSetName = GetScheduledJobCommand.DefinitionIdParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Int32[] Id
         {
             get { return _definitionIds; }
+
             set { _definitionIds = value; }
         }
+
         private Int32[] _definitionIds;
 
         /// <summary>
         /// ScheduledJobDefinition Name.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, 
+        [Parameter(Position = 0, Mandatory = true,
                    ParameterSetName = GetScheduledJobCommand.DefinitionNameParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name
         {
             get { return _definitionNames; }
+
             set { _definitionNames = value; }
         }
+
         private string[] _definitionNames;
 
         #endregion
@@ -72,17 +75,18 @@ namespace Microsoft.PowerShell.ScheduledJob
                     else
                     {
                         FindJobDefinitionsById(
-                            _definitionIds, 
+                            _definitionIds,
                             (definition) =>
                             {
                                 WriteObject(definition);
                             });
                     }
+
                     break;
 
                 case DefinitionNameParameterSet:
                     FindJobDefinitionsByName(
-                        _definitionNames, 
+                        _definitionNames,
                         (definition) =>
                         {
                             WriteObject(definition);

@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -8,14 +7,16 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
+
 using Microsoft.Management.Infrastructure;
 using Microsoft.PowerShell.Cim;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Job wrapping invocation of an extrinsic CIM method
+    /// Job wrapping invocation of an extrinsic CIM method.
     /// </summary>
     internal abstract class ExtrinsicMethodInvocationJob : MethodInvocationJobBase<CimMethodResultBase>
     {
@@ -131,6 +132,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     var tmp = new PSNoteProperty(element.Key, element.Value.Value);
                     propertyBag.Properties.Add(tmp);
                 }
+
                 this.WriteObject(propertyBag);
             }
         }
@@ -180,6 +182,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     pso.TypeNames.Insert(0, methodParameter.ParameterTypeName);
                 }
             }
+
             this.WriteObject(cmdletOutput);
         }
 

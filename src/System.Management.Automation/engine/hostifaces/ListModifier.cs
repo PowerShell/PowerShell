@@ -1,19 +1,18 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace System.Management.Automation
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Collections.Generic;
-    using System.Collections;
-
     /// <summary>
     /// PSListModifier is a simple helper class created by the update-list cmdlet.
     /// The update-list cmdlet will either return an instance of this class, or
     /// it will internally use an instance of this class to implement the updates.
-    /// 
+    ///
     /// Cmdlets can also take a PSListModifier as a parameter.  Usage might look like:
     ///
     ///     Get-Mailbox | Set-Mailbox -Alias @{Add='jim'}
@@ -36,8 +35,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a new PSListModifier with the specified add and remove lists.
         /// </summary>
-        /// <param name="removeItems">The items to remove</param>
-        /// <param name="addItems">The items to add</param>
+        /// <param name="removeItems">The items to remove.</param>
+        /// <param name="addItems">The items to add.</param>
         public PSListModifier(Collection<object> removeItems, Collection<object> addItems)
         {
             _itemsToAdd = addItems ?? new Collection<object>();
@@ -48,7 +47,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a new PSListModifier to replace a given list with replaceItems.
         /// </summary>
-        /// <param name="replacementItems">The item(s) to replace an existing list with</param>
+        /// <param name="replacementItems">The item(s) to replace an existing list with.</param>
         public PSListModifier(object replacementItems)
         {
             _itemsToAdd = new Collection<object>();
@@ -89,7 +88,7 @@ namespace System.Management.Automation
         {
             if (hash == null)
             {
-                throw PSTraceSource.NewArgumentNullException("hash");
+                throw PSTraceSource.NewArgumentNullException(nameof(hash));
             }
 
             _itemsToAdd = new Collection<object>();
@@ -107,7 +106,7 @@ namespace System.Management.Automation
 
                     if (!isAdd && !isRemove && !isReplace)
                     {
-                        throw PSTraceSource.NewArgumentException("hash", PSListModifierStrings.ListModifierDisallowedKey, key);
+                        throw PSTraceSource.NewArgumentException(nameof(hash), PSListModifierStrings.ListModifierDisallowedKey, key);
                     }
 
                     Collection<object> collection;
@@ -139,7 +138,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    throw PSTraceSource.NewArgumentException("hash", PSListModifierStrings.ListModifierDisallowedKey, entry.Key);
+                    throw PSTraceSource.NewArgumentException(nameof(hash), PSListModifierStrings.ListModifierDisallowedKey, entry.Key);
                 }
             }
         }
@@ -151,6 +150,7 @@ namespace System.Management.Automation
         {
             get { return _itemsToAdd; }
         }
+
         private Collection<object> _itemsToAdd;
 
         /// <summary>
@@ -160,6 +160,7 @@ namespace System.Management.Automation
         {
             get { return _itemsToRemove; }
         }
+
         private Collection<object> _itemsToRemove;
 
         /// <summary>
@@ -169,17 +170,18 @@ namespace System.Management.Automation
         {
             get { return _replacementItems; }
         }
-        private Collection<Object> _replacementItems;
+
+        private Collection<object> _replacementItems;
 
         /// <summary>
         /// Update the given collection with the items in Add and Remove.
         /// </summary>
-        /// <param name="collectionToUpdate">The collection to update</param>
+        /// <param name="collectionToUpdate">The collection to update.</param>
         public void ApplyTo(IList collectionToUpdate)
         {
             if (collectionToUpdate == null)
             {
-                throw PSTraceSource.NewArgumentNullException("collectionToUpdate");
+                throw PSTraceSource.NewArgumentNullException(nameof(collectionToUpdate));
             }
 
             if (_replacementItems.Count > 0)
@@ -196,6 +198,7 @@ namespace System.Management.Automation
                 {
                     collectionToUpdate.Remove(PSObject.Base(obj));
                 }
+
                 foreach (object obj in _itemsToAdd)
                 {
                     collectionToUpdate.Add(PSObject.Base(obj));
@@ -206,12 +209,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Update the given collection with the items in Add and Remove.
         /// </summary>
-        /// <param name="collectionToUpdate">The collection to update</param>
+        /// <param name="collectionToUpdate">The collection to update.</param>
         public void ApplyTo(object collectionToUpdate)
         {
             if (collectionToUpdate == null)
             {
-                throw new ArgumentNullException("collectionToUpdate");
+                throw new ArgumentNullException(nameof(collectionToUpdate));
             }
 
             collectionToUpdate = PSObject.Base(collectionToUpdate);
@@ -221,6 +224,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewInvalidOperationException(PSListModifierStrings.UpdateFailed);
             }
+
             ApplyTo(list);
         }
 
@@ -252,7 +256,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// A generic version of PSListModifier that exists for the sole purpose of making 
+    /// A generic version of PSListModifier that exists for the sole purpose of making
     /// cmdlets that accept a PSListModifier more usable.  Users that look at the syntax
     /// of the command will see something like PSListModifier[Mailbox] and know they need
     /// to pass in Mailboxes.
@@ -271,8 +275,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a new PSListModifier with the specified add and remove lists.
         /// </summary>
-        /// <param name="removeItems">The items to remove</param>
-        /// <param name="addItems">The items to add</param>
+        /// <param name="removeItems">The items to remove.</param>
+        /// <param name="addItems">The items to add.</param>
         public PSListModifier(Collection<object> removeItems, Collection<object> addItems)
             : base(removeItems, addItems)
         {
@@ -281,7 +285,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a new PSListModifier to replace a given list with replaceItems.
         /// </summary>
-        /// <param name="replacementItems">The items to replace an existing list with</param>
+        /// <param name="replacementItems">The items to replace an existing list with.</param>
         public PSListModifier(object replacementItems)
             : base(replacementItems)
         {

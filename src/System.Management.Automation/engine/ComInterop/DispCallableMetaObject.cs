@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #if !SILVERLIGHT
 
@@ -53,6 +52,7 @@ namespace System.Management.Automation.ComInterop
                 bool[] isByRef = ComBinderHelpers.ProcessArgumentsForCom(method, ref args, temps, initTemps);
                 return BindComInvoke(method, args, callInfo, isByRef, temps, initTemps);
             }
+
             return null;
         }
 

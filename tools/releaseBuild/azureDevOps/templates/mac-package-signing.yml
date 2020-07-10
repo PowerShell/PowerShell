@@ -1,0 +1,127 @@
+jobs:
+- job: MacPackageSigningJob
+  displayName: macOS Package signing
+  dependsOn: build_macOS
+  condition: succeeded()
+  pool:
+    name: Package ES CodeHub Lab E
+  variables:
+    BuildConfiguration: release
+    BuildPlatform: any cpu
+
+  steps:
+
+  - template: shouldSign.yml
+
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download artifacts'
+    inputs:
+      downloadType: specific
+      itemPattern: |
+        **/*.tar.gz
+        **/*.pkg
+
+  - powershell: |
+      dir "$(System.ArtifactsDirectory)\*" -Recurse
+    displayName: 'Capture Downloaded Artifacts'
+    # Diagnostics is not critical it passes every time it runs
+    continueOnError: true
+
+  - powershell: |
+      $null = new-item -type directory -path "$(Build.StagingDirectory)\macos"
+      $zipFile = "$(Build.StagingDirectory)\macos\powershell-$(Version)-osx-x64.zip"
+      Compress-Archive -Path "$(System.ArtifactsDirectory)\results\powershell-$(Version)-osx-x64.pkg" -Destination $zipFile
+      Write-Host $zipFile
+
+      $ltsPkgPath = "$(System.ArtifactsDirectory)\results\powershell-lts-$(Version)-osx-x64.pkg"
+
+      if(Test-Path $ltsPkgPath)
+      {
+         $ltsZipFile = "$(Build.StagingDirectory)\macos\powershell-lts-$(Version)-osx-x64.zip"
+         Compress-Archive -Path $ltsPkgPath -Destination $ltsZipFile
+         Write-Host $ltsZipFile
+      }
+    displayName: 'Compress macOS Package'
+
+  - powershell: |
+      $pkgFiles = "$(Build.StagingDirectory)\macos\powershell-$(Version)-osx-x64.zip", "$(Build.StagingDirectory)\macos\powershell-lts-$(Version)-osx-x64.zip"
+      tools/releaseBuild/generatePackgeSigning.ps1 -MacDeveloperFiles $pkgFiles -path "$(System.ArtifactsDirectory)\package.xml"
+    displayName: 'Generate macOS Package Signing Xml'
+
+  - powershell: |
+      Get-Content "$(System.ArtifactsDirectory)\package.xml"
+    displayName: 'Capture macOS signing xml'
+    # Diagnostics is not critical it passes every time it runs
+    continueOnError: true
+
+  - task: PkgESCodeSign@10
+    displayName: 'CodeSign $(System.ArtifactsDirectory)\package.xml'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    inputs:
+      signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
+      outPathRoot: '$(Build.StagingDirectory)\signedMacOSPackages'
+      binVersion: $(SigingVersion)
+      binVersionOverride: $(SigningVersionOverride)
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+  - template: upload-final-results.yml
+    parameters:
+      artifactPath: $(System.ArtifactsDirectory)\results
+      artifactFilter: "*.tar.gz"
+
+  - powershell: |
+      $destination = "$(System.ArtifactsDirectory)\azureMacOs"
+      New-Item -Path $destination -Type Directory
+      $zipPath = dir "$(Build.StagingDirectory)\signedMacOSPackages\powershell-*.zip" -Recurse | select-object -expandproperty fullname
+      foreach ($z in $zipPath) { Expand-Archive -Path $z -DestinationPath $destination }
+      $targzPath = dir "$(System.ArtifactsDirectory)\*.tar.gz" -Recurse | select-object -expandproperty fullname
+      Copy-Item -Path $targzPath -Destination $destination
+    displayName: 'Extract and copy macOS artifacts for upload'
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+  - template: upload-final-results.yml
+    parameters:
+      artifactPath: $(System.ArtifactsDirectory)\azureMacOs
+      artifactFilter: "*.pkg"
+      condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+  - powershell: |
+      $null = new-item -type directory -path "$(Build.StagingDirectory)\macos-unsigned"
+      Copy-Item -Path "$(System.ArtifactsDirectory)\results\powershell-$(Version)-osx-x64.pkg" -Destination "$(Build.StagingDirectory)\macos-unsigned"
+      Copy-Item -Path "$(System.ArtifactsDirectory)\results\powershell-$(Version)-osx-x64.tar.gz" -Destination "$(Build.StagingDirectory)\macos-unsigned"
+    displayName: 'Create unsigned folder to upload'
+    condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
+
+  - task: AzureFileCopy@3
+    displayName: 'AzureBlob File Copy - unsigned'
+    inputs:
+      SourcePath: '$(Build.StagingDirectory)\macos-unsigned'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)'
+    condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
+
+  - task: AzureFileCopy@3
+    displayName: 'AzureBlob File Copy - signed'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\azureMacOs'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)'
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
+    displayName: 'Run Defender Scan'
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)'
+      snapshotForceEnabled: true

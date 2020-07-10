@@ -1,0 +1,23 @@
+<h1>Available Tests</h1>
+<ul>
+    <li><a href="/">/</a> - This page</li>
+    <li><a href="/Auth/Basic/">/Auth/Basic/</a> - Basic Authentication</li>
+    <li><a href="/Auth/Negotiate/">/Auth/Negotiate/</a> - Negotiate Authentication</li>
+    <li><a href="/Auth/NTLM/">/Auth/NTLM/</a> - NTLM Authentication</li>
+    <li><a href="/Cert/">/Cert/</a> - Client Certificate Details</li>
+    <li><a href="/Compression/Deflate/">/Compression/Deflate/</a> - Returns deflate compressed response</li>
+    <li><a href="/Compression/GZip/">/Compression/Gzip/</a> - Returns gzip compressed response</li>
+    <li><a href="/Delay/">/Delay/{seconds}</a> - Delays response for <i>seconds</i> seconds.</li>
+    <li>/Delete/ - returns data from a DELETE request</li>
+    <li><a href="/Encoding/Utf8/">/Encoding/Utf8/</a> - Returns page containing UTF-8 data.</li>
+    <li><a href="/Get/">/Get/</a> - Emulates functionality of https://httpbin.org/get by returning GET headers, Arguments, and Request URL</li>
+    <li><a href="/Get/">/Get/</a> - Emulates functionality of https://httpbin.org/get by returning GET headers, Arguments, and Request URL</li>
+    <li><a href="/Link/?linknumber=1&maxlinks=3&type=default">/Link/</a> - Link Header (pagination) testing</li>
+    <li>/Patch/ - returns data from a PATCH request</li>
+    <li>/Post/ - returns data from a POST request</li>
+    <li>/Put/ - returns data from a PUT request</li>
+    <li><a href="/Redirect/">/Redirect/{count}</a> - 302 redirect <i>count</i> times.</li>
+    <li><a href="/Response/?statuscode=200&contenttype=application%2Fjson&body=%22Body%20text%22&headers=%7B%22x-header%22%3A%20%22Response%20Header%20Value%22%7D">/Response/?statuscode=&lt;StatusCode&gt;&amp;body=&lt;ResponseBody&gt;&amp;contenttype=&lt;ResponseContentType&gt;&amp;headers=&lt;JsonHeadersObject&gt;</a> - Returns the given response.</li>
+    <li><a href="/ResponseHeaders/?key=val">/ResponseHeaders/?key=val</a> - Returns given response headers.</li>
+    <li><a href="/Retry/?sessionid=100&failureCode=599&failureCount=2">/Retry/?sessionid=100&failureCode=599&failureCount=2</a> - Returns HTTP status code <i>failureCode</i>, <i>failureCount</i> number of times.</li>
+</ul>

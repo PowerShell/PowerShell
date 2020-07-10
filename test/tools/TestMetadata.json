@@ -1,0 +1,10 @@
+{
+  "ExperimentalFeatures": {
+    "ExpTest.FeatureOne": [ "test/powershell/engine/ExperimentalFeature/ExperimentalFeature.Basic.Tests.ps1" ],
+    "PSNullConditionalOperators": [
+      "test/powershell/Language/Operators/NullConditional.Tests.ps1",
+      "test/powershell/Language/Parser/Parsing.Tests.ps1",
+      "test/powershell/Host/TabCompletion/TabCompletion.Tests.ps1" ],
+    "PSCultureInvariantReplaceOperator": [ "test/powershell/Language/Operators/ReplaceOperator.Tests.ps1" ]
+  }
+}

@@ -1,11 +1,10 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+#if !UNIX
 
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
-using Dbg = System.Management.Automation;
 using System.Security.AccessControl;
 using Microsoft.PowerShell.Commands.Internal;
 
@@ -15,16 +14,13 @@ namespace Microsoft.PowerShell.Commands
     /// Provider that provides access to Registry through cmdlets. This provider
     /// implements <see cref="System.Management.Automation.Provider.NavigationCmdletProvider"/>,
     /// <see cref="System.Management.Automation.Provider.IPropertyCmdletProvider"/>,
-    /// <see cref="System.Management.Automation.Provider.IDynamicPropertyCmdletProvider"/>,    
+    /// <see cref="System.Management.Automation.Provider.IDynamicPropertyCmdletProvider"/>,
     /// <see cref="System.Management.Automation.Provider.ISecurityDescriptorCmdletProvider"/>
-    /// interfaces. 
+    /// interfaces.
     /// </summary>
     public sealed partial class RegistryProvider :
         NavigationCmdletProvider,
         IPropertyCmdletProvider,
-#if SUPPORTS_IMULTIVALUEPROPERTYCMDLETPROVIDER
-        IMultivaluePropertyCmdletProvider,
-#endif
         IDynamicPropertyCmdletProvider,
         ISecurityDescriptorCmdletProvider
     {
@@ -33,15 +29,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the security descriptor for the item specified by <paramref name="path"/>.
         /// </summary>
-        /// 
         /// <param name="path">
         /// The path to the item.
         /// </param>
-        ///
         /// <param name="sections">
         /// Specifies the parts of a security descriptor to retrieve.
         /// </param>
-        /// 
         /// <returns>
         /// Nothing. An object that represents the security descriptor for the item
         /// specified by path is written to the WriteSecurityDescriptorObject method.
@@ -53,14 +46,14 @@ namespace Microsoft.PowerShell.Commands
             IRegistryWrapper key = null;
 
             // Validate input first.
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if ((sections & ~AccessControlSections.All) != 0)
             {
-                throw PSTraceSource.NewArgumentException("sections");
+                throw PSTraceSource.NewArgumentException(nameof(sections));
             }
 
             path = NormalizePath(path);
@@ -78,6 +71,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(new ErrorRecord(e, e.GetType().FullName, ErrorCategory.PermissionDenied, path));
                     return;
                 }
+
                 WriteSecurityDescriptorObject(sd, path);
             }
         }
@@ -85,11 +79,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the security descriptor for the item specified by <paramref name="path"/>
         /// </summary>
-        /// 
         /// <param name="path">
         /// The path to the item to set the security descriptor on.
         /// </param>
-        /// 
         /// <param name="securityDescriptor">
         /// The new security descriptor for the item.
         /// </param>
@@ -99,14 +91,14 @@ namespace Microsoft.PowerShell.Commands
         {
             IRegistryWrapper key = null;
 
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (securityDescriptor == null)
             {
-                throw PSTraceSource.NewArgumentNullException("securityDescriptor");
+                throw PSTraceSource.NewArgumentNullException(nameof(securityDescriptor));
             }
 
             path = NormalizePath(path);
@@ -118,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (sd == null)
                 {
-                    throw PSTraceSource.NewArgumentException("securityDescriptor");
+                    throw PSTraceSource.NewArgumentException(nameof(securityDescriptor));
                 }
             }
             else
@@ -127,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (sd == null)
                 {
-                    throw PSTraceSource.NewArgumentException("securityDescriptor");
+                    throw PSTraceSource.NewArgumentException(nameof(securityDescriptor));
                 }
             }
 
@@ -159,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
 
                 WriteSecurityDescriptorObject(sd, path);
             }
-        } // SetSecurityDescriptor
+        }
 
         /// <summary>
         /// Creates a new empty security descriptor.
@@ -185,22 +177,19 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                return new RegistrySecurity(); //sections);
+                return new RegistrySecurity(); // sections);
             }
         }
 
         /// <summary>
         /// Creates a new empty security descriptor.
         /// </summary>
-        /// 
         /// <param name="type">
         /// The type of item associated with this security descriptor
         /// </param>
-        /// 
         /// <param name="sections">
         /// Specifies the parts of a security descriptor to create.
         /// </param>
-        /// 
         /// <returns>
         /// An instance of <see cref="System.Security.AccessControl.ObjectSecurity" /> object.
         /// </returns>
@@ -214,11 +203,11 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                return new RegistrySecurity(); //sections);
+                return new RegistrySecurity(); // sections);
             }
         }
 
         #endregion ISecurityDescriptorCmdletProvider members
     }
 }
-
+#endif // !UNIX

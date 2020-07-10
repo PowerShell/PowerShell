@@ -1,22 +1,21 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System.Management.Automation;
+using System.Text;
 
 // TODO/FIXME: move this to Microsoft.PowerShell.Cim namespace (and move in source depot folder as well)
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
-    using System.Management.Automation;
-    using System.Text;
-
     /// <summary>
     /// Translates a <see cref="WildcardPattern"/> into a like-operand for WQL.
     /// </summary>
     /// <remarks>
-    /// Documentation on MSDN (http://msdn.microsoft.com/en-us/library/aa392263(VS.85).aspx) is
+    /// Documentation on MSDN (https://msdn.microsoft.com/library/aa392263(VS.85).aspx) is
     /// 1) rather slim / incomplete
     /// 2) sometimes incorrect (i.e. says that '=' is used for character ranges, when it should have said '-')
-    /// 
+    ///
     /// The code below is therefore mainly based on reverse engineering of admin\wmi\wbem\winmgmt\wbecomn\like.cpp
     /// </remarks>
     internal class WildcardPatternToCimQueryParser : WildcardPatternParser
@@ -85,6 +84,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 startOfCharacterRange = (char)90;
                 _needClientSideFiltering = true;
             }
+
             if ((91 <= endOfCharacterRange) && (endOfCharacterRange <= 94))
             {
                 endOfCharacterRange = (char)95;
@@ -99,6 +99,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 startOfCharacterRange = (char)44;
                 _needClientSideFiltering = true;
             }
+
             if (endOfCharacterRange == 45)
             {
                 endOfCharacterRange = (char)46;
@@ -116,7 +117,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         /// <summary>
-        /// Converts <paramref name="wildcardPattern"/> into a value of a right-hand-side operand of LIKE operator of a WQL query.  
+        /// Converts <paramref name="wildcardPattern"/> into a value of a right-hand-side operand of LIKE operator of a WQL query.
         /// Return value still has to be string-escaped (i.e. by doubling '\'' character), before embedding it into a query.
         /// </summary>
         internal static string Parse(WildcardPattern wildcardPattern, out bool needsClientSideFiltering)

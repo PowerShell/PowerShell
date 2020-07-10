@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #if !SILVERLIGHT // ComObject
 #if !CLR2
@@ -32,7 +31,7 @@ namespace System.Management.Automation.ComInterop
 
         internal override Expression UnmarshalFromRef(Expression value)
         {
-            //parameter = temp != 0
+            // parameter = temp != 0
             return base.UnmarshalFromRef(
                 Expression.NotEqual(
                      value,

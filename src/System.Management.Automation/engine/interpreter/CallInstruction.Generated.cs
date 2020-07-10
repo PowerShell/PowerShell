@@ -1,11 +1,11 @@
 /* ****************************************************************************
  *
- * Copyright (c) Microsoft Corporation. 
+ * Copyright (c) Microsoft Corporation.
  *
- * This source code is subject to terms and conditions of the Apache License, Version 2.0. A 
- * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Apache License, Version 2.0, please send an email to 
- * ironpy@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
+ * This source code is subject to terms and conditions of the Apache License, Version 2.0. A
+ * copy of the license can be found in the License.html file at the root of this distribution. If
+ * you cannot locate the Apache License, Version 2.0, please send an email to
+ * ironpy@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Apache License, Version 2.0.
  *
  * You must not remove this notice, or any other, from this software.
@@ -68,27 +68,36 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public virtual object Invoke() { throw new InvalidOperationException(); }
+
         public virtual object Invoke(object arg0) { throw new InvalidOperationException(); }
+
         public virtual object Invoke(object arg0, object arg1) { throw new InvalidOperationException(); }
+
         public virtual object Invoke(object arg0, object arg1, object arg2) { throw new InvalidOperationException(); }
+
         public virtual object Invoke(object arg0, object arg1, object arg2, object arg3) { throw new InvalidOperationException(); }
+
         public virtual object Invoke(object arg0, object arg1, object arg2, object arg3, object arg4) { throw new InvalidOperationException(); }
+
         public virtual object Invoke(object arg0, object arg1, object arg2, object arg3, object arg4, object arg5) { throw new InvalidOperationException(); }
+
         public virtual object Invoke(object arg0, object arg1, object arg2, object arg3, object arg4, object arg5, object arg6) { throw new InvalidOperationException(); }
+
         public virtual object Invoke(object arg0, object arg1, object arg2, object arg3, object arg4, object arg5, object arg6, object arg7) { throw new InvalidOperationException(); }
+
         public virtual object Invoke(object arg0, object arg1, object arg2, object arg3, object arg4, object arg5, object arg6, object arg7, object arg8) { throw new InvalidOperationException(); }
 
         /// <summary>
         /// Fast creation works if we have a known primitive types for the entire
-        /// method siganture.  If we have any non-primitive types then FastCreate
+        /// method signature.  If we have any non-primitive types then FastCreate
         /// falls back to SlowCreate which works for all types.
-        /// 
+        ///
         /// Fast creation is fast because it avoids using reflection (MakeGenericType
         /// and Activator.CreateInstance) to create the types.  It does this through
         /// calling a series of generic methods picking up each strong type of the
-        /// signature along the way.  When it runs out of types it news up the 
+        /// signature along the way.  When it runs out of types it news up the
         /// appropriate CallInstruction with the strong-types that have been built up.
-        /// 
+        ///
         /// One relaxation is that for return types which are non-primitive types
         /// we can fallback to object due to relaxed delegates.
         /// </summary>
@@ -98,31 +107,31 @@ namespace System.Management.Automation.Interpreter {
                 return new ActionCallInstruction(target);
             }
 
-            var typeInfo = t.GetTypeInfo();
-            if (typeInfo.IsEnum) return SlowCreate(target, pi);
+            if (t.IsEnum) return SlowCreate(target, pi);
             switch (t.GetTypeCode()) {
                 case TypeCode.Object: {
-                    if (t != typeof(object) && (IndexIsNotReturnType(0, target, pi) || typeInfo.IsValueType)) {
+                    if (t != typeof(object) && (IndexIsNotReturnType(0, target, pi) || t.IsValueType)) {
                         // if we're on the return type relaxed delegates makes it ok to use object
                         goto default;
                     }
-                    return FastCreate<Object>(target, pi);
+
+                    return FastCreate<object>(target, pi);
                 }
                 case TypeCode.Int16: return FastCreate<Int16>(target, pi);
                 case TypeCode.Int32: return FastCreate<Int32>(target, pi);
                 case TypeCode.Int64: return FastCreate<Int64>(target, pi);
-                case TypeCode.Boolean: return FastCreate<Boolean>(target, pi);
-                case TypeCode.Char: return FastCreate<Char>(target, pi);
-                case TypeCode.Byte: return FastCreate<Byte>(target, pi);
+                case TypeCode.Boolean: return FastCreate<bool>(target, pi);
+                case TypeCode.Char: return FastCreate<char>(target, pi);
+                case TypeCode.Byte: return FastCreate<byte>(target, pi);
                 case TypeCode.Decimal: return FastCreate<Decimal>(target, pi);
                 case TypeCode.DateTime: return FastCreate<DateTime>(target, pi);
-                case TypeCode.Double: return FastCreate<Double>(target, pi);
+                case TypeCode.Double: return FastCreate<double>(target, pi);
                 case TypeCode.Single: return FastCreate<Single>(target, pi);
                 case TypeCode.UInt16: return FastCreate<UInt16>(target, pi);
                 case TypeCode.UInt32: return FastCreate<UInt32>(target, pi);
                 case TypeCode.UInt64: return FastCreate<UInt64>(target, pi);
-                case TypeCode.String: return FastCreate<String>(target, pi);
-                case TypeCode.SByte: return FastCreate<SByte>(target, pi);
+                case TypeCode.String: return FastCreate<string>(target, pi);
+                case TypeCode.SByte: return FastCreate<sbyte>(target, pi);
                 default: return SlowCreate(target, pi);
             }
         }
@@ -133,25 +142,26 @@ namespace System.Management.Automation.Interpreter {
                 if (target.ReturnType == typeof(void)) {
                     return new ActionCallInstruction<T0>(target);
                 }
+
                 return new FuncCallInstruction<T0>(target);
             }
 
-            var typeInfo = t.GetTypeInfo();
-            if (typeInfo.IsEnum) return SlowCreate(target, pi);
+            if (t.IsEnum) return SlowCreate(target, pi);
             switch (t.GetTypeCode()) {
                 case TypeCode.Object: {
-                    if (t != typeof(object) && (IndexIsNotReturnType(1, target, pi) || typeInfo.IsValueType)) {
+                    if (t != typeof(object) && (IndexIsNotReturnType(1, target, pi) || t.IsValueType)) {
                         // if we're on the return type relaxed delegates makes it ok to use object
                         goto default;
                     }
-                    return FastCreate<T0, Object>(target, pi);
+
+                    return FastCreate<T0, object>(target, pi);
                 }
                 case TypeCode.Int16: return FastCreate<T0, Int16>(target, pi);
                 case TypeCode.Int32: return FastCreate<T0, Int32>(target, pi);
                 case TypeCode.Int64: return FastCreate<T0, Int64>(target, pi);
-                case TypeCode.Boolean: return FastCreate<T0, Boolean>(target, pi);
-                case TypeCode.Char: return FastCreate<T0, Char>(target, pi);
-                case TypeCode.Byte: return FastCreate<T0, Byte>(target, pi);
+                case TypeCode.Boolean: return FastCreate<T0, bool>(target, pi);
+                case TypeCode.Char: return FastCreate<T0, char>(target, pi);
+                case TypeCode.Byte: return FastCreate<T0, byte>(target, pi);
                 case TypeCode.Decimal: return FastCreate<T0, Decimal>(target, pi);
                 case TypeCode.DateTime: return FastCreate<T0, DateTime>(target, pi);
                 case TypeCode.Double: return FastCreate<T0, Double>(target, pi);
@@ -159,8 +169,8 @@ namespace System.Management.Automation.Interpreter {
                 case TypeCode.UInt16: return FastCreate<T0, UInt16>(target, pi);
                 case TypeCode.UInt32: return FastCreate<T0, UInt32>(target, pi);
                 case TypeCode.UInt64: return FastCreate<T0, UInt64>(target, pi);
-                case TypeCode.String: return FastCreate<T0, String>(target, pi);
-                case TypeCode.SByte: return FastCreate<T0, SByte>(target, pi);
+                case TypeCode.String: return FastCreate<T0, string>(target, pi);
+                case TypeCode.SByte: return FastCreate<T0, sbyte>(target, pi);
                 default: return SlowCreate(target, pi);
             }
         }
@@ -171,24 +181,24 @@ namespace System.Management.Automation.Interpreter {
                 if (target.ReturnType == typeof(void)) {
                     return new ActionCallInstruction<T0, T1>(target);
                 }
+
                 return new FuncCallInstruction<T0, T1>(target);
             }
 
-            var typeInfo = t.GetTypeInfo();
-            if (typeInfo.IsEnum) return SlowCreate(target, pi);
+            if (t.IsEnum) return SlowCreate(target, pi);
             switch (t.GetTypeCode()) {
                 case TypeCode.Object: {
                     Debug.Assert(pi.Length == 2);
-                    if (typeInfo.IsValueType) goto default;
+                    if (t.IsValueType) goto default;
 
-                    return new FuncCallInstruction<T0, T1, Object>(target);
+                    return new FuncCallInstruction<T0, T1, object>(target);
                 }
                 case TypeCode.Int16: return new FuncCallInstruction<T0, T1, Int16>(target);
                 case TypeCode.Int32: return new FuncCallInstruction<T0, T1, Int32>(target);
                 case TypeCode.Int64: return new FuncCallInstruction<T0, T1, Int64>(target);
-                case TypeCode.Boolean: return new FuncCallInstruction<T0, T1, Boolean>(target);
-                case TypeCode.Char: return new FuncCallInstruction<T0, T1, Char>(target);
-                case TypeCode.Byte: return new FuncCallInstruction<T0, T1, Byte>(target);
+                case TypeCode.Boolean: return new FuncCallInstruction<T0, T1, bool>(target);
+                case TypeCode.Char: return new FuncCallInstruction<T0, T1, char>(target);
+                case TypeCode.Byte: return new FuncCallInstruction<T0, T1, byte>(target);
                 case TypeCode.Decimal: return new FuncCallInstruction<T0, T1, Decimal>(target);
                 case TypeCode.DateTime: return new FuncCallInstruction<T0, T1, DateTime>(target);
                 case TypeCode.Double: return new FuncCallInstruction<T0, T1, Double>(target);
@@ -196,8 +206,8 @@ namespace System.Management.Automation.Interpreter {
                 case TypeCode.UInt16: return new FuncCallInstruction<T0, T1, UInt16>(target);
                 case TypeCode.UInt32: return new FuncCallInstruction<T0, T1, UInt32>(target);
                 case TypeCode.UInt64: return new FuncCallInstruction<T0, T1, UInt64>(target);
-                case TypeCode.String: return new FuncCallInstruction<T0, T1, String>(target);
-                case TypeCode.SByte: return new FuncCallInstruction<T0, T1, SByte>(target);
+                case TypeCode.String: return new FuncCallInstruction<T0, T1, string>(target);
+                case TypeCode.SByte: return new FuncCallInstruction<T0, T1, sbyte>(target);
                 default: return SlowCreate(target, pi);
             }
         }
@@ -233,13 +243,16 @@ namespace System.Management.Automation.Interpreter {
                     default: throw new InvalidOperationException();
                 }
             }
+
             return t;
         }
+
         public static MethodInfo CacheFunc<TRet>(Func<TRet> method) {
             var info = method.GetMethodInfo();
             lock (s_cache) {
                 s_cache[info] = new FuncCallInstruction<TRet>(method);
             }
+
             return info;
         }
 
@@ -248,6 +261,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new FuncCallInstruction<T0, TRet>(method);
             }
+
             return info;
         }
 
@@ -256,6 +270,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new FuncCallInstruction<T0, T1, TRet>(method);
             }
+
             return info;
         }
 
@@ -264,6 +279,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new FuncCallInstruction<T0, T1, T2, TRet>(method);
             }
+
             return info;
         }
 
@@ -272,6 +288,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new FuncCallInstruction<T0, T1, T2, T3, TRet>(method);
             }
+
             return info;
         }
 
@@ -280,6 +297,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new FuncCallInstruction<T0, T1, T2, T3, T4, TRet>(method);
             }
+
             return info;
         }
 
@@ -288,6 +306,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new FuncCallInstruction<T0, T1, T2, T3, T4, T5, TRet>(method);
             }
+
             return info;
         }
 
@@ -296,6 +315,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new FuncCallInstruction<T0, T1, T2, T3, T4, T5, T6, TRet>(method);
             }
+
             return info;
         }
 
@@ -304,6 +324,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new FuncCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7, TRet>(method);
             }
+
             return info;
         }
 
@@ -312,6 +333,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new FuncCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8, TRet>(method);
             }
+
             return info;
         }
 
@@ -320,6 +342,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new ActionCallInstruction(method);
             }
+
             return info;
         }
 
@@ -328,6 +351,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new ActionCallInstruction<T0>(method);
             }
+
             return info;
         }
 
@@ -336,6 +360,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new ActionCallInstruction<T0, T1>(method);
             }
+
             return info;
         }
 
@@ -344,6 +369,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new ActionCallInstruction<T0, T1, T2>(method);
             }
+
             return info;
         }
 
@@ -352,6 +378,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new ActionCallInstruction<T0, T1, T2, T3>(method);
             }
+
             return info;
         }
 
@@ -360,6 +387,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new ActionCallInstruction<T0, T1, T2, T3, T4>(method);
             }
+
             return info;
         }
 
@@ -368,6 +396,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new ActionCallInstruction<T0, T1, T2, T3, T4, T5>(method);
             }
+
             return info;
         }
 
@@ -376,6 +405,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new ActionCallInstruction<T0, T1, T2, T3, T4, T5, T6>(method);
             }
+
             return info;
         }
 
@@ -384,6 +414,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new ActionCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7>(method);
             }
+
             return info;
         }
 
@@ -392,6 +423,7 @@ namespace System.Management.Automation.Interpreter {
             lock (s_cache) {
                 s_cache[info] = new ActionCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8>(method);
             }
+
             return info;
         }
 
@@ -400,6 +432,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class ActionCallInstruction : CallInstruction {
         private readonly Action _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 0; } }
 
         public ActionCallInstruction(Action target) {
@@ -425,6 +458,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class ActionCallInstruction<T0> : CallInstruction {
         private readonly Action<T0> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 1; } }
 
         public ActionCallInstruction(Action<T0> target) {
@@ -450,6 +484,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class ActionCallInstruction<T0, T1> : CallInstruction {
         private readonly Action<T0, T1> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 2; } }
 
         public ActionCallInstruction(Action<T0, T1> target) {
@@ -475,6 +510,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class ActionCallInstruction<T0, T1, T2> : CallInstruction {
         private readonly Action<T0, T1, T2> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 3; } }
 
         public ActionCallInstruction(Action<T0, T1, T2> target) {
@@ -500,6 +536,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class ActionCallInstruction<T0, T1, T2, T3> : CallInstruction {
         private readonly Action<T0, T1, T2, T3> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 4; } }
 
         public ActionCallInstruction(Action<T0, T1, T2, T3> target) {
@@ -525,6 +562,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class ActionCallInstruction<T0, T1, T2, T3, T4> : CallInstruction {
         private readonly Action<T0, T1, T2, T3, T4> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 5; } }
 
         public ActionCallInstruction(Action<T0, T1, T2, T3, T4> target) {
@@ -550,6 +588,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class ActionCallInstruction<T0, T1, T2, T3, T4, T5> : CallInstruction {
         private readonly Action<T0, T1, T2, T3, T4, T5> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 6; } }
 
         public ActionCallInstruction(Action<T0, T1, T2, T3, T4, T5> target) {
@@ -575,6 +614,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class ActionCallInstruction<T0, T1, T2, T3, T4, T5, T6> : CallInstruction {
         private readonly Action<T0, T1, T2, T3, T4, T5, T6> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 7; } }
 
         public ActionCallInstruction(Action<T0, T1, T2, T3, T4, T5, T6> target) {
@@ -600,6 +640,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class ActionCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7> : CallInstruction {
         private readonly Action<T0, T1, T2, T3, T4, T5, T6, T7> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 8; } }
 
         public ActionCallInstruction(Action<T0, T1, T2, T3, T4, T5, T6, T7> target) {
@@ -625,6 +666,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class ActionCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8> : CallInstruction {
         private readonly Action<T0, T1, T2, T3, T4, T5, T6, T7, T8> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 9; } }
 
         public ActionCallInstruction(Action<T0, T1, T2, T3, T4, T5, T6, T7, T8> target) {
@@ -650,6 +692,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class FuncCallInstruction<TRet> : CallInstruction {
         private readonly Func<TRet> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 0; } }
 
         public FuncCallInstruction(Func<TRet> target) {
@@ -674,6 +717,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class FuncCallInstruction<T0, TRet> : CallInstruction {
         private readonly Func<T0, TRet> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 1; } }
 
         public FuncCallInstruction(Func<T0, TRet> target) {
@@ -698,6 +742,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class FuncCallInstruction<T0, T1, TRet> : CallInstruction {
         private readonly Func<T0, T1, TRet> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 2; } }
 
         public FuncCallInstruction(Func<T0, T1, TRet> target) {
@@ -722,6 +767,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class FuncCallInstruction<T0, T1, T2, TRet> : CallInstruction {
         private readonly Func<T0, T1, T2, TRet> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 3; } }
 
         public FuncCallInstruction(Func<T0, T1, T2, TRet> target) {
@@ -746,6 +792,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class FuncCallInstruction<T0, T1, T2, T3, TRet> : CallInstruction {
         private readonly Func<T0, T1, T2, T3, TRet> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 4; } }
 
         public FuncCallInstruction(Func<T0, T1, T2, T3, TRet> target) {
@@ -770,6 +817,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class FuncCallInstruction<T0, T1, T2, T3, T4, TRet> : CallInstruction {
         private readonly Func<T0, T1, T2, T3, T4, TRet> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 5; } }
 
         public FuncCallInstruction(Func<T0, T1, T2, T3, T4, TRet> target) {
@@ -794,6 +842,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class FuncCallInstruction<T0, T1, T2, T3, T4, T5, TRet> : CallInstruction {
         private readonly Func<T0, T1, T2, T3, T4, T5, TRet> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 6; } }
 
         public FuncCallInstruction(Func<T0, T1, T2, T3, T4, T5, TRet> target) {
@@ -818,6 +867,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class FuncCallInstruction<T0, T1, T2, T3, T4, T5, T6, TRet> : CallInstruction {
         private readonly Func<T0, T1, T2, T3, T4, T5, T6, TRet> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 7; } }
 
         public FuncCallInstruction(Func<T0, T1, T2, T3, T4, T5, T6, TRet> target) {
@@ -842,6 +892,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class FuncCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7, TRet> : CallInstruction {
         private readonly Func<T0, T1, T2, T3, T4, T5, T6, T7, TRet> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 8; } }
 
         public FuncCallInstruction(Func<T0, T1, T2, T3, T4, T5, T6, T7, TRet> target) {
@@ -866,6 +917,7 @@ namespace System.Management.Automation.Interpreter {
     internal sealed class FuncCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8, TRet> : CallInstruction {
         private readonly Func<T0, T1, T2, T3, T4, T5, T6, T7, T8, TRet> _target;
         public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+
         public override int ArgumentCount { get { return 9; } }
 
         public FuncCallInstruction(Func<T0, T1, T2, T3, T4, T5, T6, T7, T8, TRet> target) {
@@ -891,9 +943,11 @@ namespace System.Management.Automation.Interpreter {
         public override object Invoke() {
             return InvokeWorker();
         }
+
         public override object Invoke(object arg0) {
             return InvokeWorker(arg0);
         }
+
         public override object Invoke(object arg0, object arg1) {
             return InvokeWorker(arg0, arg1);
         }

@@ -1,31 +1,34 @@
-﻿if ($IsWindows -and !$IsCoreCLR) {
-  #check to see whether we're running as admin in Windows...
-  $windowsIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
-  $windowsPrincipal = new-object 'Security.Principal.WindowsPrincipal' $windowsIdentity
-  if ($windowsPrincipal.IsInRole("Administrators") -eq $true) {
-      $NonWinAdmin=$false
-  } else {$NonWinAdmin=$true}
-  Describe "New-EventLog cmdlet tests" -Tags "CI" {
-    BeforeEach{
-      Remove-EventLog -LogName TestLog -ea Ignore
-      {New-EventLog -LogName TestLog -Source TestSource -ea Stop}                              | Should Not Throw                            
-      {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ea Stop} | Should Not Throw
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+Describe "New-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
+
+    BeforeAll {
+        $defaultParamValues = $PSDefaultParameterValues.Clone()
+        $IsNotSkipped = ($IsWindows -and !$IsCoreCLR)
+        $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
     }
-    #CmdLet is NYI - change to -Skip:($NonWinAdmin) when implemented   
-    It "should be able to Remove-EventLog -LogName <string> -ComputerName <string>" -Pending:($True -Or $NonWinAdmin) {
-      {Remove-EventLog -LogName TestLog -ComputerName $env:COMPUTERNAME -ea Stop}              | Should Not Throw
-      try {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ea Stop; Throw "Previous statement unexpectedly succeeded..."
-      } catch {$_.FullyQualifiedErrorId             | Should Be "Microsoft.PowerShell.Commands.WriteEventLogCommand"}
-      try {Get-EventLog -LogName TestLog -ea Stop; Throw "Previous statement unexpectedly succeeded..."
-      } catch {$_.FullyQualifiedErrorId             | Should Be "System.InvalidOperationException,Microsoft.PowerShell.Commands.GetEventLogCommand"}
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $defaultParamValues
+    }
+
+    BeforeEach {
+        if ($IsNotSkipped) {
+            Remove-EventLog -LogName TestLog -ErrorAction Ignore
+            {New-EventLog -LogName TestLog -Source TestSource -ErrorAction Stop}                              | Should -Not -Throw
+            {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventId 1 -ErrorAction Stop} | Should -Not -Throw
+        }
     }
     #CmdLet is NYI - change to -Skip:($NonWinAdmin) when implemented
-    It "should be able to Remove-EventLog -Source <string> -ComputerName <string>"  -Pending:($True -Or $NonWinAdmin) {
-      {Remove-EventLog -Source TestSource -ComputerName $env:COMPUTERNAME -ea Stop} | Should Not Throw
-      try {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ea Stop; Throw "Previous statement unexpectedly succeeded..."
-      } catch {$_.FullyQualifiedErrorId             | Should Be "Microsoft.PowerShell.Commands.WriteEventLogCommand"}
-      try {Get-EventLog -LogName TestLog -ea Stop; Throw "Previous statement unexpectedly succeeded..."
-      } catch {$_.FullyQualifiedErrorId             | Should Be "System.InvalidOperationException,Microsoft.PowerShell.Commands.GetEventLogCommand"}
+    It "should be able to Remove-EventLog -LogName <string> -ComputerName <string>" -Pending:($true) {
+      { Remove-EventLog -LogName TestLog -ComputerName $env:COMPUTERNAME -ErrorAction Stop }              | Should -Not -Throw
+      { Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventId 1 -ErrorAction Stop } | Should -Throw -ErrorId "Microsoft.PowerShell.Commands.WriteEventLogCommand"
+      { Get-EventLog -LogName TestLog -ErrorAction Stop } | Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.GetEventLogCommand"
     }
-  }
+    #CmdLet is NYI - change to -Skip:($NonWinAdmin) when implemented
+    It "should be able to Remove-EventLog -Source <string> -ComputerName <string>"  -Pending:($true) {
+      {Remove-EventLog -Source TestSource -ComputerName $env:COMPUTERNAME -ErrorAction Stop} | Should -Not -Throw
+      { Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventId 1 -ErrorAction Stop } | Should -Throw -ErrorId "Microsoft.PowerShell.Commands.WriteEventLogCommand"
+      { Get-EventLog -LogName TestLog -ErrorAction Stop; } | Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.GetEventLogCommand"
+    }
 }

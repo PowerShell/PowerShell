@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 #
 # Wrap Python script in such a way to make it easy to
 # consume from PowerShell
@@ -7,5 +10,5 @@
 # picking up the Python script from the same directory
 #
 
-& $PSScriptRoot/class1.py | ConvertFrom-JSON
+& $PSScriptRoot/class1.py | ConvertFrom-Json
 

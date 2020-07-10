@@ -1,17 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,41 +26,41 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -129,6 +129,18 @@
   <data name="IncompleteString" xml:space="preserve">
     <value>Incomplete string token.</value>
   </data>
+  <data name="InvalidUnicodeEscapeSequence" xml:space="preserve">
+    <value>The Unicode escape sequence is not valid. A valid sequence is `u{ followed by one to six hex digits and a closing '}'.</value>
+  </data>
+  <data name="InvalidUnicodeEscapeSequenceValue" xml:space="preserve">
+    <value>The Unicode escape sequence value is out of range. The maximum value is 0x10FFFF.</value>
+  </data>
+  <data name="MissingUnicodeEscapeSequenceTerminator" xml:space="preserve">
+    <value>The Unicode escape sequence is missing the closing '}'.</value>
+  </data>
+  <data name="TooManyDigitsInUnicodeEscapeSequence" xml:space="preserve">
+    <value>The Unicode escape sequence contains more than the maximum of six hex digits between braces.</value>
+  </data>
   <data name="NumberBothLongAndFloatingPoint" xml:space="preserve">
     <value>A number cannot be both a long and floating point.</value>
   </data>
@@ -177,7 +189,7 @@ Possible matches are</value>
   </data>
   <data name="AmbiguousParameterExtendMessage" xml:space="preserve">
     <value>
-	{0} ({1})</value>
+    {0} ({1})</value>
   </data>
   <data name="MissingExpression" xml:space="preserve">
     <value>Missing expression after '{0}' in pipeline element.</value>
@@ -279,7 +291,10 @@ Possible matches are</value>
     <value>Cannot index into a null array.</value>
   </data>
   <data name="CannotIndex" xml:space="preserve">
-    <value>Unable to index into an object of type {0}.</value>
+    <value>Unable to index into an object of type "{0}".</value>
+  </data>
+  <data name="CannotIndexWithByRefLikeReturnType" xml:space="preserve">
+    <value>Unable to index into an object of type "{0}" with the ByRef-like return type "{1}". ByRef-like types are not supported in PowerShell.</value>
   </data>
   <data name="ArrayAssignmentFailed" xml:space="preserve">
     <value>Array assignment to [{0}] failed: {1}.</value>
@@ -347,9 +362,6 @@ Possible matches are</value>
   <data name="MissingExpressionInNamedArgument" xml:space="preserve">
     <value>Missing statement after '=' in named argument.</value>
   </data>
-  <data name="IncompleteHashLiteral" xml:space="preserve">
-    <value>The hash literal was incomplete.</value>
-  </data>
   <data name="MissingPropertyTerminator" xml:space="preserve">
     <value>Missing ';' or end-of-line in property definition.</value>
   </data>
@@ -380,8 +392,8 @@ Possible matches are</value>
   <data name="IncompleteSwitchStatement" xml:space="preserve">
     <value>The switch statement was incomplete.</value>
   </data>
-  <data name="ParallelNotSupported" xml:space="preserve">
-    <value>The '-parallel' parameter can be used only within a workflow.</value>
+  <data name="KeywordParameterReservedForFutureUse" xml:space="preserve">
+    <value>The {0} '-{1}' parameter is reserved for future use.</value>
   </data>
   <data name="MissingFilenameOption" xml:space="preserve">
     <value>Cannot process the 'switch' statement because of a missing file name argument to the -file option.</value>
@@ -411,10 +423,12 @@ Possible matches are</value>
     <value>Missing statement block in switch statement clause.</value>
   </data>
   <data name="MissingForeachExpression" xml:space="preserve">
-    <value>Missing expression in foreach loop.</value>
+    <value>Missing expression in foreach loop.
+The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingForeachStatement" xml:space="preserve">
-    <value>Missing statement body in foreach loop.</value>
+    <value>Missing statement body in foreach loop.
+The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="OnlyOneParameterListAllowed" xml:space="preserve">
     <value>The param statement cannot be used if arguments were specified in the function declaration.</value>
@@ -449,9 +463,6 @@ Possible matches are</value>
   <data name="InvalidEndOfLine" xml:space="preserve">
     <value>The token '{0}' is not a valid statement separator in this version.</value>
   </data>
-  <data name="AmpersandNotAllowed" xml:space="preserve">
-    <value>The ampersand (&amp;) character is not allowed. The &amp; operator is reserved for future use; wrap an ampersand in double quotation marks ("&amp;") to pass it as part of a string.</value>
-  </data>
   <data name="FromKeywordNotAllowed" xml:space="preserve">
     <value>The 'from' keyword is not supported in this version of the language.</value>
   </data>
@@ -485,6 +496,9 @@ Possible matches are</value>
   <data name="DuplicateScriptCommandClause" xml:space="preserve">
     <value>Script command clause '{0}' has already been defined.</value>
   </data>
+  <data name="MissingNamedBlocks" xml:space="preserve">
+    <value>unexpected token '{0}', expected 'begin', 'process', 'end', or 'dynamicparam'.</value>
+  </data>
   <data name="MissingEndCurlyBrace" xml:space="preserve">
     <value>Missing closing '}' in statement block or type definition.</value>
   </data>
@@ -510,13 +524,16 @@ Possible matches are</value>
     <value>Missing '{' in switch statement.</value>
   </data>
   <data name="MissingVariableNameAfterForeach" xml:space="preserve">
-    <value>Missing variable name after foreach.</value>
+    <value>Missing variable name after foreach.
+The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingInInForeach" xml:space="preserve">
-    <value>Missing 'in' after variable in foreach loop.</value>
+    <value>Missing 'in' after variable in foreach loop.
+The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingEndParenthesisAfterForeach" xml:space="preserve">
-    <value>Missing closing ')' after expression part of foreach loop.</value>
+    <value>Missing closing ')' after expression part of foreach loop.
+The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingOpenParenthesisAfterKeyword" xml:space="preserve">
     <value>Missing opening '(' after keyword '{0}'.</value>
@@ -844,7 +861,7 @@ Possible matches are</value>
     <value>Flow of control cannot leave a Finally block.</value>
   </data>
   <data name="UnrecoverableParserError" xml:space="preserve">
-    <value>Unrecoverable error in Windows PowerShell.</value>
+    <value>Unrecoverable error in PowerShell.</value>
   </data>
   <data name="AstIsReused" xml:space="preserve">
     <value>An AST cannot be used as the child of more than one AST. To use this AST in another AST, call the Copy() method and use its result.</value>
@@ -919,7 +936,7 @@ Possible matches are</value>
     <value>The argument for the Module parameter is not valid. {0}</value>
   </data>
   <data name="RequiresVersionInvalid" xml:space="preserve">
-    <value>The argument for the Version parameter is not valid. Specify a valid Windows PowerShell version, in the format major.minor version.</value>
+    <value>The argument for the Version parameter is not valid. Specify a valid PowerShell version, in the format major.minor version.</value>
   </data>
   <data name="RequiresPSEditionInvalid" xml:space="preserve">
     <value>The argument for the {0} parameter is not valid. Specify a valid PowerShell edition.</value>
@@ -971,7 +988,7 @@ Possible matches are</value>
     <value>Exception parsing MOF file '{0}':{1}.</value>
   </data>
   <data name="MissingConfigurationName" xml:space="preserve">
-    <value>The name for the configuration is missing. Provide the missing name as a simple name, string, or string-valued expresson.</value>
+    <value>The name for the configuration is missing. Provide the missing name as a simple name, string, or string-valued expression.</value>
   </data>
   <data name="MissingRequiredResourcesArgument" xml:space="preserve">
     <value>Missing argument to -Resources. The argument to the -Resource parameter must be a comma-separated list of names or constant strings naming modules to reference for resource type definitions.</value>
@@ -991,7 +1008,7 @@ Possible matches are</value>
     <value>The ThrottleLimit parameter of the foreach statement is missing a value. Supply a throttle limit to the parameter.</value>
     <comment>'ThrottleLimit' must not be localized.</comment>
   </data>
-  <data name="ThrottleLimitRequresParallelFlag" xml:space="preserve">
+  <data name="ThrottleLimitRequiresParallelFlag" xml:space="preserve">
     <value>The ThrottleLimit parameter is only supported on foreach statements that use the Parallel parameter.</value>
     <comment>'ThrottleLimit' and 'Parallel' must not be localized.</comment>
   </data>
@@ -1008,7 +1025,7 @@ Possible matches are</value>
     <value>Missing '=' operator after key in property assignment.</value>
   </data>
   <data name="DuplicatePropertyInInstanceDefinition" xml:space="preserve">
-    <value>Duplicate property assignements are not allowed in an instance definition.</value>
+    <value>Duplicate property assignments are not allowed in an instance definition.</value>
   </data>
   <data name="DuplicateCimClassDefinition" xml:space="preserve">
     <value>A second CIM class definition for '{0}' was found while processing the schema file '{1}'. This class was already defined in the file(s) '{2}'. Remove the redundant definition, and then try again.</value>
@@ -1045,10 +1062,10 @@ Possible matches are</value>
     <value>The script block that defines function '{0}' cannot be null or empty. Provide a non-empty script block in the function definition dictionary, and then try the operation again.</value>
   </data>
   <data name="ImportDscResourceNeedParams" xml:space="preserve">
-    <value>The syntax of the Import-DscResource dynamic keyword is: 
-   
+    <value>The syntax of the Import-DscResource dynamic keyword is:
+
 Import-DscResource  [-Name &lt;ResourceName(s)&gt;]  [-ModuleName  &lt;ModuleName(s)&gt;] [-ModuleVersion &lt;ModuleVersion&gt;].
-  
+
 Name          : Names of one or more resources to import.
 ModuleName    : Module names or ModuleSpecification objects of one or more modules to import.
 ModuleVersion : Version of module to import. If used, ModuleName must represent only one module by name.</value>
@@ -1078,7 +1095,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>'{0}' is not a valid value for property '{1}' on class '{2}'. Please change the value to one of the following strings: {3}.</value>
   </data>
   <data name="UnsupportedValueForProperty" xml:space="preserve">
-    <value>At least one of the values '{0}' is not supported or valid for property '{1}' on class '{2}'. Please specify only supported values: 
+    <value>At least one of the values '{0}' is not supported or valid for property '{1}' on class '{2}'. Please specify only supported values:
 {3}.</value>
   </data>
   <data name="MissingValueForMandatoryProperty" xml:space="preserve">
@@ -1161,7 +1178,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Only one type may be specified on class members.</value>
   </data>
   <data name="TypeCreationError" xml:space="preserve">
-    <value>Error during creation of type "{0}". Error message: 
+    <value>Error during creation of type "{0}". Error message:
 {1}</value>
   </data>
   <data name="CannotConvertValue" xml:space="preserve">
@@ -1186,7 +1203,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Exception occurred when post-parsing dynamic keyword '{0}' with details '{1}'.</value>
   </data>
   <data name="WorkflowNotSupportedInPowerShellCore" xml:space="preserve">
-    <value>Workflow is not supported in PowerShell Core.</value>
+    <value>Workflow is not supported in PowerShell 6+.</value>
   </data>
   <data name="MetaConfigurationUsedInRegularConfig" xml:space="preserve">
     <value>Meta Configuration resource {0} is not allowed in the regular configuration. Use meta configuration resources in a configuration with [DscLocalConfigurationManager()] attribute.</value>
@@ -1255,7 +1272,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Variant.GetAccessor cannot handle {0}.</value>
   </data>
   <data name="ConfigurationNotSupportedInPowerShellCore" xml:space="preserve">
-    <value>Configuration keyword is not supported in PowerShell Core.</value>
+    <value>Configuration keyword is not supported in PowerShell 6+.</value>
   </data>
   <data name="MethodHasCodePathNotReturn" xml:space="preserve">
     <value>Not all code path returns value within method.</value>
@@ -1272,8 +1289,8 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="CycleInEnumInitializers" xml:space="preserve">
     <value>Cannot define enum because of a cycle in the initialization expressions.</value>
   </data>
-  <data name="EnumeratorValueTooLarge" xml:space="preserve">
-    <value>Enumerator value is too large for a System.Int.</value>
+  <data name="EnumeratorValueOutOfBounds" xml:space="preserve">
+    <value>Enumerator value is either too large or too small for {0}.</value>
   </data>
   <data name="EnumeratorValueMustBeConstant" xml:space="preserve">
     <value>Enumerator value must be a constant value.</value>
@@ -1298,6 +1315,9 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   </data>
   <data name="TypeNameExpected" xml:space="preserve">
     <value>Type name expected.</value>
+  </data>
+  <data name="InvalidUnderlyingType" xml:space="preserve">
+    <value>'{0}' is not a valid underlying type for enums. Expected a builtin integral type (one of byte, sbyte, short, ushort, int, uint, long or ulong)</value>
   </data>
   <data name="InterfaceNameExpected" xml:space="preserve">
     <value>'{0}': Interface name expected.</value>
@@ -1349,10 +1369,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
 '{1}'.</value>
   </data>
   <data name="CantActivateDocumentInPowerShellCore" xml:space="preserve">
-    <value>Cannot run a document in PowerShell Core: {0}.</value>
-  </data>
-  <data name="LoadContextNotInitialized" xml:space="preserve">
-    <value>'PowerShellAssemblyLoadContext' is not initialized.</value>
+    <value>Cannot run a document in PowerShell: {0}.</value>
   </data>
   <data name="MultipleTypeConstraintsOnMethodParam" xml:space="preserve">
     <value>Multiple type constraints are not allowed on a method parameter.</value>
@@ -1449,5 +1466,47 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   </data>
   <data name="PsDscRunAsCredentialMergeErrorForCompositeResources" xml:space="preserve">
     <value>Conflict in using PsDscRunAsCredential for Resource {0} because it already specifies PsDscRunAsCredential value. We can only use one PsDscRunAsCredential for the composite resource. </value>
+  </data>
+  <data name="ParserError" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="ImplicitRemotingPipelineBatchingNotSupported" xml:space="preserve">
+    <value>Command pipeline not supported for implicit remoting batching.</value>
+  </data>
+  <data name="ImplicitRemotingPipelineBatchingNotASimplePipeline" xml:space="preserve">
+    <value>Command is not a simple pipeline and cannot be batched.</value>
+  </data>
+  <data name="ImplicitRemotingPipelineBatchingNotImplicitCommand" xml:space="preserve">
+    <value>The pipeline command '{0}' is not an implicit remoting command or an approved batching command.</value>
+  </data>
+  <data name="ImplicitRemotingPipelineBatchingWrongSession" xml:space="preserve">
+    <value>The pipeline command '{0}' is for a different remote session and cannot be batched.</value>
+  </data>
+  <data name="ImplicitRemotingPipelineBatchingNoPSSession" xml:space="preserve">
+    <value>The implicit remoting PSSession for batching could not be retrieved.</value>
+  </data>
+  <data name="ImplicitRemotingPipelineBatchingException" xml:space="preserve">
+    <value>Exception while checking the command for implicit remoting batching: {0}</value>
+  </data>
+  <data name="ImplicitRemotingPipelineBatchingSuccess" xml:space="preserve">
+    <value>Implicit remoting command pipeline has been batched for execution on remote target.</value>
+  </data>
+  <data name="ScriptHasAdminBlockedContent" xml:space="preserve">
+    <value>This script contains content that has been flagged as suspicious through a policy setting and has been blocked with error code {0}. Contact your administrator for more information.</value>
+  </data>
+  <data name = "CantInvokeCallOperatorAcrossLanguageBoundaries" xml:space="preserve">
+    <value>Cannot use '&amp;' or '.' operators to invoke a module scope command across language boundaries.</value>
+  </data>
+  <data name="ClassesNotAllowedInConstrainedLanguage" xml:space="preserve">
+    <value>Class keyword is not allowed in ConstrainedLanguage mode.</value>
+  </data>
+  <data name="MissingColonInTernaryExpression" xml:space="preserve">
+    <value>Missing ':' in the ternary expression.</value>
+  </data>
+  <data name="EmptyPipelineChainElement" xml:space="preserve">
+    <value>A pipeline chain operator must be followed by a pipeline.</value>
+  </data>
+  <data name="BackgroundOperatorInPipelineChain" xml:space="preserve">
+    <value>Background operators can only be used at the end of a pipeline chain.</value>
   </data>
 </root>

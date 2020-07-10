@@ -1,21 +1,21 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+
 using Microsoft.PowerShell;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// The information about a parameter set and its parameters for a cmdlet
+    /// The information about a parameter set and its parameters for a cmdlet.
     /// </summary>
-    ///
     public class CommandParameterSetInfo
     {
         #region ctor
@@ -24,31 +24,24 @@ namespace System.Management.Automation
         /// Constructs the parameter set information using the specified parameter name,
         /// and type metadata.
         /// </summary>
-        /// 
         /// <param name="name">
         /// The formal name of the parameter.
         /// </param>
-        /// 
         /// <param name="isDefaultParameterSet">
         /// True if the parameter set is the default parameter set, or false otherwise.
         /// </param>
-        /// 
         /// <param name="parameterSetFlag">
         /// The bit that specifies the parameter set in the type metadata.
         /// </param>
-        /// 
         /// <param name="parameterMetadata">
         /// The type metadata about the cmdlet.
         /// </param>
-        /// 
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="parameterMetadata"/> is null.
         /// </exception>
-        /// 
         internal CommandParameterSetInfo(
             string name,
             bool isDefaultParameterSet,
@@ -56,15 +49,15 @@ namespace System.Management.Automation
             MergedCommandParameterMetadata parameterMetadata)
         {
             IsDefault = true;
-            Name = String.Empty;
-            if (String.IsNullOrEmpty(name))
+            Name = string.Empty;
+            if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             if (parameterMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("parameterMetadata");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterMetadata));
             }
 
             this.Name = name;
@@ -77,12 +70,12 @@ namespace System.Management.Automation
         #region public members
 
         /// <summary>
-        /// Gets the name of the parameter set
+        /// Gets the name of the parameter set.
         /// </summary>
         public string Name { get; private set; }
 
         /// <summary>
-        /// Gets whether the parameer set is the default parameter set.
+        /// Gets whether the parameter set is the default parameter set.
         /// </summary>
         public bool IsDefault { get; private set; }
 
@@ -92,33 +85,21 @@ namespace System.Management.Automation
         public ReadOnlyCollection<CommandParameterInfo> Parameters { get; private set; }
 
         /// <summary>
-        /// Gets the synopsis for the cmdlet as a string
+        /// Gets the synopsis for the cmdlet as a string.
         /// </summary>
         public override string ToString()
         {
-            return ToString(false);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="isCapabilityWorkflow">
-        /// This boolean is used to suppress common workflow parameters (or) display
-        /// them separately towards the end
-        /// </param>
-        /// <returns></returns>
-        internal string ToString(bool isCapabilityWorkflow)
-        {
             Text.StringBuilder result = new Text.StringBuilder();
 
-            GenerateParametersInDisplayOrder(isCapabilityWorkflow,
-                                 parameter => AppendFormatCommandParameterInfo(parameter, ref result),
+            GenerateParametersInDisplayOrder(
+                                 parameter => AppendFormatCommandParameterInfo(parameter, result),
                                  delegate (string str)
                                      {
                                          if (result.Length > 0)
                                          {
                                              result.Append(" ");
                                          }
+
                                          result.Append("[");
                                          result.Append(str);
                                          result.Append("]");
@@ -128,23 +109,19 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// GenerateParameters parameters in display order 
-        /// ie., Postional followed by
+        /// GenerateParameters parameters in display order
+        /// ie., Positional followed by
         ///      Named Mandatory (in alpha numeric) followed by
         ///      Named (in alpha numeric).
-        /// 
+        ///
         /// Callers use <paramref name="parameterAction"/> and
-        /// <paramref name="commonParameterAction"/> to handle 
+        /// <paramref name="commonParameterAction"/> to handle
         /// syntax generation etc.
         /// </summary>
-        /// <param name="isCapabilityWorkflow">
-        /// This boolean is used to suppress common workflow parameters (or) display
-        /// them separately towards the end
-        /// </param>
         /// <param name="parameterAction"></param>
         /// <param name="commonParameterAction"></param>
         /// <returns></returns>
-        internal void GenerateParametersInDisplayOrder(bool isCapabilityWorkflow,
+        internal void GenerateParametersInDisplayOrder(
             Action<CommandParameterInfo> parameterAction,
             Action<string> commonParameterAction)
         {
@@ -184,12 +161,10 @@ namespace System.Management.Automation
                             sortedPositionalParameters.Add(null);
                         }
                     }
+
                     sortedPositionalParameters[parameter.Position] = parameter;
                 }
             }
-
-            // Now convert the sorted positional parameters into a string
-            List<CommandParameterInfo> commonWorkflowParameter = new List<CommandParameterInfo>();
 
             foreach (CommandParameterInfo parameter in sortedPositionalParameters)
             {
@@ -198,14 +173,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                if (!Internal.CommonParameters.CommonWorkflowParameters.Contains(parameter.Name, StringComparer.OrdinalIgnoreCase) || !isCapabilityWorkflow)
-                {
-                    parameterAction(parameter);
-                }
-                else
-                {
-                    commonWorkflowParameter.Add(parameter);
-                }
+                parameterAction(parameter);
             }
 
             // Now convert the named mandatory parameters into a string
@@ -233,30 +201,11 @@ namespace System.Management.Automation
                 bool isCommon = Cmdlet.CommonParameters.Contains(parameter.Name, StringComparer.OrdinalIgnoreCase);
                 if (!isCommon)
                 {
-                    if (!Internal.CommonParameters.CommonWorkflowParameters.Contains(parameter.Name, StringComparer.OrdinalIgnoreCase) || !isCapabilityWorkflow)
-                    {
-                        parameterAction(parameter);
-                    }
-                    else
-                    {
-                        commonWorkflowParameter.Add(parameter);
-                    }
+                    parameterAction(parameter);
                 }
                 else
                 {
                     commonParameters.Add(parameter);
-                }
-            }
-
-            if (commonWorkflowParameter.Count == Internal.CommonParameters.CommonWorkflowParameters.Length)
-            {
-                commonParameterAction(HelpDisplayStrings.CommonWorkflowParameters);
-            }
-            else
-            {
-                foreach (CommandParameterInfo parameter in commonWorkflowParameter)
-                {
-                    parameterAction(parameter);
                 }
             }
 
@@ -279,7 +228,7 @@ namespace System.Management.Automation
 
         #region private members
 
-        private static void AppendFormatCommandParameterInfo(CommandParameterInfo parameter, ref Text.StringBuilder result)
+        private static void AppendFormatCommandParameterInfo(CommandParameterInfo parameter, Text.StringBuilder result)
         {
             if (result.Length > 0)
             {
@@ -343,7 +292,7 @@ namespace System.Management.Automation
                 }
 
                 // If the type is really an array, but the typename didn't include [], then add it.
-                if (type.IsArray && (parameterTypeString.IndexOf("[]", StringComparison.OrdinalIgnoreCase) == -1))
+                if (type.IsArray && !parameterTypeString.Contains("[]", StringComparison.Ordinal))
                 {
                     var t = type;
                     while (t.IsArray)
@@ -358,6 +307,7 @@ namespace System.Management.Automation
                 Type parameterType = Nullable.GetUnderlyingType(type) ?? type;
                 parameterTypeString = ToStringCodeMethods.Type(parameterType, true);
             }
+
             return parameterTypeString;
         }
 
@@ -387,6 +337,6 @@ namespace System.Management.Automation
         }
 
         #endregion private members
-    } // class CommandParameterSetInfo
-} // namespace System.Management.Automation
+    }
+}
 

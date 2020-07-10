@@ -1,10 +1,10 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using System.Threading;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Runspaces
@@ -18,12 +18,12 @@ namespace System.Management.Automation.Runspaces
     public abstract class PipelineReader<T>
     {
         /// <summary>
-        /// Event fired when data is added to the buffer
+        /// Event fired when data is added to the buffer.
         /// </summary>
         public abstract event EventHandler DataReady;
 
         /// <summary>
-        /// Signaled when data is available
+        /// Signaled when data is available.
         /// </summary>
         public abstract WaitHandle WaitHandle
         {
@@ -49,7 +49,7 @@ namespace System.Management.Automation.Runspaces
         /// <value>true if the underlying stream is open, otherwise false</value>
         /// <remarks>
         /// The underlying stream may be readable after it is closed if data remains in the
-        /// internal buffer. Check <see cref="EndOfPipeline"/> to determine if 
+        /// internal buffer. Check <see cref="EndOfPipeline"/> to determine if
         /// the underlying stream is closed and contains no data.
         /// </remarks>
         public abstract bool IsOpen
@@ -58,7 +58,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Returns the number of objects currently available in the underlying stream
+        /// Returns the number of objects currently available in the underlying stream.
         /// </summary>
         public abstract int Count
         {
@@ -66,7 +66,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Get the capacity of the stream
+        /// Get the capacity of the stream.
         /// </summary>
         /// <value>
         /// The capacity of the stream.
@@ -82,7 +82,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Close the stream
+        /// Close the stream.
         /// </summary>
         /// <remarks>
         /// Causes subsequent calls to IsOpen to return false and calls to
@@ -95,10 +95,10 @@ namespace System.Management.Automation.Runspaces
         public abstract void Close();
 
         /// <summary>
-        /// Read at most <paramref name="count"/> objects
+        /// Read at most <paramref name="count"/> objects.
         /// </summary>
-        /// <param name="count">The maximum number of objects to read</param>
-        /// <returns>The objects read</returns>
+        /// <param name="count">The maximum number of objects to read.</param>
+        /// <returns>The objects read.</returns>
         /// <remarks>
         /// This method blocks if the number of objects in the stream is less than <paramref name="count"/>
         /// and the stream is not closed.
@@ -106,9 +106,9 @@ namespace System.Management.Automation.Runspaces
         public abstract Collection<T> Read(int count);
 
         /// <summary>
-        /// Read a single object from the stream
+        /// Read a single object from the stream.
         /// </summary>
-        /// <returns>the next object in the stream</returns>
+        /// <returns>The next object in the stream.</returns>
         /// <remarks>This method blocks if the stream is empty</remarks>
         public abstract T Read();
 
@@ -127,7 +127,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>A collection of zero or more objects.</returns>
         /// <remarks>
         /// This method performs a read of all objects currently in the
-        /// stream.  If there are no objects in the stream, 
+        /// stream.  If there are no objects in the stream,
         /// an empty collection is returned.
         /// </remarks>
         public abstract Collection<T> NonBlockingRead();
@@ -139,7 +139,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>A collection of zero or more objects.</returns>
         /// <remarks>
         /// This method performs a read of objects currently in the
-        /// stream.  If there are no objects in the stream, 
+        /// stream.  If there are no objects in the stream,
         /// an empty collection is returned.
         /// </remarks>
         /// <param name="maxRequested">
@@ -153,13 +153,13 @@ namespace System.Management.Automation.Runspaces
         /// <returns>
         /// The next object in the stream or AutomationNull.Value if the stream is empty
         /// </returns>
-        /// <exception cref="PipelineClosedException">The stream is closed</exception>
+        /// <exception cref="PipelineClosedException">The stream is closed.</exception>
         public abstract T Peek();
 
         #region IEnumerable<T> Members
 
         /// <summary>
-        /// Returns an enumerator that reads the items in the pipeline
+        /// Returns an enumerator that reads the items in the pipeline.
         /// </summary>
         internal IEnumerator<T> GetReadEnumerator()
         {

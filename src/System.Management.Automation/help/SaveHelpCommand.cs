@@ -1,31 +1,30 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
-using System.Management.Automation;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Help;
-using System.IO;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Help;
+using System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements the Save-Help cmdleto
+    /// This class implements the Save-Help cmdlet.
     /// </summary>
     [Cmdlet(VerbsData.Save, "Help", DefaultParameterSetName = SaveHelpCommand.PathParameterSetName,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210612")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096794")]
     public sealed class SaveHelpCommand : UpdatableHelpCommandBase
     {
         #region Constructor
 
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         public SaveHelpCommand() : base(UpdatableHelpCommandType.SaveHelpCommand)
         {
@@ -38,10 +37,11 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Specifies the paths to save updates to
+        /// Specifies the paths to save updates to.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = PathParameterSetName)]
         [ValidateNotNull]
+        [Alias("Path")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] DestinationPath
         {
@@ -49,18 +49,20 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 _path = value;
             }
         }
+
         private string[] _path;
 
         /// <summary>
-        /// Specifies the literal path to save updates to
+        /// Specifies the literal path to save updates to.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = LiteralPathParameterSetName)]
-        [Alias("PSPath")]
+        [Alias("PSPath", "LP")]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
@@ -69,16 +71,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 _path = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
-        /// Specifies the modules to update
+        /// Specifies the modules to update.
         /// </summary>
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true, ParameterSetName = PathParameterSetName)]
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true, ParameterSetName = LiteralPathParameterSetName)]
@@ -89,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
         public PSModuleInfo[] Module { get; set; }
 
         /// <summary>
-        /// Specifies the Module Specifications to update
+        /// Specifies the Module Specifications to update.
         /// </summary>
         [Parameter(ParameterSetName = PathParameterSetName, ValueFromPipelineByPropertyName = true)]
         [Parameter(ParameterSetName = LiteralPathParameterSetName, ValueFromPipelineByPropertyName = true)]
@@ -98,7 +102,6 @@ namespace Microsoft.PowerShell.Commands
         public ModuleSpecification[] FullyQualifiedModule { get; set; }
 
         #endregion
-
 
         #region Implementation
 
@@ -158,11 +161,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process a single module with a given culture
+        /// Process a single module with a given culture.
         /// </summary>
-        /// <param name="module">module to process</param>
-        /// <param name="culture">culture to use</param>
-        /// <returns>true if the module has been processed, false if not</returns>
+        /// <param name="module">Module to process.</param>
+        /// <param name="culture">Culture to use.</param>
+        /// <returns>True if the module has been processed, false if not.</returns>
         internal override bool ProcessModuleWithCulture(UpdatableHelpModuleInfo module, string culture)
         {
             Collection<string> resolvedPaths = new Collection<string>();
@@ -174,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (String.IsNullOrEmpty(path))
+                    if (string.IsNullOrEmpty(path))
                     {
                         PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.PathNullOrEmpty));
                         WriteError(e.ErrorRecord);
@@ -189,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Deal with wildcards
 
-                            int index = path.IndexOf("*", StringComparison.OrdinalIgnoreCase);
+                            int index = path.IndexOf('*');
 
                             if (index == 0)
                             {
@@ -268,7 +271,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 return true;
             }
-
 
             bool installed = false;
 
@@ -364,8 +366,6 @@ namespace Microsoft.PowerShell.Commands
                                     }
                                     catch (Exception e)
                                     {
-                                        CommandProcessorBase.CheckForSevereException(e);
-
                                         ProcessException(module.ModuleName, contentUri.Culture.Name, e);
                                         installed = false;
                                         continue;
@@ -403,8 +403,6 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (Exception e)
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
-
                             ProcessException(module.ModuleName, contentUri.Culture.Name, e);
                         }
                         finally
@@ -443,33 +441,33 @@ namespace Microsoft.PowerShell.Commands
             IList iListArg = ParameterBinderBase.GetIList(argument);
             if (iListArg != null && iListArg.Count > 0)
             {
-                int elemtCount = iListArg.Count;
+                int elementCount = iListArg.Count;
                 int targetIndex = 0;
-                var target = Array.CreateInstance(typeof(object), elemtCount);
+                var target = Array.CreateInstance(typeof(object), elementCount);
 
-                foreach (object elemt in iListArg)
+                foreach (object element in iListArg)
                 {
-                    var elemtValue = PSObject.Base(elemt);
+                    var elementValue = PSObject.Base(element);
 
-                    if (elemtValue is PSModuleInfo)
+                    if (elementValue is PSModuleInfo)
                     {
-                        target.SetValue(elemtValue, targetIndex++);
+                        target.SetValue(elementValue, targetIndex++);
                     }
-                    else if (elemtValue is string)
+                    else if (elementValue is string)
                     {
-                        var elemtAsModuleObj = new PSModuleInfo(name: (string)elemtValue, path: null, context: null, sessionState: null);
-                        target.SetValue(elemtAsModuleObj, targetIndex++);
+                        var elementAsModuleObj = new PSModuleInfo(name: (string)elementValue, path: null, context: null, sessionState: null);
+                        target.SetValue(elementAsModuleObj, targetIndex++);
                     }
                     else
                     {
                         PSModuleInfo elementValueModuleInfo = null;
-                        if (TryConvertFromDeserializedModuleInfo(elemtValue, out elementValueModuleInfo))
+                        if (TryConvertFromDeserializedModuleInfo(elementValue, out elementValueModuleInfo))
                         {
                             target.SetValue(elementValueModuleInfo, targetIndex++);
                         }
                         else
                         {
-                            target.SetValue(elemt, targetIndex++);
+                            target.SetValue(element, targetIndex++);
                         }
                     }
                 }

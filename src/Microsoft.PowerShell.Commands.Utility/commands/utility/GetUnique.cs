@@ -1,29 +1,25 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
+using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Globalization;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// 
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Unique", DefaultParameterSetName = "AsString",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113335", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097028", RemotingCapability = RemotingCapability.None)]
     public sealed class GetUniqueCommand : PSCmdlet
     {
         #region Parameters
         /// <summary>
-        /// 
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
-
 
         /// <summary>
         /// This parameter specifies that objects should be converted to
@@ -34,10 +30,11 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsString
         {
             get { return _asString; }
+
             set { _asString = value; }
         }
-        private bool _asString;
 
+        private bool _asString;
 
         /// <summary>
         /// This parameter specifies that just the types of the objects
@@ -48,19 +45,20 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter OnType
         {
             get { return _onType; }
+
             set { _onType = value; }
         }
+
         private bool _onType = false;
         #endregion Parameters
 
         #region Overrides
         /// <summary>
-        /// 
         /// </summary>
         protected override void ProcessRecord()
         {
             bool isUnique = true;
-            if (null == _lastObject)
+            if (_lastObject == null)
             {
                 // always write first object, but return nothing
                 // on "MSH> get-unique"
@@ -74,11 +72,12 @@ namespace Microsoft.PowerShell.Commands
             else if (AsString)
             {
                 string inputString = InputObject.ToString();
-                if (null == _lastObjectAsString)
+                if (_lastObjectAsString == null)
                 {
                     _lastObjectAsString = _lastObject.ToString();
                 }
-                if (0 == String.Compare(
+
+                if (string.Equals(
                     inputString,
                     _lastObjectAsString,
                     StringComparison.CurrentCulture))
@@ -92,13 +91,14 @@ namespace Microsoft.PowerShell.Commands
             }
             else // compare as objects
             {
-                if (null == _comparer)
+                if (_comparer == null)
                 {
                     _comparer = new ObjectCommandComparer(
                         true, // ascending (doesn't matter)
                         CultureInfo.CurrentCulture,
                         true); // case-sensitive
                 }
+
                 isUnique = (0 != _comparer.Compare(InputObject, _lastObject));
             }
 
@@ -117,4 +117,3 @@ namespace Microsoft.PowerShell.Commands
         #endregion Internal
     }
 }
-

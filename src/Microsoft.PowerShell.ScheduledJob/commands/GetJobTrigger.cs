@@ -1,24 +1,23 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
-using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
 using System.Threading;
-using System.Diagnostics;
 
 namespace Microsoft.PowerShell.ScheduledJob
 {
     /// <summary>
-    /// This cmdlet gets ScheduledJobTriggers for the specified ScheduledJobDefintion object.
+    /// This cmdlet gets ScheduledJobTriggers for the specified ScheduledJobDefinition object.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "JobTrigger", DefaultParameterSetName = GetJobTriggerCommand.JobDefinitionParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223915")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223915")]
     [OutputType(typeof(ScheduledJobTrigger))]
     public sealed class GetJobTriggerCommand : ScheduleJobCmdletBase
     {
@@ -31,18 +30,20 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Trigger number to get.
         /// </summary>
-        [Parameter(Position = 1, 
+        [Parameter(Position = 1,
                    ParameterSetName = GetJobTriggerCommand.JobDefinitionParameterSet)]
-        [Parameter(Position = 1, 
+        [Parameter(Position = 1,
                    ParameterSetName = GetJobTriggerCommand.JobDefinitionIdParameterSet)]
-        [Parameter(Position = 1, 
+        [Parameter(Position = 1,
                    ParameterSetName = GetJobTriggerCommand.JobDefinitionNameParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Int32[] TriggerId
         {
             get { return _triggerIds; }
+
             set { _triggerIds = value; }
         }
+
         private Int32[] _triggerIds;
 
         /// <summary>
@@ -54,20 +55,24 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobDefinition InputObject
         {
             get { return _definition; }
+
             set { _definition = value; }
         }
+
         private ScheduledJobDefinition _definition;
 
         /// <summary>
-        /// ScheduledJobDefintion Id.
+        /// ScheduledJobDefinition Id.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true,
                    ParameterSetName = GetJobTriggerCommand.JobDefinitionIdParameterSet)]
         public Int32 Id
         {
             get { return _definitionId; }
+
             set { _definitionId = value; }
         }
+
         private Int32 _definitionId;
 
         /// <summary>
@@ -79,8 +84,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public string Name
         {
             get { return _name; }
+
             set { _name = value; }
         }
+
         private string _name;
 
         #endregion

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #if !SILVERLIGHT // ComObject
 
@@ -15,7 +14,7 @@ using System.Runtime.InteropServices;
 namespace System.Management.Automation.ComInterop
 {
     /// <summary>
-    /// VariantBuilder handles packaging of arguments into a Variant for a call to IDispatch.Invoke
+    /// VariantBuilder handles packaging of arguments into a Variant for a call to IDispatch.Invoke.
     /// </summary>
     internal class VariantBuilder
     {
@@ -37,9 +36,9 @@ namespace System.Management.Automation.ComInterop
 
         internal Expression InitializeArgumentVariant(MemberExpression variant, Expression parameter)
         {
-            //NOTE: we must remember our variant
-            //the reason is that argument order does not map exactly to the order of variants for invoke
-            //and when we are doing clean-up we must be sure we are cleaning the variant we have initialized.
+            // NOTE: we must remember our variant
+            // the reason is that argument order does not map exactly to the order of variants for invoke
+            // and when we are doing clean-up we must be sure we are cleaning the variant we have initialized.
 
             _variant = variant;
 
@@ -63,7 +62,7 @@ namespace System.Management.Automation.ComInterop
 
             Expression argument = _argBuilder.Marshal(parameter);
 
-            // we are forced to special case ConvertibleArgBuilder since it does not have 
+            // we are forced to special case ConvertibleArgBuilder since it does not have
             // a corresponding _targetComType.
             if (_argBuilder is ConvertibleArgBuilder)
             {
@@ -135,9 +134,9 @@ namespace System.Management.Automation.ComInterop
                     Debug.Assert(TempVariable != null);
                     return Expression.Call(TempVariable, typeof(Variant).GetMethod("Clear"));
                 }
+
                 return null;
             }
-
 
             switch (_targetComType)
             {
@@ -166,6 +165,7 @@ namespace System.Management.Automation.ComInterop
             {
                 return null;
             }
+
             return Expression.Assign(
                 parameter,
                 Helpers.Convert(

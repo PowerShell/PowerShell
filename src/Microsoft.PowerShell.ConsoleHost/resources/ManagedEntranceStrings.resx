@@ -1,17 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,41 +26,41 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -117,128 +117,279 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ShellBanner" xml:space="preserve">
-    <value>Windows PowerShell 
-Copyright (C) 2016 Microsoft Corporation. All rights reserved.</value>
-  </data>
   <data name="ShellBannerNonWindowsPowerShell" xml:space="preserve">
-    <value>PowerShell 
-Copyright (C) 2016 Microsoft Corporation. All rights reserved.</value>
+    <value>PowerShell {0}
+Copyright (c) Microsoft Corporation.
+
+https://aka.ms/powershell
+Type 'help' to get help.</value>
   </data>
-  <data name="ShellHelp" xml:space="preserve">
-    <value>PowerShell[.exe] [-PSConsoleFile &lt;file&gt; | -Version &lt;version&gt;]
-    [-NoLogo] [-NoExit] [-Sta] [-Mta] [-NoProfile] [-NonInteractive]
-    [-InputFormat {Text | XML}] [-OutputFormat {Text | XML}]
-    [-WindowStyle &lt;style&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
-    [-ConfigurationName &lt;string&gt;]
-    [-File &lt;filePath&gt; &lt;args&gt;] [-ExecutionPolicy &lt;ExecutionPolicy&gt;]
-    [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
-                  | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
+  <data name="PSReadLineDisabledWhenScreenReaderIsActive" xml:space="preserve">
+    <value>Warning: PowerShell detected that you might be using a screen reader and has disabled PSReadLine for compatibility purposes. If you want to re-enable it, run 'Import-Module PSReadLine'.</value>
+  </data>
+  <data name="PreviewUpdateNotificationMessage" xml:space="preserve">
+    <value>  {1} A new PowerShell preview release is available: v{0} {2}
+  {1} Upgrade now, or check out the release page at:{3}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
+</value>
+  </data>
+  <data name="StableUpdateNotificationMessage" xml:space="preserve">
+    <value>  {1} A new PowerShell stable release is available: v{0} {2}
+  {1} Upgrade now, or check out the release page at:{3}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
+</value>
+  </data>
+  <data name="LTSUpdateNotificationMessage" xml:space="preserve">
+    <value>  {1} A new PowerShell LTS release is available: v{0} {2}
+  {1} Upgrade now, or check out the release page at:{3}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
+</value>
+  </data>
+  <data name="UsageHelp" xml:space="preserve">
+    <value>Usage: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
+                  [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
+                                | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
+                  [-ConfigurationName &lt;string&gt;] [-CustomPipeName &lt;string&gt;]
+                  [-EncodedCommand &lt;Base64EncodedCommand&gt;]
+                  [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
+                  [-Interactive] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
+                  [-OutputFormat {Text | XML}] [-SettingsFile &lt;filePath&gt;] [-STA] [-Version]
+                  [-WindowStyle &lt;style&gt;] [-WorkingDirectory &lt;directoryPath&gt;]
 
-PowerShell[.exe] -Help | -? | /?
+       pwsh[.exe] -h | -Help | -? | /?
 
--PSConsoleFile
-    Loads the specified Windows PowerShell console file. To create a console
-    file, use Export-Console in Windows PowerShell.
+PowerShell Online Help https://aka.ms/powershell-docs
 
--Version
-    Starts the specified version of Windows PowerShell. 
-    Enter a version number with the parameter, such as "-version 2.0".
+All parameters are case-insensitive.</value>
+  </data>
+  <data name="ExtendedHelp" xml:space="preserve">
+    <value>
 
--NoLogo
-    Hides the copyright banner at startup.
+-File | -f
 
--NoExit
-    Does not exit after running startup commands.
+    If the value of File is "-", the command text is read from standard input.
+    Running "pwsh -File -" without redirected standard input starts a regular
+    session. This is the same as not specifying the File parameter at all.
 
--Sta
-    Starts the shell using a single-threaded apartment.
-    Single-threaded apartment (STA) is the default.
+    This is the default parameter if no parameters are present but values are
+    present in the command line. The specified script runs in the local scope
+    ("dot-sourced"), so that the functions and variables that the script
+    creates are available in the current session. Enter the script file path
+    and any parameters. File must be the last parameter in the command, because
+    all characters typed after the File parameter name are interpreted as the
+    script file path followed by the script parameters.
 
--Mta
-    Start the shell using a multithreaded apartment.
+    Typically, the switch parameters of a script are either included or
+    omitted. For example, the following command uses the All parameter of the
+    Get-Script.ps1 script file: "-File .\Get-Script.ps1 -All"
 
--NoProfile
-    Does not load the Windows PowerShell profile.
+    In rare cases, you might need to provide a Boolean value for a switch
+    parameter. To provide a Boolean value for a switch parameter in the value
+    of the File parameter, enclose the parameter name and value in curly
+    braces, such as the following: "-File .\Get-Script.ps1 {-All:$False}."
 
--NonInteractive
-    Does not present an interactive prompt to the user.
+    Parameters passed to the script are passed as literal strings, after
+    interpretation by the current shell. For example, if you are in cmd.exe and
+    want to pass an environment variable value, you would use the cmd.exe
+    syntax: "pwsh -File .\test.ps1 -TestParam %windir%"
 
--InputFormat
-    Describes the format of data sent to Windows PowerShell. Valid values are
-    "Text" (text strings) or "XML" (serialized CLIXML format).
+    In contrast, running "pwsh -File .\test.ps1 -TestParam $env:windir" in
+    cmd.exe results in the script receiving the literal string "$env:windir"
+    because it has no special meaning to the current cmd.exe shell. The
+    "$env:windir" style of environment variable reference can be used inside a
+    Command parameter, since there it will be interpreted as PowerShell code.
 
--OutputFormat
-    Determines how output from Windows PowerShell is formatted. Valid values
-    are "Text" (text strings) or "XML" (serialized CLIXML format).
+-Command | -c
 
--WindowStyle
-    Sets the window style to Normal, Minimized, Maximized or Hidden.
-
--EncodedCommand
-    Accepts a base-64-encoded string version of a command. Use this parameter 
-    to submit commands to Windows PowerShell that require complex quotation 
-    marks or curly braces.
-
--ConfigurationName
-    Specifies a configuration endpoint in which Windows PowerShell is run.
-    This can be any endpoint registered on the local machine including the
-    default Windows PowerShell remoting endpoints or a custom endpoint having
-    specific user role capabilities.
-    
--File
-    Runs the specified script in the local scope ("dot-sourced"), so that the 
-    functions and variables that the script creates are available in the 
-    current session. Enter the script file path and any parameters. 
-    File must be the last parameter in the command, because all characters 
-    typed after the File parameter name are interpreted 
-    as the script file path followed by the script parameters.
-
--ExecutionPolicy
-    Sets the default execution policy for the current session and saves it 
-    in the $env:PSExecutionPolicyPreference environment variable. 
-    This parameter does not change the Windows PowerShell execution policy 
-    that is set in the registry.
-
--Command
     Executes the specified commands (and any parameters) as though they were
-    typed at the Windows PowerShell command prompt, and then exits, unless 
-    NoExit is specified. The value of Command can be "-", a string. or a
-    script block.
+    typed at the PowerShell command prompt, and then exits, unless the NoExit
+    parameter is specified.
+
+    The value of Command can be "-", a script block, or a string. If the value
+    of Command is "-", the command text is read from standard input.
+
+    The Command parameter only accepts a script block for execution when it can
+    recognize the value passed to Command as a ScriptBlock type. This is only
+    possible when running pwsh from another PowerShell host. The ScriptBlock
+    type may be contained in an existing variable, returned from an expression,
+    or parsed by the PowerShell host as a literal script block enclosed in
+    curly braces "{}", before being passed to pwsh.
+
+
+    pwsh -Command {Get-WinEvent -LogName security}
+
+    In cmd.exe, there is no such thing as a script block (or ScriptBlock type),
+    so the value passed to Command will always be a string. You can write a
+    script block inside the string, but instead of being executed it will
+    behave exactly as though you typed it at a typical PowerShell prompt,
+    printing the contents of the script block back out to you.
+
+    A string passed to Command will still be executed as PowerShell, so the
+    script block curly braces are often not required in the first place when
+    running from cmd.exe. To execute an inline script block defined inside a
+    string, the call operator "&amp;" can be used:
+
+        pwsh -Command "&amp; {Get-WinEvent -LogName security}"
+
+    If the value of Command is a string, Command must be the last parameter for
+    pwsh, because all arguments following it are interpreted as part of the
+    command to execute.
+
+    The results are returned to the parent shell as deserialized XML objects,
+    not live objects.
 
     If the value of Command is "-", the command text is read from standard
-    input.
+    input. You must redirect standard input when using the Command parameter
+    with standard input. For example:
 
-    If the value of Command is a script block, the script block must be enclosed
-    in braces ({}). You can specify a script block only when running PowerShell.exe
-    in Windows PowerShell. The results of the script block are returned to the
-    parent shell as deserialized XML objects, not live objects.
 
-    If the value of Command is a string, Command must be the last parameter
-    in the command , because any characters typed after the command are 
-    interpreted as the command arguments.
+    @'
+    "in"
 
-    To write a string that runs a Windows PowerShell command, use the format:
-	"&amp; {&lt;command&gt;}"
-    where the quotation marks indicate a string and the invoke operator (&amp;)
-    causes the command to be executed.
+    "hi" |
+      % { "$_ there" }
 
--Help, -?, /?
-    Shows this message. If you are typing a PowerShell.exe command in Windows
-    PowerShell, prepend the command parameters with a hyphen (-), not a forward
-    slash (/). You can use either a hyphen or forward slash in Cmd.exe.
+    "out"
+    '@ | powershell -NoProfile -Command -
 
-EXAMPLES
-    PowerShell -PSConsoleFile SqlSnapIn.Psc1
-    PowerShell -version 2.0 -NoLogo -InputFormat text -OutputFormat XML
-    PowerShell -ConfigurationName AdminRoles
-    PowerShell -Command {Get-EventLog -LogName security}
-    PowerShell -Command "&amp; {Get-EventLog -LogName security}"
+    This example produces the following output:
 
-    # To use the -EncodedCommand parameter:
+    """Output
+    in
+    hi there
+    out
+
+-ConfigurationName | -config
+
+    Specifies a configuration endpoint in which PowerShell is run. This can be
+    any endpoint registered on the local machine including the default
+    PowerShell remoting endpoints or a custom endpoint having specific user
+    role capabilities.
+
+    Example: "pwsh -ConfigurationName AdminRoles"
+
+-CustomPipeName
+
+    Specifies the name to use for an additional IPC server (named pipe) used
+    for debugging and other cross-process communication. This offers a
+    predictable mechanism for connecting to other PowerShell instances.
+    Typically used with the CustomPipeName parameter on "Enter-PSHostProcess".
+
+    For example:
+
+
+    # PowerShell instance 1
+    pwsh -CustomPipeName mydebugpipe
+    # PowerShell instance 2
+    Enter-PSHostProcess -CustomPipeName mydebugpipe
+
+-EncodedCommand | -e | -ec
+
+    Accepts a base64-encoded string version of a command. Use this parameter to
+    submit commands to PowerShell that require complex quotation marks or curly
+    braces. The string must be formatted using UTF-16 character encoding.
+
+    For example:
+
+
     $command = 'dir "c:\program files" '
     $bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
     $encodedCommand = [Convert]::ToBase64String($bytes)
-    powershell.exe -encodedCommand $encodedCommand</value>
+    pwsh -encodedcommand $encodedCommand
+
+-ExecutionPolicy | -ex | -ep
+
+    Sets the default execution policy for the current session and saves it in
+    the "$env:PSExecutionPolicyPreference" environment variable. This parameter
+    does not change the PowerShell execution policy that is set in the
+    registry.
+
+-InputFormat | -in | -if
+
+    Describes the format of data sent to PowerShell. Valid values are "Text"
+    (text strings) or "XML" (serialized CLIXML format).
+
+-Interactive | -i
+
+    Present an interactive prompt to the user. Inverse for NonInteractive
+    parameter.
+
+-Login | -l
+
+    On Linux and macOS, starts PowerShell as a login shell,
+    using /bin/sh to execute login profiles such as /etc/profile and ~/.profile.
+    On Windows, this switch does nothing.
+
+    Note that "-Login" is only supported as the first parameter to pwsh.
+
+-MTA
+
+    Start the shell using a multi-threaded apartment.
+    Only available on Windows.
+
+-NoExit | -noe
+
+    Does not exit after running startup commands.
+
+    Example: "pwsh -NoExit -Command Get-Date"
+
+-NoLogo | -nol
+
+Hides the copyright banner at startup.
+
+-NonInteractive | -noni
+
+    Does not present an interactive prompt to the user.
+
+-NoProfile | -nop
+
+    Does not load the PowerShell profile.
+
+-OutputFormat | -o | -of
+
+    Determines how output from PowerShell is formatted. Valid values are "Text"
+    (text strings) or "XML" (serialized CLIXML format).
+
+    Example: "pwsh -o XML -c Get-Date"
+
+-SettingsFile | -settings
+
+    Overrides the system-wide "powershell.config.json" settings file for the
+    session. By default, system-wide settings are read from the
+    "powershell.config.json" in the "$PSHOME" directory.
+
+    Note that these settings are not used by the endpoint specified by the
+    "-ConfigurationName" argument.
+
+    Example: "pwsh -SettingsFile c:\myproject\powershell.config.json"
+
+-STA
+
+    Start the shell using a single-threaded apartment.  This is the default.
+    Only available on Windows.
+
+-Version | -v
+
+    Displays the version of PowerShell. Additional parameters are ignored.
+
+-WindowStyle | -w
+
+    Sets the window style for the session. Valid values are Normal, Minimized,
+    Maximized and Hidden.
+
+-WorkingDirectory | -wd
+
+    Sets the initial working directory by executing
+    "Set-Location -LiteralPath &lt;path&gt;" at startup. Any valid PowerShell file
+    path is supported.
+
+    To start PowerShell in your home directory, use: "pwsh -WorkingDirectory ~"
+
+-Help, -?, /?
+
+    Displays help for pwsh. If you are typing a pwsh command in PowerShell,
+    prepend the command parameters with a hyphen (-), not a forward slash (/).
+    You can use either a hyphen or forward slash in Cmd.exe.
+    </value>
   </data>
 </root>

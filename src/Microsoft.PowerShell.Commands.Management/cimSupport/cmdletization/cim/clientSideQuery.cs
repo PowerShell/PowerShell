@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -8,14 +7,16 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
+
 using Microsoft.Management.Infrastructure;
 using Microsoft.PowerShell.Cim;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Client-side filtering for 
+    /// Client-side filtering for
     /// 1) filtering that cannot be translated into a server-side query (i.e. when CimQuery.WildcardToWqlLikeOperand reports that it cannot translate into WQL)
     /// 2) detecting if all expected results have been received and giving friendly user errors otherwise (i.e. could not find process with name='foo';  details in Windows 8 Bugs: #60926)
     /// </summary>
@@ -55,7 +56,9 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
 
             public string PropertyName { get; private set; }
+
             public object PropertyValue { get; private set; }
+
             public Func<string, string, string> ErrorMessageGenerator { get; private set; }
 
             private static string GetErrorMessageForNotFound(string queryDescription, string className)
@@ -151,7 +154,9 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private abstract class CimInstancePropertyBasedFilter : CimInstanceFilterBase
         {
             private readonly List<PropertyValueFilter> _propertyValueFilters = new List<PropertyValueFilter>();
+
             protected IEnumerable<PropertyValueFilter> PropertyValueFilters { get { return _propertyValueFilters; } }
+
             protected void AddPropertyValueFilter(PropertyValueFilter propertyValueFilter)
             {
                 _propertyValueFilters.Add(propertyValueFilter);
@@ -171,6 +176,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                         }
                     }
                 }
+
                 return isMatch;
             }
         }
@@ -217,7 +223,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     case BehaviorOnNoMatch.Default:
                     default:
                         return this.PropertyValueFilters
-                                   .Where(f => !f.HadMatch).Any(f => f.BehaviorOnNoMatch == BehaviorOnNoMatch.ReportErrors);
+                                   .Any(f => !f.HadMatch && f.BehaviorOnNoMatch == BehaviorOnNoMatch.ReportErrors);
                 }
             }
 
@@ -346,10 +352,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     {
                         _behaviorOnNoMatch = this.GetDefaultBehaviorWhenNoMatchesFound(this.CimTypedExpectedPropertyValue);
                     }
+
                     return _behaviorOnNoMatch;
                 }
             }
+
             protected abstract BehaviorOnNoMatch GetDefaultBehaviorWhenNoMatchesFound(object cimTypedExpectedPropertyValue);
+
             private BehaviorOnNoMatch _behaviorOnNoMatch;
 
             public string PropertyName { get; }
@@ -372,6 +381,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 {
                     return false;
                 }
+
                 object actualPropertyValue = propertyInfo.Value;
 
                 if (CimTypedExpectedPropertyValue == null)
@@ -423,6 +433,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 {
                     return true;
                 }
+
                 if (expectedPropertyValue == null)
                 {
                     return true;
@@ -492,6 +503,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     expectedPropertyValue = expectedPropertyValue.ToString();
                     actualPropertyValue = actualPropertyValue.ToString();
                 }
+
                 var expectedPropertyValueAsString = expectedPropertyValue as string;
                 if (expectedPropertyValueAsString != null)
                 {
@@ -511,10 +523,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 {
                     return false;
                 }
+
                 if (!LanguagePrimitives.TryConvertTo(expectedPropertyValue, out expectedPropertyValueAsString))
                 {
                     return false;
                 }
+
                 return WildcardPattern.Get(expectedPropertyValueAsString, WildcardOptions.IgnoreCase).IsMatch(actualPropertyValueAsString);
             }
         }

@@ -1,13 +1,13 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 using System;
-using System.IO;
-using System.Xml;
-using System.Net;
-using System.Resources;
-using System.Reflection;
 using System.ComponentModel;
+using System.IO;
+using System.Net;
+using System.Reflection;
+using System.Resources;
+using System.Xml;
 
 using System.Collections;
 using System.Collections.Generic;
@@ -16,151 +16,162 @@ using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-
-
-
-
 [assembly: CLSCompliant(true)]
+
 namespace Microsoft.WSMan.Management
 {
-
     /// <summary>
-    /// Session option class
+    /// Session option class.
     /// </summary>
 
     public sealed class SessionOption
     {
-
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
         public bool SkipCACheck
         {
             get { return _SkipCACheck; }
+
             set
-            { 
-                _SkipCACheck = value; 
+            {
+                _SkipCACheck = value;
             }
         }
+
         private bool _SkipCACheck;
 
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
         public bool SkipCNCheck
         {
             get { return _SkipCNCheck; }
-            set 
-            { 
+
+            set
+            {
                 _SkipCNCheck = value;
             }
         }
+
         private bool _SkipCNCheck;
 
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
-        /// 
         public bool SkipRevocationCheck
         {
             get { return _SkipRevocationCheck; }
-            set 
-            {
-                _SkipRevocationCheck = value; 
-            }
 
+            set
+            {
+                _SkipRevocationCheck = value;
+            }
         }
+
         private bool _SkipRevocationCheck;
 
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
         public bool UseEncryption
         {
             get { return _useencryption; }
-            set 
+
+            set
             {
-                _useencryption = value; 
+                _useencryption = value;
             }
         }
+
         private bool _useencryption = true;
 
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
         public bool UseUtf16
         {
             get { return _UTF16; }
-            set 
-            { 
-                _UTF16 = value; 
+
+            set
+            {
+                _UTF16 = value;
             }
         }
+
         private bool _UTF16;
 
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
         public ProxyAuthentication ProxyAuthentication
         {
             get { return _ProxyAuthentication; }
-            set 
-            { 
-                _ProxyAuthentication = value; 
+
+            set
+            {
+                _ProxyAuthentication = value;
             }
         }
+
         private ProxyAuthentication _ProxyAuthentication;
 
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SPN")]
         public int SPNPort
         {
             get { return _SPNPort; }
-            set 
-            { 
-                _SPNPort = value; 
+
+            set
+            {
+                _SPNPort = value;
             }
         }
 
         private int _SPNPort;
 
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
         public int OperationTimeout
         {
             get { return _OperationTimeout; }
-            set 
-            { 
-                _OperationTimeout = value; 
+
+            set
+            {
+                _OperationTimeout = value;
             }
         }
+
         private int _OperationTimeout;
 
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
         public NetworkCredential ProxyCredential
         {
             get { return _ProxyCredential; }
-            set 
-            { 
-                _ProxyCredential = value; 
+
+            set
+            {
+                _ProxyCredential = value;
             }
         }
+
         private NetworkCredential _ProxyCredential;
 
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
         public ProxyAccessType ProxyAccessType
         {
             get { return _proxyaccesstype; }
-            set 
-            { 
-                _proxyaccesstype = value; 
+
+            set
+            {
+                _proxyaccesstype = value;
             }
         }
 
@@ -168,45 +179,45 @@ namespace Microsoft.WSMan.Management
     }
 
     /// <summary>
-    /// property
+    /// Property.
     /// </summary>
     public enum ProxyAccessType
     {
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
         ProxyIEConfig = 0,
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
         ProxyWinHttpConfig = 1,
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
         ProxyAutoDetect = 2,
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
         ProxyNoProxyServer = 3
     }
 
     /// <summary>
-    /// property
+    /// Property.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue")]
     public enum ProxyAuthentication
     {
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
         Negotiate = 1,
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
         Basic = 2,
         /// <summary>
-        /// property
+        /// Property.
         /// </summary>
         Digest = 4
     }

@@ -1,14 +1,13 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Xml;
+using System.IO;
 using System.Reflection;
+using System.Xml;
 
 namespace System.Management.Automation
 {
@@ -22,7 +21,7 @@ namespace System.Management.Automation
     internal class ProviderHelpProvider : HelpProviderWithCache
     {
         /// <summary>
-        /// Constructor for HelpProvider
+        /// Constructor for HelpProvider.
         /// </summary>
         internal ProviderHelpProvider(HelpSystem helpSystem) : base(helpSystem)
         {
@@ -62,9 +61,9 @@ namespace System.Management.Automation
         #region Help Provider Interface
 
         /// <summary>
-        /// Do exact match help based on the target. 
+        /// Do exact match help based on the target.
         /// </summary>
-        /// <param name="helpRequest">help request object</param>
+        /// <param name="helpRequest">Help request object.</param>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             Collection<ProviderInfo> matchingProviders = null;
@@ -75,15 +74,15 @@ namespace System.Management.Automation
             }
             catch (ProviderNotFoundException e)
             {
-                // We distinguish two cases here, 
+                // We distinguish two cases here,
                 //      a. If the "Provider" is the only category to search for in this case,
                 //         an error will be written.
-                //      b. Otherwise, no errors will be written since in end user's mind, 
+                //      b. Otherwise, no errors will be written since in end user's mind,
                 //         he may mean to search for provider help.
                 if (this.HelpSystem.LastHelpCategory == HelpCategory.Provider)
                 {
                     ErrorRecord errorRecord = new ErrorRecord(e, "ProviderLoadError", ErrorCategory.ResourceUnavailable, null);
-                    errorRecord.ErrorDetails = new ErrorDetails(typeof(ProviderHelpProvider).GetTypeInfo().Assembly, "HelpErrors", "ProviderLoadError", helpRequest.Target, e.Message);
+                    errorRecord.ErrorDetails = new ErrorDetails(typeof(ProviderHelpProvider).Assembly, "HelpErrors", "ProviderLoadError", helpRequest.Target, e.Message);
                     this.HelpSystem.LastErrors.Add(errorRecord);
                 }
             }
@@ -119,7 +118,6 @@ namespace System.Management.Automation
             }
         }
 
-
         private static string GetProviderAssemblyPath(ProviderInfo providerInfo)
         {
             if (providerInfo == null)
@@ -128,16 +126,15 @@ namespace System.Management.Automation
             if (providerInfo.ImplementingType == null)
                 return null;
 
-            return Path.GetDirectoryName(providerInfo.ImplementingType.GetTypeInfo().Assembly.Location);
+            return Path.GetDirectoryName(providerInfo.ImplementingType.Assembly.Location);
         }
 
         /// <summary>
-        /// This is a hashtable to track which help files are loaded already. 
-        /// 
-        /// This will avoid one help file getting loaded again and again. 
-        /// (Which should not happen unless some provider is pointing 
-        /// to a help file that actually doesn't contain the help for it).
+        /// This is a hashtable to track which help files are loaded already.
         ///
+        /// This will avoid one help file getting loaded again and again.
+        /// (Which should not happen unless some provider is pointing
+        /// to a help file that actually doesn't contain the help for it).
         /// </summary>
         private readonly Hashtable _helpFiles = new Hashtable();
 
@@ -147,17 +144,17 @@ namespace System.Management.Automation
         /// <remarks>
         /// This will load providerHelpInfo from help file into help cache.
         /// </remarks>
-        /// <param name="providerInfo">providerInfo for which to locate help.</param>
+        /// <param name="providerInfo">ProviderInfo for which to locate help.</param>
         private void LoadHelpFile(ProviderInfo providerInfo)
         {
             if (providerInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerInfo));
             }
 
             string helpFile = providerInfo.HelpFile;
 
-            if (String.IsNullOrEmpty(helpFile) || _helpFiles.Contains(helpFile))
+            if (string.IsNullOrEmpty(helpFile) || _helpFiles.Contains(helpFile))
             {
                 return;
             }
@@ -172,7 +169,7 @@ namespace System.Management.Automation
             //    of the mshsnapin
             // Otherwise,
             //    Look in the default search path and cmdlet assembly path
-            Collection<String> searchPaths = new Collection<String>();
+            Collection<string> searchPaths = new Collection<string>();
             if (mshSnapInInfo != null)
             {
                 Diagnostics.Assert(!string.IsNullOrEmpty(mshSnapInInfo.ApplicationBase),
@@ -194,7 +191,7 @@ namespace System.Management.Automation
             }
 
             string location = MUIFileSearcher.LocateFile(helpFileToLoad, searchPaths);
-            if (String.IsNullOrEmpty(location))
+            if (string.IsNullOrEmpty(location))
                 throw new FileNotFoundException(helpFile);
 
             XmlDocument doc = InternalDeserializer.LoadUnsafeXmlDocument(
@@ -212,7 +209,7 @@ namespace System.Management.Automation
                 for (int i = 0; i < doc.ChildNodes.Count; i++)
                 {
                     XmlNode node = doc.ChildNodes[i];
-                    if (node.NodeType == XmlNodeType.Element && String.Compare(node.Name, "helpItems", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (node.NodeType == XmlNodeType.Element && string.Equals(node.Name, "helpItems", StringComparison.OrdinalIgnoreCase))
                     {
                         helpItemsNode = node;
                         break;
@@ -230,7 +227,7 @@ namespace System.Management.Automation
                     for (int i = 0; i < helpItemsNode.ChildNodes.Count; i++)
                     {
                         XmlNode node = helpItemsNode.ChildNodes[i];
-                        if (node.NodeType == XmlNodeType.Element && String.Compare(node.Name, "providerHelp", StringComparison.OrdinalIgnoreCase) == 0)
+                        if (node.NodeType == XmlNodeType.Element && string.Equals(node.Name, "providerHelp", StringComparison.OrdinalIgnoreCase))
                         {
                             HelpInfo helpInfo = ProviderHelpInfo.Load(node);
 
@@ -248,6 +245,7 @@ namespace System.Management.Automation
                                     helpInfo.FullHelp.TypeNames.Insert(1, string.Format(CultureInfo.InvariantCulture,
                                         "ProviderHelpInfo#{0}", providerInfo.PSSnapInName));
                                 }
+
                                 AddCache(providerInfo.PSSnapInName + "\\" + helpInfo.Name, helpInfo);
                             }
                         }
@@ -259,13 +257,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Search for provider help based on a search target.
         /// </summary>
-        /// <param name="helpRequest">help request object</param>   
+        /// <param name="helpRequest">Help request object.</param>
         /// <param name="searchOnlyContent">
-        /// If true, searches for pattern in the help content. Individual 
+        /// If true, searches for pattern in the help content. Individual
         /// provider can decide which content to search in.
-        /// 
-        /// If false, seraches for pattern in the command names.
-        /// </param>        
+        ///
+        /// If false, searches for pattern in the command names.
+        /// </param>
         /// <returns></returns>
         internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
@@ -300,7 +298,7 @@ namespace System.Management.Automation
             PSSnapinQualifiedName snapinQualifiedNameForPattern =
                 PSSnapinQualifiedName.GetInstance(pattern);
 
-            if (null == snapinQualifiedNameForPattern)
+            if (snapinQualifiedNameForPattern == null)
             {
                 yield break;
             }
@@ -370,13 +368,13 @@ namespace System.Management.Automation
         /// Process a helpInfo forwarded from other providers (normally commandHelpProvider)
         /// </summary>
         /// <remarks>
-        /// For command help info, this will 
+        /// For command help info, this will
         ///     1. check whether provider-specific commandlet help exists.
         ///     2. merge found provider-specific help with commandlet help provided.
         /// </remarks>
-        /// <param name="helpInfo">helpInfo forwarded in</param>
-        /// <param name="helpRequest">help request object</param>        
-        /// <returns>The help info object after processing</returns>
+        /// <param name="helpInfo">HelpInfo forwarded in.</param>
+        /// <param name="helpRequest">Help request object.</param>
+        /// <returns>The help info object after processing.</returns>
         override internal HelpInfo ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
             if (helpInfo == null)
@@ -388,7 +386,7 @@ namespace System.Management.Automation
             }
 
             string providerName = helpRequest.Provider;
-            if (String.IsNullOrEmpty(providerName))
+            if (string.IsNullOrEmpty(providerName))
             {
                 providerName = this._sessionState.Path.CurrentLocation.Provider.Name;
             }
@@ -413,8 +411,8 @@ namespace System.Management.Automation
 #endif
 
         /// <summary>
-        /// This will reset the help cache. Normally this corresponds to a 
-        /// help culture change. 
+        /// This will reset the help cache. Normally this corresponds to a
+        /// help culture change.
         /// </summary>
         internal override void Reset()
         {

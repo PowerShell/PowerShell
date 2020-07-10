@@ -1,33 +1,29 @@
-﻿//-----------------------------------------------------------------------
-//     Copyright © Microsoft Corporation.  All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands.ShowCommandExtension
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Management.Automation;
-
-
     /// <summary>
-    /// Implements a facade around CommandParameterSetInfo and its deserialized counterpart
+    /// Implements a facade around CommandParameterSetInfo and its deserialized counterpart.
     /// </summary>
     public class ShowCommandParameterSetInfo
     {
         /// <summary>
-        /// Creates an instance of the ShowCommandParameterSetInfo class based on a CommandParameterSetInfo object
+        /// Creates an instance of the ShowCommandParameterSetInfo class based on a CommandParameterSetInfo object.
         /// </summary>
-        /// 
         /// <param name="other">
         /// The object to wrap.
         /// </param>
         public ShowCommandParameterSetInfo(CommandParameterSetInfo other)
         {
-            if (null == other)
+            if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             this.Name = other.Name;
@@ -36,17 +32,16 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
-        /// Creates an instance of the ShowCommandParameterSetInfo class based on a PSObject object
+        /// Creates an instance of the ShowCommandParameterSetInfo class based on a PSObject object.
         /// </summary>
-        /// 
         /// <param name="other">
         /// The object to wrap.
         /// </param>
         public ShowCommandParameterSetInfo(PSObject other)
         {
-            if (null == other)
+            if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             this.Name = other.Members["Name"].Value as string;
@@ -56,7 +51,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
-        /// Gets the name of the parameter set
+        /// Gets the name of the parameter set.
         /// </summary>
         public string Name { get; private set; }
 

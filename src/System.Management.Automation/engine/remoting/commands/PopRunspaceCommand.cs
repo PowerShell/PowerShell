@@ -1,11 +1,11 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Remoting;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Exit-PSSession cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.Exit, "PSSession", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135212")]
+    [Cmdlet(VerbsCommon.Exit, "PSSession", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096787")]
     public class ExitPSSessionCommand : PSRemotingCmdlet
     {
         /// <summary>
@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(
                     new ErrorRecord(
                         new ArgumentException(GetMessage(RemotingErrorIdStrings.HostDoesNotSupportPushRunspace)),
-                        PSRemotingErrorId.HostDoesNotSupportPushRunspace.ToString(),
+                        nameof(PSRemotingErrorId.HostDoesNotSupportPushRunspace),
                         ErrorCategory.InvalidArgument,
                         null));
                 return;

@@ -1,10 +1,10 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -12,12 +12,12 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command that commits a transaction.
     /// </summary>
-    [Cmdlet(VerbsOther.Use, "Transaction", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135271")]
+    [Cmdlet(VerbsOther.Use, "Transaction", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135271")]
     public class UseTransactionCommand : PSCmdlet
     {
         /// <summary>
         /// This parameter specifies the script block to run in the current
-        /// PowerShell transaction
+        /// PowerShell transaction.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         public ScriptBlock TransactedScript
@@ -26,15 +26,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _transactedScript;
             }
+
             set
             {
                 _transactedScript = value;
             }
         }
+
         private ScriptBlock _transactedScript;
 
         /// <summary>
-        /// Commits the current transaction
+        /// Commits the current transaction.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -42,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    var emptyArray = Utils.EmptyArray<object>();
+                    var emptyArray = Array.Empty<object>();
                     _transactedScript.InvokeUsingCmdlet(
                         contextCmdlet: this,
                         useLocalScope: false,
@@ -55,7 +57,6 @@ namespace Microsoft.PowerShell.Commands
                 catch (Exception e)
                 {
                     // Catch-all OK. This is a third-party call-out.
-                    CommandProcessorBase.CheckForSevereException(e);
 
                     ErrorRecord errorRecord = new ErrorRecord(e, "TRANSACTED_SCRIPT_EXCEPTION", ErrorCategory.NotSpecified, null);
 
@@ -88,6 +89,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-    } // CommitTransactionCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

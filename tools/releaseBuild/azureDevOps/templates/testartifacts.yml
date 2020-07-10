@@ -1,0 +1,48 @@
+jobs:
+- job: build_testartifacts
+  displayName: Build test artifacts
+  condition: succeeded()
+  pool: 'Hosted Ubuntu 1604'
+  steps:
+
+  - pwsh: |
+      Import-Module ./build.psm1
+      Start-PSBootstrap
+    displayName: Bootstrap
+
+  - pwsh: |
+      Import-Module ./build.psm1
+
+      function BuildTestPackage([string] $runtime)
+      {
+        Write-Verbose -Verbose "Starting to build package for $runtime"
+
+        New-TestPackage -Destination $(System.ArtifactsDirectory) -Runtime $runtime
+
+        if (-not (Test-Path $(System.ArtifactsDirectory)/TestPackage.zip))
+        {
+          throw "Test Package was not found at: $(System.ArtifactsDirectory)"
+        }
+
+        switch ($runtime)
+        {
+          win7-x64 { $packageName = "TestPackage-win.zip" }
+          linux-x64 { $packageName = "TestPackage-linux-x64.zip" }
+          linux-arm { $packageName = "TestPackage-linux-arm.zip" }
+          linux-arm64 { $packageName = "TestPackage-linux-arm64.zip" }
+          osx-x64 { $packageName = "TestPackage-macOS.zip" }
+          linux-musl-x64 { $packageName = "TestPackage-alpine-x64.zip"}
+        }
+
+        Rename-Item $(System.ArtifactsDirectory)/TestPackage.zip $packageName
+        Write-Host "##vso[artifact.upload containerfolder=testArtifacts;artifactname=testArtifacts]$(System.ArtifactsDirectory)/$packageName"
+      }
+
+      BuildTestPackage -runtime win7-x64
+      BuildTestPackage -runtime linux-x64
+      BuildTestPackage -runtime linux-arm
+      BuildTestPackage -runtime linux-arm64
+      BuildTestPackage -runtime osx-x64
+      BuildTestPackage -runtime linux-musl-x64
+
+    displayName: Build test package and upload

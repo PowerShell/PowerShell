@@ -12,7 +12,6 @@
     <import schemaLocation="developer.xsd" namespace="http://schemas.microsoft.com/maml/dev/2004/10" />
     <include schemaLocation="ITPro.xsd" />
     <include schemaLocation="base.xsd" />
-    <include schemaLocation="glossary.xsd" />
     <include schemaLocation="conditionSet.xsd" />
     <include schemaLocation="task.xsd" />
 </schema>

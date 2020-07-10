@@ -1,18 +1,18 @@
-﻿/********************************************************************++
- * Copyright (c) Microsoft Corporation.  All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using System.IO;
-using System.Xml;
-using Microsoft.PowerShell.Commands;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Xml;
+
+using Microsoft.PowerShell.Commands;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
-    /// 
     /// </summary>
     public sealed class PSSessionConfigurationData
     {
@@ -23,7 +23,6 @@ namespace System.Management.Automation.Remoting
         #region Public Properties
 
         /// <summary>
-        /// 
         /// </summary>
         public List<string> ModulesToImport
         {
@@ -42,14 +41,14 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
         /// </summary>
-        public String PrivateData
+        public string PrivateData
         {
             get
             {
                 return _privateData;
             }
+
             internal set
             {
                 _privateData = value;
@@ -79,7 +78,7 @@ namespace System.Management.Automation.Remoting
         {
             PSSessionConfigurationData configuration = new PSSessionConfigurationData();
 
-            if (String.IsNullOrEmpty(configurationData)) return configuration;
+            if (string.IsNullOrEmpty(configurationData)) return configuration;
 
             configurationData = Unescape(configurationData);
 
@@ -89,9 +88,7 @@ namespace System.Management.Automation.Remoting
                 IgnoreComments = true,
                 IgnoreProcessingInstructions = true,
                 MaxCharactersInDocument = 10000,
-#if !CORECLR // No XmlReaderSettings.XmlResolver in CoreCLR
                 XmlResolver = null,
-#endif
                 ConformanceLevel = ConformanceLevel.Fragment
             };
 
@@ -112,7 +109,7 @@ namespace System.Management.Automation.Remoting
 
                         string optionName = reader.Value;
 
-                        if (String.Equals(optionName, PrivateDataToken, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(optionName, PrivateDataToken, StringComparison.OrdinalIgnoreCase))
                         {
                             // this is a PrivateData element which we
                             // need to process
@@ -158,7 +155,7 @@ namespace System.Management.Automation.Remoting
         private string _privateData;
 
         /// <summary>
-        /// Checks if the originalValue is empty. If not throws an exception
+        /// Checks if the originalValue is empty. If not throws an exception.
         /// </summary>
         /// <param name="optionName"></param>
         /// <param name="originalValue"></param>
@@ -175,7 +172,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Using optionName and optionValue updates the current object
+        /// Using optionName and optionValue updates the current object.
         /// </summary>
         /// <param name="optionName"></param>
         /// <param name="optionValue"></param>
@@ -192,7 +189,7 @@ namespace System.Management.Automation.Remoting
                         AssertValueNotAssigned(ModulesToImportToken, _modulesToImport);
                         _modulesToImport = new List<string>();
                         _modulesToImportInternal = new List<object>();
-                        object[] modulesToImport = optionValue.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                        object[] modulesToImport = optionValue.Split(',', StringSplitOptions.RemoveEmptyEntries);
                         foreach (var module in modulesToImport)
                         {
                             var s = module as string;
@@ -212,11 +209,13 @@ namespace System.Management.Automation.Remoting
                             }
                         }
                     }
+
                     break;
                 default:
                     {
                         Dbg.Assert(false, "Unknown option specified");
                     }
+
                     break;
             }
         }

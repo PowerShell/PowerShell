@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +11,7 @@ using System.Text;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// The base class for the parameter binder controllers. This class and 
+    /// The base class for the parameter binder controllers. This class and
     /// its derived classes control the interaction between the command processor
     /// and the parameter binder(s). It holds the state of the arguments and parameters.
     /// </summary>
@@ -25,7 +24,6 @@ namespace System.Management.Automation
         /// Constructs a parameter binder controller for the specified command
         /// in the specified engine context.
         /// </summary>
-        /// 
         /// <param name="invocationInfo">
         ///     The invocation information about the code being run.
         /// </param>
@@ -53,13 +51,11 @@ namespace System.Management.Automation
         /// <summary>
         /// The engine context the command is running in.
         /// </summary>
-        /// 
         internal ExecutionContext Context { get; }
 
         /// <summary>
         /// Gets the parameter binder for the command.
         /// </summary>
-        /// 
         internal ParameterBinderBase DefaultParameterBinder { get; private set; }
 
         /// <summary>
@@ -71,24 +67,22 @@ namespace System.Management.Automation
         /// All the metadata associated with any of the parameters that
         /// are available from the command.
         /// </summary>
-        /// 
         internal MergedCommandParameterMetadata BindableParameters
         {
             get { return _bindableParameters; }
         }
+
         protected MergedCommandParameterMetadata _bindableParameters = new MergedCommandParameterMetadata();
 
         /// <summary>
         /// A list of the unbound parameters for the command.
         /// </summary>
-        /// 
         protected List<MergedCompiledCommandParameter> UnboundParameters { get; set; }
 
         /// <summary>
         /// A collection of the bound parameters for the command. The collection is
         /// indexed based on the name of the parameter.
         /// </summary>
-        /// 
         protected Dictionary<string, MergedCompiledCommandParameter> BoundParameters { get; } = new Dictionary<string, MergedCompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 
         internal CommandLineParameters CommandLineParameters
@@ -97,14 +91,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Set true if the default parameter binding is in use
+        /// Set true if the default parameter binding is in use.
         /// </summary>
         protected bool DefaultParameterBindingInUse { get; set; } = false;
 
         // Set true if the default parameter values are applied
 
         /// <summary>
-        /// A collection of bound default parameters
+        /// A collection of bound default parameters.
         /// </summary>
         protected Collection<string> BoundDefaultParameters { get; } = new Collection<string>();
 
@@ -122,23 +116,20 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// A collection of the arguments that have been bound
+        /// A collection of the arguments that have been bound.
         /// </summary>
-        /// 
         protected Dictionary<string, CommandParameterInternal> BoundArguments { get; } = new Dictionary<string, CommandParameterInternal>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Reparses the unbound arguments using the parameter metadata of the
-        /// specified parameter binder as the parsing guide. 
+        /// specified parameter binder as the parsing guide.
         /// </summary>
-        /// 
         /// <exception cref="ParameterBindingException">
         /// If a parameter token is not matched with an argument and its not a bool or
         /// SwitchParameter.
         /// Or
         /// The name of the argument matches more than one parameter.
         /// </exception>
-        /// 
         internal void ReparseUnboundArguments()
         {
             Collection<CommandParameterInternal> result = new Collection<CommandParameterInternal>();
@@ -199,7 +190,7 @@ namespace System.Management.Automation
 
                     if (nextArgument.ParameterNameSpecified)
                     {
-                        // Since we have a valid parameter we need to see if the next argument is 
+                        // Since we have a valid parameter we need to see if the next argument is
                         // an argument value for that parameter or a parameter itself.
 
                         MergedCompiledCommandParameter nextMatchingParameter =
@@ -230,9 +221,10 @@ namespace System.Management.Automation
 
                             throw exception;
                         }
+
                         ++index;
                         argument.ParameterName = matchingParameter.Parameter.Name;
-                        argument.SetArgumentValue(nextArgument.ArgumentExtent, nextArgument.ParameterText);
+                        argument.SetArgumentValue(nextArgument.ArgumentAst, nextArgument.ParameterText);
                         result.Add(argument);
                         continue;
                     }
@@ -242,7 +234,7 @@ namespace System.Management.Automation
 
                     ++index;
                     argument.ParameterName = matchingParameter.Parameter.Name;
-                    argument.SetArgumentValue(nextArgument.ArgumentExtent, nextArgument.ArgumentValue);
+                    argument.SetArgumentValue(nextArgument.ArgumentAst, nextArgument.ArgumentValue);
                     result.Add(argument);
                 }
                 else
@@ -266,10 +258,10 @@ namespace System.Management.Automation
             }
 
             UnboundArguments = result;
-        } // ReparseUnboundArgumentsForBinder
+        }
 
         private static bool IsSwitchAndSetValue(
-            String argumentName,
+            string argumentName,
             CommandParameterInternal argument,
             CompiledCommandParameter matchingParameter)
         {
@@ -278,32 +270,29 @@ namespace System.Management.Automation
             if (matchingParameter.Type == typeof(SwitchParameter))
             {
                 argument.ParameterName = argumentName;
-                argument.SetArgumentValue(PositionUtilities.EmptyExtent, SwitchParameter.Present);
+                argument.SetArgumentValue(null, SwitchParameter.Present);
                 result = true;
             }
 
             return result;
-        } // EnsureBoolOrSwitchAndSetValue
+        }
 
         /// <summary>
         /// The argument looks like a parameter if it is a string
         /// and starts with a dash.
         /// </summary>
-        /// 
         /// <param name="arg">
         /// The argument to check.
         /// </param>
-        /// 
         /// <returns>
-        /// True if the argument is a string and starts with a dash, 
+        /// True if the argument is a string and starts with a dash,
         /// or false otherwise.
         /// </returns>
-        /// 
         internal static bool ArgumentLooksLikeParameter(string arg)
         {
             bool result = false;
 
-            if (!String.IsNullOrEmpty(arg))
+            if (!string.IsNullOrEmpty(arg))
             {
                 result = arg[0].IsDash();
             }
@@ -316,15 +305,12 @@ namespace System.Management.Automation
         /// based on whether the arguments look like parameters. The CommandParameterInternal instances then
         /// get added to the specified command processor.
         /// </summary>
-        /// 
         /// <param name="commandProcessor">
         /// The command processor instance to add the reparsed parameters to.
         /// </param>
-        /// 
         /// <param name="arguments">
         /// The arguments that require reparsing.
         /// </param>
-        /// 
         internal static void AddArgumentsToCommandProcessor(CommandProcessorBase commandProcessor, object[] arguments)
         {
             if ((arguments != null) && (arguments.Length > 0))
@@ -336,8 +322,8 @@ namespace System.Management.Automation
                     foreach (KeyValuePair<string, object> boundParameter in boundParameters)
                     {
                         CommandParameterInternal param = CommandParameterInternal.CreateParameterWithArgument(
-                            PositionUtilities.EmptyExtent, boundParameter.Key, boundParameter.Key,
-                            PositionUtilities.EmptyExtent, boundParameter.Value, false);
+                            /*parameterAst*/null, boundParameter.Key, boundParameter.Key,
+                            /*argumentAst*/null, boundParameter.Value, false);
                         commandProcessor.AddParameter(param);
                     }
                 }
@@ -358,29 +344,29 @@ namespace System.Management.Automation
                             if (colonIndex != -1 && colonIndex != paramText.Length - 1)
                             {
                                 param = CommandParameterInternal.CreateParameterWithArgument(
-                                    PositionUtilities.EmptyExtent, paramText.Substring(1, colonIndex - 1), paramText,
-                                    PositionUtilities.EmptyExtent, paramText.Substring(colonIndex + 1).Trim(),
+                                    /*parameterAst*/null, paramText.Substring(1, colonIndex - 1), paramText,
+                                    /*argumentAst*/null, paramText.AsSpan(colonIndex + 1).Trim().ToString(),
                                     false);
                             }
                             else if (argIndex == arguments.Length - 1 || paramText[paramText.Length - 1] != ':')
                             {
                                 param = CommandParameterInternal.CreateParameter(
-                                    PositionUtilities.EmptyExtent, paramText.Substring(1), paramText);
+                                    paramText.Substring(1), paramText);
                             }
                             else
                             {
                                 param = CommandParameterInternal.CreateParameterWithArgument(
-                                    PositionUtilities.EmptyExtent, paramText.Substring(1, paramText.Length - 2), paramText,
-                                    PositionUtilities.EmptyExtent, arguments[argIndex + 1],
+                                    /*parameterAst*/null, paramText.Substring(1, paramText.Length - 2), paramText,
+                                    /*argumentAst*/null, arguments[argIndex + 1],
                                     false);
                                 argIndex++;
                             }
                         }
                         else
                         {
-                            param = CommandParameterInternal.CreateArgument(
-                                PositionUtilities.EmptyExtent, arguments[argIndex]);
+                            param = CommandParameterInternal.CreateArgument(arguments[argIndex]);
                         }
+
                         commandProcessor.AddParameter(param);
                     }
                 }
@@ -388,22 +374,18 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Bind the argument to the specified parameter
+        /// Bind the argument to the specified parameter.
         /// </summary>
-        /// 
         /// <param name="argument">
         /// The argument to be bound.
         /// </param>
-        /// 
         /// <param name="flags">
         /// The flags for type coercion, validation, and script block binding.
         /// </param>
-        /// 
         /// <returns>
         /// True if the parameter was successfully bound. False if <paramref name="flags"/> does not have the
         /// flag <see>ParameterBindingFlags.ShouldCoerceType</see> and the type does not match the parameter type.
         /// </returns>
-        /// 
         /// <exception cref="ParameterBindingException">
         /// If argument transformation fails.
         /// or
@@ -415,7 +397,6 @@ namespace System.Management.Automation
         /// or
         /// The parameter has already been bound.
         /// </exception>
-        /// 
         internal virtual bool BindParameter(
             CommandParameterInternal argument,
             ParameterBindingFlags flags)
@@ -445,8 +426,7 @@ namespace System.Management.Automation
                             null,
                             null,
                             ParameterBinderStrings.ParameterAlreadyBound,
-                            "ParameterAlreadyBound");
-
+                            nameof(ParameterBinderStrings.ParameterAlreadyBound));
 
                     throw bindingException;
                 }
@@ -461,46 +441,36 @@ namespace System.Management.Automation
         /// <summary>
         /// Derived classes need to define the binding of multiple arguments.
         /// </summary>
-        /// 
         /// <param name="parameters">
         /// The arguments to be bound.
         /// </param>
-        /// 
         /// <returns>
         /// The arguments which are still not bound.
         /// </returns>
-        /// 
         internal abstract Collection<CommandParameterInternal> BindParameters(Collection<CommandParameterInternal> parameters);
 
         /// <summary>
-        /// Bind the argument to the specified parameter
+        /// Bind the argument to the specified parameter.
         /// </summary>
-        /// 
         /// <param name="parameterSets">
         /// The parameter set used to bind the arguments.
         /// </param>
-        /// 
         /// <param name="argument">
         /// The argument to be bound.
         /// </param>
-        /// 
         /// <param name="parameter">
         /// The metadata for the parameter to bind the argument to.
         /// </param>
-        /// 
         /// <param name="flags">
-        /// Flags for type coercion and valiation of the arguments.
+        /// Flags for type coercion and validation of the arguments.
         /// </param>
-        /// 
         /// <returns>
-        /// True if the parameter was successfully bound. False if <paramref name="flags"/> 
+        /// True if the parameter was successfully bound. False if <paramref name="flags"/>
         /// specifies no type coercion and the type does not match the parameter type.
         /// </returns>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="parameter"/> or <paramref name="argument"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ParameterBindingException">
         /// If argument transformation fails.
         /// or
@@ -510,7 +480,6 @@ namespace System.Management.Automation
         /// or
         /// If the binding to the parameter fails.
         /// </exception>
-        /// 
         internal virtual bool BindParameter(
             uint parameterSets,
             CommandParameterInternal argument,
@@ -541,40 +510,34 @@ namespace System.Management.Automation
                 UnboundParameters.Remove(parameter);
                 BoundParameters.Add(parameter.Parameter.Name, parameter);
             }
+
             return result;
         }
 
         /// <summary>
-        /// Binds the unbound arguments to positional parameters
+        /// Binds the unbound arguments to positional parameters.
         /// </summary>
-        /// 
         /// <param name="unboundArguments">
         /// The unbound arguments to attempt to bind as positional arguments.
         /// </param>
-        /// 
         /// <param name="validParameterSets">
         /// The current parameter set flags that are valid.
         /// </param>
-        /// 
         /// <param name="defaultParameterSet">
         /// The parameter set to use to disambiguate parameters that have the same position
         /// </param>
-        /// 
         /// <param name="outgoingBindingException">
         /// Returns the underlying parameter binding exception if any was generated.
         /// </param>
-        /// 
         /// <returns>
         /// The remaining arguments that have not been bound.
         /// </returns>
-        /// 
         /// <remarks>
         /// It is assumed that the unboundArguments parameter has already been processed
         /// for this parameter binder. All named parameters have been paired with their
         /// values. Any arguments that don't have a name are considered positional and
         /// will be processed in this method.
         /// </remarks>
-        /// 
         /// <exception cref="ParameterBindingException">
         /// If multiple parameters were found for the same position in the specified
         /// parameter set.
@@ -636,7 +599,6 @@ namespace System.Management.Automation
                     throw bindingException;
                 }
 
-
                 if (positionalParameterDictionary.Count > 0)
                 {
                     int unboundArgumentsIndex = 0;
@@ -682,7 +644,7 @@ namespace System.Management.Automation
 
                         if (!aParameterWasBound)
                         {
-                            // Try the non-default parameter sets 
+                            // Try the non-default parameter sets
                             // without type coercion.
 
                             aParameterWasBound =
@@ -714,7 +676,7 @@ namespace System.Management.Automation
 
                         if (!aParameterWasBound)
                         {
-                            // Try the non-default parameter sets 
+                            // Try the non-default parameter sets
                             // with type coercion.
 
                             aParameterWasBound =
@@ -742,7 +704,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    // Now for any arguments that were not processed, add them to 
+                    // Now for any arguments that were not processed, add them to
                     // the result
 
                     for (int index = unboundArgumentsIndex; index < unboundArgumentsCollection.Count; ++index)
@@ -758,22 +720,20 @@ namespace System.Management.Automation
                     result = unboundArguments;
                 }
             }
+
             return result;
-        } // BindPositionalParameters
+        }
 
         /// <summary>
         /// This method only updates the collections contained in the dictionary, not the dictionary
         /// itself to contain only the parameters that are in the specified parameter set.
         /// </summary>
-        /// 
         /// <param name="positionalParameterDictionary">
         /// The sorted dictionary of positional parameters.
         /// </param>
-        /// 
         /// <param name="validParameterSets">
         /// Valid parameter sets
         /// </param>
-        /// 
         internal static void UpdatePositionalDictionary(
             SortedDictionary<int, Dictionary<MergedCompiledCommandParameter, PositionalCommandParameter>> positionalParameterDictionary,
             uint validParameterSets)
@@ -841,8 +801,8 @@ namespace System.Management.Automation
                     {
                         CommandParameterInternal bindableArgument =
                             CommandParameterInternal.CreateParameterWithArgument(
-                                PositionUtilities.EmptyExtent, parameterName, "-" + parameterName + ":",
-                                argument.ArgumentExtent, argument.ArgumentValue,
+                                /*parameterAst*/null, parameterName, "-" + parameterName + ":",
+                                argument.ArgumentAst, argument.ArgumentValue,
                                 false);
 
                         bindResult =
@@ -900,19 +860,19 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return result;
         }
 
-
         /// <summary>
-        /// Generate elaborated binding exception so that the user will know the default binding might cause the failure
+        /// Generate elaborated binding exception so that the user will know the default binding might cause the failure.
         /// </summary>
         /// <param name="pbex"></param>
         protected void ThrowElaboratedBindingException(ParameterBindingException pbex)
         {
             if (pbex == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pbex");
+                throw PSTraceSource.NewArgumentNullException(nameof(pbex));
             }
 
             Diagnostics.Assert(pbex.ErrorRecord != null, "ErrorRecord should not be null in a ParameterBindingException");
@@ -942,7 +902,6 @@ namespace System.Management.Automation
             throw newBindingException;
         }
 
-
         private static CommandParameterInternal GetNextPositionalArgument(
             List<CommandParameterInternal> unboundArgumentsCollection,
             Collection<CommandParameterInternal> nonPositionalArguments,
@@ -963,6 +922,7 @@ namespace System.Management.Automation
                     result = argument;
                     break;
                 }
+
                 nonPositionalArguments.Add(argument);
 
                 // Now check to see if the next argument needs to be consumed as well.
@@ -989,12 +949,10 @@ namespace System.Management.Automation
         /// Gets the unbound positional parameters in a sorted dictionary in the order of their
         /// positions.
         /// </summary>
-        /// 
         /// <returns>
         /// The sorted dictionary of MergedCompiledCommandParameter metadata with the position
-        /// as the key. 
+        /// as the key.
         /// </returns>
-        /// 
         internal static SortedDictionary<int, Dictionary<MergedCompiledCommandParameter, PositionalCommandParameter>> EvaluateUnboundPositionalParameters(
             ICollection<MergedCompiledCommandParameter> unboundParameters, uint validParameterSetFlag)
         {
@@ -1036,8 +994,9 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             return result;
-        } // EvaluateUnboundPositionalParameters
+        }
 
         private static void AddNewPosition(
             SortedDictionary<int, Dictionary<MergedCompiledCommandParameter, PositionalCommandParameter>> result,
@@ -1068,6 +1027,7 @@ namespace System.Management.Automation
                     positionalCommandParameter = new PositionalCommandParameter(parameter);
                     positionalCommandParameters.Add(parameter, positionalCommandParameter);
                 }
+
                 positionalCommandParameter.ParameterSetData.Add(parameterSetData);
             }
             else
@@ -1113,6 +1073,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             return result;
         }
 
@@ -1120,7 +1081,6 @@ namespace System.Management.Automation
         /// Keeps track of the parameters that get bound through pipeline input, so that their
         /// previous values can be restored before the next pipeline input comes.
         /// </summary>
-        ///
         internal Collection<MergedCompiledCommandParameter> ParametersBoundThroughPipelineInput { get; } = new Collection<MergedCompiledCommandParameter>();
 
         /// <summary>
@@ -1139,7 +1099,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// If the parameter binder might use the value more than once, this it can save the value to avoid
-        /// re-evalauting complicated expressions.
+        /// re-evaluating complicated expressions.
         /// </summary>
         protected virtual void SaveDefaultScriptParameterValue(string name, object value)
         {
@@ -1173,8 +1133,8 @@ namespace System.Management.Automation
                     object result = spb.GetDefaultScriptParameterValue(runtimeDefinedParameter, implicitUsingParameters);
                     SaveDefaultScriptParameterValue(parameter.Parameter.Name, result);
                     CommandParameterInternal argument = CommandParameterInternal.CreateParameterWithArgument(
-                        PositionUtilities.EmptyExtent, parameter.Parameter.Name, "-" + parameter.Parameter.Name + ":",
-                        PositionUtilities.EmptyExtent, result,
+                        /*parameterAst*/null, parameter.Parameter.Name, "-" + parameter.Parameter.Name + ":",
+                        /*argumentAst*/null, result,
                         false);
                     ParameterBindingFlags flags = ParameterBindingFlags.IsDefaultValue;
                     // Only coerce explicit values.  We default to null, which isn't always convertible.
@@ -1182,6 +1142,7 @@ namespace System.Management.Automation
                     {
                         flags |= ParameterBindingFlags.ShouldCoerceType;
                     }
+
                     BindParameter(uint.MaxValue, argument, parameter, flags);
                 }
                 finally
@@ -1200,7 +1161,7 @@ namespace System.Management.Automation
             if (result == PositionUtilities.EmptyExtent)
                 result = InvocationInfo.ScriptPosition;
             // Can't use this assertion - we don't have useful positions when invoked via PowerShell API
-            //Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
+            // Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
             return result;
         }
 
@@ -1210,7 +1171,7 @@ namespace System.Management.Automation
             if (result == PositionUtilities.EmptyExtent)
                 result = InvocationInfo.ScriptPosition;
             // Can't use this assertion - we don't have useful positions when invoked via PowerShell API
-            //Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
+            // Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
             return result;
         }
 

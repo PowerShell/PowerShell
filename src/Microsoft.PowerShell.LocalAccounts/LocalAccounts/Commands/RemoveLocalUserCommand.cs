@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 #region Using directives
 using System;
 using System.Management.Automation;
@@ -9,16 +12,15 @@ using Microsoft.PowerShell.LocalAccounts;
 using System.Diagnostics.CodeAnalysis;
 #endregion
 
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Remove-LocalUser cmdlet deletes a user account from the Windows Security 
+    /// The Remove-LocalUser cmdlet deletes a user account from the Windows Security
     /// Accounts manager.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "LocalUser",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717982")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717982")]
     [Alias("rlu")]
     public class RemoveLocalUserCommand : Cmdlet
     {
@@ -29,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameter Properties
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
-        /// Specifies the of the local user accounts to remove in the local Security 
+        /// Specifies the of the local user accounts to remove in the local Security
         /// Accounts Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -42,13 +44,15 @@ namespace Microsoft.PowerShell.Commands
         public Microsoft.PowerShell.Commands.LocalUser[] InputObject
         {
             get { return this.inputobject;}
+
             set { this.inputobject = value; }
         }
+
         private Microsoft.PowerShell.Commands.LocalUser[] inputobject;
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
-        /// Specifies the user accounts to be deleted from the local Security Accounts 
+        /// Specifies the user accounts to be deleted from the local Security Accounts
         /// Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -61,13 +65,15 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name
         {
             get { return this.name; }
+
             set { this.name = value; }
         }
+
         private string[] name;
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
-        /// Specifies the local user accounts to remove by 
+        /// Specifies the local user accounts to remove by
         /// System.Security.Principal.SecurityIdentifier.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -80,13 +86,13 @@ namespace Microsoft.PowerShell.Commands
         public System.Security.Principal.SecurityIdentifier[] SID
         {
             get { return this.sid; }
+
             set { this.sid = value; }
         }
+
         private System.Security.Principal.SecurityIdentifier[] sid;
         #endregion Parameter Properties
 
-
-      
         #region Cmdlet Overrides
         /// <summary>
         /// BeginProcessing method.
@@ -95,7 +101,6 @@ namespace Microsoft.PowerShell.Commands
         {
             sam = new Sam();
         }
-
 
         /// <summary>
         /// ProcessRecord method.
@@ -114,7 +119,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        
         /// <summary>
         /// EndProcessing method.
         /// </summary>
@@ -130,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
         /// <summary>
-        /// Process users requested by -Name
+        /// Process users requested by -Name.
         /// </summary>
         /// <remarks>
         /// All arguments to -Name will be treated as names,
@@ -156,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process users requested by -SID
+        /// Process users requested by -SID.
         /// </summary>
         private void ProcessSids()
         {
@@ -178,7 +182,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process users given through -InputObject
+        /// Process users given through -InputObject.
         /// </summary>
         private void ProcessUsers()
         {
@@ -204,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(target, Strings.ActionRemoveUser);
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

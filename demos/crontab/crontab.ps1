@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 
 Import-Module $PSScriptRoot/CronTab/CronTab.psd1
 

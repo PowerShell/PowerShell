@@ -1,12 +1,9 @@
-//------------------------------------------------------------------------------
-// <copyright file="etwprovider.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using System.Diagnostics.CodeAnalysis;
 
 namespace System.Diagnostics.Eventing
 {
@@ -15,16 +12,22 @@ namespace System.Diagnostics.Eventing
     {
         [FieldOffset(0)]
         private ushort _id;
+
         [FieldOffset(2)]
         private byte _version;
+
         [FieldOffset(3)]
         private byte _channel;
+
         [FieldOffset(4)]
         private byte _level;
+
         [FieldOffset(5)]
         private byte _opcode;
+
         [FieldOffset(6)]
         private ushort _task;
+
         [FieldOffset(8)]
         private long _keywords;
 
@@ -41,12 +44,12 @@ namespace System.Diagnostics.Eventing
         {
             if (id < 0)
             {
-                throw new ArgumentOutOfRangeException("id", DotNetEventingStrings.ArgumentOutOfRange_NeedNonNegNum);
+                throw new ArgumentOutOfRangeException(nameof(id), DotNetEventingStrings.ArgumentOutOfRange_NeedNonNegNum);
             }
 
             if (id > ushort.MaxValue)
             {
-                throw new ArgumentOutOfRangeException("id", string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_NeedValidId, 1, ushort.MaxValue));
+                throw new ArgumentOutOfRangeException(nameof(id), string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_NeedValidId, 1, ushort.MaxValue));
             }
 
             _id = (ushort)id;
@@ -58,12 +61,12 @@ namespace System.Diagnostics.Eventing
 
             if (task < 0)
             {
-                throw new ArgumentOutOfRangeException("task", DotNetEventingStrings.ArgumentOutOfRange_NeedNonNegNum);
+                throw new ArgumentOutOfRangeException(nameof(task), DotNetEventingStrings.ArgumentOutOfRange_NeedNonNegNum);
             }
 
             if (task > ushort.MaxValue)
             {
-                throw new ArgumentOutOfRangeException("task", string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_NeedValidId, 1, ushort.MaxValue));
+                throw new ArgumentOutOfRangeException(nameof(task), string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_NeedValidId, 1, ushort.MaxValue));
             }
 
             _task = (ushort)task;
@@ -92,6 +95,7 @@ namespace System.Diagnostics.Eventing
                 return _channel;
             }
         }
+
         public byte Level
         {
             get

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #if !SILVERLIGHT
 
@@ -58,7 +57,7 @@ namespace System.Management.Automation.ComInterop
 
     /// <summary>
     /// Splats the arguments to another nested dynamic site, which does the
-    /// real invocation of the IDynamicMetaObjectProvider. 
+    /// real invocation of the IDynamicMetaObjectProvider.
     /// </summary>
     internal sealed class SplatInvokeBinder : CallSiteBinder
     {
@@ -82,6 +81,7 @@ namespace System.Management.Automation.ComInterop
                 nestedArgs.Add(Expression.ArrayAccess(array, Expression.Constant(i)));
                 delegateArgs[i + 2] = typeof(object).MakeByRefType();
             }
+
             delegateArgs[delegateArgs.Length - 1] = typeof(object);
 
             return Expression.IfThen(

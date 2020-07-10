@@ -1,14 +1,14 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Management.Automation.Language;
 using System.IO;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
@@ -40,7 +40,7 @@ namespace System.Management.Automation
         private Collection<PSClassInfo> _matchingClassList = null;
         private bool _useWildCards = false;
         private Dictionary<string, PSModuleInfo> _moduleInfoCache = null;
-        private object _lockObject = new Object();
+        private object _lockObject = new object();
 
         #endregion
 
@@ -74,7 +74,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the Enumerator
+        /// Get the Enumerator.
         /// </summary>
         /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
@@ -83,7 +83,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Move to the Next value in the enumerator. 
+        /// Move to the Next value in the enumerator.
         /// </summary>
         /// <returns></returns>
         public bool MoveNext()
@@ -97,7 +97,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Return the current PSClassInfo
+        /// Return the current PSClassInfo.
         /// </summary>
         PSClassInfo IEnumerator<PSClassInfo>.Current
         {
@@ -108,7 +108,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Return the current PSClassInfo as object
+        /// Return the current PSClassInfo as object.
         /// </summary>
         object IEnumerator.Current
         {
@@ -158,7 +158,7 @@ namespace System.Management.Automation
         {
             bool matchFound = false;
 
-            var moduleList = ModuleUtils.GetDefaultAvailableModuleFiles(false, false, _context);
+            var moduleList = ModuleUtils.GetDefaultAvailableModuleFiles(isForAutoDiscovery: false, _context);
 
             foreach (var modulePath in moduleList)
             {
@@ -167,7 +167,7 @@ namespace System.Management.Automation
 
                 if (cachedClasses != null)
                 {
-                    //Exact match
+                    // Exact match
                     if (!_useWildCards)
                     {
                         if (cachedClasses.ContainsKey(_className))
@@ -297,8 +297,7 @@ namespace System.Management.Automation
 
             foreach (var member in statement.Members)
             {
-                PropertyMemberAst propAst = member as PropertyMemberAst;
-                if (propAst != null)
+                if (member is PropertyMemberAst propAst && !propAst.PropertyAttributes.HasFlag(PropertyAttributes.Hidden))
                 {
                     Dbg.Assert(propAst.Name != null, "PropName cannot be null");
                     Dbg.Assert(propAst.PropertyType != null, "PropertyType cannot be null");
@@ -319,7 +318,7 @@ namespace System.Management.Automation
             if (ast.GetHelpContent() != null)
                 mamlHelpFile = ast.GetHelpContent().MamlHelpFile;
 
-            if (!String.IsNullOrEmpty(mamlHelpFile))
+            if (!string.IsNullOrEmpty(mamlHelpFile))
                 classInfo.HelpFile = mamlHelpFile;
 
             return classInfo;

@@ -1,7 +1,7 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
+using System.Management.Automation.Internal;
 using System.Management.Automation.Provider;
 using System.Xml;
 
@@ -40,7 +40,7 @@ namespace System.Management.Automation
             ExecutionContext executionContext,
             PathIntrinsics pathIntrinsics)
         {
-            Dbg.Assert(null != executionContext, "ExecutionContext cannot be null.");
+            Dbg.Assert(executionContext != null, "ExecutionContext cannot be null.");
             _requestedPath = requestedPath;
             _executionContext = executionContext;
             _pathIntrinsics = pathIntrinsics;
@@ -51,6 +51,13 @@ namespace System.Management.Automation
         /// </summary>
         internal MamlCommandHelpInfo GetProviderSpecificHelpInfo(string helpItemName)
         {
+            if (InternalTestHooks.BypassOnlineHelpRetrieval)
+            {
+                // By returning null, we force get-help to return generic help
+                // which includes a helpUri that points to the fwlink defined in the cmdlet code.
+                return null;
+            }
+
             // Get the provider.
             ProviderInfo providerInfo = null;
             PSDriveInfo driveInfo = null;
@@ -102,17 +109,41 @@ namespace System.Management.Automation
             // Does the provider know how to generate MAML.
             CmdletProvider cmdletProvider = providerInfo.CreateInstance();
             ICmdletProviderSupportsHelp provider = cmdletProvider as ICmdletProviderSupportsHelp;
+
+            // Under JEA sessions the resolvedProviderPath will be null, we should allow get-help to continue.
             if (provider == null)
             {
                 return null;
             }
 
-            if (resolvedProviderPath == null)
+            bool isJEASession = false;
+            if (this._executionContext.InitialSessionState != null && this._executionContext.InitialSessionState.Providers != null && providerInfo != null)
             {
-                throw new ItemNotFoundException(_requestedPath, "PathNotFound", SessionStateStrings.PathNotFound);
+                foreach (
+                    Runspaces.SessionStateProviderEntry sessionStateProvider in
+                        this._executionContext.InitialSessionState.Providers[providerInfo.Name])
+                {
+                    if (sessionStateProvider.Visibility == SessionStateEntryVisibility.Private)
+                    {
+                        isJEASession = true;
+                        break;
+                    }
+                }
             }
 
-            // ok we have path and valid provider that supplys content..intialize the provider
+            if (resolvedProviderPath == null)
+            {
+                if (isJEASession)
+                {
+                    return null;
+                }
+                else
+                {
+                    throw new ItemNotFoundException(_requestedPath, "PathNotFound", SessionStateStrings.PathNotFound);
+                }
+            }
+
+            // ok we have path and valid provider that supplys content..initialize the provider
             // and get the help content for the path.
             cmdletProvider.Start(providerInfo, cmdletProviderContext);
             // There should be exactly one resolved path.

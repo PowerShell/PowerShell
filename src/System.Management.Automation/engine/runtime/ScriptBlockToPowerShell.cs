@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,6 +17,7 @@ namespace System.Management.Automation
 
         internal ScriptBlockAst ScriptBeingConverted { get; set; }
         internal bool UsesParameter { get; private set; }
+
         internal bool HasUsingExpr { get; private set; }
 
         public override AstVisitAction VisitParameter(ParameterAst parameterAst)
@@ -200,7 +200,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Converts a ScriptBlock to a PowerShell object by traversing the 
+    /// Converts a ScriptBlock to a PowerShell object by traversing the
     /// given Ast.
     /// </summary>
     internal class ScriptBlockToPowerShellConverter
@@ -228,7 +228,7 @@ namespace System.Management.Automation
 
             if (args == null)
             {
-                args = Utils.EmptyArray<object>();
+                args = Array.Empty<object>();
             }
 
             // Perform validations on the ScriptBlock.  GetSimplePipeline can allow for more than one
@@ -252,6 +252,7 @@ namespace System.Management.Automation
                     parameter.InternalVisit(checker);
                 }
             }
+
             body.InternalVisit(checker);
 
             // When the context is null (or they haven't supplied any variables), throw, but only if we really need the
@@ -281,14 +282,14 @@ namespace System.Management.Automation
                     var locals =
                         MutableTuple.MakeTuple(Compiler.DottedLocalsTupleType, Compiler.DottedLocalsNameIndexMap);
 
-                    // Get the parameter metadata for the script block. 
+                    // Get the parameter metadata for the script block.
                     // If 'functionParameters' is not null, then the ScriptBlockAst is actually the body of a FunctionDefinitionAst, and it doesn't have a ParamBlock.
                     // If 'functionParameters' is null, then the ScriptBlockAst may have parameters defined in its ParamBlock.
                     bool usesCmdletBinding = false;
                     var parameters = functionParameters != null
                                          ? Compiler.GetParameterMetaData(functionParameters, true, ref usesCmdletBinding)
                                          : ((IParameterMetadataProvider)body).GetParameterMetadata(true, ref usesCmdletBinding);
-                    object[] remainingArgs = ScriptBlock.BindArgumentsForScripblockInvoke(
+                    object[] remainingArgs = ScriptBlock.BindArgumentsForScriptblockInvoke(
                         (RuntimeDefinedParameter[])parameters.Data, args, context, false, null, locals);
                     locals.SetAutomaticVariable(AutomaticVariable.Args, remainingArgs, context);
                     newScope.LocalsTuple = locals;
@@ -299,6 +300,7 @@ namespace System.Management.Automation
                     converter._powershell.AddStatement();
                     converter.ConvertPipeline(pipeline, isTrustedInput);
                 }
+
                 return converter._powershell;
             }
             finally
@@ -329,7 +331,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Collect values for UsingExpressions, in the form of a dictionary and an array.
         ///  - The dictionary form is used when the remote server is PSv5 and later version for handling UsingExpression in Invoke-Command/Start-Job
-        ///  - The array form is used when the remote server is PSv3 and PSv4 for handling UsingExpression in Invoke-Command
+        ///  - The array form is used when the remote server is PSv3 and PSv4 for handling UsingExpression in Invoke-Command.
         /// </summary>
         /// <remarks>
         /// We still keep the array-form using values because we want to avoid any breaking changes when running Invoke-Command
@@ -368,12 +370,12 @@ namespace System.Management.Automation
                     usingAst = (UsingExpressionAst)usingAsts[i];
                     object value = null;
 
-                    // This happens only when GetUsingValues gets called outside the ScriptBlockToPowerShellConverter class 
+                    // This happens only when GetUsingValues gets called outside the ScriptBlockToPowerShellConverter class
                     if (!hasUsingExprInDifferentScope && HasUsingExpressionsInDifferentScopes(usingAst, body, ref sbClosestToPreUsingExpr))
                     {
                         // If there are UsingExpressions in different scopes, the array-form using values will not be useful
                         // even if the remote end is PSv3 or PSv4, because the way we handle using expression in PSv3 and PSv4
-                        // doesn't support UsingExpression in different scopes. In this case, we will set the array-form using 
+                        // doesn't support UsingExpression in different scopes. In this case, we will set the array-form using
                         // value to be null before return.
                         //
                         // Note that this check only affect array-form using value. In PSv5, we change the way to handle UsingExpression
@@ -407,10 +409,7 @@ namespace System.Management.Automation
 
                     // Collect UsingExpression value as a dictionary
                     string usingAstKey = PsUtils.GetUsingExpressionKey(usingAst);
-                    if (!usingValueMap.ContainsKey(usingAstKey))
-                    {
-                        usingValueMap.Add(usingAstKey, value);
-                    }
+                    usingValueMap.TryAdd(usingAstKey, value);
                 }
             }
             catch (RuntimeException rte)
@@ -460,9 +459,9 @@ namespace System.Management.Automation
         /// Note that the value of <paramref name="usingExpr"/> is retrieved by calling 'UsingExpressionAstSearcher.FindAllUsingExpressionExceptForWorkflow'.
         /// So <paramref name="usingExpr"/> is guaranteed not inside a workflow.
         /// </remarks>
-        /// <param name="usingExpr">The UsingExpression to analyze</param>
-        /// <param name="topLevelParent">The top level Ast, should be either ScriptBlockAst or FunctionDefinitionAst</param>
-        /// <param name="sbClosestToPreviousUsingExpr">The ScriptBlockAst that represents the scope of the previously analyzed UsingExpressions</param>
+        /// <param name="usingExpr">The UsingExpression to analyze.</param>
+        /// <param name="topLevelParent">The top level Ast, should be either ScriptBlockAst or FunctionDefinitionAst.</param>
+        /// <param name="sbClosestToPreviousUsingExpr">The ScriptBlockAst that represents the scope of the previously analyzed UsingExpressions.</param>
         private static bool HasUsingExpressionsInDifferentScopes(UsingExpressionAst usingExpr, Ast topLevelParent, ref ScriptBlockAst sbClosestToPreviousUsingExpr)
         {
             Diagnostics.Assert(topLevelParent is ScriptBlockAst || topLevelParent is FunctionDefinitionAst,
@@ -500,7 +499,7 @@ namespace System.Management.Automation
                 var funcAst = current as FunctionDefinitionAst;
                 if (funcAst != null)
                 {
-                    // The parent chain of the current UsingExpression reaches a FunctionDefinitionAst, then the UsingExpression 
+                    // The parent chain of the current UsingExpression reaches a FunctionDefinitionAst, then the UsingExpression
                     // must be in 'Parameters' property of this FunctionDefinitionAst.
                     // In this case, the 'Body' of this FunctionDefinitionAst represents the scope that the UsingExpression is in.
 
@@ -615,7 +614,7 @@ namespace System.Management.Automation
                                 var arguments = usingValue as System.Collections.IEnumerable;
                                 if (arguments != null)
                                 {
-                                    foreach (Object argument in arguments)
+                                    foreach (object argument in arguments)
                                     {
                                         _powershell.AddArgument(argument);
                                     }
@@ -631,6 +630,7 @@ namespace System.Management.Automation
                         {
                             _powershell.AddArgument(usingValue);
                         }
+
                         continue;
                     }
 
@@ -643,7 +643,9 @@ namespace System.Management.Automation
                     {
                         var constantExprAst = ast as ConstantExpressionAst;
                         object argument;
-                        if (constantExprAst != null && LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constantExprAst.StaticType)))
+                        if (constantExprAst != null
+                            && (LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constantExprAst.StaticType))
+                            || constantExprAst.StaticType == typeof(System.Numerics.BigInteger)))
                         {
                             var commandArgumentText = constantExprAst.Extent.Text;
                             argument = constantExprAst.Value;
@@ -677,6 +679,7 @@ namespace System.Management.Automation
                                 argument = GetExpressionValue(exprAst, isTrustedInput);
                             }
                         }
+
                         _powershell.AddArgument(argument);
                     }
                 }
@@ -714,7 +717,7 @@ namespace System.Management.Automation
             else
             {
                 // If this assertion fires, the command name is determined incorrectly.
-                Diagnostics.Assert(commandNameAst is CommandParameterAst, "Unxpected element not handled correctly.");
+                Diagnostics.Assert(commandNameAst is CommandParameterAst, "Unexpected element not handled correctly.");
                 commandName = commandNameAst.Extent.Text;
             }
 
@@ -739,10 +742,10 @@ namespace System.Management.Automation
 
             // Process the contents of a splatted variable into the arguments for this
             // command. If the variable contains a hashtable, distribute the key/value pairs
-            // If it's an enumberable, then distribute the values as $args and finally
+            // If it's an enumerable, then distribute the values as $args and finally
             // if it's a scalar, then the effect is equivalent to $var
             object splattedValue = _context.GetVariableValue(variableAst.VariablePath);
-            foreach (var splattedParameter in PipelineOps.Splat(splattedValue, variableAst.Extent))
+            foreach (var splattedParameter in PipelineOps.Splat(splattedValue, variableAst))
             {
                 CommandParameter publicParameter = CommandParameter.FromCommandParameterInternal(splattedParameter);
                 _powershell.AddParameter(publicParameter.Name, publicParameter.Value);
@@ -758,10 +761,12 @@ namespace System.Management.Automation
                 rs.Open();
                 _context = rs.ExecutionContext;
             }
+
             if (!isTrustedInput) // if it's not trusted, call the safe value visitor
             {
                 return GetSafeValueVisitor.GetSafeValue(exprAst, _context, GetSafeValueVisitor.SafeValueContext.GetPowerShell);
             }
+
             return Compiler.GetExpressionValue(exprAst, isTrustedInput, _context, _usingValueMap);
         }
 
@@ -781,7 +786,7 @@ namespace System.Management.Automation
             }
             else
             {
-                nameSuffix = "";
+                nameSuffix = string.Empty;
                 argument = null;
             }
 

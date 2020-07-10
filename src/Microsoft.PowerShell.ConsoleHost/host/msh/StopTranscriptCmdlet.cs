@@ -1,29 +1,22 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
-
-
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// 
-    /// Implements the stop-transcript cmdlet
-    /// 
+    /// Implements the stop-transcript cmdlet.
     /// </summary>
 
-    [Cmdlet(VerbsLifecycle.Stop, "Transcript", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113415")]
-    [OutputType(typeof(String))]
+    [Cmdlet(VerbsLifecycle.Stop, "Transcript", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096798")]
+    [OutputType(typeof(string))]
     public sealed class StopTranscriptCommand : PSCmdlet
     {
         /// <summary>
-        /// 
-        /// Starts the transcription
+        /// Starts the transcription.
         /// </summary>
 
         protected override
@@ -43,13 +36,9 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception e)
             {
-                ConsoleHost.CheckForSevereException(e);
                 throw PSTraceSource.NewInvalidOperationException(
                         e, TranscriptStrings.ErrorStoppingTranscript, e.Message);
             }
         }
     }
 }
-
-
-

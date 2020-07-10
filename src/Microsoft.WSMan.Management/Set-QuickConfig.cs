@@ -1,22 +1,18 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 using System;
-using System.IO;
-using System.Reflection;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-using System.Management.Automation;
-using System.Management.Automation.Provider;
-using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-#if CORECLR
-using System.Xml.XPath;
-#endif
-
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Provider;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Xml;
 
 namespace Microsoft.WSMan.Management
 {
@@ -25,34 +21,36 @@ namespace Microsoft.WSMan.Management
     //
 
     /// <summary>
-    /// Performs configuration actions to enable the local machine for remote 
+    /// Performs configuration actions to enable the local machine for remote
     /// management. Steps include:
     /// 1. Check if WinRM service is running. If not start the WinRM service
     /// 2. Set the WinRM service type to auto start
-    /// 3. Create a listener to accept request on any IP address. By default 
+    /// 3. Create a listener to accept request on any IP address. By default
     /// transport is http
-    /// 4. Enable firewall exception for WS-Management traffic
+    /// 4. Enable firewall exception for WS-Management traffic.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "WSManQuickConfig", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=141463")]
+    [Cmdlet(VerbsCommon.Set, "WSManQuickConfig", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097112")]
     public class SetWSManQuickConfigCommand : PSCmdlet, IDisposable
     {
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
-        /// Indicates a https listener to be created. If this switch is not specified 
-        /// then by default a http listener will be created
+        /// Indicates a https listener to be created. If this switch is not specified
+        /// then by default a http listener will be created.
         /// </summary>
         [Parameter]
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSL")]
         public SwitchParameter UseSSL
         {
             get { return usessl; }
+
             set { usessl = value; }
         }
+
         private SwitchParameter usessl;
 
-        //helper variable
+        // helper variable
         private WSManHelper helper;
-                
+
         /// <summary>
         /// Property that sets force parameter. This will allow
         /// configuring WinRM without prompting the user.
@@ -61,8 +59,10 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter Force
         {
             get { return force; }
+
             set { force = value; }
         }
+
         private bool force = false;
 
         /// <summary>
@@ -72,8 +72,10 @@ namespace Microsoft.WSMan.Management
         public SwitchParameter SkipNetworkProfileCheck
         {
             get { return skipNetworkProfileCheck; }
+
             set { skipNetworkProfileCheck = value; }
         }
+
         private bool skipNetworkProfileCheck = false;
 
         /// <summary>
@@ -81,23 +83,21 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void BeginProcessing()
         {
-            //If not running elevated, then throw an "elevation required" error message.
+            // If not running elevated, then throw an "elevation required" error message.
             WSManHelper.ThrowIfNotAdministrator();
             helper = new WSManHelper(this);
-            String query = helper.GetResourceMsgFromResourcetext("QuickConfigContinueQuery");
-            String caption = helper.GetResourceMsgFromResourcetext("QuickConfigContinueCaption");
+            string query = helper.GetResourceMsgFromResourcetext("QuickConfigContinueQuery");
+            string caption = helper.GetResourceMsgFromResourcetext("QuickConfigContinueCaption");
             if (!force && !ShouldContinue(query, caption))
             {
                 return;
             }
+
             QuickConfigRemoting(true);
             QuickConfigRemoting(false);
-        }//End BeginProcessing()
-
-
+        }
 
         #region private
-
 
         private void QuickConfigRemoting(bool serviceonly)
         {
@@ -115,7 +115,6 @@ namespace Microsoft.WSMan.Management
                 string xpathStatus = string.Empty;
                 string xpathResult = string.Empty;
 
-
                 if (!usessl)
                 {
                     transport = "http";
@@ -132,11 +131,10 @@ namespace Microsoft.WSMan.Management
                 }
                 else
                 {
-                    string openAllProfiles = skipNetworkProfileCheck ? "<Force/>" : String.Empty;
+                    string openAllProfiles = skipNetworkProfileCheck ? "<Force/>" : string.Empty;
                     analysisInputXml = @"<Analyze_INPUT xmlns=""http://schemas.microsoft.com/wbem/wsman/1/config/service""><Transport>" + transport + "</Transport>" + openAllProfiles + "</Analyze_INPUT>";
                     action = "Analyze";
                 }
-
 
                 string analysisOutputXml = m_SessionObj.Invoke(action, "winrm/config/service", analysisInputXml, 0);
                 XmlDocument resultopxml = new XmlDocument();
@@ -155,8 +153,6 @@ namespace Microsoft.WSMan.Management
                     xpathUpdate = "/cfg:Analyze_OUTPUT/cfg:EnableRemoting_INPUT";
                 }
 
-
-
                 XmlNamespaceManager nsmgr = new XmlNamespaceManager(resultopxml.NameTable);
                 nsmgr.AddNamespace("cfg", "http://schemas.microsoft.com/wbem/wsman/1/config/service");
                 string enabled = resultopxml.SelectSingleNode(xpathEnabled, nsmgr).InnerText;
@@ -166,10 +162,11 @@ namespace Microsoft.WSMan.Management
                 {
                     source = sourceAttribute.Value;
                 }
-                string rxml = "";
+
+                string rxml = string.Empty;
                 if (enabled.Equals("true"))
                 {
-                    string Err_Msg = "";
+                    string Err_Msg = string.Empty;
                     if (serviceonly)
                     {
                         Err_Msg = WSManResourceLoader.GetResourceString("L_QuickConfigNoServiceChangesNeeded_Message");
@@ -184,6 +181,7 @@ namespace Microsoft.WSMan.Management
                     WriteObject(Err_Msg);
                     return;
                 }
+
                 if (!enabled.Equals("false"))
                 {
                     ArgumentException e = new ArgumentException(WSManResourceLoader.GetResourceString("L_QuickConfig_InvalidBool_0_ErrorMessage"));
@@ -193,9 +191,9 @@ namespace Microsoft.WSMan.Management
                 }
 
                 string resultAction = resultopxml.SelectSingleNode(xpathText, nsmgr).InnerText;
-                if ( source != null && source.Equals("GPO"))
+                if (source != null && source.Equals("GPO"))
                 {
-                    String Info_Msg = WSManResourceLoader.GetResourceString("L_QuickConfig_RemotingDisabledbyGP_00_ErrorMessage");
+                    string Info_Msg = WSManResourceLoader.GetResourceString("L_QuickConfig_RemotingDisabledbyGP_00_ErrorMessage");
                     Info_Msg += " " + resultAction;
                     ArgumentException e = new ArgumentException(Info_Msg);
                     WriteError(new ErrorRecord(e, "NotSpecified", ErrorCategory.NotSpecified, null));
@@ -203,7 +201,7 @@ namespace Microsoft.WSMan.Management
                 }
 
                 string inputXml = resultopxml.SelectSingleNode(xpathUpdate, nsmgr).OuterXml;
-                if (resultAction.Equals("") || inputXml.Equals(""))
+                if (resultAction.Equals(string.Empty) || inputXml.Equals(string.Empty))
                 {
                     ArgumentException e = new ArgumentException(WSManResourceLoader.GetResourceString("L_ERR_Message") + WSManResourceLoader.GetResourceString("L_QuickConfig_MissingUpdateXml_0_ErrorMessage"));
                     ErrorRecord er = new ErrorRecord(e, "InvalidOperation", ErrorCategory.InvalidOperation, null);
@@ -219,6 +217,7 @@ namespace Microsoft.WSMan.Management
                 {
                     action = "EnableRemoting";
                 }
+
                 rxml = m_SessionObj.Invoke(action, "winrm/config/service", inputXml, 0);
                 XmlDocument finalxml = new XmlDocument();
                 finalxml.LoadXml(rxml);
@@ -233,7 +232,8 @@ namespace Microsoft.WSMan.Management
                     xpathStatus = "/cfg:EnableRemoting_OUTPUT/cfg:Status";
                     xpathResult = "/cfg:EnableRemoting_OUTPUT/cfg:Results";
                 }
-                if (finalxml.SelectSingleNode(xpathStatus, nsmgr).InnerText.ToString().Equals("succeeded"))
+
+                if (finalxml.SelectSingleNode(xpathStatus, nsmgr).InnerText.Equals("succeeded"))
                 {
                     if (serviceonly)
                     {
@@ -243,6 +243,7 @@ namespace Microsoft.WSMan.Management
                     {
                         WriteObject(WSManResourceLoader.GetResourceString("L_QuickConfigUpdated_Message"));
                     }
+
                     WriteObject(finalxml.SelectSingleNode(xpathResult, nsmgr).InnerText);
                 }
                 else
@@ -252,13 +253,13 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (!String.IsNullOrEmpty(m_SessionObj.Error))
+                if (!string.IsNullOrEmpty(m_SessionObj.Error))
                 {
                     helper.AssertError(m_SessionObj.Error, true, null);
                 }
+
                 if (m_SessionObj != null)
                     Dispose(m_SessionObj);
-
             }
         }
         #endregion private
@@ -266,17 +267,17 @@ namespace Microsoft.WSMan.Management
         #region IDisposable Members
 
         /// <summary>
-        /// public dispose method
+        /// Public dispose method.
         /// </summary>
         public
         void
         Dispose()
         {
-            //CleanUp();
+            // CleanUp();
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// public dispose method
+        /// Public dispose method.
         /// </summary>
         public
         void
@@ -287,7 +288,6 @@ namespace Microsoft.WSMan.Management
         }
 
         #endregion IDisposable Members
-
-    }//End Class
+    }
     #endregion Set-WsManQuickConfig
 }

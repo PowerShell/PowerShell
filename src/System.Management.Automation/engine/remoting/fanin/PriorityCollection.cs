@@ -1,16 +1,15 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation.  All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Tracing;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
-    /// 
     /// </summary>
     internal enum DataPriorityType : int
     {
@@ -22,7 +21,7 @@ namespace System.Management.Automation.Remoting
         Default = 0,
 
         /// <summary>
-        /// PromptReponse may be sent with or without priority considerations.
+        /// PromptResponse may be sent with or without priority considerations.
         /// Large data objects will be fragmented so that each fragmented piece can
         /// fit into one message.
         /// </summary>
@@ -46,9 +45,11 @@ namespace System.Management.Automation.Remoting
         // actual data store(s) to store priority based data and its
         // corresponding sync objects to provide thread safety.
         private SerializedDataStream[] _dataToBeSent;
+        // array of sync objects, one for each element in _dataToBeSent
+        private object[] _dataSyncObjects;
+
         // fragmentor used to serialize & fragment objects added to this collection.
         private Fragmentor _fragmentor;
-        private object[] _syncObjects;
 
         // callbacks used if no data is available at any time.
         // these callbacks are used to notify when data becomes available under
@@ -62,7 +63,7 @@ namespace System.Management.Automation.Remoting
         /// Callback that is called once a fragmented data is available to send.
         /// </summary>
         /// <param name="data">
-        /// Fragemented object that can be sent to the remote end.
+        /// Fragmented object that can be sent to the remote end.
         /// </param>
         /// <param name="priorityType">
         /// Priority stream to which <paramref name="data"/> belongs to.
@@ -71,7 +72,7 @@ namespace System.Management.Automation.Remoting
 
         #endregion
 
-        #region  Constructor
+        #region Constructor
 
         /// <summary>
         /// Constructs a PrioritySendDataCollection object.
@@ -88,18 +89,19 @@ namespace System.Management.Automation.Remoting
         internal Fragmentor Fragmentor
         {
             get { return _fragmentor; }
+
             set
             {
-                Dbg.Assert(null != value, "Fragmentor cannot be null.");
+                Dbg.Assert(value != null, "Fragmentor cannot be null.");
                 _fragmentor = value;
                 // create serialized streams using fragment size.
                 string[] names = Enum.GetNames(typeof(DataPriorityType));
                 _dataToBeSent = new SerializedDataStream[names.Length];
-                _syncObjects = new object[names.Length];
+                _dataSyncObjects = new object[names.Length];
                 for (int i = 0; i < names.Length; i++)
                 {
                     _dataToBeSent[i] = new SerializedDataStream(_fragmentor.FragmentSize);
-                    _syncObjects[i] = new object();
+                    _dataSyncObjects[i] = new object();
                 }
             }
         }
@@ -119,14 +121,14 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal void Add<T>(RemoteDataObject<T> data, DataPriorityType priority)
         {
-            Dbg.Assert(null != data, "Cannot send null data object");
-            Dbg.Assert(null != _fragmentor, "Fragmentor cannot be null while adding objects");
-            Dbg.Assert(null != _dataToBeSent, "Serialized streams are not initialized");
+            Dbg.Assert(data != null, "Cannot send null data object");
+            Dbg.Assert(_fragmentor != null, "Fragmentor cannot be null while adding objects");
+            Dbg.Assert(_dataToBeSent != null, "Serialized streams are not initialized");
 
             // make sure the only one object is fragmented and added to the collection
-            // at any give time. This way the order of fragmenets is maintained
+            // at any give time. This way the order of fragment is maintained
             // in the SendDataCollection(s).
-            lock (_syncObjects[(int)priority])
+            lock (_dataSyncObjects[(int)priority])
             {
                 _fragmentor.Fragment<T>(data, _dataToBeSent[(int)priority]);
             }
@@ -136,7 +138,7 @@ namespace System.Management.Automation.Remoting
         /// Adds data to this collection. The data is fragmented in this method
         /// before being stored into the collection. So the calling thread
         /// will get affected, if it tries to add a huge object.
-        /// 
+        ///
         /// The data is added with Default priority.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -154,25 +156,43 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void Clear()
         {
-            Dbg.Assert(null != _dataToBeSent, "Serialized streams are not initialized");
-            lock (_syncObjects[(int)DataPriorityType.PromptResponse])
+            /*
+                NOTE: Error paths during initialization can cause _dataSyncObjects to be null
+                causing an unhandled exception in finalize and a process crash.
+                Verify arrays and dataToBeSent objects before referencing.
+            */
+            if (_dataSyncObjects != null && _dataToBeSent != null)
             {
-                _dataToBeSent[(int)DataPriorityType.PromptResponse].Dispose();
-            }
+                int promptResponseIndex = (int)DataPriorityType.PromptResponse;
+                int defaultIndex = (int)DataPriorityType.Default;
 
-            lock (_syncObjects[(int)DataPriorityType.Default])
-            {
-                _dataToBeSent[(int)DataPriorityType.Default].Dispose();
+                lock (_dataSyncObjects[promptResponseIndex])
+                {
+                    if (_dataToBeSent[promptResponseIndex] != null)
+                    {
+                        _dataToBeSent[promptResponseIndex].Dispose();
+                        _dataToBeSent[promptResponseIndex] = null;
+                    }
+                }
+
+                lock (_dataSyncObjects[defaultIndex])
+                {
+                    if (_dataToBeSent[defaultIndex] != null)
+                    {
+                        _dataToBeSent[defaultIndex].Dispose();
+                        _dataToBeSent[defaultIndex] = null;
+                    }
+                }
             }
         }
 
         /// <summary>
         /// Gets the fragment or if no fragment is available registers the callback which
-        /// gets called once a fragment is available. These 2 steps are performed in a 
+        /// gets called once a fragment is available. These 2 steps are performed in a
         /// synchronized way.
-        /// 
+        ///
         /// While getting a fragment the following algorithm is used:
-        /// 1. If this is the first time or if the last fragement read is an EndFragment,
+        /// 1. If this is the first time or if the last fragment read is an EndFragment,
         ///    then a new set of fragments is chosen based on the implicit priority.
         ///    PromptResponse is higher in priority order than default.
         /// 2. If last fragment read is not an EndFragment, then next fragment is chosen from
@@ -189,7 +209,7 @@ namespace System.Management.Automation.Remoting
         /// is undefined.
         /// </param>
         /// <returns>
-        /// A FragementRemoteObject if available, otherwise null.
+        /// A FragmentRemoteObject if available, otherwise null.
         /// </returns>
         internal byte[] ReadOrRegisterCallback(OnDataAvailableCallback callback,
             out DataPriorityType priorityType)
@@ -203,13 +223,13 @@ namespace System.Management.Automation.Remoting
                 result = _dataToBeSent[(int)DataPriorityType.PromptResponse].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
                 priorityType = DataPriorityType.PromptResponse;
 
-                if (null == result)
+                if (result == null)
                 {
                     result = _dataToBeSent[(int)DataPriorityType.Default].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
                     priorityType = DataPriorityType.Default;
                 }
                 // no data to return..so register the callback.
-                if (null == result)
+                if (result == null)
                 {
                     // register callback.
                     _onDataAvailableCallback = callback;
@@ -233,13 +253,13 @@ namespace System.Management.Automation.Remoting
                 _isHandlingCallback = true;
             }
 
-            if (null != _onDataAvailableCallback)
+            if (_onDataAvailableCallback != null)
             {
                 DataPriorityType prType;
                 // now get the fragment and call the callback..
                 byte[] result = ReadOrRegisterCallback(_onDataAvailableCallback, out prType);
 
-                if (null != result)
+                if (result != null)
                 {
                     // reset the onDataAvailableCallback so that we dont notify
                     // multiple times. we are resetting before actually calling
@@ -284,16 +304,16 @@ namespace System.Management.Automation.Remoting
         private MemoryStream _pendingDataStream;
         // the idea is to maintain 1 whole object.
         // 1 whole object may contain any number of fragments. blob from
-        // each fragement is written to this stream.
+        // each fragment is written to this stream.
         private MemoryStream _dataToProcessStream;
         private long _currentObjectId;
         private long _currentFrgId;
-        // max deseriazlied object size in bytes
-        private Nullable<int> _maxReceivedObjectSize;
+        // max deserialized object size in bytes
+        private int? _maxReceivedObjectSize;
         private int _totalReceivedObjectSizeSoFar;
         private bool _isCreateByClientTM;
 
-        // this indicates if any off sync fragments canbe ignored
+        // this indicates if any off sync fragments can be ignored
         // this gets reset (to false) upon receiving the next "start" fragment along the stream
         private bool _canIgnoreOffSyncFragments = false;
 
@@ -326,7 +346,6 @@ namespace System.Management.Automation.Remoting
 
         #region Constructor
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="defragmentor">
         /// Defragmentor used to deserialize an object.
@@ -337,12 +356,12 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal ReceiveDataCollection(Fragmentor defragmentor, bool createdByClientTM)
         {
-            Dbg.Assert(null != defragmentor, "ReceiveDataCollection needs a defragmentor to work with");
+            Dbg.Assert(defragmentor != null, "ReceiveDataCollection needs a defragmentor to work with");
 
-            // Memory streams created with an unsigned byte array provide a non-resizable stream view 
+            // Memory streams created with an unsigned byte array provide a non-resizable stream view
             // of the data, and can only be written to. When using a byte array, you can neither append
-            // to nor shrink the stream, although you might be able to modify the existing contents 
-            // depending on the parameters passed into the constructor. Empty memory streams are 
+            // to nor shrink the stream, although you might be able to modify the existing contents
+            // depending on the parameters passed into the constructor. Empty memory streams are
             // resizable, and can be written to and read from.
             _pendingDataStream = new MemoryStream();
             _syncObject = new object();
@@ -357,14 +376,14 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Limits the deserialized object size received from a remote machine.
         /// </summary>
-        internal Nullable<int> MaximumReceivedObjectSize
+        internal int? MaximumReceivedObjectSize
         {
             set { _maxReceivedObjectSize = value; }
         }
 
         /// <summary>
-        /// This might be needed only for ServerCommandTransportManager case 
-        /// where the command is run in the same thread that runs ProcessRawData 
+        /// This might be needed only for ServerCommandTransportManager case
+        /// where the command is run in the same thread that runs ProcessRawData
         /// (to avoid thread context switch). By default this class supports
         /// only one thread in ProcessRawData.
         /// </summary>
@@ -375,9 +394,9 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Prepares the collection for a stream connect
-        ///     When reconneting from same client, its possible that fragment stream get interrupted if server is dropping data
+        ///     When reconnecting from same client, its possible that fragment stream get interrupted if server is dropping data
         ///     When connecting from a new client, its possible to get trailing fragments of a previously partially transmitted object
-        ///     Logic based on this flag, ensures such offsync/trailing fragments get ignored until the next full object starts flowing
+        ///     Logic based on this flag, ensures such offsync/trailing fragments get ignored until the next full object starts flowing.
         /// </summary>
         internal void PrepareForStreamConnect()
         {
@@ -386,8 +405,8 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Process data coming from the transport. This method analyses the data
-        /// and if an object can be created, it creates one and calls the 
-        /// <paramref name="callback"/> with the deserialized object. This method 
+        /// and if an object can be created, it creates one and calls the
+        /// <paramref name="callback"/> with the deserialized object. This method
         /// does not assume all fragments to be available. So if not enough fragments are
         /// available it will simply return..
         /// </summary>
@@ -401,9 +420,9 @@ namespace System.Management.Automation.Remoting
         /// Defragmented Object if any, otherwise null.
         /// </returns>
         /// <exception cref="PSRemotingTransportException">
-        /// 1. Fragmet Ids not in sequence
+        /// 1. Fragment Ids not in sequence
         /// 2. Object Ids does not match
-        /// 3. The current deserialized object size of the received data exceeded 
+        /// 3. The current deserialized object size of the received data exceeded
         /// allowed maximum object size. The current deserialized object size is {0}.
         /// Allowed maximum object size is {1}.
         /// </exception>
@@ -412,8 +431,8 @@ namespace System.Management.Automation.Remoting
         /// </remarks>
         internal void ProcessRawData(byte[] data, OnDataAvailableCallback callback)
         {
-            Dbg.Assert(null != data, "Cannot process null data");
-            Dbg.Assert(null != callback, "Callback cannot be null");
+            Dbg.Assert(data != null, "Cannot process null data");
+            Dbg.Assert(callback != null, "Callback cannot be null");
 
             lock (_syncObject)
             {
@@ -477,8 +496,8 @@ namespace System.Management.Automation.Remoting
                     }
                     catch (System.OverflowException)
                     {
-                        s_baseTracer.WriteLine("Fragement too big.");
-                        ResetRecieveData();
+                        s_baseTracer.WriteLine("Fragment too big.");
+                        ResetReceiveData();
                         PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.ObjectIsTooBig);
                         throw e;
                     }
@@ -513,12 +532,12 @@ namespace System.Management.Automation.Remoting
                                       _totalReceivedObjectSizeSoFar, _maxReceivedObjectSize);
                             }
 
-                            ResetRecieveData();
+                            ResetReceiveData();
                             throw e;
                         }
                     }
 
-                    // appears like stream doesn't have individual postion marker for read and write
+                    // appears like stream doesn't have individual position marker for read and write
                     // since we are going to read from now...
                     _pendingDataStream.Seek(0, SeekOrigin.Begin);
 
@@ -549,19 +568,19 @@ namespace System.Management.Automation.Remoting
                     // reset incoming stream.
                     _pendingDataStream.Dispose();
                     _pendingDataStream = new MemoryStream();
-                    if (null != extraData)
+                    if (extraData != null)
                     {
                         _pendingDataStream.Write(extraData, 0, extraData.Length);
                     }
 
                     if (sFlag)
                     {
-                        _canIgnoreOffSyncFragments = false; //reset this upon receiving a start fragment of a fresh object
+                        _canIgnoreOffSyncFragments = false; // reset this upon receiving a start fragment of a fresh object
                         _currentObjectId = objectId;
-                        // Memory streams created with an unsigned byte array provide a non-resizable stream view 
+                        // Memory streams created with an unsigned byte array provide a non-resizable stream view
                         // of the data, and can only be written to. When using a byte array, you can neither append
-                        // to nor shrink the stream, although you might be able to modify the existing contents 
-                        // depending on the parameters passed into the constructor. Empty memory streams are 
+                        // to nor shrink the stream, although you might be able to modify the existing contents
+                        // depending on the parameters passed into the constructor. Empty memory streams are
                         // resizable, and can be written to and read from.
                         _dataToProcessStream = new MemoryStream();
                     }
@@ -571,8 +590,8 @@ namespace System.Management.Automation.Remoting
                         if (objectId != _currentObjectId)
                         {
                             s_baseTracer.WriteLine("ObjectId != CurrentObjectId");
-                            //TODO - drop an ETW event 
-                            ResetRecieveData();
+                            // TODO - drop an ETW event
+                            ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
                             {
                                 PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.ObjectIdsNotMatching);
@@ -588,11 +607,11 @@ namespace System.Management.Automation.Remoting
                         if (fragmentId != (_currentFrgId + 1))
                         {
                             s_baseTracer.WriteLine("Fragment Id is not in sequence.");
-                            //TODO - drop an ETW event 
-                            ResetRecieveData();
+                            // TODO - drop an ETW event
+                            ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
                             {
-                                PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.FragmetIdsNotInSequence);
+                                PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.FragmentIdsNotInSequence);
                                 throw e;
                             }
                             else
@@ -612,7 +631,7 @@ namespace System.Management.Automation.Remoting
                     {
                         try
                         {
-                            // appears like stream doesn't individual postion marker for read and write
+                            // appears like stream doesn't individual position marker for read and write
                             // since we are going to read from now..i am resetting position to 0.
                             _dataToProcessStream.Seek(0, SeekOrigin.Begin);
                             RemoteDataObject<PSObject> remoteObject = RemoteDataObject<PSObject>.CreateFrom(_dataToProcessStream, _defragmentor);
@@ -624,7 +643,7 @@ namespace System.Management.Automation.Remoting
                         finally
                         {
                             // Reset the receive data buffers and start the process again.
-                            ResetRecieveData();
+                            ResetReceiveData();
                         }
 
                         if (_isDisposed)
@@ -642,6 +661,7 @@ namespace System.Management.Automation.Remoting
                     {
                         ReleaseResources();
                     }
+
                     _numberOfThreadsProcessing--;
                 }
             }
@@ -650,13 +670,14 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Resets the store(s) holding received data.
         /// </summary>
-        private void ResetRecieveData()
+        private void ResetReceiveData()
         {
             // reset resources used to store incoming data (for a single object)
-            if (null != _dataToProcessStream)
+            if (_dataToProcessStream != null)
             {
                 _dataToProcessStream.Dispose();
             }
+
             _currentObjectId = 0;
             _currentFrgId = 0;
             _totalReceivedObjectSizeSoFar = 0;
@@ -664,13 +685,13 @@ namespace System.Management.Automation.Remoting
 
         private void ReleaseResources()
         {
-            if (null != _pendingDataStream)
+            if (_pendingDataStream != null)
             {
                 _pendingDataStream.Dispose();
                 _pendingDataStream = null;
             }
 
-            if (null != _dataToProcessStream)
+            if (_dataToProcessStream != null)
             {
                 _dataToProcessStream.Dispose();
                 _dataToProcessStream = null;
@@ -708,7 +729,7 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    /// DataStructure used by different remoting protocol / 
+    /// DataStructure used by different remoting protocol /
     /// DataStructures to receive data from transport manager.
     /// This class holds the responsibility of defragmenting and
     /// deserializing.
@@ -726,7 +747,7 @@ namespace System.Management.Automation.Remoting
         #region Constructor
 
         /// <summary>
-        /// Construct a priority recieve data collection
+        /// Construct a priority receive data collection.
         /// </summary>
         /// <param name="defragmentor">Defragmentor used to deserialize an object.</param>
         /// <param name="createdByClientTM">
@@ -742,6 +763,7 @@ namespace System.Management.Automation.Remoting
             {
                 _recvdData[index] = new ReceiveDataCollection(defragmentor, createdByClientTM);
             }
+
             _isCreateByClientTM = createdByClientTM;
         }
         #endregion
@@ -751,7 +773,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Limits the total data received from a remote machine.
         /// </summary>
-        internal Nullable<int> MaximumReceivedDataSize
+        internal int? MaximumReceivedDataSize
         {
             set
             {
@@ -762,7 +784,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Limits the deserialized object size received from a remote machine.
         /// </summary>
-        internal Nullable<int> MaximumReceivedObjectSize
+        internal int? MaximumReceivedObjectSize
         {
             set
             {
@@ -773,9 +795,8 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-
         /// <summary>
-        /// Prepares receive data streams for a reconnection
+        /// Prepares receive data streams for a reconnection.
         /// </summary>
         internal void PrepareForStreamConnect()
         {
@@ -785,10 +806,9 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-
         /// <summary>
-        /// This might be needed only for ServerCommandTransportManager case 
-        /// where the command is run in the same thread that runs ProcessRawData 
+        /// This might be needed only for ServerCommandTransportManager case
+        /// where the command is run in the same thread that runs ProcessRawData
         /// (to avoid thread context switch). By default this class supports
         /// only one thread in ProcessRawData.
         /// </summary>
@@ -802,8 +822,8 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Process data coming from the transport. This method analyses the data
-        /// and if an object can be created, it creates one and calls the 
-        /// <paramref name="callback"/> with the deserialized object. This method 
+        /// and if an object can be created, it creates one and calls the
+        /// <paramref name="callback"/> with the deserialized object. This method
         /// does not assume all fragments to be available. So if not enough fragments are
         /// available it will simply return..
         /// </summary>
@@ -811,7 +831,7 @@ namespace System.Management.Automation.Remoting
         /// Data to process.
         /// </param>
         /// <param name="priorityType">
-        /// Priorty stream this data belongs to.
+        /// Priority stream this data belongs to.
         /// </param>
         /// <param name="callback">
         /// Callback to call once a complete deserialized object is available.
@@ -820,12 +840,12 @@ namespace System.Management.Automation.Remoting
         /// Defragmented Object if any, otherwise null.
         /// </returns>
         /// <exception cref="PSRemotingTransportException">
-        /// 1. Fragmet Ids not in sequence
+        /// 1. Fragment Ids not in sequence
         /// 2. Object Ids does not match
-        /// 3. The current deserialized object size of the received data exceeded 
+        /// 3. The current deserialized object size of the received data exceeded
         /// allowed maximum object size. The current deserialized object size is {0}.
         /// Allowed maximum object size is {1}.
-        /// 4.The total data received from the remote machine exceeded allowed maximum. 
+        /// 4.The total data received from the remote machine exceeded allowed maximum.
         /// The total data received from remote machine is {0}. Allowed maximum is {1}.
         /// </exception>
         /// <remarks>
@@ -835,7 +855,7 @@ namespace System.Management.Automation.Remoting
             DataPriorityType priorityType,
             ReceiveDataCollection.OnDataAvailableCallback callback)
         {
-            Dbg.Assert(null != data, "Cannot process null data");
+            Dbg.Assert(data != null, "Cannot process null data");
 
             try
             {
@@ -882,7 +902,7 @@ namespace System.Management.Automation.Remoting
 
         internal virtual void Dispose(bool isDisposing)
         {
-            if (null != _recvdData)
+            if (_recvdData != null)
             {
                 for (int index = 0; index < _recvdData.Length; index++)
                 {

@@ -1,4 +1,0 @@
-{
-    "monad/src/CoreCLR/CorePsAssemblyLoadContext.cs":  "CoreCLR/CorePsAssemblyLoadContext.cs",
-    "monad/src/CoreCLR/AssemblyMetadataHelper.cs": "CoreCLR/AssemblyMetadataHelper.cs"
-}

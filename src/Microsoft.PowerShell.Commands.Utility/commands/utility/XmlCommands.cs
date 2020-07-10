@@ -1,12 +1,10 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -19,9 +17,9 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// implementation for the Export-Clixml command
+    /// Implementation for the Export-Clixml command.
     /// </summary>
-    [Cmdlet(VerbsData.Export, "Clixml", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113297")]
+    [Cmdlet(VerbsData.Export, "Clixml", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096926")]
     public sealed class ExportClixmlCommand : PSCmdlet, IDisposable
     {
         #region Command Line Parameters
@@ -30,39 +28,41 @@ namespace Microsoft.PowerShell.Commands
         // implementation will need to be modified.
 
         /// <summary>
-        /// Depth of serialization
+        /// Depth of serialization.
         /// </summary>
         [Parameter]
         [ValidateRange(1, int.MaxValue)]
         public int Depth { get; set; } = 0;
 
         /// <summary>
-        /// mandatory file name to write to
+        /// Mandatory file name to write to.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByPath")]
         public string Path { get; set; }
 
         /// <summary>
-        /// mandatory file name to write to
+        /// Mandatory file name to write to.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ByLiteralPath")]
-        [Alias("PSPath")]
+        [Alias("PSPath", "LP")]
         public string LiteralPath
         {
             get
             {
                 return Path;
             }
+
             set
             {
                 Path = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
-        /// Input object to be exported
+        /// Input object to be exported.
         /// </summary>
         [Parameter(ValueFromPipeline = true, Mandatory = true)]
         [AllowNull]
@@ -78,11 +78,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -96,27 +98,30 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _noclobber;
             }
+
             set
             {
                 _noclobber = value;
             }
         }
+
         private bool _noclobber;
 
         /// <summary>
-        /// Encoding optional flag
+        /// Encoding optional flag.
         /// </summary>
-        /// 
         [Parameter]
-        [ValidateSetAttribute(new string[] { "Unicode", "UTF7", "UTF8", "ASCII", "UTF32", "BigEndianUnicode", "Default", "OEM" })]
-        public string Encoding { get; set; } = "Unicode";
+        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentEncodingCompletionsAttribute]
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         #endregion Command Line Parameters
 
         #region Overrides
 
         /// <summary>
-        /// BeginProcessing override
+        /// BeginProcessing override.
         /// </summary>
         protected override
         void
@@ -125,15 +130,13 @@ namespace Microsoft.PowerShell.Commands
             CreateFileStream();
         }
 
-
         /// <summary>
-        /// 
         /// </summary>
         protected override
         void
         ProcessRecord()
         {
-            if (null != _serializer)
+            if (_serializer != null)
             {
                 _serializer.Serialize(InputObject);
                 _xw.Flush();
@@ -141,7 +144,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         protected override
         void
@@ -152,11 +154,11 @@ namespace Microsoft.PowerShell.Commands
                 _serializer.Done();
                 _serializer = null;
             }
+
             CleanUp();
         }
 
         /// <summary>
-        /// 
         /// </summary>
         protected override void StopProcessing()
         {
@@ -169,22 +171,22 @@ namespace Microsoft.PowerShell.Commands
         #region file
 
         /// <summary>
-        /// handle to file stream
+        /// Handle to file stream.
         /// </summary>
         private FileStream _fs;
 
         /// <summary>
-        /// stream writer used to write to file
+        /// Stream writer used to write to file.
         /// </summary>
         private XmlWriter _xw;
 
         /// <summary>
-        /// Serializer used for serialization
+        /// Serializer used for serialization.
         /// </summary>
         private Serializer _serializer;
 
         /// <summary>
-        /// FileInfo of file to clear read-only flag when operation is complete
+        /// FileInfo of file to clear read-only flag when operation is complete.
         /// </summary>
         private FileInfo _readOnlyFileInfo = null;
 
@@ -237,14 +239,9 @@ namespace Microsoft.PowerShell.Commands
                     _xw.Dispose();
                     _xw = null;
                 }
+
                 _fs.Dispose();
                 _fs = null;
-            }
-            // reset the read-only attribute
-            if (null != _readOnlyFileInfo)
-            {
-                _readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
-                _readOnlyFileInfo = null;
             }
         }
 
@@ -253,12 +250,12 @@ namespace Microsoft.PowerShell.Commands
         #region IDisposable Members
 
         /// <summary>
-        /// Set to true when object is disposed
+        /// Set to true when object is disposed.
         /// </summary>
         private bool _disposed;
 
         /// <summary>
-        /// public dispose method
+        /// Public dispose method.
         /// </summary>
         public
         void
@@ -268,6 +265,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 CleanUp();
             }
+
             _disposed = true;
         }
 
@@ -275,39 +273,39 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Implements Import-Clixml command
+    /// Implements Import-Clixml command.
     /// </summary>
-    [Cmdlet(VerbsData.Import, "Clixml", SupportsPaging = true, DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113340")]
+    [Cmdlet(VerbsData.Import, "Clixml", SupportsPaging = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096618")]
     public sealed class ImportClixmlCommand : PSCmdlet, IDisposable
     {
         #region Command Line Parameters
 
         /// <summary>
-        /// mandatory file name to read from
+        /// Mandatory file name to read from.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
-        public String[] Path { get; set; }
+        public string[] Path { get; set; }
 
         /// <summary>
-        /// mandatory file name to read from
+        /// Mandatory file name to read from.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
-        [Alias("PSPath")]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] LiteralPath
+        [Alias("PSPath", "LP")]
+        public string[] LiteralPath
         {
             get
             {
                 return Path;
             }
+
             set
             {
                 Path = value;
                 _isLiteralPath = true;
             }
         }
-        private bool _isLiteralPath = false;
 
+        private bool _isLiteralPath = false;
 
         #endregion Command Line Parameters
 
@@ -316,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _disposed = false;
 
         /// <summary>
-        /// public dispose method
+        /// Public dispose method.
         /// </summary>
         public void Dispose()
         {
@@ -328,6 +326,7 @@ namespace Microsoft.PowerShell.Commands
                     _helper.Dispose();
                     _helper = null;
                 }
+
                 _disposed = true;
             }
         }
@@ -337,7 +336,7 @@ namespace Microsoft.PowerShell.Commands
         private ImportXmlHelper _helper;
 
         /// <summary>
-        /// ProcessRecord overload
+        /// ProcessRecord overload.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -352,7 +351,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// </summary>
         protected override void StopProcessing()
         {
@@ -361,33 +359,29 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-
     /// <summary>
-    /// implementation for the convertto-xml command
+    /// Implementation for the convertto-xml command.
     /// </summary>
     [Cmdlet(VerbsData.ConvertTo, "Xml", SupportsShouldProcess = false,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135204", RemotingCapability = RemotingCapability.None)]
-    [OutputType(typeof(XmlDocument), typeof(String))]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096603", RemotingCapability = RemotingCapability.None)]
+    [OutputType(typeof(XmlDocument), typeof(string))]
     public sealed class ConvertToXmlCommand : PSCmdlet, IDisposable
     {
         #region Command Line Parameters
 
-
         /// <summary>
-        /// Depth of serialization
+        /// Depth of serialization.
         /// </summary>
         [Parameter(HelpMessage = "Specifies how many levels of contained objects should be included in the XML representation")]
         [ValidateRange(1, int.MaxValue)]
         public int Depth { get; set; } = 0;
 
-
         /// <summary>
-        /// Input Object which is written to XML format
+        /// Input Object which is written to XML format.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true)]
         [AllowNull]
         public PSObject InputObject { get; set; }
-
 
         /// <summary>
         /// Property that sets NoTypeInformation parameter.
@@ -399,11 +393,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _notypeinformation;
             }
+
             set
             {
                 _notypeinformation = value;
             }
         }
+
         private bool _notypeinformation;
 
         /// <summary>
@@ -416,11 +412,10 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Command Line Parameters
 
-
         #region Overrides
 
         /// <summary>
-        /// BeginProcessing override
+        /// BeginProcessing override.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -435,9 +430,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         /// <summary>
-        /// override ProcessRecord
+        /// Override ProcessRecord.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -445,37 +439,35 @@ namespace Microsoft.PowerShell.Commands
             {
                 CreateMemoryStream();
 
-                if (null != _serializer)
+                if (_serializer != null)
                     _serializer.SerializeAsStream(InputObject);
 
-
-                if (null != _serializer)
+                if (_serializer != null)
                 {
                     _serializer.DoneAsStream();
                     _serializer = null;
                 }
-                //Loading to the XML Document 
+                // Loading to the XML Document
                 _ms.Position = 0;
                 StreamReader read = new StreamReader(_ms);
                 string data = read.ReadToEnd();
                 WriteObject(data);
 
-                //Cleanup
+                // Cleanup
                 CleanUp();
             }
             else
             {
-                if (null != _serializer)
+                if (_serializer != null)
                     _serializer.Serialize(InputObject);
             }
         }
 
         /// <summary>
-        /// 
         /// </summary>
         protected override void EndProcessing()
         {
-            if (null != _serializer)
+            if (_serializer != null)
             {
                 _serializer.Done();
                 _serializer = null;
@@ -487,7 +479,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                //Loading to the XML Document 
+                // Loading to the XML Document
                 _ms.Position = 0;
                 if (As.Equals("Document", StringComparison.OrdinalIgnoreCase))
                 {
@@ -504,12 +496,12 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            //Cleaning up
+            // Cleaning up
             CleanUp();
         }
 
         /// <summary>
-        /// 
+        /// StopProcessing.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -521,17 +513,17 @@ namespace Microsoft.PowerShell.Commands
         #region memory
 
         /// <summary>
-        /// XmlText writer 
+        /// XmlText writer.
         /// </summary>
         private XmlWriter _xw;
 
         /// <summary>
-        /// Serializer used for serialization
+        /// Serializer used for serialization.
         /// </summary>
         private CustomSerialization _serializer;
 
         /// <summary>
-        ///Memory Stream used for  serialization
+        /// Memory Stream used for serialization.
         /// </summary>
         private MemoryStream _ms;
 
@@ -564,7 +556,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (As.Equals("Stream", StringComparison.OrdinalIgnoreCase))
             {
-                // Omit xml declaration in this case becuase we will write out the declaration string in BeginProcess.
+                // Omit xml declaration in this case because we will write out the declaration string in BeginProcess.
                 xmlSettings.OmitXmlDeclaration = true;
             }
 
@@ -572,16 +564,16 @@ namespace Microsoft.PowerShell.Commands
 
             if (Depth == 0)
             {
-                _serializer = new CustomSerialization(_xw, _notypeinformation);
+                _serializer = new CustomSerialization(_xw, NoTypeInformation);
             }
             else
             {
-                _serializer = new CustomSerialization(_xw, _notypeinformation, Depth);
+                _serializer = new CustomSerialization(_xw, NoTypeInformation, Depth);
             }
         }
 
         /// <summary>
-        ///Cleaning up the MemoryStream 
+        ///Cleaning up the MemoryStream.
         /// </summary>
         private void CleanUp()
         {
@@ -603,12 +595,12 @@ namespace Microsoft.PowerShell.Commands
         #region IDisposable Members
 
         /// <summary>
-        /// Set to true when object is disposed
+        /// Set to true when object is disposed.
         /// </summary>
         private bool _disposed;
 
         /// <summary>
-        /// public dispose method
+        /// Public dispose method.
         /// </summary>
         public
         void
@@ -618,41 +610,35 @@ namespace Microsoft.PowerShell.Commands
             {
                 CleanUp();
             }
+
             _disposed = true;
         }
 
         #endregion IDisposable Members
     }
 
-
     /// <summary>
-    /// Helper class to import single XML file
+    /// Helper class to import single XML file.
     /// </summary>
     internal class ImportXmlHelper : IDisposable
     {
         #region constructor
 
         /// <summary>
-        /// XML file to import
+        /// XML file to import.
         /// </summary>
         private readonly string _path;
 
         /// <summary>
-        /// Reference to cmdlet which is using this helper class
+        /// Reference to cmdlet which is using this helper class.
         /// </summary>
         private readonly PSCmdlet _cmdlet;
         private bool _isLiteralPath;
 
         internal ImportXmlHelper(string fileName, PSCmdlet cmdlet, bool isLiteralPath)
         {
-            if (fileName == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("fileName");
-            }
-            if (cmdlet == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("cmdlet");
-            }
+            Dbg.Assert(fileName != null, "filename is mandatory");
+            Dbg.Assert(cmdlet != null, "cmdlet is mandatory");
             _path = fileName;
             _cmdlet = cmdlet;
             _isLiteralPath = isLiteralPath;
@@ -663,12 +649,12 @@ namespace Microsoft.PowerShell.Commands
         #region file
 
         /// <summary>
-        /// handle to file stream
+        /// Handle to file stream.
         /// </summary>
         internal FileStream _fs;
 
         /// <summary>
-        /// XmlReader used to read file
+        /// XmlReader used to read file.
         /// </summary>
         internal XmlReader _xr;
 
@@ -710,12 +696,12 @@ namespace Microsoft.PowerShell.Commands
         #region IDisposable Members
 
         /// <summary>
-        /// Set to true when object is disposed
+        /// Set to true when object is disposed.
         /// </summary>
         private bool _disposed;
 
         /// <summary>
-        /// public dispose method
+        /// Public dispose method.
         /// </summary>
         public void Dispose()
         {
@@ -723,6 +709,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 CleanUp();
             }
+
             _disposed = true;
             GC.SuppressFinalize(this);
         }
@@ -742,24 +729,16 @@ namespace Microsoft.PowerShell.Commands
                 _cmdlet.WriteObject(totalCount);
             }
 
-
             ulong skip = _cmdlet.PagingParameters.Skip;
             ulong first = _cmdlet.PagingParameters.First;
 
             // if paging is not specified then keep the old V2 behavior
             if (skip == 0 && first == ulong.MaxValue)
             {
-                ulong item = 0;
                 while (!_deserializer.Done())
                 {
                     object result = _deserializer.Deserialize();
-                    if (item++ < skip)
-                        continue;
-                    if (first == 0)
-                        break;
-
                     _cmdlet.WriteObject(result);
-                    first--;
                 }
             }
             // else try to flatten the output if possible
@@ -772,35 +751,37 @@ namespace Microsoft.PowerShell.Commands
                     object result = _deserializer.Deserialize();
                     PSObject psObject = result as PSObject;
 
-                    if (psObject == null && skipped++ >= skip)
+                    if (psObject != null)
+                    {
+                        ICollection c = psObject.BaseObject as ICollection;
+                        if (c != null)
+                        {
+                            foreach (object o in c)
+                            {
+                                if (count >= first)
+                                    break;
+
+                                if (skipped++ >= skip)
+                                {
+                                    count++;
+                                    _cmdlet.WriteObject(o);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (skipped++ >= skip)
+                            {
+                                count++;
+                                _cmdlet.WriteObject(result);
+                            }
+                        }
+                    }
+                    else if (skipped++ >= skip)
                     {
                         count++;
                         _cmdlet.WriteObject(result);
                         continue;
-                    }
-
-                    ICollection c = psObject.BaseObject as ICollection;
-                    if (c != null)
-                    {
-                        foreach (object o in c)
-                        {
-                            if (count >= first)
-                                break;
-
-                            if (skipped++ >= skip)
-                            {
-                                count++;
-                                _cmdlet.WriteObject(o);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (skipped++ >= skip)
-                        {
-                            count++;
-                            _cmdlet.WriteObject(result);
-                        }
                     }
                 }
             }
@@ -813,56 +794,52 @@ namespace Microsoft.PowerShell.Commands
                 _deserializer.Stop();
             }
         }
-    } // ImportXmlHelper
+    }
 
     #region Select-Xml
     ///<summary>
     ///This cmdlet is used to search an xml document based on the XPath Query.
     ///</summary>
-    [Cmdlet(VerbsCommon.Select, "Xml", DefaultParameterSetName = "Xml", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135255")]
+    [Cmdlet(VerbsCommon.Select, "Xml", DefaultParameterSetName = "Xml", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097031")]
     [OutputType(typeof(SelectXmlInfo))]
     public class SelectXmlCommand : PSCmdlet
     {
-        # region parameters
+        #region parameters
         /// <summary>
-        /// Specifies the path which contains the xml files. The default is the current 
-        /// user directory
+        /// Specifies the path which contains the xml files. The default is the current user directory.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Position = 1, Mandatory = true,
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "Path")]
         [ValidateNotNullOrEmpty]
-        public String[] Path { get; set; }
+        public string[] Path { get; set; }
 
         /// <summary>
-        /// Specifies the literal path which contains the xml files. The default is the current 
-        /// user directory
+        /// Specifies the literal path which contains the xml files. The default is the current user directory.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralPath")]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath")]
-        public String[] LiteralPath
+        [Alias("PSPath", "LP")]
+        public string[] LiteralPath
         {
             get { return Path; }
+
             set
             {
                 Path = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
         /// The following is the definition of the input parameter "XML".
-        /// Specifies the xml Node
+        /// Specifies the xml Node.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true,
                    ParameterSetName = "Xml")]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode")]
         [Alias("Node")]
         public System.Xml.XmlNode[] Xml { get; set; }
 
@@ -870,7 +847,6 @@ namespace Microsoft.PowerShell.Commands
         /// The following is the definition of the input parameter in string format.
         /// Specifies the string format of a fully qualified xml.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Mandatory = true, ValueFromPipeline = true,
                    ParameterSetName = "Content")]
         [ValidateNotNullOrEmpty]
@@ -878,7 +854,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "Xpath".
-        /// Specifies the String in XPath language syntax. The xml documents will be 
+        /// Specifies the String in XPath language syntax. The xml documents will be
         /// searched for the nodes/values represented by this parameter.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
@@ -886,17 +862,15 @@ namespace Microsoft.PowerShell.Commands
         public string XPath { get; set; }
 
         /// <summary>
-        /// The following definition used to specify the 
-        /// NameSpace of xml.
+        /// The following definition used to specify the NameSpace of xml.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Hashtable Namespace { get; set; }
 
-        # endregion parameters
+        #endregion parameters
 
-        # region private
+        #region private
 
         private void WriteResults(XmlNodeList foundXmlNodes, string filePath)
         {
@@ -927,14 +901,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 xList = xmlNode.SelectNodes(XPath);
             }
+
             this.WriteResults(xList, filePath);
         }
 
         private void ProcessXmlFile(string filePath)
         {
-            //Cannot use ImportXMLHelper because it will throw terminating error which will 
-            //not be inline with Select-String
-            //So doing self processing of the file.
+            // Cannot use ImportXMLHelper because it will throw terminating error which will
+            // not be inline with Select-String
+            // So doing self processing of the file.
             try
             {
                 XmlDocument xmlDocument = InternalDeserializer.LoadUnsafeXmlDocument(
@@ -1023,9 +998,9 @@ namespace Microsoft.PowerShell.Commands
             return xmlns;
         }
 
-        # endregion private
+        #endregion private
 
-        #region overrdies
+        #region override
 
         /// <summary>
         /// ProcessRecord method.
@@ -1043,7 +1018,7 @@ namespace Microsoft.PowerShell.Commands
                 (ParameterSetName.Equals("Path", StringComparison.OrdinalIgnoreCase) ||
                 (ParameterSetName.Equals("LiteralPath", StringComparison.OrdinalIgnoreCase))))
             {
-                //If any file not resolved, execution stops. this is to make consistent with select-string.
+                // If any file not resolved, execution stops. this is to make consistent with select-string.
                 List<string> fullresolvedPaths = new List<string>();
                 foreach (string fpath in Path)
                 {
@@ -1058,16 +1033,18 @@ namespace Microsoft.PowerShell.Commands
                         Collection<string> resolvedPaths = GetResolvedProviderPathFromPSPath(fpath, out provider);
                         if (!provider.NameEquals(this.Context.ProviderNames.FileSystem))
                         {
-                            //Cannot open File error
+                            // Cannot open File error
                             string message = StringUtil.Format(UtilityCommonStrings.FileOpenError, provider.FullName);
                             InvalidOperationException e = new InvalidOperationException(message);
                             ErrorRecord er = new ErrorRecord(e, "ProcessingFile", ErrorCategory.InvalidOperation, fpath);
                             WriteError(er);
                             continue;
                         }
+
                         fullresolvedPaths.AddRange(resolvedPaths);
                     }
                 }
+
                 foreach (string file in fullresolvedPaths)
                 {
                     ProcessXmlFile(file);
@@ -1095,10 +1072,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 Dbg.Assert(false, "Unrecognized parameterset");
             }
-        }//End ProcessRecord()
-
+        }
         #endregion overrides
-    }//End Class
+    }
 
     /// <summary>
     /// The object returned by Select-Xml representing the result of a match.
@@ -1113,9 +1089,8 @@ namespace Microsoft.PowerShell.Commands
         private const string SimpleFormat = "{0}";
 
         /// <summary>
-        /// The XmlNode that matches search
+        /// The XmlNode that matches search.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode")]
         public XmlNode Node { get; set; }
 
         /// <summary>
@@ -1127,9 +1102,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
-                if (String.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value))
                 {
                     _path = inputStream;
                 }
@@ -1139,10 +1115,11 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private string _path;
 
         /// <summary>
-        /// The pattern used to search
+        /// The pattern used to search.
         /// </summary>
         public string Pattern { get; set; }
 
@@ -1157,7 +1134,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Return String representation of the object
+        /// Return String representation of the object.
         /// </summary>
         /// <param name="directory"></param>
         /// <returns></returns>
@@ -1173,7 +1150,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal string GetNodeText()
         {
-            string nodeText = String.Empty;
+            string nodeText = string.Empty;
             if (Node != null)
             {
                 if (Node.Value != null)
@@ -1185,6 +1162,7 @@ namespace Microsoft.PowerShell.Commands
                     nodeText = Node.InnerXml.Trim();
                 }
             }
+
             return nodeText;
         }
 
@@ -1202,7 +1180,7 @@ namespace Microsoft.PowerShell.Commands
             string relPath = _path;
             if (!relPath.Equals(inputStream))
             {
-                if (relPath.StartsWith(directory, StringComparison.CurrentCultureIgnoreCase))
+                if (relPath.StartsWith(directory, StringComparison.OrdinalIgnoreCase))
                 {
                     int offset = directory.Length;
                     if (offset < relPath.Length)
@@ -1214,6 +1192,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return relPath;
         }
 
@@ -1235,7 +1214,5 @@ namespace Microsoft.PowerShell.Commands
             }
         }
     }
-
     #endregion Select-Xml
 }
-

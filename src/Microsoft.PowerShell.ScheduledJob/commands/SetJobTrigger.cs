@@ -1,13 +1,12 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
-using System.Diagnostics;
 
 namespace Microsoft.PowerShell.ScheduledJob
 {
@@ -15,7 +14,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This cmdlet sets properties on a trigger for a ScheduledJobDefinition.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "JobTrigger", DefaultParameterSetName = SetJobTriggerCommand.DefaultParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223916")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223916")]
     [OutputType(typeof(ScheduledJobTrigger))]
     public sealed class SetJobTriggerCommand : ScheduleJobCmdletBase
     {
@@ -33,8 +32,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobTrigger[] InputObject
         {
             get { return _triggers; }
+
             set { _triggers = value; }
         }
+
         private ScheduledJobTrigger[] _triggers;
 
         /// <summary>
@@ -44,8 +45,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public Int32 DaysInterval
         {
             get { return _daysInterval; }
+
             set { _daysInterval = value; }
         }
+
         private Int32 _daysInterval = 1;
 
         /// <summary>
@@ -55,8 +58,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public Int32 WeeksInterval
         {
             get { return _weeksInterval; }
+
             set { _weeksInterval = value; }
         }
+
         private Int32 _weeksInterval = 1;
 
         /// <summary>
@@ -66,8 +71,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan RandomDelay
         {
             get { return _randomDelay; }
+
             set { _randomDelay = value; }
         }
+
         private TimeSpan _randomDelay;
 
         /// <summary>
@@ -77,8 +84,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public DateTime At
         {
             get { return _atTime; }
+
             set { _atTime = value; }
         }
+
         private DateTime _atTime;
 
         /// <summary>
@@ -90,8 +99,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public string User
         {
             get { return _user; }
+
             set { _user = value; }
         }
+
         private string _user;
 
         /// <summary>
@@ -103,8 +114,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public DayOfWeek[] DaysOfWeek
         {
             get { return _daysOfWeek; }
+
             set { _daysOfWeek = value; }
         }
+
         private DayOfWeek[] _daysOfWeek;
 
         /// <summary>
@@ -114,8 +127,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter AtStartup
         {
             get { return _atStartup; }
+
             set { _atStartup = value; }
         }
+
         private SwitchParameter _atStartup;
 
         /// <summary>
@@ -125,8 +140,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter AtLogOn
         {
             get { return _atLogon; }
+
             set { _atLogon = value; }
         }
+
         private SwitchParameter _atLogon;
 
         /// <summary>
@@ -136,8 +153,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter Once
         {
             get { return _once; }
+
             set { _once = value; }
         }
+
         private SwitchParameter _once;
 
         /// <summary>
@@ -147,8 +166,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan RepetitionInterval
         {
             get { return _repInterval; }
+
             set { _repInterval = value; }
         }
+
         private TimeSpan _repInterval;
 
         /// <summary>
@@ -158,8 +179,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan RepetitionDuration
         {
             get { return _repDuration; }
+
             set { _repDuration = value; }
         }
+
         private TimeSpan _repDuration;
 
         /// <summary>
@@ -169,8 +192,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter RepeatIndefinitely
         {
             get { return _repRepeatIndefinitely; }
+
             set { _repRepeatIndefinitely = value; }
         }
+
         private SwitchParameter _repRepeatIndefinitely;
 
         /// <summary>
@@ -180,8 +205,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter Daily
         {
             get { return _daily; }
+
             set { _daily = value; }
         }
+
         private SwitchParameter _daily;
 
         /// <summary>
@@ -191,8 +218,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter Weekly
         {
             get { return _weekly; }
+
             set { _weekly = value; }
         }
+
         private SwitchParameter _weekly;
 
         /// <summary>
@@ -202,8 +231,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter PassThru
         {
             get { return _passThru; }
+
             set { _passThru = value; }
         }
+
         private SwitchParameter _passThru;
 
         #endregion
@@ -273,31 +304,37 @@ namespace Microsoft.PowerShell.ScheduledJob
         {
             // First see if a switch parameter was set.
             List<TriggerFrequency> switchParamList = new List<TriggerFrequency>();
-            if (MyInvocation.BoundParameters.ContainsKey(_paramAtStartup))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(AtStartup)))
             {
                 switchParamList.Add(TriggerFrequency.AtStartup);
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramAtLogon))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(AtLogon)))
             {
                 switchParamList.Add(TriggerFrequency.AtLogon);
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramOnce))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(Once)))
             {
                 switchParamList.Add(TriggerFrequency.Once);
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramDaily))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(Daily)))
             {
                 switchParamList.Add(TriggerFrequency.Daily);
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramWeekly))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(Weekly)))
             {
                 switchParamList.Add(TriggerFrequency.Weekly);
             }
+
             if (switchParamList.Count > 1)
             {
                 WriteValidationError(ScheduledJobErrorStrings.ConflictingTypeParams);
                 return false;
             }
+
             newTriggerFrequency = (switchParamList.Count == 1) ? switchParamList[0] : TriggerFrequency.None;
 
             // Validate parameters against the new trigger frequency value.
@@ -339,38 +376,43 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private bool ValidateStartupParams()
         {
-            if (MyInvocation.BoundParameters.ContainsKey(_paramDaysInterval))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(DaysInterval)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidDaysInterval, ScheduledJobErrorStrings.TriggerStartUpType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramWeeksInterval))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(WeeksInterval)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidWeeksInterval, ScheduledJobErrorStrings.TriggerStartUpType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramAt))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(At)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidAtTime, ScheduledJobErrorStrings.TriggerStartUpType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramUser))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(User)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidUser, ScheduledJobErrorStrings.TriggerStartUpType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramDaysOfWeek))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(DaysOfWeek)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidDaysOfWeek, ScheduledJobErrorStrings.TriggerStartUpType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramRepetitionInterval) || MyInvocation.BoundParameters.ContainsKey(_paramRepetitionDuration) ||
-                MyInvocation.BoundParameters.ContainsKey(_paramRepetitionInfiniteDuration))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionInterval)) || MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionDuration)) ||
+                MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionInfiniteDuration)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidSetTriggerRepetition, ScheduledJobErrorStrings.TriggerStartUpType);
                 WriteValidationError(msg);
@@ -382,32 +424,36 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private bool ValidateLogonParams()
         {
-            if (MyInvocation.BoundParameters.ContainsKey(_paramDaysInterval))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(DaysInterval)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidDaysInterval, ScheduledJobErrorStrings.TriggerLogonType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramWeeksInterval))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(WeeksInterval)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidWeeksInterval, ScheduledJobErrorStrings.TriggerLogonType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramAt))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(At)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidAtTime, ScheduledJobErrorStrings.TriggerLogonType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramDaysOfWeek))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(DaysOfWeek)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidDaysOfWeek, ScheduledJobErrorStrings.TriggerLogonType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramRepetitionInterval) || MyInvocation.BoundParameters.ContainsKey(_paramRepetitionDuration) ||
-                MyInvocation.BoundParameters.ContainsKey(_paramRepetitionInfiniteDuration))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionInterval)) || MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionDuration)) ||
+                MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionInfiniteDuration)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidSetTriggerRepetition, ScheduledJobErrorStrings.TriggerLogonType);
                 WriteValidationError(msg);
@@ -419,38 +465,41 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private bool ValidateOnceParams(ScheduledJobTrigger trigger = null)
         {
-            if (MyInvocation.BoundParameters.ContainsKey(_paramDaysInterval))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(DaysInterval)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidDaysInterval, ScheduledJobErrorStrings.TriggerOnceType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramWeeksInterval))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(WeeksInterval)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidWeeksInterval, ScheduledJobErrorStrings.TriggerOnceType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramUser))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(User)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidUser, ScheduledJobErrorStrings.TriggerOnceType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramDaysOfWeek))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(DaysOfWeek)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidDaysOfWeek, ScheduledJobErrorStrings.TriggerOnceType);
                 WriteValidationError(msg);
                 return false;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey(_paramRepetitionInfiniteDuration))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionInfiniteDuration)))
             {
                 _repDuration = TimeSpan.MaxValue;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey(_paramRepetitionInterval) || MyInvocation.BoundParameters.ContainsKey(_paramRepetitionDuration) ||
-                MyInvocation.BoundParameters.ContainsKey(_paramRepetitionInfiniteDuration))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionInterval)) || MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionDuration)) ||
+                MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionInfiniteDuration)))
             {
                 // Validate Once trigger repetition parameters.
                 try
@@ -466,7 +515,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             if (trigger != null)
             {
-                if (trigger.At == null && !MyInvocation.BoundParameters.ContainsKey(_paramAt))
+                if (trigger.At == null && !MyInvocation.BoundParameters.ContainsKey(nameof(At)))
                 {
                     string msg = StringUtil.Format(ScheduledJobErrorStrings.MissingAtTime, ScheduledJobErrorStrings.TriggerOnceType);
                     WriteValidationError(msg);
@@ -479,32 +528,36 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private bool ValidateDailyParams(ScheduledJobTrigger trigger = null)
         {
-            if (MyInvocation.BoundParameters.ContainsKey(_paramDaysInterval) &&
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(DaysInterval)) &&
                 _daysInterval < 1)
             {
                 WriteValidationError(ScheduledJobErrorStrings.InvalidDaysIntervalParam);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramWeeksInterval))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(WeeksInterval)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidWeeksInterval, ScheduledJobErrorStrings.TriggerDailyType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramUser))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(User)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidUser, ScheduledJobErrorStrings.TriggerDailyType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramDaysOfWeek))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(DaysOfWeek)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidDaysOfWeek, ScheduledJobErrorStrings.TriggerDailyType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramRepetitionInterval) || MyInvocation.BoundParameters.ContainsKey(_paramRepetitionDuration) ||
-                MyInvocation.BoundParameters.ContainsKey(_paramRepetitionInfiniteDuration))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionInterval)) || MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionDuration)) ||
+                MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionInfiniteDuration)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidSetTriggerRepetition, ScheduledJobErrorStrings.TriggerDailyType);
                 WriteValidationError(msg);
@@ -513,7 +566,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             if (trigger != null)
             {
-                if (trigger.At == null && !MyInvocation.BoundParameters.ContainsKey(_paramAt))
+                if (trigger.At == null && !MyInvocation.BoundParameters.ContainsKey(nameof(At)))
                 {
                     string msg = StringUtil.Format(ScheduledJobErrorStrings.MissingAtTime, ScheduledJobErrorStrings.TriggerDailyType);
                     WriteValidationError(msg);
@@ -526,26 +579,29 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private bool ValidateWeeklyParams(ScheduledJobTrigger trigger = null)
         {
-            if (MyInvocation.BoundParameters.ContainsKey(_paramDaysInterval))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(DaysInterval)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidDaysInterval, ScheduledJobErrorStrings.TriggerWeeklyType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramWeeksInterval) &&
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(WeeksInterval)) &&
                 _weeksInterval < 1)
             {
                 WriteValidationError(ScheduledJobErrorStrings.InvalidWeeksIntervalParam);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramUser))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(User)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidUser, ScheduledJobErrorStrings.TriggerWeeklyType);
                 WriteValidationError(msg);
                 return false;
             }
-            if (MyInvocation.BoundParameters.ContainsKey(_paramRepetitionInterval) || MyInvocation.BoundParameters.ContainsKey(_paramRepetitionDuration) ||
-                MyInvocation.BoundParameters.ContainsKey(_paramRepetitionInfiniteDuration))
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionInterval)) || MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionDuration)) ||
+                MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionInfiniteDuration)))
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.InvalidSetTriggerRepetition, ScheduledJobErrorStrings.TriggerWeeklyType);
                 WriteValidationError(msg);
@@ -554,14 +610,15 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             if (trigger != null)
             {
-                if (trigger.At == null && !MyInvocation.BoundParameters.ContainsKey(_paramAt))
+                if (trigger.At == null && !MyInvocation.BoundParameters.ContainsKey(nameof(At)))
                 {
                     string msg = StringUtil.Format(ScheduledJobErrorStrings.MissingAtTime, ScheduledJobErrorStrings.TriggerDailyType);
                     WriteValidationError(msg);
                     return false;
                 }
-                if ((trigger.DaysOfWeek == null || trigger.DaysOfWeek.Count == 0) && 
-                    !MyInvocation.BoundParameters.ContainsKey(_paramDaysOfWeek))
+
+                if ((trigger.DaysOfWeek == null || trigger.DaysOfWeek.Count == 0) &&
+                    !MyInvocation.BoundParameters.ContainsKey(nameof(DaysOfWeek)))
                 {
                     string msg = StringUtil.Format(ScheduledJobErrorStrings.MissingDaysOfWeek, ScheduledJobErrorStrings.TriggerDailyType);
                     WriteValidationError(msg);
@@ -617,6 +674,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     {
                         return false;
                     }
+
                     CreateOnceTrigger(trigger);
                     break;
 
@@ -626,6 +684,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     {
                         return false;
                     }
+
                     CreateDailyTrigger(trigger);
                     break;
 
@@ -635,6 +694,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     {
                         return false;
                     }
+
                     CreateWeeklyTrigger(trigger);
                     break;
             }
@@ -652,6 +712,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     {
                         return false;
                     }
+
                     ModifyStartupTrigger(trigger);
                     break;
 
@@ -661,6 +722,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     {
                         return false;
                     }
+
                     ModifyLogonTrigger(trigger);
                     break;
 
@@ -670,6 +732,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     {
                         return false;
                     }
+
                     ModifyOnceTrigger(trigger);
                     break;
 
@@ -679,6 +742,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     {
                         return false;
                     }
+
                     ModifyDailyTrigger(trigger);
                     break;
 
@@ -688,6 +752,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     {
                         return false;
                     }
+
                     ModifyWeeklyTrigger(trigger);
                     break;
             }
@@ -697,7 +762,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private void ModifyStartupTrigger(ScheduledJobTrigger trigger)
         {
-            if (MyInvocation.BoundParameters.ContainsKey(_paramRandomDelay))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RandomDelay)))
             {
                 trigger.RandomDelay = _randomDelay;
             }
@@ -705,12 +770,12 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private void ModifyLogonTrigger(ScheduledJobTrigger trigger)
         {
-            if (MyInvocation.BoundParameters.ContainsKey(_paramRandomDelay))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RandomDelay)))
             {
                 trigger.RandomDelay = _randomDelay;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey(_paramUser))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(User)))
             {
                 trigger.User = string.IsNullOrEmpty(_user) ? ScheduledJobTrigger.AllUsers : _user;
             }
@@ -718,22 +783,22 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private void ModifyOnceTrigger(ScheduledJobTrigger trigger)
         {
-            if (MyInvocation.BoundParameters.ContainsKey(_paramRandomDelay))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RandomDelay)))
             {
                 trigger.RandomDelay = _randomDelay;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey(_paramRepetitionInterval))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionInterval)))
             {
                 trigger.RepetitionInterval = _repInterval;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey(_paramRepetitionDuration))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionDuration)))
             {
                 trigger.RepetitionDuration = _repDuration;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey(_paramAt))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(At)))
             {
                 trigger.At = _atTime;
             }
@@ -741,17 +806,17 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private void ModifyDailyTrigger(ScheduledJobTrigger trigger)
         {
-            if (MyInvocation.BoundParameters.ContainsKey(_paramRandomDelay))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RandomDelay)))
             {
                 trigger.RandomDelay = _randomDelay;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey(_paramAt))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(At)))
             {
                 trigger.At = _atTime;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey(_paramDaysInterval))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(DaysInterval)))
             {
                 trigger.Interval = _daysInterval;
             }
@@ -759,22 +824,22 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private void ModifyWeeklyTrigger(ScheduledJobTrigger trigger)
         {
-            if (MyInvocation.BoundParameters.ContainsKey(_paramRandomDelay))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RandomDelay)))
             {
                 trigger.RandomDelay = _randomDelay;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey(_paramAt))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(At)))
             {
                 trigger.At = _atTime;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey(_paramWeeksInterval))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(WeeksInterval)))
             {
                 trigger.Interval = _weeksInterval;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey(_paramDaysOfWeek))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(DaysOfWeek)))
             {
                 trigger.DaysOfWeek = new List<DayOfWeek>(_daysOfWeek);
             }
@@ -792,8 +857,8 @@ namespace Microsoft.PowerShell.ScheduledJob
             trigger.Enabled = enabled;
             trigger.Id = id;
 
-            trigger.RandomDelay = MyInvocation.BoundParameters.ContainsKey(_paramRandomDelay) ? _randomDelay : randomDelay;
-            trigger.User = MyInvocation.BoundParameters.ContainsKey(_paramUser) ? _user : user;
+            trigger.RandomDelay = MyInvocation.BoundParameters.ContainsKey(nameof(RandomDelay)) ? _randomDelay : randomDelay;
+            trigger.User = MyInvocation.BoundParameters.ContainsKey(nameof(User)) ? _user : user;
         }
 
         private void CreateAtStartupTrigger(ScheduledJobTrigger trigger)
@@ -807,7 +872,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             trigger.Enabled = enabled;
             trigger.Id = id;
 
-            trigger.RandomDelay = MyInvocation.BoundParameters.ContainsKey(_paramRandomDelay) ? _randomDelay : randomDelay;
+            trigger.RandomDelay = MyInvocation.BoundParameters.ContainsKey(nameof(RandomDelay)) ? _randomDelay : randomDelay;
         }
 
         private void CreateOnceTrigger(ScheduledJobTrigger trigger)
@@ -824,10 +889,10 @@ namespace Microsoft.PowerShell.ScheduledJob
             trigger.Enabled = enabled;
             trigger.Id = id;
 
-            trigger.RandomDelay = MyInvocation.BoundParameters.ContainsKey(_paramRandomDelay) ? _randomDelay : randomDelay;
-            trigger.At = MyInvocation.BoundParameters.ContainsKey(_paramAt) ? _atTime : atTime;
-            trigger.RepetitionInterval = MyInvocation.BoundParameters.ContainsKey(_paramRepetitionInterval) ? _repInterval : repInterval;
-            trigger.RepetitionDuration = MyInvocation.BoundParameters.ContainsKey(_paramRepetitionDuration) ? _repDuration : repDuration;
+            trigger.RandomDelay = MyInvocation.BoundParameters.ContainsKey(nameof(RandomDelay)) ? _randomDelay : randomDelay;
+            trigger.At = MyInvocation.BoundParameters.ContainsKey(nameof(At)) ? _atTime : atTime;
+            trigger.RepetitionInterval = MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionInterval)) ? _repInterval : repInterval;
+            trigger.RepetitionDuration = MyInvocation.BoundParameters.ContainsKey(nameof(RepetitionDuration)) ? _repDuration : repDuration;
         }
 
         private void CreateDailyTrigger(ScheduledJobTrigger trigger)
@@ -843,9 +908,9 @@ namespace Microsoft.PowerShell.ScheduledJob
             trigger.Enabled = enabled;
             trigger.Id = id;
 
-            trigger.RandomDelay = MyInvocation.BoundParameters.ContainsKey(_paramRandomDelay) ? _randomDelay : randomDelay;
-            trigger.At = MyInvocation.BoundParameters.ContainsKey(_paramAt) ? _atTime : atTime;
-            trigger.Interval = MyInvocation.BoundParameters.ContainsKey(_paramDaysInterval) ? _daysInterval : interval;
+            trigger.RandomDelay = MyInvocation.BoundParameters.ContainsKey(nameof(RandomDelay)) ? _randomDelay : randomDelay;
+            trigger.At = MyInvocation.BoundParameters.ContainsKey(nameof(At)) ? _atTime : atTime;
+            trigger.Interval = MyInvocation.BoundParameters.ContainsKey(nameof(DaysInterval)) ? _daysInterval : interval;
         }
 
         private void CreateWeeklyTrigger(ScheduledJobTrigger trigger)
@@ -862,10 +927,10 @@ namespace Microsoft.PowerShell.ScheduledJob
             trigger.Enabled = enabled;
             trigger.Id = id;
 
-            trigger.RandomDelay = MyInvocation.BoundParameters.ContainsKey(_paramRandomDelay) ? _randomDelay : randomDelay;
-            trigger.At = MyInvocation.BoundParameters.ContainsKey(_paramAt) ? _atTime : atTime;
-            trigger.Interval = MyInvocation.BoundParameters.ContainsKey(_paramWeeksInterval) ? _weeksInterval : interval;
-            trigger.DaysOfWeek = MyInvocation.BoundParameters.ContainsKey(_paramDaysOfWeek) ? new List<DayOfWeek>(_daysOfWeek) : daysOfWeek;
+            trigger.RandomDelay = MyInvocation.BoundParameters.ContainsKey(nameof(RandomDelay)) ? _randomDelay : randomDelay;
+            trigger.At = MyInvocation.BoundParameters.ContainsKey(nameof(At)) ? _atTime : atTime;
+            trigger.Interval = MyInvocation.BoundParameters.ContainsKey(nameof(WeeksInterval)) ? _weeksInterval : interval;
+            trigger.DaysOfWeek = MyInvocation.BoundParameters.ContainsKey(nameof(DaysOfWeek)) ? new List<DayOfWeek>(_daysOfWeek) : daysOfWeek;
         }
 
         private void WriteValidationError(string msg)
@@ -874,26 +939,6 @@ namespace Microsoft.PowerShell.ScheduledJob
             ErrorRecord errorRecord = new ErrorRecord(reason, "SetJobTriggerParameterValidationError", ErrorCategory.InvalidArgument, null);
             WriteError(errorRecord);
         }
-
-        #endregion
-
-        #region Private Members
-
-        private string _paramAtStartup = "AtStartup";
-        private string _paramAtLogon = "AtLogon";
-        private string _paramOnce = "Once";
-        private string _paramDaily = "Daily";
-        private string _paramWeekly = "Weekly";
-        //
-        private string _paramDaysInterval = "DaysInterval";
-        private string _paramWeeksInterval = "WeeksInterval";
-        private string _paramRandomDelay = "RandomDelay";
-        private string _paramRepetitionInterval = "RepetitionInterval";
-        private string _paramRepetitionDuration = "RepetitionDuration";
-        private string _paramRepetitionInfiniteDuration = "RepeatIndefinitely";
-        private string _paramAt = "At";
-        private string _paramUser = "User";
-        private string _paramDaysOfWeek = "DaysOfWeek";
 
         #endregion
     }

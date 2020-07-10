@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #if !SILVERLIGHT // ComObject
 
@@ -12,7 +11,7 @@ using ComTypes = System.Runtime.InteropServices.ComTypes;
 namespace System.Management.Automation.ComInterop
 {
     /// <summary>
-    /// This is similar to ComTypes.EXCEPINFO, but lets us do our own custom marshaling
+    /// This is similar to ComTypes.EXCEPINFO, but lets us do our own custom marshaling.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     internal struct ExcepInfo
@@ -102,6 +101,7 @@ namespace System.Management.Automation.ComInterop
             {
                 helpLink += "#" + _dwHelpContext;
             }
+
             exception.HelpLink = helpLink;
 
             return exception;

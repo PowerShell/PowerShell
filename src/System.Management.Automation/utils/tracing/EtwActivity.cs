@@ -1,7 +1,7 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 #if !UNIX
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+
 using System.Collections.Generic;
 using System.Diagnostics.Eventing;
 using System.Diagnostics;
@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Management.Automation.Tracing
 {
     /// <summary>
-    /// Attribute to represent an EtwEvent
+    /// Attribute to represent an EtwEvent.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
@@ -19,7 +19,7 @@ namespace System.Management.Automation.Tracing
     public sealed class EtwEvent : Attribute
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="eventId"></param>
         public EtwEvent(long eventId)
@@ -28,13 +28,13 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// EventId
+        /// EventId.
         /// </summary>
         public long EventId { get; }
     }
 
     /// <summary>
-    /// Delegates that defines a call back with no parameter
+    /// Delegates that defines a call back with no parameter.
     /// </summary>
     public delegate void CallbackNoParameter();
 
@@ -43,16 +43,14 @@ namespace System.Management.Automation.Tracing
     /// </summary>
     public delegate void CallbackWithState(object state);
 
-#if !CORECLR // System.Timers.Timer is not available in CoreCLR
     /// <summary>
     /// Delegates that defines a call back with two parameters; state and ElapsedEventArgs.
     /// It will be used in System.Timers.Timer scenarios.
     /// </summary>
     public delegate void CallbackWithStateAndArgs(object state, System.Timers.ElapsedEventArgs args);
-#endif
 
     /// <summary>
-    /// ETW events argument class
+    /// ETW events argument class.
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public class EtwEventArgs : EventArgs
@@ -64,7 +62,7 @@ namespace System.Management.Automation.Tracing
             private set;
         }
 
-        /// <summary> Gets whether the event is sucessfully written </summary>
+        /// <summary> Gets whether the event is successfully written </summary>
         public bool Success
         {
             get;
@@ -82,9 +80,9 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Creates a new instance of EtwEventArgs class.
         /// </summary>
-        /// <param name="descriptor">Event descriptor</param>
-        /// <param name="success">Indicate whether the event is sucessfully written</param>
-        /// <param name="payload">Event payload</param>
+        /// <param name="descriptor">Event descriptor.</param>
+        /// <param name="success">Indicate whether the event is successfully written.</param>
+        /// <param name="payload">Event payload.</param>
         public EtwEventArgs(EventDescriptor descriptor, bool success, object[] payload)
         {
             this.Descriptor = descriptor;
@@ -110,13 +108,13 @@ namespace System.Management.Automation.Tracing
             private AsyncCallback asyncCallback;
 
             /// <summary>
-            /// parantActivityId
+            /// ParentActivityId.
             /// </summary>
             protected readonly Guid parentActivityId;
             private readonly EtwActivity tracer;
 
             /// <summary>
-            /// EtwCorrelator Constructor
+            /// EtwCorrelator Constructor.
             /// </summary>
             /// <param name="tracer"></param>
             /// <param name="callback"></param>
@@ -124,19 +122,21 @@ namespace System.Management.Automation.Tracing
             {
                 if (callback == null)
                 {
-                    throw new ArgumentNullException("callback");
+                    throw new ArgumentNullException(nameof(callback));
                 }
+
                 if (tracer == null)
                 {
-                    throw new ArgumentNullException("tracer");
+                    throw new ArgumentNullException(nameof(tracer));
                 }
+
                 this.tracer = tracer;
                 this.parentActivityId = EtwActivity.GetActivityId();
                 this.callbackNoParam = callback;
             }
 
             /// <summary>
-            /// EtwCorrelator Constructor
+            /// EtwCorrelator Constructor.
             /// </summary>
             /// <param name="tracer"></param>
             /// <param name="callback"></param>
@@ -144,19 +144,21 @@ namespace System.Management.Automation.Tracing
             {
                 if (callback == null)
                 {
-                    throw new ArgumentNullException("callback");
+                    throw new ArgumentNullException(nameof(callback));
                 }
+
                 if (tracer == null)
                 {
-                    throw new ArgumentNullException("tracer");
+                    throw new ArgumentNullException(nameof(tracer));
                 }
+
                 this.tracer = tracer;
                 this.parentActivityId = EtwActivity.GetActivityId();
                 this.callbackWithState = callback;
             }
 
             /// <summary>
-            /// EtwCorrelator Constructor
+            /// EtwCorrelator Constructor.
             /// </summary>
             /// <param name="tracer"></param>
             /// <param name="callback"></param>
@@ -164,25 +166,26 @@ namespace System.Management.Automation.Tracing
             {
                 if (callback == null)
                 {
-                    throw new ArgumentNullException("callback");
+                    throw new ArgumentNullException(nameof(callback));
                 }
+
                 if (tracer == null)
                 {
-                    throw new ArgumentNullException("tracer");
+                    throw new ArgumentNullException(nameof(tracer));
                 }
+
                 this.tracer = tracer;
                 this.parentActivityId = EtwActivity.GetActivityId();
                 this.asyncCallback = callback;
             }
 
-#if !CORECLR // System.Timers.Timer is not available in CoreCLR
             /// <summary>
             /// It is to be used in System.Timers.Timer scenarios.
             /// </summary>
             private CallbackWithStateAndArgs callbackWithStateAndArgs;
 
             /// <summary>
-            /// EtwCorrelator Constructor
+            /// EtwCorrelator Constructor.
             /// </summary>
             /// <param name="tracer"></param>
             /// <param name="callback"></param>
@@ -190,19 +193,21 @@ namespace System.Management.Automation.Tracing
             {
                 if (callback == null)
                 {
-                    throw new ArgumentNullException("callback");
+                    throw new ArgumentNullException(nameof(callback));
                 }
+
                 if (tracer == null)
                 {
-                    throw new ArgumentNullException("tracer");
+                    throw new ArgumentNullException(nameof(tracer));
                 }
+
                 this.tracer = tracer;
                 this.parentActivityId = EtwActivity.GetActivityId();
                 this.callbackWithStateAndArgs = callback;
             }
 
             /// <summary>
-            /// This is the wrapper on the actual callback
+            /// This is the wrapper on the actual callback.
             /// </summary>
             public void Callback(object state, System.Timers.ElapsedEventArgs args)
             {
@@ -211,9 +216,9 @@ namespace System.Management.Automation.Tracing
                 Correlate();
                 this.callbackWithStateAndArgs(state, args);
             }
-#endif
+
             /// <summary>
-            /// Correlate
+            /// Correlate.
             /// </summary>
             private void Correlate()
             {
@@ -221,7 +226,7 @@ namespace System.Management.Automation.Tracing
             }
 
             /// <summary>
-            /// This is the wrapper on the actual callback
+            /// This is the wrapper on the actual callback.
             /// </summary>
             public void Callback()
             {
@@ -232,7 +237,7 @@ namespace System.Management.Automation.Tracing
             }
 
             /// <summary>
-            /// This is the wrapper on the actual callback
+            /// This is the wrapper on the actual callback.
             /// </summary>
             public void Callback(object state)
             {
@@ -243,7 +248,7 @@ namespace System.Management.Automation.Tracing
             }
 
             /// <summary>
-            /// This is the wrapper on the actual callback
+            /// This is the wrapper on the actual callback.
             /// </summary>
             public void Callback(IAsyncResult asyncResult)
             {
@@ -254,7 +259,6 @@ namespace System.Management.Automation.Tracing
             }
         }
 
-        private static Guid powerShellProviderId = Guid.Parse("A0C1853B-5C40-4b15-8766-3CF1C58F985A");
         private static Dictionary<Guid, EventProvider> providers = new Dictionary<Guid, EventProvider>();
         private static object syncLock = new object();
 
@@ -263,22 +267,18 @@ namespace System.Management.Automation.Tracing
         private EventProvider currentProvider;
 
         /// <summary>
-        /// Event handler for the class
+        /// Event handler for the class.
         /// </summary>
         public static event EventHandler<EtwEventArgs> EventWritten;
 
-        static EtwActivity()
-        {
-        }
-
         /// <summary>
         /// Sets the activityId provided in the current thread.
-        /// If current thread already has the same activityId it does 
+        /// If current thread already has the same activityId it does
         /// nothing.
         /// </summary>
         /// <param name="activityId"></param>
-        /// <returns>true when provided activity was set, false if current activity
-        /// was found to be same and set was not needed</returns>
+        /// <returns>True when provided activity was set, false if current activity
+        /// was found to be same and set was not needed.</returns>
         public static bool SetActivityId(Guid activityId)
         {
             if (GetActivityId() != activityId)
@@ -286,6 +286,7 @@ namespace System.Management.Automation.Tracing
                 EventProvider.SetActivityId(ref activityId);
                 return true;
             }
+
             return false;
         }
 
@@ -299,7 +300,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Returns the ActivityId set in current thread
+        /// Returns the ActivityId set in current thread.
         /// </summary>
         /// <returns></returns>
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
@@ -311,7 +312,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         protected EtwActivity()
         {
@@ -320,7 +321,7 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// CorrelateWithActivity (EventId: 0x1f05/7941)
         /// This method also sets a new activity id in current thread.
-        /// And then correlates the new id with parentActivityId
+        /// And then correlates the new id with parentActivityId.
         /// </summary>
         public void CorrelateWithActivity(Guid parentActivityId)
         {
@@ -339,7 +340,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// IsEnabled
+        /// IsEnabled.
         /// </summary>
         public bool IsEnabled
         {
@@ -350,11 +351,11 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Checks whether a provider matching certain levels and keyword is enabled
+        /// Checks whether a provider matching certain levels and keyword is enabled.
         /// </summary>
-        /// <param name="levels">Levels to check </param>
-        /// <param name="keywords">Keywords to check</param>
-        /// <returns>True, if any ETW listener is enabled else false</returns>
+        /// <param name="levels">Levels to check.</param>
+        /// <param name="keywords">Keywords to check.</param>
+        /// <returns>True, if any ETW listener is enabled else false.</returns>
         public bool IsProviderEnabled(byte levels, long keywords)
         {
             return GetProvider().IsEnabled(levels, keywords);
@@ -362,16 +363,16 @@ namespace System.Management.Automation.Tracing
 
         /// <summary>
         /// Correlates parent activity id set in the thread with a new activity id
-        /// If parent activity id is not, it just sets a new activity in the current thread. And does not write the Transfer event
+        /// If parent activity id is not, it just sets a new activity in the current thread. And does not write the Transfer event.
         /// </summary>
         public void Correlate()
         {
-            Guid parentAcitvity = GetActivityId();
-            CorrelateWithActivity(parentAcitvity);
+            Guid parentActivity = GetActivityId();
+            CorrelateWithActivity(parentActivity);
         }
 
         /// <summary>
-        /// Wraps a callback with no params
+        /// Wraps a callback with no params.
         /// </summary>
         /// <param name="callback"></param>
         /// <returns></returns>
@@ -379,13 +380,14 @@ namespace System.Management.Automation.Tracing
         {
             if (callback == null)
             {
-                throw new ArgumentNullException("callback");
+                throw new ArgumentNullException(nameof(callback));
             }
+
             return new CorrelatedCallback(this, callback).Callback;
         }
 
         /// <summary>
-        /// Wraps a callback with one object param
+        /// Wraps a callback with one object param.
         /// </summary>
         /// <param name="callback"></param>
         /// <returns></returns>
@@ -393,13 +395,14 @@ namespace System.Management.Automation.Tracing
         {
             if (callback == null)
             {
-                throw new ArgumentNullException("callback");
+                throw new ArgumentNullException(nameof(callback));
             }
+
             return new CorrelatedCallback(this, callback).Callback;
         }
 
         /// <summary>
-        /// Wraps a AsyncCallback with IAsyncResult param
+        /// Wraps a AsyncCallback with IAsyncResult param.
         /// </summary>
         /// <param name="callback"></param>
         /// <returns></returns>
@@ -407,12 +410,12 @@ namespace System.Management.Automation.Tracing
         {
             if (callback == null)
             {
-                throw new ArgumentNullException("callback");
+                throw new ArgumentNullException(nameof(callback));
             }
+
             return new CorrelatedCallback(this, callback).Callback;
         }
 
-#if !CORECLR // System.Timers.Timer is not available in CoreCLR
         /// <summary>
         /// Wraps a callback with one object param and one ElapsedEventArgs object
         /// This is menat to be used in System.Timers.Timer scenarios.
@@ -423,11 +426,11 @@ namespace System.Management.Automation.Tracing
         {
             if (callback == null)
             {
-                throw new ArgumentNullException("callback");
+                throw new ArgumentNullException(nameof(callback));
             }
+
             return new CorrelatedCallback(this, callback).Callback;
         }
-#endif
 
         /// <summary>
         /// The provider where the tracing messages will be written to.
@@ -436,7 +439,7 @@ namespace System.Management.Automation.Tracing
         {
             get
             {
-                return powerShellProviderId;
+                return PSEtwLogProvider.ProviderGuid;
             }
         }
 
@@ -457,8 +460,8 @@ namespace System.Management.Automation.Tracing
         /// This is the main method that write the messages to the trace.
         /// All derived classes must use this method to write to the provider log.
         /// </summary>
-        /// <param name="ed">EventDescriptor</param>
-        /// <param name="payload">payload</param>
+        /// <param name="ed">EventDescriptor.</param>
+        /// <param name="payload">Payload.</param>
         protected void WriteEvent(EventDescriptor ed, params object[] payload)
         {
             EventProvider provider = GetProvider();
@@ -500,6 +503,7 @@ namespace System.Management.Automation.Tracing
                     providers[ProviderId] = currentProvider;
                 }
             }
+
             return currentProvider;
         }
 
@@ -518,7 +522,7 @@ namespace System.Management.Automation.Tracing
                 Set = 2,
 
                 /// <summary>
-                /// Creates a new activity id
+                /// Creates a new activity id.
                 /// </summary>
                 Create = 3,
 
@@ -534,7 +538,7 @@ namespace System.Management.Automation.Tracing
             }
 
             /// <summary>
-            /// Provides interop access to creating, querying and setting the current activity identifier
+            /// Provides interop access to creating, querying and setting the current activity identifier.
             /// </summary>
             /// <param name="controlCode">The <see cref="ActivityControlCode"/> indicating the type of operation to perform.</param>
             /// <param name="activityId">The activity id to set or retrieve.</param>
@@ -544,6 +548,5 @@ namespace System.Management.Automation.Tracing
         }
     }
 }
-
 
 #endif

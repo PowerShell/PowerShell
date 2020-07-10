@@ -1,31 +1,30 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Help;
-using System.IO;
-using System.Globalization;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Help;
+using System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements the Update-Help cmdlet
+    /// This class implements the Update-Help cmdlet.
     /// </summary>
     [Cmdlet(VerbsData.Update, "Help", DefaultParameterSetName = PathParameterSetName,
         SupportsShouldProcess = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210614")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096805")]
     public sealed class UpdateHelpCommand : UpdatableHelpCommandBase
     {
         #region Constructor
 
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         public UpdateHelpCommand() : base(UpdatableHelpCommandType.UpdateHelpCommand)
         {
@@ -38,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Specifies the modules to update
+        /// Specifies the modules to update.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSetName, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 0, ParameterSetName = LiteralPathParameterSetName, ValueFromPipelineByPropertyName = true)]
@@ -51,15 +50,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _module;
             }
+
             set
             {
                 _module = value;
             }
         }
+
         private string[] _module;
 
         /// <summary>
-        /// Specifies the Module Specifications to update
+        /// Specifies the Module Specifications to update.
         /// </summary>
         [Parameter(ParameterSetName = PathParameterSetName, ValueFromPipelineByPropertyName = true)]
         [Parameter(ParameterSetName = LiteralPathParameterSetName, ValueFromPipelineByPropertyName = true)]
@@ -68,10 +69,11 @@ namespace Microsoft.PowerShell.Commands
         public ModuleSpecification[] FullyQualifiedModule { get; set; }
 
         /// <summary>
-        /// Specifies the paths to update from
+        /// Specifies the paths to update from.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = PathParameterSetName)]
         [ValidateNotNull]
+        [Alias("Path")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] SourcePath
         {
@@ -79,18 +81,20 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 _path = value;
             }
         }
+
         private string[] _path;
 
         /// <summary>
-        /// Specifies the literal path to save updates to
+        /// Specifies the literal path to save updates to.
         /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSetName, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath")]
+        [Alias("PSPath", "LP")]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
@@ -99,17 +103,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _path;
             }
+
             set
             {
                 _path = value;
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
-
         /// <summary>
-        /// Scans paths recursively
+        /// Scans paths recursively.
         /// </summary>
         [Parameter]
         public SwitchParameter Recurse
@@ -118,11 +123,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _recurse;
             }
+
             set
             {
                 _recurse = value;
             }
         }
+
         private bool _recurse;
 
         #endregion
@@ -132,13 +139,10 @@ namespace Microsoft.PowerShell.Commands
         #region Implementation
 
         /// <summary>
-        /// Begin processing
+        /// Begin processing.
         /// </summary>
         protected override void BeginProcessing()
         {
-            // Disable Get-Help prompt
-            UpdatableHelpSystem.SetDisablePromptToUpdateHelp();
-
             if (_path == null)
             {
                 // Pull default source path from GP
@@ -152,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Main cmdlet logic
+        /// Main cmdlet logic.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -174,6 +178,7 @@ namespace Microsoft.PowerShell.Commands
                         PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.CannotSpecifyRecurseWithoutPath));
                         ThrowTerminatingError(e.ErrorRecord);
                     }
+
                     _isInitialized = true;
                 }
 
@@ -202,21 +207,28 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process a single module with a given culture
+        /// Process a single module with a given culture.
         /// </summary>
-        /// <param name="module">module to process</param>
-        /// <param name="culture">culture to use</param>
-        /// <returns>true if the module has been processed, false if not</returns>
+        /// <param name="module">Module to process.</param>
+        /// <param name="culture">Culture to use.</param>
+        /// <returns>True if the module has been processed, false if not.</returns>
         internal override bool ProcessModuleWithCulture(UpdatableHelpModuleInfo module, string culture)
         {
             UpdatableHelpInfo currentHelpInfo = null;
             UpdatableHelpInfo newHelpInfo = null;
             string helpInfoUri = null;
 
+            string moduleBase = module.ModuleBase;
+
+            if (this.Scope == UpdateHelpScope.CurrentUser)
+            {
+                moduleBase = HelpUtils.GetModuleBaseForUserHelp(moduleBase, module.ModuleName);
+            }
+
             // reading the xml file even if force is specified
             // Reason: we need the current version for ShouldProcess
             string xml = UpdatableHelpSystem.LoadStringFromPath(this,
-                 SessionState.Path.Combine(module.ModuleBase, module.GetHelpInfoName()),
+                 SessionState.Path.Combine(moduleBase, module.GetHelpInfoName()),
                  null);
 
             if (xml != null)
@@ -231,7 +243,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Don't update too frequently
-            if (!_alreadyCheckedOncePerDayPerModule && !CheckOncePerDayPerModule(module.ModuleName, module.ModuleBase, module.GetHelpInfoName(), DateTime.UtcNow, _force))
+            if (!_alreadyCheckedOncePerDayPerModule && !CheckOncePerDayPerModule(module.ModuleName, moduleBase, module.GetHelpInfoName(), DateTime.UtcNow, _force))
             {
                 return true;
             }
@@ -248,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
                     // Search for the HelpInfo XML
                     foreach (string path in _path)
                     {
-                        if (String.IsNullOrEmpty(path))
+                        if (string.IsNullOrEmpty(path))
                         {
                             PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.PathNullOrEmpty));
                             WriteError(e.ErrorRecord);
@@ -304,8 +316,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     throw new UpdatableHelpSystemException("UnableToRetrieveHelpInfoXml",
                         StringUtil.Format(HelpDisplayStrings.UnableToRetrieveHelpInfoXml, culture), ErrorCategory.ResourceUnavailable,
                         null, e);
@@ -350,7 +360,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                if (Utils.IsUnderProductFolder(module.ModuleBase) && (!Utils.IsAdministrator()))
+                if (Utils.IsUnderProductFolder(moduleBase) && (!Utils.IsAdministrator()))
                 {
                     string message = StringUtil.Format(HelpErrors.UpdatableHelpRequiresElevation);
                     ProcessException(module.ModuleName, null, new UpdatableHelpSystemException("UpdatableHelpSystemRequiresElevation",
@@ -378,12 +388,17 @@ namespace Microsoft.PowerShell.Commands
                         // Gather destination paths
                         Collection<string> destPaths = new Collection<string>();
 
-                        destPaths.Add(module.ModuleBase);
+                        if (!Directory.Exists(moduleBase))
+                        {
+                            Directory.CreateDirectory(moduleBase);
+                        }
+
+                        destPaths.Add(moduleBase);
 
 #if !CORECLR // Side-By-Side directories are not present in OneCore environments.
-                        if (IsSystemModule(module.ModuleName) && ClrFacade.Is64BitOperatingSystem())
+                        if (IsSystemModule(module.ModuleName) && Environment.Is64BitOperatingSystem)
                         {
-                            string path = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID).Replace("System32", "SysWOW64");
+                            string path = Utils.DefaultPowerShellAppBase.Replace("System32", "SysWOW64");
 
                             destPaths.Add(path);
                         }
@@ -419,8 +434,6 @@ namespace Microsoft.PowerShell.Commands
                                 }
                                 catch (Exception e)
                                 {
-                                    CommandProcessorBase.CheckForSevereException(e);
-
                                     throw new UpdatableHelpSystemException("HelpContentNotFound", StringUtil.Format(HelpDisplayStrings.HelpContentNotFound),
                                         ErrorCategory.ResourceUnavailable, null, e);
                                 }
@@ -447,7 +460,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         _helpSystem.GenerateHelpInfo(module.ModuleName, module.ModuleGuid, newHelpInfo.UnresolvedUri, contentUri.Culture.Name, newHelpInfo.GetCultureVersion(contentUri.Culture),
-                            module.ModuleBase, module.GetHelpInfoName(), _force);
+                            moduleBase, module.GetHelpInfoName(), _force);
 
                         foreach (string fileInstalled in filesInstalled)
                         {
@@ -462,8 +475,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception e)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
-
                         ProcessException(module.ModuleName, contentUri.Culture.Name, e);
                     }
                 }
@@ -473,7 +484,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Throws PathMustBeValidContainers exception
+        /// Throws PathMustBeValidContainers exception.
         /// </summary>
         /// <param name="path"></param>
         /// <param name="e"></param>

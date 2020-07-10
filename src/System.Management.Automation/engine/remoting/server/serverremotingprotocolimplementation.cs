@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation.  All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Remoting.Server;
 
@@ -11,7 +10,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This class is an implementation of the abstract class ServerRemoteSessionDataStructureHandler.
     /// </summary>
-    internal class ServerRemoteSessionDSHandlerlImpl : ServerRemoteSessionDataStructureHandler
+    internal class ServerRemoteSessionDSHandlerImpl : ServerRemoteSessionDataStructureHandler
     {
         private AbstractServerSessionTransportManager _transportManager;
         private ServerRemoteSessionDSHandlerStateMachine _stateMachine;
@@ -28,17 +27,17 @@ namespace System.Management.Automation.Remoting
         #region Constructors
 
         /// <summary>
-        /// Constructs a ServerRemoteSession handler using the supplied transport manager. The 
+        /// Constructs a ServerRemoteSession handler using the supplied transport manager. The
         /// supplied transport manager will be used to send and receive data from the remote
         /// client.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="transportManager"></param>
-        internal ServerRemoteSessionDSHandlerlImpl(ServerRemoteSession session,
+        internal ServerRemoteSessionDSHandlerImpl(ServerRemoteSession session,
             AbstractServerSessionTransportManager transportManager)
         {
-            Dbg.Assert(null != session, "session cannot be null.");
-            Dbg.Assert(null != transportManager, "transportManager cannot be null.");
+            Dbg.Assert(session != null, "session cannot be null.");
+            Dbg.Assert(transportManager != null, "transportManager cannot be null.");
 
             _session = session;
             _stateMachine = new ServerRemoteSessionDSHandlerStateMachine(session);
@@ -60,7 +59,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This method sends the server side capability negotitation packet to the client. 
+        /// This method sends the server side capability negotiation packet to the client.
         /// </summary>
         internal override void SendNegotiationAsync()
         {
@@ -92,7 +91,7 @@ namespace System.Management.Automation.Remoting
         internal override event EventHandler<RemoteDataEventArgs<string>> PublicKeyReceived;
 
         /// <summary>
-        /// Send the encrypted session key to the client side
+        /// Send the encrypted session key to the client side.
         /// </summary>
         /// <param name="encryptedSessionKey">encrypted session key
         /// as a string</param>
@@ -103,7 +102,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Send request to the client for sending a public key
+        /// Send request to the client for sending a public key.
         /// </summary>
         internal override void SendRequestForPublicKey()
         {
@@ -112,10 +111,10 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Raise the public key received event
+        /// Raise the public key received event.
         /// </summary>
-        /// <param name="receivedData">received data</param>
-        /// <remarks>This method is a hook to be called 
+        /// <param name="receivedData">Received data.</param>
+        /// <remarks>This method is a hook to be called
         /// from the transport manager</remarks>
         internal override void RaiseKeyExchangeMessageReceived(RemoteDataObject<PSObject> receivedData)
         {
@@ -144,7 +143,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This event indicates that the client has requested to create a new runspace pool
-        /// on the server side
+        /// on the server side.
         /// </summary>
         internal override event EventHandler<RemoteDataEventArgs> CreateRunspacePoolReceived;
 
@@ -166,7 +165,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="dataArg">
         /// The received client data.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter is null.
         /// </exception>
@@ -174,7 +172,7 @@ namespace System.Management.Automation.Remoting
         {
             if (dataArg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dataArg");
+                throw PSTraceSource.NewArgumentNullException(nameof(dataArg));
             }
 
             RemoteDataObject<PSObject> rcvdData = dataArg.ReceivedData;
@@ -192,6 +190,7 @@ namespace System.Management.Automation.Remoting
                         // need to import the clients public key
                         CreateRunspacePoolReceived.SafeInvoke(this, dataArg);
                     }
+
                     break;
 
                 case RemotingDataType.CloseSession:
@@ -211,7 +210,7 @@ namespace System.Management.Automation.Remoting
                         // this will happen if expected properties are not
                         // received for session capability
                         throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerNotFoundCapabilityProperties,
-                            dse.Message, PSVersionInfo.BuildVersion, RemotingConstants.ProtocolVersion);
+                            dse.Message, PSVersionInfo.GitCommitId, RemotingConstants.ProtocolVersion);
                     }
 
                     RemoteSessionStateMachineEventArgs capabilityArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationReceived);
@@ -224,6 +223,7 @@ namespace System.Management.Automation.Remoting
                         negotiationArg.RemoteData = rcvdData;
                         NegotiationReceived.SafeInvoke(this, negotiationArg);
                     }
+
                     break;
 
                 case RemotingDataType.PublicKey:
@@ -231,6 +231,7 @@ namespace System.Management.Automation.Remoting
                         string remotePublicKey = RemotingDecoder.GetPublicKey(rcvdData.Data);
                         PublicKeyReceived.SafeInvoke(this, new RemoteDataEventArgs<string>(remotePublicKey));
                     }
+
                     break;
 
                 default:

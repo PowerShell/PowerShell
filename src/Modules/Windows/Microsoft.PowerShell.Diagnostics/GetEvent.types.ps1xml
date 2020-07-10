@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- *******************************************************************
+These sample files contain formatting information used by the
+PowerShell engine. Do not edit or change the contents of this file
+directly. Please see the PowerShell documentation or type
+Get-Help Update-TypeData for more information.
+
+Copyright (c) Microsoft Corporation.
+
+THIS SAMPLE CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+OF ANY KIND,WHETHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+PURPOSE. IF THIS CODE AND INFORMATION IS MODIFIED, THE ENTIRE RISK OF USE
+OR RESULTS IN CONNECTION WITH THE USE OF THIS CODE AND INFORMATION
+REMAINS WITH THE USER.
+******************************************************************** -->
+
+<Types>
+  <Type>
+    <Name>System.Diagnostics.Eventing.Reader.EventLogConfiguration</Name>
+    <Members>
+      <MemberSet>
+        <Name>PSStandardMembers</Name>
+        <Members>
+          <PropertySet>
+            <Name>DefaultDisplayPropertySet</Name>
+            <ReferencedProperties>
+              <Name>LogName</Name>
+              <Name>MaximumSizeInBytes</Name>
+              <Name>RecordCount</Name>
+              <Name>LogMode</Name>
+            </ReferencedProperties>
+          </PropertySet>
+        </Members>
+      </MemberSet>
+    </Members>
+  </Type>
+  <Type>
+    <Name>System.Diagnostics.Eventing.Reader.EventLogRecord</Name>
+    <Members>
+      <MemberSet>
+        <Name>PSStandardMembers</Name>
+        <Members>
+          <PropertySet>
+            <Name>DefaultDisplayPropertySet</Name>
+            <ReferencedProperties>
+              <Name>TimeCreated</Name>
+              <Name>ProviderName</Name>
+              <Name>Id</Name>
+              <Name>Message</Name>
+            </ReferencedProperties>
+          </PropertySet>
+        </Members>
+      </MemberSet>
+    </Members>
+  </Type>
+  <Type>
+    <Name>System.Diagnostics.Eventing.Reader.ProviderMetadata</Name>
+    <Members>
+      <AliasProperty>
+          <Name>ProviderName</Name>
+          <ReferencedMemberName>Name</ReferencedMemberName>
+      </AliasProperty>
+      <MemberSet>
+        <Name>PSStandardMembers</Name>
+        <Members>
+          <PropertySet>
+            <Name>DefaultDisplayPropertySet</Name>
+            <ReferencedProperties>
+              <Name>Name</Name>
+              <Name>LogLinks</Name>
+            </ReferencedProperties>
+          </PropertySet>
+        </Members>
+      </MemberSet>
+    </Members>
+  </Type>
+  <Type>
+    <Name>Microsoft.PowerShell.Commands.GetCounter.CounterSet</Name>
+    <Members>
+    <AliasProperty>
+          <Name>Counter</Name>
+          <ReferencedMemberName>Paths</ReferencedMemberName>
+      </AliasProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSample</Name>
+    <Members>
+      <MemberSet>
+        <Name>PSStandardMembers</Name>
+        <Members>
+          <PropertySet>
+            <Name>DefaultDisplayPropertySet</Name>
+            <ReferencedProperties>
+              <Name>Path</Name>
+              <Name>InstanceName</Name>
+              <Name>CookedValue</Name>
+            </ReferencedProperties>
+          </PropertySet>
+        </Members>
+      </MemberSet>
+    </Members>
+  </Type>
+  <Type>
+    <Name>Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSampleSet</Name>
+    <Members>
+      <MemberSet>
+        <Name>PSStandardMembers</Name>
+        <Members>
+          <PropertySet>
+            <Name>DefaultDisplayPropertySet</Name>
+            <ReferencedProperties>
+              <Name>Timestamp</Name>
+              <Name>Readings</Name>
+            </ReferencedProperties>
+          </PropertySet>
+        </Members>
+      </MemberSet>
+    </Members>
+  </Type>
+  <Type>
+    <Name>Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSampleSet</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>Readings</Name>
+        <GetScriptBlock>
+          $strPaths = ""
+          foreach ($ctr in $this.CounterSamples)
+          {
+              $strPaths += ($ctr.Path + " :" + "`n")
+              $strPaths += ($ctr.CookedValue.ToString() + "`n`n")
+          }
+          return $strPaths
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+</Types>

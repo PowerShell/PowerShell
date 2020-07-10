@@ -1,41 +1,25 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+#if !UNIX
 
 using System;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Diagnostics; // Process class
-using System.ComponentModel; // Win32Exception
-using System.Globalization;
-using System.Runtime.Serialization;
-using System.Security.Permissions;
-using System.Threading;
+using System.Diagnostics.CodeAnalysis;
 using System.Management;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Diagnostics.CodeAnalysis;
-using System.Net;
-using System.IO;
-using System.Security;
 using System.Security.Principal;
-using System.Security.AccessControl;
-using Dbg = System.Management.Automation;
-
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
     #region Get-HotFix
 
     /// <summary>
-    /// Cmdlet for Get-Hotfix Proxy
+    /// Cmdlet for Get-Hotfix Proxy.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "HotFix", DefaultParameterSetName = "Default",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135217", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?linkid=2109716", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(@"System.Management.ManagementObject#root\cimv2\Win32_QuickFixEngineering")]
     public sealed class GetHotFixCommand : PSCmdlet, IDisposable
     {
@@ -51,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Id { get; set; }
 
         /// <summary>
-        /// To search on description of Hotfixes
+        /// To search on description of Hotfixes.
         /// </summary>
         [Parameter(ParameterSetName = "Description")]
         [ValidateNotNullOrEmpty]
@@ -59,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Description { get; set; }
 
         /// <summary>
-        /// Parameter to pass the Computer Name
+        /// Parameter to pass the Computer Name.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
@@ -79,47 +63,64 @@ namespace Microsoft.PowerShell.Commands
 
         #region Overrides
 
-
         private ManagementObjectSearcher _searchProcess;
 
         private bool _inputContainsWildcard = false;
+        private readonly ConnectionOptions _connectionOptions = new ConnectionOptions();
+
+        /// <summary>
+        /// Sets connection options.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            _connectionOptions.Authentication = AuthenticationLevel.Packet;
+            _connectionOptions.Impersonation = ImpersonationLevel.Impersonate;
+            _connectionOptions.Username = Credential?.UserName;
+            _connectionOptions.SecurePassword = Credential?.Password;
+        }
+
         /// <summary>
         /// Get the List of HotFixes installed on the Local Machine.
         /// </summary>
-        protected override void BeginProcessing()
+        protected override void ProcessRecord()
         {
             foreach (string computer in ComputerName)
             {
                 bool foundRecord = false;
-                StringBuilder QueryString = new StringBuilder();
-                ConnectionOptions conOptions = ComputerWMIHelper.GetConnectionOptions(AuthenticationLevel.Packet, ImpersonationLevel.Impersonate, this.Credential);
-                ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), conOptions);
+                StringBuilder queryString = new StringBuilder();
+                ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), _connectionOptions);
                 scope.Connect();
                 if (Id != null)
                 {
-                    QueryString.Append("Select * from Win32_QuickFixEngineering where (");
+                    queryString.Append("Select * from Win32_QuickFixEngineering where (");
                     for (int i = 0; i <= Id.Length - 1; i++)
                     {
-                        QueryString.Append("HotFixID= '");
-                        QueryString.Append(Id[i].ToString().Replace("'", "\\'"));
-                        QueryString.Append("'");
+                        queryString.Append("HotFixID= '");
+                        queryString.Append(Id[i].Replace("'", "\\'"));
+                        queryString.Append("'");
                         if (i < Id.Length - 1)
-                            QueryString.Append(" Or ");
+                        {
+                            queryString.Append(" Or ");
+                        }
                     }
-                    QueryString.Append(")");
+
+                    queryString.Append(")");
                 }
                 else
                 {
-                    QueryString.Append("Select * from Win32_QuickFixEngineering");
+                    queryString.Append("Select * from Win32_QuickFixEngineering");
                     foundRecord = true;
                 }
-                _searchProcess = new ManagementObjectSearcher(scope, new ObjectQuery(QueryString.ToString()));
+
+                _searchProcess = new ManagementObjectSearcher(scope, new ObjectQuery(queryString.ToString()));
                 foreach (ManagementObject obj in _searchProcess.Get())
                 {
                     if (Description != null)
                     {
                         if (!FilterMatch(obj))
+                        {
                             continue;
+                        }
                     }
                     else
                     {
@@ -129,48 +130,42 @@ namespace Microsoft.PowerShell.Commands
                     // try to translate the SID to a more friendly username
                     // just stick with the SID if anything goes wrong
                     string installed = (string)obj["InstalledBy"];
-                    if (!String.IsNullOrEmpty(installed))
+                    if (!string.IsNullOrEmpty(installed))
                     {
                         try
                         {
                             SecurityIdentifier secObj = new SecurityIdentifier(installed);
-                            obj["InstalledBy"] = secObj.Translate(typeof(NTAccount)); ;
+                            obj["InstalledBy"] = secObj.Translate(typeof(NTAccount));
                         }
-                        catch (IdentityNotMappedException) // thrown by SecurityIdentifier.Translate
+                        catch (IdentityNotMappedException)
                         {
+                            // thrown by SecurityIdentifier.Translate
                         }
-                        catch (SystemException e) // thrown by SecurityIdentifier.constr
+                        catch (SystemException)
                         {
-                            CommandsCommon.CheckForSevereException(this, e);
+                            // thrown by SecurityIdentifier.constr
                         }
-                        //catch (ArgumentException) // thrown (indirectly) by SecurityIdentifier.constr (on XP only?)
-                        //{ catch not needed - this is already caught as SystemException
-                        //}
-                        //catch (PlatformNotSupportedException) // thrown (indirectly) by SecurityIdentifier.Translate (on Win95 only?)
-                        //{ catch not needed - this is already caught as SystemException
-                        //}
-                        //catch (UnauthorizedAccessException) // thrown (indirectly) by SecurityIdentifier.Translate 
-                        //{ catch not needed - this is already caught as SystemException
-                        //}
                     }
 
                     WriteObject(obj);
                     foundRecord = true;
                 }
+
                 if (!foundRecord && !_inputContainsWildcard)
                 {
-                    Exception Ex = new ArgumentException(StringUtil.Format(HotFixResources.NoEntriesFound, computer));
-                    WriteError(new ErrorRecord(Ex, "GetHotFixNoEntriesFound", ErrorCategory.ObjectNotFound, null));
+                    Exception ex = new ArgumentException(StringUtil.Format(HotFixResources.NoEntriesFound, computer));
+                    WriteError(new ErrorRecord(ex, "GetHotFixNoEntriesFound", ErrorCategory.ObjectNotFound, null));
                 }
+
                 if (_searchProcess != null)
                 {
                     this.Dispose();
                 }
             }
-        }//end of BeginProcessing method
+        }
 
         /// <summary>
-        /// to implement ^C
+        /// To implement ^C.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -194,17 +189,18 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return true;
                     }
+
                     if (WildcardPattern.ContainsWildcardCharacters(desc))
                     {
                         _inputContainsWildcard = true;
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandsCommon.CheckForSevereException(this, e);
                 return false;
             }
+
             return false;
         }
 
@@ -213,12 +209,12 @@ namespace Microsoft.PowerShell.Commands
         #region "IDisposable Members"
 
         /// <summary>
-        /// Dispose Method
+        /// Dispose Method.
         /// </summary>
         public void Dispose()
         {
             this.Dispose(true);
-            // Use SupressFinalize in case a subclass
+            // Use SuppressFinalize in case a subclass
             // of this type implements a finalizer.
             GC.SuppressFinalize(this);
         }
@@ -239,6 +235,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion "IDisposable Members"
-    }//end class
+    }
     #endregion
-}//Microsoft.Powershell.commands
+}
+
+#endif

@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation.  All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -10,11 +9,11 @@ namespace System.Management.Automation.Remoting
 {
     /// <summary>
     /// This abstract class defines the server side data structure handler that a remote connection has
-    /// at the remote session level. 
+    /// at the remote session level.
     /// There are two other data structure handler levels:
     /// 1) at the runspace level,
     /// 2) at the pipeline level.
-    /// 
+    ///
     /// This session level data structure handler defines what can be done at the session level.
     /// </summary>
     internal abstract class ServerRemoteSessionDataStructureHandler : BaseSessionDataStructureHandler
@@ -62,7 +61,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This event indicates a request for creating a new runspace pool
-        /// has been received on the server side
+        /// has been received on the server side.
         /// </summary>
         internal abstract event EventHandler<RemoteDataEventArgs> CreateRunspacePoolReceived;
 
@@ -75,7 +74,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Transport manager used by this data structure handler
+        /// Transport manager used by this data structure handler.
         /// </summary>
         internal abstract AbstractServerSessionTransportManager TransportManager
         {
@@ -83,14 +82,14 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This method is used by the client data dispatching mechanism. 
+        /// This method is used by the client data dispatching mechanism.
         /// </summary>
         /// <param name="arg">
         /// This parameter contains the remote data from the client.
         /// </param>
         internal abstract void RaiseDataReceivedEvent(RemoteDataEventArgs arg); // this is the API the Transport calls
 
-        internal abstract event EventHandler<RemoteDataEventArgs<String>> PublicKeyReceived;
+        internal abstract event EventHandler<RemoteDataEventArgs<string>> PublicKeyReceived;
 
         internal abstract void SendRequestForPublicKey();
 

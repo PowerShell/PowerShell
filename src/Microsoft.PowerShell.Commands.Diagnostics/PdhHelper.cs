@@ -1,15 +1,15 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.Runtime.InteropServices;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+
 using Microsoft.PowerShell.Commands.GetCounter;
 using Microsoft.Win32;
 
@@ -105,8 +105,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         public const long PDH_QUERY_PERF_DATA_TIMEOUT = 0xC0000BFEL;
     }
 
-
-
     internal static class PerfDetail
     {
         public const uint PERF_DETAIL_NOVICE = 100;   // The uninformed can understand it
@@ -196,14 +194,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
     internal class PdhHelper : IDisposable
     {
-        private bool _isPreVista = false;
-
-        public PdhHelper(bool isPreVista)
-        {
-            _isPreVista = isPreVista;
-        }
-
-
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct PDH_COUNTER_PATH_ELEMENTS
         {
@@ -232,11 +222,11 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             public Int64 largeValue;
 
-            //[FieldOffset (4), MarshalAs(UnmanagedType.LPStr)]
-            //public string AnsiStringValue;
+            // [FieldOffset (4), MarshalAs(UnmanagedType.LPStr)]
+            // public string AnsiStringValue;
 
-            //[FieldOffset(4), MarshalAs(UnmanagedType.LPWStr)]
-            //public string WideStringValue; 
+            // [FieldOffset(4), MarshalAs(UnmanagedType.LPWStr)]
+            // public string WideStringValue;
         };
 
         [StructLayout(LayoutKind.Sequential)]
@@ -274,36 +264,34 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             public UInt32 SampleCount;
         }
 
-
-        /*
         //
         // This is the structure returned by PdhGetCounterInfo().
         // We only need dwType and lDefaultScale fields from this structure.
         // We access those fields directly. The struct is here for reference only.
         //
         [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
-        struct PDH_COUNTER_INFO {  
-            [FieldOffset(0)]  public UInt32 dwLength;  
-            [FieldOffset(4)]  public UInt32 dwType;  
-            [FieldOffset(8)]  public UInt32 CVersion;  
-            [FieldOffset(12)] public UInt32 CStatus;  
-            [FieldOffset(16)] public UInt32 lScale;  
-            [FieldOffset(20)] public UInt32 lDefaultScale;  
-            [FieldOffset(24)] public IntPtr dwUserData;  
-            [FieldOffset(32)] public IntPtr dwQueryUserData;  
-            [FieldOffset(40)] public string szFullPath;  
+        private struct PDH_COUNTER_INFO
+        {
+            [FieldOffset(0)] public UInt32 dwLength;
+            [FieldOffset(4)] public UInt32 dwType;
+            [FieldOffset(8)] public UInt32 CVersion;
+            [FieldOffset(12)] public UInt32 CStatus;
+            [FieldOffset(16)] public UInt32 lScale;
+            [FieldOffset(20)] public UInt32 lDefaultScale;
+            [FieldOffset(24)] public IntPtr dwUserData;
+            [FieldOffset(32)] public IntPtr dwQueryUserData;
+            [FieldOffset(40)] public string szFullPath;
 
-            [FieldOffset(48)] public string szMachineName;      
-            [FieldOffset(56)] public string szObjectName;      
-            [FieldOffset(64)] public string szInstanceName;      
-            [FieldOffset(72)] public string szParentInstance;      
-            [FieldOffset(80)] public UInt32 dwInstanceIndex;      
+            [FieldOffset(48)] public string szMachineName;
+            [FieldOffset(56)] public string szObjectName;
+            [FieldOffset(64)] public string szInstanceName;
+            [FieldOffset(72)] public string szParentInstance;
+            [FieldOffset(80)] public UInt32 dwInstanceIndex;
             [FieldOffset(88)] public string szCounterName;
-            
-            [FieldOffset(96)] public string szExplainText;  
-            [FieldOffset(104)]public IntPtr DataBuffer;
-        }*/
 
+            [FieldOffset(96)] public string szExplainText;
+            [FieldOffset(104)] public IntPtr DataBuffer;
+        }
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhBindInputDataSource(out PdhSafeDataSourceHandle phDataSource, string szLogFileNameList);
@@ -314,13 +302,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhAddCounter(PdhSafeQueryHandle queryHandle, string counterPath, IntPtr userData, out IntPtr counterHandle);
 
-        //Win7+ only
-        [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
-        private static extern uint PdhAddRelogCounter(PdhSafeQueryHandle queryHandle, string counterPath,
-                                                       UInt32 counterType, UInt32 counterDefaultScale,
-                                                       UInt64 timeBase, out IntPtr counterHandle);
-
-        //not on XP
+        // not on XP
         [DllImport("pdh.dll")]
         private static extern uint PdhCollectQueryDataWithTime(PdhSafeQueryHandle queryHandle, ref Int64 pllTimeStamp);
 
@@ -342,24 +324,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                                string szUserCaption,
                                                out PdhSafeLogHandle phLog
                                               );
-
-        //Win7+ only
-        [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
-        private static extern void PdhResetRelogCounterValues(PdhSafeLogHandle LogHandle);
-
-
-        //Win7+ only
-        [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
-        private static extern uint PdhSetCounterValue(IntPtr CounterHandle,
-                                                        ref PDH_RAW_COUNTER Value, /*PPDH_RAW_COUNTER */
-                                                        string InstanceName
-                                                        );
-
-        //Win7+ only
-        [DllImport("pdh.dll")]
-        private static extern uint PdhWriteRelogSample(PdhSafeLogHandle LogHandle,
-                                                        Int64 Timestamp
-                                                        );
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhGetFormattedCounterValue(IntPtr counterHandle, uint dwFormat, out IntPtr lpdwType, out PDH_FMT_COUNTERVALUE_DOUBLE pValue);
@@ -392,10 +356,9 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhParseCounterPath(string szFullPathBuffer,
-                                                       IntPtr pCounterPathElements, //PDH_COUNTER_PATH_ELEMENTS
+                                                       IntPtr pCounterPathElements, // PDH_COUNTER_PATH_ELEMENTS
                                                        ref IntPtr pdwBufferSize,
                                                        uint dwFlags);
-
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhExpandWildCardPathH(PdhSafeDataSourceHandle hDataSource,
@@ -404,16 +367,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                                            ref IntPtr pcchPathListLength,
                                                            uint dwFlags);
 
-        //not available on XP
+        // not available on XP
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhValidatePathEx(PdhSafeDataSourceHandle hDataSource, string szFullPathBuffer);
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhValidatePath(string szFullPathBuffer);
-
-        //not available on XP
-        [DllImport("pdh.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall, PreserveSig = true)] //private export
-        private static extern IntPtr PdhGetExplainText(string szMachineName, string szObjectName, string szCounterName);
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhGetCounterInfo(IntPtr hCounter, [MarshalAs(UnmanagedType.U1)]bool bRetrieveExplainText, ref IntPtr pdwBufferSize, IntPtr lpBuffer);
@@ -427,10 +386,8 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhSetQueryTimeRange(PdhSafeQueryHandle hQuery, ref PDH_TIME_INFO pInfo);
 
-
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhLookupPerfNameByIndex(string szMachineName, UInt32 dwNameIndex, IntPtr szNameBuffer, ref int pcchNameBufferSize);
-
 
         private PdhSafeDataSourceHandle _hDataSource = null;
 
@@ -468,12 +425,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         //
         private Dictionary<string, CounterHandleNInstance> _consumerPathToHandleAndInstanceMap = new Dictionary<string, CounterHandleNInstance>();
 
-
-        //
-        // m_ReloggerPathToHandleAndInstanceMap map is used for writing relog counters.
-        //
-        private Dictionary<string, CounterHandleNInstance> _reloggerPathToHandleAndInstanceMap = new Dictionary<string, CounterHandleNInstance>();
-
         /// <summary>
         /// A helper reading in a Unicode string with embedded NULLs and splitting it into a StringCollection.
         /// </summary>
@@ -485,7 +436,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         {
             Debug.Assert(strSize >= 2);
             int offset = 0;
-            string allSubstringsWithNulls = "";
+            string allSubstringsWithNulls = string.Empty;
             while (offset <= ((strSize * sizeof(char)) - 4))
             {
                 Int32 next4 = Marshal.ReadInt32(strNative, offset);
@@ -503,8 +454,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             strColl.AddRange(allSubstringsWithNulls.Split('\0'));
         }
-
-
 
         private uint GetCounterInfoPlus(IntPtr hCounter, out UInt32 counterType, out UInt32 defaultScale, out UInt64 timeBase)
         {
@@ -530,10 +479,9 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 res = PdhGetCounterInfo(hCounter, false, ref pBufferSize, bufCounterInfo);
                 if (res == 0 && bufCounterInfo != IntPtr.Zero)
                 {
-                    //PDH_COUNTER_INFO pdhCounterInfo = (PDH_COUNTER_INFO)Marshal.PtrToStructure(bufCounterInfo, typeof(PDH_COUNTER_INFO));                 
-
-                    counterType = (uint)Marshal.ReadInt32(bufCounterInfo, 4);
-                    defaultScale = (uint)Marshal.ReadInt32(bufCounterInfo, 20);
+                    PDH_COUNTER_INFO pdhCounterInfo = (PDH_COUNTER_INFO)Marshal.PtrToStructure(bufCounterInfo, typeof(PDH_COUNTER_INFO));
+                    counterType = pdhCounterInfo.dwType;
+                    defaultScale = pdhCounterInfo.lDefaultScale;
                 }
             }
             finally
@@ -560,7 +508,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             uint res = PdhHelper.PdhBindInputDataSource(out _hDataSource, null);
             if (res != 0)
             {
-                //Console.WriteLine("error in PdhBindInputDataSource: " + res);
+                // Console.WriteLine("error in PdhBindInputDataSource: " + res);
                 return res;
             }
 
@@ -581,11 +529,11 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             uint res = PdhHelper.PdhBindInputDataSource(out _hDataSource, dataSourceName);
             if (res != 0)
             {
-                //Console.WriteLine("error in PdhBindInputDataSource: " + res);
+                // Console.WriteLine("error in PdhBindInputDataSource: " + res);
             }
+
             return res;
         }
-
 
         public uint ConnectToDataSource(StringCollection blgFileNames)
         {
@@ -594,7 +542,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return ConnectToDataSource(blgFileNames[0]);
             }
 
-            string doubleNullTerminated = "";
+            string doubleNullTerminated = string.Empty;
             foreach (string fileName in blgFileNames)
             {
                 doubleNullTerminated += fileName + '\0';
@@ -611,8 +559,9 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             if (res != 0)
             {
-                //Console.WriteLine("error in PdhOpenQueryH: " + res);
+                // Console.WriteLine("error in PdhOpenQueryH: " + res);
             }
+
             return res;
         }
 
@@ -635,7 +584,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-
         public uint SetQueryTimeRange(DateTime startTime, DateTime endTime)
         {
             Debug.Assert(_hQuery != null);
@@ -647,12 +595,14 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             {
                 startTime = new DateTime(startTime.Ticks, DateTimeKind.Utc);
             }
+
             pTimeInfo.StartTime = (startTime == DateTime.MinValue) ? 0 : startTime.ToFileTimeUtc();
 
             if (endTime != DateTime.MaxValue && endTime.Kind == DateTimeKind.Local)
             {
                 endTime = new DateTime(endTime.Ticks, DateTimeKind.Utc);
             }
+
             pTimeInfo.EndTime = (endTime == DateTime.MaxValue) ? Int64.MaxValue : endTime.ToFileTimeUtc();
 
             pTimeInfo.SampleCount = 0;
@@ -669,7 +619,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return res;
             }
 
-            Int32 cChars = MachineListTcharSizePtr.ToInt32(); //should be ok on 64 bit
+            Int32 cChars = MachineListTcharSizePtr.ToInt32(); // should be ok on 64 bit
             IntPtr strMachineList = Marshal.AllocHGlobal(cChars * sizeof(char));
 
             try
@@ -728,23 +678,23 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             if (res == PdhResults.PDH_CSTATUS_NO_INSTANCE)
             {
                 instanceNames.Clear();
-                return 0; //masking the error
+                return 0; // masking the error
             }
             else if (res == PdhResults.PDH_CSTATUS_NO_OBJECT)
             {
                 counterNames.Clear();
-                return 0; //masking the error
+                return 0; // masking the error
             }
             else if (res != PdhResults.PDH_MORE_DATA)
             {
-                //Console.WriteLine("error in PdhEnumObjectItemsH 1st call: " + res);
+                // Console.WriteLine("error in PdhEnumObjectItemsH 1st call: " + res);
                 return res;
             }
 
             Int32 cChars = pCounterBufferSize.ToInt32();
             IntPtr strCountersList = (cChars > 0) ?
                 Marshal.AllocHGlobal((cChars) * sizeof(char)) : IntPtr.Zero;
-            //re-set count to 0 if it is lte 2
+            // re-set count to 0 if it is lte 2
             if (cChars < 0)
             {
                 pCounterBufferSize = new IntPtr(0);
@@ -754,7 +704,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             IntPtr strInstancesList = (cChars > 0) ?
                 Marshal.AllocHGlobal((cChars) * sizeof(char)) : IntPtr.Zero;
 
-            //re-set count to 0 if it is lte 2
+            // re-set count to 0 if it is lte 2
             if (cChars < 0)
             {
                 pInstanceBufferSize = new IntPtr(0);
@@ -768,7 +718,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                         PerfDetail.PERF_DETAIL_WIZARD, 0);
                 if (res != 0)
                 {
-                    //Console.WriteLine("error in PdhEnumObjectItemsH 2nd call: " + res + "\n Counter buffer size is  "
+                    // Console.WriteLine("error in PdhEnumObjectItemsH 2nd call: " + res + "\n Counter buffer size is  "
                     //    + pCounterBufferSize.ToInt32() + "\n Instance buffer size is  " + pInstanceBufferSize.ToInt32());
                 }
                 else
@@ -786,6 +736,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 {
                     Marshal.FreeHGlobal(strCountersList);
                 }
+
                 if (strInstancesList != IntPtr.Zero)
                 {
                     Marshal.FreeHGlobal(strInstancesList);
@@ -798,7 +749,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         public uint GetValidPathsFromFiles(ref StringCollection validPaths)
         {
             Debug.Assert(_hDataSource != null && !_hDataSource.IsInvalid, "Call ConnectToDataSource before GetValidPathsFromFiles");
-
 
             StringCollection machineNames = new StringCollection();
             uint res = this.EnumBlgFilesMachines(ref machineNames);
@@ -818,7 +768,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
                 foreach (string counterSet in counterSets)
                 {
-                    //Console.WriteLine("Counter set " + counterSet);
+                    // Console.WriteLine("Counter set " + counterSet);
 
                     StringCollection counterSetCounters = new StringCollection();
                     StringCollection counterSetInstances = new StringCollection();
@@ -836,13 +786,14 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     }
                 }
             }
+
             return res;
         }
 
         private bool IsPathValid(ref PDH_COUNTER_PATH_ELEMENTS pathElts, out string outPath)
         {
             bool ret = false;
-            outPath = "";
+            outPath = string.Empty;
             IntPtr pPathBufferSize = new IntPtr(0);
 
             uint res = PdhMakeCounterPath(ref pathElts, IntPtr.Zero, ref pPathBufferSize, 0);
@@ -861,14 +812,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 {
                     outPath = Marshal.PtrToStringUni(strPath);
 
-                    if (!_isPreVista)
-                    {
-                        ret = (PdhValidatePathEx(_hDataSource, outPath) == 0);
-                    }
-                    else
-                    {
-                        ret = (PdhValidatePath(outPath) == 0);
-                    }
+                    ret = (PdhValidatePathEx(_hDataSource, outPath) == 0);
                 }
             }
             finally
@@ -881,23 +825,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         public bool IsPathValid(string path)
         {
-            if (!_isPreVista)
-            {
-                return (PdhValidatePathEx(_hDataSource, path) == 0);
-            }
-            else
-            {
-                //
-                // Note: this assumes the paths already contain machine names
-                //
-                return (PdhValidatePath(path) == 0);
-            }
+            return (PdhValidatePathEx(_hDataSource, path) == 0);
         }
-
 
         private uint MakePath(PDH_COUNTER_PATH_ELEMENTS pathElts, out string outPath, bool bWildcardInstances)
         {
-            outPath = "";
+            outPath = string.Empty;
             IntPtr pPathBufferSize = new IntPtr(0);
 
             if (bWildcardInstances)
@@ -947,7 +880,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return MakePath(elts, out unifiedPath, true);
         }
 
-
         private uint ParsePath(string fullPath, ref PDH_COUNTER_PATH_ELEMENTS pCounterPathElements)
         {
             IntPtr bufSize = new IntPtr(0);
@@ -958,7 +890,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                            0);
             if (res != PdhResults.PDH_MORE_DATA && res != 0)
             {
-                //Console.WriteLine("error in PdhParseCounterPath: " + res);
+                // Console.WriteLine("error in PdhParseCounterPath: " + res);
                 return res;
             }
 
@@ -973,10 +905,10 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 if (res == 0)
                 {
                     //
-                    // Marshal.PtrToStructure will allocate managed memory for the object, 
+                    // Marshal.PtrToStructure will allocate managed memory for the object,
                     // so the unmanaged ptr can be freed safely
                     //
-                    pCounterPathElements = (PDH_COUNTER_PATH_ELEMENTS)Marshal.PtrToStructure(structPtr, typeof(PDH_COUNTER_PATH_ELEMENTS));
+                    pCounterPathElements = Marshal.PtrToStructure<PDH_COUNTER_PATH_ELEMENTS>(structPtr);
                 }
             }
             finally
@@ -991,18 +923,18 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         // TranslateLocalCounterPath() helper translates counter paths from English into the current locale language.
         // NOTE: we can only translate counter set and counter names.
         // Translated instance names come from providers
-        // This function will leave them unchanged: 
+        // This function will leave them unchanged:
         // however, it works for common cases like "*" and "_total"
         // and many instance names are just numbers, anyway.
         //
-        // Also - this only supports local paths, b/c connecting to remote registry 
-        // requires a different firewall exception. 
+        // Also - this only supports local paths, b/c connecting to remote registry
+        // requires a different firewall exception.
         // This function checks and Asserts if the path is not valid.
         //
         public uint TranslateLocalCounterPath(string englishPath, out string localizedPath)
         {
             uint res = 0;
-            localizedPath = "";
+            localizedPath = string.Empty;
             PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
             res = ParsePath(englishPath, ref pathElts);
             if (res != 0)
@@ -1011,25 +943,24 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             // Check if the path is local and assert if not:
-            string machineNameMassaged = pathElts.MachineName.ToLower(CultureInfo.InvariantCulture);
+            string machineNameMassaged = pathElts.MachineName.ToLowerInvariant();
             machineNameMassaged = machineNameMassaged.TrimStart('\\');
-            Debug.Assert(machineNameMassaged == System.Environment.MachineName.ToLower(CultureInfo.InvariantCulture));
+            Debug.Assert(machineNameMassaged == System.Environment.MachineName.ToLowerInvariant());
 
-            string lowerEngCtrName = pathElts.CounterName.ToLower(CultureInfo.InvariantCulture);
-            string lowerEngObjectName = pathElts.ObjectName.ToLower(CultureInfo.InvariantCulture);
+            string lowerEngCtrName = pathElts.CounterName.ToLowerInvariant();
+            string lowerEngObjectName = pathElts.ObjectName.ToLowerInvariant();
 
             // Get the registry index
             RegistryKey rootKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Perflib\\009");
             string[] regCounters = (string[])rootKey.GetValue("Counter");
 
-
-            // NOTE: 1-based enumeration because the name strings follow index strings in the array           
+            // NOTE: 1-based enumeration because the name strings follow index strings in the array
             Int32 counterIndex = -1;
             Int32 objIndex = -1;
             for (uint enumIndex = 1; enumIndex < regCounters.Length; enumIndex++)
             {
                 string regString = regCounters[enumIndex];
-                if (regString.ToLower(CultureInfo.InvariantCulture) == lowerEngCtrName)
+                if (regString.ToLowerInvariant() == lowerEngCtrName)
                 {
                     try
                     {
@@ -1040,7 +971,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                         return (uint)PdhResults.PDH_INVALID_PATH;
                     }
                 }
-                else if (regString.ToLower(CultureInfo.InvariantCulture) == lowerEngObjectName)
+                else if (regString.ToLowerInvariant() == lowerEngObjectName)
                 {
                     try
                     {
@@ -1051,6 +982,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                         return (uint)PdhResults.PDH_INVALID_PATH;
                     }
                 }
+
                 if (counterIndex != -1 && objIndex != -1)
                 {
                     break;
@@ -1062,7 +994,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return (uint)PdhResults.PDH_INVALID_PATH;
             }
 
-
             // Now, call retrieve the localized names of the object and the counter by index:
             string objNameLocalized;
             res = LookupPerfNameByIndex(pathElts.MachineName, (uint)objIndex, out objNameLocalized);
@@ -1070,8 +1001,8 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             {
                 return res;
             }
-            pathElts.ObjectName = objNameLocalized;
 
+            pathElts.ObjectName = objNameLocalized;
 
             string ctrNameLocalized;
             res = LookupPerfNameByIndex(pathElts.MachineName, (uint)counterIndex, out ctrNameLocalized);
@@ -1079,28 +1010,27 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             {
                 return res;
             }
+
             pathElts.CounterName = ctrNameLocalized;
 
             // Assemble the path back by using the translated object and counter names:
 
             res = MakePath(pathElts, out localizedPath, false);
 
-
             return res;
         }
-
 
         public uint LookupPerfNameByIndex(string machineName, uint index, out string locName)
         {
             //
-            //  NOTE: to make PdhLookupPerfNameByIndex() work, 
+            //  NOTE: to make PdhLookupPerfNameByIndex() work,
             //  localizedPath needs to be pre-allocated on the first call.
             //  This is different from most other PDH functions that tolerate NULL buffers and return required size.
             //
 
             int strSize = 256;
             IntPtr localizedPathPtr = Marshal.AllocHGlobal(strSize * sizeof(char));
-            locName = "";
+            locName = string.Empty;
             uint res = 0;
             try
             {
@@ -1111,6 +1041,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     localizedPathPtr = Marshal.AllocHGlobal(strSize * sizeof(char));
                     res = PdhLookupPerfNameByIndex(machineName, index, localizedPathPtr, ref strSize);
                 }
+
                 if (res == 0)
                 {
                     locName = Marshal.PtrToStringUni(localizedPathPtr);
@@ -1123,8 +1054,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             return res;
         }
-
-
 
         public uint GetValidPaths(string machineName,
                                    string objectName,
@@ -1165,9 +1094,9 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     }
                 }
             }
+
             return res;
         }
-
 
         public uint AddCounters(ref StringCollection validPaths, bool bFlushOldCounters)
         {
@@ -1195,12 +1124,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     res = ParsePath(counterPath, ref pathElts);
                     if (res == 0 && pathElts.InstanceName != null)
                     {
-                        chi.InstanceName = pathElts.InstanceName.ToLower(CultureInfo.InvariantCulture);
+                        chi.InstanceName = pathElts.InstanceName.ToLowerInvariant();
                     }
 
-                    if (!_consumerPathToHandleAndInstanceMap.ContainsKey(counterPath.ToLower(CultureInfo.InvariantCulture)))
+                    if (!_consumerPathToHandleAndInstanceMap.ContainsKey(counterPath.ToLowerInvariant()))
                     {
-                        _consumerPathToHandleAndInstanceMap.Add(counterPath.ToLower(CultureInfo.InvariantCulture), chi);
+                        _consumerPathToHandleAndInstanceMap.Add(counterPath.ToLowerInvariant(), chi);
                     }
 
                     bAtLeastOneAdded = true;
@@ -1210,341 +1139,15 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return bAtLeastOneAdded ? 0 : res;
         }
 
-
-        //
-        // AddRelogCounters combines instances and adds counters to m_hQuery.
-        // The counter handles and full paths 
-        //
-        public uint AddRelogCounters(PerformanceCounterSampleSet sampleSet)
-        {
-            Debug.Assert(_hQuery != null && !_hQuery.IsInvalid);
-
-            uint res = 0;
-
-            Dictionary<string, List<PerformanceCounterSample>> prefixInstanceMap = new Dictionary<string, List<PerformanceCounterSample>>();
-
-            // 
-            // Go through all the samples one, constructing prefixInstanceMap and adding new counters as needed
-            //            
-            foreach (PerformanceCounterSample sample in sampleSet.CounterSamples)
-            {
-                PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
-                res = ParsePath(sample.Path, ref pathElts);
-                if (res != 0)
-                {
-                    // Skipping for now, but should be a non-terminating error
-                    continue;
-                }
-
-                string lowerCaseMachine = pathElts.MachineName.ToLower(CultureInfo.InvariantCulture);
-                string lowerCaseObject = pathElts.ObjectName.ToLower(CultureInfo.InvariantCulture);
-                string lowerCaseCounter = pathElts.CounterName.ToLower(CultureInfo.InvariantCulture);
-
-                string lcPathMinusInstance = @"\\" + lowerCaseMachine + @"\" + lowerCaseObject + @"\" + lowerCaseCounter;
-
-                List<PerformanceCounterSample> sampleList;
-                if (prefixInstanceMap.TryGetValue(lcPathMinusInstance, out sampleList))
-                {
-                    prefixInstanceMap[lcPathMinusInstance].Add(sample);
-                }
-                else
-                {
-                    List<PerformanceCounterSample> newList = new List<PerformanceCounterSample>();
-                    newList.Add(sample);
-                    prefixInstanceMap.Add(lcPathMinusInstance, newList);
-                }
-
-                //Console.WriteLine ("Added path " + sample.Path + " to the 1ist map with prefix " + lcPathMinusInstance);                
-            }
-
-            // 
-            // Add counters to the query, consolidating multi-instance with a wildcard path,
-            // and construct m_ReloggerPathToHandleAndInstanceMap where each full path would be pointing to its counter handle 
-            // and an instance name (might be empty for no-instance counter types).
-            // You can have multiple full paths inside m_ReloggerPathToHandleAndInstanceMap pointing to the same handle.
-            //
-
-            foreach (string prefix in prefixInstanceMap.Keys)
-            {
-                IntPtr counterHandle;
-                string unifiedPath = prefixInstanceMap[prefix][0].Path;
-
-                if (prefixInstanceMap[prefix].Count > 1)
-                {
-                    res = MakeAllInstancePath(prefixInstanceMap[prefix][0].Path, out unifiedPath);
-                    if (res != 0)
-                    {
-                        // Skipping for now, but should be a non-terminating error
-                        continue;
-                    }
-                }
-
-                res = PdhAddRelogCounter(_hQuery,
-                                         unifiedPath,
-                                         (UInt32)prefixInstanceMap[prefix][0].CounterType,
-                                         prefixInstanceMap[prefix][0].DefaultScale,
-                                         prefixInstanceMap[prefix][0].TimeBase,
-                                         out counterHandle);
-                if (res != 0)
-                {
-                    // Skipping for now, but should be a non-terminating error
-                    // Console.WriteLine ("PdhAddCounter returned " + res + " for counter path " + unifiedPath);
-                    continue;
-                }
-
-                //Console.WriteLine ("added  pdh query path:" + unifiedPath );
-
-                //now, add all actual paths to m_ReloggerPathToHandleAndInstanceMap 
-                foreach (PerformanceCounterSample sample in prefixInstanceMap[prefix])
-                {
-                    PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
-                    res = ParsePath(sample.Path, ref pathElts);
-                    if (res != 0)
-                    {
-                        // Skipping for now, but should be a non-terminating error
-                        continue;
-                    }
-
-                    CounterHandleNInstance chi = new CounterHandleNInstance();
-
-                    chi.hCounter = counterHandle;
-
-                    if (pathElts.InstanceName != null)
-                    {
-                        chi.InstanceName = pathElts.InstanceName.ToLower(CultureInfo.InvariantCulture);
-                    }
-
-                    if (!_reloggerPathToHandleAndInstanceMap.ContainsKey(sample.Path.ToLower(CultureInfo.InvariantCulture)))
-                    {
-                        _reloggerPathToHandleAndInstanceMap.Add(sample.Path.ToLower(CultureInfo.InvariantCulture), chi);
-                        //Console.WriteLine ("added map path:" + sample.Path );
-                    }
-                }
-            }
-
-            //TODO: verify that all counters are in the map
-
-            return (_reloggerPathToHandleAndInstanceMap.Keys.Count > 0) ? 0 : res;
-        }
-
-
-
-        //
-        // AddRelogCountersPreservingPaths preserves all paths and adds as relog counters to m_hQuery.
-        // The counter handles and full paths are added to m_ReloggerPathToHandleAndInstanceMap
-        //
-        public uint AddRelogCountersPreservingPaths(PerformanceCounterSampleSet sampleSet)
-        {
-            Debug.Assert(_hQuery != null && !_hQuery.IsInvalid);
-
-            uint res = 0;
-
-            // 
-            // Go through all the samples one, constructing prefixInstanceMap and adding new counters as needed
-            //            
-            foreach (PerformanceCounterSample sample in sampleSet.CounterSamples)
-            {
-                PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
-                res = ParsePath(sample.Path, ref pathElts);
-                if (res != 0)
-                {
-                    // Skipping for now, but should be a non-terminating error
-                    continue;
-                }
-
-                IntPtr counterHandle;
-                res = PdhAddRelogCounter(_hQuery,
-                                         sample.Path,
-                                         (uint)sample.CounterType,
-                                         sample.DefaultScale,
-                                         sample.TimeBase,
-                                         out counterHandle);
-                if (res != 0)
-                {
-                    // Skipping for now, but should be a non-terminating error
-                    continue;
-                }
-
-                CounterHandleNInstance chi = new CounterHandleNInstance();
-
-                chi.hCounter = counterHandle;
-                if (pathElts.InstanceName != null)
-                {
-                    chi.InstanceName = pathElts.InstanceName.ToLower(CultureInfo.InvariantCulture);
-                }
-
-                if (!_reloggerPathToHandleAndInstanceMap.ContainsKey(sample.Path.ToLower(CultureInfo.InvariantCulture)))
-                {
-                    _reloggerPathToHandleAndInstanceMap.Add(sample.Path.ToLower(CultureInfo.InvariantCulture), chi);
-                }
-            }
-
-            return (_reloggerPathToHandleAndInstanceMap.Keys.Count > 0) ? 0 : res;
-        }
-
         public string GetCounterSetHelp(string szMachineName, string szObjectName)
         {
-            if (_isPreVista)
-            {
-                return string.Empty;
-            }
-            IntPtr retString = PdhGetExplainText(szMachineName, szObjectName, null);
-            return Marshal.PtrToStringUni(retString);
+            // API not available to retrieve
+            return string.Empty;
         }
-
-        public uint ReadNextSetPreVista(out PerformanceCounterSampleSet nextSet, bool bSkipReading)
-        {
-            uint res = 0;
-            nextSet = null;
-
-            res = PdhCollectQueryData(_hQuery);
-            if (bSkipReading)
-            {
-                return res;
-            }
-            if (res != 0 && res != PdhResults.PDH_NO_DATA)
-            {
-                return res;
-            }
-
-            PerformanceCounterSample[] samplesArr = new PerformanceCounterSample[_consumerPathToHandleAndInstanceMap.Count];
-            uint sampleIndex = 0;
-            uint numInvalidDataSamples = 0;
-            uint lastErr = 0;
-
-            DateTime sampleTimeStamp = DateTime.Now;
-
-            foreach (string path in _consumerPathToHandleAndInstanceMap.Keys)
-            {
-                IntPtr counterTypePtr = new IntPtr(0);
-                UInt32 counterType = (UInt32)PerformanceCounterType.RawBase;
-                UInt32 defaultScale = 0;
-                UInt64 timeBase = 0;
-
-                IntPtr hCounter = _consumerPathToHandleAndInstanceMap[path].hCounter;
-                Debug.Assert(hCounter != null);
-
-                res = GetCounterInfoPlus(hCounter, out counterType, out defaultScale, out timeBase);
-                if (res != 0)
-                {
-                    //Console.WriteLine ("GetCounterInfoPlus for " + path + " failed with " + res);
-                }
-
-                PDH_RAW_COUNTER rawValue;
-                res = PdhGetRawCounterValue(hCounter, out counterTypePtr, out rawValue);
-                if (res == PdhResults.PDH_INVALID_DATA || res == PdhResults.PDH_NO_DATA)
-                {
-                    //Console.WriteLine ("PdhGetRawCounterValue returned " + res);
-                    samplesArr[sampleIndex++] = new PerformanceCounterSample(path,
-                                           _consumerPathToHandleAndInstanceMap[path].InstanceName,
-                                           0,
-                                           (ulong)0,
-                                           (ulong)0,
-                                           0,
-                                           PerformanceCounterType.RawBase,
-                                           defaultScale,
-                                           timeBase,
-                                           DateTime.Now,
-                                           (UInt64)DateTime.Now.ToFileTime(),
-                                           rawValue.CStatus);
-
-                    numInvalidDataSamples++;
-                    lastErr = res;
-                    continue;
-                }
-                else if (res != 0)
-                {
-                    return res;
-                }
-
-                long dtFT = (((long)rawValue.TimeStamp.dwHighDateTime) << 32) +
-                                     (uint)rawValue.TimeStamp.dwLowDateTime;
-
-                //
-                // NOTE: PDH returns the filetime as local time, therefore 
-                // we need to call FromFileTimUtc() to avoid .NET applying the timezone adjustment.
-                // However, that would result in the DateTime object having Kind.Utc.
-                // We have to copy it once more to correct that (Kind is a read-only property).
-                //            
-                sampleTimeStamp = new DateTime(DateTime.FromFileTimeUtc(dtFT).Ticks, DateTimeKind.Local);
-
-                PDH_FMT_COUNTERVALUE_DOUBLE fmtValueDouble;
-                res = PdhGetFormattedCounterValue(hCounter,
-                                                  PdhFormat.PDH_FMT_DOUBLE | PdhFormat.PDH_FMT_NOCAP100,
-                                                  out counterTypePtr,
-                                                  out fmtValueDouble);
-                if (res == PdhResults.PDH_INVALID_DATA || res == PdhResults.PDH_NO_DATA)
-                {
-                    //Console.WriteLine ("PdhGetFormattedCounterValue returned " + res);
-                    samplesArr[sampleIndex++] = new PerformanceCounterSample(path,
-                                           _consumerPathToHandleAndInstanceMap[path].InstanceName,
-                                           0,
-                                           (ulong)rawValue.FirstValue,
-                                           (ulong)rawValue.SecondValue,
-                                           rawValue.MultiCount,
-                                           (PerformanceCounterType)counterType,
-                                           defaultScale,
-                                           timeBase,
-                                           sampleTimeStamp,
-                                           (UInt64)dtFT,
-                                           fmtValueDouble.CStatus);
-
-                    numInvalidDataSamples++;
-                    lastErr = res;
-                    continue;
-                }
-                else if (res != 0)
-                {
-                    //Console.WriteLine ("PdhGetFormattedCounterValue returned " + res);
-                    return res;
-                }
-
-                samplesArr[sampleIndex++] = new PerformanceCounterSample(path,
-                                                           _consumerPathToHandleAndInstanceMap[path].InstanceName,
-                                                           fmtValueDouble.doubleValue,
-                                                           (ulong)rawValue.FirstValue,
-                                                           (ulong)rawValue.SecondValue,
-                                                           rawValue.MultiCount,
-                                                           (PerformanceCounterType)counterTypePtr.ToInt32(),
-                                                           defaultScale,
-                                                           timeBase,
-                                                           sampleTimeStamp,
-                                                           (UInt64)dtFT,
-                                                           fmtValueDouble.CStatus);
-            }
-
-            //
-            // Prior to Vista, PdhCollectQueryDataWithTime() was not available, 
-            // so we could not collect a timestamp for the entire sample set.
-            // We will use the last sample's timstamp instead.
-            //
-            nextSet = new PerformanceCounterSampleSet(sampleTimeStamp, samplesArr, _firstReading);
-            _firstReading = false;
-
-            if (numInvalidDataSamples == samplesArr.Length)
-            {
-                res = lastErr;
-            }
-            else
-            {
-                // 
-                // Reset the error - any errors are saved per sample in PerformanceCounterSample.Status for kvetching later
-                //
-                res = 0;
-            }
-
-            return res;
-        }
-
 
         public uint ReadNextSet(out PerformanceCounterSampleSet nextSet, bool bSkipReading)
         {
             Debug.Assert(_hQuery != null && !_hQuery.IsInvalid);
-
-            if (_isPreVista)
-            {
-                return ReadNextSetPreVista(out nextSet, bSkipReading);
-            }
 
             uint res = 0;
             nextSet = null;
@@ -1556,17 +1159,18 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             {
                 return res;
             }
+
             if (res != 0 && res != PdhResults.PDH_NO_DATA)
             {
                 return res;
             }
 
             //
-            // NOTE: PDH returns the filetime as local time, therefore 
+            // NOTE: PDH returns the filetime as local time, therefore
             // we need to call FromFileTimUtc() to avoid .NET applying the timezone adjustment.
             // However, that would result in the DateTime object having Kind.Utc.
             // We have to copy it once more to correct that (Kind is a read-only property).
-            //            
+            //
             DateTime batchStamp = DateTime.Now;
             if (res != PdhResults.PDH_NO_DATA)
             {
@@ -1591,7 +1195,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 res = GetCounterInfoPlus(hCounter, out counterType, out defaultScale, out timeBase);
                 if (res != 0)
                 {
-                    //Console.WriteLine ("GetCounterInfoPlus for " + path + " failed with " + res);
+                    // Console.WriteLine ("GetCounterInfoPlus for " + path + " failed with " + res);
                 }
 
                 PDH_RAW_COUNTER rawValue;
@@ -1660,7 +1264,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                                            fmtValueDouble.CStatus);
             }
 
-
             nextSet = new PerformanceCounterSampleSet(batchStamp, samplesArr, _firstReading);
             _firstReading = false;
 
@@ -1670,35 +1273,11 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
             else
             {
-                // 
+                //
                 // Reset the error - any errors are saved per sample in PerformanceCounterSample.Status for kvetching later
                 //
                 res = 0;
             }
-
-            return res;
-        }
-
-
-        public uint GetFilesSummary(out CounterFileInfo summary)
-        {
-            IntPtr pNumEntries = new IntPtr(0);
-            PDH_TIME_INFO pInfo = new PDH_TIME_INFO();
-            IntPtr bufSize = new IntPtr(System.Runtime.InteropServices.Marshal.SizeOf(pInfo));
-
-            uint res = PdhGetDataSourceTimeRangeH(_hDataSource,
-                                                    ref pNumEntries,
-                                                    ref pInfo,
-                                                    ref bufSize);
-            if (res != 0)
-            {
-                summary = new CounterFileInfo();
-                return res;
-            }
-
-            summary = new CounterFileInfo(new DateTime(DateTime.FromFileTimeUtc(pInfo.StartTime).Ticks, DateTimeKind.Local),
-                                           new DateTime(DateTime.FromFileTimeUtc(pInfo.EndTime).Ticks, DateTimeKind.Local),
-                                           pInfo.SampleCount);
 
             return res;
         }
@@ -1736,46 +1315,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             return res;
-        }
-
-        public void ResetRelogValues()
-        {
-            Debug.Assert(_hOutputLog != null && !_hOutputLog.IsInvalid);
-            PdhResetRelogCounterValues(_hOutputLog);
-        }
-
-        public uint WriteRelogSample(DateTime timeStamp)
-        {
-            Debug.Assert(_hOutputLog != null && !_hOutputLog.IsInvalid);
-            return PdhWriteRelogSample(_hOutputLog, (new DateTime(timeStamp.Ticks, DateTimeKind.Utc)).ToFileTimeUtc());
-        }
-
-        public uint SetCounterValue(PerformanceCounterSample sample, out bool bUnknownPath)
-        {
-            Debug.Assert(_hOutputLog != null && !_hOutputLog.IsInvalid);
-
-            bUnknownPath = false;
-
-            string lcPath = sample.Path.ToLower(CultureInfo.InvariantCulture);
-
-            if (!_reloggerPathToHandleAndInstanceMap.ContainsKey(lcPath))
-            {
-                bUnknownPath = true;
-                return 0;
-            }
-
-            PDH_RAW_COUNTER rawStruct = new PDH_RAW_COUNTER();
-            rawStruct.FirstValue = (long)sample.RawValue;
-            rawStruct.SecondValue = (long)sample.SecondValue;
-            rawStruct.MultiCount = sample.MultipleCount;
-            rawStruct.TimeStamp.dwHighDateTime = (int)((new DateTime(sample.Timestamp.Ticks, DateTimeKind.Utc).ToFileTimeUtc() >> 32) & 0xFFFFFFFFL);
-            rawStruct.TimeStamp.dwLowDateTime = (int)(new DateTime(sample.Timestamp.Ticks, DateTimeKind.Utc).ToFileTimeUtc() & 0xFFFFFFFFL);
-            rawStruct.CStatus = sample.Status;
-
-
-            return PdhSetCounterValue(_reloggerPathToHandleAndInstanceMap[lcPath].hCounter,
-                                        ref rawStruct, /*PPDH_RAW_COUNTER */
-                                        _reloggerPathToHandleAndInstanceMap[lcPath].InstanceName);
         }
     }
 }

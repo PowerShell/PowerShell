@@ -1,21 +1,21 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Text;
 using System.Management;
 using System.Management.Automation;
-using System.ComponentModel;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Microsoft.WSMan.Management
 {
     #region SnapIn
 
     /// <summary>
-    /// Create the PowerShell snap-in used to register the 
+    /// Create the PowerShell snap-in used to register the
     /// WsManPSSnapIn cmdlets. Declaring the PSSnapIn class identifies
     /// this .cs file as a PowerShell snap-in.
     /// </summary>
@@ -53,8 +53,8 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// Specify the localization resource information for the vendor. 
-        /// Use the format: resourceBaseName,VendorName. 
+        /// Specify the localization resource information for the vendor.
+        /// Use the format: resourceBaseName,VendorName.
         /// </summary>
         public override string VendorResource
         {
@@ -76,8 +76,8 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// Specify the localization resource information for the description. 
-        /// Use the format: resourceBaseName,Description. 
+        /// Specify the localization resource information for the description.
+        /// Use the format: resourceBaseName,Description.
         /// </summary>
         public override string DescriptionResource
         {

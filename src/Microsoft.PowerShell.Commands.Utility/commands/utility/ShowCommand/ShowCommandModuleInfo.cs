@@ -1,54 +1,50 @@
-//-----------------------------------------------------------------------
-//     Copyright © Microsoft Corporation.  All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands.ShowCommandExtension
 {
-    using System;
-    using System.Management.Automation;
-
     /// <summary>
-    /// Implements a facade around PSModuleInfo and its deserialized counterpart
+    /// Implements a facade around PSModuleInfo and its deserialized counterpart.
     /// </summary>
     public class ShowCommandModuleInfo
     {
         /// <summary>
-        /// Creates an instance of the ShowCommandModuleInfo class based on a CommandInfo object
+        /// Creates an instance of the ShowCommandModuleInfo class based on a CommandInfo object.
         /// </summary>
-        /// 
         /// <param name="other">
         /// The object to wrap.
         /// </param>
         public ShowCommandModuleInfo(PSModuleInfo other)
         {
-            if (null == other)
+            if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             this.Name = other.Name;
         }
 
         /// <summary>
-        /// Creates an instance of the ShowCommandModuleInfo class based on a PSObject object
+        /// Creates an instance of the ShowCommandModuleInfo class based on a PSObject object.
         /// </summary>
-        /// 
         /// <param name="other">
         /// The object to wrap.
         /// </param>
         public ShowCommandModuleInfo(PSObject other)
         {
-            if (null == other)
+            if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             this.Name = other.Members["Name"].Value as string;
         }
 
         /// <summary>
-        /// Gets the name of this module
+        /// Gets the name of this module.
         /// </summary>
         public string Name { get; private set; }
     }

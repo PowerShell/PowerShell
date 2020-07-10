@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<SoftwareIdentity
-    name="MSI Provider for PackageManagement"
-	version="1.0.0.0" versionScheme="multipartnumeric"
-	media="(windows) and (PackageManagement) and (min-PackageManagement.api:2) NOT (windows-nano)"
-	xmlns="http://standards.iso.org/iso/19770/-2/2015/schema.xsd">
-
-</SoftwareIdentity>

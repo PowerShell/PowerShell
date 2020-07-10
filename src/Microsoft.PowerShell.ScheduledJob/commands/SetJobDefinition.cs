@@ -1,13 +1,12 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
-using System.Management.Automation;
-using System.Management.Automation.Runspaces;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
 
 namespace Microsoft.PowerShell.ScheduledJob
 {
@@ -16,7 +15,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// parameter values and saves changes to job store and Task Scheduler.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ScheduledJob", DefaultParameterSetName = SetScheduledJobCommand.ScriptBlockParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223924")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223924")]
     [OutputType(typeof(ScheduledJobDefinition))]
     public sealed class SetScheduledJobCommand : ScheduleJobCmdletBase
     {
@@ -25,7 +24,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         private const string ExecutionParameterSet = "Execution";
         private const string ScriptBlockParameterSet = "ScriptBlock";
         private const string FilePathParameterSet = "FilePath";
-
 
         /// <summary>
         /// Name of scheduled job definition.
@@ -36,20 +34,25 @@ namespace Microsoft.PowerShell.ScheduledJob
         public string Name
         {
             get { return _name; }
+
             set { _name = value; }
         }
+
         private string _name;
 
         /// <summary>
         /// File path for script to be run in job.
         /// </summary>
         [Parameter(ParameterSetName = SetScheduledJobCommand.FilePathParameterSet)]
+        [Alias("Path")]
         [ValidateNotNullOrEmpty]
         public string FilePath
         {
             get { return _filePath; }
+
             set { _filePath = value; }
         }
+
         private string _filePath;
 
         /// <summary>
@@ -60,8 +63,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScriptBlock ScriptBlock
         {
             get { return _scriptBlock; }
+
             set { _scriptBlock = value; }
         }
+
         private ScriptBlock _scriptBlock;
 
         /// <summary>
@@ -74,8 +79,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobTrigger[] Trigger
         {
             get { return _triggers; }
+
             set { _triggers = value; }
         }
+
         private ScheduledJobTrigger[] _triggers;
 
         /// <summary>
@@ -87,8 +94,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScriptBlock InitializationScript
         {
             get { return _initializationScript; }
+
             set { _initializationScript = value; }
         }
+
         private ScriptBlock _initializationScript;
 
         /// <summary>
@@ -99,8 +108,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter RunAs32
         {
             get { return _runAs32; }
+
             set { _runAs32 = value; }
         }
+
         private SwitchParameter _runAs32;
 
         /// <summary>
@@ -112,8 +123,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public PSCredential Credential
         {
             get { return _credential; }
+
             set { _credential = value; }
         }
+
         private PSCredential _credential;
 
         /// <summary>
@@ -124,8 +137,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public AuthenticationMechanism Authentication
         {
             get { return _authenticationMechanism; }
+
             set { _authenticationMechanism = value; }
         }
+
         private AuthenticationMechanism _authenticationMechanism;
 
         /// <summary>
@@ -137,8 +152,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobOptions ScheduledJobOption
         {
             get { return _options; }
+
             set { _options = value; }
         }
+
         private ScheduledJobOptions _options;
 
         /// <summary>
@@ -154,19 +171,23 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobDefinition InputObject
         {
             get { return _definition; }
+
             set { _definition = value; }
         }
+
         private ScheduledJobDefinition _definition;
 
         /// <summary>
-        /// ClearExecutionHistory
+        /// ClearExecutionHistory.
         /// </summary>
         [Parameter(ParameterSetName = SetScheduledJobCommand.ExecutionParameterSet)]
         public SwitchParameter ClearExecutionHistory
         {
             get { return _clearExecutionHistory; }
+
             set { _clearExecutionHistory = value; }
         }
+
         private SwitchParameter _clearExecutionHistory;
 
         /// <summary>
@@ -177,8 +198,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public int MaxResultCount
         {
             get { return _executionHistoryLength; }
+
             set { _executionHistoryLength = value; }
         }
+
         private int _executionHistoryLength;
 
         /// <summary>
@@ -190,8 +213,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter PassThru
         {
             get { return _passThru; }
+
             set { _passThru = value; }
         }
+
         private SwitchParameter _passThru;
 
         /// <summary>
@@ -204,8 +229,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public object[] ArgumentList
         {
             get { return _arguments; }
+
             set { _arguments = value; }
         }
+
         private object[] _arguments;
 
         /// <summary>
@@ -216,8 +243,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter RunNow
         {
             get { return _runNow; }
+
             set { _runNow = value; }
         }
+
         private SwitchParameter _runNow;
 
         /// <summary>
@@ -229,8 +258,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan RunEvery
         {
             get { return _runEvery; }
+
             set { _runEvery = value; }
         }
+
         private TimeSpan _runEvery;
 
         #endregion
@@ -256,10 +287,10 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             try
             {
-                // If RunEvery parameter is specified then create a job trigger for the definition that 
+                // If RunEvery parameter is specified then create a job trigger for the definition that
                 // runs the job at the requested interval.
                 bool addedTrigger = false;
-                if (MyInvocation.BoundParameters.ContainsKey("RunEvery"))
+                if (MyInvocation.BoundParameters.ContainsKey(nameof(RunEvery)))
                 {
                     AddRepetitionJobTriggerToDefinition(
                         _definition,
@@ -306,7 +337,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 else
                 {
                     string msg = StringUtil.Format(ScheduledJobErrorStrings.CantSetJobDefinition, _definition.Name);
-                    errorRecord = new ErrorRecord(new RuntimeException(msg, e), 
+                    errorRecord = new ErrorRecord(new RuntimeException(msg, e),
                         "CantSetPropertiesToScheduledJobDefinition", ErrorCategory.InvalidOperation, _definition);
                 }
 
@@ -341,7 +372,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             UpdateJobInvocationInfo();
 
-            if (MyInvocation.BoundParameters.ContainsKey("MaxResultCount"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(MaxResultCount)))
             {
                 _definition.SetExecutionHistoryLength(MaxResultCount, false);
             }
@@ -363,15 +394,15 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Create new ScheduledJobInvocationInfo object with update information and 
-        /// update the job defintion object.
+        /// Create new ScheduledJobInvocationInfo object with update information and
+        /// update the job definition object.
         /// </summary>
         private void UpdateJobInvocationInfo()
         {
             Dictionary<string, object> parameters = UpdateParameters();
             string name = _definition.Name;
             string command;
-            
+
             if (ScriptBlock != null)
             {
                 command = ScriptBlock.ToString();
@@ -398,7 +429,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <returns>Updated parameters.</returns>
         private Dictionary<string, object> UpdateParameters()
         {
-            Debug.Assert(_definition.InvocationInfo.Parameters.Count != 0, 
+            Debug.Assert(_definition.InvocationInfo.Parameters.Count != 0,
                 "ScheduledJobDefinition must always have some job invocation parameters");
             Dictionary<string, object> newParameters = new Dictionary<string, object>();
             foreach (CommandParameter parameter in _definition.InvocationInfo.Parameters[0])
@@ -407,7 +438,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
 
             // RunAs32
-            if (MyInvocation.BoundParameters.ContainsKey("RunAs32"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RunAs32)))
             {
                 if (newParameters.ContainsKey(ScheduledJobInvocationInfo.RunAs32Parameter))
                 {
@@ -420,7 +451,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
 
             // Authentication
-            if (MyInvocation.BoundParameters.ContainsKey("Authentication"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(Authentication)))
             {
                 if (newParameters.ContainsKey(ScheduledJobInvocationInfo.AuthenticationParameter))
                 {

@@ -1,14 +1,12 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-
-using Dbg = System.Management.Automation;
+using System.ComponentModel;
 using System.Management.Automation.Internal;
 using System.Security.Cryptography.X509Certificates;
-using System.ComponentModel;
-using DWORD = System.UInt32;
 
+using Dbg = System.Management.Automation;
+using DWORD = System.UInt32;
 
 namespace System.Management.Automation
 {
@@ -100,20 +98,20 @@ namespace System.Management.Automation
     /// <summary>
     /// Represents a digital signature on a signed
     /// file.
-    /// </summary>    
+    /// </summary>
     public sealed class Signature
     {
         private string _path;
         private SignatureStatus _status = SignatureStatus.UnknownError;
         private DWORD _win32Error;
         private X509Certificate2 _signerCert;
-        private string _statusMessage = String.Empty;
+        private string _statusMessage = string.Empty;
         private X509Certificate2 _timeStamperCert;
-        //private DateTime signedOn = new DateTime(0);
+        // private DateTime signedOn = new DateTime(0);
 
         // Three states:
         //   - True: we can rely on the catalog API to check catalog signature.
-        //   - False: we cannot rely on the catalog API, either because it doesn't exist in the OS (win7), 
+        //   - False: we cannot rely on the catalog API, either because it doesn't exist in the OS (win7),
         //            or it's not working properly (OneCore SKUs or dev environment where powershell might
         //            be updated/refreshed).
         //   - Null: it's not determined yet whether catalog API can be relied on or not.
@@ -179,12 +177,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the signature type of the signature
+        /// Returns the signature type of the signature.
         /// </summary>
         public SignatureType SignatureType { get; internal set; }
 
         /// <summary>
-        /// True if the item is signed as part of an operating system release
+        /// True if the item is signed as part of an operating system release.
         /// </summary>
         public bool IsOSBinary { get; internal set; }
 
@@ -193,19 +191,11 @@ namespace System.Management.Automation
         ///
         /// Call this to create a validated time-stamped signature object.
         /// </summary>
-        ///
-        /// <param name="filePath"> this signature is found in this file </param>
-        ///
-        /// <param name="error"> win32 error code </param>
-        ///
-        /// <param name="signer"> cert of the signer </param>
-        ///
-        /// <param name="timestamper"> cert of the time stamper </param>
-        ///
-        /// <returns> constructed object </returns>
-        ///
-        /// <remarks>  </remarks>
-        ///
+        /// <param name="filePath">This signature is found in this file.</param>
+        /// <param name="error">Win32 error code.</param>
+        /// <param name="signer">Cert of the signer.</param>
+        /// <param name="timestamper">Cert of the time stamper.</param>
+        /// <returns>Constructed object.</returns>
         internal Signature(string filePath,
                            DWORD error,
                            X509Certificate2 signer,
@@ -223,15 +213,9 @@ namespace System.Management.Automation
         ///
         /// Call this to create a validated signature object.
         /// </summary>
-        ///
-        /// <param name="filePath"> this signature is found in this file </param>
-        ///
-        /// <param name="signer"> cert of the signer </param>
-        ///
-        /// <returns> constructed object </returns>
-        ///
-        /// <remarks>  </remarks>
-        ///
+        /// <param name="filePath">This signature is found in this file.</param>
+        /// <param name="signer">Cert of the signer.</param>
+        /// <returns>Constructed object.</returns>
         internal Signature(string filePath,
                            X509Certificate2 signer)
         {
@@ -244,19 +228,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for class Signature
         ///
-        /// Call this ctor when creating an invalid signature object
+        /// Call this ctor when creating an invalid signature object.
         /// </summary>
-        ///
-        /// <param name="filePath"> this signature is found in this file </param>
-        ///
-        /// <param name="error"> win32 error code </param>
-        ///
-        /// <param name="signer"> cert of the signer </param>
-        ///
-        /// <returns> constructed object </returns>
-        ///
-        /// <remarks>  </remarks>
-        ///
+        /// <param name="filePath">This signature is found in this file.</param>
+        /// <param name="error">Win32 error code.</param>
+        /// <param name="signer">Cert of the signer.</param>
+        /// <returns>Constructed object.</returns>
         internal Signature(string filePath,
                            DWORD error,
                            X509Certificate2 signer)
@@ -270,17 +247,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for class Signature
         ///
-        /// Call this ctor when creating an invalid signature object
+        /// Call this ctor when creating an invalid signature object.
         /// </summary>
-        ///
-        /// <param name="filePath"> this signature is found in this file </param>
-        ///
-        /// <param name="error"> win32 error code </param>
-        ///
-        /// <returns> constructed object </returns>
-        ///
-        /// <remarks>  </remarks>
-        ///
+        /// <param name="filePath">This signature is found in this file.</param>
+        /// <param name="error">Win32 error code.</param>
+        /// <returns>Constructed object.</returns>
         internal Signature(string filePath, DWORD error)
         {
             Utils.CheckArgForNullOrEmpty(filePath, "filePath");
@@ -308,7 +279,6 @@ namespace System.Management.Automation
                                                       error,
                                                       filePath);
         }
-
 
         private static SignatureStatus GetSignatureStatusFromWin32Error(DWORD error)
         {
@@ -374,6 +344,7 @@ namespace System.Management.Automation
                     {
                         resourceString = MshSignature.MshSignature_Incompatible;
                     }
+
                     arg = filePath;
                     break;
 
@@ -396,11 +367,12 @@ namespace System.Management.Automation
                     resourceString = MshSignature.MshSignature_NotSupportedFileFormat;
                     arg = System.IO.Path.GetExtension(filePath);
 
-                    if (String.IsNullOrEmpty(arg))
+                    if (string.IsNullOrEmpty(arg))
                     {
                         resourceString = MshSignature.MshSignature_NotSupportedFileFormat_NoExtension;
                         arg = null;
                     }
+
                     break;
             }
 

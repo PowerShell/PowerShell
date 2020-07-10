@@ -1,16 +1,15 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
-using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
 using System.Threading;
-using System.Diagnostics;
 
 namespace Microsoft.PowerShell.ScheduledJob
 {
@@ -18,7 +17,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This cmdlet disables triggers on a ScheduledJobDefinition object.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, "JobTrigger", SupportsShouldProcess = true, DefaultParameterSetName = EnableJobTriggerCommand.EnabledParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223917")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223917")]
     public sealed class EnableJobTriggerCommand : EnableDisableScheduledJobCmdletBase
     {
        #region Enabled Implementation

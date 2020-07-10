@@ -1,14 +1,13 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
 using System.Management.Automation.Remoting.Internal;
+using System.Management.Automation.Runspaces;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -16,18 +15,17 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet takes a Job object and checks to see if it is debuggable.  If it
     /// is debuggable then it breaks into the job debugger in step mode.  If it is not
     /// debuggable then it is treated as a parent job and each child job is checked if
-    /// it is debuggable and if it is will break into its job debugger in step mode.  
-    /// For multiple debuggable child jobs, each job execution will be halted and the 
+    /// it is debuggable and if it is will break into its job debugger in step mode.
+    /// For multiple debuggable child jobs, each job execution will be halted and the
     /// debugger will step to each job execution point sequentially.
-    /// 
-    /// When a job is debugged its output data is written to host and the executing job 
-    /// script will break into the host debugger, in step mode, at the next stoppable 
+    ///
+    /// When a job is debugged its output data is written to host and the executing job
+    /// script will break into the host debugger, in step mode, at the next stoppable
     /// execution point.
-    /// 
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsDiagnostic.Debug, "Job", SupportsShouldProcess = true, DefaultParameterSetName = DebugJobCommand.JobParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=330208")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=330208")]
     public sealed class DebugJobCommand : PSCmdlet
     {
         #region Strings
@@ -98,6 +96,13 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
+
+        /// <summary>
+        /// Gets or sets a flag that tells PowerShell to automatically perform a BreakAll when the debugger is attached to the remote target.
+        /// </summary>
+        [Experimental("Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace", ExperimentAction.Show)]
+        [Parameter]
+        public SwitchParameter BreakAll { get; set; }
 
         #endregion
 
@@ -179,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Set up host script debugger to debug the job.
             _debugger = runspace.Debugger;
-            _debugger.DebugJob(_job);
+            _debugger.DebugJob(_job, breakAll: BreakAll);
 
             // Blocking call.  Send job output to host UI while debugging and wait for Job completion.
             WaitAndReceiveJobOutput();
@@ -217,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
         private bool CheckForDebuggableJob()
         {
             // Check passed in job object.
-            bool debuggableJobFound = GetJobDebuggable(_job); ;
+            bool debuggableJobFound = GetJobDebuggable(_job);
 
             if (!debuggableJobFound)
             {

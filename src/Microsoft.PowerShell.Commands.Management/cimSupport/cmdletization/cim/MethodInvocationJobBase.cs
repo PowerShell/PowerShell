@@ -1,21 +1,22 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
+
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Options;
 using Microsoft.PowerShell.Cim;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Job wrapping invocation of an extrinsic CIM method
+    /// Job wrapping invocation of an extrinsic CIM method.
     /// </summary>
     internal abstract class MethodInvocationJobBase<T> : CimChildJobBase<T>
     {
@@ -59,6 +60,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     IsValuePresent = inputParameter.IsValuePresent
                 });
             }
+
             return result;
         }
 

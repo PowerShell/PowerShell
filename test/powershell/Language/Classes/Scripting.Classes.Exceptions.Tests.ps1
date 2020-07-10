@@ -1,5 +1,7 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 Describe 'Exceptions flow for classes' -Tags "CI" {
-    
+
     $canaryHashtable = @{}
 
     $iss = [initialsessionstate]::CreateDefault()
@@ -13,10 +15,10 @@ Describe 'Exceptions flow for classes' -Tags "CI" {
     }
 
     Context 'All calls are inside classes' {
-        
+
         It 'does not execute statements after instance method with exception' {
-            
-            # Put try-catch outside to avoid try-catch logic altering analysis 
+
+            # Put try-catch outside to avoid try-catch logic altering analysis
             try {
 
                 $ps.AddScript( @'
@@ -30,22 +32,22 @@ class C
         $canaryHashtable['canary'] = 100
     }
 
-    [void] ImThrow() 
+    [void] ImThrow()
     {
         throw 'I told you'
     }
 }
 [C]::new().m1()
 '@).Invoke()
-            
+
             } catch {}
 
-            $canaryHashtable['canary'] | Should Be 42
+            $canaryHashtable['canary'] | Should -Be 42
         }
 
         It 'does not execute statements after static method with exception' {
-            
-            # Put try-catch outside to avoid try-catch logic altering analysis 
+
+            # Put try-catch outside to avoid try-catch logic altering analysis
             try {
 
                 $ps.AddScript( @'
@@ -59,22 +61,22 @@ class C
         $canaryHashtable['canary'] = 100
     }
 
-    static [void] ImThrow() 
+    static [void] ImThrow()
     {
         1 / 0
     }
 }
 [C]::s1()
 '@).Invoke()
-            
+
             } catch {}
 
-            $canaryHashtable['canary'] | Should Be 43
+            $canaryHashtable['canary'] | Should -Be 43
         }
 
         It 'does not execute statements after instance method with exception and deep stack' {
-            
-            # Put try-catch outside to avoid try-catch logic altering analysis 
+
+            # Put try-catch outside to avoid try-catch logic altering analysis
             try {
 
                 $ps.AddScript( @'
@@ -88,53 +90,53 @@ class C
         $canaryHashtable['canary'] = -6101
     }
 
-    [void] m2() 
+    [void] m2()
     {
         $canaryHashtable = Get-Canary
         $canaryHashtable['canary'] += 10
         $this.m3()
-        $canaryHashtable['canary'] = -6102 
+        $canaryHashtable['canary'] = -6102
     }
 
-    [void] m3() 
+    [void] m3()
     {
         $canaryHashtable = Get-Canary
         $canaryHashtable['canary'] += 100
         $this.m4()
-        $canaryHashtable['canary'] = -6103  
+        $canaryHashtable['canary'] = -6103
     }
 
-    [void] m4() 
-    { 
+    [void] m4()
+    {
         $canaryHashtable = Get-Canary
         $canaryHashtable['canary'] += 1000
         $this.ImThrow()
         $canaryHashtable['canary'] = -6104
     }
 
-    [void] ImThrow() 
+    [void] ImThrow()
     {
         $canaryHashtable = Get-Canary
         $canaryHashtable['canary'] += 10000
-        
+
         1 / 0
     }
 }
 [C]::new().m1()
 '@).Invoke()
-            
+
             } catch {}
 
-            $canaryHashtable['canary'] | Should Be 11111
+            $canaryHashtable['canary'] | Should -Be 11111
         }
     }
 
     Context 'Class method call PS function' {
-        
+
         $body = @'
 class C
 {
-    [void] m1() 
+    [void] m1()
     {
         m2
     }
@@ -144,7 +146,6 @@ class C
         s2
     }
 }
-                
 
 function m2()
 {
@@ -167,7 +168,7 @@ function CallImThrow()
     ImThrow
 }
 
-function ImThrow() 
+function ImThrow()
 {
     1 / 0
 }
@@ -175,29 +176,29 @@ function ImThrow()
 '@
 
         It 'does not execute statements after function with exception called from instance method' {
-            
-            # Put try-catch outside to avoid try-catch logic altering analysis 
+
+            # Put try-catch outside to avoid try-catch logic altering analysis
             try {
 
                 $ps.AddScript($body).Invoke()
                 $ps.AddScript('$c = [C]::new(); $c.m1()').Invoke()
-            
+
             } catch {}
-            
-            $canaryHashtable['canaryM'] | Should Be 45
+
+            $canaryHashtable['canaryM'] | Should -Be 45
         }
 
         It 'does not execute statements after function with exception called from static method' {
-            
-            # Put try-catch outside to avoid try-catch logic altering analysis 
+
+            # Put try-catch outside to avoid try-catch logic altering analysis
             try {
 
                 $ps.AddScript($body).Invoke()
                 $ps.AddScript('[C]::s1()').Invoke()
-            
+
             } catch {}
-            
-            $canaryHashtable['canaryS'] | Should Be 46
+
+            $canaryHashtable['canaryS'] | Should -Be 46
         }
 
     }
@@ -216,10 +217,10 @@ foo
 $canaryHashtable['canary'] += 100
 
 '@).Invoke()
-            
+
             } catch {}
 
-            $canaryHashtable['canary'] | Should Be 111
+            $canaryHashtable['canary'] | Should -Be 111
         }
     }
 }
@@ -230,43 +231,27 @@ Describe "Exception error position" -Tags "CI" {
         static f1() { [MSFT_3090412]::bar = 42 }
         static f2() { throw "an error in f2" }
         static f3() { "".Substring(0, 10) }
-        static f4() { dir nosuchfile -ea Stop }
+        static f4() { Get-ChildItem nosuchfile -ErrorAction Stop }
     }
 
     It "Setting a property that doesn't exist" {
-        try { 
-            [MSFT_3090412]::f1()
-            throw "f1 should have thrown"
-        } catch {
-            $_.InvocationInfo.Line | Should Match ([regex]::Escape('[MSFT_3090412]::bar = 42'))
-        }
+        $e = { [MSFT_3090412]::f1() } | Should -Throw -PassThru -ErrorId 'PropertyAssignmentException'
+        $e.InvocationInfo.Line | Should -Match ([regex]::Escape('[MSFT_3090412]::bar = 42'))
     }
 
     It "Throwing an exception" {
-        try { 
-            [MSFT_3090412]::f2()
-            throw "f2 should have thrown"
-        } catch {
-            $_.InvocationInfo.Line | Should Match ([regex]::Escape('throw "an error in f2"'))
-        }
+        $e = { [MSFT_3090412]::f2() } | Should -Throw -PassThru -ErrorId 'an error in f2'
+        $e.InvocationInfo.Line | Should -Match ([regex]::Escape('throw "an error in f2"'))
     }
 
     It "Calling a .Net method that throws" {
-        try { 
-            [MSFT_3090412]::f3()
-            throw "f3 should have thrown"
-        } catch {
-            $_.InvocationInfo.Line | Should Match ([regex]::Escape('"".Substring(0, 10)'))
-        }
+        $e = { [MSFT_3090412]::f3() } | Should -Throw -PassThru -ErrorId 'ArgumentOutOfRangeException'
+        $e.InvocationInfo.Line | Should -Match ([regex]::Escape('"".Substring(0, 10)'))
     }
 
     It "Terminating error" {
-        try { 
-            [MSFT_3090412]::f4()
-            throw "f4 should have thrown"
-        } catch {
-            $_.InvocationInfo.Line | Should Match ([regex]::Escape('dir nosuchfile -ea Stop'))
-        }
+        $e = { [MSFT_3090412]::f4() } | Should -Throw -PassThru -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand'
+        $e.InvocationInfo.Line | Should -Match ([regex]::Escape('Get-ChildItem nosuchfile -ErrorAction Stop'))
     }
 }
 
@@ -276,7 +261,7 @@ Describe "Exception from initializer" -Tags "CI" {
         [int]$a = "zz"
         MSFT_6397334a() {}
     }
-    
+
     class MSFT_6397334b
     {
         [int]$a = "zz"
@@ -287,63 +272,33 @@ Describe "Exception from initializer" -Tags "CI" {
         static [int]$a = "zz"
         static MSFT_6397334a() {}
     }
-    
+
     class MSFT_6397334d
     {
         static [int]$a = "zz"
     }
-  
+
     It "instance member w/ ctor" {
-        try {
-            [MSFT_6397334a]::new()
-            throw "[MSFT_6397334a]::new() should have thrown"
-        }
-        catch
-        {
-            $e = $_
-            $e.FullyQualifiedErrorId | Should Be InvalidCastFromStringToInteger
-            $e.InvocationInfo.Line | Should Match 'a = "zz"'            
-        }
+        $e = { [MSFT_6397334a]::new() } | Should -Throw -ErrorId 'InvalidCastFromStringToInteger' -PassThru
+        $e.InvocationInfo.Line | Should -Match 'a = "zz"'
     }
-    
+
     It "instance member w/o ctor" {
-        try {
-            [MSFT_6397334b]::new()
-            throw "[MSFT_6397334b]::new() should have thrown"
-        }
-        catch
-        {
-            $e = $_
-            $e.FullyQualifiedErrorId | Should Be InvalidCastFromStringToInteger
-            $e.InvocationInfo.Line | Should Match 'a = "zz"'            
-        }
+        $e = { [MSFT_6397334b]::new() } | Should -Throw -ErrorId 'InvalidCastFromStringToInteger' -PassThru
+        $e.InvocationInfo.Line | Should -Match 'a = "zz"'
     }
 
     It "static member w/ ctor" {
-        try {
-            $null = [MSFT_6397334c]::a
-            throw "[MSFT_6397334c]::a should have thrown"
-        }
-        catch
-        {
-            $_.Exception.GetType().FullName | Should Be System.TypeInitializationException
-            $e  = $_.Exception.InnerException.InnerException.ErrorRecord
-            $e.FullyQualifiedErrorId | Should Be InvalidCastFromStringToInteger
-            $e.InvocationInfo.Line | Should Match 'a = "zz"'            
-        }
+        $e = { $null = [MSFT_6397334c]::a } | Should -Throw -PassThru
+        $e.Exception | Should -BeOfType System.TypeInitializationException
+        $e.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
+        $e.Exception.InnerException.InnerException.ErrorRecord.InvocationInfo.Line | Should -Match 'a = "zz"'
     }
-    
+
     It "static member w/o ctor" {
-        try {
-            $null = [MSFT_6397334d]::a
-            throw "[MSFT_6397334d]::a should have thrown"
-        }
-        catch
-        {
-            $_.Exception.GetType().FullName | Should Be System.TypeInitializationException
-            $e  = $_.Exception.InnerException.InnerException.ErrorRecord
-            $e.FullyQualifiedErrorId | Should Be InvalidCastFromStringToInteger
-            $e.InvocationInfo.Line | Should Match 'a = "zz"'            
-        }
+        $e = { $null = [MSFT_6397334d]::a } | Should -Throw -PassThru
+        $e.Exception | Should -BeOfType System.TypeInitializationException
+        $e.Exception.InnerException.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
+        $e.Exception.InnerException.InnerException.ErrorRecord.InvocationInfo.Line | Should -Match 'a = "zz"'
     }
 }

@@ -1,12 +1,12 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Management.Automation.Internal;
 using System.Text;
 
 namespace System.Management.Automation.Language
@@ -212,7 +212,7 @@ namespace System.Management.Automation.Language
         /// <summary>The subtraction assignment operator '-='.</summary>
         MinusEquals = 44,
 
-        /// <summary>The multiplcation assignment operator '*='.</summary>
+        /// <summary>The multiplication assignment operator '*='.</summary>
         MultiplyEquals = 45,
 
         /// <summary>The division assignment operator '/='.</summary>
@@ -413,6 +413,21 @@ namespace System.Management.Automation.Language
         /// <summary>The PS class base class and implemented interfaces operator ':'. Also used in base class ctor calls.</summary>
         Colon = 99,
 
+        /// <summary>The ternary operator '?'.</summary>
+        QuestionMark = 100,
+
+        /// <summary>The null conditional assignment operator '??='.</summary>
+        QuestionQuestionEquals = 101,
+
+        /// <summary>The null coalesce operator '??'.</summary>
+        QuestionQuestion = 102,
+
+        /// <summary>The null conditional member access operator '?.'.</summary>
+        QuestionDot = 103,
+
+        /// <summary>The null conditional index access operator '?[]'.</summary>
+        QuestionLBracket = 104,
+
         #endregion Operators
 
         #region Keywords
@@ -570,6 +585,9 @@ namespace System.Management.Automation.Language
         /// <summary>The 'base' keyword</summary>
         Base = 168,
 
+        /// <summary>The 'default' keyword</summary>
+        Default = 169,
+
         #endregion Keywords
     }
 
@@ -589,46 +607,51 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The precedence of the logical operators '-and', '-or', and '-xor'.
         /// </summary>
-        BinaryPrecedenceLogical = 1,
+        BinaryPrecedenceLogical = 0x1,
 
         /// <summary>
         /// The precedence of the bitwise operators '-band', '-bor', and '-bxor'
         /// </summary>
-        BinaryPrecedenceBitwise = 2,
+        BinaryPrecedenceBitwise = 0x2,
 
         /// <summary>
         /// The precedence of comparison operators including: '-eq', '-ne', '-ge', '-gt', '-lt', '-le', '-like', '-notlike',
-        /// '-match', '-notmatch', '-replace', '-containts', '-notcontains', '-in', '-notin', '-split', '-join', '-is', '-isnot', '-as',
+        /// '-match', '-notmatch', '-replace', '-contains', '-notcontains', '-in', '-notin', '-split', '-join', '-is', '-isnot', '-as',
         /// and all of the case sensitive variants of these operators, if they exists.
         /// </summary>
-        BinaryPrecedenceComparison = 3,
+        BinaryPrecedenceComparison = 0x5,
+
+        /// <summary>
+        /// The precedence of null coalesce operator '??'.
+        /// </summary>
+        BinaryPrecedenceCoalesce = 0x7,
 
         /// <summary>
         /// The precedence of the binary operators '+' and '-'.
         /// </summary>
-        BinaryPrecedenceAdd = 4,
+        BinaryPrecedenceAdd = 0x9,
 
         /// <summary>
         /// The precedence of the operators '*', '/', and '%'.
         /// </summary>
-        BinaryPrecedenceMultiply = 5,
+        BinaryPrecedenceMultiply = 0xa,
 
         /// <summary>
         /// The precedence of the '-f' operator.
         /// </summary>
-        BinaryPrecedenceFormat = 6,
+        BinaryPrecedenceFormat = 0xc,
 
         /// <summary>
         /// The precedence of the '..' operator.
         /// </summary>
-        BinaryPrecedenceRange = 7,
+        BinaryPrecedenceRange = 0xd,
 
         #endregion Precedence Values
 
         /// <summary>
         /// A bitmask to get the precedence of binary operators.
         /// </summary>
-        BinaryPrecedenceMask = 0x00000007,
+        BinaryPrecedenceMask = 0x0000000f,
 
         /// <summary>
         /// The token is a keyword.
@@ -655,7 +678,10 @@ namespace System.Management.Automation.Language
         /// </summary>
         CaseSensitiveOperator = 0x00000400,
 
-        // Unused = 0x00000800,
+        /// <summary>
+        /// The token is a ternary operator '?'.
+        /// </summary>
+        TernaryOperator = 0x00000800,
 
         /// <summary>
         /// The operators '&amp;', '|', and the member access operators ':' and '::'.
@@ -663,7 +689,7 @@ namespace System.Management.Automation.Language
         SpecialOperator = 0x00001000,
 
         /// <summary>
-        /// The token is one of the assignment operators: '=', '+=', '-=', '*=', '/=', or '%='
+        /// The token is one of the assignment operators: '=', '+=', '-=', '*=', '/=', '%=' or '??='
         /// </summary>
         AssignmentOperator = 0x00002000,
 
@@ -773,8 +799,8 @@ namespace System.Management.Automation.Language
 
             #region Flags for operators
 
-            /*               AndAnd */ TokenFlags.BinaryOperator | TokenFlags.ParseModeInvariant,
-            /*                 OrOr */ TokenFlags.BinaryOperator | TokenFlags.ParseModeInvariant,
+            /*               AndAnd */ TokenFlags.ParseModeInvariant,
+            /*                 OrOr */ TokenFlags.ParseModeInvariant,
             /*            Ampersand */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
             /*                 Pipe */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
             /*                Comma */ TokenFlags.UnaryOperator | TokenFlags.ParseModeInvariant,
@@ -792,7 +818,7 @@ namespace System.Management.Automation.Language
             /*               Equals */ TokenFlags.AssignmentOperator,
             /*           PlusEquals */ TokenFlags.AssignmentOperator,
             /*          MinusEquals */ TokenFlags.AssignmentOperator,
-            /*        MultipyEquals */ TokenFlags.AssignmentOperator,
+            /*       MultiplyEquals */ TokenFlags.AssignmentOperator,
             /*         DivideEquals */ TokenFlags.AssignmentOperator,
             /*      RemainderEquals */ TokenFlags.AssignmentOperator,
             /*          Redirection */ TokenFlags.DisallowedInRestrictedMode,
@@ -847,11 +873,11 @@ namespace System.Management.Automation.Language
             /*                  Shl */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold,
             /*                  Shr */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold,
             /*                Colon */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
-            /*     Reserved slot 2  */ TokenFlags.None,
-            /*     Reserved slot 3  */ TokenFlags.None,
-            /*     Reserved slot 4  */ TokenFlags.None,
-            /*     Reserved slot 5  */ TokenFlags.None,
-            /*     Reserved slot 6  */ TokenFlags.None,
+            /*         QuestionMark */ TokenFlags.TernaryOperator | TokenFlags.DisallowedInRestrictedMode,
+          /* QuestionQuestionEquals */ TokenFlags.AssignmentOperator,
+            /*     QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceCoalesce,
+            /*          QuestionDot */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
+            /*     QuestionLBracket */ TokenFlags.None,
             /*     Reserved slot 7  */ TokenFlags.None,
             /*     Reserved slot 8  */ TokenFlags.None,
             /*     Reserved slot 9  */ TokenFlags.None,
@@ -921,6 +947,7 @@ namespace System.Management.Automation.Language
             /*              Command */ TokenFlags.Keyword,
             /*               Hidden */ TokenFlags.Keyword,
             /*                 Base */ TokenFlags.Keyword,
+            /*              Default */ TokenFlags.Keyword,
 
             #endregion Flags for keywords
         };
@@ -990,7 +1017,7 @@ namespace System.Management.Automation.Language
             /*               Equals */ "=",
             /*           PlusEquals */ "+=",
             /*          MinusEquals */ "-=",
-            /*        MultipyEquals */ "*=",
+            /*       MultiplyEquals */ "*=",
             /*         DivideEquals */ "/=",
             /*      RemainderEquals */ "%=",
             /*          Redirection */ "redirection",
@@ -1045,25 +1072,25 @@ namespace System.Management.Automation.Language
             /*                  Shl */ "-shl",
             /*                  Shr */ "-shr",
             /*                Colon */ ":",
-            /*    Reserved slot 2   */ "",
-            /*    Reserved slot 3   */ "",
-            /*    Reserved slot 4   */ "",
-            /*    Reserved slot 5   */ "",
-            /*    Reserved slot 6   */ "",
-            /*    Reserved slot 7   */ "",
-            /*    Reserved slot 8   */ "",
-            /*    Reserved slot 9   */ "",
-            /*    Reserved slot 10  */ "",
-            /*    Reserved slot 11  */ "",
-            /*    Reserved slot 12  */ "",
-            /*    Reserved slot 13  */ "",
-            /*    Reserved slot 14  */ "",
-            /*    Reserved slot 15  */ "",
-            /*    Reserved slot 16  */ "",
-            /*    Reserved slot 17  */ "",
-            /*    Reserved slot 18  */ "",
-            /*    Reserved slot 19  */ "",
-            /*    Reserved slot 20  */ "",
+            /*         QuestionMark */ "?",
+          /* QuestionQuestionEquals */ "??=",
+            /*     QuestionQuestion */ "??",
+            /*          QuestionDot */ "?.",
+            /*     QuestionLBracket */ "?[",
+            /*    Reserved slot 7   */ string.Empty,
+            /*    Reserved slot 8   */ string.Empty,
+            /*    Reserved slot 9   */ string.Empty,
+            /*    Reserved slot 10  */ string.Empty,
+            /*    Reserved slot 11  */ string.Empty,
+            /*    Reserved slot 12  */ string.Empty,
+            /*    Reserved slot 13  */ string.Empty,
+            /*    Reserved slot 14  */ string.Empty,
+            /*    Reserved slot 15  */ string.Empty,
+            /*    Reserved slot 16  */ string.Empty,
+            /*    Reserved slot 17  */ string.Empty,
+            /*    Reserved slot 18  */ string.Empty,
+            /*    Reserved slot 19  */ string.Empty,
+            /*    Reserved slot 20  */ string.Empty,
 
             #endregion Text for operators
 
@@ -1119,6 +1146,7 @@ namespace System.Management.Automation.Language
             /*              Command */ "command",
             /*               Hidden */ "hidden",
             /*                 Base */ "base",
+            /*              Default */ "default",
 
             #endregion Text for keywords
         };
@@ -1126,9 +1154,9 @@ namespace System.Management.Automation.Language
 #if DEBUG
         static TokenTraits()
         {
-            Diagnostics.Assert(s_staticTokenFlags.Length == ((int)TokenKind.Base + 1),
+            Diagnostics.Assert(s_staticTokenFlags.Length == ((int)TokenKind.Default + 1),
                                "Table size out of sync with enum - _staticTokenFlags");
-            Diagnostics.Assert(s_tokenText.Length == ((int)TokenKind.Base + 1),
+            Diagnostics.Assert(s_tokenText.Length == ((int)TokenKind.Default + 1),
                                "Table size out of sync with enum - _tokenText");
             // Some random assertions to make sure the enum and the traits are in sync
             Diagnostics.Assert(GetTraits(TokenKind.Begin) == (TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName),
@@ -1236,7 +1264,7 @@ namespace System.Management.Automation.Language
 
         internal virtual string ToDebugString(int indent)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}{1}: <{2}>", new string(' ', indent), _kind, Text);
+            return string.Format(CultureInfo.InvariantCulture, "{0}{1}: <{2}>", StringUtil.Padding(indent), _kind, Text);
         }
     }
 
@@ -1256,7 +1284,7 @@ namespace System.Management.Automation.Language
         internal override string ToDebugString(int indent)
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <{2}> Value:<{3}> Type:<{4}>", new string(' ', indent), Kind, Text, _value, _value.GetType().Name);
+                "{0}{1}: <{2}> Value:<{3}> Type:<{4}>", StringUtil.Padding(indent), Kind, Text, _value, _value.GetType().Name);
         }
 
         /// <summary>
@@ -1298,7 +1326,7 @@ namespace System.Management.Automation.Language
         internal override string ToDebugString(int indent)
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <-{2}{3}>", new string(' ', indent), Kind, _parameterName, _usedColon ? ":" : "");
+                "{0}{1}: <-{2}{3}>", StringUtil.Padding(indent), Kind, _parameterName, _usedColon ? ":" : string.Empty);
         }
     }
 
@@ -1326,7 +1354,7 @@ namespace System.Management.Automation.Language
         internal override string ToDebugString(int indent)
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <{2}> Name:<{3}>", new string(' ', indent), Kind, Text, Name);
+                "{0}{1}: <{2}> Name:<{3}>", StringUtil.Padding(indent), Kind, Text, Name);
         }
     }
 
@@ -1349,7 +1377,7 @@ namespace System.Management.Automation.Language
         internal override string ToDebugString(int indent)
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <{2}> Value:<{3}>", new string(' ', indent), Kind, Text, Value);
+                "{0}{1}: <{2}> Value:<{3}>", StringUtil.Padding(indent), Kind, Text, Value);
         }
     }
 
@@ -1403,6 +1431,7 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<Token> NestedTokens
         {
             get { return _nestedTokens; }
+
             internal set { _nestedTokens = value; }
         }
 
@@ -1417,12 +1446,12 @@ namespace System.Management.Automation.Language
             {
                 ToDebugString(_nestedTokens, sb, indent);
             }
+
             return sb.ToString();
         }
     }
 
     /// <summary>
-    /// 
     /// </summary>
     public class LabelToken : Token
     {
@@ -1433,7 +1462,6 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// 
         /// </summary>
         public string LabelText { get; }
     }

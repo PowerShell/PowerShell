@@ -1,14 +1,14 @@
 @{
 GUID="56D66100-99A0-4FFC-A12D-EEE9A6718AEF"
-Author="Microsoft Corporation"
+Author="PowerShell"
 CompanyName="Microsoft Corporation"
-Copyright="© Microsoft Corporation. All rights reserved."
-ModuleVersion="3.0.0.0"
+Copyright="Copyright (c) Microsoft Corporation."
+ModuleVersion="7.0.0.0"
+CompatiblePSEditions = @("Core")
 PowerShellVersion="3.0"
-CLRVersion="4.0"
-AliasesToExport = @()
 FunctionsToExport = @()
 CmdletsToExport="Start-Transcript", "Stop-Transcript"
+AliasesToExport = @()
 NestedModules="Microsoft.PowerShell.ConsoleHost.dll"
-HelpInfoURI = 'http://go.microsoft.com/fwlink/?linkid=390784'
+HelpInfoURI = 'https://aka.ms/powershell71-help'
 }

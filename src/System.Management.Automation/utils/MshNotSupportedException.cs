@@ -1,15 +1,8 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Runtime.Serialization;
-
-#if CORECLR
-// Use stub for SerializableAttribute.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#else
 using System.Security.Permissions;
-#endif
 
 namespace System.Management.Automation
 {
@@ -32,22 +25,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSNotSupportedException class.
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public PSNotSupportedException()
             : base()
         {
         }
 
         #region Serialization
-#if !CORECLR // NotSupportedException Has No Serialization In CoreCLR
         /// <summary>
         /// Initializes a new instance of the PSNotSupportedException class
         /// using data serialized via
         /// <see cref="System.Runtime.Serialization.ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
-        /// <returns> constructed object </returns>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
         protected PSNotSupportedException(SerializationInfo info,
                                             StreamingContext context)
                 : base(info, context)
@@ -58,27 +50,26 @@ namespace System.Management.Automation
         /// <summary>
         /// Serializer for <see cref="System.Runtime.Serialization.ISerializable"/>
         /// </summary>
-        /// <param name="info"> serialization information </param>
-        /// <param name="context"> streaming context </param>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
             info.AddValue("ErrorId", _errorId);
         }
-#endif
         #endregion Serialization
 
         /// <summary>
         /// Initializes a new instance of the PSNotSupportedException class.
         /// </summary>
-        /// <param name="message">  </param>
-        /// <returns> constructed object </returns>
+        /// <param name="message"></param>
+        /// <returns>Constructed object.</returns>
         public PSNotSupportedException(string message)
             : base(message)
         {
@@ -87,9 +78,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSNotSupportedException class.
         /// </summary>
-        /// <param name="message">  </param>
-        /// <param name="innerException">  </param>
-        /// <returns> constructed object </returns>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
+        /// <returns>Constructed object.</returns>
         public PSNotSupportedException(string message,
                         Exception innerException)
                 : base(message, innerException)
@@ -98,7 +89,7 @@ namespace System.Management.Automation
         #endregion ctor
 
         /// <summary>
-        /// Additional information about the error
+        /// Additional information about the error.
         /// </summary>
         /// <value></value>
         /// <remarks>
@@ -109,7 +100,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
@@ -117,11 +108,13 @@ namespace System.Management.Automation
                         ErrorCategory.NotImplemented,
                         null);
                 }
+
                 return _errorRecord;
             }
         }
+
         private ErrorRecord _errorRecord;
         private string _errorId = "NotSupported";
-    } // PSNotSupportedException
-} // System.Management.Automation
+    }
+}
 

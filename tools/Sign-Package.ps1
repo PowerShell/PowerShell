@@ -1,9 +1,12 @@
-﻿# Utility to generate a self-signed certificate and sign a given package such as PowerShell.zip/appx/msi
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+# Utility to generate a self-signed certificate and sign a given package such as PowerShell.zip/appx/msi
 
 [CmdletBinding()]
 param (
-        #Path to package - Ex: PowerShell.msi, PowerShell.appx 
-        [Parameter(Mandatory = $true)]      
+        #Path to package - Ex: PowerShell.msi, PowerShell.appx
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string] $PackageFilePath
 
@@ -15,10 +18,10 @@ function New-SelfSignedCertificate
 {
     [CmdletBinding()]
     param (
-        
-        #Path to save generated Certificate        
+
+        #Path to save generated Certificate
         [ValidateNotNullOrEmpty()]
-        [string] $CertificateFilePath = "$pwd\PowerShell.cer",
+        [string] $CertificateFilePath = "$PWD\PowerShell.cer",
 
         #Path to save generated pvk file
         [ValidateNotNullOrEmpty()]
@@ -38,7 +41,7 @@ function New-SelfSignedCertificate
     Remove-Item $PvkFilePath -Force -ErrorAction Ignore
 
     & $makecertBinPath -r -h 0 -n "CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" -eku 1.3.6.1.5.5.7.3.3 -pe -sv $PvkFilePath $CertificateFilePath | Write-Verbose
-    
+
     Write-Verbose "Self-Signed Cert generated @ $CertificateFilePath"
 
     return $CertificateFilePath
@@ -49,10 +52,10 @@ function ConvertTo-Pfx
 {
     [CmdletBinding()]
     param (
-        
+
         #Path to Certificate file
         [ValidateNotNullOrEmpty()]
-        [string] $CertificateFilePath = "$pwd\PowerShell.cer",
+        [string] $CertificateFilePath = "$PWD\PowerShell.cer",
 
         #Path to pvk file
         [ValidateNotNullOrEmpty()]
@@ -70,7 +73,7 @@ function ConvertTo-Pfx
     {
         throw "$pvk2pfxBinPath is required to convert pvk file to pfx file - one of the prerequisites to sign a package!"
     }
-        
+
     Remove-Item $PfxFilePath -Force -ErrorAction Ignore
 
     & $pvk2pfxBinPath /pvk $PvkFilePath /spc $CertificateFilePath /pfx $PfxFilePath /f | Write-Verbose
@@ -81,17 +84,17 @@ function ConvertTo-Pfx
 }
 
 # Sign a given package
-# this function needs the proprietary pfx file 
+# this function needs the proprietary pfx file
 function Sign-Package
 {
     [CmdletBinding()]
-    param (   
-    
-        #Path to package - Ex: PowerShell.msi, PowerShell.appx 
-        [Parameter(Mandatory = $true)]      
+    param (
+
+        #Path to package - Ex: PowerShell.msi, PowerShell.appx
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string] $PackageFilePath,
-        
+
         #Path to generated pfx file to sign the package
         [ValidateNotNullOrEmpty()]
         [string] $PfxFilePath = "$env:Temp\PowerShell.pfx"
@@ -112,7 +115,6 @@ function Sign-Package
 
     return $PackageFilePath
 }
-
 
 $certificate = New-SelfSignedCertificate -Verbose
 ConvertTo-Pfx -Verbose

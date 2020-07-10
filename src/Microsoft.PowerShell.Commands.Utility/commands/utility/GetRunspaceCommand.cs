@@ -1,12 +1,12 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet returns runspaces in the PowerShell session.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Runspace", DefaultParameterSetName = GetRunspaceCommand.NameParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=403730")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096616")]
     [OutputType(typeof(Runspace))]
     public sealed class GetRunspaceCommand : PSCmdlet
     {
@@ -34,6 +34,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0,
                    ParameterSetName = GetRunspaceCommand.NameParameterSet)]
+        [ValidateNotNullOrEmpty()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name
         {
@@ -72,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Process record
+        /// Process record.
         /// </summary>
         protected override void ProcessRecord()
         {

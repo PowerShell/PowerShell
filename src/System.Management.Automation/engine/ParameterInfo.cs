@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,28 +15,24 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructs the parameter info using the specified aliases, attributes, and
-        /// parameter set metadata
+        /// parameter set metadata.
         /// </summary>
-        /// 
         /// <param name="parameter">
         /// The parameter metadata to retrieve the parameter information from.
         /// </param>
-        /// 
         /// <param name="parameterSetFlag">
         /// The parameter set flag to get the parameter information from.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="parameter"/> is null.
         /// </exception>
-        /// 
         internal CommandParameterInfo(
             CompiledCommandParameter parameter,
             uint parameterSetFlag)
         {
             if (parameter == null)
             {
-                throw PSTraceSource.NewArgumentNullException("parameter");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameter));
             }
 
             Name = parameter.Name;
@@ -56,7 +51,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the parameter.
         /// </summary>
-        public string Name { get; } = String.Empty;
+        public string Name { get; } = string.Empty;
 
         /// <summary>
         /// Gets the type of the parameter.
@@ -66,7 +61,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets whether or not the parameter is a dynamic parameter.
         /// </summary>
-        /// 
         /// <remarks>
         /// True if the parameter is dynamic, or false otherwise.
         /// </remarks>
@@ -75,7 +69,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets whether or not the parameter is mandatory.
         /// </summary>
-        /// 
         /// <remarks>
         /// True if the parameter is mandatory, or false otherwise.
         /// </remarks>
@@ -106,7 +99,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the help message for this parameter.
         /// </summary>
-        public string HelpMessage { get; private set; } = String.Empty;
+        public string HelpMessage { get; private set; } = string.Empty;
 
         /// <summary>
         /// Gets the aliases by which this parameter can be referenced.
@@ -138,7 +131,6 @@ namespace System.Management.Automation
             Attributes = new ReadOnlyCollection<Attribute>(processedAttributes);
         }
 
-
         private void SetParameterSetData(ParameterSetSpecificMetadata parameterMetadata)
         {
             IsMandatory = parameterMetadata.IsMandatory;
@@ -150,6 +142,6 @@ namespace System.Management.Automation
         }
 
         #endregion private members
-    } // class CommandParameterInfo
-} // namespace System.Management.Automation
+    }
+}
 

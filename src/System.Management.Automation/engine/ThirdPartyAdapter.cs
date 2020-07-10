@@ -1,6 +1,5 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,12 +19,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The type this instance is adapting
+        /// The type this instance is adapting.
         /// </summary>
         internal Type AdaptedType { get; }
 
         /// <summary>
-        /// The type of the external adapter
+        /// The type of the external adapter.
         /// </summary>
         internal Type ExternalAdapterType
         {
@@ -36,7 +35,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the TypeNameHierarchy out of an object
+        /// Returns the TypeNameHierarchy out of an object.
         /// </summary>
         protected override IEnumerable<string> GetTypeNameHierarchy(object obj)
         {
@@ -48,8 +47,6 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.GetTypeNameHierarchyError",
                     exception,
@@ -80,8 +77,6 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.GetProperties",
                     exception,
@@ -119,8 +114,6 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.GetProperty",
                     exception,
@@ -135,8 +128,32 @@ namespace System.Management.Automation
             return property;
         }
 
+        protected override PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate)
+        {
+            PSAdaptedProperty property = null;
+
+            try
+            {
+                property = _externalAdapter.GetFirstPropertyOrDefault(obj, predicate);
+            }
+            catch (Exception exception)
+            {
+                throw new ExtendedTypeSystemException(
+                    "PSPropertyAdapter.GetProperty",
+                    exception,
+                    ExtendedTypeSystem.GetProperty, nameof(predicate), obj.ToString());
+            }
+
+            if (property != null)
+            {
+                InitializeProperty(property, obj);
+            }
+
+            return property;
+        }
+
         /// <summary>
-        /// Ensures that the adapter and base object are set in the given PSAdaptedProperty
+        /// Ensures that the adapter and base object are set in the given PSAdaptedProperty.
         /// </summary>
         private void InitializeProperty(PSAdaptedProperty property, object baseObject)
         {
@@ -148,7 +165,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns true if the property is settable
+        /// Returns true if the property is settable.
         /// </summary>
         protected override bool PropertyIsSettable(PSProperty property)
         {
@@ -162,8 +179,6 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.PropertyIsSettableError",
                     exception,
@@ -172,7 +187,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns true if the property is gettable
+        /// Returns true if the property is gettable.
         /// </summary>
         protected override bool PropertyIsGettable(PSProperty property)
         {
@@ -186,8 +201,6 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.PropertyIsGettableError",
                     exception,
@@ -196,7 +209,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the value from a property coming from a previous call to DoGetProperty
+        /// Returns the value from a property coming from a previous call to DoGetProperty.
         /// </summary>
         protected override object PropertyGet(PSProperty property)
         {
@@ -210,8 +223,6 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.PropertyGetError",
                     exception,
@@ -220,7 +231,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the value of a property coming from a previous call to DoGetProperty
+        /// Sets the value of a property coming from a previous call to DoGetProperty.
         /// </summary>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
@@ -235,8 +246,6 @@ namespace System.Management.Automation
             catch (SetValueException) { throw; }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.PropertySetError",
                     exception,
@@ -245,7 +254,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the name of the type corresponding to the property
+        /// Returns the name of the type corresponding to the property.
         /// </summary>
         protected override string PropertyType(PSProperty property, bool forDisplay)
         {
@@ -261,8 +270,6 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.PropertyTypeError",
                     exception,
@@ -276,7 +283,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// User-defined property adapter
+    /// User-defined property adapter.
     /// </summary>
     /// <remarks>
     /// This class is used to expose a simplified version of the type adapter API
@@ -284,19 +291,19 @@ namespace System.Management.Automation
     public abstract class PSPropertyAdapter
     {
         /// <summary>
-        /// Returns the type hiercharchy for the given object
+        /// Returns the type hierarchy for the given object.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "object")]
         public virtual Collection<string> GetTypeNameHierarchy(object baseObject)
         {
             if (baseObject == null)
             {
-                throw new ArgumentNullException("baseObject");
+                throw new ArgumentNullException(nameof(baseObject));
             }
 
-            Collection<string> types = new Collection<String>();
+            Collection<string> types = new Collection<string>();
 
-            for (Type type = baseObject.GetType(); type != null; type = type.GetTypeInfo().BaseType)
+            for (Type type = baseObject.GetType(); type != null; type = type.BaseType)
             {
                 types.Add(type.FullName);
             }
@@ -305,40 +312,57 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns a list of the adapted properties
+        /// Returns a list of the adapted properties.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "object")]
         public abstract Collection<PSAdaptedProperty> GetProperties(object baseObject);
 
         /// <summary>
-        /// Returns a specific property, or null if the base object does not contain the given property
+        /// Returns a specific property, or null if the base object does not contain the given property.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "object")]
         public abstract PSAdaptedProperty GetProperty(object baseObject, string propertyName);
 
         /// <summary>
-        /// Returns true if the given property is settable
+        /// Returns true if the given property is settable.
         /// </summary>
         public abstract bool IsSettable(PSAdaptedProperty adaptedProperty);
 
         /// <summary>
-        /// Returns true if the given property is gettable
+        /// Returns true if the given property is gettable.
         /// </summary>
         public abstract bool IsGettable(PSAdaptedProperty adaptedProperty);
 
         /// <summary>
-        /// Returns the value of a given property
+        /// Returns the value of a given property.
         /// </summary>
         public abstract object GetPropertyValue(PSAdaptedProperty adaptedProperty);
 
         /// <summary>
-        /// Sets the value of a given property
+        /// Sets the value of a given property.
         /// </summary>
         public abstract void SetPropertyValue(PSAdaptedProperty adaptedProperty, object value);
 
         /// <summary>
-        /// Returns the type for a given property
+        /// Returns the type for a given property.
         /// </summary>
         public abstract string GetPropertyTypeName(PSAdaptedProperty adaptedProperty);
+
+        /// <summary>
+        /// Returns a property if it's name matches the specified <see cref="MemberNamePredicate"/>, otherwise null.
+        /// </summary>
+        /// <returns>An adapted property if the predicate matches, or <c>null</c>.</returns>
+        public virtual PSAdaptedProperty GetFirstPropertyOrDefault(object baseObject, MemberNamePredicate predicate)
+        {
+            foreach (var property in GetProperties(baseObject))
+            {
+                if (predicate(property.Name))
+                {
+                    return property;
+                }
+            }
+
+            return null;
+        }
     }
 }

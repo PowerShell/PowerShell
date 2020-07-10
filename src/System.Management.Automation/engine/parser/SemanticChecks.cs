@@ -1,33 +1,35 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
+
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
-
 
 namespace System.Management.Automation.Language
 {
     internal class SemanticChecks : AstVisitor2, IAstPostVisitHandler
     {
         private readonly Parser _parser;
+
         private static readonly IsConstantValueVisitor s_isConstantAttributeArgVisitor = new IsConstantValueVisitor
         {
             CheckingAttributeArgument = true,
         };
+
         private static readonly IsConstantValueVisitor s_isConstantAttributeArgForClassVisitor = new IsConstantValueVisitor
         {
             CheckingAttributeArgument = true,
             CheckingClassAttributeArguments = true
         };
+
         private readonly Stack<MemberAst> _memberScopeStack;
         private readonly Stack<ScriptBlockAst> _scopeStack;
 
@@ -65,11 +67,16 @@ namespace System.Management.Automation.Language
             return (bool)ast.Accept(visitor);
         }
 
-        private Expression<Func<string>> GetNonConstantAttributeArgErrorExpr(IsConstantValueVisitor visitor)
+        private (string id, string msg) GetNonConstantAttributeArgErrorExpr(IsConstantValueVisitor visitor)
         {
-            return visitor.CheckingClassAttributeArguments
-                ? (Expression<Func<string>>)(() => ParserStrings.ParameterAttributeArgumentNeedsToBeConstant)
-                : () => ParserStrings.ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock;
+            if (visitor.CheckingClassAttributeArguments)
+            {
+                return (nameof(ParserStrings.ParameterAttributeArgumentNeedsToBeConstant),
+                    ParserStrings.ParameterAttributeArgumentNeedsToBeConstant);
+            }
+
+            return (nameof(ParserStrings.ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock),
+                ParserStrings.ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock);
         }
 
         private void CheckForDuplicateParameters(ReadOnlyCollection<ParameterAst> parameters)
@@ -82,18 +89,24 @@ namespace System.Management.Automation.Language
                     string parameterName = parameter.Name.VariablePath.UserPath;
                     if (parametersSet.Contains(parameterName))
                     {
-                        _parser.ReportError(parameter.Name.Extent, () => ParserStrings.DuplicateFormalParameter, parameterName);
+                        _parser.ReportError(parameter.Name.Extent,
+                            nameof(ParserStrings.DuplicateFormalParameter),
+                            ParserStrings.DuplicateFormalParameter,
+                            parameterName);
                     }
                     else
                     {
                         parametersSet.Add(parameterName);
                     }
+
                     var voidConstraint =
                         parameter.Attributes.OfType<TypeConstraintAst>().FirstOrDefault(t => typeof(void) == t.TypeName.GetReflectionType());
 
                     if (voidConstraint != null)
                     {
-                        _parser.ReportError(voidConstraint.Extent, () => ParserStrings.VoidTypeConstraintNotAllowed);
+                        _parser.ReportError(voidConstraint.Extent,
+                            nameof(ParserStrings.VoidTypeConstraintNotAllowed),
+                            ParserStrings.VoidTypeConstraintNotAllowed);
                     }
                 }
             }
@@ -168,10 +181,14 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    var usage = attributeType.GetTypeInfo().GetCustomAttribute<AttributeUsageAttribute>(true);
+                    var usage = attributeType.GetCustomAttribute<AttributeUsageAttribute>(true);
                     if (usage != null && (usage.ValidOn & attributeTargets) == 0)
                     {
-                        _parser.ReportError(attributeAst.Extent, () => ParserStrings.AttributeNotAllowedOnDeclaration, ToStringCodeMethods.Type(attributeType), usage.ValidOn);
+                        _parser.ReportError(attributeAst.Extent,
+                            nameof(ParserStrings.AttributeNotAllowedOnDeclaration),
+                            ParserStrings.AttributeNotAllowedOnDeclaration,
+                            ToStringCodeMethods.Type(attributeType),
+                            usage.ValidOn);
                     }
 
                     foreach (var namedArg in attributeAst.NamedArguments)
@@ -183,7 +200,8 @@ namespace System.Management.Automation.Language
                         if (members.Length != 1 || !(members[0] is PropertyInfo || members[0] is FieldInfo))
                         {
                             _parser.ReportError(namedArg.Extent,
-                                () => ParserStrings.PropertyNotFoundForAttribute,
+                                nameof(ParserStrings.PropertyNotFoundForAttribute),
+                                ParserStrings.PropertyNotFoundForAttribute,
                                 name,
                                 ToStringCodeMethods.Type(attributeType),
                                 GetValidNamedAttributeProperties(attributeType));
@@ -196,7 +214,10 @@ namespace System.Management.Automation.Language
                         {
                             if (propertyInfo.GetSetMethod() == null)
                             {
-                                _parser.ReportError(namedArg.Extent, () => ExtendedTypeSystem.ReadOnlyProperty, name);
+                                _parser.ReportError(namedArg.Extent,
+                                    nameof(ExtendedTypeSystem.ReadOnlyProperty),
+                                    ExtendedTypeSystem.ReadOnlyProperty,
+                                    name);
                             }
 
                             continue;
@@ -205,7 +226,10 @@ namespace System.Management.Automation.Language
                         var fieldInfo = (FieldInfo)members[0];
                         if (fieldInfo.IsInitOnly || fieldInfo.IsLiteral)
                         {
-                            _parser.ReportError(namedArg.Extent, () => ExtendedTypeSystem.ReadOnlyProperty, name);
+                            _parser.ReportError(namedArg.Extent,
+                                nameof(ExtendedTypeSystem.ReadOnlyProperty),
+                                ExtendedTypeSystem.ReadOnlyProperty,
+                                name);
                         }
                     }
                 }
@@ -216,7 +240,10 @@ namespace System.Management.Automation.Language
                 string name = namedArg.ArgumentName;
                 if (names.Contains(name))
                 {
-                    _parser.ReportError(namedArg.Extent, () => ParserStrings.DuplicateNamedArgument, name);
+                    _parser.ReportError(namedArg.Extent,
+                        nameof(ParserStrings.DuplicateNamedArgument),
+                        ParserStrings.DuplicateNamedArgument,
+                        name);
                 }
                 else
                 {
@@ -224,7 +251,8 @@ namespace System.Management.Automation.Language
 
                     if (!namedArg.ExpressionOmitted && !IsValidAttributeArgument(namedArg.Argument, constantValueVisitor))
                     {
-                        _parser.ReportError(namedArg.Argument.Extent, GetNonConstantAttributeArgErrorExpr(constantValueVisitor));
+                        var error = GetNonConstantAttributeArgErrorExpr(constantValueVisitor);
+                        _parser.ReportError(namedArg.Argument.Extent, error.id, error.msg);
                     }
                 }
             }
@@ -233,7 +261,8 @@ namespace System.Management.Automation.Language
             {
                 if (!IsValidAttributeArgument(posArg, constantValueVisitor))
                 {
-                    _parser.ReportError(posArg.Extent, GetNonConstantAttributeArgErrorExpr(constantValueVisitor));
+                    var error = GetNonConstantAttributeArgErrorExpr(constantValueVisitor);
+                    _parser.ReportError(posArg.Extent, error.id, error.msg);
                 }
             }
 
@@ -262,9 +291,9 @@ namespace System.Management.Automation.Language
                     propertyNames.Add(fieldInfo.Name);
                 }
             }
+
             return string.Join(", ", propertyNames);
         }
-
 
         public override AstVisitAction VisitParameter(ParameterAst parameterAst)
         {
@@ -276,7 +305,10 @@ namespace System.Management.Automation.Language
                 {
                     if (attribute.TypeName.FullName.Equals(LanguagePrimitives.OrderedAttribute, StringComparison.OrdinalIgnoreCase))
                     {
-                        _parser.ReportError(attribute.Extent, () => ParserStrings.OrderedAttributeOnlyOnHashLiteralNode, attribute.TypeName.FullName);
+                        _parser.ReportError(attribute.Extent,
+                            nameof(ParserStrings.OrderedAttributeOnlyOnHashLiteralNode),
+                            ParserStrings.OrderedAttributeOnlyOnHashLiteralNode,
+                            attribute.TypeName.FullName);
                     }
                     else
                     {
@@ -285,8 +317,11 @@ namespace System.Management.Automation.Language
                             // attribute represent parameter type.
                             if (isParamTypeDefined)
                             {
-                                _parser.ReportError(attribute.Extent, () => ParserStrings.MultipleTypeConstraintsOnMethodParam);
+                                _parser.ReportError(attribute.Extent,
+                                    nameof(ParserStrings.MultipleTypeConstraintsOnMethodParam),
+                                    ParserStrings.MultipleTypeConstraintsOnMethodParam);
                             }
+
                             isParamTypeDefined = true;
                         }
                     }
@@ -318,9 +353,12 @@ namespace System.Management.Automation.Language
                 count++;
                 if (count > 200)
                 {
-                    parser.ReportError(extent, () => ParserStrings.ScriptTooComplicated);
+                    parser.ReportError(extent,
+                        nameof(ParserStrings.ScriptTooComplicated),
+                        ParserStrings.ScriptTooComplicated);
                     break;
                 }
+
                 if (type is ArrayTypeName)
                 {
                     type = ((ArrayTypeName)type).ElementType;
@@ -334,19 +372,20 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst)
         {
-            AttributeAst dscResourceAttibuteAst = null;
+            AttributeAst dscResourceAttributeAst = null;
             for (int i = 0; i < typeDefinitionAst.Attributes.Count; i++)
             {
                 var attr = typeDefinitionAst.Attributes[i];
                 if (attr.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute))
                 {
-                    dscResourceAttibuteAst = attr;
+                    dscResourceAttributeAst = attr;
                     break;
                 }
             }
-            if (dscResourceAttibuteAst != null)
+
+            if (dscResourceAttributeAst != null)
             {
-                DscResourceChecker.CheckType(_parser, typeDefinitionAst, dscResourceAttibuteAst);
+                DscResourceChecker.CheckType(_parser, typeDefinitionAst, dscResourceAttributeAst);
             }
 
             return AstVisitAction.Continue;
@@ -359,7 +398,9 @@ namespace System.Management.Automation.Language
             var body = functionMemberAst.Body;
             if (body.ParamBlock != null)
             {
-                _parser.ReportError(body.ParamBlock.Extent, () => ParserStrings.ParamBlockNotAllowedInMethod);
+                _parser.ReportError(body.ParamBlock.Extent,
+                    nameof(ParserStrings.ParamBlockNotAllowedInMethod),
+                    ParserStrings.ParamBlockNotAllowedInMethod);
             }
 
             if (body.BeginBlock != null ||
@@ -368,19 +409,24 @@ namespace System.Management.Automation.Language
                 !body.EndBlock.Unnamed)
             {
                 _parser.ReportError(Parser.ExtentFromFirstOf(body.DynamicParamBlock, body.BeginBlock, body.ProcessBlock, body.EndBlock),
-                    () => ParserStrings.NamedBlockNotAllowedInMethod);
+                    nameof(ParserStrings.NamedBlockNotAllowedInMethod),
+                    ParserStrings.NamedBlockNotAllowedInMethod);
             }
 
             if (functionMemberAst.IsConstructor && functionMemberAst.ReturnType != null)
             {
-                _parser.ReportError(functionMemberAst.ReturnType.Extent, () => ParserStrings.ConstructorCantHaveReturnType);
+                _parser.ReportError(functionMemberAst.ReturnType.Extent,
+                    nameof(ParserStrings.ConstructorCantHaveReturnType),
+                    ParserStrings.ConstructorCantHaveReturnType);
             }
 
             // Analysis determines if all paths return and do data flow for variables.
             var allCodePathsReturned = VariableAnalysis.AnalyzeMemberFunction(functionMemberAst);
             if (!allCodePathsReturned && !functionMemberAst.IsReturnTypeVoid())
             {
-                _parser.ReportError(functionMemberAst.NameExtent ?? functionMemberAst.Extent, () => ParserStrings.MethodHasCodePathNotReturn);
+                _parser.ReportError(functionMemberAst.NameExtent ?? functionMemberAst.Extent,
+                    nameof(ParserStrings.MethodHasCodePathNotReturn),
+                    ParserStrings.MethodHasCodePathNotReturn);
             }
 
             return AstVisitAction.Continue;
@@ -391,7 +437,9 @@ namespace System.Management.Automation.Language
             if (functionDefinitionAst.Parameters != null
                 && functionDefinitionAst.Body.ParamBlock != null)
             {
-                _parser.ReportError(functionDefinitionAst.Body.ParamBlock.Extent, () => ParserStrings.OnlyOneParameterListAllowed);
+                _parser.ReportError(functionDefinitionAst.Body.ParamBlock.Extent,
+                    nameof(ParserStrings.OnlyOneParameterListAllowed),
+                    ParserStrings.OnlyOneParameterListAllowed);
             }
             else if (functionDefinitionAst.Parameters != null)
             {
@@ -400,20 +448,9 @@ namespace System.Management.Automation.Language
 
             if (functionDefinitionAst.IsWorkflow)
             {
-#if !CORECLR // Workflow Not Supported On CSS
-                try
-                {
-                    var converterInstance = Utils.GetAstToWorkflowConverterAndEnsureWorkflowModuleLoaded(null);
-                    List<ParseError> parseErrors = converterInstance.ValidateAst(functionDefinitionAst);
-                    foreach (ParseError error in parseErrors)
-                    {
-                        _parser.ReportError(error);
-                    }
-                }
-                catch (NotSupportedException) { }
-#else
-                _parser.ReportError(functionDefinitionAst.Extent, () => ParserStrings.WorkflowNotSupportedInPowerShellCore);
-#endif
+                _parser.ReportError(functionDefinitionAst.Extent,
+                    nameof(ParserStrings.WorkflowNotSupportedInPowerShellCore),
+                    ParserStrings.WorkflowNotSupportedInPowerShellCore);
             }
 
             return AstVisitAction.Continue;
@@ -424,11 +461,12 @@ namespace System.Management.Automation.Language
             // Parallel flag not allowed
             if ((switchStatementAst.Flags & SwitchFlags.Parallel) == SwitchFlags.Parallel)
             {
-                bool reportError = !switchStatementAst.IsInWorkflow();
-                if (reportError)
-                {
-                    _parser.ReportError(switchStatementAst.Extent, () => ParserStrings.ParallelNotSupported);
-                }
+                _parser.ReportError(
+                    switchStatementAst.Extent,
+                    nameof(ParserStrings.KeywordParameterReservedForFutureUse),
+                    ParserStrings.KeywordParameterReservedForFutureUse,
+                    "switch",
+                    "parallel");
             }
 
             return AstVisitAction.Continue;
@@ -458,18 +496,32 @@ namespace System.Management.Automation.Language
             // Parallel flag not allowed
             if ((forEachStatementAst.Flags & ForEachFlags.Parallel) == ForEachFlags.Parallel)
             {
-                bool reportError = !forEachStatementAst.IsInWorkflow();
-                if (reportError)
-                {
-                    _parser.ReportError(forEachStatementAst.Extent, () => ParserStrings.ParallelNotSupported);
-                }
+                _parser.ReportError(
+                    forEachStatementAst.Extent,
+                    nameof(ParserStrings.KeywordParameterReservedForFutureUse),
+                    ParserStrings.KeywordParameterReservedForFutureUse,
+                    "foreach",
+                    "parallel");
+            }
+
+            if (forEachStatementAst.ThrottleLimit != null)
+            {
+                _parser.ReportError(
+                    forEachStatementAst.Extent,
+                    nameof(ParserStrings.KeywordParameterReservedForFutureUse),
+                    ParserStrings.KeywordParameterReservedForFutureUse,
+                    "foreach",
+                    "throttlelimit");
             }
 
             // Throttle limit must be combined with Parallel flag
             if ((forEachStatementAst.ThrottleLimit != null) &&
                 ((forEachStatementAst.Flags & ForEachFlags.Parallel) != ForEachFlags.Parallel))
             {
-                _parser.ReportError(forEachStatementAst.Extent, () => ParserStrings.ThrottleLimitRequresParallelFlag);
+                _parser.ReportError(
+                    forEachStatementAst.Extent,
+                    nameof(ParserStrings.ThrottleLimitRequiresParallelFlag),
+                    ParserStrings.ThrottleLimitRequiresParallelFlag);
             }
 
             return AstVisitAction.Continue;
@@ -488,7 +540,9 @@ namespace System.Management.Automation.Language
 
                     if (block1.IsCatchAll)
                     {
-                        _parser.ReportError(Parser.Before(block2.Extent), () => ParserStrings.EmptyCatchNotLast);
+                        _parser.ReportError(Parser.Before(block2.Extent),
+                            nameof(ParserStrings.EmptyCatchNotLast),
+                            ParserStrings.EmptyCatchNotLast);
                         break;
                     }
 
@@ -510,7 +564,10 @@ namespace System.Management.Automation.Language
 
                             if (type1 == type2 || type2.IsSubclassOf(type1))
                             {
-                                _parser.ReportError(typeLiteral2.Extent, () => ParserStrings.ExceptionTypeAlreadyCaught, type2.FullName);
+                                _parser.ReportError(typeLiteral2.Extent,
+                                    nameof(ParserStrings.ExceptionTypeAlreadyCaught),
+                                    ParserStrings.ExceptionTypeAlreadyCaught,
+                                    type2.FullName);
                             }
                         }
                     }
@@ -524,11 +581,11 @@ namespace System.Management.Automation.Language
         /// Check that label exists inside the method.
         /// Only call it, when label is present and can be calculated in compile time.
         /// </summary>
-        /// <param name="ast">BreakStatementAst or ContinueStatementAst</param>
-        /// <param name="label">label name. Can be null</param>
+        /// <param name="ast">BreakStatementAst or ContinueStatementAst.</param>
+        /// <param name="label">Label name. Can be null.</param>
         private void CheckLabelExists(StatementAst ast, string label)
         {
-            if (String.IsNullOrEmpty(label))
+            if (string.IsNullOrEmpty(label))
             {
                 return;
             }
@@ -540,15 +597,19 @@ namespace System.Management.Automation.Language
                 {
                     if (parent.Parent is FunctionMemberAst)
                     {
-                        _parser.ReportError(ast.Extent, () => ParserStrings.LabelNotFound, label);
+                        _parser.ReportError(ast.Extent,
+                            nameof(ParserStrings.LabelNotFound),
+                            ParserStrings.LabelNotFound,
+                            label);
                     }
+
                     break;
                 }
 
                 var loop = parent as LoopStatementAst;
                 if (loop != null)
                 {
-                    if (LoopFlowException.MatchLoopLabel(label, loop.Label ?? ""))
+                    if (LoopFlowException.MatchLoopLabel(label, loop.Label ?? string.Empty))
                         break;
                 }
             }
@@ -558,7 +619,7 @@ namespace System.Management.Automation.Language
         /// Check that flow doesn't leave finally.
         /// </summary>
         /// <param name="ast"></param>
-        /// <param name="label">If label is null, either it's a break/continue to an unknown label 
+        /// <param name="label">If label is null, either it's a break/continue to an unknown label
         /// (and unknown does not mean not specified, it means it's an expression we can't evaluate) or we have a return statement.
         /// </param>
         private void CheckForFlowOutOfFinally(Ast ast, string label)
@@ -577,9 +638,9 @@ namespace System.Management.Automation.Language
                 // If label is not null, we have a break/continue where we know the loop label at compile
                 // time. If we can match the label before finding the finally, then we're not flowing out
                 // of the finally.
-                if (label != null && parent is LoopStatementAst)
+                if (label != null && parent is LabeledStatementAst)
                 {
-                    if (LoopFlowException.MatchLoopLabel(label, ((LoopStatementAst)parent).Label ?? ""))
+                    if (LoopFlowException.MatchLoopLabel(label, ((LabeledStatementAst)parent).Label ?? string.Empty))
                         break;
                 }
 
@@ -589,7 +650,9 @@ namespace System.Management.Automation.Language
                     var tryStatementAst = stmtBlock.Parent as TryStatementAst;
                     if (tryStatementAst != null && tryStatementAst.Finally == stmtBlock)
                     {
-                        _parser.ReportError(ast.Extent, () => ParserStrings.ControlLeavingFinally);
+                        _parser.ReportError(ast.Extent,
+                            nameof(ParserStrings.ControlLeavingFinally),
+                            ParserStrings.ControlLeavingFinally);
                         break;
                     }
                 }
@@ -602,7 +665,7 @@ namespace System.Management.Automation.Language
             // we just use the empty string.
             if (expr == null)
             {
-                return "";
+                return string.Empty;
             }
 
             var str = expr as StringConstantExpressionAst;
@@ -634,18 +697,23 @@ namespace System.Management.Automation.Language
             {
                 return;
             }
+
             if (ast.Pipeline != null)
             {
                 if (functionMemberAst.IsReturnTypeVoid())
                 {
-                    _parser.ReportError(ast.Extent, () => ParserStrings.VoidMethodHasReturn);
+                    _parser.ReportError(ast.Extent,
+                        nameof(ParserStrings.VoidMethodHasReturn),
+                        ParserStrings.VoidMethodHasReturn);
                 }
             }
             else
             {
                 if (!functionMemberAst.IsReturnTypeVoid())
                 {
-                    _parser.ReportError(ast.Extent, () => ParserStrings.NonVoidMethodMissingReturnValue);
+                    _parser.ReportError(ast.Extent,
+                        nameof(ParserStrings.NonVoidMethodMissingReturnValue),
+                        ParserStrings.NonVoidMethodMissingReturnValue);
                 }
             }
         }
@@ -661,7 +729,7 @@ namespace System.Management.Automation.Language
         /// Check if the ast is a valid target for assignment.  If not, the action reportError is called.
         /// </summary>
         /// <param name="ast">The target of an assignment.</param>
-        /// <param name="simpleAssignment">True if the operator '=' is used, false otherwise (e.g. false on '+=' or '++'.)</param>
+        /// <param name="simpleAssignment">True if the operator '=' is used, false otherwise (e.g. false on '+=' or '++'.).</param>
         /// <param name="reportError">The action called to report any errors.</param>
         private void CheckAssignmentTarget(ExpressionAst ast, bool simpleAssignment, Action<Ast> reportError)
         {
@@ -697,6 +765,14 @@ namespace System.Management.Automation.Language
                 {
                     errorAst = ast;
                 }
+                else if (ast is MemberExpressionAst memberExprAst && memberExprAst.NullConditional)
+                {
+                    errorAst = ast;
+                }
+                else if (ast is IndexExpressionAst indexExprAst && indexExprAst.NullConditional)
+                {
+                    errorAst = ast;
+                }
                 else if (ast is AttributedExpressionAst)
                 {
                     // Check for multiple types combined with [ref].
@@ -717,15 +793,20 @@ namespace System.Management.Automation.Language
                             }
                             else if (typeof(void) == lastConvertType)
                             {
-                                _parser.ReportError(convertExpr.Type.Extent, () => ParserStrings.VoidTypeConstraintNotAllowed);
+                                _parser.ReportError(convertExpr.Type.Extent,
+                                    nameof(ParserStrings.VoidTypeConstraintNotAllowed),
+                                    ParserStrings.VoidTypeConstraintNotAllowed);
                             }
                         }
+
                         expr = ((AttributedExpressionAst)expr).Child;
                     }
 
                     if ((errorPosition != null) && converts > 1)
                     {
-                        _parser.ReportError(errorPosition, () => ParserStrings.ReferenceNeedsToBeByItselfInTypeConstraint);
+                        _parser.ReportError(errorPosition,
+                            nameof(ParserStrings.ReferenceNeedsToBeByItselfInTypeConstraint),
+                            ParserStrings.ReferenceNeedsToBeByItselfInTypeConstraint);
                     }
                     else
                     {
@@ -743,18 +824,26 @@ namespace System.Management.Automation.Language
                                         var expectedType = SpecialVariables.AutomaticVariableTypes[specialIndex];
                                         if (expectedType != lastConvertType)
                                         {
-                                            _parser.ReportError(ast.Extent, () => ParserStrings.AssignmentStatementToAutomaticNotSupported, varPath.UnqualifiedPath, expectedType);
+                                            _parser.ReportError(ast.Extent,
+                                                nameof(ParserStrings.AssignmentStatementToAutomaticNotSupported),
+                                                ParserStrings.AssignmentStatementToAutomaticNotSupported,
+                                                varPath.UnqualifiedPath,
+                                                expectedType);
                                         }
+
                                         break;
                                     }
+
                                     specialIndex += 1;
                                 }
                             }
                         }
+
                         CheckAssignmentTarget(expr, simpleAssignment, reportError);
                     }
                 }
             }
+
             if (errorAst != null)
             {
                 reportError(errorAst);
@@ -774,7 +863,9 @@ namespace System.Management.Automation.Language
         {
             // Make sure LHS is something that can be assigned to.
             CheckAssignmentTarget(assignmentStatementAst.Left, assignmentStatementAst.Operator == TokenKind.Equals,
-                ast => _parser.ReportError(ast.Extent, () => ParserStrings.InvalidLeftHandSide));
+                ast => _parser.ReportError(ast.Extent,
+                    nameof(ParserStrings.InvalidLeftHandSide),
+                    ParserStrings.InvalidLeftHandSide));
 
             return AstVisitAction.Continue;
         }
@@ -784,7 +875,9 @@ namespace System.Management.Automation.Language
             if (binaryExpressionAst.Operator == TokenKind.AndAnd
                 || binaryExpressionAst.Operator == TokenKind.OrOr)
             {
-                _parser.ReportError(binaryExpressionAst.ErrorPosition, () => ParserStrings.InvalidEndOfLine,
+                _parser.ReportError(binaryExpressionAst.ErrorPosition,
+                    nameof(ParserStrings.InvalidEndOfLine),
+                    ParserStrings.InvalidEndOfLine,
                     binaryExpressionAst.Operator.Text());
             }
 
@@ -800,7 +893,9 @@ namespace System.Management.Automation.Language
                 case TokenKind.MinusMinus:
                 case TokenKind.PostfixMinusMinus:
                     CheckAssignmentTarget(unaryExpressionAst.Child, false,
-                        ast => _parser.ReportError(ast.Extent, () => ParserStrings.OperatorRequiresVariableOrProperty,
+                        ast => _parser.ReportError(ast.Extent,
+                            nameof(ParserStrings.OperatorRequiresVariableOrProperty),
+                            ParserStrings.OperatorRequiresVariableOrProperty,
                             unaryExpressionAst.TokenKind.Text()));
                     break;
             }
@@ -817,7 +912,10 @@ namespace System.Management.Automation.Language
                     // We allow the ordered attribute only on hashliteral node.
                     // This check covers the following scenario
                     //   $a = [ordered]10
-                    _parser.ReportError(convertExpressionAst.Extent, () => ParserStrings.OrderedAttributeOnlyOnHashLiteralNode, convertExpressionAst.Type.TypeName.FullName);
+                    _parser.ReportError(convertExpressionAst.Extent,
+                        nameof(ParserStrings.OrderedAttributeOnlyOnHashLiteralNode),
+                        ParserStrings.OrderedAttributeOnlyOnHashLiteralNode,
+                        convertExpressionAst.Type.TypeName.FullName);
                 }
             }
 
@@ -836,8 +934,10 @@ namespace System.Management.Automation.Language
                         {
                             multipleRefs = true;
                             _parser.ReportError(childConvert.Type.Extent,
-                                                () => ParserStrings.ReferenceNeedsToBeByItselfInTypeSequence);
+                                                nameof(ParserStrings.ReferenceNeedsToBeByItselfInTypeSequence),
+                                                ParserStrings.ReferenceNeedsToBeByItselfInTypeSequence);
                         }
+
                         child = childAttrExpr.Child;
                         continue;
                     }
@@ -869,18 +969,23 @@ namespace System.Management.Automation.Language
                                 skipError = statementAst.Left.Find(ast1 => ast1 == convertExpressionAst, searchNestedScriptBlocks: true) != null;
                                 break;
                             }
+
                             if (ast is CommandExpressionAst)
                             {
                                 break;
                             }
+
                             ast = ast.Parent;
                         }
+
                         if (!skipError)
                         {
                             _parser.ReportError(convertExpressionAst.Type.Extent,
-                                                () => ParserStrings.ReferenceNeedsToBeLastTypeInTypeConversion);
+                                                nameof(ParserStrings.ReferenceNeedsToBeLastTypeInTypeConversion),
+                                                ParserStrings.ReferenceNeedsToBeLastTypeInTypeConversion);
                         }
                     }
+
                     parent = parent.Child as AttributedExpressionAst;
                 }
             }
@@ -904,7 +1009,9 @@ namespace System.Management.Automation.Language
             var badExpr = CheckUsingExpression(exprAst);
             if (badExpr != null)
             {
-                _parser.ReportError(badExpr.Extent, () => ParserStrings.InvalidUsingExpression);
+                _parser.ReportError(badExpr.Extent,
+                    nameof(ParserStrings.InvalidUsingExpression),
+                    ParserStrings.InvalidUsingExpression);
             }
 
             return AstVisitAction.Continue;
@@ -931,6 +1038,7 @@ namespace System.Management.Automation.Language
                 {
                     return indexExpr.Index;
                 }
+
                 return CheckUsingExpression(indexExpr.Target);
             }
 
@@ -943,11 +1051,17 @@ namespace System.Management.Automation.Language
             {
                 if (variableExpressionAst.Parent is ArrayLiteralAst && variableExpressionAst.Parent.Parent is CommandAst)
                 {
-                    _parser.ReportError(variableExpressionAst.Extent, () => ParserStrings.SplattingNotPermittedInArgumentList, variableExpressionAst.VariablePath.UserPath);
+                    _parser.ReportError(variableExpressionAst.Extent,
+                        nameof(ParserStrings.SplattingNotPermittedInArgumentList),
+                        ParserStrings.SplattingNotPermittedInArgumentList,
+                        variableExpressionAst.VariablePath.UserPath);
                 }
                 else
                 {
-                    _parser.ReportError(variableExpressionAst.Extent, () => ParserStrings.SplattingNotPermitted, variableExpressionAst.VariablePath.UserPath);
+                    _parser.ReportError(variableExpressionAst.Extent,
+                        nameof(ParserStrings.SplattingNotPermitted),
+                        ParserStrings.SplattingNotPermitted,
+                        variableExpressionAst.VariablePath.UserPath);
                 }
             }
 
@@ -960,7 +1074,9 @@ namespace System.Management.Automation.Language
                     && !variableExpressionAst.IsConstantVariable()
                     && !SpecialVariables.IsImplicitVariableAccessibleInClassMethod(variableExpressionAst.VariablePath))
                 {
-                    _parser.ReportError(variableExpressionAst.Extent, () => ParserStrings.VariableNotLocal);
+                    _parser.ReportError(variableExpressionAst.Extent,
+                        nameof(ParserStrings.VariableNotLocal),
+                        ParserStrings.VariableNotLocal);
                 }
             }
 
@@ -968,7 +1084,10 @@ namespace System.Management.Automation.Language
             {
                 if (AnalyzingStaticMember())
                 {
-                    _parser.ReportError(variableExpressionAst.Extent, () => ParserStrings.NonStaticMemberAccessInStaticMember, variableExpressionAst.VariablePath.UserPath);
+                    _parser.ReportError(variableExpressionAst.Extent,
+                        nameof(ParserStrings.NonStaticMemberAccessInStaticMember),
+                        ParserStrings.NonStaticMemberAccessInStaticMember,
+                        variableExpressionAst.VariablePath.UserPath);
                 }
             }
 
@@ -986,13 +1105,20 @@ namespace System.Management.Automation.Language
                     var keyStr = keyStrAst.Value.ToString();
                     if (keys.Contains(keyStr))
                     {
-                        // Note -  the error handling function inspects the error message body to extra the ParserStrings property name. It uses this value as the errorid.
-                        var errorMessageExpression = hashtableAst.IsSchemaElement
-                            ? (() => ParserStrings.DuplicatePropertyInInstanceDefinition)
-                            : (Expression<Func<string>>)(() => ParserStrings.DuplicateKeyInHashLiteral);
+                        string errorId;
+                        string errorMsg;
+                        if (hashtableAst.IsSchemaElement)
+                        {
+                            errorId = nameof(ParserStrings.DuplicatePropertyInInstanceDefinition);
+                            errorMsg = ParserStrings.DuplicatePropertyInInstanceDefinition;
+                        }
+                        else
+                        {
+                            errorId = nameof(ParserStrings.DuplicateKeyInHashLiteral);
+                            errorMsg = ParserStrings.DuplicateKeyInHashLiteral;
+                        }
 
-                        _parser.ReportError(entry.Item1.Extent, errorMessageExpression,
-                                            keyStr);
+                        _parser.ReportError(entry.Item1.Extent, errorId, errorMsg, keyStr);
                     }
                     else
                     {
@@ -1018,7 +1144,10 @@ namespace System.Management.Automation.Language
                 attributedExpressionAst = attributedExpressionAst.Child as AttributedExpressionAst;
             }
 
-            _parser.ReportError(errorAst.Extent, () => ParserStrings.UnexpectedAttribute, errorAst.TypeName.FullName);
+            _parser.ReportError(errorAst.Extent,
+                nameof(ParserStrings.UnexpectedAttribute),
+                ParserStrings.UnexpectedAttribute,
+                errorAst.TypeName.FullName);
 
             return AstVisitAction.Continue;
         }
@@ -1030,7 +1159,10 @@ namespace System.Management.Automation.Language
                 return AstVisitAction.Continue;
             }
 
-            _parser.ReportError(blockStatementAst.Kind.Extent, () => ParserStrings.UnexpectedKeyword, blockStatementAst.Kind.Text);
+            _parser.ReportError(blockStatementAst.Kind.Extent,
+                nameof(ParserStrings.UnexpectedKeyword),
+                ParserStrings.UnexpectedKeyword,
+                blockStatementAst.Kind.Text);
 
             return AstVisitAction.Continue;
         }
@@ -1086,6 +1218,7 @@ namespace System.Management.Automation.Language
             {
                 _memberScopeStack.Push(null);
             }
+
             return AstVisitAction.Continue;
         }
 
@@ -1141,18 +1274,24 @@ namespace System.Management.Automation.Language
                                     var commandNameAst = commandAst.CommandElements[0] as StringConstantExpressionAst;
                                     if (commandNameAst != null)
                                     {
-                                        _parser.ReportError(commandNameAst.Extent, () => ParserStrings.ResourceNotDefined, commandNameAst.Extent.Text);
+                                        _parser.ReportError(commandNameAst.Extent,
+                                            nameof(ParserStrings.ResourceNotDefined),
+                                            ParserStrings.ResourceNotDefined,
+                                            commandNameAst.Extent.Text);
                                     }
                                 }
                             }
                         }
+
                         break;
                     }
+
                     statementAst = ast as PipelineAst;
                     ancestorNodeLevel++;
                     ast = ast.Parent;
                 }
             }
+
             return AstVisitAction.Continue;
         }
 
@@ -1164,7 +1303,9 @@ namespace System.Management.Automation.Language
             if (!usingKindSupported ||
                 usingStatementAst.Alias != null)
             {
-                _parser.ReportError(usingStatementAst.Extent, () => ParserStrings.UsingStatementNotSupported);
+                _parser.ReportError(usingStatementAst.Extent,
+                    nameof(ParserStrings.UsingStatementNotSupported),
+                    ParserStrings.UsingStatementNotSupported);
             }
 
             return AstVisitAction.Continue;
@@ -1173,7 +1314,7 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst)
         {
             //
-            // Check if the ScirptBlockAst contains NamedBlockAst other than the End block
+            // Check if the ScriptBlockAst contains NamedBlockAst other than the End block
             //
             ScriptBlockAst configBody = configurationDefinitionAst.Body.ScriptBlock;
             if (configBody.BeginBlock != null || configBody.ProcessBlock != null || configBody.DynamicParamBlock != null)
@@ -1183,7 +1324,9 @@ namespace System.Management.Automation.Language
                 {
                     if (namedBlock != null)
                     {
-                        _parser.ReportError(namedBlock.OpenCurlyExtent, () => ParserStrings.UnsupportedNamedBlockInConfiguration);
+                        _parser.ReportError(namedBlock.OpenCurlyExtent,
+                            nameof(ParserStrings.UnsupportedNamedBlockInConfiguration),
+                            ParserStrings.UnsupportedNamedBlockInConfiguration);
                     }
                 }
 
@@ -1208,9 +1351,14 @@ namespace System.Management.Automation.Language
                 }
                 catch (Exception e)
                 {
-                    _parser.ReportError(dynamicKeywordStatementAst.Extent, () => ParserStrings.DynamicKeywordSemanticCheckException, dynamicKeywordStatementAst.Keyword.ResourceName, e.ToString());
+                    _parser.ReportError(dynamicKeywordStatementAst.Extent,
+                        nameof(ParserStrings.DynamicKeywordSemanticCheckException),
+                        ParserStrings.DynamicKeywordSemanticCheckException,
+                        dynamicKeywordStatementAst.Keyword.ResourceName,
+                        e.ToString());
                 }
             }
+
             DynamicKeyword keyword = dynamicKeywordStatementAst.Keyword;
             HashtableAst hashtable = dynamicKeywordStatementAst.BodyExpression as HashtableAst;
             if (hashtable != null)
@@ -1224,15 +1372,21 @@ namespace System.Management.Automation.Language
                     if (propName == null)
                     {
                         _parser.ReportError(keyValueTuple.Item1.Extent,
-                            () => ParserStrings.ConfigurationInvalidPropertyName,
-                            dynamicKeywordStatementAst.FunctionName.Extent, keyValueTuple.Item1.Extent);
+                            nameof(ParserStrings.ConfigurationInvalidPropertyName),
+                            ParserStrings.ConfigurationInvalidPropertyName,
+                            dynamicKeywordStatementAst.FunctionName.Extent,
+                            keyValueTuple.Item1.Extent);
                     }
                     else if (!keyword.Properties.ContainsKey(propName.Value))
                     {
+                        IOrderedEnumerable<string> tableKeys = keyword.Properties.Keys
+                            .OrderBy(key => key, StringComparer.OrdinalIgnoreCase);
+
                         _parser.ReportError(propName.Extent,
-                            () => ParserStrings.InvalidInstanceProperty,
+                            nameof(ParserStrings.InvalidInstanceProperty),
+                            ParserStrings.InvalidInstanceProperty,
                             propName.Value,
-                            string.Join("', '", keyword.Properties.Keys.OrderBy(key => key, StringComparer.OrdinalIgnoreCase)));
+                            string.Join("', '", tableKeys));
                     }
                 }
             }
@@ -1250,13 +1404,15 @@ namespace System.Management.Automation.Language
                     if (configAst.ConfigurationType == ConfigurationType.Meta && !dynamicKeywordStatementAst.Keyword.IsMetaDSCResource())
                     {
                         _parser.ReportError(nameAst.Extent,
-                            () => ParserStrings.RegularResourceUsedInMetaConfig,
+                            nameof(ParserStrings.RegularResourceUsedInMetaConfig),
+                            ParserStrings.RegularResourceUsedInMetaConfig,
                             nameAst.Extent.Text);
                     }
                     else if (configAst.ConfigurationType != ConfigurationType.Meta && dynamicKeywordStatementAst.Keyword.IsMetaDSCResource())
                     {
                         _parser.ReportError(nameAst.Extent,
-                            () => ParserStrings.MetaConfigurationUsedInRegularConfig,
+                            nameof(ParserStrings.MetaConfigurationUsedInRegularConfig),
+                            ParserStrings.MetaConfigurationUsedInRegularConfig,
                             nameAst.Extent.Text);
                     }
                 }
@@ -1265,7 +1421,6 @@ namespace System.Management.Automation.Language
             return AstVisitAction.Continue;
         }
 
-
         public override AstVisitAction VisitPropertyMember(PropertyMemberAst propertyMemberAst)
         {
             if (propertyMemberAst.PropertyType != null)
@@ -1273,12 +1428,15 @@ namespace System.Management.Automation.Language
                 // Type must be resolved, but if it's not, the error was reported by the symbol resolver.
                 var type = propertyMemberAst.PropertyType.TypeName.GetReflectionType();
 
-                if (type != null && (type == typeof(void) || type.GetTypeInfo().IsGenericTypeDefinition))
+                if (type != null && (type == typeof(void) || type.IsGenericTypeDefinition))
                 {
-                    _parser.ReportError(propertyMemberAst.PropertyType.Extent, () => ParserStrings.TypeNotAllowedForProperty,
+                    _parser.ReportError(propertyMemberAst.PropertyType.Extent,
+                        nameof(ParserStrings.TypeNotAllowedForProperty),
+                        ParserStrings.TypeNotAllowedForProperty,
                         propertyMemberAst.PropertyType.TypeName.FullName);
                 }
             }
+
             _memberScopeStack.Push(propertyMemberAst);
             return AstVisitAction.Continue;
         }
@@ -1292,6 +1450,7 @@ namespace System.Management.Automation.Language
                 {
                     _memberScopeStack.Pop();
                 }
+
                 _scopeStack.Pop();
                 scriptBlockAst.PostParseChecksPerformed = true;
                 // at this moment, we could use different parser for the initial syntax check
@@ -1309,7 +1468,7 @@ namespace System.Management.Automation.Language
     internal static class DscResourceChecker
     {
         /// <summary>
-        /// Check if it is a qualified DSC resource type
+        /// Check if it is a qualified DSC resource type.
         /// </summary>
         /// <param name="parser"></param>
         /// <param name="typeDefinitionAst"></param>
@@ -1363,38 +1522,53 @@ namespace System.Management.Automation.Language
 
             if (!hasSet)
             {
-                parser.ReportError(dscResourceAttributeAst.Extent, () => ParserStrings.DscResourceMissingSetMethod, name);
+                parser.ReportError(dscResourceAttributeAst.Extent,
+                    nameof(ParserStrings.DscResourceMissingSetMethod),
+                    ParserStrings.DscResourceMissingSetMethod,
+                    name);
             }
 
             if (!hasGet)
             {
-                parser.ReportError(dscResourceAttributeAst.Extent, () => ParserStrings.DscResourceMissingGetMethod, name);
+                parser.ReportError(dscResourceAttributeAst.Extent,
+                    nameof(ParserStrings.DscResourceMissingGetMethod),
+                    ParserStrings.DscResourceMissingGetMethod,
+                    name);
             }
 
             if (!hasTest)
             {
-                parser.ReportError(dscResourceAttributeAst.Extent, () => ParserStrings.DscResourceMissingTestMethod, name);
+                parser.ReportError(dscResourceAttributeAst.Extent,
+                    nameof(ParserStrings.DscResourceMissingTestMethod),
+                    ParserStrings.DscResourceMissingTestMethod,
+                    name);
             }
 
             if (!hasDefaultCtor && hasNonDefaultCtor)
             {
-                parser.ReportError(dscResourceAttributeAst.Extent, () => ParserStrings.DscResourceMissingDefaultConstructor, name);
+                parser.ReportError(dscResourceAttributeAst.Extent,
+                    nameof(ParserStrings.DscResourceMissingDefaultConstructor),
+                    ParserStrings.DscResourceMissingDefaultConstructor,
+                    name);
             }
 
             if (!hasKey)
             {
-                parser.ReportError(dscResourceAttributeAst.Extent, () => ParserStrings.DscResourceMissingKeyProperty, name);
+                parser.ReportError(dscResourceAttributeAst.Extent,
+                    nameof(ParserStrings.DscResourceMissingKeyProperty),
+                    ParserStrings.DscResourceMissingKeyProperty,
+                    name);
             }
         }
         /// <summary>
-        /// Look up all the way up until find all the required members
+        /// Look up all the way up until find all the required members.
         /// </summary>
         /// <param name="parser"></param>
-        /// <param name="typeDefinitionAst">The type definition ast of the DSC resource type</param>
-        /// <param name="hasSet">flag to indicate if the class contains Set method.</param>
-        /// <param name="hasGet">flag to indicate if the class contains Get method.</param>
-        /// <param name="hasTest">flag to indicate if the class contains Test method.</param>
-        /// <param name="hasKey">flag to indicate if the class contains Key property.</param>
+        /// <param name="typeDefinitionAst">The type definition ast of the DSC resource type.</param>
+        /// <param name="hasSet">Flag to indicate if the class contains Set method.</param>
+        /// <param name="hasGet">Flag to indicate if the class contains Get method.</param>
+        /// <param name="hasTest">Flag to indicate if the class contains Test method.</param>
+        /// <param name="hasKey">Flag to indicate if the class contains Key property.</param>
         private static void LookupRequiredMembers(Parser parser, TypeDefinitionAst typeDefinitionAst, ref bool hasSet, ref bool hasGet, ref bool hasTest, ref bool hasKey)
         {
             if (typeDefinitionAst == null)
@@ -1436,6 +1610,7 @@ namespace System.Management.Automation.Language
                         CheckKey(parser, propertyMemberAst, ref hasKey);
                     }
                 }
+
                 if (baseTypeDefinitionAst.BaseTypes != null && (!hasSet || !hasGet || !hasTest || !hasKey))
                 {
                     LookupRequiredMembers(parser, baseTypeDefinitionAst, ref hasSet, ref hasGet, ref hasTest, ref hasKey);
@@ -1443,48 +1618,55 @@ namespace System.Management.Automation.Language
             }
         }
         /// <summary>
-        /// Check if it is a Get method with correct return type and signature
+        /// Check if it is a Get method with correct return type and signature.
         /// </summary>
         /// <param name="parser"></param>
-        /// <param name="functionMemberAst">The function member AST</param>
-        /// <param name="hasGet">True if it is a Get method with qualified return type and signaure; otherwise, false. </param>
+        /// <param name="functionMemberAst">The function member AST.</param>
+        /// <param name="hasGet">True if it is a Get method with qualified return type and signature; otherwise, false.</param>
         private static void CheckGet(Parser parser, FunctionMemberAst functionMemberAst, ref bool hasGet)
         {
             if (hasGet)
             {
                 return;
             }
+
             if (functionMemberAst.Name.Equals("Get", StringComparison.OrdinalIgnoreCase) &&
                 functionMemberAst.Parameters.Count == 0)
             {
                 if (functionMemberAst.ReturnType != null)
                 {
                     // Return type is of the class we're defined in
-                    //it must return the class type, or array of the class type.
+                    // it must return the class type, or array of the class type.
                     var arrayTypeName = functionMemberAst.ReturnType.TypeName as ArrayTypeName;
                     var typeName =
                         (arrayTypeName != null ? arrayTypeName.ElementType : functionMemberAst.ReturnType.TypeName) as
                             TypeName;
                     if (typeName == null || typeName._typeDefinitionAst != functionMemberAst.Parent)
                     {
-                        parser.ReportError(functionMemberAst.Extent, () => ParserStrings.DscResourceInvalidGetMethod, ((TypeDefinitionAst)functionMemberAst.Parent).Name);
+                        parser.ReportError(functionMemberAst.Extent,
+                            nameof(ParserStrings.DscResourceInvalidGetMethod),
+                            ParserStrings.DscResourceInvalidGetMethod,
+                            ((TypeDefinitionAst)functionMemberAst.Parent).Name);
                     }
                 }
                 else
                 {
-                    parser.ReportError(functionMemberAst.Extent, () => ParserStrings.DscResourceInvalidGetMethod, ((TypeDefinitionAst)functionMemberAst.Parent).Name);
+                    parser.ReportError(functionMemberAst.Extent,
+                        nameof(ParserStrings.DscResourceInvalidGetMethod),
+                        ParserStrings.DscResourceInvalidGetMethod,
+                        ((TypeDefinitionAst)functionMemberAst.Parent).Name);
                 }
-                //Set hasGet to true to stop look up; it may have invalid get
+                // Set hasGet to true to stop look up; it may have invalid get
                 hasGet = true;
                 return;
             }
         }
 
         /// <summary>
-        /// Check if it is a Test method with correct return type and signature
+        /// Check if it is a Test method with correct return type and signature.
         /// </summary>
-        /// <param name="functionMemberAst">The function member AST</param>
-        /// <param name="hasTest">True if it is a Test method with qualified return type and signaure; otherwise, false.</param>
+        /// <param name="functionMemberAst">The function member AST.</param>
+        /// <param name="hasTest">True if it is a Test method with qualified return type and signature; otherwise, false.</param>
         private static void CheckTest(FunctionMemberAst functionMemberAst, ref bool hasTest)
         {
             if (hasTest) return;
@@ -1494,10 +1676,10 @@ namespace System.Management.Automation.Language
                     functionMemberAst.ReturnType.TypeName.GetReflectionType() == typeof(bool));
         }
         /// <summary>
-        /// Check if it is a Set method with correct return type and signature
+        /// Check if it is a Set method with correct return type and signature.
         /// </summary>
-        /// <param name="functionMemberAst">The function member AST</param>
-        /// <param name="hasSet">True if it is a Set method with qualified return type and signaure; otherwise, false.</param>
+        /// <param name="functionMemberAst">The function member AST.</param>
+        /// <param name="hasSet">True if it is a Set method with qualified return type and signature; otherwise, false.</param>
         private static void CheckSet(FunctionMemberAst functionMemberAst, ref bool hasSet)
         {
             if (hasSet) return;
@@ -1510,7 +1692,7 @@ namespace System.Management.Automation.Language
         /// True if it is a key property.
         /// </summary>
         /// <param name="parser"></param>
-        /// <param name="propertyMemberAst">The property member AST</param>
+        /// <param name="propertyMemberAst">The property member AST.</param>
         /// <param name="hasKey">True if it is a key property; otherwise, false.</param>
         private static void CheckKey(Parser parser, PropertyMemberAst propertyMemberAst, ref bool hasKey)
         {
@@ -1550,10 +1732,14 @@ namespace System.Management.Automation.Language
                                         }
                                     }
                                 }
+
                                 if (!keyPropertyTypeAllowed)
                                 {
-                                    parser.ReportError(propertyMemberAst.Extent, () => ParserStrings.DscResourceInvalidKeyProperty);
+                                    parser.ReportError(propertyMemberAst.Extent,
+                                        nameof(ParserStrings.DscResourceInvalidKeyProperty),
+                                        ParserStrings.DscResourceInvalidKeyProperty);
                                 }
+
                                 return;
                             }
                         }
@@ -1578,7 +1764,7 @@ namespace System.Management.Automation.Language
 
             if (allowedVariables != null)
             {
-                // A single '*' allows any variable to be used. The use of a single '*' aligns with the 
+                // A single '*' allows any variable to be used. The use of a single '*' aligns with the
                 // way SessionState.Applications and SessionState.Scripts lists work.
                 var allowedVariablesList = allowedVariables as IList<string> ?? allowedVariables.ToList();
                 if (allowedVariablesList.Count == 1 && allowedVariablesList.Contains("*"))
@@ -1613,7 +1799,9 @@ namespace System.Management.Automation.Language
             if (executionContext.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
                 var parser = new Parser();
-                parser.ReportError(dataStatementAst.CommandsAllowed[0].Extent, () => ParserStrings.DataSectionAllowedCommandDisallowed);
+                parser.ReportError(dataStatementAst.CommandsAllowed[0].Extent,
+                    nameof(ParserStrings.DataSectionAllowedCommandDisallowed),
+                    ParserStrings.DataSectionAllowedCommandDisallowed);
                 throw new ParseException(parser.ErrorList.ToArray());
             }
         }
@@ -1623,7 +1811,7 @@ namespace System.Management.Automation.Language
             var parser = new Parser();
             var rlc = new RestrictedLanguageChecker(parser, allowedCommands, null, false);
             dataStatementAst.Body.InternalVisit(rlc);
-            if (parser.ErrorList.Any())
+            if (parser.ErrorList.Count > 0)
             {
                 throw new ParseException(parser.ErrorList.ToArray());
             }
@@ -1634,28 +1822,32 @@ namespace System.Management.Automation.Language
             Utils.EnsureModuleLoaded("Microsoft.PowerShell.Utility", context);
         }
 
-        private void ReportError(Ast ast, Expression<Func<string>> errorExpr, params object[] args)
+        private void ReportError(Ast ast, string errorId, string errorMsg, params object[] args)
         {
-            ReportError(ast.Extent, errorExpr, args);
+            ReportError(ast.Extent, errorId, errorMsg, args);
             FoundError = true;
         }
 
-        private void ReportError(IScriptExtent extent, Expression<Func<string>> errorExpr, params object[] args)
+        private void ReportError(IScriptExtent extent, string errorId, string errorMsg, params object[] args)
         {
-            _parser.ReportError(extent, errorExpr, args);
+            _parser.ReportError(extent, errorId, errorMsg, args);
             FoundError = true;
         }
 
         public override AstVisitAction VisitScriptBlock(ScriptBlockAst scriptBlockAst)
         {
-            ReportError(scriptBlockAst, () => ParserStrings.ScriptBlockNotSupportedInDataSection);
+            ReportError(scriptBlockAst,
+                nameof(ParserStrings.ScriptBlockNotSupportedInDataSection),
+                ParserStrings.ScriptBlockNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitParamBlock(ParamBlockAst paramBlockAst)
         {
-            ReportError(paramBlockAst, () => ParserStrings.ParameterDeclarationNotSupportedInDataSection);
+            ReportError(paramBlockAst,
+                nameof(ParserStrings.ParameterDeclarationNotSupportedInDataSection),
+                ParserStrings.ParameterDeclarationNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
@@ -1678,7 +1870,10 @@ namespace System.Management.Automation.Language
             // If we couldn't resolve the type, then it's definitely an error.
             if (type == null || ((type.IsArray ? type.GetElementType() : type).GetTypeCode() == TypeCode.Object))
             {
-                ReportError(ast, () => ParserStrings.TypeNotAllowedInDataSection, typename.FullName);
+                ReportError(ast,
+                    nameof(ParserStrings.TypeNotAllowedInDataSection),
+                    ParserStrings.TypeNotAllowedInDataSection,
+                    typename.FullName);
             }
         }
 
@@ -1692,7 +1887,9 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitAttribute(AttributeAst attributeAst)
         {
             Diagnostics.Assert(FoundError, "an error should have been reported elsewhere, making this redunant");
-            ReportError(attributeAst, () => ParserStrings.AttributeNotSupportedInDataSection);
+            ReportError(attributeAst,
+                nameof(ParserStrings.AttributeNotSupportedInDataSection),
+                ParserStrings.AttributeNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
@@ -1713,7 +1910,9 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst)
         {
-            ReportError(functionDefinitionAst, () => ParserStrings.FunctionDeclarationNotSupportedInDataSection);
+            ReportError(functionDefinitionAst,
+                nameof(ParserStrings.FunctionDeclarationNotSupportedInDataSection),
+                ParserStrings.FunctionDeclarationNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
@@ -1734,49 +1933,63 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitTrap(TrapStatementAst trapStatementAst)
         {
-            ReportError(trapStatementAst, () => ParserStrings.TrapStatementNotSupportedInDataSection);
+            ReportError(trapStatementAst,
+                nameof(ParserStrings.TrapStatementNotSupportedInDataSection),
+                ParserStrings.TrapStatementNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitSwitchStatement(SwitchStatementAst switchStatementAst)
         {
-            ReportError(switchStatementAst, () => ParserStrings.SwitchStatementNotSupportedInDataSection);
+            ReportError(switchStatementAst,
+                nameof(ParserStrings.SwitchStatementNotSupportedInDataSection),
+                ParserStrings.SwitchStatementNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitDataStatement(DataStatementAst dataStatementAst)
         {
-            ReportError(dataStatementAst, () => ParserStrings.DataSectionStatementNotSupportedInDataSection);
+            ReportError(dataStatementAst,
+                nameof(ParserStrings.DataSectionStatementNotSupportedInDataSection),
+                ParserStrings.DataSectionStatementNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitForEachStatement(ForEachStatementAst forEachStatementAst)
         {
-            ReportError(forEachStatementAst, () => ParserStrings.ForeachStatementNotSupportedInDataSection);
+            ReportError(forEachStatementAst,
+                nameof(ParserStrings.ForeachStatementNotSupportedInDataSection),
+                ParserStrings.ForeachStatementNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitDoWhileStatement(DoWhileStatementAst doWhileStatementAst)
         {
-            ReportError(doWhileStatementAst, () => ParserStrings.DoWhileStatementNotSupportedInDataSection);
+            ReportError(doWhileStatementAst,
+                nameof(ParserStrings.DoWhileStatementNotSupportedInDataSection),
+                ParserStrings.DoWhileStatementNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitForStatement(ForStatementAst forStatementAst)
         {
-            ReportError(forStatementAst, () => ParserStrings.ForWhileStatementNotSupportedInDataSection);
+            ReportError(forStatementAst,
+                nameof(ParserStrings.ForWhileStatementNotSupportedInDataSection),
+                ParserStrings.ForWhileStatementNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitWhileStatement(WhileStatementAst whileStatementAst)
         {
-            ReportError(whileStatementAst, () => ParserStrings.ForWhileStatementNotSupportedInDataSection);
+            ReportError(whileStatementAst,
+                nameof(ParserStrings.ForWhileStatementNotSupportedInDataSection),
+                ParserStrings.ForWhileStatementNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
@@ -1790,49 +2003,63 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitTryStatement(TryStatementAst tryStatementAst)
         {
-            ReportError(tryStatementAst, () => ParserStrings.TryStatementNotSupportedInDataSection);
+            ReportError(tryStatementAst,
+                nameof(ParserStrings.TryStatementNotSupportedInDataSection),
+                ParserStrings.TryStatementNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitBreakStatement(BreakStatementAst breakStatementAst)
         {
-            ReportError(breakStatementAst, () => ParserStrings.FlowControlStatementNotSupportedInDataSection);
+            ReportError(breakStatementAst,
+                nameof(ParserStrings.FlowControlStatementNotSupportedInDataSection),
+                ParserStrings.FlowControlStatementNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitContinueStatement(ContinueStatementAst continueStatementAst)
         {
-            ReportError(continueStatementAst, () => ParserStrings.FlowControlStatementNotSupportedInDataSection);
+            ReportError(continueStatementAst,
+                nameof(ParserStrings.FlowControlStatementNotSupportedInDataSection),
+                ParserStrings.FlowControlStatementNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitReturnStatement(ReturnStatementAst returnStatementAst)
         {
-            ReportError(returnStatementAst, () => ParserStrings.FlowControlStatementNotSupportedInDataSection);
+            ReportError(returnStatementAst,
+                nameof(ParserStrings.FlowControlStatementNotSupportedInDataSection),
+                ParserStrings.FlowControlStatementNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitExitStatement(ExitStatementAst exitStatementAst)
         {
-            ReportError(exitStatementAst, () => ParserStrings.FlowControlStatementNotSupportedInDataSection);
+            ReportError(exitStatementAst,
+                nameof(ParserStrings.FlowControlStatementNotSupportedInDataSection),
+                ParserStrings.FlowControlStatementNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitThrowStatement(ThrowStatementAst throwStatementAst)
         {
-            ReportError(throwStatementAst, () => ParserStrings.FlowControlStatementNotSupportedInDataSection);
+            ReportError(throwStatementAst,
+                nameof(ParserStrings.FlowControlStatementNotSupportedInDataSection),
+                ParserStrings.FlowControlStatementNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitDoUntilStatement(DoUntilStatementAst doUntilStatementAst)
         {
-            ReportError(doUntilStatementAst, () => ParserStrings.DoWhileStatementNotSupportedInDataSection);
+            ReportError(doUntilStatementAst,
+                nameof(ParserStrings.DoWhileStatementNotSupportedInDataSection),
+                ParserStrings.DoWhileStatementNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
@@ -1840,7 +2067,9 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst)
         {
             // Assignments are never allowed.
-            ReportError(assignmentStatementAst, () => ParserStrings.AssignmentStatementNotSupportedInDataSection);
+            ReportError(assignmentStatementAst,
+                nameof(ParserStrings.AssignmentStatementNotSupportedInDataSection),
+                ParserStrings.AssignmentStatementNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
@@ -1861,7 +2090,9 @@ namespace System.Management.Automation.Language
 
             if (commandAst.InvocationOperator == TokenKind.Dot)
             {
-                ReportError(commandAst, () => ParserStrings.DotSourcingNotSupportedInDataSection);
+                ReportError(commandAst,
+                    nameof(ParserStrings.DotSourcingNotSupportedInDataSection),
+                    ParserStrings.DotSourcingNotSupportedInDataSection);
                 return AstVisitAction.Continue;
             }
 
@@ -1873,13 +2104,19 @@ namespace System.Management.Automation.Language
             {
                 if (commandAst.InvocationOperator == TokenKind.Ampersand)
                 {
-                    ReportError(commandAst, () => ParserStrings.OperatorNotSupportedInDataSection,
-                                TokenKind.Ampersand.Text());
+                    ReportError(commandAst,
+                        nameof(ParserStrings.OperatorNotSupportedInDataSection),
+                        ParserStrings.OperatorNotSupportedInDataSection,
+                        TokenKind.Ampersand.Text());
                 }
                 else
                 {
-                    ReportError(commandAst, () => ParserStrings.CmdletNotInAllowedListForDataSection, commandAst.Extent.Text);
+                    ReportError(commandAst,
+                        nameof(ParserStrings.CmdletNotInAllowedListForDataSection),
+                        ParserStrings.CmdletNotInAllowedListForDataSection,
+                        commandAst.Extent.Text);
                 }
+
                 return AstVisitAction.Continue;
             }
 
@@ -1888,7 +2125,10 @@ namespace System.Management.Automation.Language
                 return AstVisitAction.Continue;
             }
 
-            ReportError(commandAst, () => ParserStrings.CmdletNotInAllowedListForDataSection, commandName);
+            ReportError(commandAst,
+                nameof(ParserStrings.CmdletNotInAllowedListForDataSection),
+                ParserStrings.CmdletNotInAllowedListForDataSection,
+                commandName);
 
             return AstVisitAction.Continue;
         }
@@ -1909,14 +2149,18 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitMergingRedirection(MergingRedirectionAst mergingRedirectionAst)
         {
-            ReportError(mergingRedirectionAst, () => ParserStrings.RedirectionNotSupportedInDataSection);
+            ReportError(mergingRedirectionAst,
+                nameof(ParserStrings.RedirectionNotSupportedInDataSection),
+                ParserStrings.RedirectionNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitFileRedirection(FileRedirectionAst fileRedirectionAst)
         {
-            ReportError(fileRedirectionAst, () => ParserStrings.RedirectionNotSupportedInDataSection);
+            ReportError(fileRedirectionAst,
+                nameof(ParserStrings.RedirectionNotSupportedInDataSection),
+                ParserStrings.RedirectionNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
@@ -1935,7 +2179,10 @@ namespace System.Management.Automation.Language
 
             if (binaryExpressionAst.Operator.HasTrait(TokenFlags.DisallowedInRestrictedMode))
             {
-                ReportError(binaryExpressionAst.ErrorPosition, () => ParserStrings.OperatorNotSupportedInDataSection, binaryExpressionAst.Operator.Text());
+                ReportError(binaryExpressionAst.ErrorPosition,
+                    nameof(ParserStrings.OperatorNotSupportedInDataSection),
+                    ParserStrings.OperatorNotSupportedInDataSection,
+                    binaryExpressionAst.Operator.Text());
             }
 
             return AstVisitAction.Continue;
@@ -1945,7 +2192,10 @@ namespace System.Management.Automation.Language
         {
             if (unaryExpressionAst.TokenKind.HasTrait(TokenFlags.DisallowedInRestrictedMode))
             {
-                ReportError(unaryExpressionAst, () => ParserStrings.OperatorNotSupportedInDataSection, unaryExpressionAst.TokenKind.Text());
+                ReportError(unaryExpressionAst,
+                    nameof(ParserStrings.OperatorNotSupportedInDataSection),
+                    ParserStrings.OperatorNotSupportedInDataSection,
+                    unaryExpressionAst.TokenKind.Text());
             }
 
             return AstVisitAction.Continue;
@@ -1999,7 +2249,7 @@ namespace System.Management.Automation.Language
 
             if (_allowEnvironmentVariables)
             {
-                // Allow access to environment when processing module manifests            
+                // Allow access to environment when processing module manifests
                 if (varPath.IsDriveQualified && varPath.DriveName.Equals("env", StringComparison.OrdinalIgnoreCase))
                     return AstVisitAction.Continue;
             }
@@ -2028,21 +2278,28 @@ namespace System.Management.Automation.Language
                 resourceArg = argBuilder.ToString();
             }
 
-            ReportError(variableExpressionAst, () => ParserStrings.VariableReferenceNotSupportedInDataSection, resourceArg);
+            ReportError(variableExpressionAst,
+                nameof(ParserStrings.VariableReferenceNotSupportedInDataSection),
+                ParserStrings.VariableReferenceNotSupportedInDataSection,
+                resourceArg);
 
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitMemberExpression(MemberExpressionAst memberExpressionAst)
         {
-            ReportError(memberExpressionAst, () => ParserStrings.PropertyReferenceNotSupportedInDataSection);
+            ReportError(memberExpressionAst,
+                nameof(ParserStrings.PropertyReferenceNotSupportedInDataSection),
+                ParserStrings.PropertyReferenceNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
 
         public override AstVisitAction VisitInvokeMemberExpression(InvokeMemberExpressionAst methodCallAst)
         {
-            ReportError(methodCallAst, () => ParserStrings.MethodCallNotSupportedInDataSection);
+            ReportError(methodCallAst,
+                nameof(ParserStrings.MethodCallNotSupportedInDataSection),
+                ParserStrings.MethodCallNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
@@ -2070,7 +2327,9 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst)
         {
-            ReportError(scriptBlockExpressionAst, () => ParserStrings.ScriptBlockNotSupportedInDataSection);
+            ReportError(scriptBlockExpressionAst,
+                nameof(ParserStrings.ScriptBlockNotSupportedInDataSection),
+                ParserStrings.ScriptBlockNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
@@ -2086,7 +2345,7 @@ namespace System.Management.Automation.Language
         {
             // REVIEW: it should be OK to allow these, since the ast now would visit the nested expressions and catch the errors.
             // Not allowed since most variables are not allowed
-            //ReportError(expandableStringExpressionAst, () => ParserStrings.ExpandableStringNotSupportedInDataSection);
+            // ReportError(expandableStringExpressionAst, () => ParserStrings.ExpandableStringNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
@@ -2094,7 +2353,9 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitIndexExpression(IndexExpressionAst indexExpressionAst)
         {
             // Array references are never allowed.  They could turn into function calls.
-            ReportError(indexExpressionAst, () => ParserStrings.ArrayReferenceNotSupportedInDataSection);
+            ReportError(indexExpressionAst,
+                nameof(ParserStrings.ArrayReferenceNotSupportedInDataSection),
+                ParserStrings.ArrayReferenceNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
@@ -2102,7 +2363,9 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst)
         {
             // Attributes are not allowed, they may code in attribute constructors.
-            ReportError(attributedExpressionAst, () => ParserStrings.AttributeNotSupportedInDataSection);
+            ReportError(attributedExpressionAst,
+                nameof(ParserStrings.AttributeNotSupportedInDataSection),
+                ParserStrings.AttributeNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }
@@ -2110,7 +2373,9 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitBlockStatement(BlockStatementAst blockStatementAst)
         {
             // Keyword blocks are not allowed
-            ReportError(blockStatementAst, () => ParserStrings.ParallelAndSequenceBlockNotSupportedInDataSection);
+            ReportError(blockStatementAst,
+                nameof(ParserStrings.ParallelAndSequenceBlockNotSupportedInDataSection),
+                ParserStrings.ParallelAndSequenceBlockNotSupportedInDataSection);
 
             return AstVisitAction.Continue;
         }

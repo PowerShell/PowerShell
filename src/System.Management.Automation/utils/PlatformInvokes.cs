@@ -1,29 +1,17 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Win32.SafeHandles;
-
-#if CORECLR
-// Use stubs for SafeHandleZeroOrMinusOneIsInvalid, SecurityPermissionAttribute and ReliabilityContractAttribute
-using Microsoft.PowerShell.CoreClr.Stubs;
-#else
-using System.Security.Permissions;
 using System.Runtime.ConstrainedExecution;
-#endif
+using System.Runtime.InteropServices;
+using System.Security.Permissions;
+
+using Microsoft.Win32.SafeHandles;
 
 namespace System.Management.Automation
 {
     internal class PlatformInvokes
     {
-        [DllImport(PinvokeDllNames.GetFileAttributesDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-        internal static extern int GetFileAttributes(string lpFileName);
-
-        internal const int MAX_PATH = 260;
-        internal const int MAX_ALTERNATE = 14;
-
         [StructLayout(LayoutKind.Sequential)]
         internal class FILETIME
         {
@@ -48,34 +36,8 @@ namespace System.Management.Automation
             }
         };
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        internal struct WIN32_FIND_DATA
-        {
-            internal FileAttributes dwFileAttributes;
-            internal FILETIME ftCreationTime;
-            internal FILETIME ftLastAccessTime;
-            internal FILETIME ftLastWriteTime;
-            internal uint nFileSizeHigh; //changed all to uint, otherwise you run into unexpected overflow
-            internal uint nFileSizeLow;  //|
-            internal uint dwReserved0;   //|
-            internal uint dwReserved1;   //v
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_PATH)]
-            internal string cFileName;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_ALTERNATE)]
-            internal string cAlternate;
-        }
-
-        [DllImport(PinvokeDllNames.FindFirstFileDllName, CharSet = CharSet.Unicode)]
-        internal static extern IntPtr FindFirstFile(string lpFileName, out WIN32_FIND_DATA lpFindFileData);
-
-        [DllImport(PinvokeDllNames.FindNextFileDllName, CharSet = CharSet.Unicode)]
-        internal static extern bool FindNextFile(IntPtr hFindFile, out WIN32_FIND_DATA lpFindFileData);
-
-        [DllImport(PinvokeDllNames.FindCloseDllName, CharSet = CharSet.Unicode)]
-        internal static extern bool FindClose(IntPtr hFindFile);
-
         [Flags]
-        //dwDesiredAccess of CreateFile
+        // dwDesiredAccess of CreateFile
         internal enum FileDesiredAccess : uint
         {
             GenericRead = 0x80000000,
@@ -85,7 +47,7 @@ namespace System.Management.Automation
         }
 
         [Flags]
-        //dwShareMode of CreateFile
+        // dwShareMode of CreateFile
         internal enum FileShareMode : uint
         {
             None = 0x00000000,
@@ -94,7 +56,7 @@ namespace System.Management.Automation
             Delete = 0x00000004,
         }
 
-        //dwCreationDisposition of CreateFile
+        // dwCreationDisposition of CreateFile
         internal enum FileCreationDisposition : uint
         {
             New = 1,
@@ -105,7 +67,7 @@ namespace System.Management.Automation
         }
 
         [Flags]
-        //dwFlagsAndAttributes 
+        // dwFlagsAndAttributes
         internal enum FileAttributes : uint
         {
             ReadOnly = 0x00000001,
@@ -137,6 +99,7 @@ namespace System.Management.Automation
             internal int nLength;
             internal SafeLocalMemHandle lpSecurityDescriptor;
             internal bool bInheritHandle;
+
             internal SecurityAttributes()
             {
                 this.nLength = 12;
@@ -162,6 +125,7 @@ namespace System.Management.Automation
 
             [DllImport(PinvokeDllNames.LocalFreeDllName), ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
             private static extern IntPtr LocalFree(IntPtr hMem);
+
             protected override bool ReleaseHandle()
             {
                 return (LocalFree(base.handle) == IntPtr.Zero);
@@ -170,26 +134,26 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Creates or opens a file, file stream, directory, physical disk, volume, console buffer,
-        /// tape drive, communications resource, mailslot, or named pipe. The function returns a 
+        /// tape drive, communications resource, mailslot, or named pipe. The function returns a
         /// handle that can be used to access the object.
         /// </summary>
         /// <param name="lpFileName">
         /// The name of the object to be created or opened.
-        /// In the ANSI version of this function, the name is limited to MAX_PATH characters. 
-        /// To extend this limit to 32,767 wide characters, call the Unicode version of the 
-        /// function and prepend "\\?\" to the path. For more information, see Naming a File. 
+        /// In the ANSI version of this function, the name is limited to MAX_PATH characters.
+        /// To extend this limit to 32,767 wide characters, call the Unicode version of the
+        /// function and prepend "\\?\" to the path. For more information, see Naming a File.
         /// For information on special device names, see Defining an MS-DOS Device Name.
-        /// To specify a COM port number greater than 9, use the following syntax: "\\.\COM10". 
+        /// To specify a COM port number greater than 9, use the following syntax: "\\.\COM10".
         /// This syntax works for all port numbers and hardware that allows COM port numbers to be specified.
         /// To create a file stream, specify the name of the file, a colon, and then the name of the
         /// stream. For more information, see File Streams.
         /// </param>
         /// <param name="dwDesiredAccess">
         /// The access to the object, which can be read, write, or both.
-        /// You cannot request an access mode that conflicts with the sharing mode that is 
+        /// You cannot request an access mode that conflicts with the sharing mode that is
         /// specified in an open request that has an open handle.
-        /// If this parameter is zero (0), the application can query file and device attributes 
-        /// without accessing a device. This is useful for an application to determine the size 
+        /// If this parameter is zero (0), the application can query file and device attributes
+        /// without accessing a device. This is useful for an application to determine the size
         /// of a floppy disk drive and the formats it supports without requiring a floppy in a drive.
         /// It can also be used to test for the existence of a file or directory without opening
         /// them for read or write access.
@@ -197,54 +161,54 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="dwShareMode">
         /// The sharing mode of an object, which can be read, write, both, or none.
-        /// You cannot request a sharing mode that conflicts with the access mode that is specified 
-        /// in an open request that has an open handle, because that would result in the following 
-        /// sharing violation: ERROR_SHARING_VIOLATION. 
-        /// If this parameter is zero (0) and CreateFile succeeds, the object cannot be shared 
-        /// and cannot be opened again until the handle is closed. For more information, see the 
+        /// You cannot request a sharing mode that conflicts with the access mode that is specified
+        /// in an open request that has an open handle, because that would result in the following
+        /// sharing violation: ERROR_SHARING_VIOLATION.
+        /// If this parameter is zero (0) and CreateFile succeeds, the object cannot be shared
+        /// and cannot be opened again until the handle is closed. For more information, see the
         /// Remarks section of this topic.
         /// The sharing options remain in effect until you close the handle to an object.
         /// To enable a process to share an object while another process has the object open,
         /// use a combination of one or more of the following values to specify the access mode
-        /// they can request to open the object. 
+        /// they can request to open the object.
         /// </param>
         /// <param name="lpSecurityAttributes">
-        /// A pointer to a SECURITY_ATTRIBUTES structure that determines whether or not the returned 
+        /// A pointer to a SECURITY_ATTRIBUTES structure that determines whether or not the returned
         /// handle can be inherited by child processes.
         /// If lpSecurityAttributes is NULL, the handle cannot be inherited.
         /// The lpSecurityDescriptor member of the structure specifies a security descriptor
-        /// for an object. If lpSecurityAttributes is NULL, the object gets a default security descriptor. 
-        /// The access control lists (ACL) in the default security descriptor for a file or directory 
+        /// for an object. If lpSecurityAttributes is NULL, the object gets a default security descriptor.
+        /// The access control lists (ACL) in the default security descriptor for a file or directory
         /// are inherited from its parent directory.
         /// The target file system must support security on files and directories for this parameter to
         /// have an effect on them, which is indicated when GetVolumeInformation returns FS_PERSISTENT_ACLS.
-        /// CreateFile ignores lpSecurityDescriptor when opening an existing file, but continues to 
+        /// CreateFile ignores lpSecurityDescriptor when opening an existing file, but continues to
         /// use the other structure members.
         /// </param>
         /// <param name="dwCreationDisposition">
-        /// An action to take on files that exist and do not exist. 
+        /// An action to take on files that exist and do not exist.
         /// See "CreateFile creation disposition" below
         /// </param>
         /// <param name="dwFlagsAndAttributes">
         /// The file attributes and flags.
-        /// This parameter can include any combination of the file attributes. 
+        /// This parameter can include any combination of the file attributes.
         /// All other file attributes override FILE_ATTRIBUTE_NORMAL.
-        /// When CreateFile opens a file, it combines the file flags with existing 
+        /// When CreateFile opens a file, it combines the file flags with existing
         /// file attributes, and ignores any supplied file attributes.
         /// </param>
         /// <param name="hTemplateFile">
-        /// A handle to a template file with the GENERIC_READ access right. 
+        /// A handle to a template file with the GENERIC_READ access right.
         /// The template file supplies file attributes and extended attributes for the file that is
         /// being created. This parameter can be NULL.
         /// When opening an existing file, CreateFile ignores the template file.
         /// When opening a new EFS-encrypted file, the file inherits the DACL from its parent directory.
         /// </param>
         /// <returns>
-        /// If the function succeeds, the return value is an open handle to a specified file. 
+        /// If the function succeeds, the return value is an open handle to a specified file.
         /// If a specified file exists before the function call and dwCreationDisposition is CREATE_ALWAYS
-        /// or OPEN_ALWAYS, a call to GetLastError returns ERROR_ALREADY_EXISTS, even when the 
+        /// or OPEN_ALWAYS, a call to GetLastError returns ERROR_ALREADY_EXISTS, even when the
         /// function succeeds. If a file does not exist before the call, GetLastError returns zero (0).
-        /// If the function fails, the return value is INVALID_HANDLE_VALUE. 
+        /// If the function fails, the return value is INVALID_HANDLE_VALUE.
         /// To get extended error information, call GetLastError.
         /// </returns>
         [DllImport(PinvokeDllNames.CreateFileDllName, SetLastError = true, CharSet = CharSet.Unicode)]
@@ -265,40 +229,44 @@ namespace System.Management.Automation
         /// </param>
         /// <returns>
         /// If the function succeeds, the return value is nonzero.
-        /// If the function fails, the return value is zero. To get extended error information, 
+        /// If the function fails, the return value is zero. To get extended error information,
         /// call GetLastError.
-        /// If the application is running under a debugger, the function will throw an exception 
-        /// if it receives either a handle value that is not valid or a pseudo-handle value. 
+        /// If the application is running under a debugger, the function will throw an exception
+        /// if it receives either a handle value that is not valid or a pseudo-handle value.
         /// This can happen if you close a handle twice, or if you call CloseHandle on a handle
         /// returned by the FindFirstFile function.
         /// </returns>
         [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true)]//, ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        //[SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
+        // [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         internal static extern bool CloseHandle(IntPtr handle);
 
         [DllImport(PinvokeDllNames.DosDateTimeToFileTimeDllName, SetLastError = false)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool DosDateTimeToFileTime(
             short wFatDate, // _In_   WORD
             short wFatTime, // _In_   WORD
-            FILETIME lpFileTime); // _Out_  LPFILETIME 
+            FILETIME lpFileTime); // _Out_ LPFILETIME
 
         [DllImport(PinvokeDllNames.LocalFileTimeToFileTimeDllName, SetLastError = false, CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool LocalFileTimeToFileTime(
             FILETIME lpLocalFileTime, // _In_   const FILETIME *
-            FILETIME lpFileTime); // _Out_  LPFILETIME 
+            FILETIME lpFileTime); // _Out_ LPFILETIME
 
         [DllImport(PinvokeDllNames.SetFileTimeDllName, SetLastError = false, CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool SetFileTime(
             IntPtr hFile, // _In_      HANDLE
-            FILETIME lpCreationTime, // _In_opt_  const FILETIME *
-            FILETIME lpLastAccessTime, // _In_opt_  const FILETIME *
-            FILETIME lpLastWriteTime); // _In_opt_  const FILETIME *
+            FILETIME lpCreationTime, // _In_opt_ const FILETIME *
+            FILETIME lpLastAccessTime, // _In_opt_ const FILETIME *
+            FILETIME lpLastWriteTime); // _In_opt_ const FILETIME *
 
         [DllImport(PinvokeDllNames.SetFileAttributesWDllName, SetLastError = false, CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool SetFileAttributesW(
-            [MarshalAs(UnmanagedType.LPWStr)] string lpFileName, // _In_  LPCTSTR
-            FileAttributes dwFileAttributes); // _In_  DWORD
+            [MarshalAs(UnmanagedType.LPWStr)] string lpFileName, // _In_ LPCTSTR
+            FileAttributes dwFileAttributes); // _In_ DWORD
 
         /// <summary>
         /// Enable the privilege specified by the privilegeName. If the specified privilege is already enabled, return true
@@ -343,7 +311,7 @@ namespace System.Management.Automation
                             // The specified privilege is not enabled yet. Enable it.
                             newPrivilegeState.PrivilegeCount = 1;
                             newPrivilegeState.Privilege.Attributes = SE_PRIVILEGE_ENABLED;
-                            int bufferSize = ClrFacade.SizeOf<TOKEN_PRIVILEGE>();
+                            int bufferSize = Marshal.SizeOf<TOKEN_PRIVILEGE>();
                             int returnSize = 0;
 
                             // enable the specified privilege
@@ -374,6 +342,7 @@ namespace System.Management.Automation
                     {
                         CloseHandle(tokenHandler);
                     }
+
                     CloseHandle(processHandler);
                 }
             }
@@ -382,7 +351,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Restore the previous privilege state
+        /// Restore the previous privilege state.
         /// </summary>
         /// <param name="privilegeName"></param>
         /// <param name="previousPrivilegeState"></param>
@@ -412,7 +381,7 @@ namespace System.Management.Automation
                     IntPtr tokenHandler = IntPtr.Zero;
                     if (OpenProcessToken(processHandler, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, out tokenHandler))
                     {
-                        int bufferSize = ClrFacade.SizeOf<TOKEN_PRIVILEGE>();
+                        int bufferSize = Marshal.SizeOf<TOKEN_PRIVILEGE>();
                         int returnSize = 0;
 
                         // restore the privilege state back to the previous privilege state
@@ -429,6 +398,7 @@ namespace System.Management.Automation
                     {
                         CloseHandle(tokenHandler);
                     }
+
                     CloseHandle(processHandler);
                 }
             }
@@ -462,7 +432,7 @@ namespace System.Management.Automation
         internal static extern bool PrivilegeCheck(IntPtr tokenHandler, ref PRIVILEGE_SET requiredPrivileges, out bool pfResult);
 
         /// <summary>
-        /// The AdjustTokenPrivileges function enables or disables privileges in the specified access token. Enabling or disabling privileges in 
+        /// The AdjustTokenPrivileges function enables or disables privileges in the specified access token. Enabling or disabling privileges in
         /// an access token requires TOKEN_ADJUST_PRIVILEGES access. The TOKEN_ADJUST_PRIVILEGES and TOKEN_QUERY accesses are gained when calling
         /// the OpenProcessToken function.
         /// </summary>
@@ -511,7 +481,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the pseudo handler of the current process 
+        /// Get the pseudo handler of the current process.
         /// </summary>
         /// <returns></returns>
         [DllImport(PinvokeDllNames.GetCurrentProcessDllName)]
@@ -519,12 +489,12 @@ namespace System.Management.Automation
         internal static extern IntPtr GetCurrentProcess();
 
         /// <summary>
-        /// Retrieves the current process token. 
-        /// This function exists just for backward compatibility. It is prefered to use the other override that takes 'SafeHandle' as parameter. 
+        /// Retrieves the current process token.
+        /// This function exists just for backward compatibility. It is prefered to use the other override that takes 'SafeHandle' as parameter.
         /// </summary>
-        /// <param name="processHandle">process handle</param>
-        /// <param name="desiredAccess">token access</param>
-        /// <param name="tokenHandle">process token</param>
+        /// <param name="processHandle">Process handle.</param>
+        /// <param name="desiredAccess">Token access.</param>
+        /// <param name="tokenHandle">Process token.</param>
         /// <returns>The current process token.</returns>
         [DllImport(PinvokeDllNames.OpenProcessTokenDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
@@ -558,15 +528,15 @@ namespace System.Management.Automation
 #if !UNIX
 
         // Fields
-        internal static readonly IntPtr INVALID_HANDLE_VALUE = IntPtr.Zero;
-        internal static UInt32 GENERIC_READ = 0x80000000;
-        internal static UInt32 GENERIC_WRITE = 0x40000000;
-        internal static UInt32 FILE_ATTRIBUTE_NORMAL = 0x80000000;
-        internal static UInt32 CREATE_ALWAYS = 2;
-        internal static UInt32 FILE_SHARE_WRITE = 0x00000002;
-        internal static UInt32 FILE_SHARE_READ = 0x00000001;
-        internal static UInt32 OF_READWRITE = 0x00000002;
-        internal static UInt32 OPEN_EXISTING = 3;
+        internal static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
+        internal static readonly UInt32 GENERIC_READ = 0x80000000;
+        internal static readonly UInt32 GENERIC_WRITE = 0x40000000;
+        internal static readonly UInt32 FILE_ATTRIBUTE_NORMAL = 0x80000000;
+        internal static readonly UInt32 CREATE_ALWAYS = 2;
+        internal static readonly UInt32 FILE_SHARE_WRITE = 0x00000002;
+        internal static readonly UInt32 FILE_SHARE_READ = 0x00000001;
+        internal static readonly UInt32 OF_READWRITE = 0x00000002;
+        internal static readonly UInt32 OPEN_EXISTING = 3;
 
         [StructLayout(LayoutKind.Sequential)]
         internal class PROCESS_INFORMATION
@@ -583,7 +553,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Dispose
+            /// Dispose.
             /// </summary>
             public void Dispose()
             {
@@ -591,7 +561,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Dispose
+            /// Dispose.
             /// </summary>
             /// <param name="disposing"></param>
             private void Dispose(bool disposing)
@@ -634,6 +604,7 @@ namespace System.Management.Automation
             public SafeFileHandle hStdInput;
             public SafeFileHandle hStdOutput;
             public SafeFileHandle hStdError;
+
             public STARTUPINFO()
             {
                 this.lpReserved = IntPtr.Zero;
@@ -644,7 +615,6 @@ namespace System.Management.Automation
                 this.hStdOutput = new SafeFileHandle(IntPtr.Zero, false);
                 this.hStdError = new SafeFileHandle(IntPtr.Zero, false);
                 this.cb = Marshal.SizeOf(this);
-
             }
 
             public void Dispose(bool disposing)
@@ -656,11 +626,13 @@ namespace System.Management.Automation
                         this.hStdInput.Dispose();
                         this.hStdInput = null;
                     }
+
                     if ((this.hStdOutput != null) && !this.hStdOutput.IsInvalid)
                     {
                         this.hStdOutput.Dispose();
                         this.hStdOutput = null;
                     }
+
                     if ((this.hStdError != null) && !this.hStdError.IsInvalid)
                     {
                         this.hStdError.Dispose();
@@ -681,6 +653,7 @@ namespace System.Management.Automation
             public int nLength;
             public SafeLocalMemHandle lpSecurityDescriptor;
             public bool bInheritHandle;
+
             public SECURITY_ATTRIBUTES()
             {
                 this.nLength = 12;
@@ -689,10 +662,8 @@ namespace System.Management.Automation
             }
         }
 
-        // Methods
-        //
-
         [DllImport(PinvokeDllNames.CreateProcessDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CreateProcess(
             [MarshalAs(UnmanagedType.LPWStr)] string lpApplicationName,
             [MarshalAs(UnmanagedType.LPWStr)] string lpCommandLine,
@@ -707,6 +678,8 @@ namespace System.Management.Automation
 
         [DllImport(PinvokeDllNames.ResumeThreadDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern uint ResumeThread(IntPtr threadHandle);
+
+        internal static readonly uint RESUME_THREAD_FAILED = System.UInt32.MaxValue; // (DWORD)-1
 
         [DllImport(PinvokeDllNames.CreateFileDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern System.IntPtr CreateFileW(

@@ -1,139 +1,245 @@
-![logo][] PowerShell
-====================
+# ![logo][] PowerShell
 
 Welcome to the PowerShell GitHub Community!
-PowerShell is a cross-platform (Windows, Linux, and OS X) automation and configuration tool/framework that works well with your existing tools and is optimized for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models.
-It includes a command-line shell, an associated scripting language and a framework for processing cmdlets. 
+PowerShell Core is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework that works well with your existing tools and is optimized
+for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models.
+It includes a command-line shell, an associated scripting language and a framework for processing cmdlets.
 
+[logo]: https://raw.githubusercontent.com/PowerShell/PowerShell/master/assets/ps_black_64.svg?sanitize=true
 
-[logo]: assets/Powershell_64.png
+## Windows PowerShell vs. PowerShell Core
 
-New to PowerShell?
-------------------
+Although this repository started as a fork of the Windows PowerShell code base, changes made in this repository do not make their way back to Windows PowerShell 5.1 automatically.
+This also means that [issues tracked here][issues] are only for PowerShell Core 6 and higher.
+Windows PowerShell specific issues should be opened on [UserVoice][].
+
+[issues]: https://github.com/PowerShell/PowerShell/issues
+[UserVoice]: https://windowsserver.uservoice.com/forums/301869-powershell
+
+## New to PowerShell?
 
 If you are new to PowerShell and would like to learn more, we recommend reviewing the [getting started][] documentation.
 
-[getting started]: docs/learning-powershell
+[getting started]: https://github.com/PowerShell/PowerShell/tree/master/docs/learning-powershell
 
-Get PowerShell
---------------
+## Get PowerShell
 
 You can download and install a PowerShell package for any of the following platforms.
 
-| Platform                       | Downloads              | How to Install                |
-| ------------------------------ | ---------------------- | ----------------------------- |
-| Windows 10 / Server 2016       | [.msi][rl-windows10]   | [Instructions][in-windows]    |
-| Windows 8.1 / Server 2012 R2   | [.msi][rl-windows81]   | [Instructions][in-windows]    |
-| Ubuntu 16.04                   | [.deb][rl-ubuntu16]    | [Instructions][in-ubuntu16]   |
-| Ubuntu 14.04                   | [.deb][rl-ubuntu14]    | [Instructions][in-ubuntu14]   |
-| CentOS 7                       | [.rpm][rl-centos]      | [Instructions][in-centos]     |
-| OS X 10.11                     | [.pkg][rl-osx]         | [Instructions][in-osx]        |
-| Docker                         |                        | [Instructions] [in-docker]    |
+| Supported Platform                         | Download (LTS)          | Downloads (stable)      | Downloads (preview)   | How to Install                |
+| -------------------------------------------| ------------------------| ------------------------| ----------------------| ------------------------------|
+| [Windows (x64)][corefx-win]                | [.msi][rl-windows-64]   | [.msi][rl-windows-64]   | [.msi][pv-windows-64] | [Instructions][in-windows]    |
+| [Windows (x86)][corefx-win]                | [.msi][rl-windows-86]   | [.msi][rl-windows-86]   | [.msi][pv-windows-86] | [Instructions][in-windows]    |
+| [Ubuntu 18.04][corefx-linux]               | [.deb][lts-ubuntu18]    | [.deb][rl-ubuntu18]     | [.deb][pv-ubuntu18]   | [Instructions][in-ubuntu18]   |
+| [Ubuntu 16.04][corefx-linux]               | [.deb][lts-ubuntu16]    | [.deb][rl-ubuntu16]     | [.deb][pv-ubuntu16]   | [Instructions][in-ubuntu16]   |
+| [Debian 9][corefx-linux]                   | [.deb][lts-debian9]     | [.deb][rl-debian9]      | [.deb][pv-debian9]    | [Instructions][in-deb9]       |
+| [Debian 10][corefx-linux]                  | [.deb][lts-debian10]    | [.deb][rl-debian10]     | [.deb][pv-debian10]   |                               |
+| [CentOS 7][corefx-linux]                   | [.rpm][lts-centos]      | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-centos]     |
+| [CentOS 8][corefx-linux]                   | [.rpm][lts-centos8]     | [.rpm][rl-centos8]      | [.rpm][pv-centos8]    |                               |
+| [Red Hat Enterprise Linux 7][corefx-linux] | [.rpm][lts-centos]      | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-rhel7]      |
+| [openSUSE 42.3][corefx-linux]              | [.rpm][lts-centos]      | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-opensuse]   |
+| [Fedora 30][corefx-linux]                  | [.rpm][lts-centos]      | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-fedora]     |
+| [macOS 10.13+][corefx-macos]               | [.pkg][lts-macos]       | [.pkg][rl-macos]        | [.pkg][pv-macos]      | [Instructions][in-macos]      |
+| Docker                                     |                         |                         |                       | [Instructions][in-docker]     |
 
-[rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.9/PowerShell_6.0.0.9-alpha.9-win10-x64.msi
-[rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.9/PowerShell_6.0.0.9-alpha.9-win81-x64.msi
-[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.9/powershell_6.0.0-alpha.9-1ubuntu1.16.04.1_amd64.deb
-[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.9/powershell_6.0.0-alpha.9-1ubuntu1.14.04.1_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.9/powershell-6.0.0_alpha.9-1.el7.centos.x86_64.rpm
-[rl-osx]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.9/powershell-6.0.0-alpha.9.pkg
+You can download and install a PowerShell package for any of the following platforms, **which are supported by the community.**
 
-[installation]: docs/installation
-[in-windows]: docs/installation/windows.md#msi
-[in-ubuntu14]: docs/installation/linux.md#ubuntu-1404
-[in-ubuntu16]: docs/installation/linux.md#ubuntu-1604
-[in-centos]: docs/installation/linux.md#centos-7
-[in-osx]: docs/installation/linux.md#os-x-1011
-[in-docker]: docs/installation/docker.md
+| Platform                 | Downloads (stable)      | Downloads (preview)           | How to Install                |
+| -------------------------| ------------------------| ----------------------------- | ------------------------------|
+| Arch Linux               |                         |                               | [Instructions][in-archlinux]  |
+| Kali Linux               | [.deb][rl-ubuntu16]     | [.deb][pv-ubuntu16]           | [Instructions][in-kali]       |
+| Many Linux distributions | [Snapcraft][rl-snap]    | [Snapcraft][pv-snap]          |                               |
+
+You can also download the PowerShell binary archives for Windows, macOS and Linux.
+
+| Platform       | Downloads (stable)                                  | Downloads (preview)                             | How to Install                                 |
+| ---------------| --------------------------------------------------- | ------------------------------------------------| -----------------------------------------------|
+| Windows        | [32-bit][rl-winx86-zip]/[64-bit][rl-winx64-zip]     | [32-bit][pv-winx86-zip]/[64-bit][pv-winx64-zip] | [Instructions][in-windows-zip]                 |
+| macOS          | [64-bit][rl-macos-tar]                              | [64-bit][pv-macos-tar]                          | [Instructions][in-tar-macos]                   |
+| Linux          | [64-bit][rl-linux-tar]                              | [64-bit][pv-linux-tar]                          | [Instructions][in-tar-linux]                   |
+| Windows (Arm)  | [32-bit][rl-winarm]/[64-bit][rl-winarm64] (preview) | [32-bit][pv-winarm]/[64-bit][pv-winarm64]       | [Instructions][in-arm]                         |
+| Raspbian (Arm) | [32-bit][rl-arm32]/[64-bit][rl-arm64]               | [32-bit][pv-arm32]/[64-bit][pv-arm64]           | [Instructions][in-raspbian]                    |
+
+[lts-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-lts_7.0.2-1.ubuntu.18.04_amd64.deb
+[lts-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-lts_7.0.2-1.ubuntu.16.04_amd64.deb
+[lts-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-lts_7.0.2-1.debian.9_amd64.deb
+[lts-debian10]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-lts_7.0.2-1.debian.10_amd64.deb
+[lts-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-lts-7.0.2-1.rhel.7.x86_64.rpm
+[lts-centos8]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-lts-7.0.2-1.centos.8.x86_64.rpm
+[lts-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-lts-7.0.2-osx-x64.pkg
+
+[rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/PowerShell-7.0.2-win-x64.msi
+[rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/PowerShell-7.0.2-win-x86.msi
+[rl-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell_7.0.2-1.ubuntu.18.04_amd64.deb
+[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell_7.0.2-1.ubuntu.16.04_amd64.deb
+[rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell_7.0.2-1.debian.9_amd64.deb
+[rl-debian10]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell_7.0.2-1.debian.10_amd64.deb
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-7.0.2-1.rhel.7.x86_64.rpm
+[rl-centos8]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-7.0.2-1.centos.8.x86_64.rpm
+[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-7.0.2-osx-x64.pkg
+[rl-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/PowerShell-7.0.2-win-arm32.zip
+[rl-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/PowerShell-7.0.2-win-arm64.zip
+[rl-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/PowerShell-7.0.2-win-x86.zip
+[rl-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/PowerShell-7.0.2-win-x64.zip
+[rl-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-7.0.2-osx-x64.tar.gz
+[rl-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-7.0.2-linux-x64.tar.gz
+[rl-arm32]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-7.0.2-linux-arm32.tar.gz
+[rl-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-7.0.2-linux-arm64.tar.gz
+[rl-snap]: https://snapcraft.io/powershell
+
+[pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/PowerShell-7.1.0-preview.5-win-x64.msi
+[pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/PowerShell-7.1.0-preview.5-win-x86.msi
+[pv-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/powershell-preview_7.1.0-preview.5-1.ubuntu.18.04_amd64.deb
+[pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/powershell-preview_7.1.0-preview.5-1.ubuntu.16.04_amd64.deb
+[pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/powershell-preview_7.1.0-preview.5-1.debian.9_amd64.deb
+[pv-debian10]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/powershell-preview_7.1.0-preview.5-1.debian.10_amd64.deb
+[pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/powershell-preview-7.1.0_preview.5-1.rhel.7.x86_64.rpm
+[pv-centos8]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/powershell-preview-7.1.0_preview.5-1.centos.8.x86_64.rpm
+[pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/powershell-7.1.0-preview.5-osx-x64.pkg
+[pv-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/PowerShell-7.1.0-preview.5-win-arm32.zip
+[pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/PowerShell-7.1.0-preview.5-win-arm64.zip
+[pv-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/PowerShell-7.1.0-preview.5-win-x86.zip
+[pv-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/PowerShell-7.1.0-preview.5-win-x64.zip
+[pv-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/powershell-7.1.0-preview.5-osx-x64.tar.gz
+[pv-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/powershell-7.1.0-preview.5-linux-x64.tar.gz
+[pv-arm32]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/powershell-7.1.0-preview.5-linux-arm32.tar.gz
+[pv-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.5/powershell-7.1.0-preview.5-linux-arm64.tar.gz
+[pv-snap]: https://snapcraft.io/powershell-preview
+
+[in-windows]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-windows
+[in-ubuntu16]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#ubuntu-1604
+[in-ubuntu18]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#ubuntu-1804
+[in-deb9]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#debian-9
+[in-centos]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#centos-7
+[in-rhel7]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#red-hat-enterprise-linux-rhel-7
+[in-opensuse]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#opensuse
+[in-fedora]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#fedora
+[in-archlinux]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#arch-linux
+[in-macos]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-macos
+[in-docker]: https://github.com/PowerShell/PowerShell-Docker
+[in-kali]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#kali
+[in-windows-zip]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-windows#zip
+[in-tar-linux]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#binary-archives
+[in-tar-macos]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-macos#binary-archives
+[in-raspbian]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#raspbian
+[in-arm]: https://docs.microsoft.com/powershell/scripting/install/powershell-core-on-arm
+[corefx-win]:https://github.com/dotnet/core/blob/master/release-notes/3.0/3.0-supported-os.md#windows
+[corefx-linux]:https://github.com/dotnet/core/blob/master/release-notes/3.0/3.0-supported-os.md#linux
+[corefx-macos]:https://github.com/dotnet/core/blob/master/release-notes/3.0/3.0-supported-os.md#macos
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 
-Chat Room
----------
+## Community Dashboard
+
+[Dashboard](https://aka.ms/psgithubbi) with visualizations for community contributions and project status using PowerShell, Azure, and PowerBI.
+
+For more information on how and why we built this dashboard, check out this [blog post](https://devblogs.microsoft.com/powershell/powershell-open-source-community-dashboard/).
+
+## Chat
 
 Want to chat with other members of the PowerShell community?
 
-[![Join the chat at https://gitter.im/PowerShell/PowerShell](https://badges.gitter.im/PowerShell/PowerShell.svg)](https://gitter.im/PowerShell/PowerShell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+We have a Gitter Room which you can join below.
 
-Building the Repository
------------------------
+[![Join the chat](https://img.shields.io/static/v1.svg?label=chat&message=on%20gitter&color=informational&logo=gitter)](https://gitter.im/PowerShell/PowerShell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-| Linux                    | Windows                    | OS X                   |
+There is also the community driven PowerShell Virtual User Group, which you can join on:
+
+* [Slack](https://aka.ms/psslack)
+* [Discord](https://aka.ms/psdiscord)
+
+## Add-ons and libraries
+
+[Awesome PowerShell](https://github.com/janikvonrotz/awesome-powershell) has a great curated list of add-ons and resources.
+
+## Building the Repository
+
+| Linux                    | Windows                    | macOS                   |
 |--------------------------|----------------------------|------------------------|
-| [Instructions][bd-linux] | [Instructions][bd-windows] | [Instructions][bd-osx] |
+| [Instructions][bd-linux] | [Instructions][bd-windows] | [Instructions][bd-macOS] |
 
 If you have any problems building, please consult the developer [FAQ][].
 
-### Build status of master branches
+### Build status of nightly builds
 
-| AppVeyor (Windows)       | Travis CI (Linux / OS X) |
-|--------------------------|--------------------------|
-| [![av-image][]][av-site] | [![tv-image][]][tv-site] |
+| Azure CI (Windows)                       | Azure CI (Linux)                               | Azure CI (macOS)                               | Code Coverage Status     | CodeFactor Grade         |
+|:-----------------------------------------|:-----------------------------------------------|:-----------------------------------------------|:-------------------------|:-------------------------|
+| [![windows-nightly-image][]][windows-nightly-site] | [![linux-nightly-image][]][linux-nightly-site] | [![macOS-nightly-image][]][macos-nightly-site] | [![cc-image][]][cc-site] | [![cf-image][]][cf-site] |
 
-[bd-linux]: docs/building/linux.md
-[bd-windows]: docs/building/windows-core.md
-[bd-osx]: docs/building/osx.md
+[bd-linux]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/linux.md
+[bd-windows]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/windows-core.md
+[bd-macOS]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/macos.md
 
-[FAQ]: docs/FAQ.md
+[FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md
 
-[tv-image]: https://travis-ci.org/PowerShell/PowerShell.svg?branch=master
-[tv-site]: https://travis-ci.org/PowerShell/PowerShell/branches
-[av-image]: https://ci.appveyor.com/api/projects/status/nsng9iobwa895f98/branch/master?svg=true
-[av-site]: https://ci.appveyor.com/project/PowerShell/powershell
+[windows-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=32
+[linux-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=23
+[macos-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=24
+[windows-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-Windows-daily
+[linux-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-linux-daily?branchName=master
+[macOS-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-macos-daily?branchName=master
+[cc-site]: https://codecov.io/gh/PowerShell/PowerShell
+[cc-image]: https://codecov.io/gh/PowerShell/PowerShell/branch/master/graph/badge.svg
+[cf-site]: https://www.codefactor.io/repository/github/powershell/powershell
+[cf-image]: https://www.codefactor.io/repository/github/powershell/powershell/badge
 
-Downloading the Source Code
----------------------------
+## Downloading the Source Code
 
-The PowerShell repository has a number of other repositories embedded as submodules.
-
-To make things easy, you can just clone recursively:
-
-```sh
-git clone --recursive https://github.com/PowerShell/PowerShell.git
-```
-
-If you already cloned but forgot to use `--recursive`, you can update submodules manually:
+You can just clone the repository:
 
 ```sh
-git submodule update --init
+git clone https://github.com/PowerShell/PowerShell.git
 ```
 
-See [working with the PowerShell repository](docs/git) for more information.
+See [working with the PowerShell repository](https://github.com/PowerShell/PowerShell/tree/master/docs/git) for more information.
 
-Developing and Contributing
---------------------------
+## Developing and Contributing
 
 Please see the [Contribution Guide][] for how to develop and contribute.
+If you are developing .NET Core C# applications targeting PowerShell Core, please [check out our FAQ][] to learn more about the PowerShell SDK NuGet package.
 
-If you have any problems, please consult the [known issues][], developer [FAQ][], and [GitHub issues][].
-If you do not see your problem captured, please file a [new issue][] and follow the provided template.
-If you are developing .NET Core C# applications targeting PowerShell Core, please [check out our FAQ][] to learn more about the PowerShell SDK NuGet package. 
+Also, make sure to check out our [PowerShell-RFC repository](https://github.com/powershell/powershell-rfc) for request-for-comments (RFC) documents to submit and give comments on proposed and future designs.
 
-[check out our FAQ]: docs/FAQ.md#where-do-i-get-the-powershell-core-sdk-package
-[Contribution Guide]: .github/CONTRIBUTING.md
-[known issues]: docs/KNOWNISSUES.md
-[GitHub issues]: https://github.com/PowerShell/PowerShell/issues
-[new issue]:https://github.com/PowerShell/PowerShell/issues/new
+[Contribution Guide]: https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md
+[check out our FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md#where-do-i-get-the-powershell-core-sdk-package
 
-Legal and Licensing
--------------------
+## Support
+
+For support, please see the [Support Section][].
+
+[Support Section]: https://github.com/PowerShell/PowerShell/tree/master/.github/SUPPORT.md
+
+## Legal and Licensing
 
 PowerShell is licensed under the [MIT license][].
 
-[MIT license]: LICENSE.txt
+[MIT license]: https://github.com/PowerShell/PowerShell/tree/master/LICENSE.txt
 
-Governance
--------------------
+### Windows Docker Files and Images
 
-Governance policy for PowerShell project is described [here][].  
+License: By requesting and using the Container OS Image for Windows containers, you acknowledge, understand, and consent to the Supplemental License Terms available on Docker Hub:
+
+- [Windows Server Core](https://hub.docker.com/r/microsoft/windowsservercore/)
+- [Nano Server](https://hub.docker.com/r/microsoft/nanoserver/)
+
+### Telemetry
+
+By default, PowerShell collects the OS description and the version of PowerShell (equivalent to `$PSVersionTable.OS` and `$PSVersionTable.GitCommitId`) using [Application Insights](https://azure.microsoft.com/services/application-insights/).
+To opt-out of sending telemetry, create an environment variable called `POWERSHELL_TELEMETRY_OPTOUT` set to a value of `1` before starting PowerShell from the installed location.
+The telemetry we collect falls under the [Microsoft Privacy Statement](https://privacy.microsoft.com/privacystatement/).
+
+## Governance
+
+Governance policy for PowerShell project is described [here][].
 
 [here]: https://github.com/PowerShell/PowerShell/blob/master/docs/community/governance.md
 
-Code of Conduct
----------------
+## [Code of Conduct][conduct-md]
 
 This project has adopted the [Microsoft Open Source Code of Conduct][conduct-code].
 For more information see the [Code of Conduct FAQ][conduct-FAQ] or contact [opencode@microsoft.com][conduct-email] with any additional questions or comments.
 
-[conduct-code]: http://opensource.microsoft.com/codeofconduct/
-[conduct-FAQ]: http://opensource.microsoft.com/codeofconduct/faq/
+[conduct-code]: https://opensource.microsoft.com/codeofconduct/
+[conduct-FAQ]: https://opensource.microsoft.com/codeofconduct/faq/
 [conduct-email]: mailto:opencode@microsoft.com
+[conduct-md]: https://github.com/PowerShell/PowerShell/tree/master/CODE_OF_CONDUCT.md

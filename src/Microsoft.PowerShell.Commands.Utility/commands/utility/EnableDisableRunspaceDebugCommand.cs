@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -15,14 +14,14 @@ namespace Microsoft.PowerShell.Commands
     #region PSRunspaceDebug class
 
     /// <summary>
-    /// Runspace Debug Options class
+    /// Runspace Debug Options class.
     /// </summary>
     public sealed class PSRunspaceDebug
     {
         #region Properties
 
         /// <summary>
-        /// When true this property will cause any breakpoints set in a Runspace to stop 
+        /// When true this property will cause any breakpoints set in a Runspace to stop
         /// the running command or script when the breakpoint is hit, regardless of whether a
         /// debugger is currently attached.  The script or command will remain stopped until
         /// a debugger is attached to debug the breakpoint.
@@ -35,8 +34,8 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// When true this property will cause any running command or script in the Runspace
-        /// to stop in step mode, regardless of whether a debugger is currently attached.  The 
-        /// script or command will remain stopped until a debugger is attached to debug the 
+        /// to stop in step mode, regardless of whether a debugger is currently attached.  The
+        /// script or command will remain stopped until a debugger is attached to debug the
         /// current stop point.
         /// </summary>
         public bool BreakAll
@@ -70,13 +69,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="enabled">Enable debugger option</param>
-        /// <param name="breakAll">BreakAll option</param>
-        /// <param name="runspaceName">Runspace name</param>
-        /// <param name="runspaceId">Runspace local Id</param>
+        /// <param name="enabled">Enable debugger option.</param>
+        /// <param name="breakAll">BreakAll option.</param>
+        /// <param name="runspaceName">Runspace name.</param>
+        /// <param name="runspaceId">Runspace local Id.</param>
         public PSRunspaceDebug(bool enabled, bool breakAll, string runspaceName, int runspaceId)
         {
-            if (string.IsNullOrEmpty(runspaceName)) { throw new PSArgumentNullException("runspaceName"); }
+            if (string.IsNullOrEmpty(runspaceName)) { throw new PSArgumentNullException(nameof(runspaceName)); }
 
             this.Enabled = enabled;
             this.BreakAll = breakAll;
@@ -92,34 +91,34 @@ namespace Microsoft.PowerShell.Commands
     #region CommonRunspaceCommandBase class
 
     /// <summary>
-    /// Abstract class that defines common Runpace Command parameters.
+    /// Abstract class that defines common Runspace Command parameters.
     /// </summary>
     public abstract class CommonRunspaceCommandBase : PSCmdlet
     {
         #region Strings
 
         /// <summary>
-        /// RunspaceParameterSet
+        /// RunspaceParameterSet.
         /// </summary>
         protected const string RunspaceParameterSet = "RunspaceParameterSet";
 
         /// <summary>
-        /// RunspaceNameParameterSet
+        /// RunspaceNameParameterSet.
         /// </summary>
         protected const string RunspaceNameParameterSet = "RunspaceNameParameterSet";
 
         /// <summary>
-        /// RunspaceIdParameterSet
+        /// RunspaceIdParameterSet.
         /// </summary>
         protected const string RunspaceIdParameterSet = "RunspaceIdParameterSet";
 
         /// <summary>
-        /// RunspaceInstanceIdParameterSet
+        /// RunspaceInstanceIdParameterSet.
         /// </summary>
         protected const string RunspaceInstanceIdParameterSet = "RunspaceInstanceIdParameterSet";
 
         /// <summary>
-        /// ProcessNameParameterSet
+        /// ProcessNameParameterSet.
         /// </summary>
         protected const string ProcessNameParameterSet = "ProcessNameParameterSet";
 
@@ -128,10 +127,11 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Runspace Name
+        /// Runspace Name.
         /// </summary>
         [Parameter(Position = 0,
                    ParameterSetName = CommonRunspaceCommandBase.RunspaceNameParameterSet)]
+        [ValidateNotNullOrEmpty()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] RunspaceName
         {
@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Runpace
+        /// Runspace.
         /// </summary>
         [Parameter(Position = 0,
                    Mandatory = true,
@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Runspace Id
+        /// Runspace Id.
         /// </summary>
         [Parameter(Position = 0,
                    Mandatory = true,
@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
         /// <summary>
-        /// RunspaceInstanceId
+        /// RunspaceInstanceId.
         /// </summary>
         [Parameter(Position = 0,
                    Mandatory = true,
@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or Sets the ProcessName for which runspace debugging has to be enabled or disabled. 
+        /// Gets or Sets the ProcessName for which runspace debugging has to be enabled or disabled.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = CommonRunspaceCommandBase.ProcessNameParameterSet)]
         [ValidateNotNullOrEmpty()]
@@ -194,7 +194,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or Sets the AppDomain Names for which runspace debugging has to be enabled or disabled. 
+        /// Gets or Sets the AppDomain Names for which runspace debugging has to be enabled or disabled.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = CommonRunspaceCommandBase.ProcessNameParameterSet)]
         [ValidateNotNullOrEmpty()]
@@ -213,7 +213,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns a list of valid runspaces based on current parameter set.
         /// </summary>
-        /// <returns>IReadOnlyList</returns>
+        /// <returns>IReadOnlyList.</returns>
         protected IReadOnlyList<Runspace> GetRunspaces()
         {
             IReadOnlyList<Runspace> results = null;
@@ -248,10 +248,10 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns Runspace Debugger
+        /// Returns Runspace Debugger.
         /// </summary>
-        /// <param name="runspace">Runspace</param>
-        /// <returns>Debugger</returns>
+        /// <param name="runspace">Runspace.</param>
+        /// <returns>Debugger.</returns>
         protected System.Management.Automation.Debugger GetDebuggerFromRunspace(Runspace runspace)
         {
             System.Management.Automation.Debugger debugger = null;
@@ -276,10 +276,10 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// SetDebugPreferenceHelper is a helper method used to enable/disabe debug preference.
+        /// SetDebugPreferenceHelper is a helper method used to enable/disable debug preference.
         /// </summary>
-        /// <param name="processName">Process Name</param>
-        /// <param name="appDomainName">App Domain Name</param>
+        /// <param name="processName">Process Name.</param>
+        /// <param name="appDomainName">App Domain Name.</param>
         /// <param name="enable">Indicates if debug preference has to be enabled or disabled.</param>
         /// <param name="fullyQualifiedErrorId">FullyQualifiedErrorId to be used on error.</param>
         protected void SetDebugPreferenceHelper(string processName, string[] appDomainName, bool enable, string fullyQualifiedErrorId)
@@ -295,6 +295,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             appDomainNames = new List<string>();
                         }
+
                         appDomainNames.Add(currentAppDomainName.ToLowerInvariant());
                     }
                 }
@@ -306,8 +307,6 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception ex)
             {
-                CommandProcessorBase.CheckForSevereException(ex);
-
                 ErrorRecord errorRecord = new ErrorRecord(
                 new PSInvalidOperationException(string.Format(CultureInfo.InvariantCulture, Debugger.PersistDebugPreferenceFailure, processName), ex),
                 fullyQualifiedErrorId,
@@ -328,15 +327,15 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet enables debugging for selected runspaces in the current or specified process.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, "RunspaceDebug", DefaultParameterSetName = CommonRunspaceCommandBase.RunspaceNameParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=403732")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096831")]
     public sealed class EnableRunspaceDebugCommand : CommonRunspaceCommandBase
     {
         #region Parameters
 
         /// <summary>
         /// When true this property will cause any running command or script in the Runspace
-        /// to stop in step mode, regardless of whether a debugger is currently attached.  The 
-        /// script or command will remain stopped until a debugger is attached to debug the 
+        /// to stop in step mode, regardless of whether a debugger is currently attached.  The
+        /// script or command will remain stopped until a debugger is attached to debug the
         /// current stop point.
         /// </summary>
         [Parameter(Position = 1,
@@ -356,64 +355,61 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Process Record
+        /// Process Record.
         /// </summary>
         protected override void ProcessRecord()
         {
             if (this.ParameterSetName.Equals(CommonRunspaceCommandBase.ProcessNameParameterSet))
             {
                 SetDebugPreferenceHelper(ProcessName, AppDomainName, true, "EnableRunspaceDebugCommandPersistDebugPreferenceFailure");
+                return;
             }
-            else
+
+            IReadOnlyList<Runspace> results = GetRunspaces();
+
+            foreach (var runspace in results)
             {
-                IReadOnlyList<Runspace> results = GetRunspaces();
-
-                foreach (var runspace in results)
+                if (runspace.RunspaceStateInfo.State != RunspaceState.Opened)
                 {
-                    if (runspace.RunspaceStateInfo.State != RunspaceState.Opened)
+                    WriteError(
+                        new ErrorRecord(new PSInvalidOperationException(string.Format(CultureInfo.InvariantCulture, Debugger.RunspaceOptionInvalidRunspaceState, runspace.Name)),
+                        "SetRunspaceDebugOptionCommandInvalidRunspaceState",
+                        ErrorCategory.InvalidOperation,
+                        this));
+
+                    continue;
+                }
+
+                System.Management.Automation.Debugger debugger = GetDebuggerFromRunspace(runspace);
+                if (debugger == null)
+                {
+                    continue;
+                }
+
+                // Enable debugging by preserving debug stop events.
+                debugger.UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Wait;
+
+                if (this.MyInvocation.BoundParameters.ContainsKey(nameof(BreakAll)))
+                {
+                    if (BreakAll)
                     {
-                        WriteError(
-                            new ErrorRecord(new PSInvalidOperationException(string.Format(CultureInfo.InvariantCulture, Debugger.RunspaceOptionInvalidRunspaceState, runspace.Name)),
-                            "SetRunspaceDebugOptionCommandInvalidRunspaceState",
-                            ErrorCategory.InvalidOperation,
-                            this)
-                            );
-
-                        continue;
-                    }
-
-                    System.Management.Automation.Debugger debugger = GetDebuggerFromRunspace(runspace);
-                    if (debugger == null)
-                    {
-                        continue;
-                    }
-
-                    // Enable debugging by preserving debug stop events.
-                    debugger.UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Wait;
-
-                    if (this.MyInvocation.BoundParameters.ContainsKey("BreakAll"))
-                    {
-                        if (BreakAll)
+                        try
                         {
-                            try
-                            {
-                                debugger.SetDebuggerStepMode(true);
-                            }
-                            catch (PSInvalidOperationException e)
-                            {
-                                WriteError(
-                                    new ErrorRecord(
-                                    e,
-                                    "SetRunspaceDebugOptionCommandCannotEnableDebuggerStepping",
-                                    ErrorCategory.InvalidOperation,
-                                    this)
-                                    );
-                            }
+                            debugger.SetDebuggerStepMode(true);
                         }
-                        else
+                        catch (PSInvalidOperationException e)
                         {
-                            debugger.SetDebuggerStepMode(false);
+                            WriteError(
+                                new ErrorRecord(
+                                e,
+                                "SetRunspaceDebugOptionCommandCannotEnableDebuggerStepping",
+                                ErrorCategory.InvalidOperation,
+                                this));
                         }
+                    }
+                    else
+                    {
+                        debugger.SetDebuggerStepMode(false);
                     }
                 }
             }
@@ -430,13 +426,13 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet disables Runspace debugging in selected Runspaces.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Disable, "RunspaceDebug", DefaultParameterSetName = CommonRunspaceCommandBase.RunspaceNameParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=403733")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096924")]
     public sealed class DisableRunspaceDebugCommand : CommonRunspaceCommandBase
     {
         #region Overrides
 
         /// <summary>
-        /// Process Record
+        /// Process Record.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -486,14 +482,14 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet returns a PSRunspaceDebug object for each found Runspace object.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "RunspaceDebug", DefaultParameterSetName = CommonRunspaceCommandBase.RunspaceNameParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=403734")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097015")]
     [OutputType(typeof(PSRunspaceDebug))]
     public sealed class GetRunspaceDebugCommand : CommonRunspaceCommandBase
     {
         #region Overrides
 
         /// <summary>
-        /// Process Record
+        /// Process Record.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -525,31 +521,23 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet causes a running script or command to stop in the debugger at the next execution point.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Wait, "Debugger",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=403735")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097035")]
     public sealed class WaitDebuggerCommand : PSCmdlet
     {
         #region Overrides
 
         /// <summary>
-        /// EndProcessing
+        /// EndProcessing.
         /// </summary>
         protected override void EndProcessing()
         {
             Runspace currentRunspace = this.Context.CurrentRunspace;
 
-            if ((currentRunspace != null) && (currentRunspace.Debugger != null))
+            if (currentRunspace != null && currentRunspace.Debugger != null)
             {
-                if (!currentRunspace.Debugger.IsDebugHandlerSubscribed &&
-                    (currentRunspace.Debugger.UnhandledBreakpointMode == UnhandledBreakpointProcessingMode.Ignore))
-                {
-                    // No debugger attached and runspace debugging is not enabled.  Enable runspace debugging here
-                    // so that this command is effective.
-                    currentRunspace.Debugger.UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Wait;
-                }
-
-                // Set debugger to step mode so that a break occurs immediately.
-                currentRunspace.Debugger.SetDebuggerStepMode(true);
                 WriteVerbose(string.Format(CultureInfo.InvariantCulture, Debugger.DebugBreakMessage, MyInvocation.ScriptLineNumber, MyInvocation.ScriptName));
+
+                currentRunspace.Debugger.Break();
             }
         }
 

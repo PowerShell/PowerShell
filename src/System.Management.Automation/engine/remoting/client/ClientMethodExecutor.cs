@@ -1,11 +1,11 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting.Client;
 using System.Management.Automation.Runspaces.Internal;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
@@ -118,9 +118,7 @@ namespace System.Management.Automation.Remoting
             // Cmdlet case: queue up the executor in the pipeline stream.
             if (isMethodExecutorStreamEnabled)
             {
-                Dbg.Assert(!isMethodExecutorStreamEnabled ||
-                           (isMethodExecutorStreamEnabled && methodExecutorStream != null),
-                           "method executor stream can't be null when enabled");
+                Dbg.Assert(methodExecutorStream != null, "method executor stream can't be null when enabled");
                 methodExecutorStream.Write(methodExecutor);
             }
 
@@ -168,10 +166,9 @@ namespace System.Management.Automation.Remoting
                             _clientHost.UI.WriteErrorLine(errorRecord.ToString());
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         // Catch-all OK, 3rd party callout.
-                        CommandProcessorBase.CheckForSevereException(e);
                     }
                 };
             }
@@ -231,7 +228,6 @@ namespace System.Management.Automation.Remoting
             catch (Exception exception)
             {
                 // Catch-all OK, 3rd party callout.
-                CommandProcessorBase.CheckForSevereException(exception);
 
                 // Extract inner exception.
                 if (exception.InnerException != null)
@@ -242,7 +238,7 @@ namespace System.Management.Automation.Remoting
                 // Create an error record and write it to the stream.
                 ErrorRecord errorRecord = new ErrorRecord(
                     exception,
-                    PSRemotingErrorId.RemoteHostCallFailed.ToString(),
+                    nameof(PSRemotingErrorId.RemoteHostCallFailed),
                     ErrorCategory.InvalidArgument,
                     _remoteHostCall.MethodName);
                 writeErrorAction(errorRecord);

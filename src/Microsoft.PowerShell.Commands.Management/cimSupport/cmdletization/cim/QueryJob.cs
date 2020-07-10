@@ -1,22 +1,24 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Globalization;
 using System.Text;
+
 using Microsoft.Management.Infrastructure;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Job that handles executing a WQL (in the future CQL?) query on a remote CIM server
+    /// Job that handles executing a WQL (in the future CQL?) query on a remote CIM server.
     /// </summary>
     internal class QueryInstancesJob : QueryJobBase
     {
         private readonly string _wqlQuery;
         private readonly bool _useEnumerateInstances;
+
         internal QueryInstancesJob(CimJobContext jobContext, CimQuery cimQuery, string wqlCondition)
                 : base(jobContext, cimQuery)
         {

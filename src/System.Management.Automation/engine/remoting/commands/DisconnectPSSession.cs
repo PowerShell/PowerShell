@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -11,36 +10,36 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
 using System.Threading;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// This cmdlet disconnects PS sessions (RemoteRunspaces) that are in the Opened state
-    /// and returns the PS session objects in the Disconnected state.  While the PS 
+    /// and returns the PS session objects in the Disconnected state.  While the PS
     /// sessions are in the disconnected state no commands can be invoked on them and
     /// any existing remote running commands will not return any data.
-    /// The PS sessions can be reconnected by using the Connect-PSSession cmdlet.  
-    /// 
+    /// The PS sessions can be reconnected by using the Connect-PSSession cmdlet.
+    ///
     /// The cmdlet can be used in the following ways:
-    /// 
+    ///
     /// Disconnect a PS session object:
     /// > $session = New-PSSession serverName
     /// > Disconnect-PSSession $session
-    /// 
+    ///
     /// Disconnect a PS session by name:
     /// > Disconnect-PSSession -Name $session.Name
-    /// 
+    ///
     /// Disconnect a PS session by Id:
     /// > Disconnect-PSSession -Id $session.Id
-    /// 
+    ///
     /// Disconnect a collection of PS sessions:
-    /// > Get-PSSession | Disconnect-PSSession
-    /// 
+    /// > Get-PSSession | Disconnect-PSSession.
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Disconnect, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = DisconnectPSSessionCommand.SessionParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210605", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096576", RemotingCapability = RemotingCapability.OwnedByCommand)]
     [OutputType(typeof(PSSession))]
     public class DisconnectPSSessionCommand : PSRunspaceCmdlet, IDisposable
     {
@@ -69,6 +68,7 @@ namespace Microsoft.PowerShell.Commands
         public int IdleTimeoutSec
         {
             get { return this.PSSessionOption.IdleTimeout.Seconds; }
+
             set { this.PSSessionOption.IdleTimeout = TimeSpan.FromSeconds(value); }
         }
 
@@ -82,6 +82,7 @@ namespace Microsoft.PowerShell.Commands
         public OutputBufferingMode OutputBufferingMode
         {
             get { return this.PSSessionOption.OutputBufferingMode; }
+
             set { this.PSSessionOption.OutputBufferingMode = value; }
         }
 
@@ -94,13 +95,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = PSRunspaceCmdlet.NameParameterSet)]
         [Parameter(ParameterSetName = PSRunspaceCmdlet.IdParameterSet)]
         [Parameter(ParameterSetName = PSRunspaceCmdlet.InstanceIdParameterSet)]
-        public Int32 ThrottleLimit { get; set; } = 0;
+        public int ThrottleLimit { get; set; } = 0;
 
         /// <summary>
         /// Disconnect-PSSession does not support ComputerName parameter set.
         /// This may change for later versions.
         /// </summary>
-        public override String[] ComputerName { get; set; }
+        public override string[] ComputerName { get; set; }
 
         private PSSessionOption PSSessionOption
         {
@@ -111,10 +112,11 @@ namespace Microsoft.PowerShell.Commands
                 return _sessionOption ?? (_sessionOption = new PSSessionOption());
             }
         }
+
         private PSSessionOption _sessionOption;
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override string[] ContainerId
         {
@@ -125,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override Guid[] VMId
         {
@@ -136,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter
+        /// Overriding to suppress this parameter.
         /// </summary>
         public override string[] VMName
         {
@@ -158,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
             base.BeginProcessing();
 
             _throttleManager.ThrottleLimit = ThrottleLimit;
-            _throttleManager.ThrottleComplete += new EventHandler<EventArgs>(HandleThrottleDisconnectComplete);
+            _throttleManager.ThrottleComplete += HandleThrottleDisconnectComplete;
         }
 
         /// <summary>
@@ -190,8 +192,8 @@ namespace Microsoft.PowerShell.Commands
                     psSessions = GetMatchingRunspaces(false, true);
                 }
 
-                // Look for local sessions that have the EnableNetworkAccess property set and 
-                // return a string containing all of the session names.  Emit a warning for 
+                // Look for local sessions that have the EnableNetworkAccess property set and
+                // return a string containing all of the session names.  Emit a warning for
                 // these sessions.
                 string cnNames = GetLocalhostWithNetworkAccessEnabled(psSessions);
                 if (!string.IsNullOrEmpty(cnNames))
@@ -307,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
             // Read all objects in the stream pipeline.
             while (!_stream.ObjectReader.EndOfPipeline)
             {
-                Object streamObject = _stream.ObjectReader.Read();
+                object streamObject = _stream.ObjectReader.Read();
                 WriteStreamObject((Action<Cmdlet>)streamObject);
             }
         }
@@ -332,8 +334,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles the connect throttling complete event from the ThrottleManager.
         /// </summary>
-        /// <param name="sender">Sender</param>
-        /// <param name="eventArgs">EventArgs</param>
+        /// <param name="sender">Sender.</param>
+        /// <param name="eventArgs">EventArgs.</param>
         private void HandleThrottleDisconnectComplete(object sender, EventArgs eventArgs)
         {
             _stream.ObjectWriter.Close();
@@ -501,6 +503,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         msg = StringUtil.Format(RemotingErrorIdStrings.RunspaceDisconnectFailed, _remoteSession.InstanceId);
                     }
+
                     Exception reason = new RuntimeException(msg, e);
                     ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionDisconnectFailed", ErrorCategory.InvalidOperation, _remoteSession);
                     Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
@@ -519,7 +522,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Dispose method of IDisposable. Gets called in the following cases:
         ///     1. Pipeline explicitly calls dispose on cmdlets
-        ///     2. Called by the garbage collector 
+        ///     2. Called by the garbage collector.
         /// </summary>
         public void Dispose()
         {
@@ -530,9 +533,9 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Internal dispose method which does the actual
-        /// dispose operations and finalize suppressions
+        /// dispose operations and finalize suppressions.
         /// </summary>
-        /// <param name="disposing">Whether method is called 
+        /// <param name="disposing">Whether method is called
         /// from Dispose or destructor</param>
         private void Dispose(bool disposing)
         {
@@ -543,7 +546,7 @@ namespace Microsoft.PowerShell.Commands
                 _operationsComplete.WaitOne();
                 _operationsComplete.Dispose();
 
-                _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleDisconnectComplete);
+                _throttleManager.ThrottleComplete -= HandleThrottleDisconnectComplete;
                 _stream.Dispose();
             }
         }
@@ -563,5 +566,5 @@ namespace Microsoft.PowerShell.Commands
         private ObjectStream _stream = new ObjectStream();
 
         #endregion
-    } // DisconnectPSSessionCommand
+    }
 }

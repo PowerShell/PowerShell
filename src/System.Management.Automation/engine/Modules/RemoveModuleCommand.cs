@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -10,6 +9,7 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 //
@@ -22,58 +22,63 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that gets the list of loaded modules...
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "Module", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=141556")]
+    [Cmdlet(VerbsCommon.Remove, "Module", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096802")]
     public sealed class RemoveModuleCommand : ModuleCmdletBase
     {
         /// <summary>
-        /// This parameter specifies the current pipeline object 
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "name", ValueFromPipeline = true, Position = 0)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Name
         {
             set { _name = value; }
+
             get { return _name; }
         }
-        private string[] _name = Utils.EmptyArray<string>();
+
+        private string[] _name = Array.Empty<string>();
 
         /// <summary>
-        /// This parameter specifies the current pipeline object 
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "FullyQualifiedName", ValueFromPipeline = true, Position = 0)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public ModuleSpecification[] FullyQualifiedName { get; set; }
 
         /// <summary>
-        /// This parameter specifies the current pipeline object 
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ModuleInfo", ValueFromPipeline = true, Position = 0)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public PSModuleInfo[] ModuleInfo
         {
             set { _moduleInfo = value; }
+
             get { return _moduleInfo; }
         }
-        private PSModuleInfo[] _moduleInfo = Utils.EmptyArray<PSModuleInfo>();
+
+        private PSModuleInfo[] _moduleInfo = Array.Empty<PSModuleInfo>();
 
         /// <summary>
-        /// If provided, this paramter will allow readonly modules to be removed.
+        /// If provided, this parameter will allow readonly modules to be removed.
         /// </summary>
         [Parameter]
         public SwitchParameter Force
         {
             get { return BaseForce; }
+
             set { BaseForce = value; }
         }
 
         private int _numberRemoved = 0;  // Maintains a count of the number of modules removed...
 
         /// <summary>
-        /// Remove the specified modules. Modules can be specifed either through a ModuleInfo or a name.
+        /// Remove the specified modules. Modules can be specified either through a ModuleInfo or a name.
         /// </summary>
         protected override void ProcessRecord()
         {
-            // This dictionary has the list of modules to be removed. 
+            // This dictionary has the list of modules to be removed.
             // Key - Module specified as a parameter to Remove-Module
             // Values - List of all modules that need to be removed for this key (includes all nested modules of this module)
             Dictionary<PSModuleInfo, List<PSModuleInfo>> modulesToRemove = new Dictionary<PSModuleInfo, List<PSModuleInfo>>();
@@ -85,6 +90,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (FullyQualifiedName != null)
             {
+                // TODO:
+                // Paths in the module name may fail here because
+                // they the wrong directory separator or are relative.
+                // Fix with the code below:
+                // FullyQualifiedName = FullyQualifiedName.Select(ms => ms.WithNormalizedName(Context, SessionState.Path.CurrentLocation.Path)).ToArray();
                 foreach (var m in Context.Modules.GetModules(FullyQualifiedName, false))
                 {
                     modulesToRemove.Add(m, new List<PSModuleInfo> { m });
@@ -136,8 +146,8 @@ namespace Microsoft.PowerShell.Commands
             // Check the list of modules to remove and exclude those that cannot or should not be removed
             Dictionary<PSModuleInfo, List<PSModuleInfo>> actualModulesToRemove = new Dictionary<PSModuleInfo, List<PSModuleInfo>>();
 
-            // We want to remove the modules starting from the nested modules 
-            // If we start from the parent module, the nested modules do not get removed and are left hanging in the parent modules's sessionstate.
+            // We want to remove the modules starting from the nested modules
+            // If we start from the parent module, the nested modules do not get removed and are left orphaned in the parent modules's sessionstate.
             foreach (var entry in modulesToRemove)
             {
                 List<PSModuleInfo> moduleList = new List<PSModuleInfo>();
@@ -171,6 +181,7 @@ namespace Microsoft.PowerShell.Commands
                                                              ErrorCategory.PermissionDenied, module);
                             WriteError(er);
                         }
+
                         continue;
                     }
 
@@ -190,6 +201,7 @@ namespace Microsoft.PowerShell.Commands
                                 string message = StringUtil.Format(Modules.CoreModuleCannotBeRemoved, module.Name);
                                 this.WriteWarning(message);
                             }
+
                             continue;
                         }
                         // Specify the overall module name if there is only one.
@@ -207,6 +219,7 @@ namespace Microsoft.PowerShell.Commands
                     // Add module to remove list.
                     moduleList.Add(module);
                 }
+
                 actualModulesToRemove[entry.Key] = moduleList;
             }
 
@@ -260,7 +273,7 @@ namespace Microsoft.PowerShell.Commands
                     Dbg.Assert(pList.Value != null, "There should never be a null list of entries in the provider table");
                     foreach (ProviderInfo pInfo in pList.Value)
                     {
-                        string implTypeAssemblyLocation = pInfo.ImplementingType.GetTypeInfo().Assembly.Location;
+                        string implTypeAssemblyLocation = pInfo.ImplementingType.Assembly.Location;
                         if (implTypeAssemblyLocation.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
                         {
                             foreach (PSDriveInfo dInfo in Context.TopLevelSessionState.GetDrivesForProvider(pInfo.FullName))
@@ -300,7 +313,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns a map from a module to the list of modules that require it
+        /// Returns a map from a module to the list of modules that require it.
         /// </summary>
         private Dictionary<PSModuleInfo, List<PSModuleInfo>> GetRequiredDependencies()
         {
@@ -344,6 +357,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         isEngineModule = false;
                     }
+
                     if (!WildcardPattern.ContainsWildcardCharacters(n))
                         hasWildcards = false;
                 }
@@ -365,4 +379,4 @@ namespace Microsoft.PowerShell.Commands
         }
     }
     #endregion Remove-Module
-} // Microsoft.PowerShell.Commands
+}

@@ -1,8 +1,7 @@
-#pragma warning disable 1634, 1691
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+#pragma warning disable 1634, 1691
 
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
@@ -12,8 +11,6 @@ using System.Reflection;
 using System.Resources;
 using System.Management.Automation.Internal;
 using Dbg = System.Management.Automation.Diagnostics;
-
-
 
 namespace System.Management.Automation
 {
@@ -26,14 +23,14 @@ namespace System.Management.Automation
     /// deriving from the PSCmdlet base class.  The Cmdlet base class is the primary means by
     /// which users create their own Cmdlets.  Extending this class provides support for the most
     /// common functionality, including object output and record processing.
-    /// If your Cmdlet requires access to the MSH Runtime (for example, variables in the session state, 
-    /// access to the host, or information about the current Cmdlet Providers,) then you should instead 
-    /// derive from the PSCmdlet base class.  
+    /// If your Cmdlet requires access to the MSH Runtime (for example, variables in the session state,
+    /// access to the host, or information about the current Cmdlet Providers,) then you should instead
+    /// derive from the PSCmdlet base class.
     /// In both cases, users should first develop and implement an object model to accomplish their
     /// task, extending the Cmdlet or PSCmdlet classes only as a thin management layer.
     /// </remarks>
     /// <seealso cref="System.Management.Automation.Internal.InternalCommand"/>
-    public abstract partial class Cmdlet : InternalCommand
+    public abstract class Cmdlet : InternalCommand
     {
         #region public_properties
 
@@ -48,6 +45,7 @@ namespace System.Management.Automation
                 return s_commonParameters.Value;
             }
         }
+
         private static Lazy<HashSet<string>> s_commonParameters = new Lazy<HashSet<string>>(
             () =>
             {
@@ -57,7 +55,6 @@ namespace System.Management.Automation
                     "OutBuffer", "PipelineVariable", "InformationVariable" };
             }
         );
-
 
         /// <summary>
         /// Lists the common parameters that are added by the PowerShell engine when a cmdlet defines
@@ -70,6 +67,7 @@ namespace System.Management.Automation
                 return s_optionalCommonParameters.Value;
             }
         }
+
         private static Lazy<HashSet<string>> s_optionalCommonParameters = new Lazy<HashSet<string>>(
             () =>
             {
@@ -78,14 +76,13 @@ namespace System.Management.Automation
             }
         );
 
-
         /// <summary>
         /// Is this command stopping?
         /// </summary>
         /// <remarks>
         /// If Stopping is true, many Cmdlet methods will throw
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>.
-        /// 
+        ///
         /// In general, if a Cmdlet's override implementation of ProcessRecord etc.
         /// throws <see cref="System.Management.Automation.PipelineStoppedException"/>, the best thing to do is to
         /// shut down the operation and return to the caller.
@@ -113,18 +110,17 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the parameter set
+        /// Sets the parameter set.
         /// </summary>
-        /// 
         /// <param name="parameterSetName">
         /// The name of the valid parameter set.
         /// </param>
-        /// 
         internal void SetParameterSetName(string parameterSetName)
         {
             _parameterSetName = parameterSetName;
         }
-        private string _parameterSetName = "";
+
+        private string _parameterSetName = string.Empty;
 
         #region Override Internal
 
@@ -179,7 +175,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// When overridden in the derived class, performs clean-up
-        /// after the command execution. 
+        /// after the command execution.
         /// Default implementation in the base class just returns.
         /// </summary>
         /// <exception cref="Exception">
@@ -234,9 +230,9 @@ namespace System.Management.Automation
         /// baseName and resourceId from the current assembly.
         /// You should override this if you require a different behavior.
         /// </summary>
-        /// <param name="baseName">the base resource name</param>
-        /// <param name="resourceId">the resource id</param>
-        /// <returns>the resource string corresponding to baseName and resourceId</returns>
+        /// <param name="baseName">The base resource name.</param>
+        /// <param name="resourceId">The resource id.</param>
+        /// <returns>The resource string corresponding to baseName and resourceId.</returns>
         /// <exception cref="System.ArgumentException">
         /// Invalid <paramref name="baseName"/> or <paramref name="resourceId"/>, or
         /// string not found in resources
@@ -255,13 +251,13 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (String.IsNullOrEmpty(baseName))
-                    throw PSTraceSource.NewArgumentNullException("baseName");
+                if (string.IsNullOrEmpty(baseName))
+                    throw PSTraceSource.NewArgumentNullException(nameof(baseName));
 
-                if (String.IsNullOrEmpty(resourceId))
-                    throw PSTraceSource.NewArgumentNullException("resourceId");
+                if (string.IsNullOrEmpty(resourceId))
+                    throw PSTraceSource.NewArgumentNullException(nameof(resourceId));
 
-                ResourceManager manager = ResourceManagerCache.GetResourceManager(this.GetType().GetTypeInfo().Assembly, baseName);
+                ResourceManager manager = ResourceManagerCache.GetResourceManager(this.GetType().Assembly, baseName);
                 string retValue = null;
 
                 try
@@ -270,11 +266,12 @@ namespace System.Management.Automation
                 }
                 catch (MissingManifestResourceException)
                 {
-                    throw PSTraceSource.NewArgumentException("baseName", GetErrorText.ResourceBaseNameFailure, baseName);
+                    throw PSTraceSource.NewArgumentException(nameof(baseName), GetErrorText.ResourceBaseNameFailure, baseName);
                 }
+
                 if (retValue == null)
                 {
-                    throw PSTraceSource.NewArgumentException("resourceId", GetErrorText.ResourceIdFailure, resourceId);
+                    throw PSTraceSource.NewArgumentException(nameof(resourceId), GetErrorText.ResourceIdFailure, resourceId);
                 }
 
                 return retValue;
@@ -298,6 +295,7 @@ namespace System.Management.Automation
                     return commandRuntime;
                 }
             }
+
             set
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
@@ -318,7 +316,7 @@ namespace System.Management.Automation
         /// a <see cref="System.Management.Automation.ParentContainsErrorRecordException"/>
         /// rather than the real exception.
         /// </remarks>
-        /// <param name="errorRecord">error</param>
+        /// <param name="errorRecord">Error.</param>
         /// <exception cref="System.InvalidOperationException">
         /// Not permitted at this time or from this thread
         /// </exception>
@@ -333,7 +331,7 @@ namespace System.Management.Automation
         /// terminates the command, where
         /// <see cref="System.Management.Automation.ICommandRuntime.WriteError"/>
         /// allows the command to continue.
-        /// 
+        ///
         /// If the pipeline is terminated due to ActionPreference.Stop
         /// or ActionPreference.Inquire, this method will throw
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
@@ -419,9 +417,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Display verbose information
+        /// Display verbose information.
         /// </summary>
-        /// <param name="text">verbose output</param>
+        /// <param name="text">Verbose output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -453,12 +451,12 @@ namespace System.Management.Automation
                 else
                     throw new System.NotImplementedException("WriteVerbose");
             }
-        }//WriteVerbose
+        }
 
         /// <summary>
-        /// Display warning information
+        /// Display warning information.
         /// </summary>
-        /// <param name="text">warning output</param>
+        /// <param name="text">Warning output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -490,12 +488,12 @@ namespace System.Management.Automation
                 else
                     throw new System.NotImplementedException("WriteWarning");
             }
-        }//WriteVerbose
+        }
 
         /// <summary>
         /// Write text into pipeline execution log.
         /// </summary>
-        /// <param name="text">text to be written to log</param>
+        /// <param name="text">Text to be written to log.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -509,9 +507,9 @@ namespace System.Management.Automation
         /// and only from that thread.
         /// </exception>
         /// <remarks>
-        /// Use WriteCommandDetail to write important information about cmdlet execution to 
-        /// pipeline execution log. 
-        /// 
+        /// Use WriteCommandDetail to write important information about cmdlet execution to
+        /// pipeline execution log.
+        ///
         /// If LogPipelineExecutionDetail is turned on, this information will be written
         /// to monad log under log category "Pipeline execution detail"
         /// </remarks>
@@ -530,9 +528,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Display progress information
+        /// Display progress information.
         /// </summary>
-        /// <param name="progressRecord">progress information</param>
+        /// <param name="progressRecord">Progress information.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -549,7 +547,7 @@ namespace System.Management.Automation
         /// Use WriteProgress to display progress information about
         /// the activity of your Cmdlet, when the operation of your Cmdlet
         /// could potentially take a long time.
-        /// 
+        ///
         /// By default, progress output will
         /// be displayed, although this can be configured with the
         /// ProgressPreference shell variable.
@@ -569,7 +567,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Displays progress output if enabled
+        /// Displays progress output if enabled.
         /// </summary>
         /// <param name="sourceId">
         /// Identifies which command is reporting progress
@@ -598,12 +596,12 @@ namespace System.Management.Automation
                 commandRuntime.WriteProgress(sourceId, progressRecord);
             else
                 throw new System.NotImplementedException("WriteProgress");
-        }//WriteProgress
+        }
 
         /// <summary>
-        /// Display debug information
+        /// Display debug information.
         /// </summary>
-        /// <param name="text">debug output</param>
+        /// <param name="text">Debug output.</param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -641,7 +639,7 @@ namespace System.Management.Automation
                 else
                     throw new System.NotImplementedException("WriteDebug");
             }
-        }//WriteDebug
+        }
 
         /// <summary>
         /// Route information to the user or host.
@@ -676,7 +674,7 @@ namespace System.Management.Automation
         /// but the command failure will ultimately be
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
-        public void WriteInformation(Object messageData, string[] tags)
+        public void WriteInformation(object messageData, string[] tags)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
@@ -684,7 +682,7 @@ namespace System.Management.Automation
                 if (commandRuntime2 != null)
                 {
                     string source = this.MyInvocation.PSCommandPath;
-                    if (String.IsNullOrEmpty(source))
+                    if (string.IsNullOrEmpty(source))
                     {
                         source = this.MyInvocation.MyCommand.Name;
                     }
@@ -703,7 +701,7 @@ namespace System.Management.Automation
                     throw new System.NotImplementedException("WriteInformation");
                 }
             }
-        }//WriteInformation
+        }
 
         /// <summary>
         /// Route information to the user or host.
@@ -748,7 +746,7 @@ namespace System.Management.Automation
                     throw new System.NotImplementedException("WriteInformation");
                 }
             }
-        }//WriteInformation
+        }
 
         #endregion Write
 
@@ -784,11 +782,11 @@ namespace System.Management.Automation
         /// A Cmdlet should declare
         /// [Cmdlet( SupportsShouldProcess = true )]
         /// if-and-only-if it calls ShouldProcess before making changes.
-        /// 
+        ///
         /// ShouldProcess may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// ShouldProcess will take into account command-line settings
         /// and preference variables in determining what it should return
         /// and whether it should prompt the user.
@@ -816,7 +814,7 @@ namespace System.Management.Automation
         ///                     set { filename = value; }
         ///                 }
         ///                 private string filename;
-        /// 
+        ///
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(filename))
@@ -849,7 +847,7 @@ namespace System.Management.Automation
         /// (e.g. delete files, stop services etc.) should call ShouldProcess
         /// to give the user the opportunity to confirm that the operation
         /// should actually be performed.
-        /// 
+        ///
         /// This variant allows the caller to specify text for both the
         /// target resource and the action.
         /// </summary>
@@ -882,11 +880,11 @@ namespace System.Management.Automation
         /// A Cmdlet should declare
         /// [Cmdlet( SupportsShouldProcess = true )]
         /// if-and-only-if it calls ShouldProcess before making changes.
-        /// 
+        ///
         /// ShouldProcess may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// ShouldProcess will take into account command-line settings
         /// and preference variables in determining what it should return
         /// and whether it should prompt the user.
@@ -912,7 +910,7 @@ namespace System.Management.Automation
         ///                     set { filename = value; }
         ///                 }
         ///                 private string filename;
-        /// 
+        ///
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(filename, "delete"))
@@ -945,7 +943,7 @@ namespace System.Management.Automation
         /// (e.g. delete files, stop services etc.) should call ShouldProcess
         /// to give the user the opportunity to confirm that the operation
         /// should actually be performed.
-        /// 
+        ///
         /// This variant allows the caller to specify the complete text
         /// describing the operation, rather than just the name and action.
         /// </summary>
@@ -986,11 +984,11 @@ namespace System.Management.Automation
         /// A Cmdlet should declare
         /// [Cmdlet( SupportsShouldProcess = true )]
         /// if-and-only-if it calls ShouldProcess before making changes.
-        /// 
+        ///
         /// ShouldProcess may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// ShouldProcess will take into account command-line settings
         /// and preference variables in determining what it should return
         /// and whether it should prompt the user.
@@ -1016,12 +1014,12 @@ namespace System.Management.Automation
         ///                     set { filename = value; }
         ///                 }
         ///                 private string filename;
-        /// 
+        ///
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}?", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}?", filename),
         ///                         "Delete file"))
         ///                     {
         ///                         // delete the object
@@ -1055,7 +1053,7 @@ namespace System.Management.Automation
         /// (e.g. delete files, stop services etc.) should call ShouldProcess
         /// to give the user the opportunity to confirm that the operation
         /// should actually be performed.
-        /// 
+        ///
         /// This variant allows the caller to specify the complete text
         /// describing the operation, rather than just the name and action.
         /// </summary>
@@ -1102,11 +1100,11 @@ namespace System.Management.Automation
         /// A Cmdlet should declare
         /// [Cmdlet( SupportsShouldProcess = true )]
         /// if-and-only-if it calls ShouldProcess before making changes.
-        /// 
+        ///
         /// ShouldProcess may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// ShouldProcess will take into account command-line settings
         /// and preference variables in determining what it should return
         /// and whether it should prompt the user.
@@ -1132,13 +1130,13 @@ namespace System.Management.Automation
         ///                     set { filename = value; }
         ///                 }
         ///                 private string filename;
-        /// 
+        ///
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     ShouldProcessReason shouldProcessReason;
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}?", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}?", filename),
         ///                         "Delete file",
         ///                         out shouldProcessReason))
         ///                     {
@@ -1171,7 +1169,6 @@ namespace System.Management.Automation
                 }
             }
         }
-
 
         #endregion ShouldProcess
 
@@ -1215,16 +1212,16 @@ namespace System.Management.Automation
         /// and ShouldProcess.
         /// If this is not done, it will be difficult to use the Cmdlet
         /// from scripts and non-interactive hosts.
-        /// 
+        ///
         /// Cmdlets using ShouldContinue must still verify operations
         /// which will make changes using ShouldProcess.
         /// This will assure that settings such as -WhatIf work properly.
         /// You may call ShouldContinue either before or after ShouldProcess.
-        /// 
+        ///
         /// ShouldContinue may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// Cmdlets may have different "classes" of confirmations.  For example,
         /// "del" confirms whether files in a particular directory should be
         /// deleted, whether read-only files should be deleted, etc.
@@ -1249,7 +1246,7 @@ namespace System.Management.Automation
         ///                     set { filename = value; }
         ///                 }
         ///                 private string filename;
-        /// 
+        ///
         ///                 [Parameter]
         ///                 public SwitchParameter Force
         ///                 {
@@ -1257,18 +1254,18 @@ namespace System.Management.Automation
         ///                     set { force = value; }
         ///                 }
         ///                 private bool force;
-        /// 
+        ///
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}", filename),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     String.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
+        ///                                     string.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
         ///                                     "Delete file"))
         ///                                     )
         ///                             {
@@ -1344,16 +1341,16 @@ namespace System.Management.Automation
         /// and ShouldProcess.
         /// If this is not done, it will be difficult to use the Cmdlet
         /// from scripts and non-interactive hosts.
-        /// 
+        ///
         /// Cmdlets using ShouldContinue must still verify operations
         /// which will make changes using ShouldProcess.
         /// This will assure that settings such as -WhatIf work properly.
         /// You may call ShouldContinue either before or after ShouldProcess.
-        /// 
+        ///
         /// ShouldContinue may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// Cmdlets may have different "classes" of confirmations.  For example,
         /// "del" confirms whether files in a particular directory should be
         /// deleted, whether read-only files should be deleted, etc.
@@ -1378,7 +1375,7 @@ namespace System.Management.Automation
         ///                     set { filename = value; }
         ///                 }
         ///                 private string filename;
-        /// 
+        ///
         ///                 [Parameter]
         ///                 public SwitchParameter Force
         ///                 {
@@ -1386,21 +1383,21 @@ namespace System.Management.Automation
         ///                     set { force = value; }
         ///                 }
         ///                 private bool force;
-        /// 
+        ///
         ///                 private bool yesToAll;
         ///                 private bool noToAll;
-        /// 
+        ///
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}", filename),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     String.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
+        ///                                     string.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
         ///                                     "Delete file"),
         ///                                     ref yesToAll,
         ///                                     ref noToAll
@@ -1484,16 +1481,16 @@ namespace System.Management.Automation
         /// and ShouldProcess.
         /// If this is not done, it will be difficult to use the Cmdlet
         /// from scripts and non-interactive hosts.
-        /// 
+        ///
         /// Cmdlets using ShouldContinue must still verify operations
         /// which will make changes using ShouldProcess.
         /// This will assure that settings such as -WhatIf work properly.
         /// You may call ShouldContinue either before or after ShouldProcess.
-        /// 
+        ///
         /// ShouldContinue may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// Cmdlets may have different "classes" of confirmations.  For example,
         /// "del" confirms whether files in a particular directory should be
         /// deleted, whether read-only files should be deleted, etc.
@@ -1518,7 +1515,7 @@ namespace System.Management.Automation
         ///                     set { filename = value; }
         ///                 }
         ///                 private string filename;
-        /// 
+        ///
         ///                 [Parameter]
         ///                 public SwitchParameter Force
         ///                 {
@@ -1526,21 +1523,21 @@ namespace System.Management.Automation
         ///                     set { force = value; }
         ///                 }
         ///                 private bool force;
-        /// 
+        ///
         ///                 private bool yesToAll;
         ///                 private bool noToAll;
-        /// 
+        ///
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         String.Format("Deleting file {0}",filename),
-        ///                         String.Format("Are you sure you want to delete file {0}", filename),
+        ///                         string.Format("Deleting file {0}",filename),
+        ///                         string.Format("Are you sure you want to delete file {0}", filename),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     String.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
+        ///                                     string.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
         ///                                     "Delete file"),
         ///                                     ref yesToAll,
         ///                                     ref noToAll
@@ -1614,7 +1611,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Invoke this cmdlet object returning a collection of results.
         /// </summary>
-        /// <returns>The results that were produced by this class</returns>
+        /// <returns>The results that were produced by this class.</returns>
         public IEnumerable Invoke()
         {
             using (PSTransactionManager.GetEngineProtectionScope())
@@ -1629,8 +1626,8 @@ namespace System.Management.Automation
         /// Returns a strongly-typed enumerator for the results of this cmdlet.
         /// </summary>
         /// <typeparam name="T">The type returned by the enumerator</typeparam>
-        /// <returns>An instance of the appropriate enumerator</returns>
-        /// <exception cref="InvalidCastException">Thrown when the object returned by the cmdlet cannot be converted to the target type</exception>
+        /// <returns>An instance of the appropriate enumerator.</returns>
+        /// <exception cref="InvalidCastException">Thrown when the object returned by the cmdlet cannot be converted to the target type.</exception>
         public IEnumerable<T> Invoke<T>()
         {
             using (PSTransactionManager.GetEngineProtectionScope())
@@ -1662,7 +1659,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets an object that surfaces the current PowerShell transaction.
-        /// When this object is disposed, PowerShell resets the active transaction
+        /// When this object is disposed, PowerShell resets the active transaction.
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         public PSTransactionContext CurrentPSTransaction
@@ -1681,7 +1678,7 @@ namespace System.Management.Automation
 
         #region ThrowTerminatingError
         /// <summary>
-        /// Terminate the command and report an error
+        /// Terminate the command and report an error.
         /// </summary>
         /// <param name="errorRecord">
         /// The error which caused the command to be terminated
@@ -1694,7 +1691,7 @@ namespace System.Management.Automation
         /// terminates the command, where
         /// <see cref="System.Management.Automation.ICommandRuntime.WriteError"/>
         /// allows the command to continue.
-        /// 
+        ///
         /// The cmdlet can also terminate the command by simply throwing
         /// any exception.  When the cmdlet's implementation of
         /// <see cref="System.Management.Automation.Cmdlet.ProcessRecord"/>,
@@ -1707,7 +1704,6 @@ namespace System.Management.Automation
         /// so that the additional information in
         /// <see cref="System.Management.Automation.ErrorRecord"/>
         /// is available.
-        /// 
         /// <see cref="System.Management.Automation.Cmdlet.ThrowTerminatingError"/>
         /// always throws
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
@@ -1723,7 +1719,7 @@ namespace System.Management.Automation
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 if (errorRecord == null)
-                    throw new ArgumentNullException("errorRecord");
+                    throw new ArgumentNullException(nameof(errorRecord));
 
                 if (commandRuntime != null)
                 {
@@ -1776,7 +1772,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// When overridden in the derived class, performs clean-up
-        /// after the command execution. 
+        /// after the command execution.
         /// Default implementation in the base class just returns.
         /// </summary>
         /// <exception cref="Exception">
@@ -1810,7 +1806,7 @@ namespace System.Management.Automation
         #endregion Exposed API Override
 
         #endregion public_methods
-    } // Cmdlet
+    }
 
     /// <summary>
     /// This describes the reason why ShouldProcess returned what it returned.

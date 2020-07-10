@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -8,33 +7,35 @@ using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Provider;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The base class for the */content commands
+    /// The base class for the */content commands.
     /// </summary>
     public class ContentCommandBase : CoreCommandWithCredentialsBase, IDisposable
     {
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                    Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path { get; set; }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath")]
+        [Alias("PSPath", "LP")]
         public string[] LiteralPath
         {
             get { return Path; }
+
             set
             {
                 base.SuppressWildcardExpansion = true;
@@ -43,39 +44,41 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the filter property
+        /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
         public override string Filter
         {
             get { return base.Filter; }
+
             set { base.Filter = value; }
         }
 
         /// <summary>
-        /// Gets or sets the include property
+        /// Gets or sets the include property.
         /// </summary>
         [Parameter]
         public override string[] Include
         {
             get { return base.Include; }
+
             set { base.Include = value; }
         }
 
         /// <summary>
-        /// Gets or sets the exclude property
+        /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
         public override string[] Exclude
         {
             get { return base.Exclude; }
+
             set { base.Exclude = value; }
         }
 
         /// <summary>
-        /// Gets or sets the force property
+        /// Gets or sets the force property.
         /// </summary>
-        ///
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
         /// the operation. If true, the provider should do everything possible to perform
@@ -85,11 +88,11 @@ namespace Microsoft.PowerShell.Commands
         /// the destination is read-only, if force is true, the provider should copy over
         /// the existing read-only file. If force is false, the provider should write an error.
         /// </remarks>
-        ///
         [Parameter]
         public override SwitchParameter Force
         {
             get { return base.Force; }
+
             set { base.Force = value; }
         }
 
@@ -105,29 +108,23 @@ namespace Microsoft.PowerShell.Commands
         /// An array of content holder objects that contain the path information
         /// and content readers/writers for the item represented by the path information.
         /// </summary>
-        /// 
         internal List<ContentHolder> contentStreams = new List<ContentHolder>();
 
         /// <summary>
-        /// Wraps the content into a PSObject and adds context information as notes
+        /// Wraps the content into a PSObject and adds context information as notes.
         /// </summary>
-        /// 
         /// <param name="content">
         /// The content being written out.
         /// </param>
-        /// 
         /// <param name="readCount">
         /// The number of blocks that have been read so far.
         /// </param>
-        /// 
         /// <param name="pathInfo">
         /// The context the content was retrieved from.
         /// </param>
-        /// 
         /// <param name="context">
         /// The context the command is being run under.
         /// </param>
-        /// 
         internal void WriteContentObject(object content, long readCount, PathInfo pathInfo, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
@@ -153,13 +150,10 @@ namespace Microsoft.PowerShell.Commands
 
             if (_currentContentItem != null &&
                 ((_currentContentItem.PathInfo == pathInfo) ||
-                 (
-                    String.Compare(
+                    string.Equals(
                         pathInfo.Path,
                         _currentContentItem.PathInfo.Path,
-                        StringComparison.OrdinalIgnoreCase) == 0)
-                    )
-                )
+                        StringComparison.OrdinalIgnoreCase)))
             {
                 result = _currentContentItem.AttachNotes(result);
             }
@@ -188,8 +182,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        parentPath = SessionState.Path.ParseParent(pathInfo.Path, String.Empty, context);
+                        parentPath = SessionState.Path.ParseParent(pathInfo.Path, string.Empty, context);
                     }
+
                     note = new PSNoteProperty("PSParentPath", parentPath);
                     result.Properties.Add(note, true);
                     tracer.WriteLine("Attaching {0} = {1}", "PSParentPath", parentPath);
@@ -233,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
             result.Properties.Add(note, true);
 
             WriteObject(result);
-        } // WriteContentObject
+        }
 
         /// <summary>
         /// A cache of the notes that get added to the content items as they are written
@@ -251,11 +246,9 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Constructs a content cache item.
             /// </summary>
-            /// 
             /// <param name="pathInfo">
             /// The path information for which the cache will be bound.
             /// </param>
-            /// 
             public ContentPathsCache(PathInfo pathInfo)
             {
                 PathInfo = pathInfo;
@@ -264,51 +257,42 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// The path information for the cached item.
             /// </summary>
-            /// 
             public PathInfo PathInfo { get; }
 
             /// <summary>
             /// The cached PSPath of the item.
             /// </summary>
-            /// 
-            public String PSPath { get; set; }
+            public string PSPath { get; set; }
 
             /// <summary>
             /// The cached parent path of the item.
             /// </summary>
-            /// 
-            public String ParentPath { get; set; }
+            public string ParentPath { get; set; }
 
             /// <summary>
             /// The cached drive for the item.
             /// </summary>
-            /// 
             public PSDriveInfo Drive { get; set; }
 
             /// <summary>
             /// The cached provider of the item.
             /// </summary>
-            /// 
             public ProviderInfo Provider { get; set; }
 
             /// <summary>
             /// The cached child name of the item.
             /// </summary>
-            /// 
-            public String ChildName { get; set; }
+            public string ChildName { get; set; }
 
             /// <summary>
             /// Attaches the cached notes to the specified PSObject.
             /// </summary>
-            /// 
             /// <param name="content">
             /// The PSObject to attached the cached notes to.
             /// </param>
-            /// 
             /// <returns>
             /// The PSObject that was passed in with the cached notes added.
             /// </returns>
-            /// 
             public PSObject AttachNotes(PSObject content)
             {
                 // Construct a provider qualified path as the Path note
@@ -345,15 +329,13 @@ namespace Microsoft.PowerShell.Commands
                 tracer.WriteLine("Attaching {0} = {1}", "PSProvider", Provider);
 
                 return content;
-            } // AttachNotes
-        } // ContentPathsCache
-
+            }
+        }
 
         /// <summary>
         /// A struct to hold the path information and the content readers/writers
         /// for an item.
         /// </summary>
-        /// 
         internal struct ContentHolder
         {
             internal ContentHolder(
@@ -363,29 +345,29 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (pathInfo == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("pathInfo");
+                    throw PSTraceSource.NewArgumentNullException(nameof(pathInfo));
                 }
 
                 PathInfo = pathInfo;
                 Reader = reader;
                 Writer = writer;
-            } // constructor
+            }
 
             internal PathInfo PathInfo { get; }
 
             internal IContentReader Reader { get; }
 
             internal IContentWriter Writer { get; }
-        } // struct ContentHolder
+        }
 
         /// <summary>
-        /// Closes the content readers and writers in the content holder array
+        /// Closes the content readers and writers in the content holder array.
         /// </summary>
         internal void CloseContent(List<ContentHolder> contentHolders, bool disposing)
         {
             if (contentHolders == null)
             {
-                throw PSTraceSource.NewArgumentNullException("contentHolders");
+                throw PSTraceSource.NewArgumentNullException(nameof(contentHolders));
             }
 
             foreach (ContentHolder holder in contentHolders)
@@ -399,7 +381,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception e) // Catch-all OK. 3rd party callout
                 {
-                    CommandsCommon.CheckForSevereException(this, e);
                     // Catch all the exceptions caused by closing the writer
                     // and write out an error.
 
@@ -410,7 +391,6 @@ namespace Microsoft.PowerShell.Commands
                             holder.PathInfo.Provider,
                             holder.PathInfo.Path,
                             e);
-
 
                     // Log a provider health event
 
@@ -438,7 +418,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception e) // Catch-all OK. 3rd party callout
                 {
-                    CommandsCommon.CheckForSevereException(this, e);
                     // Catch all the exceptions caused by closing the writer
                     // and write out an error.
 
@@ -449,7 +428,6 @@ namespace Microsoft.PowerShell.Commands
                             holder.PathInfo.Provider,
                             holder.PathInfo.Path,
                             e);
-
 
                     // Log a provider health event
 
@@ -468,22 +446,19 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // CloseContent
+        }
 
         /// <summary>
         /// Overridden by derived classes to support ShouldProcess with
         /// the appropriate information.
         /// </summary>
-        /// 
         /// <param name="path">
         /// The path to the item from which the content writer will be
         /// retrieved.
         /// </param>
-        /// 
         /// <returns>
         /// True if the action should continue or false otherwise.
         /// </returns>
-        /// 
         internal virtual bool CallShouldProcess(string path)
         {
             return true;
@@ -492,11 +467,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the IContentReaders for the current path(s)
         /// </summary>
-        /// 
         /// <returns>
         /// An array of IContentReaders for the current path(s)
         /// </returns>
-        /// 
         internal List<ContentHolder> GetContentReaders(
             string[] readerPaths,
             CmdletProviderContext currentCommandContext)
@@ -570,36 +543,30 @@ namespace Microsoft.PowerShell.Commands
                         results.Add(holder);
                     }
                 }
-            } // foreach pathInfo in pathInfos
+            }
 
             return results;
-        } // GetContentReaders
+        }
 
         /// <summary>
-        /// Resolves the specified paths to PathInfo objects
+        /// Resolves the specified paths to PathInfo objects.
         /// </summary>
-        /// 
         /// <param name="pathsToResolve">
         /// The paths to be resolved. Each path may contain glob characters.
         /// </param>
-        /// 
         /// <param name="allowNonexistingPaths">
         /// If true, resolves the path even if it doesn't exist.
         /// </param>
-        /// 
         /// <param name="allowEmptyResult">
         /// If true, allows a wildcard that returns no results.
         /// </param>
-        /// 
         /// <param name="currentCommandContext">
         /// The context under which the command is running.
         /// </param>
-        /// 
         /// <returns>
         /// An array of PathInfo objects that are the resolved paths for the
         /// <paramref name="pathsToResolve"/> parameter.
         /// </returns>
-        /// 
         internal Collection<PathInfo> ResolvePaths(
             string[] pathsToResolve,
             bool allowNonexistingPaths,
@@ -698,7 +665,7 @@ namespace Microsoft.PowerShell.Commands
                         if (pathNotFoundErrorRecord == null)
                         {
                             // Detect if the path resolution failed to resolve to a file.
-                            String error = StringUtil.Format(NavigationResources.ItemNotFound, Path);
+                            string error = StringUtil.Format(NavigationResources.ItemNotFound, Path);
                             Exception e = new Exception(error);
 
                             pathNotFoundErrorRecord = new ErrorRecord(
@@ -714,7 +681,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return results;
-        } // ResolvePaths
+        }
 
         #endregion protected members
 
@@ -730,7 +697,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Dispose method in IDisposeable
+        /// Dispose method in IDisposable.
         /// </summary>
         public void Dispose()
         {
@@ -739,7 +706,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Finalizer
+        /// Finalizer.
         /// </summary>
         ~ContentCommandBase()
         {
@@ -747,5 +714,5 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion IDisposable
 
-    } // ContentCommandBase
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

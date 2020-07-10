@@ -3,7 +3,7 @@
 This demo shows examining, creating, and removing cron jobs via crontab.
 
 Output of Get-CronJob is a strongly typed object with properties like DayOfWeek or Command.
-Remove-CronJob prompts before removing the job unless you specifiy -Force.
+Remove-CronJob prompts before removing the job unless you specify -Force.
 
 Tab completion of -UserName is supported, e.g.
 

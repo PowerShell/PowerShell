@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,41 +26,41 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Ellipsize" xml:space="preserve">
-    <value>{0}...{1}</value>
+    <value>{0}&#x2026;{1}</value>
   </data>
   <data name="ErrorDetailsEmptyTemplate" xml:space="preserve">
     <value>Error text is empty for error "{0}" : "{1}"</value>
@@ -126,18 +126,13 @@
   <data name="RedirectedException" xml:space="preserve">
     <value>Object "{0}" is reported as an error.</value>
   </data>
-  <data name="SuspendActionPreferenceErrorActionOnly" xml:space="preserve">
-    <value>The action preference of "Suspend" is supported only for ErrorAction.</value>
-    <comment>"Suspend" and ErrorAction should not be localized</comment>
-  </data>
-  <data name="SuspendActionPreferenceSupportedOnlyOnWorkflow" xml:space="preserve">
-    <value>The error action preference of "Suspend" is supported only on workflows.</value>
-    <comment>"Suspend" should not be localized - it is a literal.</comment>
-  </data>
   <data name="UnsupportedPreferenceError" xml:space="preserve">
     <value>The value {0} is not supported for an ActionPreference variable. The provided value should be used only as a value for a preference parameter, and has been replaced by the default value. For more information, see the Help topic, "about_Preference_Variables."</value>
   </data>
-  <data name="UnsupportedPreferenceVariable" xml:space="preserve">
-    <value>The value {0} is not supported for an ActionPreference variable. The provided value should be used only as a value for a preference parameter. For more information, see the Help topic, "about_Preference_Variables."</value>
+  <data name="ActionPreferenceReservedForFutureUseError" xml:space="preserve">
+    <value>The {0} ActionPreference value is reserved for future use and is not supported at this time. For more information about preference variables, see the Help topic, "about_Preference_Variables."</value>
+  </data>
+  <data name="ReservedActionPreferenceReplacedError" xml:space="preserve">
+    <value>The {0} ActionPreference value is reserved for future use and is not supported at this time. It has been replaced in your {1} variable by the default value of {2}. For more information about preference variables, see the Help topic, "about_Preference_Variables."</value>
   </data>
 </root>

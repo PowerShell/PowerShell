@@ -1,17 +1,18 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Globalization;
 using System.Management.Automation;
+
 using Microsoft.Management.Infrastructure;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Job that handles executing a WQL (in the future CQL?) query on a remote CIM server
+    /// Job that handles executing a WQL (in the future CQL?) query on a remote CIM server.
     /// </summary>
     internal class EnumerateAssociatedInstancesJob : QueryJobBase
     {
@@ -90,6 +91,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 PSObject pso = PSObject.AsPSObject(outputObject);
                 AddShowComputerNameMarker(pso);
             }
+
             base.WriteObject(outputObject);
         }
 

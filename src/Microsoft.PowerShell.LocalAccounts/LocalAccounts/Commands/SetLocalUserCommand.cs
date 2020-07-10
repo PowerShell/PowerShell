@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 #region Using directives
 using System;
 using System.Management.Automation;
@@ -8,18 +11,17 @@ using System.Management.Automation.SecurityAccountsManager.Extensions;
 using Microsoft.PowerShell.LocalAccounts;
 #endregion
 
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Set-LocalUser cmdlet changes the properties of a user account in the 
-    /// local Windows Security Accounts Manager. It can also reset the password of a 
+    /// The Set-LocalUser cmdlet changes the properties of a user account in the
+    /// local Windows Security Accounts Manager. It can also reset the password of a
     /// local user account.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "LocalUser",
             SupportsShouldProcess = true,
             DefaultParameterSetName = "Name",
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717984")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717984")]
     [Alias("slu")]
     public class SetLocalUserCommand : PSCmdlet
     {
@@ -44,16 +46,18 @@ namespace Microsoft.PowerShell.Commands
         #region Parameter Properties
         /// <summary>
         /// The following is the definition of the input parameter "AccountExpires".
-        /// Specifies when the user account will expire. Set to null to indicate that 
-        /// the account will never expire. The default value is null (account never 
+        /// Specifies when the user account will expire. Set to null to indicate that
+        /// the account will never expire. The default value is null (account never
         /// expires).
         /// </summary>
         [Parameter]
         public System.DateTime AccountExpires
         {
             get { return this.accountexpires;}
+
             set { this.accountexpires = value; }
         }
+
         private System.DateTime accountexpires;
 
         /// <summary>
@@ -64,27 +68,30 @@ namespace Microsoft.PowerShell.Commands
         public System.Management.Automation.SwitchParameter AccountNeverExpires
         {
             get { return this.accountneverexpires;}
+
             set { this.accountneverexpires = value; }
         }
+
         private System.Management.Automation.SwitchParameter accountneverexpires;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "Description".
-        /// A descriptive comment for this user account (48 characters).
+        /// A descriptive comment for this user account.
         /// </summary>
         [Parameter]
         [ValidateNotNull]
-        [ValidateLength(0, 48)]
         public string Description
         {
             get { return this.description;}
+
             set { this.description = value; }
         }
+
         private string description;
 
         /// <summary>
         /// The following is the definition of the input parameter "FullName".
-        /// Specifies the full name of the user account. This is different from the 
+        /// Specifies the full name of the user account. This is different from the
         /// username of the user account.
         /// </summary>
         [Parameter]
@@ -92,12 +99,14 @@ namespace Microsoft.PowerShell.Commands
         public string FullName
         {
             get { return this.fullname;}
+
             set { this.fullname = value; }
         }
+
         private string fullname;
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
-        /// Specifies the of the local user account to modify in the local Security 
+        /// Specifies the of the local user account to modify in the local Security
         /// Accounts Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -109,10 +118,12 @@ namespace Microsoft.PowerShell.Commands
         public Microsoft.PowerShell.Commands.LocalUser InputObject
         {
             get { return this.inputobject;}
+
             set { this.inputobject = value; }
         }
+
         private Microsoft.PowerShell.Commands.LocalUser inputobject;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "Name".
         /// Specifies the local user account to change.
@@ -126,10 +137,12 @@ namespace Microsoft.PowerShell.Commands
         public string Name
         {
             get { return this.name;}
+
             set { this.name = value; }
         }
+
         private string name;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "Password".
         /// Specifies the password for the local user account.
@@ -139,8 +152,10 @@ namespace Microsoft.PowerShell.Commands
         public System.Security.SecureString Password
         {
             get { return this.password;}
+
             set { this.password = value; }
         }
+
         private System.Security.SecureString password;
 
         /// <summary>
@@ -148,12 +163,14 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies that the password will not expire.
         /// </summary>
         [Parameter]
-        public System.Boolean PasswordNeverExpires
+        public bool PasswordNeverExpires
         {
             get { return this.passwordneverexpires; }
+
             set { this.passwordneverexpires = value; }
         }
-        private System.Boolean passwordneverexpires;
+
+        private bool passwordneverexpires;
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -168,26 +185,28 @@ namespace Microsoft.PowerShell.Commands
         public System.Security.Principal.SecurityIdentifier SID
         {
             get { return this.sid;}
+
             set { this.sid = value; }
         }
+
         private System.Security.Principal.SecurityIdentifier sid;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "UserMayChangePassword".
-        /// Specifies whether the user is allowed to change the password on this 
+        /// Specifies whether the user is allowed to change the password on this
         /// account. The default value is True.
         /// </summary>
         [Parameter]
-        public System.Boolean UserMayChangePassword
+        public bool UserMayChangePassword
         {
             get { return this.usermaychangepassword;}
+
             set { this.usermaychangepassword = value; }
         }
-        private System.Boolean usermaychangepassword;
+
+        private bool usermaychangepassword;
         #endregion Parameter Properties
-      
-      
-      
+
         #region Cmdlet Overrides
         /// <summary>
         /// BeginProcessing method.
@@ -199,9 +218,9 @@ namespace Microsoft.PowerShell.Commands
                 InvalidParametersException ex = new InvalidParametersException("AccountExpires", "AccountNeverExpires");
                 ThrowTerminatingError(ex.MakeErrorRecord());
             }
+
             sam = new Sam();
         }
-
 
         /// <summary>
         /// ProcessRecord method.
@@ -238,7 +257,7 @@ namespace Microsoft.PowerShell.Commands
                 // We start with what already exists
                 var delta = user.Clone();
                 bool? passwordNeverExpires = null;
-                
+
                 foreach (var paramName in parameterNames)
                 {
                     if (this.HasParameter(paramName))
@@ -279,7 +298,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        
         /// <summary>
         /// EndProcessing method.
         /// </summary>
@@ -299,7 +317,7 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(target, Strings.ActionSetUser);
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

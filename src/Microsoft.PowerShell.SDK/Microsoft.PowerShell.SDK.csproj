@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <Import Project="..\..\PowerShell.Common.props" />
+  <PropertyGroup>
+    <Description>PowerShell SDK metapackage</Description>
+    <PackageId>Microsoft.PowerShell.SDK</PackageId>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.PowerShell.Commands.Management\Microsoft.PowerShell.Commands.Management.csproj" />
+    <ProjectReference Include="..\Microsoft.PowerShell.Commands.Utility\Microsoft.PowerShell.Commands.Utility.csproj" />
+    <ProjectReference Include="..\Microsoft.PowerShell.ConsoleHost\Microsoft.PowerShell.ConsoleHost.csproj" />
+    <ProjectReference Include="..\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.csproj" />
+    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
+    <!-- the following package(s) are from https://github.com/dotnet/corefx -->
+    <PackageReference Include="System.IO.Packaging" Version="5.0.0-preview.7.20326.1" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="5.0.0-preview.7.20326.1" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="5.0.0-preview.7.20326.1" />
+    <!-- the following package(s) are from https://github.com/dotnet/wcf -->
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.7.0" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.7.0" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.7.0" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.7.0" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.7.0" />
+    <PackageReference Include="System.Private.ServiceModel" Version="4.7.0" />
+    <!-- the source could not be found for the following package(s) -->
+    <PackageReference Include="Microsoft.NETCore.Windows.ApiSets" Version="1.0.1" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.0-preview.7.20326.1" />
+  </ItemGroup>
+
+</Project>

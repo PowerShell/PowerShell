@@ -1,8 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 #if !UNIX
-//-----------------------------------------------------------------------
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
 
 namespace System.Management.Automation.Tracing
 {
@@ -11,9 +9,9 @@ namespace System.Management.Automation.Tracing
     internal interface IMethodInvoker
     {
         Delegate Invoker { get; }
+
         object[] CreateInvokerArgs(Delegate methodToInvoke, object[] methodToInvokeArgs);
     }
 }
-
 
 #endif

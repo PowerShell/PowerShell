@@ -1,14 +1,16 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+#if !UNIX
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq.Expressions;
 using System.Management.Automation;
-using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 using Microsoft.Management.Infrastructure;
 using Microsoft.Win32;
@@ -19,12 +21,13 @@ namespace Microsoft.PowerShell.Commands
 
     #region GetComputerInfoCommand cmdlet implementation
     /// <summary>
-    /// The Get=ComputerInfo cmdlet gathers and reports information
+    /// The Get-ComputerInfo cmdlet gathers and reports information
     /// about a computer.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ComputerInfo",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=799466")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096810")]
     [Alias("gin")]
+    [OutputType(typeof(ComputerInfo), typeof(PSObject))]
     public class GetComputerInfoCommand : PSCmdlet
     {
         #region Inner Types
@@ -64,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
 
         private class MiscInfoGroup
         {
-            public UInt64? physicallyInstalledMemory;
+            public ulong? physicallyInstalledMemory;
             public string timeZone;
             public string logonServer;
             public FirmwareType? firmwareType;
@@ -78,12 +81,11 @@ namespace Microsoft.PowerShell.Commands
 
         #region Static Data and Constants
         private const string activity = "Get-ComputerInfo";
-        private const string localMachineName = "localhost";
+        private const string localMachineName = null;
         #endregion Static Data and Constants
 
         #region Instance Data
         private string _machineName = localMachineName;  // we might need to have cmdlet work on another machine
-        private ProgressRecord _progress = null;
 
         /// <summary>
         /// Collection of property names from the Property parameter,
@@ -98,7 +100,7 @@ namespace Microsoft.PowerShell.Commands
         /// The Property parameter contains the names of properties to be retrieved.
         /// If this parameter is given, the cmdlet returns a PSCustomObject
         /// containing only the requested properties.
-        /// Wild-card patterns may be provided
+        /// Wild-card patterns may be provided.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -121,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Cmdlet Overrides
         /// <summary>
-        /// Perform any first-stage processing
+        /// Perform any first-stage processing.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -141,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Performs the cmdlet's work
+        /// Performs the cmdlet's work.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -196,13 +198,13 @@ namespace Microsoft.PowerShell.Commands
                 systemInfo.networkAdapters = GetNetworkAdapters(session);
 
                 UpdateProgress(null);   // close the progress bar
-            } // end of using(CimSession...)
+            }
 
             var infoOutput = CreateFullOutputObject(systemInfo, osInfo, miscInfo);
 
             if (_namedProperties != null)
             {
-                //var output = CreateCustomOutputObject(namedProperties, systemInfo, osInfo, miscInfo);
+                // var output = CreateCustomOutputObject(namedProperties, systemInfo, osInfo, miscInfo);
                 var output = CreateCustomOutputObject(infoOutput, _namedProperties);
 
                 WriteObject(output);
@@ -216,24 +218,17 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
         /// <summary>
-        /// Display progress
+        /// Display progress.
         /// </summary>
         /// <param name="status">
         /// Text to be displayed in status bar
         /// </param>
         private void UpdateProgress(string status)
         {
-            if (_progress != null)
-            {
-                _progress.RecordType = ProgressRecordType.Completed;
-                WriteProgress(_progress);
-            }
+            ProgressRecord progress = new ProgressRecord(0, activity, status ?? ComputerResources.ProgressStatusCompleted);
+            progress.RecordType = status == null ? ProgressRecordType.Completed : ProgressRecordType.Processing;
 
-            if (status != null)
-            {
-                _progress = new ProgressRecord(0, activity, status);
-                WriteProgress(_progress);
-            }
+            WriteProgress(progress);
         }
 
         /// <summary>
@@ -292,7 +287,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (adapters != null && configs != null)
             {
-                var configDict = new Dictionary<UInt32, WmiNetworkAdapterConfiguration>();
+                var configDict = new Dictionary<uint, WmiNetworkAdapterConfiguration>();
 
                 foreach (var config in configs)
                 {
@@ -386,31 +381,35 @@ namespace Microsoft.PowerShell.Commands
 
         private static bool CheckDeviceGuardLicense()
         {
-#if !CORECLR
             const string propertyName = "CodeIntegrity-AllowConfigurablePolicy";
 
-            try
+            // DeviceGuard is supported on all versions of PowerShell that execute on "full" SKUs
+            if (Platform.IsWindows &&
+                !(Platform.IsNanoServer || Platform.IsIoT))
             {
-                int policy = 0;
-
-                if (Native.SLGetWindowsInformationDWORD(propertyName, out policy) == Native.S_OK
-                    && policy == 1)
+                try
                 {
-                    return true;
+                    int policy = 0;
+
+                    if (Native.SLGetWindowsInformationDWORD(propertyName, out policy) == Native.S_OK
+                        && policy == 1)
+                    {
+                        return true;
+                    }
+                }
+                catch (Exception)
+                {
+                    // if we fail to load the native dll or if the call fails
+                    // catastrophically there's not much we can do except to
+                    // consider there to be no license.
                 }
             }
-            catch (Exception)
-            {
-                // if we fail to load the native dll or if the call fails
-                // catastrophically there's not much we can do except to
-                // consider there to be no license.
-            }
-#endif
+
             return false;
         }
 
         /// <summary>
-        /// Retrieve information related to Device Guard
+        /// Retrieve information related to Device Guard.
         /// </summary>
         /// <param name="session">
         /// A <see cref="Microsoft.Management.Infrastructure.CimSession"/> object representing
@@ -431,7 +430,15 @@ namespace Microsoft.PowerShell.Commands
                                                                 CIMHelper.ClassNames.DeviceGuard);
 
                 if (wmiGuard != null)
+                {
+                    var smartStatus = EnumConverter<DeviceGuardSmartStatus>.Convert((int?)wmiGuard.VirtualizationBasedSecurityStatus ?? 0);
+                    if (smartStatus != null)
+                    {
+                        status = (DeviceGuardSmartStatus)smartStatus;
+                    }
+
                     guard = wmiGuard.AsOutputType;
+                }
             }
 
             return new DeviceGuardInfo
@@ -467,7 +474,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Retrieve information related to HyperVisor
+        /// Retrieve information related to HyperVisor.
         /// </summary>
         /// <param name="session">
         /// A <see cref="Microsoft.Management.Infrastructure.CimSession"/> object representing
@@ -521,7 +528,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Retrieve miscellaneous system information
+        /// Retrieve miscellaneous system information.
         /// </summary>
         /// <param name="session">
         /// A <see cref="Microsoft.Management.Infrastructure.CimSession"/> object representing
@@ -538,7 +545,7 @@ namespace Microsoft.PowerShell.Commands
             // get platform role
             try
             {
-                //TODO: Local machine only. Check for that?
+                // TODO: Local machine only. Check for that?
                 uint powerRole = Native.PowerDeterminePlatformRoleEx(Native.POWER_PLATFORM_ROLE_V2);
                 if (powerRole >= (uint)PowerPlatformRole.MaximumEnumValue)
                     rv.powerPlatformRole = PowerPlatformRole.Unspecified;
@@ -552,17 +559,12 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // get secure-boot info
-            //TODO: Local machine only? Check for that?
-            FirmwareType fwType = FirmwareType.Unknown;
-            if (Native.GetFirmwareType(ref fwType))
-                rv.firmwareType = fwType;
+            // TODO: Local machine only? Check for that?
+            rv.firmwareType = GetFirmwareType();
 
             // get amount of memory physically installed
-            //TODO: Local machine only. Check for that?
-            UInt64 memory;
-            if (Native.GetPhysicallyInstalledSystemMemory(out memory))
-                rv.physicallyInstalledMemory = memory;
-
+            // TODO: Local machine only. Check for that?
+            rv.physicallyInstalledMemory = GetPhysicallyInstalledSystemMemory();
 
             // get time zone
             // we'll use .Net's TimeZoneInfo for now. systeminfo uses Caption from Win32_TimeZone
@@ -602,6 +604,54 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Wrapper around the native GetFirmwareType function.
+        /// </summary>
+        /// <returns>
+        /// null if unsuccessful, otherwise FirmwareType enum specifying
+        /// the firmware type.
+        /// </returns>
+        private static FirmwareType? GetFirmwareType()
+        {
+            try
+            {
+                FirmwareType firmwareType;
+
+                if (Native.GetFirmwareType(out firmwareType))
+                    return firmwareType;
+            }
+            catch (Exception)
+            {
+                // Probably failed to load the DLL or to file the function entry point.
+                // Fail silently
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Wrapper around the native GetPhysicallyInstalledSystemMemory function.
+        /// </summary>
+        /// <returns>
+        /// null if unsuccessful, otherwise the amount of physically installed memory.
+        /// </returns>
+        private static ulong? GetPhysicallyInstalledSystemMemory()
+        {
+            try
+            {
+                ulong memory;
+                if (Native.GetPhysicallyInstalledSystemMemory(out memory))
+                    return memory;
+            }
+            catch (Exception)
+            {
+                // Probably failed to load the DLL or to file the function entry point.
+                // Fail silently
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Create a new ComputerInfo object populated with the specified data objects.
         /// </summary>
         /// <param name="systemInfo">
@@ -634,6 +684,8 @@ namespace Microsoft.PowerShell.Commands
                 output.WindowsRegisteredOrganization = regCurVer.RegisteredOrganization;
                 output.WindowsRegisteredOwner = regCurVer.RegisteredOwner;
                 output.WindowsSystemRoot = regCurVer.SystemRoot;
+                output.WindowsVersion = regCurVer.ReleaseId;
+                output.WindowsUBR = regCurVer.UBR;
             }
 
             var os = osInfo.os;
@@ -737,7 +789,7 @@ namespace Microsoft.PowerShell.Commands
                 output.BiosOtherTargetOS = bios.OtherTargetOS;
                 output.BiosPrimaryBIOS = bios.PrimaryBIOS;
                 output.BiosReleaseDate = bios.ReleaseDate;
-                output.BiosSeralNumber = bios.SerialNumber;
+                output.BiosSerialNumber = bios.SerialNumber;
                 output.BiosSMBIOSBIOSVersion = bios.SMBIOSBIOSVersion;
                 output.BiosSMBIOSMajorVersion = bios.SMBIOSMajorVersion;
                 output.BiosSMBIOSMinorVersion = bios.SMBIOSMinorVersion;
@@ -819,7 +871,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (otherInfo != null)
                 {
-                    output.CsPhyicallyInstalledMemory = otherInfo.physicallyInstalledMemory;
+                    output.CsPhysicallyInstalledMemory = otherInfo.physicallyInstalledMemory;
                 }
             }
 
@@ -831,14 +883,13 @@ namespace Microsoft.PowerShell.Commands
 
                 if (otherInfo.keyboards.Length > 0)
                 {
-                    //TODO: handle multiple keyboards?
+                    // TODO: handle multiple keyboards?
                     // there might be several keyboards found. For the moment
                     // we display info for only one
 
                     string layout = otherInfo.keyboards[0].Layout;
-                    var culture = Conversion.MakeLocale(layout);
 
-                    output.KeyboardLayout = culture == null ? layout : culture.Name;
+                    output.KeyboardLayout = Conversion.GetLocaleName(layout);
                 }
 
                 if (otherInfo.hyperV != null)
@@ -875,7 +926,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Create a new PSObject, containing only those properties named in the
-        /// namedProperties parameter
+        /// namedProperties parameter.
         /// </summary>
         /// <param name="info">
         /// A <see cref="ComputerInfo"/> containing all the acquired system information
@@ -930,7 +981,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Expand any wild-card patterns into known property names
+        /// Expand any wild-card patterns into known property names.
         /// </summary>
         /// <param name="propertyNames">
         /// List of known property names
@@ -991,9 +1042,9 @@ namespace Microsoft.PowerShell.Commands
                     // find a matching property name via case-insensitive string comparison
                     Predicate<string> pred = (s) =>
                                                 {
-                                                    return string.Compare(s,
+                                                    return string.Equals(s,
                                                                           name,
-                                                                          StringComparison.CurrentCultureIgnoreCase) == 0;
+                                                                          StringComparison.OrdinalIgnoreCase);
                                                 };
                     var propertyName = availableProperties.Find(pred);
 
@@ -1046,21 +1097,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        public static string LocaleIdToLocaleName(uint localeID)
-        {
-            // CoreCLR's System.Globalization.Culture does not appear to have a constructor
-            // that accepts an integer LocalID (LCID) value, so we'll PInvoke native code
-            // to get a locale name from an LCID value
-
-            var sbName = new System.Text.StringBuilder(Native.LOCALE_NAME_MAX_LENGTH);
-            var len = Native.LCIDToLocaleName(localeID, sbName, sbName.Capacity, 0);
-
-            if (len > 0 && sbName.Length > 0)
-                return sbName.ToString();
-
-            return null;
-        }
-
         /// <summary>
         /// Attempt to create a <see cref="System.Globalization.CultureInfo"/>
         /// object from a locale string as retrieved from WMI.
@@ -1077,38 +1113,36 @@ namespace Microsoft.PowerShell.Commands
         /// Failing that it attempts to retrieve the CultureInfo object
         /// using the locale string as passed.
         /// </remarks>
-        internal static System.Globalization.CultureInfo MakeLocale(string locale)
+        internal static string GetLocaleName(string locale)
         {
-            System.Globalization.CultureInfo culture = null;
+            CultureInfo culture = null;
 
             if (locale != null)
             {
                 try
                 {
-                    uint localeNum;
-
-                    if (TryParseHex(locale, out localeNum))
+                    // The "locale" must contain a hexadecimal value, with no
+                    // base-indication prefix. For example, the string "0409" will be
+                    // parsed into the base-10 integer value 1033, while the string "0x0409"
+                    // will fail to parse due to the "0x" base-indication prefix.
+                    if (UInt32.TryParse(locale, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint localeNum))
                     {
-                        string localeName = LocaleIdToLocaleName(localeNum);
-
-                        if (localeName != null)
-                            culture = new System.Globalization.CultureInfo(localeName);
+                        culture = CultureInfo.GetCultureInfo((int)localeNum);
                     }
 
                     if (culture == null)
                     {
-                        // either the TryParseHex failed, or the LocaleIdToLocaleName
-                        // failed, so we'll try using the original string
-                        culture = new System.Globalization.CultureInfo(locale);
+                        // If TryParse failed we'll try using the original string as culture name
+                        culture = CultureInfo.GetCultureInfo(locale);
                     }
                 }
-                catch (Exception/* ex*/)
+                catch (Exception)
                 {
                     culture = null;
                 }
             }
 
-            return culture;
+            return culture == null ? null : culture.Name;
         }
 
         /// <summary>
@@ -1152,7 +1186,7 @@ namespace Microsoft.PowerShell.Commands
         private static readonly Func<int, T?> s_convert = MakeConverter();
 
         /// <summary>
-        /// Convert an integer to a Nullable enum of type T
+        /// Convert an integer to a Nullable enum of type T.
         /// </summary>
         /// <param name="value">
         /// The integer value to be converted to the specified enum type.
@@ -1255,7 +1289,9 @@ namespace Microsoft.PowerShell.Commands
                         ProductName = (string)key.GetValue("ProductName"),
                         RegisteredOrganization = (string)key.GetValue("RegisteredOrganization"),
                         RegisteredOwner = (string)key.GetValue("RegisteredOwner"),
-                        SystemRoot = (string)key.GetValue("SystemRoot")
+                        SystemRoot = (string)key.GetValue("SystemRoot"),
+                        ReleaseId = (string)key.GetValue("ReleaseId"),
+                        UBR = (int?)key.GetValue("UBR")
                     };
                 }
             }
@@ -1275,7 +1311,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get a language name from a language identifier.
         /// </summary>
-        /// <param name="language">
+        /// <param name="lcid">
         /// A nullable integer containing the language ID for the desired language.
         /// </param>
         /// <returns>
@@ -1283,10 +1319,18 @@ namespace Microsoft.PowerShell.Commands
         /// the language parameter. If the language parameter is null or has a
         /// value that is not a valid language ID, the method returns null.
         /// </returns>
-        protected static string GetLanguageName(UInt32? language)
+        protected static string GetLanguageName(uint? lcid)
         {
-            if (language != null)
-                return Conversion.LocaleIdToLocaleName(language.Value);
+            if (lcid != null && lcid >= 0)
+            {
+                try
+                {
+                    return CultureInfo.GetCultureInfo((int)lcid.Value).Name;
+                }
+                catch
+                {
+                }
+            }
 
             return null;
         }
@@ -1338,7 +1382,7 @@ namespace Microsoft.PowerShell.Commands
         public byte? EmbeddedControllerMajorVersion;
         public byte? EmbeddedControllerMinorVersion;
         public string IdentificationCode;
-        public UInt16? InstallableLanguages;
+        public ushort? InstallableLanguages;
         public DateTime? InstallDate;
         public string LanguageEdition;
         public string[] ListOfLanguages;
@@ -1349,65 +1393,65 @@ namespace Microsoft.PowerShell.Commands
         public DateTime? ReleaseDate;
         public string SerialNumber;
         public string SMBIOSBIOSVersion;
-        public UInt16? SMBIOSMajorVersion;
-        public UInt16? SMBIOSMinorVersion;
+        public ushort? SMBIOSMajorVersion;
+        public ushort? SMBIOSMinorVersion;
         public bool? SMBIOSPresent;
-        public UInt16? SoftwareElementState;
+        public ushort? SoftwareElementState;
         public string Status;
         public byte? SystemBiosMajorVersion;
         public byte? SystemBiosMinorVersion;
-        public UInt16? TargetOperatingSystem;
+        public ushort? TargetOperatingSystem;
         public string Version;
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiComputerSystem
     {
-        public UInt16? AdminPasswordStatus;
+        public ushort? AdminPasswordStatus;
         public bool? AutomaticManagedPagefile;
         public bool? AutomaticResetBootOption;
         public bool? AutomaticResetCapability;
-        public UInt16? BootOptionOnLimit;
-        public UInt16? BootOptionOnWatchDog;
+        public ushort? BootOptionOnLimit;
+        public ushort? BootOptionOnWatchDog;
         public bool? BootROMSupported;
         public string BootupState;
         public UInt16[] BootStatus;
         public string Caption;
-        public UInt16? ChassisBootupState;
+        public ushort? ChassisBootupState;
         public string ChassisSKUNumber;
         public Int16? CurrentTimeZone;
         public bool? DaylightInEffect;
         public string Description;
         public string DNSHostName;
         public string Domain;
-        public UInt16? DomainRole;
+        public ushort? DomainRole;
         public bool? EnableDaylightSavingsTime;
-        public UInt16? FrontPanelResetStatus;
+        public ushort? FrontPanelResetStatus;
         public bool? HypervisorPresent;
         public bool? InfraredSupported;
         public string InitialLoadInfo;
         public DateTime? InstallDate;
-        public UInt16? KeyboardPasswordStatus;
+        public ushort? KeyboardPasswordStatus;
         public string LastLoadInfo;
         public string Manufacturer;
         public string Model;
         public string Name;
         public bool? NetworkServerModeEnabled;
-        public UInt32? NumberOfLogicalProcessors;
-        public UInt32? NumberOfProcessors;
+        public uint? NumberOfLogicalProcessors;
+        public uint? NumberOfProcessors;
         public string[] OEMStringArray;
         public bool? PartOfDomain;
         public Int64? PauseAfterReset;
-        public UInt16? PCSystemType;
-        public UInt16? PCSystemTypeEx;
+        public ushort? PCSystemType;
+        public ushort? PCSystemTypeEx;
         public UInt16[] PowerManagementCapabilities;
         public bool? PowerManagementSupported;
-        public UInt16? PowerOnPasswordStatus;
-        public UInt16? PowerState;
-        public UInt16? PowerSupplyState;
+        public ushort? PowerOnPasswordStatus;
+        public ushort? PowerState;
+        public ushort? PowerSupplyState;
         public string PrimaryOwnerContact;
         public string PrimaryOwnerName;
-        public UInt16? ResetCapability;
+        public ushort? ResetCapability;
         public Int16? ResetCount;
         public Int16? ResetLimit;
         public string[] Roles;
@@ -1416,10 +1460,10 @@ namespace Microsoft.PowerShell.Commands
         public string SystemFamily;
         public string SystemSKUNumber;
         public string SystemType;
-        public UInt16? ThermalState;
-        public UInt64? TotalPhysicalMemory;
+        public ushort? ThermalState;
+        public ulong? TotalPhysicalMemory;
         public string UserName;
-        public UInt16? WakeUpType;
+        public ushort? WakeUpType;
         public string Workgroup;
 
         public PowerManagementCapabilities[] GetPowerManagementCapabilities()
@@ -1447,12 +1491,12 @@ namespace Microsoft.PowerShell.Commands
     internal class WmiDeviceGuard
     {
         public UInt32[] AvailableSecurityProperties;
-        public UInt32? CodeIntegrityPolicyEnforcementStatus;
-        public UInt32? UsermodeCodeIntegrityPolicyEnforcementStatus;
+        public uint? CodeIntegrityPolicyEnforcementStatus;
+        public uint? UsermodeCodeIntegrityPolicyEnforcementStatus;
         public UInt32[] RequiredSecurityProperties;
         public UInt32[] SecurityServicesConfigured;
         public UInt32[] SecurityServicesRunning;
-        public UInt32? VirtualizationBasedSecurityStatus;
+        public uint? VirtualizationBasedSecurityStatus;
 
         public DeviceGuard AsOutputType
         {
@@ -1471,6 +1515,7 @@ namespace Microsoft.PowerShell.Commands
                         if (temp != null)
                             listHardware.Add(temp.Value);
                     }
+
                     guard.RequiredSecurityProperties = listHardware.ToArray();
 
                     listHardware.Clear();
@@ -1481,6 +1526,7 @@ namespace Microsoft.PowerShell.Commands
                         if (temp != null)
                             listHardware.Add(temp.Value);
                     }
+
                     guard.AvailableSecurityProperties = listHardware.ToArray();
 
                     var listSoftware = new List<DeviceGuardSoftwareSecure>();
@@ -1491,6 +1537,7 @@ namespace Microsoft.PowerShell.Commands
                         if (temp != null)
                             listSoftware.Add(temp.Value);
                     }
+
                     guard.SecurityServicesConfigured = listSoftware.ToArray();
 
                     listSoftware.Clear();
@@ -1501,16 +1548,14 @@ namespace Microsoft.PowerShell.Commands
                         if (temp != null)
                             listSoftware.Add(temp.Value);
                     }
+
                     guard.SecurityServicesRunning = listSoftware.ToArray();
                 }
 
-                var configCIStatus = EnumConverter<DeviceGuardConfigCodeIntegrityStatus>.Convert((int?)CodeIntegrityPolicyEnforcementStatus);
-                var userModeCIStatus = EnumConverter<DeviceGuardConfigCodeIntegrityStatus>.Convert((int?)UsermodeCodeIntegrityPolicyEnforcementStatus);
-                if (configCIStatus != null && configCIStatus != DeviceGuardConfigCodeIntegrityStatus.Off)
-                {
-                    guard.CodeIntegrityPolicyEnforcementStatus = configCIStatus;
-                    guard.UserModeCodeIntegrityPolicyEnforcementStatus = userModeCIStatus;
-                }
+                var configCiStatus = EnumConverter<DeviceGuardConfigCodeIntegrityStatus>.Convert((int?)CodeIntegrityPolicyEnforcementStatus);
+                var userModeCiStatus = EnumConverter<DeviceGuardConfigCodeIntegrityStatus>.Convert((int?)UsermodeCodeIntegrityPolicyEnforcementStatus);
+                guard.CodeIntegrityPolicyEnforcementStatus = configCiStatus;
+                guard.UserModeCodeIntegrityPolicyEnforcementStatus = userModeCiStatus;
 
                 return guard;
             }
@@ -1520,9 +1565,9 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiKeyboard
     {
-        public UInt16? Availability;
+        public ushort? Availability;
         public string Caption;
-        public UInt32? ConfigManagerErrorCode;
+        public uint? ConfigManagerErrorCode;
         public bool? ConfigManagerUserConfig;
         public string Description;
         public string DeviceID;
@@ -1530,16 +1575,16 @@ namespace Microsoft.PowerShell.Commands
         public string ErrorDescription;
         public DateTime? InstallDate;
         public bool? IsLocked;
-        public UInt32? LastErrorCode;
+        public uint? LastErrorCode;
         public string Layout;
         public string Name;
-        public UInt16? NumberOfFunctionKeys;
-        public UInt16? Password;
+        public ushort? NumberOfFunctionKeys;
+        public ushort? Password;
         public string PNPDeviceID;
         public UInt16[] PowerManagementCapabilities;
         public bool? PowerManagementSupported;
         public string Status;
-        public UInt16? StatusInfo;
+        public ushort? StatusInfo;
         public string SystemCreationClassName;
         public string SystemName;
     }
@@ -1547,8 +1592,8 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WMiLogicalMemory
     {
-        //TODO: fill this in!!!
-        public UInt32? TotalPhysicalMemory;
+        // TODO: fill this in!!!
+        public uint? TotalPhysicalMemory;
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
@@ -1559,76 +1604,76 @@ namespace Microsoft.PowerShell.Commands
         public DateTime? InstallDate;
         public string Name;
         public string Status;
-        public UInt16? Availability;
-        public UInt32? ConfigManagerErrorCode;
+        public ushort? Availability;
+        public uint? ConfigManagerErrorCode;
         public bool? ConfigManagerUserConfig;
         public string DeviceID;
         public bool? ErrorCleared;
         public string ErrorDescription;
-        public UInt32? LastErrorCode;
+        public uint? LastErrorCode;
         public string PNPDeviceID;
         public UInt16[] PowerManagementCapabilities;
         public bool? PowerManagementSupported;
-        public UInt16? StatusInfo;
+        public ushort? StatusInfo;
         public string SystemCreationClassName;
         public string SystemName;
-        public UInt64? Speed;
-        public UInt64? MaxSpeed;
-        public UInt64? RequestedSpeed;
-        public UInt16? UsageRestriction;
-        public UInt16? PortType;
+        public ulong? Speed;
+        public ulong? MaxSpeed;
+        public ulong? RequestedSpeed;
+        public ushort? UsageRestriction;
+        public ushort? PortType;
         public string OtherPortType;
         public string OtherNetworkPortType;
-        public UInt16? PortNumber;
-        public UInt16? LinkTechnology;
+        public ushort? PortNumber;
+        public ushort? LinkTechnology;
         public string OtherLinkTechnology;
         public string PermanentAddress;
         public string[] NetworkAddresses;
         public bool? FullDuplex;
         public bool? AutoSense;
-        public UInt64? SupportedMaximumTransmissionUnit;
-        public UInt64? ActiveMaximumTransmissionUnit;
+        public ulong? SupportedMaximumTransmissionUnit;
+        public ulong? ActiveMaximumTransmissionUnit;
         public string InterfaceDescription;
         public string InterfaceName;
-        public UInt64? NetLuid;
+        public ulong? NetLuid;
         public string InterfaceGuid;
-        public UInt32? InterfaceIndex;
+        public uint? InterfaceIndex;
         public string DeviceName;
-        public UInt32? NetLuidIndex;
+        public uint? NetLuidIndex;
         public bool? Virtual;
         public bool? Hidden;
         public bool? NotUserRemovable;
         public bool? IMFilter;
-        public UInt32? InterfaceType;
+        public uint? InterfaceType;
         public bool? HardwareInterface;
         public bool? WdmInterface;
         public bool? EndPointInterface;
         public bool? iSCSIInterface;
-        public UInt32? State;
-        public UInt32? NdisMedium;
-        public UInt32? NdisPhysicalMedium;
-        public UInt32? InterfaceOperationalStatus;
+        public uint? State;
+        public uint? NdisMedium;
+        public uint? NdisPhysicalMedium;
+        public uint? InterfaceOperationalStatus;
         public bool? OperationalStatusDownDefaultPortNotAuthenticated;
         public bool? OperationalStatusDownMediaDisconnected;
         public bool? OperationalStatusDownInterfacePaused;
         public bool? OperationalStatusDownLowPowerState;
-        public UInt32? InterfaceAdminStatus;
-        public UInt32? MediaConnectState;
-        public UInt32? MtuSize;
-        public UInt16? VlanID;
-        public UInt64? TransmitLinkSpeed;
-        public UInt64? ReceiveLinkSpeed;
+        public uint? InterfaceAdminStatus;
+        public uint? MediaConnectState;
+        public uint? MtuSize;
+        public ushort? VlanID;
+        public ulong? TransmitLinkSpeed;
+        public ulong? ReceiveLinkSpeed;
         public bool? PromiscuousMode;
         public bool? DeviceWakeUpEnable;
         public bool? ConnectorPresent;
-        public UInt32? MediaDuplexState;
+        public uint? MediaDuplexState;
         public string DriverDate;
-        public UInt64? DriverDateData;
+        public ulong? DriverDateData;
         public string DriverVersionString;
         public string DriverName;
         public string DriverDescription;
-        public UInt16? MajorDriverVersion;
-        public UInt16? MinorDriverVersion;
+        public ushort? MajorDriverVersion;
+        public ushort? MinorDriverVersion;
         public byte? DriverMajorNdisVersion;
         public byte? DriverMinorNdisVersion;
         public string PnPDeviceID;
@@ -1643,29 +1688,29 @@ namespace Microsoft.PowerShell.Commands
     internal class WmiNetworkAdapter
     {
         public string AdapterType;
-        public UInt16? AdapterTypeID;
+        public ushort? AdapterTypeID;
         public bool? AutoSense;
-        public UInt16? Availability;
+        public ushort? Availability;
         public string Caption;
-        public UInt32? ConfigManagerErrorCode;
+        public uint? ConfigManagerErrorCode;
         public bool? ConfigManagerUserConfig;
         public string Description;
         public string DeviceID;
         public bool? ErrorCleared;
         public string ErrorDescription;
         public string GUID;
-        public UInt32? Index;
+        public uint? Index;
         public DateTime? InstallDate;
         public bool? Installed;
-        public UInt32? InterfaceIndex;
-        public UInt32? LastErrorCode;
+        public uint? InterfaceIndex;
+        public uint? LastErrorCode;
         public string MACAddress;
         public string Manufacturer;
-        public UInt32? MaxNumberControlled;
-        public UInt64? MaxSpeed;
+        public uint? MaxNumberControlled;
+        public ulong? MaxSpeed;
         public string Name;
         public string NetConnectionID;
-        public UInt16? NetConnectionStatus;
+        public ushort? NetConnectionStatus;
         public bool? NetEnabled;
         public string[] NetworkAddresses;
         public string PermanentAddress;
@@ -1675,9 +1720,9 @@ namespace Microsoft.PowerShell.Commands
         public bool? PowerManagementSupported;
         public string ProductName;
         public string ServiceName;
-        public UInt64? Speed;
+        public ulong? Speed;
         public string Status;
-        public UInt16? StatusInfo;
+        public ushort? StatusInfo;
         public string SystemCreationClassName;
         public string SystemName;
         public DateTime? TimeOfLastReset;
@@ -1705,14 +1750,14 @@ namespace Microsoft.PowerShell.Commands
         public string DNSHostName;
         public string[] DNSServerSearchOrder;
         public bool? DomainDNSRegistrationEnabled;
-        public UInt32? ForwardBufferMemory;
+        public uint? ForwardBufferMemory;
         public bool? FullDNSRegistrationEnabled;
         public UInt16[] GatewayCostMetric;
         public byte? IGMPLevel;
-        public UInt32? Index;
-        public UInt32? InterfaceIndex;
+        public uint? Index;
+        public uint? InterfaceIndex;
         public string[] IPAddress;
-        public UInt32? IPConnectionMetric;
+        public uint? IPConnectionMetric;
         public bool? IPEnabled;
         public bool? IPFilterSecurityEnabled;
         public bool? IPPortSecurityEnabled;
@@ -1724,24 +1769,24 @@ namespace Microsoft.PowerShell.Commands
         public string IPXAddress;
         public bool? IPXEnabled;
         public UInt32[] IPXFrameType;
-        public UInt32? IPXMediaType;
+        public uint? IPXMediaType;
         public string[] IPXNetworkNumber;
         public string IPXVirtualNetNumber;
-        public UInt32? KeepAliveInterval;
-        public UInt32? KeepAliveTime;
+        public uint? KeepAliveInterval;
+        public uint? KeepAliveTime;
         public string MACAddress;
-        public UInt32? MTU;
-        public UInt32? NumForwardPackets;
+        public uint? MTU;
+        public uint? NumForwardPackets;
         public bool? PMTUBHDetectEnabled;
         public bool? PMTUDiscoveryEnabled;
         public string ServiceName;
         public string SettingID;
-        public UInt32? TcpipNetbiosOptions;
-        public UInt32? TcpMaxConnectRetransmissions;
-        public UInt32? TcpMaxDataRetransmissions;
-        public UInt32? TcpNumConnections;
+        public uint? TcpipNetbiosOptions;
+        public uint? TcpMaxConnectRetransmissions;
+        public uint? TcpMaxDataRetransmissions;
+        public uint? TcpNumConnections;
         public bool? TcpUseRFC1122UrgentPointer;
-        public UInt16? TcpWindowSize;
+        public ushort? TcpWindowSize;
         public bool? WINSEnableLMHostsLookup;
         public string WINSHostLookupFile;
         public string WINSPrimaryServer;
@@ -1769,47 +1814,47 @@ namespace Microsoft.PowerShell.Commands
         public bool? Debug;
         public string Description;
         public bool? Distributed;
-        public UInt32? EncryptionLevel;
+        public uint? EncryptionLevel;
         public byte? ForegroundApplicationBoost;
-        public UInt64? FreePhysicalMemory;
-        public UInt64? FreeSpaceInPagingFiles;
-        public UInt64? FreeVirtualMemory;
+        public ulong? FreePhysicalMemory;
+        public ulong? FreeSpaceInPagingFiles;
+        public ulong? FreeVirtualMemory;
         public DateTime? InstallDate;
         public DateTime? LastBootUpTime;
         public DateTime? LocalDateTime;
         public string Locale;
         public string Manufacturer;
-        public UInt32? MaxNumberOfProcesses;
-        public UInt64? MaxProcessMemorySize;
+        public uint? MaxNumberOfProcesses;
+        public ulong? MaxProcessMemorySize;
         public string[] MUILanguages;
         public string Name;
-        public UInt32? NumberOfLicensedUsers;
-        public UInt32? NumberOfProcesses;
-        public UInt32? NumberOfUsers;
-        public UInt32? OperatingSystemSKU;
+        public uint? NumberOfLicensedUsers;
+        public uint? NumberOfProcesses;
+        public uint? NumberOfUsers;
+        public uint? OperatingSystemSKU;
         public string Organization;
         public string OSArchitecture;
-        public UInt32? OSLanguage;
-        public UInt32? OSProductSuite;
-        public UInt16? OSType;
+        public uint? OSLanguage;
+        public uint? OSProductSuite;
+        public ushort? OSType;
         public string OtherTypeDescription;
         public bool? PAEEnabled;
         public bool? PortableOperatingSystem;
         public bool? Primary;
-        public UInt32? ProductType;
+        public uint? ProductType;
         public string RegisteredUser;
         public string SerialNumber;
-        public UInt16? ServicePackMajorVersion;
-        public UInt16? ServicePackMinorVersion;
-        public UInt64? SizeStoredInPagingFiles;
+        public ushort? ServicePackMajorVersion;
+        public ushort? ServicePackMinorVersion;
+        public ulong? SizeStoredInPagingFiles;
         public string Status;
-        public UInt32? SuiteMask;
+        public uint? SuiteMask;
         public string SystemDevice;
         public string SystemDirectory;
         public string SystemDrive;
-        public UInt64? TotalSwapSpaceSize;
-        public UInt64? TotalVirtualMemorySize;
-        public UInt64? TotalVisibleMemorySize;
+        public ulong? TotalSwapSpaceSize;
+        public ulong? TotalVirtualMemorySize;
+        public ulong? TotalVisibleMemorySize;
         public string Version;
         public string WindowsDirectory;
         #endregion Fields
@@ -1834,17 +1879,12 @@ namespace Microsoft.PowerShell.Commands
         #region Public Methods
         public string GetLocale()
         {
-            System.Globalization.CultureInfo culture = null;
-
-            if (Locale != null)
-                culture = Conversion.MakeLocale(Locale);
-
-            return culture == null ? null : culture.Name;
+            return Conversion.GetLocaleName(Locale);
         }
         #endregion Public Methods
 
         #region Private Methods
-        private OSProductSuite[] MakeProductSuites(UInt32? suiteMask)
+        private OSProductSuite[] MakeProductSuites(uint? suiteMask)
         {
             if (suiteMask == null)
                 return null;
@@ -1864,13 +1904,13 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiPageFileUsage
     {
-        public UInt32? AllocatedBaseSize;
+        public uint? AllocatedBaseSize;
         public string Caption;
-        public UInt32? CurrentUsage;
+        public uint? CurrentUsage;
         public string Description;
         public DateTime? InstallDate;
         public string Name;
-        public UInt32? PeakUsage;
+        public uint? PeakUsage;
         public string Status;
         public bool? TempPageFile;
     }
@@ -1878,67 +1918,67 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiProcessor
     {
-        public UInt16? AddressWidth;
-        public UInt16? Architecture;
+        public ushort? AddressWidth;
+        public ushort? Architecture;
         public string AssetTag;
-        public UInt16? Availability;
+        public ushort? Availability;
         public string Caption;
-        public UInt32? Characteristics;
-        public UInt32? ConfigManagerErrorCode;
+        public uint? Characteristics;
+        public uint? ConfigManagerErrorCode;
         public bool? ConfigManagerUserConfig;
-        public UInt16? CpuStatus;
-        public UInt32? CurrentClockSpeed;
-        public UInt16? CurrentVoltage;
-        public UInt16? DataWidth;
+        public ushort? CpuStatus;
+        public uint? CurrentClockSpeed;
+        public ushort? CurrentVoltage;
+        public ushort? DataWidth;
         public string Description;
         public string DeviceID;
         public bool? ErrorCleared;
         public string ErrorDescription;
-        public UInt32? ExtClock;
-        public UInt16? Family;
+        public uint? ExtClock;
+        public ushort? Family;
         public DateTime? InstallDate;
-        public UInt32? L2CacheSize;
-        public UInt32? L2CacheSpeed;
-        public UInt32? L3CacheSize;
-        public UInt32? L3CacheSpeed;
-        public UInt32? LastErrorCode;
-        public UInt16? Level;
-        public UInt16? LoadPercentage;
+        public uint? L2CacheSize;
+        public uint? L2CacheSpeed;
+        public uint? L3CacheSize;
+        public uint? L3CacheSpeed;
+        public uint? LastErrorCode;
+        public ushort? Level;
+        public ushort? LoadPercentage;
         public string Manufacturer;
-        public UInt32? MaxClockSpeed;
+        public uint? MaxClockSpeed;
         public string Name;
-        public UInt32? NumberOfCores;
-        public UInt32? NumberOfEnabledCore;
-        public UInt32? NumberOfLogicalProcessors;
+        public uint? NumberOfCores;
+        public uint? NumberOfEnabledCore;
+        public uint? NumberOfLogicalProcessors;
         public string OtherFamilyDescription;
         public string PartNumber;
         public string PNPDeviceID;
         public UInt16[] PowerManagementCapabilities;
         public bool? PowerManagementSupported;
         public string ProcessorId;
-        public UInt16? ProcessorType;
-        public UInt16? Revision;
+        public ushort? ProcessorType;
+        public ushort? Revision;
         public string Role;
         public bool? SecondLevelAddressTranslationExtensions;
         public string SerialNumber;
         public string SocketDesignation;
         public string Status;
-        public UInt16? StatusInfo;
+        public ushort? StatusInfo;
         public string Stepping;
         public string SystemName;
-        public UInt32? ThreadCount;
+        public uint? ThreadCount;
         public string UniqueId;
-        public UInt16? UpgradeMethod;
+        public ushort? UpgradeMethod;
         public string Version;
         public bool? VirtualizationFirmwareEnabled;
         public bool? VMMonitorModeExtensions;
-        public UInt32? VoltageCaps;
+        public uint? VoltageCaps;
     }
 
 #pragma warning restore 649
     #endregion Intermediate WMI classes
 
-    #region Other Imtermediate classes
+    #region Other Intermediate classes
     internal class RegWinNtCurrentVersion
     {
         public string BuildLabEx;
@@ -1951,49 +1991,51 @@ namespace Microsoft.PowerShell.Commands
         public string RegisteredOrganization;
         public string RegisteredOwner;
         public string SystemRoot;
+        public string ReleaseId;
+        public int? UBR;
     }
-    #endregion Other Intermediage classes
+    #endregion Other Intermediate classes
 
     #region Output components
     #region Classes comprising the output object
     /// <summary>
-    /// Provides information about Device Guard
+    /// Provides information about Device Guard.
     /// </summary>
     public class DeviceGuard
     {
         /// <summary>
-        /// Array of required security properties
+        /// Array of required security properties.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardHardwareSecure[] RequiredSecurityProperties { get; internal set; }
         /// <summary>
-        /// Array of available security properties
+        /// Array of available security properties.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardHardwareSecure[] AvailableSecurityProperties { get; internal set; }
         /// <summary>
-        /// Indicates which security services have been configured
+        /// Indicates which security services have been configured.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardSoftwareSecure[] SecurityServicesConfigured { get; internal set; }
         /// <summary>
-        /// Indicates which security services are running
+        /// Indicates which security services are running.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardSoftwareSecure[] SecurityServicesRunning { get; internal set; }
         /// <summary>
-        /// Indicates the status of the Device Guard Code Integrity policy
+        /// Indicates the status of the Device Guard Code Integrity policy.
         /// </summary>
         public DeviceGuardConfigCodeIntegrityStatus? CodeIntegrityPolicyEnforcementStatus { get; internal set; }
 
         /// <summary>
-        /// Indicates the status of the Device Guard user mode Code Integrity policy
+        /// Indicates the status of the Device Guard user mode Code Integrity policy.
         /// </summary>
         public DeviceGuardConfigCodeIntegrityStatus? UserModeCodeIntegrityPolicyEnforcementStatus { get; internal set; }
     }
 
     /// <summary>
-    /// Describes a Quick-Fix Engineering update
+    /// Describes a Quick-Fix Engineering update.
     /// </summary>
     public class HotFix
     {
@@ -2008,7 +2050,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Description of the update
+        /// Description of the update.
         /// </summary>
         public string Description
         {
@@ -2018,7 +2060,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// String containing the date that the update was installed
+        /// String containing the date that the update was installed.
         /// </summary>
         public string InstalledOn
         {
@@ -2028,7 +2070,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Additional comments that relate to the update
+        /// Additional comments that relate to the update.
         /// </summary>
         public string FixComments
         {
@@ -2039,30 +2081,30 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Provides information about a network adapter
+    /// Provides information about a network adapter.
     /// </summary>
     public class NetworkAdapter
     {
         /// <summary>
-        /// Description of the network adapter
+        /// Description of the network adapter.
         /// </summary>
         public string Description { get; internal set; }
         /// <summary>
         /// Name of the network connection as it appears in the Network
-        /// Connections Control Panel program
+        /// Connections Control Panel program.
         /// </summary>
         public string ConnectionID { get; internal set; }
         /// <summary>
         /// Indicates whether the DHCP server automatically assigns an IP address
-        /// to the computer system when establishing a network connection
+        /// to the computer system when establishing a network connection.
         /// </summary>
         public bool? DHCPEnabled { get; internal set; }
         /// <summary>
-        /// IP Address of the DHCP server
+        /// IP Address of the DHCP server.
         /// </summary>
         public string DHCPServer { get; internal set; }
         /// <summary>
-        /// State of the network adapter connection to the network
+        /// State of the network adapter connection to the network.
         /// </summary>
         public NetConnectionStatus ConnectionStatus { get; internal set; }
         /// <summary>
@@ -2073,49 +2115,49 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Describes a processor on the computer
+    /// Describes a processor on the computer.
     /// </summary>
     public class Processor
     {
         /// <summary>
-        /// Name of the processor
+        /// Name of the processor.
         /// </summary>
         public string Name { get; internal set; }
         /// <summary>
-        /// Name of the processor manufacturer
+        /// Name of the processor manufacturer.
         /// </summary>
         public string Manufacturer { get; internal set; }
         /// <summary>
-        /// Description of the processor
+        /// Description of the processor.
         /// </summary>
         public string Description { get; internal set; }
         /// <summary>
-        /// Processor architecture used by the platform
+        /// Processor architecture used by the platform.
         /// </summary>
         public CpuArchitecture? Architecture { get; internal set; }
         /// <summary>
-        /// Address width of the processor
+        /// Address width of the processor.
         /// </summary>
-        public UInt16? AddressWidth { get; internal set; }
+        public ushort? AddressWidth { get; internal set; }
         /// <summary>
-        /// Data width of the processor
+        /// Data width of the processor.
         /// </summary>
-        public UInt16? DataWidth { get; internal set; }
+        public ushort? DataWidth { get; internal set; }
         /// <summary>
-        /// Maximum speed of the processor, in MHz
+        /// Maximum speed of the processor, in MHz.
         /// </summary>
-        public UInt32? MaxClockSpeed { get; internal set; }
+        public uint? MaxClockSpeed { get; internal set; }
         /// <summary>
-        /// Current speed of the processor, in MHz
+        /// Current speed of the processor, in MHz.
         /// </summary>
-        public UInt32? CurrentClockSpeed { get; internal set; }
+        public uint? CurrentClockSpeed { get; internal set; }
         /// <summary>
         /// Number of cores for the current instance of the processor.
         /// </summary>
         /// <remarks>
         /// A core is a physical processor on the integrated circuit
         /// </remarks>
-        public UInt32? NumberOfCores { get; internal set; }
+        public uint? NumberOfCores { get; internal set; }
         /// <summary>
         /// Number of logical processors for the current instance of the processor.
         /// </summary>
@@ -2123,7 +2165,7 @@ namespace Microsoft.PowerShell.Commands
         /// For processors capable of hyperthreading, this value includes only the
         /// processors which have hyperthreading enabled
         /// </remarks>
-        public UInt32? NumberOfLogicalProcessors { get; internal set; }
+        public uint? NumberOfLogicalProcessors { get; internal set; }
         /// <summary>
         /// Processor information that describes the processor features.
         /// </summary>
@@ -2139,35 +2181,35 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         public string ProcessorID { get; internal set; }
         /// <summary>
-        /// Type of chip socket used on the circuit
+        /// Type of chip socket used on the circuit.
         /// </summary>
         public string SocketDesignation { get; internal set; }
         /// <summary>
-        /// Primary function of the processor
+        /// Primary function of the processor.
         /// </summary>
         public ProcessorType? ProcessorType { get; internal set; }
         /// <summary>
-        /// Role of the processor
+        /// Role of the processor.
         /// </summary>
         public string Role { get; internal set; }
         /// <summary>
-        /// Current status of the processor
+        /// Current status of the processor.
         /// </summary>
         public string Status { get; internal set; }
         /// <summary>
         /// Current status of the processor.
         /// Status changes indicate processor usage, but not the physical
-        /// condition of the processor
+        /// condition of the processor.
         /// </summary>
         public CpuStatus? CpuStatus { get; internal set; }
         /// <summary>
-        /// Availability and status of the processor
+        /// Availability and status of the processor.
         /// </summary>
         public CpuAvailability? Availability { get; internal set; }
     }
 
     /// <summary>
-    ///  The ComputerInfo class is output to the PowerShell pipeline.
+    /// The ComputerInfo class is output to the PowerShell pipeline.
     /// </summary>
     public class ComputerInfo
     {
@@ -2221,12 +2263,22 @@ namespace Microsoft.PowerShell.Commands
         /// Path to the operating system's root directory, from the Windows Registry.
         /// </summary>
         public string WindowsSystemRoot { get; internal set; }
+
+        /// <summary>
+        /// The Windows ReleaseId, from the Windows Registry.
+        /// </summary>
+        public string WindowsVersion { get; internal set; }
+
+        /// <summary>
+        /// The Windows Update Build Revision (UBR), from the Windows Registry.
+        /// </summary>
+        public int? WindowsUBR { get; internal set; }
         #endregion Registry
 
         #region BIOS
         /// <summary>
         /// Array of BIOS characteristics supported by the system as defined by
-        /// the System Management BIOS Reference Specification
+        /// the System Management BIOS Reference Specification.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public UInt16[] BiosCharacteristics { get; internal set; }
@@ -2234,13 +2286,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Array of the complete system BIOS information. In many computers
         /// there can be several version strings that are stored in the registry
-        /// and represent the system BIOS information
+        /// and represent the system BIOS information.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] BiosBIOSVersion { get; internal set; }
 
         /// <summary>
-        /// Internal identifier for this compilation of the BIOS firmware
+        /// Internal identifier for this compilation of the BIOS firmware.
         /// </summary>
         public string BiosBuildNumber { get; internal set; }
 
@@ -2250,27 +2302,27 @@ namespace Microsoft.PowerShell.Commands
         public string BiosCaption { get; internal set; }
 
         /// <summary>
-        /// Code set used by the BIOS
+        /// Code set used by the BIOS.
         /// </summary>
         public string BiosCodeSet { get; internal set; }
 
         /// <summary>
-        /// Name of the current BIOS language
+        /// Name of the current BIOS language.
         /// </summary>
         public string BiosCurrentLanguage { get; internal set; }
 
         /// <summary>
-        /// Description of the BIOS
+        /// Description of the BIOS.
         /// </summary>
         public string BiosDescription { get; internal set; }
 
         /// <summary>
-        /// Major version of the embedded controller firmware
+        /// Major version of the embedded controller firmware.
         /// </summary>
         public Int16? BiosEmbeddedControllerMajorVersion { get; internal set; }
 
         /// <summary>
-        /// Minor version of the embedded controller firmware
+        /// Minor version of the embedded controller firmware.
         /// </summary>
         public Int16? BiosEmbeddedControllerMinorVersion { get; internal set; }
 
@@ -2284,43 +2336,43 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Manufacturer's identifier for this software element.
-        /// Often this will be a stock keeping unit (SKU) or a part number
+        /// Often this will be a stock keeping unit (SKU) or a part number.
         /// </summary>
         public string BiosIdentificationCode { get; internal set; }
 
         /// <summary>
         /// Number of languages available for installation on this system.
-        /// Language may determine properties such as the need for Unicode and bidirectional text
+        /// Language may determine properties such as the need for Unicode and bidirectional text.
         /// </summary>
-        public UInt16? BiosInstallableLanguages { get; internal set; }
+        public ushort? BiosInstallableLanguages { get; internal set; }
 
         /// <summary>
         /// Date and time the object was installed.
         /// </summary>
-        //TODO: do we want this? On my system this is null
+        // TODO: do we want this? On my system this is null
         public DateTime? BiosInstallDate { get; internal set; }
 
         /// <summary>
         /// Language edition of the BIOS firmware.
         /// The language codes defined in ISO 639 should be used.
         /// Where the software element represents a multilingual or international
-        /// version of a product, the string "multilingual" should be used
+        /// version of a product, the string "multilingual" should be used.
         /// </summary>
         public string BiosLanguageEdition { get; internal set; }
 
         /// <summary>
-        /// Array of names of available BIOS-installable languages
+        /// Array of names of available BIOS-installable languages.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] BiosListOfLanguages { get; internal set; }
 
         /// <summary>
-        /// Manufacturer of the BIOS
+        /// Manufacturer of the BIOS.
         /// </summary>
         public string BiosManufacturer { get; internal set; }
 
         /// <summary>
-        /// Name used to identify the BIOS
+        /// Name used to identify the BIOS.
         /// </summary>
         public string BiosName { get; internal set; }
 
@@ -2329,139 +2381,141 @@ namespace Microsoft.PowerShell.Commands
         /// the BiosTargetOperatingSystem property has a value of 1 (Other).
         /// When TargetOperatingSystem has a value of 1, BiosOtherTargetOS must
         /// have a nonnull value. For all other values of BiosTargetOperatingSystem,
-        /// BiosOtherTargetOS is NULL
+        /// BiosOtherTargetOS is NULL.
         /// </summary>
         public string BiosOtherTargetOS { get; internal set; }
 
         /// <summary>
-        /// If true, this is the primary BIOS of the computer system
+        /// If true, this is the primary BIOS of the computer system.
         /// </summary>
         public bool? BiosPrimaryBIOS { get; internal set; }
 
         /// <summary>
-        /// Release date of the Windows BIOS
+        /// Release date of the Windows BIOS.
         /// </summary>
         public DateTime? BiosReleaseDate { get; internal set; }
 
         /// <summary>
-        /// Assigned serial number of the BIOS
+        /// Assigned serial number of the BIOS.
         /// </summary>
-        public string BiosSeralNumber { get; internal set; }
+        public string BiosSerialNumber { get; internal set; }
 
         /// <summary>
-        /// BIOS version as reported by SMBIOS
+        /// BIOS version as reported by SMBIOS.
         /// </summary>
         public string BiosSMBIOSBIOSVersion { get; internal set; }
 
         /// <summary>
-        /// SMBIOS major version number. This property is null if SMBIOS is not found
+        /// SMBIOS major version number. This property is null if SMBIOS is not found.
         /// </summary>
-        public UInt16? BiosSMBIOSMajorVersion { get; internal set; }
+        public ushort? BiosSMBIOSMajorVersion { get; internal set; }
 
         /// <summary>
-        /// SMBIOS minor version number. This property is null if SMBIOS is not found
+        /// SMBIOS minor version number. This property is null if SMBIOS is not found.
         /// </summary>
-        public UInt16? BiosSMBIOSMinorVersion { get; internal set; }
+        public ushort? BiosSMBIOSMinorVersion { get; internal set; }
 
         /// <summary>
-        /// If true, the SMBIOS is available on this computer system
+        /// If true, the SMBIOS is available on this computer system.
         /// </summary>
         public bool? BiosSMBIOSPresent { get; internal set; }
 
         /// <summary>
-        /// State of a BIOS software element
+        /// State of a BIOS software element.
         /// </summary>
         public SoftwareElementState? BiosSoftwareElementState { get; internal set; }
 
         /// <summary>
-        /// Status of the BIOS
+        /// Status of the BIOS.
         /// </summary>
         public string BiosStatus { get; internal set; }
 
         /// <summary>
-        /// Major elease of the System BIOS
+        /// Major elease of the System BIOS.
         /// </summary>
-        public UInt16? BiosSystemBiosMajorVersion { get; internal set; }
+        public ushort? BiosSystemBiosMajorVersion { get; internal set; }
 
         /// <summary>
-        /// Minor release of the System BIOS
+        /// Minor release of the System BIOS.
         /// </summary>
-        public UInt16? BiosSystemBiosMinorVersion { get; internal set; }
+        public ushort? BiosSystemBiosMinorVersion { get; internal set; }
 
         /// <summary>
-        /// Target operating system
+        /// Target operating system.
         /// </summary>
-        public UInt16? BiosTargetOperatingSystem { get; internal set; }
+        public ushort? BiosTargetOperatingSystem { get; internal set; }
 
         /// <summary>
         /// Version of the BIOS.
-        /// This string is created by the BIOS manufacturer
+        /// This string is created by the BIOS manufacturer.
         /// </summary>
         public string BiosVersion { get; internal set; }
         #endregion BIOS
 
         #region Computer System
         /// <summary>
-        /// System hardware security settings for administrator password status
+        /// System hardware security settings for administrator password status.
         /// </summary>
-        //public AdminPasswordStatus? CsAdminPasswordStatus { get; internal set; }
+        // public AdminPasswordStatus? CsAdminPasswordStatus { get; internal set; }
+
         public HardwareSecurity? CsAdminPasswordStatus { get; internal set; }
 
         /// <summary>
-        /// If true, the system manages the page file
+        /// If true, the system manages the page file.
         /// </summary>
         public bool? CsAutomaticManagedPagefile { get; internal set; }
 
         /// <summary>
-        /// If True, the automatic reset boot option is enabled
+        /// If True, the automatic reset boot option is enabled.
         /// </summary>
         public bool? CsAutomaticResetBootOption { get; internal set; }
 
         /// <summary>
-        /// If True, the automatic reset is enabled
+        /// If True, the automatic reset is enabled.
         /// </summary>
         public bool? CsAutomaticResetCapability { get; internal set; }
 
         /// <summary>
         /// Boot option limit is ON. Identifies the system action when the
-        /// CsResetLimit value is reached
+        /// CsResetLimit value is reached.
         /// </summary>
         public BootOptionAction? CsBootOptionOnLimit { get; internal set; }
 
         /// <summary>
-        /// Type of reboot action after the time on the watchdog timer is elapsed
+        /// Type of reboot action after the time on the watchdog timer is elapsed.
         /// </summary>
         public BootOptionAction? CsBootOptionOnWatchDog { get; internal set; }
 
         /// <summary>
-        /// If true, indicates whether a boot ROM is supported
+        /// If true, indicates whether a boot ROM is supported.
         /// </summary>
         public bool? CsBootROMSupported { get; internal set; }
 
         /// <summary>
-        /// Status and Additional Data fields that identify the boot status
+        /// Status and Additional Data fields that identify the boot status.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public UInt16[] CsBootStatus { get; internal set; }
 
         /// <summary>
-        /// System is started. Fail-safe boot bypasses the user startup files—also called SafeBoot
+        /// System is started. Fail-safe boot bypasses the user startup files—also called SafeBoot.
         /// </summary>
         public string CsBootupState { get; internal set; }
 
         /// <summary>
-        /// The name of this computer
+        /// The name of this computer.
         /// </summary>
-        public string CsCaption { get; internal set; }  //TODO: remove this? Same as CsName???
+        public string CsCaption { get; internal set; }  // TODO: remove this? Same as CsName???
 
         /// <summary>
-        /// Boot up state of the chassis
+        /// Boot up state of the chassis.
         /// </summary>
-        //public ChassisBootupState? CsChassisBootupState { get; internal set; }
+        // public ChassisBootupState? CsChassisBootupState { get; internal set; }
+
         public SystemElementState? CsChassisBootupState { get; internal set; }
 
         /// <summary>
-        /// The chassis or enclosure SKU number as a string
+        /// The chassis or enclosure SKU number as a string.
         /// </summary>
         public string CsChassisSKUNumber { get; internal set; }
 
@@ -2472,17 +2526,17 @@ namespace Microsoft.PowerShell.Commands
         public Int16? CsCurrentTimeZone { get; internal set; }
 
         /// <summary>
-        /// If True, the daylight savings mode is ON
+        /// If True, the daylight savings mode is ON.
         /// </summary>
         public bool? CsDaylightInEffect { get; internal set; }
 
         /// <summary>
-        /// Description of the computer system
+        /// Description of the computer system.
         /// </summary>
         public string CsDescription { get; internal set; }
 
         /// <summary>
-        /// Name of local computer according to the domain name server
+        /// Name of local computer according to the domain name server.
         /// </summary>
         public string CsDNSHostName { get; internal set; }
 
@@ -2497,7 +2551,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Role of a computer in an assigned domain workgroup. A domain workgroup
         /// is a collection of computers on the same network. For example,
-        /// a DomainRole property may show that a computer is a member workstation
+        /// a DomainRole property may show that a computer is a member workstation.
         /// </summary>
         public DomainRole? CsDomainRole { get; internal set; }
 
@@ -2511,57 +2565,59 @@ namespace Microsoft.PowerShell.Commands
         public bool? CsEnableDaylightSavingsTime { get; internal set; }
 
         /// <summary>
-        /// Hardware security setting for the reset button on a computer
+        /// Hardware security setting for the reset button on a computer.
         /// </summary>
-        //public FrontPanelResetStatus? CsFrontPanelResetStatus { get; internal set; }
+        // public FrontPanelResetStatus? CsFrontPanelResetStatus { get; internal set; }
+
         public HardwareSecurity? CsFrontPanelResetStatus { get; internal set; }
 
         /// <summary>
-        /// If True, a hypervisor is present
+        /// If True, a hypervisor is present.
         /// </summary>
         public bool? CsHypervisorPresent { get; internal set; }
 
         /// <summary>
-        /// If True, an infrared port exists on a computer system
+        /// If True, an infrared port exists on a computer system.
         /// </summary>
         public bool? CsInfraredSupported { get; internal set; }
 
         /// <summary>
-        /// Data required to find the initial load device or boot service to request that the operating system start up
+        /// Data required to find the initial load device or boot service to request that the operating system start up.
         /// </summary>
         public string CsInitialLoadInfo { get; internal set; }
 
         /// <summary>
-        /// Object is installed. An object does not need a value to indicate that it is installed
+        /// Object is installed. An object does not need a value to indicate that it is installed.
         /// </summary>
         public DateTime? CsInstallDate { get; internal set; }
 
         /// <summary>
-        /// System hardware security setting for Keyboard Password Status
+        /// System hardware security setting for Keyboard Password Status.
         /// </summary>
-        //public KeyboardPasswordStatus? CsKeyboardPasswordStatus { get; internal set; }
+        // public KeyboardPasswordStatus? CsKeyboardPasswordStatus { get; internal set; }
+
         public HardwareSecurity? CsKeyboardPasswordStatus { get; internal set; }
 
         /// <summary>
         /// Array entry of the CsInitialLoadInfo property that contains the data
-        /// to start the loaded operating system
+        /// to start the loaded operating system.
         /// </summary>
         public string CsLastLoadInfo { get; internal set; }
 
         /// <summary>
-        /// Name of the computer manufacturer
+        /// Name of the computer manufacturer.
         /// </summary>
         public string CsManufacturer { get; internal set; }
 
         /// <summary>
-        /// Product name that a manufacturer gives to a computer
+        /// Product name that a manufacturer gives to a computer.
         /// </summary>
         public string CsModel { get; internal set; }
 
         /// <summary>
-        /// Key of a CIM_System instance in an enterprise environment
+        /// Key of a CIM_System instance in an enterprise environment.
         /// </summary>
-        public string CsName { get; internal set; } //TODO: get rid of this? Is this about CIM rather than about the computer?
+        public string CsName { get; internal set; }
 
         /// <summary>
         /// An array of <see cref="NetworkAdapter"/> objects describing any
@@ -2571,14 +2627,14 @@ namespace Microsoft.PowerShell.Commands
         public NetworkAdapter[] CsNetworkAdapters { get; internal set; }
 
         /// <summary>
-        /// If True, the network Server Mode is enabled
+        /// If True, the network Server Mode is enabled.
         /// </summary>
         public bool? CsNetworkServerModeEnabled { get; internal set; }
 
         /// <summary>
-        /// Number of logical processors available on the computer
+        /// Number of logical processors available on the computer.
         /// </summary>
-        public UInt32? CsNumberOfLogicalProcessors { get; internal set; }
+        public uint? CsNumberOfLogicalProcessors { get; internal set; }
 
         /// <summary>
         /// Number of physical processors currently available on a system.
@@ -2590,7 +2646,7 @@ namespace Microsoft.PowerShell.Commands
         /// then the value of CsNumberOfProcessors is 2 and CsNumberOfLogicalProcessors
         /// is 4. The processors may be multicore or they may be hyperthreading processors
         /// </remarks>
-        public UInt32? CsNumberOfProcessors { get; internal set; }
+        public uint? CsNumberOfProcessors { get; internal set; }
 
         /// <summary>
         /// Array of <see cref="Processor"/> objects describing each processor on the system.
@@ -2601,14 +2657,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Array of free-form strings that an OEM defines.
         /// For example, an OEM defines the part numbers for system reference
-        /// documents, manufacturer contact information, and so on
+        /// documents, manufacturer contact information, and so on.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] CsOEMStringArray { get; internal set; }
 
         /// <summary>
         /// If True, the computer is part of a domain.
-        /// If the value is NULL, the computer is not in a domain or the status is unknown
+        /// If the value is NULL, the computer is not in a domain or the status is unknown.
         /// </summary>
         public bool? CsPartOfDomain { get; internal set; }
 
@@ -2616,12 +2672,12 @@ namespace Microsoft.PowerShell.Commands
         /// Time delay before a reboot is initiated, in milliseconds.
         /// It is used after a system power cycle, local or remote system reset,
         /// and automatic system reset. A value of –1 (minus one) indicates that
-        /// the pause value is unknown
+        /// the pause value is unknown.
         /// </summary>
         public Int64? CsPauseAfterReset { get; internal set; }
 
         /// <summary>
-        /// Type of the computer in use, such as laptop, desktop, or tablet
+        /// Type of the computer in use, such as laptop, desktop, or tablet.
         /// </summary>
         public PCSystemType? CsPCSystemType { get; internal set; }
 
@@ -2631,7 +2687,7 @@ namespace Microsoft.PowerShell.Commands
         public PCSystemTypeEx? CsPCSystemTypeEx { get; internal set; }
 
         /// <summary>
-        /// Array of the specific power-related capabilities of a logical device
+        /// Array of the specific power-related capabilities of a logical device.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public PowerManagementCapabilities[] CsPowerManagementCapabilities { get; internal set; }
@@ -2648,9 +2704,10 @@ namespace Microsoft.PowerShell.Commands
         public bool? CsPowerManagementSupported { get; internal set; }
 
         /// <summary>
-        /// System hardware security setting for Power-On Password Status
+        /// System hardware security setting for Power-On Password Status.
         /// </summary>
-        //public PowerOnPasswordStatus? CsPowerOnPasswordStatus { get; internal set; }
+        // public PowerOnPasswordStatus? CsPowerOnPasswordStatus { get; internal set; }
+
         public HardwareSecurity? CsPowerOnPasswordStatus { get; internal set; }
 
         /// <summary>
@@ -2659,53 +2716,54 @@ namespace Microsoft.PowerShell.Commands
         public PowerState? CsPowerState { get; internal set; }
 
         /// <summary>
-        /// State of the power supply or supplies when last booted
+        /// State of the power supply or supplies when last booted.
         /// </summary>
-        //public PowerSupplyState? CsPowerSupplyState { get; internal set; }
+        // public PowerSupplyState? CsPowerSupplyState { get; internal set; }
+
         public SystemElementState? CsPowerSupplyState { get; internal set; }
 
         /// <summary>
         /// Contact information for the primary system owner.
-        /// For example, phone number, email address, and so on
+        /// For example, phone number, email address, and so on.
         /// </summary>
         public string CsPrimaryOwnerContact { get; internal set; }
 
         /// <summary>
-        /// Name of the primary system owner
+        /// Name of the primary system owner.
         /// </summary>
         public string CsPrimaryOwnerName { get; internal set; }
 
         /// <summary>
-        /// Indicates if the computer system can be resut.
+        /// Indicates if the computer system can be reset.
         /// </summary>
         public ResetCapability? CsResetCapability { get; internal set; }
 
         /// <summary>
         /// Number of automatic resets since the last reset.
-        /// A value of –1 (minus one) indicates that the count is unknown
+        /// A value of –1 (minus one) indicates that the count is unknown.
         /// </summary>
         public Int16? CsResetCount { get; internal set; }
 
         /// <summary>
         /// Number of consecutive times a system reset is attempted.
-        /// A value of –1 (minus one) indicates that the limit is unknown
+        /// A value of –1 (minus one) indicates that the limit is unknown.
         /// </summary>
         public Int16? CsResetLimit { get; internal set; }
 
         /// <summary>
         /// Array that specifies the roles of a system in the information
-        /// technology environment
+        /// technology environment.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] CsRoles { get; internal set; }
 
         /// <summary>
-        /// Statis pf the computer system
+        /// Statis pf the computer system.
         /// </summary>
         public string CsStatus { get; internal set; }
 
         /// <summary>
-        /// Array of the support contact information for the Windows operating system
+        /// Array of the support contact information for the Windows operating system.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] CsSupportContactDescription { get; internal set; }
@@ -2713,25 +2771,26 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The family to which a particular computer belongs.
         /// A family refers to a set of computers that are similar but not
-        /// identical from a hardware or software point of view
+        /// identical from a hardware or software point of view.
         /// </summary>
         public string CsSystemFamily { get; internal set; }
 
         /// <summary>
         /// Identifies a particular computer configuration for sale.
-        /// It is sometimes also called a product ID or purchase order number
+        /// It is sometimes also called a product ID or purchase order number.
         /// </summary>
         public string CsSystemSKUNumber { get; internal set; }
 
         /// <summary>
-        /// System running on the Windows-based computer
+        /// System running on the Windows-based computer.
         /// </summary>
         public string CsSystemType { get; internal set; }
 
         /// <summary>
-        /// Thermal state of the system when last booted
+        /// Thermal state of the system when last booted.
         /// </summary>
-        //public ThermalState? CsThermalState { get; internal set; }
+        // public ThermalState? CsThermalState { get; internal set; }
+
         public SystemElementState? CsThermalState { get; internal set; }
 
         /// <summary>
@@ -2742,13 +2801,13 @@ namespace Microsoft.PowerShell.Commands
         /// return an accurate value for the physical memory. For example,
         /// it is not accurate if the BIOS is using some of the physical memory
         /// </remarks>
-        public UInt64? CsTotalPhysicalMemory { get; internal set; }
+        public ulong? CsTotalPhysicalMemory { get; internal set; }
 
         /// <summary>
         /// Size of physically installed memory, as reported by the Windows API
-        /// function GetPhysicallyInstalledSystemMemory
+        /// function GetPhysicallyInstalledSystemMemory.
         /// </summary>
-        public UInt64? CsPhyicallyInstalledMemory { get; internal set; }
+        public ulong? CsPhysicallyInstalledMemory { get; internal set; }
 
         /// <summary>
         /// Name of a user that is logged on currently.
@@ -2761,83 +2820,83 @@ namespace Microsoft.PowerShell.Commands
         public string CsUserName { get; internal set; }
 
         /// <summary>
-        /// Event that causes the system to power up
+        /// Event that causes the system to power up.
         /// </summary>
         public WakeUpType? CsWakeUpType { get; internal set; }
 
         /// <summary>
-        /// Name of the workgroup for this computer
+        /// Name of the workgroup for this computer.
         /// </summary>
         public string CsWorkgroup { get; internal set; }
         #endregion Computer System
 
         #region Operating System
         /// <summary>
-        /// Name of the operating system
+        /// Name of the operating system.
         /// </summary>
         public string OsName { get; internal set; }
 
         /// <summary>
-        /// Type of operating system
+        /// Type of operating system.
         /// </summary>
         public OSType? OsType { get; internal set; }
 
         /// <summary>
-        /// SKU number for the operating system
+        /// SKU number for the operating system.
         /// </summary>
         public OperatingSystemSKU? OsOperatingSystemSKU { get; internal set; }
 
         /// <summary>
-        /// Version number of the operating system
+        /// Version number of the operating system.
         /// </summary>
         public string OsVersion { get; internal set; }
 
         /// <summary>
         /// String that indicates the latest service pack installed on a computer.
-        /// If no service pack is installed, the string is NULL
+        /// If no service pack is installed, the string is NULL.
         /// </summary>
         public string OsCSDVersion { get; internal set; }
 
         /// <summary>
-        /// Build number of the operating system
+        /// Build number of the operating system.
         /// </summary>
         public string OsBuildNumber { get; internal set; }
 
         /// <summary>
         /// Array of <see cref="HotFix"/> objects containing information about
-        /// any Quick-Fix Enginnering patches (Hot Fixes) applied to the operating
-        /// system
+        /// any Quick-Fix Engineering patches (Hot Fixes) applied to the operating
+        /// system.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public HotFix[] OsHotFixes { get; internal set; }
 
         /// <summary>
-        /// Name of the disk drive from which the Windows operating system starts
+        /// Name of the disk drive from which the Windows operating system starts.
         /// </summary>
         public string OsBootDevice { get; internal set; }
 
         /// <summary>
-        /// Physical disk partition on which the operating system is installed
+        /// Physical disk partition on which the operating system is installed.
         /// </summary>
         public string OsSystemDevice { get; internal set; }
 
         /// <summary>
-        /// System directory of the operating system
+        /// System directory of the operating system.
         /// </summary>
         public string OsSystemDirectory { get; internal set; }
 
         /// <summary>
-        /// Letter of the disk drive on which the operating system resides
+        /// Letter of the disk drive on which the operating system resides.
         /// </summary>
         public string OsSystemDrive { get; internal set; }
 
         /// <summary>
-        /// Windows directory of the operating system
+        /// Windows directory of the operating system.
         /// </summary>
         public string OsWindowsDirectory { get; internal set; }
 
         /// <summary>
-        /// Code for the country/region that an operating system uses
+        /// Code for the country/region that an operating system uses.
         /// </summary>
         /// <remarks>
         /// Values are based on international phone dialing prefixes—also
@@ -2847,7 +2906,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Number, in minutes, an operating system is offset from Greenwich
-        /// mean time (GMT). The number is positive, negative, or zero
+        /// mean time (GMT). The number is positive, negative, or zero.
         /// </summary>
         public Int16? OsCurrentTimeZone { get; internal set; }
 
@@ -2863,70 +2922,70 @@ namespace Microsoft.PowerShell.Commands
         public string OsLocaleID { get; internal set; }   // From Win32_OperatingSystem.Locale
 
         /// <summary>
-        /// The culture name, such as "en-US", derived from the <see cref="OsLocaleID"/> property
+        /// The culture name, such as "en-US", derived from the <see cref="OsLocaleID"/> property.
         /// </summary>
         public string OsLocale { get; internal set; }
 
         /// <summary>
-        /// Operating system version of the local date and time-of-day
+        /// Operating system version of the local date and time-of-day.
         /// </summary>
         public DateTime? OsLocalDateTime { get; internal set; }
 
         /// <summary>
-        /// Date and time the operating system was last restarted
+        /// Date and time the operating system was last restarted.
         /// </summary>
         public DateTime? OsLastBootUpTime { get; internal set; }
 
         /// <summary>
         /// The interval between the time the operating system was last
-        /// restarted and the current time
+        /// restarted and the current time.
         /// </summary>
         public TimeSpan? OsUptime { get; internal set; }
 
         /// <summary>
-        /// Type of build used for the operating system
+        /// Type of build used for the operating system.
         /// </summary>
         public string OsBuildType { get; internal set; }
 
         /// <summary>
-        /// Code page value the operating system uses
+        /// Code page value the operating system uses.
         /// </summary>
         public string OsCodeSet { get; internal set; }
 
         /// <summary>
-        /// If true, then the data execution prevention hardware feature is available
+        /// If true, then the data execution prevention hardware feature is available.
         /// </summary>
         public bool? OsDataExecutionPreventionAvailable { get; internal set; }
 
         /// <summary>
         /// When the data execution prevention hardware feature is available,
         /// this property indicates that the feature is set to work for 32-bit
-        /// applications if true
+        /// applications if true.
         /// </summary>
         public bool? OsDataExecutionPrevention32BitApplications { get; internal set; }
 
         /// <summary>
         /// When the data execution prevention hardware feature is available,
         /// this property indicates that the feature is set to work for drivers
-        /// if true
+        /// if true.
         /// </summary>
         public bool? OsDataExecutionPreventionDrivers { get; internal set; }
 
         /// <summary>
         /// Indicates which Data Execution Prevention (DEP) setting is applied.
         /// The DEP setting specifies the extent to which DEP applies to 32-bit
-        /// applications on the system. DEP is always applied to the Windows kernel
+        /// applications on the system. DEP is always applied to the Windows kernel.
         /// </summary>
         public DataExecutionPreventionSupportPolicy? OsDataExecutionPreventionSupportPolicy { get; internal set; }
 
         /// <summary>
-        /// If true, the operating system is a checked (debug) build
+        /// If true, the operating system is a checked (debug) build.
         /// </summary>
         public bool? OsDebug { get; internal set; }
 
         /// <summary>
         /// If True, the operating system is distributed across several computer
-        /// system nodes. If so, these nodes should be grouped as a cluster
+        /// system nodes. If so, these nodes should be grouped as a cluster.
         /// </summary>
         public bool? OsDistributed { get; internal set; }
 
@@ -2936,7 +2995,7 @@ namespace Microsoft.PowerShell.Commands
         public OSEncryptionLevel? OsEncryptionLevel { get; internal set; }
 
         /// <summary>
-        /// Increased priority given to the foreground application
+        /// Increased priority given to the foreground application.
         /// </summary>
         public ForegroundApplicationBoost? OsForegroundApplicationBoost { get; internal set; }
 
@@ -2945,34 +3004,34 @@ namespace Microsoft.PowerShell.Commands
         /// operating system.
         /// </summary>
         /// <remarks>
-        /// This value does not necessarily indicate the true amount of 
+        /// This value does not necessarily indicate the true amount of
         /// physical memory, but what is reported to the operating system
         /// as available to it.
         /// </remarks>
-        public UInt64? OsTotalVisibleMemorySize { get; internal set; }
+        public ulong? OsTotalVisibleMemorySize { get; internal set; }
 
         /// <summary>
-        /// Number, in kilobytes, of physical memory currently unused and available
+        /// Number, in kilobytes, of physical memory currently unused and available.
         /// </summary>
-        public UInt64? OsFreePhysicalMemory { get; internal set; }
+        public ulong? OsFreePhysicalMemory { get; internal set; }
 
         /// <summary>
-        /// Number, in kilobytes, of virtual memory
+        /// Number, in kilobytes, of virtual memory.
         /// </summary>
-        public UInt64? OsTotalVirtualMemorySize { get; internal set; }
+        public ulong? OsTotalVirtualMemorySize { get; internal set; }
 
         /// <summary>
-        /// Number, in kilobytes, of virtual memory currently unused and available
+        /// Number, in kilobytes, of virtual memory currently unused and available.
         /// </summary>
-        public UInt64? OsFreeVirtualMemory { get; internal set; }
+        public ulong? OsFreeVirtualMemory { get; internal set; }
 
         /// <summary>
-        /// Number, in kilobytes, of virtual memory currently in use
+        /// Number, in kilobytes, of virtual memory currently in use.
         /// </summary>
-        public UInt64? OsInUseVirtualMemory { get; internal set; }
+        public ulong? OsInUseVirtualMemory { get; internal set; }
 
         /// <summary>
-        /// Total swap space in kilobytes
+        /// Total swap space in kilobytes.
         /// </summary>
         /// <remarks>
         /// This value may be NULL (unspecified) if the swap space is not
@@ -2981,24 +3040,24 @@ namespace Microsoft.PowerShell.Commands
         /// can be swapped out when the free page list falls and remains below
         /// a specified amount
         /// </remarks>
-        public UInt64? OsTotalSwapSpaceSize { get; internal set; }
+        public ulong? OsTotalSwapSpaceSize { get; internal set; }
 
         /// <summary>
         /// Total number of kilobytes that can be stored in the operating system
         /// paging files—0 (zero) indicates that there are no paging files.
         /// Be aware that this number does not represent the actual physical
-        /// size of the paging file on disk
+        /// size of the paging file on disk.
         /// </summary>
-        public UInt64? OsSizeStoredInPagingFiles { get; internal set; }
+        public ulong? OsSizeStoredInPagingFiles { get; internal set; }
 
         /// <summary>
         /// Number, in kilobytes, that can be mapped into the operating system
-        /// paging files without causing any other pages to be swapped out
+        /// paging files without causing any other pages to be swapped out.
         /// </summary>
-        public UInt64? OsFreeSpaceInPagingFiles { get; internal set; }
+        public ulong? OsFreeSpaceInPagingFiles { get; internal set; }
 
         /// <summary>
-        /// Array of fiel paths to the operating system's paging files
+        /// Array of fiel paths to the operating system's paging files.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] OsPagingFiles { get; internal set; }
@@ -3009,7 +3068,7 @@ namespace Microsoft.PowerShell.Commands
         public string OsHardwareAbstractionLayer { get; internal set; }
 
         /// <summary>
-        /// Indicates the install date
+        /// Indicates the install date.
         /// </summary>
         public DateTime? OsInstallDate { get; internal set; }
 
@@ -3020,18 +3079,18 @@ namespace Microsoft.PowerShell.Commands
         public string OsManufacturer { get; internal set; }
 
         /// <summary>
-        /// Maximum number of process contexts the operating system can support
+        /// Maximum number of process contexts the operating system can support.
         /// </summary>
-        public UInt32? OsMaxNumberOfProcesses { get; internal set; }
+        public uint? OsMaxNumberOfProcesses { get; internal set; }
 
         /// <summary>
-        /// Maximum number, in kilobytes, of memory that can be allocated to a process
+        /// Maximum number, in kilobytes, of memory that can be allocated to a process.
         /// </summary>
-        public UInt64? OsMaxProcessMemorySize { get; internal set; }
+        public ulong? OsMaxProcessMemorySize { get; internal set; }
 
         /// <summary>
         /// Array of Multilingual User Interface Pack (MUI Pack) languages installed
-        /// on the computer
+        /// on the computer.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] OsMuiLanguages { get; internal set; }
@@ -3039,195 +3098,195 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Number of user licenses for the operating system.
         /// </summary>
-        public UInt32? OsNumberOfLicensedUsers { get; internal set; }
+        public uint? OsNumberOfLicensedUsers { get; internal set; }
 
         /// <summary>
-        /// Number of process contexts currently loaded or running on the operating system
+        /// Number of process contexts currently loaded or running on the operating system.
         /// </summary>
-        public UInt32? OsNumberOfProcesses { get; internal set; }
+        public uint? OsNumberOfProcesses { get; internal set; }
 
         /// <summary>
         /// Number of user sessions for which the operating system is storing
-        /// state information currently
+        /// state information currently.
         /// </summary>
-        public UInt32? OsNumberOfUsers { get; internal set; }
+        public uint? OsNumberOfUsers { get; internal set; }
 
         /// <summary>
-        /// Company name for the registered user of the operating system
+        /// Company name for the registered user of the operating system.
         /// </summary>
         public string OsOrganization { get; internal set; }
 
         /// <summary>
-        /// Architecture of the operating system, as opposed to the processor
+        /// Architecture of the operating system, as opposed to the processor.
         /// </summary>
         public string OsArchitecture { get; internal set; }
 
         /// <summary>
-        /// Language version of the operating system installed
+        /// Language version of the operating system installed.
         /// </summary>
         public string OsLanguage { get; internal set; }
 
         /// <summary>
         /// Array of <see cref="OSProductSuite"/> objects indicating installed
-        /// and licensed product additions to the operating system
+        /// and licensed product additions to the operating system.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public OSProductSuite[] OsProductSuites { get; internal set; }
 
         /// <summary>
-        /// Additional description for the current operating system version
+        /// Additional description for the current operating system version.
         /// </summary>
         public string OsOtherTypeDescription { get; internal set; }
 
         /// <summary>
         /// If True, the physical address extensions (PAE) are enabled by the
-        /// operating system running on Intel processors
+        /// operating system running on Intel processors.
         /// </summary>
         public bool? OsPAEEnabled { get; internal set; }
 
         /// <summary>
         /// Specifies whether the operating system booted from an external USB device.
         /// If true, the operating system has detected it is booting on a supported
-        /// locally connected storage device
+        /// locally connected storage device.
         /// </summary>
         public bool? OsPortableOperatingSystem { get; internal set; }
 
         /// <summary>
-        /// Specifies whether this is the primary operating system
+        /// Specifies whether this is the primary operating system.
         /// </summary>
         public bool? OsPrimary { get; internal set; }
 
         /// <summary>
-        /// Additional system information
+        /// Additional system information.
         /// </summary>
         public ProductType? OsProductType { get; internal set; }
 
         /// <summary>
-        /// Name of the registered user of the operating system
+        /// Name of the registered user of the operating system.
         /// </summary>
         public string OsRegisteredUser { get; internal set; }
 
         /// <summary>
-        /// Operating system product serial identification number
+        /// Operating system product serial identification number.
         /// </summary>
         public string OsSerialNumber { get; internal set; }
 
         /// <summary>
-        /// Major version of the service pack installed on the computer system
+        /// Major version of the service pack installed on the computer system.
         /// </summary>
-        public UInt16? OsServicePackMajorVersion { get; internal set; }
+        public ushort? OsServicePackMajorVersion { get; internal set; }
 
         /// <summary>
-        /// Minor version of the service pack installed on the computer system
+        /// Minor version of the service pack installed on the computer system.
         /// </summary>
-        public UInt16? OsServicePackMinorVersion { get; internal set; }
+        public ushort? OsServicePackMinorVersion { get; internal set; }
 
         /// <summary>
-        /// Current status
+        /// Current status.
         /// </summary>
         public string OsStatus { get; internal set; }
 
         /// <summary>
-        /// Product suites available on the operating system
+        /// Product suites available on the operating system.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public OSProductSuite[] OsSuites { get; internal set; }
 
         /// <summary>
-        /// Server level of the operating system, if the operating system is a server
+        /// Server level of the operating system, if the operating system is a server.
         /// </summary>
         public ServerLevel? OsServerLevel { get; internal set; }
         #endregion Operating System
 
         #region Misc Info
         /// <summary>
-        /// Layout of the (first) keyboard attached to the system
+        /// Layout of the (first) keyboard attached to the system.
         /// </summary>
         public string KeyboardLayout { get; internal set; }
 
         /// <summary>
-        /// Name of the system's current time zone
+        /// Name of the system's current time zone.
         /// </summary>
         public string TimeZone { get; internal set; }
 
         /// <summary>
-        /// Path to the system's logon server
+        /// Path to the system's logon server.
         /// </summary>
         public string LogonServer { get; internal set; }
 
         /// <summary>
-        /// Power platform role
+        /// Power platform role.
         /// </summary>
         public PowerPlatformRole? PowerPlatformRole { get; internal set; }
 
         /// <summary>
-        /// If true, a HyperVisor was detected
+        /// If true, a HyperVisor was detected.
         /// </summary>
         public bool? HyperVisorPresent { get; internal set; }
 
         /// <summary>
         /// If a HyperVisor is not present, indicates the state of the
-        /// requirement that the Data Execution Prevention feature is available
+        /// requirement that the Data Execution Prevention feature is available.
         /// </summary>
         public bool? HyperVRequirementDataExecutionPreventionAvailable { get; internal set; }
 
         /// <summary>
         /// If a HyperVisor is not present, indicates the state of the
         /// requirement that the processor supports address translation
-        /// extensions used for virtualization
+        /// extensions used for virtualization.
         /// </summary>
         public bool? HyperVRequirementSecondLevelAddressTranslation { get; internal set; }
 
         /// <summary>
         /// If a HyperVisor is not present, indicates the state of the
         /// requirement that the firmware has enabled virtualization
-        /// extensions
+        /// extensions.
         /// </summary>
         public bool? HyperVRequirementVirtualizationFirmwareEnabled { get; internal set; }
 
         /// <summary>
         /// If a HyperVisor is not present, indicates the state of the
-        /// requirement that the processor supports  Intel or AMD Virtual
-        /// Machine Monitor extensions
+        /// requirement that the processor supports Intel or AMD Virtual
+        /// Machine Monitor extensions.
         /// </summary>
         public bool? HyperVRequirementVMMonitorModeExtensions { get; internal set; }
 
         /// <summary>
-        /// Indicates the status of the Device Guard features
+        /// Indicates the status of the Device Guard features.
         /// </summary>
         public DeviceGuardSmartStatus? DeviceGuardSmartStatus { get; internal set; }
 
         /// <summary>
-        /// Required Device Guard security properties
+        /// Required Device Guard security properties.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardHardwareSecure[] DeviceGuardRequiredSecurityProperties { get; internal set; }
 
         /// <summary>
-        /// Available Device Guard security properties
+        /// Available Device Guard security properties.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardHardwareSecure[] DeviceGuardAvailableSecurityProperties { get; internal set; }
 
         /// <summary>
-        /// Configured Device Guard security services
+        /// Configured Device Guard security services.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardSoftwareSecure[] DeviceGuardSecurityServicesConfigured { get; internal set; }
 
         /// <summary>
-        /// Running Device Guard security services
+        /// Running Device Guard security services.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardSoftwareSecure[] DeviceGuardSecurityServicesRunning { get; internal set; }
 
         /// <summary>
-        /// Status of the Device Guard Code Integrity policy enforcement
+        /// Status of the Device Guard Code Integrity policy enforcement.
         /// </summary>
         public DeviceGuardConfigCodeIntegrityStatus? DeviceGuardCodeIntegrityPolicyEnforcementStatus { get; internal set; }
 
         /// <summary>
-        /// Status of the Device Guard user mode Code Integrity policy enforcement
+        /// Status of the Device Guard user mode Code Integrity policy enforcement.
         /// </summary>
         public DeviceGuardConfigCodeIntegrityStatus? DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus { get; internal set; }
         #endregion Misc Info
@@ -3236,34 +3295,34 @@ namespace Microsoft.PowerShell.Commands
 
     #region Enums used in the output objects
     /// <summary>
-    /// System hardware security settings for administrator password status
+    /// System hardware security settings for administrator password status.
     /// </summary>
     public enum AdminPasswordStatus
     {
         /// <summary>
-        /// Feature is disabled
+        /// Feature is disabled.
         /// </summary>
         Disabled = 0,
 
         /// <summary>
-        /// Feature is Enabled
+        /// Feature is Enabled.
         /// </summary>
         Enabled = 1,
 
         /// <summary>
-        /// Feature is not implemented
+        /// Feature is not implemented.
         /// </summary>
         NotImplemented = 2,
 
         /// <summary>
-        /// Status is unknown
+        /// Status is unknown.
         /// </summary>
         Unknown = 3
     }
 
     /// <summary>
     /// Actions related to the BootOptionOn* properties of the Win32_ComputerSystem
-    /// CIM class
+    /// CIM class.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum BootOptionAction
@@ -3271,276 +3330,276 @@ namespace Microsoft.PowerShell.Commands
         //  <summary>
         //  This value is reserved
         //  </summary>
-        //Reserved = 0,
+        // Reserved = 0,
 
         /// <summary>
-        /// Boot into operating system
+        /// Boot into operating system.
         /// </summary>
         OperatingSystem = 1,
 
         /// <summary>
-        /// Boot into system utilities
+        /// Boot into system utilities.
         /// </summary>
         SystemUtilities = 2,
 
         /// <summary>
-        /// Do not reboot
+        /// Do not reboot.
         /// </summary>
         DoNotReboot = 3
     }
 
     /// <summary>
-    /// Indicates the state of a system element
+    /// Indicates the state of a system element.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum SystemElementState
     {
         /// <summary>
-        /// The element state is something other than those in this Enum
+        /// The element state is something other than those in this Enum.
         /// </summary>
         Other = 1,
 
         /// <summary>
-        /// The element state is unknown
+        /// The element state is unknown.
         /// </summary>
         Unknown = 2,
 
         /// <summary>
-        /// The element is in Safe state
+        /// The element is in Safe state.
         /// </summary>
         Safe = 3,
 
         /// <summary>
-        /// The element is in Warning state
+        /// The element is in Warning state.
         /// </summary>
         Warning = 4,
 
         /// <summary>
-        /// The element is in Critical state
+        /// The element is in Critical state.
         /// </summary>
         Critical = 5,
 
         /// <summary>
-        /// The element is in Non-Recoverable state
+        /// The element is in Non-Recoverable state.
         /// </summary>
         NonRecoverable = 6
     }
 
     /// <summary>
-    /// Specifies the processor architecture
+    /// Specifies the processor architecture.
     /// </summary>
     public enum CpuArchitecture
     {
         /// <summary>
-        /// Architecture is Intel x86
+        /// Architecture is Intel x86.
         /// </summary>
         x86 = 0,
 
         /// <summary>
-        /// Architecture is MIPS
+        /// Architecture is MIPS.
         /// </summary>
         MIPs = 1,
 
         /// <summary>
-        /// Architecture is DEC Alpha
+        /// Architecture is DEC Alpha.
         /// </summary>
         Alpha = 2,
 
         /// <summary>
-        /// Architecture is Motorolla PowerPC
+        /// Architecture is Motorola PowerPC.
         /// </summary>
         PowerPC = 3,
 
         /// <summary>
-        /// Architecture is ARM
+        /// Architecture is ARM.
         /// </summary>
         ARM = 5,
 
         /// <summary>
-        /// Architecture is Itanium-based 64-bit
+        /// Architecture is Itanium-based 64-bit.
         /// </summary>
         ia64 = 6,
 
         /// <summary>
-        /// Architecture is Intel 64-bit
+        /// Architecture is Intel 64-bit.
         /// </summary>
         x64 = 9
     }
 
     /// <summary>
-    /// Specifies a CPU's availability and status
+    /// Specifies a CPU's availability and status.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum CpuAvailability
     {
         /// <summary>
-        /// A state other than those specified in CpuAvailability
+        /// A state other than those specified in CpuAvailability.
         /// </summary>
         Other = 1,
 
         /// <summary>
-        /// Availability status is unknown
+        /// Availability status is unknown.
         /// </summary>
         Unknown = 2,
 
         /// <summary>
-        /// The device is running or at full power
+        /// The device is running or at full power.
         /// </summary>
         RunningOrFullPower = 3,
 
         /// <summary>
-        /// Device is in a Warning state
+        /// Device is in a Warning state.
         /// </summary>
         Warning = 4,
 
         /// <summary>
-        /// Availability status is In Test
+        /// Availability status is In Test.
         /// </summary>
         InTest = 5,
 
         /// <summary>
-        /// Status is not applicable to this device
+        /// Status is not applicable to this device.
         /// </summary>
         NotApplicable = 6,
 
         /// <summary>
-        /// The device is powered off
+        /// The device is powered off.
         /// </summary>
         PowerOff = 7,
 
         /// <summary>
-        /// Availability status is Offline
+        /// Availability status is Offline.
         /// </summary>
         OffLine = 8,
 
         /// <summary>
-        /// Availability status is Off-Duty
+        /// Availability status is Off-Duty.
         /// </summary>
         OffDuty = 9,
 
         /// <summary>
-        /// Availability status is Degraded
+        /// Availability status is Degraded.
         /// </summary>
         Degraded = 10,
 
         /// <summary>
-        /// Availability status is Not Installed
+        /// Availability status is Not Installed.
         /// </summary>
-        NotIntalled = 11,
+        NotInstalled = 11,
 
         /// <summary>
-        /// Availability status is Install Error
+        /// Availability status is Install Error.
         /// </summary>
         InstallError = 12,
 
         /// <summary>
-        /// The device is known to be in a power save state, but its exact status is unknown
+        /// The device is known to be in a power save state, but its exact status is unknown.
         /// </summary>
         PowerSaveUnknown = 13,
 
         /// <summary>
         /// The device is in a power save state, but is still functioning,
-        /// and may exhibit decreased performance
+        /// and may exhibit decreased performance.
         /// </summary>
         PowerSaveLowPowerMode = 14,
 
         /// <summary>
-        /// The device is not functioning, but can be brought to full power quickly
+        /// The device is not functioning, but can be brought to full power quickly.
         /// </summary>
         PowerSaveStandby = 15,
 
         /// <summary>
-        /// The device is in a power-cycle state
+        /// The device is in a power-cycle state.
         /// </summary>
         PowerCycle = 16,
 
         /// <summary>
-        /// The device is in a warning state, though also in a power save state
+        /// The device is in a warning state, though also in a power save state.
         /// </summary>
         PowerSaveWarning = 17,
 
         /// <summary>
-        /// The device is paused
+        /// The device is paused.
         /// </summary>
         Paused = 18,
 
         /// <summary>
-        /// The device is not ready
+        /// The device is not ready.
         /// </summary>
         NotReady = 19,
 
         /// <summary>
-        /// The device is not configured
+        /// The device is not configured.
         /// </summary>
         NotConfigured = 20,
 
         /// <summary>
-        /// The device is quiet
+        /// The device is quiet.
         /// </summary>
         Quiesced = 21
     }
 
     /// <summary>
-    /// Specifies that current status of the processor
+    /// Specifies that current status of the processor.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags", Justification = "The underlying MOF definition is not a bit field.")]
     public enum CpuStatus
     {
         /// <summary>
-        /// CPU status is Unknown
+        /// CPU status is Unknown.
         /// </summary>
         Unknown = 0,
 
         /// <summary>
-        /// CPU status is Enabled
+        /// CPU status is Enabled.
         /// </summary>
         Enabled = 1,
 
         /// <summary>
-        /// CPU status is Disabled by User via BIOS Setup
+        /// CPU status is Disabled by User via BIOS Setup.
         /// </summary>
         DisabledByUser = 2,
 
         /// <summary>
-        /// CPU status is Disabled by BIOS
+        /// CPU status is Disabled by BIOS.
         /// </summary>
         DisabledByBIOS = 3,
 
         /// <summary>
-        /// CPU is Idle
+        /// CPU is Idle.
         /// </summary>
         Idle = 4,
 
         // <summary>
         // This value is reserved
         // </summary>
-        //Reserved_5 = 5,
+        // Reserved_5 = 5,
 
         // <summary>
         // This value is reserved
         // </summary>
-        //Reserved_6 = 6,
+        // Reserved_6 = 6,
 
         /// <summary>
-        /// CPU is in another state
+        /// CPU is in another state.
         /// </summary>
         Other = 7
     }
 
     /// <summary>
-    /// Data Execution Prevention (DEP) settings
+    /// Data Execution Prevention (DEP) settings.
     /// </summary>
     public enum DataExecutionPreventionSupportPolicy
     {
-        //Unknown     = -1,
+        // Unknown     = -1,
 
         /// <summary>
-        /// DEP is turned off for all 32-bit applications on the computer with no exceptions
+        /// DEP is turned off for all 32-bit applications on the computer with no exceptions.
         /// </summary>
         AlwaysOff = 0,
 
         /// <summary>
-        /// DEP is enabled for all 32-bit applications on the computer
+        /// DEP is enabled for all 32-bit applications on the computer.
         /// </summary>
         AlwaysOn = 1,
 
@@ -3549,311 +3608,311 @@ namespace Microsoft.PowerShell.Commands
         /// Windows-based services. However, it is off by default for all 32-bit
         /// applications. A user or administrator must explicitly choose either
         /// the Always On or the Opt Out setting before DEP can be applied to
-        /// 32-bit applications
+        /// 32-bit applications.
         /// </summary>
         OptIn = 2,
 
         /// <summary>
         /// DEP is enabled by default for all 32-bit applications. A user or
         /// administrator can explicitly remove support for a 32-bit
-        /// application by adding the application to an exceptions list
+        /// application by adding the application to an exceptions list.
         /// </summary>
         OptOut = 3
     }
 
     /// <summary>
-    /// Status of the Device Guard feature
+    /// Status of the Device Guard feature.
     /// </summary>
     public enum DeviceGuardSmartStatus
     {
         /// <summary>
-        /// Device Guard is off
+        /// Device Guard is off.
         /// </summary>
         Off = 0,
 
         /// <summary>
-        /// Device Guard is Configured
+        /// Device Guard is Configured.
         /// </summary>
         Configured = 1,
 
         /// <summary>
-        /// Device Guard is Running
+        /// Device Guard is Running.
         /// </summary>
         Running = 2
     }
 
     /// <summary>
-    /// Configuration status of the Device Guard Code Integrity
+    /// Configuration status of the Device Guard Code Integrity.
     /// </summary>
     public enum DeviceGuardConfigCodeIntegrityStatus
     {
         /// <summary>
-        /// Code Integrity is off
+        /// Code Integrity is off.
         /// </summary>
         Off = 0,
 
         /// <summary>
-        /// Code Integrity uses Audit mode
+        /// Code Integrity uses Audit mode.
         /// </summary>
         AuditMode = 1,
 
         /// <summary>
-        /// Code Integrity uses Enforcement mode
+        /// Code Integrity uses Enforcement mode.
         /// </summary>
         EnforcementMode = 2
     }
 
     /// <summary>
-    /// Device Guard hardware security properties
+    /// Device Guard hardware security properties.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum DeviceGuardHardwareSecure
     {
         /// <summary>
-        /// Base Virtualization Support
+        /// Base Virtualization Support.
         /// </summary>
         BaseVirtualizationSupport = 1,
 
         /// <summary>
-        /// Secure Boot
+        /// Secure Boot.
         /// </summary>
         SecureBoot = 2,
 
         /// <summary>
-        /// DMA Protection
+        /// DMA Protection.
         /// </summary>
         DMAProtection = 3,
 
         /// <summary>
-        /// Secure Memory Overwrite
+        /// Secure Memory Overwrite.
         /// </summary>
         SecureMemoryOverwrite = 4
     }
 
     /// <summary>
-    /// Device Guard software security properties
+    /// Device Guard software security properties.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum DeviceGuardSoftwareSecure
     {
         /// <summary>
-        /// Credential Guard
+        /// Credential Guard.
         /// </summary>
         CredentialGuard = 1,
 
         /// <summary>
-        /// Hypervisor enforced Code Integrity
+        /// Hypervisor enforced Code Integrity.
         /// </summary>
         HypervisorEnforcedCodeIntegrity = 2
     }
 
     /// <summary>
-    /// Role of a computer in an assigned domain workgroup
+    /// Role of a computer in an assigned domain workgroup.
     /// </summary>
     public enum DomainRole
     {
         /// <summary>
-        /// Standalone Workstation
+        /// Standalone Workstation.
         /// </summary>
         StandaloneWorkstation = 0,
 
         /// <summary>
-        /// Member Workstation
+        /// Member Workstation.
         /// </summary>
         MemberWorkstation = 1,
 
         /// <summary>
-        /// Standalone Server
+        /// Standalone Server.
         /// </summary>
         StandaloneServer = 2,
 
         /// <summary>
-        /// Member Server
+        /// Member Server.
         /// </summary>
         MemberServer = 3,
 
         /// <summary>
-        /// Backup Domain Controller
+        /// Backup Domain Controller.
         /// </summary>
         BackupDomainController = 4,
 
         /// <summary>
-        /// Primary Domain Controller 
+        /// Primary Domain Controller.
         /// </summary>
         PrimaryDomainController = 5
     }
 
     /// <summary>
-    /// Specifies a firmware type
+    /// Specifies a firmware type.
     /// </summary>
     public enum FirmwareType
     {
         /// <summary>
-        /// The firmware type is unknown
+        /// The firmware type is unknown.
         /// </summary>
         Unknown = 0,
 
         /// <summary>
-        /// The computer booted in legacy BIOS mode
+        /// The computer booted in legacy BIOS mode.
         /// </summary>
         Bios = 1,
 
         /// <summary>
-        /// The computer booted in UEFI mode
+        /// The computer booted in UEFI mode.
         /// </summary>
         Uefi = 2,
 
         /// <summary>
-        /// Not implemented
+        /// Not implemented.
         /// </summary>
         Max = 3
     }
 
     /// <summary>
-    /// Increase in priority given to the foreground application
+    /// Increase in priority given to the foreground application.
     /// </summary>
     public enum ForegroundApplicationBoost
     {
         /// <summary>
-        /// The system boosts the quantum length by 6
+        /// The system boosts the quantum length by 6.
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// The system boosts the quantum length by 12
+        /// The system boosts the quantum length by 12.
         /// </summary>
         Minimum = 1,
 
         /// <summary>
-        /// The system boosts the quantum length by 18
+        /// The system boosts the quantum length by 18.
         /// </summary>
         Maximum = 2
     }
 
     /// <summary>
-    /// hardware security settings for the reset button on a computer
+    /// Hardware security settings for the reset button on a computer.
     /// </summary>
     public enum FrontPanelResetStatus
     {
         /// <summary>
-        /// Reset button is disabled
+        /// Reset button is disabled.
         /// </summary>
         Disabled = 0,
 
         /// <summary>
-        /// Reset button is enabled
+        /// Reset button is enabled.
         /// </summary>
         Enabled = 1,
 
         /// <summary>
-        /// Hardware security settings are not implement
+        /// Hardware security settings are not implement.
         /// </summary>
         NotImplemented = 2,
 
         /// <summary>
-        /// Unknown security setting
+        /// Unknown security setting.
         /// </summary>
         Unknown = 3
     }
 
     /// <summary>
-    /// Indicates a hardware security setting
+    /// Indicates a hardware security setting.
     /// </summary>
     public enum HardwareSecurity
     {
         /// <summary>
-        /// Hardware security is disabled
+        /// Hardware security is disabled.
         /// </summary>
         Disabled = 0,
 
         /// <summary>
-        /// Hardware security is enabled
+        /// Hardware security is enabled.
         /// </summary>
         Enabled = 1,
 
         /// <summary>
-        /// Hardware security is not implemented
+        /// Hardware security is not implemented.
         /// </summary>
         NotImplemented = 2,
 
         /// <summary>
-        /// Hardware security setting is unknown
+        /// Hardware security setting is unknown.
         /// </summary>
         Unknown = 3
     }
 
     /// <summary>
-    /// State of the network adapter connection to the network
+    /// State of the network adapter connection to the network.
     /// </summary>
     public enum NetConnectionStatus
     {
         /// <summary>
-        /// Adapter is disconnected
+        /// Adapter is disconnected.
         /// </summary>
         Disconnected = 0,
 
         /// <summary>
-        /// Adapter is connecting
+        /// Adapter is connecting.
         /// </summary>
         Connecting = 1,
 
         /// <summary>
-        /// Adapter is connected
+        /// Adapter is connected.
         /// </summary>
         Connected = 2,
 
         /// <summary>
-        /// Adapter is disconnecting
+        /// Adapter is disconnecting.
         /// </summary>
         Disconnecting = 3,
 
         /// <summary>
-        /// Adapter hardware is not present
+        /// Adapter hardware is not present.
         /// </summary>
         HardwareNotPresent = 4,
 
         /// <summary>
-        /// Adapter hardware is disabled
+        /// Adapter hardware is disabled.
         /// </summary>
         HardwareDisabled = 5,
 
         /// <summary>
-        /// Adapter has a hardware malfunction
+        /// Adapter has a hardware malfunction.
         /// </summary>
         HardwareMalfunction = 6,
 
         /// <summary>
-        /// Media is disconnected
+        /// Media is disconnected.
         /// </summary>
         MediaDisconnected = 7,
 
         /// <summary>
-        /// Adapter is authenticating
+        /// Adapter is authenticating.
         /// </summary>
         Authenticating = 8,
 
         /// <summary>
-        /// Authentication has succeeded
+        /// Authentication has succeeded.
         /// </summary>
         AuthenticationSucceeded = 9,
 
         /// <summary>
-        /// Authentication has failed
+        /// Authentication has failed.
         /// </summary>
         AuthenticationFailed = 10,
 
         /// <summary>
-        /// Address is invalid
+        /// Address is invalid.
         /// </summary>
         InvalidAddress = 11,
 
         /// <summary>
-        /// Credentials are required
+        /// Credentials are required.
         /// </summary>
         CredentialsRequired = 12,
 
         /// <summary>
-        /// Other unspecified state
+        /// Other unspecified state.
         /// </summary>
         Other = 13
     }
@@ -3864,23 +3923,23 @@ namespace Microsoft.PowerShell.Commands
     public enum OSEncryptionLevel
     {
         /// <summary>
-        /// 40-bit encription
+        /// 40-bit encryption.
         /// </summary>
         Encrypt40Bits = 0,
 
         /// <summary>
-        /// 128-bit encription
+        /// 128-bit encryption.
         /// </summary>
         Encrypt128Bits = 1,
 
         /// <summary>
-        /// n-bit encription
+        /// N-bit encryption.
         /// </summary>
         EncryptNBits = 2
     }
 
     /// <summary>
-    /// Indicates installed and licensed system product additions to the operating system
+    /// Indicates installed and licensed system product additions to the operating system.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     [FlagsAttribute]
@@ -3888,68 +3947,68 @@ namespace Microsoft.PowerShell.Commands
     {
         /// <summary>
         /// Microsoft Small Business Server was once installed, but may have
-        /// been upgraded to another version of Windows
+        /// been upgraded to another version of Windows.
         /// </summary>
         SmallBusinessServer = 0x0001,
 
         /// <summary>
-        /// Windows Server 2008 Enterprise is installed
+        /// Windows Server 2008 Enterprise is installed.
         /// </summary>
         Server2008Enterprise = 0x0002,
 
         /// <summary>
-        /// Windows BackOffice components are installed
+        /// Windows BackOffice components are installed.
         /// </summary>
         BackOfficeComponents = 0x0004,
 
         /// <summary>
-        /// Communication Server is installed
+        /// Communication Server is installed.
         /// </summary>
         CommunicationsServer = 0x0008,
 
         /// <summary>
-        /// Terminal Services is installed
+        /// Terminal Services is installed.
         /// </summary>
         TerminalServices = 0x0010,
 
         /// <summary>
         /// Microsoft Small Business Server is installed with the restrictive
-        /// client license
+        /// client license.
         /// </summary>
         SmallBusinessServerRestricted = 0x0020,
 
         /// <summary>
-        /// Windows Embedded is installed
+        /// Windows Embedded is installed.
         /// </summary>
         WindowsEmbedded = 0x0040,
 
         /// <summary>
-        /// A Datacenter edition is installed
+        /// A Datacenter edition is installed.
         /// </summary>
         DatacenterEdition = 0x0080,
 
         /// <summary>
-        /// Terminal Services is installed, but only one interactive session is supported
+        /// Terminal Services is installed, but only one interactive session is supported.
         /// </summary>
         TerminalServicesSingleSession = 0x0100,
 
         /// <summary>
-        /// Windows Home Edition is installed
+        /// Windows Home Edition is installed.
         /// </summary>
         HomeEdition = 0x0200,
 
         /// <summary>
-        /// Web Server Edition is installed
+        /// Web Server Edition is installed.
         /// </summary>
         WebServerEdition = 0x0400,
 
         /// <summary>
-        /// Storage Server Edition is installed
+        /// Storage Server Edition is installed.
         /// </summary>
         StorageServerEdition = 0x2000,
 
         /// <summary>
-        /// Compute Cluster Edition is installed
+        /// Compute Cluster Edition is installed.
         /// </summary>
         ComputeClusterEdition = 0x4000
     }
@@ -3960,147 +4019,147 @@ namespace Microsoft.PowerShell.Commands
     public enum OperatingSystemSKU
     {
         /// <summary>
-        /// The SKU is undefined
+        /// The SKU is undefined.
         /// </summary>
         Undefined = 0,
 
         /// <summary>
-        /// SKU is Ultimate Edition
+        /// SKU is Ultimate Edition.
         /// </summary>
         UltimateEdition = 1,
 
         /// <summary>
-        /// SKU is Home Basic Edition
+        /// SKU is Home Basic Edition.
         /// </summary>
         HomeBasicEdition = 2,
 
         /// <summary>
-        /// SKU is Home Premium Edition
+        /// SKU is Home Premium Edition.
         /// </summary>
         HomePremiumEdition = 3,
 
         /// <summary>
-        /// SKU is Enterprise Edition
+        /// SKU is Enterprise Edition.
         /// </summary>
         EnterpriseEdition = 4,
 
         /// <summary>
-        /// SKU is Home Basic N Edition
+        /// SKU is Home Basic N Edition.
         /// </summary>
         HomeBasicNEdition = 5,
 
         /// <summary>
-        /// SKU is Business Edition
+        /// SKU is Business Edition.
         /// </summary>
         BusinessEdition = 6,
 
         /// <summary>
-        /// SKU is Standard Server Edition
+        /// SKU is Standard Server Edition.
         /// </summary>
         StandardServerEdition = 7,
 
         /// <summary>
-        /// SKU is Datacenter Server Edition
+        /// SKU is Datacenter Server Edition.
         /// </summary>
         DatacenterServerEdition = 8,
 
         /// <summary>
-        /// SKU is Small Business Server Edition
+        /// SKU is Small Business Server Edition.
         /// </summary>
         SmallBusinessServerEdition = 9,
 
         /// <summary>
-        /// SKU is Enterprise Server Edition
+        /// SKU is Enterprise Server Edition.
         /// </summary>
         EnterpriseServerEdition = 10,
 
         /// <summary>
-        /// SKU is Starter Edition
+        /// SKU is Starter Edition.
         /// </summary>
         StarterEdition = 11,
 
         /// <summary>
-        /// SKU is Datacenter Server Core Edition
+        /// SKU is Datacenter Server Core Edition.
         /// </summary>
         DatacenterServerCoreEdition = 12,
 
         /// <summary>
-        /// SKU is Standard Server Core Edition
+        /// SKU is Standard Server Core Edition.
         /// </summary>
         StandardServerCoreEdition = 13,
 
         /// <summary>
-        /// SKU is Enterprise Server Core Edition
+        /// SKU is Enterprise Server Core Edition.
         /// </summary>
         EnterpriseServerCoreEdition = 14,
 
         /// <summary>
-        /// SKU is Enterprise Server IA64 Edition
+        /// SKU is Enterprise Server IA64 Edition.
         /// </summary>
         EnterpriseServerIA64Edition = 15,
 
         /// <summary>
-        /// SKU is Business N Edition
+        /// SKU is Business N Edition.
         /// </summary>
         BusinessNEdition = 16,
 
         /// <summary>
-        /// SKU is Web Server Edition
+        /// SKU is Web Server Edition.
         /// </summary>
         WebServerEdition = 17,
 
         /// <summary>
-        /// SKU is Cluster Server Edition
+        /// SKU is Cluster Server Edition.
         /// </summary>
         ClusterServerEdition = 18,
 
         /// <summary>
-        /// SKU is Home Server Edition
+        /// SKU is Home Server Edition.
         /// </summary>
         HomeServerEdition = 19,
 
         /// <summary>
-        /// SKU is Storage Express Server Edition
+        /// SKU is Storage Express Server Edition.
         /// </summary>
         StorageExpressServerEdition = 20,
 
         /// <summary>
-        /// SKU is Storage Standard Server Edition
+        /// SKU is Storage Standard Server Edition.
         /// </summary>
         StorageStandardServerEdition = 21,
 
         /// <summary>
-        /// SKU is Storage Workgroup Server Edition
+        /// SKU is Storage Workgroup Server Edition.
         /// </summary>
         StorageWorkgroupServerEdition = 22,
 
         /// <summary>
-        /// SKU is Storage Enterprise Server Edition
+        /// SKU is Storage Enterprise Server Edition.
         /// </summary>
         StorageEnterpriseServerEdition = 23,
 
         /// <summary>
-        /// SKU is Server For Small Business Edition
+        /// SKU is Server For Small Business Edition.
         /// </summary>
         ServerForSmallBusinessEdition = 24,
 
         /// <summary>
-        /// SKU is Small Business Server Premium Edition 
+        /// SKU is Small Business Server Premium Edition.
         /// </summary>
         SmallBusinessServerPremiumEdition = 25,
 
         /// <summary>
-        /// SKU is to be determined
+        /// SKU is to be determined.
         /// </summary>
         TBD = 26,
 
         /// <summary>
-        /// SKU is Windows Enterprise
+        /// SKU is Windows Enterprise.
         /// </summary>
         WindowsEnterprise = 27,
 
         /// <summary>
-        /// SKU is Windows Ultimate
+        /// SKU is Windows Ultimate.
         /// </summary>
         WindowsUltimate = 28,
 
@@ -4110,17 +4169,17 @@ namespace Microsoft.PowerShell.Commands
         WebServerCore = 29,
 
         /// <summary>
-        /// SKU is Server Foundation
+        /// SKU is Server Foundation.
         /// </summary>
         ServerFoundation = 33,
 
         /// <summary>
-        /// SKU is Windows Home Server
+        /// SKU is Windows Home Server.
         /// </summary>
         WindowsHomeServer = 34,
 
         /// <summary>
-        /// SKU is Windows Server Standard without Hyper-V
+        /// SKU is Windows Server Standard without Hyper-V.
         /// </summary>
         WindowsServerStandardNoHyperVFull = 36,
 
@@ -4150,7 +4209,7 @@ namespace Microsoft.PowerShell.Commands
         WindowsServerEnterpriseNoHyperVCore = 41,
 
         /// <summary>
-        /// SKU is Microsoft Hyper-V Server
+        /// SKU is Microsoft Hyper-V Server.
         /// </summary>
         MicrosoftHyperVServer = 42,
 
@@ -4175,7 +4234,7 @@ namespace Microsoft.PowerShell.Commands
         StorageServerEnterpriseCore = 46,
 
         /// <summary>
-        /// SKU is Windows Small Business Server 2011 Essentials
+        /// SKU is Windows Small Business Server 2011 Essentials.
         /// </summary>
         WindowsSmallBusinessServer2011Essentials = 50,
 
@@ -4185,655 +4244,655 @@ namespace Microsoft.PowerShell.Commands
         SmallBusinessServerPremiumCore = 63,
 
         /// <summary>
-        /// SKU is Windows Server Hyper Core V
+        /// SKU is Windows Server Hyper Core V.
         /// </summary>
         WindowsServerHyperCoreV = 64,
 
         /// <summary>
-        /// SKU is Windows Thin PC
+        /// SKU is Windows Thin PC.
         /// </summary>
         WindowsThinPC = 87,
 
         /// <summary>
-        /// SKU is Windows Embedded Industry
+        /// SKU is Windows Embedded Industry.
         /// </summary>
         WindowsEmbeddedIndustry = 89,
 
         /// <summary>
-        /// SKU is Windows RT
+        /// SKU is Windows RT.
         /// </summary>
         WindowsRT = 97,
 
         /// <summary>
-        /// SKU is Windows Home
+        /// SKU is Windows Home.
         /// </summary>
         WindowsHome = 101,
 
         /// <summary>
-        /// SKU is Windows Professional with Media Center
+        /// SKU is Windows Professional with Media Center.
         /// </summary>
         WindowsProfessionalWithMediaCenter = 103,
 
         /// <summary>
-        /// SKU is Windows Mobile
+        /// SKU is Windows Mobile.
         /// </summary>
         WindowsMobile = 104,
 
         /// <summary>
-        /// SKU is Windows Embedded Handheld
+        /// SKU is Windows Embedded Handheld.
         /// </summary>
         WindowsEmbeddedHandheld = 118,
 
         /// <summary>
-        /// SKU is Windows IoT (Internet of Things) Core
+        /// SKU is Windows IoT (Internet of Things) Core.
         /// </summary>
         WindowsIotCore = 123
     }
 
     /// <summary>
-    /// Type of operating system
+    /// Type of operating system.
     /// </summary>
     public enum OSType
     {
         /// <summary>
-        /// OS is unknown
+        /// OS is unknown.
         /// </summary>
         Unknown = 0,
 
         /// <summary>
-        /// OS is one other than covered by this Enum
+        /// OS is one other than covered by this Enum.
         /// </summary>
         Other = 1,
 
         /// <summary>
-        /// OS is MacOS
+        /// OS is MacOS.
         /// </summary>
         MACROS = 2,
 
         /// <summary>
-        /// OS is AT&amp;T UNIX
+        /// OS is AT&amp;T UNIX.
         /// </summary>
         ATTUNIX = 3,
 
         /// <summary>
-        /// OS is DG/UX
+        /// OS is DG/UX.
         /// </summary>
         DGUX = 4,
 
         /// <summary>
-        /// OS is DECNT
+        /// OS is DECNT.
         /// </summary>
         DECNT = 5,
 
         /// <summary>
-        /// OS is Digital UNIX
+        /// OS is Digital UNIX.
         /// </summary>
         DigitalUNIX = 6,
 
         /// <summary>
-        /// OS is OpenVMS
+        /// OS is OpenVMS.
         /// </summary>
         OpenVMS = 7,
 
         /// <summary>
-        /// OS is HP-UX
+        /// OS is HP-UX.
         /// </summary>
         HPUX = 8,
 
         /// <summary>
-        /// OS is AIX
+        /// OS is AIX.
         /// </summary>
         AIX = 9,
 
         /// <summary>
-        /// OS is MVS
+        /// OS is MVS.
         /// </summary>
         MVS = 10,
 
         /// <summary>
-        /// OS is OS/400
+        /// OS is OS/400.
         /// </summary>
         OS400 = 11,
 
         /// <summary>
-        /// OS is OS/2
+        /// OS is OS/2.
         /// </summary>
         OS2 = 12,
 
         /// <summary>
-        /// OS is Java Virtual Machine
+        /// OS is Java Virtual Machine.
         /// </summary>
         JavaVM = 13,
 
         /// <summary>
-        /// OS is MS-DOS
+        /// OS is MS-DOS.
         /// </summary>
         MSDOS = 14,
 
         /// <summary>
-        /// OS is Windows 3x
+        /// OS is Windows 3x.
         /// </summary>
         WIN3x = 15,
 
         /// <summary>
-        /// OS is Windows 95
+        /// OS is Windows 95.
         /// </summary>
         WIN95 = 16,
 
         /// <summary>
-        /// OS is Windows 98
+        /// OS is Windows 98.
         /// </summary>
         WIN98 = 17,
 
         /// <summary>
-        /// OS is Windows NT
+        /// OS is Windows NT.
         /// </summary>
         WINNT = 18,
 
         /// <summary>
-        /// OS is Windows CE
+        /// OS is Windows CE.
         /// </summary>
         WINCE = 19,
 
         /// <summary>
-        /// OS is NCR System 3000
+        /// OS is NCR System 3000.
         /// </summary>
         NCR3000 = 20,
 
         /// <summary>
-        /// OS is NetWare
+        /// OS is NetWare.
         /// </summary>
         NetWare = 21,
 
         /// <summary>
-        /// OS is OSF
+        /// OS is OSF.
         /// </summary>
         OSF = 22,
 
         /// <summary>
-        /// OS is DC/OS
+        /// OS is DC/OS.
         /// </summary>
         DC_OS = 23,
 
         /// <summary>
-        /// OS is Reliant UNIX
+        /// OS is Reliant UNIX.
         /// </summary>
         ReliantUNIX = 24,
 
         /// <summary>
-        /// OS is SCO UnixWare
+        /// OS is SCO UnixWare.
         /// </summary>
         SCOUnixWare = 25,
 
         /// <summary>
-        /// OS is SCO OpenServer
+        /// OS is SCO OpenServer.
         /// </summary>
         SCOOpenServer = 26,
 
         /// <summary>
-        /// OS is Sequent
+        /// OS is Sequent.
         /// </summary>
         Sequent = 27,
 
         /// <summary>
-        /// OS is IRIX
+        /// OS is IRIX.
         /// </summary>
         IRIX = 28,
 
         /// <summary>
-        /// OS is Solaris
+        /// OS is Solaris.
         /// </summary>
         Solaris = 29,
 
         /// <summary>
-        /// OS is SunOS
+        /// OS is SunOS.
         /// </summary>
         SunOS = 30,
 
         /// <summary>
-        /// OS is U6000
+        /// OS is U6000.
         /// </summary>
         U6000 = 31,
 
         /// <summary>
-        /// OS is ASERIES
+        /// OS is ASERIES.
         /// </summary>
         ASERIES = 32,
 
         /// <summary>
-        /// OS is Tandem NSK
+        /// OS is Tandem NSK.
         /// </summary>
         TandemNSK = 33,
 
         /// <summary>
-        /// OS is Tandem NT
+        /// OS is Tandem NT.
         /// </summary>
         TandemNT = 34,
 
         /// <summary>
-        /// OS is BS2000
+        /// OS is BS2000.
         /// </summary>
         BS2000 = 35,
 
         /// <summary>
-        /// OS is Linux
+        /// OS is Linux.
         /// </summary>
         LINUX = 36,
 
         /// <summary>
-        /// OS is Lynx
+        /// OS is Lynx.
         /// </summary>
         Lynx = 37,
 
         /// <summary>
-        /// OS is XENIX
+        /// OS is XENIX.
         /// </summary>
         XENIX = 38,
 
         /// <summary>
-        /// OS is VM/ESA
+        /// OS is VM/ESA.
         /// </summary>
         VM_ESA = 39,
 
         /// <summary>
-        /// OS is Interactive UNIX
+        /// OS is Interactive UNIX.
         /// </summary>
         InteractiveUNIX = 40,
 
         /// <summary>
-        /// OS is BSD UNIX
+        /// OS is BSD UNIX.
         /// </summary>
         BSDUNIX = 41,
 
         /// <summary>
-        /// OS is FreeBSD
+        /// OS is FreeBSD.
         /// </summary>
         FreeBSD = 42,
 
         /// <summary>
-        /// OS is NetBSD
+        /// OS is NetBSD.
         /// </summary>
         NetBSD = 43,
 
         /// <summary>
-        /// OS is GNU Hurd
+        /// OS is GNU Hurd.
         /// </summary>
         GNUHurd = 44,
 
         /// <summary>
-        /// OS is OS 9
+        /// OS is OS 9.
         /// </summary>
         OS9 = 45,
 
         /// <summary>
-        /// OS is Mach Kernel
+        /// OS is Mach Kernel.
         /// </summary>
         MACHKernel = 46,
 
         /// <summary>
-        /// OS is Inferno
+        /// OS is Inferno.
         /// </summary>
         Inferno = 47,
 
         /// <summary>
-        /// OS is QNX
+        /// OS is QNX.
         /// </summary>
         QNX = 48,
 
         /// <summary>
-        /// OS is EPOC
+        /// OS is EPOC.
         /// </summary>
         EPOC = 49,
 
         /// <summary>
-        /// OS is IxWorks
+        /// OS is IxWorks.
         /// </summary>
         IxWorks = 50,
 
         /// <summary>
-        /// OS is VxWorks
+        /// OS is VxWorks.
         /// </summary>
         VxWorks = 51,
 
         /// <summary>
-        /// OS is MiNT
+        /// OS is MiNT.
         /// </summary>
         MiNT = 52,
 
         /// <summary>
-        /// OS is BeOS
+        /// OS is BeOS.
         /// </summary>
         BeOS = 53,
 
         /// <summary>
-        /// OS is HP MPE
+        /// OS is HP MPE.
         /// </summary>
         HP_MPE = 54,
 
         /// <summary>
-        /// OS is NextStep
+        /// OS is NextStep.
         /// </summary>
         NextStep = 55,
 
         /// <summary>
-        /// OS is PalmPilot
+        /// OS is PalmPilot.
         /// </summary>
         PalmPilot = 56,
 
         /// <summary>
-        /// OS is Rhapsody
+        /// OS is Rhapsody.
         /// </summary>
         Rhapsody = 57,
 
         /// <summary>
-        /// OS is Windows 2000
+        /// OS is Windows 2000.
         /// </summary>
         Windows2000 = 58,
 
         /// <summary>
-        /// OS is Dedicated
+        /// OS is Dedicated.
         /// </summary>
         Dedicated = 59,
 
         /// <summary>
-        /// OS is OS/390
+        /// OS is OS/390.
         /// </summary>
         OS_390 = 60,
 
         /// <summary>
-        /// OS is VSE
+        /// OS is VSE.
         /// </summary>
         VSE = 61,
 
         /// <summary>
-        /// OS is TPF
+        /// OS is TPF.
         /// </summary>
         TPF = 62
     }
 
     /// <summary>
-    /// Specifies the type of the computer in use, such as laptop, desktop, or Tablet
+    /// Specifies the type of the computer in use, such as laptop, desktop, or Tablet.
     /// </summary>
     public enum PCSystemType
     {
         /// <summary>
-        /// System type is unspecified
+        /// System type is unspecified.
         /// </summary>
         Unspecified = 0,
 
         /// <summary>
-        /// System is a desktop
+        /// System is a desktop.
         /// </summary>
         Desktop = 1,
 
         /// <summary>
-        /// System is a mobile device
+        /// System is a mobile device.
         /// </summary>
         Mobile = 2,
 
         /// <summary>
-        /// System is a workstation
+        /// System is a workstation.
         /// </summary>
         Workstation = 3,
 
         /// <summary>
-        /// System is an Enterprise Server
+        /// System is an Enterprise Server.
         /// </summary>
         EnterpriseServer = 4,
 
         /// <summary>
-        /// System is a Small Office and Home Office (SOHO) Server
+        /// System is a Small Office and Home Office (SOHO) Server.
         /// </summary>
         SOHOServer = 5,
 
         /// <summary>
-        /// System is an appliance PC
+        /// System is an appliance PC.
         /// </summary>
         AppliancePC = 6,
 
         /// <summary>
-        /// System is a performance server
+        /// System is a performance server.
         /// </summary>
         PerformanceServer = 7,
 
         /// <summary>
-        /// Maximum enum value
+        /// Maximum enum value.
         /// </summary>
         Maximum = 8
     }
 
     /// <summary>
     /// Specifies the type of the computer in use, such as laptop, desktop, or Tablet.
-    /// This is an extended verion of PCSystemType
+    /// This is an extended version of PCSystemType.
     /// </summary>
-    //TODO: conflate these two enums???
+    // TODO: conflate these two enums???
     public enum PCSystemTypeEx
     {
         /// <summary>
-        /// System type is unspecified
+        /// System type is unspecified.
         /// </summary>
         Unspecified = 0,
 
         /// <summary>
-        /// System is a desktop
+        /// System is a desktop.
         /// </summary>
         Desktop = 1,
 
         /// <summary>
-        /// System is a mobile device
+        /// System is a mobile device.
         /// </summary>
         Mobile = 2,
 
         /// <summary>
-        /// System is a workstation
+        /// System is a workstation.
         /// </summary>
         Workstation = 3,
 
         /// <summary>
-        /// System is an Enterprise Server
+        /// System is an Enterprise Server.
         /// </summary>
         EnterpriseServer = 4,
 
         /// <summary>
-        /// System is a Small Office and Home Office (SOHO) Server
+        /// System is a Small Office and Home Office (SOHO) Server.
         /// </summary>
         SOHOServer = 5,
 
         /// <summary>
-        /// System is an appliance PC
+        /// System is an appliance PC.
         /// </summary>
         AppliancePC = 6,
 
         /// <summary>
-        /// System is a performance server
+        /// System is a performance server.
         /// </summary>
         PerformanceServer = 7,
 
         /// <summary>
-        /// System is a Slate
+        /// System is a Slate.
         /// </summary>
         Slate = 8,
 
         /// <summary>
-        /// Maximum enum value
+        /// Maximum enum value.
         /// </summary>
         Maximum = 9
     }
 
     /// <summary>
-    /// Specifies power-related capabilities of a logical device
+    /// Specifies power-related capabilities of a logical device.
     /// </summary>
     public enum PowerManagementCapabilities
     {
         /// <summary>
-        /// Unknown capability
+        /// Unknown capability.
         /// </summary>
         Unknown = 0,
 
         /// <summary>
-        /// Power management not supported
+        /// Power management not supported.
         /// </summary>
         NotSupported = 1,
 
         /// <summary>
-        /// Power management features are currently disabled
+        /// Power management features are currently disabled.
         /// </summary>
         Disabled = 2,
 
         /// <summary>
         /// The power management features are currently enabled,
-        /// but the exact feature set is unknown or the information is unavailable
+        /// but the exact feature set is unknown or the information is unavailable.
         /// </summary>
         Enabled = 3,
 
         /// <summary>
-        /// The device can change its power state based on usage or other criteria
+        /// The device can change its power state based on usage or other criteria.
         /// </summary>
         PowerSavingModesEnteredAutomatically = 4,
 
         /// <summary>
-        /// The power state may be set through the Win32_LogicalDevice class
+        /// The power state may be set through the Win32_LogicalDevice class.
         /// </summary>
         PowerStateSettable = 5,
 
         /// <summary>
-        /// Power may be done through the Win32_LogicalDevice class
+        /// Power may be done through the Win32_LogicalDevice class.
         /// </summary>
         PowerCyclingSupported = 6,
 
         /// <summary>
-        /// Timed power-on is supported
+        /// Timed power-on is supported.
         /// </summary>
         TimedPowerOnSupported = 7
     }
 
     /// <summary>
-    /// Specified power states
+    /// Specified power states.
     /// </summary>
     public enum PowerState
     {
         /// <summary>
-        /// Power state is unknown
+        /// Power state is unknown.
         /// </summary>
         Unknown = 0,
 
         /// <summary>
-        /// Full power
+        /// Full power.
         /// </summary>
         FullPower = 1,
 
         /// <summary>
-        /// Power Save - Low Power mode 
+        /// Power Save - Low Power mode.
         /// </summary>
         PowerSaveLowPowerMode = 2,
 
         /// <summary>
-        /// Power Save - Standby
+        /// Power Save - Standby.
         /// </summary>
         PowerSaveStandby = 3,
 
         /// <summary>
-        /// Unknown Power Save mode
+        /// Unknown Power Save mode.
         /// </summary>
         PowerSaveUnknown = 4,
 
         /// <summary>
-        /// Power Cycle
+        /// Power Cycle.
         /// </summary>
         PowerCycle = 5,
 
         /// <summary>
-        /// Power Off
+        /// Power Off.
         /// </summary>
         PowerOff = 6,
 
         /// <summary>
-        /// Power Save - Warning
+        /// Power Save - Warning.
         /// </summary>
         PowerSaveWarning = 7,
 
         /// <summary>
-        /// Power Save - Hibernate
+        /// Power Save - Hibernate.
         /// </summary>
         PowerSaveHibernate = 8,
 
         /// <summary>
-        /// Power Save - Soft off
+        /// Power Save - Soft off.
         /// </summary>
         PowerSaveSoftOff = 9
     }
 
     /// <summary>
-    /// Specifies the primary function of a processor
+    /// Specifies the primary function of a processor.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum ProcessorType
     {
         /// <summary>
-        /// Processor ype is other than provided in these enumeration values
+        /// Processor ype is other than provided in these enumeration values.
         /// </summary>
         Other = 1,
 
         /// <summary>
-        /// Proccessor type is 
+        /// Processor type is.
         /// </summary>
         Unknown = 2,
 
         /// <summary>
-        /// Proccessor is a Central Processing Unit (CPU)
+        /// Processor is a Central Processing Unit (CPU)
         /// </summary>
         CentralProcessor = 3,
 
         /// <summary>
-        /// Proccessor is a Math processor
+        /// Processor is a Math processor.
         /// </summary>
         MathProcessor = 4,
 
         /// <summary>
-        /// Proccessor is a Digital Signal processor (DSP)
+        /// Processor is a Digital Signal processor (DSP)
         /// </summary>
         DSPProcessor = 5,
 
         /// <summary>
-        /// Proccessor is a Video processor
+        /// Processor is a Video processor.
         /// </summary>
         VideoProcessor = 6
     }
 
     /// <summary>
-    /// Specifies a computer's reset capability
+    /// Specifies a computer's reset capability.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum ResetCapability
     {
         /// <summary>
-        /// Capability is a value other than provided in these enumerated values
+        /// Capability is a value other than provided in these enumerated values.
         /// </summary>
         Other = 1,
 
         /// <summary>
-        /// Reset capability is unknown
+        /// Reset capability is unknown.
         /// </summary>
         Unknown = 2,
 
         /// <summary>
-        /// Capability is disabled
+        /// Capability is disabled.
         /// </summary>
         Disabled = 3,
 
         /// <summary>
-        /// Capability is enabled
+        /// Capability is enabled.
         /// </summary>
         Enabled = 4,
 
         /// <summary>
-        /// Capability is not implemented
+        /// Capability is not implemented.
         /// </summary>
         NotImplemented = 5
     }
 
     /// <summary>
-    /// Specifies the kind of event that causes a computer to power up
+    /// Specifies the kind of event that causes a computer to power up.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum WakeUpType
@@ -4841,61 +4900,61 @@ namespace Microsoft.PowerShell.Commands
         // <summary>
         // This value is reserved
         // </summary>
-        //Reserved = 0,
+        // Reserved = 0,
 
         /// <summary>
-        /// An event other than specified in this enumeration
+        /// An event other than specified in this enumeration.
         /// </summary>
         Other = 1,
 
         /// <summary>
-        /// Event type is unknown
+        /// Event type is unknown.
         /// </summary>
         Unknown = 2,
 
         /// <summary>
-        /// Event is APM timer
+        /// Event is APM timer.
         /// </summary>
         APMTimer = 3,
 
         /// <summary>
-        /// Event is a Modem Ring
+        /// Event is a Modem Ring.
         /// </summary>
         ModemRing = 4,
 
         /// <summary>
-        /// Event is a LAN Remove
+        /// Event is a LAN Remove.
         /// </summary>
         LANRemote = 5,
 
         /// <summary>
-        /// Event is a power switch
+        /// Event is a power switch.
         /// </summary>
         PowerSwitch = 6,
 
         /// <summary>
-        /// Event is a PCI PME# signal
+        /// Event is a PCI PME# signal.
         /// </summary>
         PCIPME = 7,
 
         /// <summary>
-        /// AC power was restored
+        /// AC power was restored.
         /// </summary>
         ACPowerRestored = 8
     }
 
     /// <summary>
-    /// Indicates the OEM's preferred power management profile
+    /// Indicates the OEM's preferred power management profile.
     /// </summary>
     public enum PowerPlatformRole
     {
         /// <summary>
-        /// The OEM did not specify a specific role
+        /// The OEM did not specify a specific role.
         /// </summary>
         Unspecified = 0,
 
         /// <summary>
-        /// The OEM specified a desktop role
+        /// The OEM specified a desktop role.
         /// </summary>
         Desktop = 1,
 
@@ -4905,120 +4964,120 @@ namespace Microsoft.PowerShell.Commands
         Mobile = 2,
 
         /// <summary>
-        /// The OEM specified a workstation role
+        /// The OEM specified a workstation role.
         /// </summary>
         Workstation = 3,
 
         /// <summary>
-        /// The OEM specified an enterprise server role
+        /// The OEM specified an enterprise server role.
         /// </summary>
         EnterpriseServer = 4,
 
         /// <summary>
-        /// The OEM specified a single office/home office (SOHO) server role
+        /// The OEM specified a single office/home office (SOHO) server role.
         /// </summary>
         SOHOServer = 5,
 
         /// <summary>
-        /// The OEM specified an appliance PC role
+        /// The OEM specified an appliance PC role.
         /// </summary>
         AppliancePC = 6,
 
         /// <summary>
-        /// The OEM specified a performance server role
+        /// The OEM specified a performance server role.
         /// </summary>
         PerformanceServer = 7,    // v1 last supported
 
         /// <summary>
-        /// The OEM specified a tablet form factor role
+        /// The OEM specified a tablet form factor role.
         /// </summary>
         Slate = 8,    // v2 last supported
 
         /// <summary>
-        /// Max enum value
+        /// Max enum value.
         /// </summary>
         MaximumEnumValue
     }
 
     /// <summary>
-    /// Additional system information, from Win32_OperatingSystem
+    /// Additional system information, from Win32_OperatingSystem.
     /// </summary>
     public enum ProductType
     {
         /// <summary>
-        /// Product type is unknown
+        /// Product type is unknown.
         /// </summary>
         Unknown = 0,    // this value is not specified in Win32_OperatingSystem, but may prove useful
 
         /// <summary>
-        /// System is a workstation
+        /// System is a workstation.
         /// </summary>
         WorkStation = 1,
 
         /// <summary>
-        /// System is a domain controller
+        /// System is a domain controller.
         /// </summary>
         DomainController = 2,
 
         /// <summary>
-        /// System is a server
+        /// System is a server.
         /// </summary>
         Server = 3
     }
 
     /// <summary>
-    /// Specifies the system server level
+    /// Specifies the system server level.
     /// </summary>
     public enum ServerLevel
     {
         /// <summary>
-        /// An unknown or unrecognized level was dected
+        /// An unknown or unrecognized level was detected.
         /// </summary>
         Unknown = 0,
 
         /// <summary>
-        /// Nano server
+        /// Nano server.
         /// </summary>
         NanoServer,
 
         /// <summary>
-        /// Server core
+        /// Server core.
         /// </summary>
         ServerCore,
 
         /// <summary>
-        /// Server core with management tools
+        /// Server core with management tools.
         /// </summary>
         ServerCoreWithManagementTools,
 
         /// <summary>
-        /// Full server
+        /// Full server.
         /// </summary>
         FullServer
     }
 
     /// <summary>
-    /// State of a software element
+    /// State of a software element.
     /// </summary>
     public enum SoftwareElementState
     {
         /// <summary>
-        /// Software element is deployable
+        /// Software element is deployable.
         /// </summary>
         Deployable = 0,
 
         /// <summary>
-        /// Software element is installable
+        /// Software element is installable.
         /// </summary>
         Installable = 1,
 
         /// <summary>
-        /// Software element is executable
+        /// Software element is executable.
         /// </summary>
         Executable = 2,
 
         /// <summary>
-        /// Software element is running
+        /// Software element is running.
         /// </summary>
         Running = 3
     }
@@ -5030,17 +5089,9 @@ namespace Microsoft.PowerShell.Commands
     {
         private static class PInvokeDllNames
         {
-#if CORECLR
             public const string GetPhysicallyInstalledSystemMemoryDllName = "api-ms-win-core-sysinfo-l1-2-1.dll";
-            public const string LCIDToLocaleNameDllName = "kernelbase.dll";
             public const string PowerDeterminePlatformRoleExDllName = "api-ms-win-power-base-l1-1-0.dll";
             public const string GetFirmwareTypeDllName = "api-ms-win-core-kernel32-legacy-l1-1-1";
-#else
-            public const string GetPhysicallyInstalledSystemMemoryDllName = "kernel32.dll";
-            public const string LCIDToLocaleNameDllName = "kernel32.dll";
-            public const string PowerDeterminePlatformRoleExDllName = "Powrprof.dll";
-            public const string GetFirmwareTypeDllName = "kernel32.dll";
-#endif
         }
 
         public const int LOCALE_NAME_MAX_LENGTH = 85;
@@ -5049,17 +5100,16 @@ namespace Microsoft.PowerShell.Commands
 
         public const UInt32 S_OK = 0;
 
-
         /// <summary>
-        /// Import WINAPI function PowerDeterminePlatformRoleEx
+        /// Import WINAPI function PowerDeterminePlatformRoleEx.
         /// </summary>
-        /// <param name="version">The version of the POWER_PLATFORM_ROLE enumeration for the platform</param>
-        /// <returns>POWER_PLATFORM_ROLE enumeration</returns>
+        /// <param name="version">The version of the POWER_PLATFORM_ROLE enumeration for the platform.</param>
+        /// <returns>POWER_PLATFORM_ROLE enumeration.</returns>
         [DllImport(PInvokeDllNames.PowerDeterminePlatformRoleExDllName, EntryPoint = "PowerDeterminePlatformRoleEx", CharSet = CharSet.Ansi)]
         public static extern uint PowerDeterminePlatformRoleEx(uint version);
 
         /// <summary>
-        /// Retrieve the amount of RAM physically installed in the computer
+        /// Retrieve the amount of RAM physically installed in the computer.
         /// </summary>
         /// <param name="MemoryInKilobytes"></param>
         /// <returns></returns>
@@ -5068,7 +5118,7 @@ namespace Microsoft.PowerShell.Commands
         public static extern bool GetPhysicallyInstalledSystemMemory(out ulong MemoryInKilobytes);
 
         /// <summary>
-        /// Retrieve the firmware type of the local computer
+        /// Retrieve the firmware type of the local computer.
         /// </summary>
         /// <param name="firmwareType">
         /// A reference to a <see cref="FirmwareType"/> enumeration to contain
@@ -5077,38 +5127,19 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         [DllImport(PInvokeDllNames.GetFirmwareTypeDllName, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetFirmwareType(ref FirmwareType firmwareType);
+        public static extern bool GetFirmwareType(out FirmwareType firmwareType);
 
         /// <summary>
-        /// Convert a Local Identifier to a Locale name
-        /// </summary>
-        /// <param name="localeID">The Locale ID (LCID) to be converted</param>
-        /// <param name="localeName">Destination of the Locale name</param>
-        /// <param name="localeNameSize">Capacity of <paramref name="localeName"/></param>
-        /// <param name="flags"></param>
-        /// <returns></returns>
-        [DllImport(PInvokeDllNames.LCIDToLocaleNameDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuilder localeName, int localeNameSize, int flags);
-
-#if !CORECLR
-        /// <summary>    
         /// Gets the data specified for the passed in property name from the
-        /// Software Licensing API
+        /// Software Licensing API.
         /// </summary>
-        /// <param name="licenseProperty">Name of the licensing property to get.</param>    
-        /// <param name="propertyValue">Out parameter for the value.</param>    
-        /// <returns>An hresult indicating success or failure.</returns>    
+        /// <param name="licenseProperty">Name of the licensing property to get.</param>
+        /// <param name="propertyValue">Out parameter for the value.</param>
+        /// <returns>An hresult indicating success or failure.</returns>
         [DllImport("slc.dll", CharSet = CharSet.Unicode)]
         internal static extern int SLGetWindowsInformationDWORD(string licenseProperty, out int propertyValue);
-        /*                               
-         * SLGetWindowsInformationDWORD function returns  
-         * S_OK (0x00000000): If the method succeeds  
-         * SL_E_RIGHT_NOT_GRANTED (0xC004F013): The caller does not have the permissions necessary to call this function.  
-         * SL_E_DATATYPE_MISMATCHED (0xC004F013): The value portion of the name-value pair is not a DWORD.                               
-        [DllImport("Slc.dll", EntryPoint = "SLGetWindowsInformationDWORD", CharSet = CharSet.Unicode)]  
-        public static extern UInt32 SLGetWindowsInformationDWORD(string pwszValueName, ref int pdwValue);  
-         */
-#endif
     }
     #endregion Native
 }
+
+#endif

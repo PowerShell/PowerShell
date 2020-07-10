@@ -1,0 +1,58 @@
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>Microsoft.Management.Infrastructure.CimInstance</T>
+      <T>System.Object</T>
+    </TN>
+    <ToString>SomeClassName</ToString>
+    <Obj RefId="1">
+      <TNRef RefId = "0" />
+      <ToString>SomeClassName</ToString>
+      <Props>
+        <Nil N="PSComputerName" />
+        <Obj N="Test1" RefId="20">
+          <TN RefId = "2">
+            <T>System.Windows.Markup.XamlReader[], PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35</T>
+          </TN>
+          <LST>
+            <S N="Hash">
+              &lt;ResourceDictionary
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:System="clr-namespace:System;assembly=mscorlib"
+                xmlns:Diag="clr-namespace:System.Diagnostics;assembly=system"&gt;
+                &lt;ObjectDataProvider x:Key="LaunchCalc" 
+                  ObjectType="{x:Type Diag:Process}" 
+                  MethodName="Start"&gt;
+                  &lt;ObjectDataProvider.MethodParameters&gt;
+                    &lt;System:String&gt;calc&lt;/System:String&gt;
+                  &lt;/ObjectDataProvider.MethodParameters&gt;
+                &lt;/ObjectDataProvider&gt;
+                &lt;SolidColorBrush x:Key="ThemeBrushBlue" Color="{Binding Source={StaticResource LaunchCalc}}"/&gt;
+              &lt;/ResourceDictionary&gt;
+            </S>
+          </LST>
+        </Obj>
+      </Props>
+    </Obj>
+    <MS>
+      <Obj N="__ClassMetadata" RefId="2">
+        <TN RefId="3">
+          <T>System.Collections.ArrayList</T>
+          <T>System.Object</T>
+        </TN>
+        <LST>
+          <Obj RefId="4">
+            <MS>
+              <S N="ClassName">SomeClassName</S>
+              <S N="Namespace">SomeNamespace</S>
+              <Nil N="ServerName" />
+              <I32 N="Hash">460929192</I32>
+              <S N="MiXml">&lt;CLASS NAME="SomeClassName"&gt;&lt;PROPERTY NAME="test1" TYPE="string"&gt;&lt;/PROPERTY&gt;&lt;/CLASS&gt;</S>
+            </MS>
+          </Obj>
+        </LST>
+      </Obj>
+    </MS>
+  </Obj>
+</Objs>

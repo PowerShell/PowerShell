@@ -1,16 +1,10 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation.Language;
 using System.Runtime.Serialization;
-
-#if CORECLR
-// Use stub for SerializableAttribute and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
 
 namespace System.Management.Automation
 {
@@ -21,6 +15,7 @@ namespace System.Management.Automation
     public class ParseException : RuntimeException
     {
         private const string errorIdString = "Parse";
+
         private ParseError[] _errors;
 
         /// <summary>
@@ -36,16 +31,15 @@ namespace System.Management.Automation
         /// Initializes a new instance of the ParseException class and defines the serialization information,
         /// and streaming context.
         /// </summary>
-        /// <param name="info">The serialization information to use when initializing this object</param>
-        /// <param name="context">The streaming context to use when initializing this object</param>
-        /// <returns> constructed object </returns>
+        /// <param name="info">The serialization information to use when initializing this object.</param>
+        /// <param name="context">The streaming context to use when initializing this object.</param>
+        /// <returns>Constructed object.</returns>
         protected ParseException(SerializationInfo info,
                            StreamingContext context)
                 : base(info, context)
         {
             _errors = (ParseError[])info.GetValue("Errors", typeof(ParseError[]));
         }
-
 
         /// <summary>
         /// Add private data for serialization.
@@ -54,7 +48,7 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -66,9 +60,9 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Initializes a new instance of the class ParseException
+        /// Initializes a new instance of the class ParseException.
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public ParseException() : base()
         {
             base.SetErrorId(errorIdString);
@@ -78,8 +72,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ParseException class and defines the error message.
         /// </summary>
-        /// <param name="message">The error message to use when initializing this object</param>
-        /// <returns> constructed object </returns>
+        /// <param name="message">The error message to use when initializing this object.</param>
+        /// <returns>Constructed object.</returns>
         public ParseException(string message) : base(message)
         {
             base.SetErrorId(errorIdString);
@@ -90,9 +84,9 @@ namespace System.Management.Automation
         /// Initializes a new instance of the ParseException class and defines the error message and
         /// errorID.
         /// </summary>
-        /// <param name="message">The error message to use when initializing this object</param>
-        /// <param name="errorId">The errorId to use when initializing this object</param>
-        /// <returns> constructed object </returns>
+        /// <param name="message">The error message to use when initializing this object.</param>
+        /// <param name="errorId">The errorId to use when initializing this object.</param>
+        /// <returns>Constructed object.</returns>
         internal ParseException(string message, string errorId) : base(message)
         {
             base.SetErrorId(errorId);
@@ -103,10 +97,10 @@ namespace System.Management.Automation
         /// Initializes a new instance of the ParseException class and defines the error message,
         /// error ID and inner exception.
         /// </summary>
-        /// <param name="message">The error message to use when initializing this object</param>
-        /// <param name="errorId">The errorId to use when initializing this object</param>
-        /// <param name="innerException">The inner exception to use when initializing this object</param>
-        /// <returns> constructed object </returns>
+        /// <param name="message">The error message to use when initializing this object.</param>
+        /// <param name="errorId">The errorId to use when initializing this object.</param>
+        /// <param name="innerException">The inner exception to use when initializing this object.</param>
+        /// <returns>Constructed object.</returns>
         internal ParseException(string message, string errorId, Exception innerException)
             : base(message, innerException)
         {
@@ -118,9 +112,9 @@ namespace System.Management.Automation
         /// Initializes a new instance of the ParseException class and defines the error message and
         /// inner exception.
         /// </summary>
-        /// <param name="message">The error message to use when initializing this object</param>
-        /// <param name="innerException">The inner exception to use when initializing this object</param>
-        /// <returns> constructed object </returns>
+        /// <param name="message">The error message to use when initializing this object.</param>
+        /// <param name="innerException">The inner exception to use when initializing this object.</param>
+        /// <returns>Constructed object.</returns>
         public ParseException(string message,
                         Exception innerException)
                 : base(message, innerException)
@@ -139,7 +133,7 @@ namespace System.Management.Automation
         {
             if ((errors == null) || (errors.Length == 0))
             {
-                throw new ArgumentNullException("errors");
+                throw new ArgumentNullException(nameof(errors));
             }
 
             _errors = errors;
@@ -173,8 +167,7 @@ namespace System.Management.Automation
                 return string.Join(Environment.NewLine + Environment.NewLine, errorsToReport);
             }
         }
-    } // ParseException
-
+    }
 
     /// <summary>
     /// Defines the exception thrown when a incomplete parse error occurs while parsing msh script text.
@@ -199,9 +192,9 @@ namespace System.Management.Automation
         /// Initializes a new instance of the IncompleteParseException class and defines the serialization information,
         /// and streaming context.
         /// </summary>
-        /// <param name="info">The serialization information to use when initializing this object</param>
-        /// <param name="context">The streaming context to use when initializing this object</param>
-        /// <returns> constructed object </returns>
+        /// <param name="info">The serialization information to use when initializing this object.</param>
+        /// <param name="context">The streaming context to use when initializing this object.</param>
+        /// <returns>Constructed object.</returns>
         protected IncompleteParseException(SerializationInfo info,
                            StreamingContext context)
                 : base(info, context)
@@ -210,9 +203,9 @@ namespace System.Management.Automation
         #endregion Serialization
 
         /// <summary>
-        /// Initializes a new instance of the class IncompleteParseException
+        /// Initializes a new instance of the class IncompleteParseException.
         /// </summary>
-        /// <returns> constructed object </returns>
+        /// <returns>Constructed object.</returns>
         public IncompleteParseException() : base()
         {
             // Error category is set in base constructor
@@ -222,8 +215,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the IncompleteParseException class and defines the error message.
         /// </summary>
-        /// <param name="message">The error message to use when initializing this object</param>
-        /// <returns> constructed object </returns>
+        /// <param name="message">The error message to use when initializing this object.</param>
+        /// <returns>Constructed object.</returns>
         public IncompleteParseException(string message) : base(message)
         {
             // Error category is set in base constructor
@@ -234,9 +227,9 @@ namespace System.Management.Automation
         /// Initializes a new instance of the IncompleteParseException class and defines the error message and
         /// errorID.
         /// </summary>
-        /// <param name="message">The error message to use when initializing this object</param>
-        /// <param name="errorId">The errorId to use when initializing this object</param>
-        /// <returns> constructed object </returns>
+        /// <param name="message">The error message to use when initializing this object.</param>
+        /// <param name="errorId">The errorId to use when initializing this object.</param>
+        /// <returns>Constructed object.</returns>
         internal IncompleteParseException(string message, string errorId) : base(message, errorId)
         {
             // Error category is set in base constructor
@@ -246,10 +239,10 @@ namespace System.Management.Automation
         /// Initializes a new instance of the IncompleteParseException class and defines the error message,
         /// error ID and inner exception.
         /// </summary>
-        /// <param name="message">The error message to use when initializing this object</param>
-        /// <param name="errorId">The errorId to use when initializing this object</param>
-        /// <param name="innerException">The inner exception to use when initializing this object</param>
-        /// <returns> constructed object </returns>
+        /// <param name="message">The error message to use when initializing this object.</param>
+        /// <param name="errorId">The errorId to use when initializing this object.</param>
+        /// <param name="innerException">The inner exception to use when initializing this object.</param>
+        /// <returns>Constructed object.</returns>
         internal IncompleteParseException(string message, string errorId, Exception innerException)
             : base(message, errorId, innerException)
         {
@@ -260,9 +253,9 @@ namespace System.Management.Automation
         /// Initializes a new instance of the IncompleteParseException class and defines the error message and
         /// inner exception.
         /// </summary>
-        /// <param name="message">The error message to use when initializing this object</param>
-        /// <param name="innerException">The inner exception to use when initializing this object</param>
-        /// <returns> constructed object </returns>
+        /// <param name="message">The error message to use when initializing this object.</param>
+        /// <param name="innerException">The inner exception to use when initializing this object.</param>
+        /// <returns>Constructed object.</returns>
         public IncompleteParseException(string message,
                         Exception innerException)
                 : base(message, innerException)
@@ -272,4 +265,4 @@ namespace System.Management.Automation
         }
         #endregion ctor
     }
-} // System.Management.Automation
+}

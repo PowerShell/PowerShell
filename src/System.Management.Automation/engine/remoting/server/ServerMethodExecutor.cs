@@ -1,8 +1,8 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Remoting.Server;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
@@ -81,7 +81,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void ExecuteVoidMethod(RemoteHostMethodId methodId)
         {
-            ExecuteVoidMethod(methodId, Utils.EmptyArray<object>());
+            ExecuteVoidMethod(methodId, Array.Empty<object>());
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace System.Management.Automation.Remoting
             RemoteDataObject<PSObject> dataToBeSent = RemoteDataObject<PSObject>.CreateFrom(RemotingDestination.Client,
                 _remoteHostCallDataType, _clientRunspacePoolId, _clientPowerShellId,
                 remoteHostCall.Encode());
-            // flush is not used here..since this is a void method and server host 
+            // flush is not used here..since this is a void method and server host
             // does not expect anything from client..so let the transport manager buffer
             // and send as much data as possible.
             _transportManager.SendDataToClient(dataToBeSent, false);
@@ -112,7 +112,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal T ExecuteMethod<T>(RemoteHostMethodId methodId)
         {
-            return ExecuteMethod<T>(methodId, Utils.EmptyArray<object>());
+            return ExecuteMethod<T>(methodId, Array.Empty<object>());
         }
 
         /// <summary>

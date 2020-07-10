@@ -1,13 +1,13 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
 using System.Diagnostics;
-using Dbg = System.Management.Automation;
 using System.Globalization;
+using System.Reflection;
+using System.Text;
+
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -27,7 +27,7 @@ namespace System.Management.Automation
         /// </param>
         public FlagsExpression(string expression)
         {
-            if (!typeof(T).GetTypeInfo().IsEnum)
+            if (!typeof(T).IsEnum)
             {
                 throw InterpreterError.NewInterpreterException(expression, typeof(RuntimeException),
                     null, "InvalidGenericType", EnumExpressionEvaluatorStrings.InvalidGenericType);
@@ -35,7 +35,7 @@ namespace System.Management.Automation
 
             _underType = Enum.GetUnderlyingType(typeof(T));
 
-            if (String.IsNullOrWhiteSpace(expression))
+            if (string.IsNullOrWhiteSpace(expression))
             {
                 throw InterpreterError.NewInterpreterException(expression, typeof(RuntimeException),
                     null, "EmptyInputString", EnumExpressionEvaluatorStrings.EmptyInputString);
@@ -51,15 +51,15 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Construct the tree from an object collection when arguments are comma seperated.
-        /// If valid, all elements are OR seperated.
+        /// Construct the tree from an object collection when arguments are comma separated.
+        /// If valid, all elements are OR separated.
         /// </summary>
         /// <param name="expression">
         /// The array of specified flag attribute subexpression strings.
         /// </param>
         public FlagsExpression(object[] expression)
         {
-            if (!typeof(T).GetTypeInfo().IsEnum)
+            if (!typeof(T).IsEnum)
             {
                 throw InterpreterError.NewInterpreterException(expression, typeof(RuntimeException),
                     null, "InvalidGenericType", EnumExpressionEvaluatorStrings.InvalidGenericType);
@@ -67,7 +67,7 @@ namespace System.Management.Automation
 
             _underType = Enum.GetUnderlyingType(typeof(T));
 
-            if (null == expression)
+            if (expression == null)
             {
                 throw InterpreterError.NewInterpreterException(null, typeof(ArgumentNullException),
                     null, "EmptyInputString", EnumExpressionEvaluatorStrings.EmptyInputString);
@@ -75,7 +75,7 @@ namespace System.Management.Automation
 
             foreach (string inputClause in expression)
             {
-                if (String.IsNullOrWhiteSpace(inputClause))
+                if (string.IsNullOrWhiteSpace(inputClause))
                 {
                     throw InterpreterError.NewInterpreterException(expression, typeof(RuntimeException),
                         null, "EmptyInputString", EnumExpressionEvaluatorStrings.EmptyInputString);
@@ -131,7 +131,7 @@ namespace System.Management.Automation
                         Text = "NOT";
                         break;
                     default:
-                        Debug.Assert(false, "Invalid token kind passed in.");
+                        Debug.Fail("Invalid token kind passed in.");
                         break;
                 }
             }
@@ -148,11 +148,11 @@ namespace System.Management.Automation
         #region tree nodes
 
         /// <summary>
-        /// Abstract base type for other types of nodes in the tree. 
+        /// Abstract base type for other types of nodes in the tree.
         /// </summary>
         internal abstract class Node
         {
-            // Only used in internal nodes holding operators. 
+            // Only used in internal nodes holding operators.
 
             public Node Operand1 { get; set; }
 
@@ -244,6 +244,7 @@ namespace System.Management.Automation
                 {
                     return _operandValue;
                 }
+
                 set
                 {
                     _operandValue = value;
@@ -252,8 +253,8 @@ namespace System.Management.Automation
 
             /// <summary>
             /// Takes a string value and converts to corresponding enum value.
-            /// The string value should be checked at parsing stage prior to 
-            /// tree construction to ensure it is valid. 
+            /// The string value should be checked at parsing stage prior to
+            /// tree construction to ensure it is valid.
             /// </summary>
             internal OperandNode(string enumString)
             {
@@ -281,6 +282,7 @@ namespace System.Management.Automation
                     long operandValue = (long)LanguagePrimitives.ConvertTo(_operandValue, typeof(long), CultureInfo.InvariantCulture);
                     satisfy = (operandValue == (valueToCheck & operandValue));
                 }
+
                 return satisfy;
             }
 
@@ -302,6 +304,7 @@ namespace System.Management.Automation
                     long operandValue = (long)LanguagePrimitives.ConvertTo(_operandValue, typeof(long), CultureInfo.InvariantCulture);
                     exist = valueToCheck == (valueToCheck & operandValue);
                 }
+
                 return exist;
             }
 
@@ -357,7 +360,7 @@ namespace System.Management.Automation
         /// Whether the enum element is present in the expression.
         /// </returns>
         /// <remarks>
-        /// The enum value passed in should be a single enum element value, 
+        /// The enum value passed in should be a single enum element value,
         /// not a flag enum value with multiple bits set.
         /// </remarks>
         internal bool ExistsInExpression(T flagName)
@@ -377,10 +380,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="input">
         /// The input argument string,
-        /// could be partial input (one element from the argument collection). 
+        /// could be partial input (one element from the argument collection).
         /// </param>
         /// <returns>
-        /// A generic list of tokenized input. 
+        /// A generic list of tokenized input.
         /// </returns>
         private List<Token> TokenizeInput(string input)
         {
@@ -395,17 +398,18 @@ namespace System.Management.Automation
                     tokenList.Add(GetNextToken(input, ref _offset));
                 }
             }
+
             return tokenList;
         }
 
         /// <summary>
-        /// Find the start of the next token, skipping white spaces. 
+        /// Find the start of the next token, skipping white spaces.
         /// </summary>
         /// <param name="input">
         /// Input string
         /// </param>
         /// <param name="_offset">
-        /// Current offset position for the string parser. 
+        /// Current offset position for the string parser.
         /// </param>
         private void FindNextToken(string input, ref int _offset)
         {
@@ -437,8 +441,8 @@ namespace System.Management.Automation
         private Token GetNextToken(string input, ref int _offset)
         {
             StringBuilder sb = new StringBuilder();
-            //bool singleQuoted = false;
-            //bool doubleQuoted = false;
+            // bool singleQuoted = false;
+            // bool doubleQuoted = false;
             bool readingIdentifier = false;
             while (_offset < input.Length)
             {
@@ -453,6 +457,7 @@ namespace System.Management.Automation
                     {
                         _offset--;
                     }
+
                     break;
                 }
                 else
@@ -460,7 +465,7 @@ namespace System.Management.Automation
                     sb.Append(cc);
                     readingIdentifier = true;
                 }
-            }//while
+            }
 
             string result = sb.ToString().Trim();
             // If resulting identifier is enclosed in paired quotes,
@@ -475,7 +480,7 @@ namespace System.Management.Automation
             result = result.Trim();
 
             // possible empty token because white spaces are enclosed in quotation marks.
-            if (String.IsNullOrWhiteSpace(result))
+            if (string.IsNullOrWhiteSpace(result))
             {
                 throw InterpreterError.NewInterpreterException(input, typeof(RuntimeException),
                     null, "EmptyTokenString", EnumExpressionEvaluatorStrings.EmptyTokenString,
@@ -490,6 +495,7 @@ namespace System.Management.Automation
                         null, "NoIdentifierGroupingAllowed", EnumExpressionEvaluatorStrings.NoIdentifierGroupingAllowed);
                 }
             }
+
             if (result.Equals(","))
             {
                 return (new Token(TokenKind.Or));
@@ -509,7 +515,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks syntax errors on input expression, 
+        /// Checks syntax errors on input expression,
         /// as well as performing disambiguation for identifiers.
         /// </summary>
         /// <param name="tokenList">
@@ -559,6 +565,7 @@ namespace System.Management.Automation
                     string text = token.Text;
                     token.Text = EnumMinimumDisambiguation.EnumDisambiguate(text, typeof(T));
                 }
+
                 previous = token.Kind;
             }
         }
@@ -600,12 +607,12 @@ namespace System.Management.Automation
                 }
                 else if (kind == TokenKind.And)
                 {
-                    ;   // do nothing
+                    // do nothing
                 }
                 else if (kind == TokenKind.Or)
                 {
                     // Dequeue all nodes from AND queue,
-                    // create the AND tree, then add to the OR queue. 
+                    // create the AND tree, then add to the OR queue.
                     Node andCurrent = andQueue.Dequeue();
                     while (andQueue.Count > 0)
                     {
@@ -613,9 +620,10 @@ namespace System.Management.Automation
                         andNode.Operand1 = andQueue.Dequeue();
                         andCurrent = andNode;
                     }
+
                     orQueue.Enqueue(andCurrent);
                 }
-            }//foreach
+            }
 
             // Dequeue all nodes from OR queue,
             // create the OR tree (final expression tree)
@@ -626,6 +634,7 @@ namespace System.Management.Automation
                 orNode.Operand1 = orQueue.Dequeue();
                 orCurrent = orNode;
             }
+
             return orCurrent;
         }
 

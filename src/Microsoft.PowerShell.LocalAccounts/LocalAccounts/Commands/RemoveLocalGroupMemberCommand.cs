@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 #region Using directives
 using System;
 using System.Collections.Generic;
@@ -11,16 +14,15 @@ using Microsoft.PowerShell.LocalAccounts;
 using System.Diagnostics.CodeAnalysis;
 #endregion
 
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Remove-LocalGroupMember cmdlet removes one or more members (users or 
+    /// The Remove-LocalGroupMember cmdlet removes one or more members (users or
     /// groups) from a local security group.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "LocalGroupMember",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717989")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717989")]
     [Alias("rlgm")]
     public class RemoveLocalGroupMemberCommand : PSCmdlet
     {
@@ -40,14 +42,16 @@ namespace Microsoft.PowerShell.Commands
         public Microsoft.PowerShell.Commands.LocalGroup Group
         {
             get { return this.group;}
+
             set { this.group = value; }
         }
+
         private Microsoft.PowerShell.Commands.LocalGroup group;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "Member".
-        /// Specifies one or more users or groups to remove from this local group. You can 
-        /// identify users or groups by specifying their names or SIDs, or by passing 
+        /// Specifies one or more users or groups to remove from this local group. You can
+        /// identify users or groups by specifying their names or SIDs, or by passing
         /// Microsoft.PowerShell.Commands.LocalPrincipal objects.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -59,8 +63,10 @@ namespace Microsoft.PowerShell.Commands
         public Microsoft.PowerShell.Commands.LocalPrincipal[] Member
         {
             get { return this.member;}
+
             set { this.member = value; }
         }
+
         private Microsoft.PowerShell.Commands.LocalPrincipal[] member;
 
         /// <summary>
@@ -74,10 +80,12 @@ namespace Microsoft.PowerShell.Commands
         public string Name
         {
             get { return this.name;}
+
             set { this.name = value; }
         }
+
         private string name;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "SID".
         /// Specifies a security group from the local Security Accounts Manager.
@@ -89,11 +97,12 @@ namespace Microsoft.PowerShell.Commands
         public System.Security.Principal.SecurityIdentifier SID
         {
             get { return this.sid;}
+
             set { this.sid = value; }
         }
+
         private System.Security.Principal.SecurityIdentifier sid;
         #endregion Parameter Properties
-
 
         #region Cmdlet Overrides
         /// <summary>
@@ -103,7 +112,6 @@ namespace Microsoft.PowerShell.Commands
         {
             sam = new Sam();
         }
-
 
         /// <summary>
         /// ProcessRecord method.
@@ -124,7 +132,6 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(ex.MakeErrorRecord());
             }
         }
-
 
         /// <summary>
         /// EndProcessing method.
@@ -151,7 +158,7 @@ namespace Microsoft.PowerShell.Commands
         /// in WhatIf scenarios.
         /// </param>
         /// <param name="member">
-        /// LocalPrincipal object to be processed 
+        /// LocalPrincipal object to be processed
         /// </param>
         /// <returns>
         /// LocalPrincipal object processed and ready to be removed
@@ -244,10 +251,10 @@ namespace Microsoft.PowerShell.Commands
             foreach (var member in this.Member)
             {
                 LocalPrincipal principal = MakePrincipal(groupId, member);
-                if (null != principal)
+                if (principal != null)
                 {
                     var ex = sam.RemoveLocalGroupMember(group, principal);
-                    if (null != ex)
+                    if (ex != null)
                     {
                         WriteError(ex.MakeErrorRecord());
                     }
@@ -278,10 +285,10 @@ namespace Microsoft.PowerShell.Commands
             foreach (var member in this.Member)
             {
                 LocalPrincipal principal = MakePrincipal(groupSid.ToString(), member);
-                if (null != principal)
+                if (principal != null)
                 {
                     var ex = sam.RemoveLocalGroupMember(groupSid, principal);
-                    if (null != ex)
+                    if (ex != null)
                     {
                         WriteError(ex.MakeErrorRecord());
                     }
@@ -289,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         #endregion Private Methods
-    }//End Class
+    }
 
-}//End namespace
+}
 

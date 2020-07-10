@@ -1,66 +1,42 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Runtime.Serialization;
 using System.Collections.Generic;
-
-#if CORECLR
-using Environment = System.Management.Automation.Environment;
-#endif
+using System.Runtime.Serialization;
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Defines a data structure used to represent informational context destined for the host or user. 
-    /// 
+    /// Defines a data structure used to represent informational context destined for the host or user.
     /// </summary>
     /// <remarks>
-    /// 
-    /// InformationRecords are passed to <see cref="System.Management.Automation.Cmdlet.WriteInformation(Object, string[])"/>,
+    /// InformationRecords are passed to <see cref="System.Management.Automation.Cmdlet.WriteInformation(object, string[])"/>,
     /// which, according to host or user preference, forwards that information on to the host for rendering to the user.
-    /// 
     /// </remarks>
-    /// <seealso cref="System.Management.Automation.Cmdlet.WriteInformation(Object, string[])"/>
+    /// <seealso cref="System.Management.Automation.Cmdlet.WriteInformation(object, string[])"/>
 
     [DataContract()]
     public class InformationRecord
     {
         /// <summary>
-        /// 
         /// Initializes a new instance of the InformationRecord class.
-        /// 
         /// </summary>
         /// <param name="messageData">The object to be transmitted to the host.</param>
-        /// <param name="source">The source of the message (i.e.: script path, function name, etc.)</param>
-        public InformationRecord(Object messageData, string source)
+        /// <param name="source">The source of the message (i.e.: script path, function name, etc.).</param>
+        public InformationRecord(object messageData, string source)
         {
             this.MessageData = messageData;
             this.Source = source;
 
             this.TimeGenerated = DateTime.Now;
-            this.Tags = new List<string>();
-            // domain\user on Windows, just user on Unix
-#if UNIX
-            this.User = Platform.Unix.UserName;
-#else
-            this.User = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-#endif
-            this.Computer = PsUtils.GetHostName();
-            this.ProcessId = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
             this.NativeThreadId = PsUtils.GetNativeThreadId();
             this.ManagedThreadId = (uint)System.Threading.Thread.CurrentThread.ManagedThreadId;
         }
 
-        /// <summary>
-        /// Added to enable ClrFacade.GetUninitializedObject to instantiate an uninitialized version of this class.
-        /// </summary>
-        internal InformationRecord() { }
+        private InformationRecord() { }
 
         /// <summary>
-        /// Copy constructor
+        /// Copy constructor.
         /// </summary>
         internal InformationRecord(InformationRecord baseRecord)
         {
@@ -82,10 +58,10 @@ namespace System.Management.Automation
         // are that way because they are fundamental properties of the record itself.
 
         /// <summary>
-        /// The message data for this informational record
+        /// The message data for this informational record.
         /// </summary>
         [DataMember]
-        public Object MessageData { get; internal set; }
+        public object MessageData { get; internal set; }
 
         /// <summary>
         /// The source of this informational record (script path, function name, etc.)
@@ -100,37 +76,86 @@ namespace System.Management.Automation
         public DateTime TimeGenerated { get; set; }
 
         /// <summary>
-        /// The tags assocaited with this informational record (if any)
+        /// The tags associated with this informational record (if any)
         /// </summary>
         [DataMember]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public List<string> Tags { get; internal set; }
+        public List<string> Tags
+        {
+            get { return _tags ?? (_tags = new List<string>()); }
+
+            internal set { _tags = value; }
+        }
+
+        private List<string> _tags;
 
         /// <summary>
-        /// The user that generated this informational record
+        /// The user that generated this informational record.
         /// </summary>
         [DataMember]
-        public string User { get; set; }
+        public string User
+        {
+            get
+            {
+                if (this._user == null)
+                {
+                    // domain\user on Windows, just user on Unix
+#if UNIX
+                    this._user = Environment.UserName;
+#else
+                    this._user = Environment.UserDomainName + "\\" + Environment.UserName;
+#endif
+                }
+
+                return _user;
+            }
+
+            set { _user = value; }
+        }
+
+        private string _user;
 
         /// <summary>
-        /// The computer that generated this informational record
+        /// The computer that generated this informational record.
         /// </summary>
         [DataMember]
-        public string Computer { get; set; }
+        public string Computer
+        {
+            get { return this._computerName ?? (this._computerName = PsUtils.GetHostName()); }
+
+            set { this._computerName = value; }
+        }
+
+        private string _computerName;
 
         /// <summary>
-        /// The process that generated this informational record
+        /// The process that generated this informational record.
         /// </summary>
         [DataMember]
-        public uint ProcessId { get; set; }
+        public uint ProcessId
+        {
+            get
+            {
+                if (!this._processId.HasValue)
+                {
+                    this._processId = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
+                }
+
+                return this._processId.Value;
+            }
+
+            set { _processId = value; }
+        }
+
+        private uint? _processId;
 
         /// <summary>
-        /// The native thread that generated this informational record
+        /// The native thread that generated this informational record.
         /// </summary>
         public uint NativeThreadId { get; set; }
 
         /// <summary>
-        /// The managed thread that generated this informational record
+        /// The managed thread that generated this informational record.
         /// </summary>
         [DataMember]
         public uint ManagedThreadId { get; set; }
@@ -155,7 +180,7 @@ namespace System.Management.Automation
         {
             InformationRecord informationRecord = new InformationRecord();
 
-            informationRecord.MessageData = RemotingDecoder.GetPropertyValue<Object>(inputObject, "MessageData");
+            informationRecord.MessageData = RemotingDecoder.GetPropertyValue<object>(inputObject, "MessageData");
             informationRecord.Source = RemotingDecoder.GetPropertyValue<string>(inputObject, "Source");
             informationRecord.TimeGenerated = RemotingDecoder.GetPropertyValue<DateTime>(inputObject, "TimeGenerated");
 
@@ -179,7 +204,7 @@ namespace System.Management.Automation
         /// Returns this object as a PSObject property bag
         /// that can be used in a remoting protocol data object.
         /// </summary>
-        /// <returns>This object as a PSObject property bag</returns>
+        /// <returns>This object as a PSObject property bag.</returns>
         internal PSObject ToPSObjectForRemoting()
         {
             PSObject informationAsPSObject = RemotingEncoder.CreateEmptyPSObject();
@@ -205,28 +230,27 @@ namespace System.Management.Automation
     public class HostInformationMessage
     {
         /// <summary>
-        /// The message being output by the host
+        /// The message being output by the host.
         /// </summary>
         public string Message { get; set; }
 
         /// <summary>
-        /// 'True' if the host should not append a NewLine to the message output
+        /// 'True' if the host should not append a NewLine to the message output.
         /// </summary>
         public bool? NoNewLine { get; set; }
 
         /// <summary>
-        /// The foreground color of the message
+        /// The foreground color of the message.
         /// </summary>
         public ConsoleColor? ForegroundColor { get; set; }
 
         /// <summary>
-        /// The background color of the message
+        /// The background color of the message.
         /// </summary>
         public ConsoleColor? BackgroundColor { get; set; }
 
-
         /// <summary>
-        /// Returns a string-based representation of the host information message
+        /// Returns a string-based representation of the host information message.
         /// </summary>
         /// <returns></returns>
         public override string ToString()

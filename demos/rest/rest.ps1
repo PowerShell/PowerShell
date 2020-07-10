@@ -1,7 +1,9 @@
-﻿
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 #-----------------
 
-function Get-Issues
+function Get-Issue
 {
     param([string]$UserName,
           [string]$Repo,
@@ -22,13 +24,13 @@ function Get-Issues
         {
             if ($link -match '\s*<(.*)>;\s+rel="next"')
             {
-                $uri = $matches[1]
+                $uri = $Matches[1]
             }
         }
     }
 }
 
-$issues = Get-Issues -UserName lzybkr -Repo PSReadline
+$issues = Get-Issue -UserName lzybkr -Repo PSReadline
 
 $issues.Count
 

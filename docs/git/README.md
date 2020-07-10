@@ -1,28 +1,12 @@
-Working with PowerShell repository
-==================================
+# Working with PowerShell repository
 
-#### Get the code for the first time
-
-```sh
-git clone --recursive https://github.com/PowerShell/PowerShell
-```
-
-The PowerShell repository has **submodules**.
-They are required to build and test PowerShell.
-That's why you need `--recursive`, when you `git clone`.
-
-If you already cloned the repo without `--recursive`, update submodules manually
+## Get the code for the first time
 
 ```sh
-git submodule init
-git submodule update
+git clone https://github.com/PowerShell/PowerShell.git --branch=master
 ```
 
-See [FAQ](../FAQ.md#why-is-my-submodule-empty) for details.
-
-
-Branches
----------
+## Branches
 
 * Don't commit your changes directly to master.
   It will make the collaborative workflow messy.
@@ -33,18 +17,18 @@ Branches
     You must never EVER destroy other peoples history. You must not rebase commits other people did.
     Basically, if it doesn't have your sign-off on it, it's off limits: you can't rebase it, because it's not yours."
 
-#### Understand branches
+### Understand branches
 
 * **master** is the branch with the latest and greatest changes.
   It could be unstable.
 * Send your pull requests to **master**.
 
-#### Sync your local repo
+### Sync your local repo
 
 Use **git rebase** instead of **git merge** and **git pull**, when you're updating your feature-branch.
 
 ```sh
-# fetch updates all remote branch references in the repo and all submodules
+# fetch updates all remote branch references in the repo
 # --all : tells it to do it for all remotes (handy, when you use your fork)
 # -p : tells it to remove obsolete remote branch references (when they are removed from remote)
 git fetch --all -p
@@ -53,7 +37,7 @@ git fetch --all -p
 git rebase origin/master
 ```
 
-#### More complex scenarios
+### More complex scenarios
 
 Covering all possible git scenarios is behind the scope of the current document.
 Git has excellent documentation and lots of materials available online.
@@ -62,16 +46,14 @@ We are leaving few links here:
 
 [Git pretty flowchart](http://justinhileman.info/article/git-pretty/): what to do, when your local repo became a mess.
 
-[Linus]:http://thread.gmane.org/gmane.comp.video.dri.devel/34739/focus=34744
+[Linus]:https://wincent.com/wiki/git_rebase%3A_you're_doing_it_wrong
 
-
-Tags
-------
+## Tags
 
 If you are looking for the source code for a particular release,
 you will find it via **tags**.
 
-* `git tag` will show you list of all tags. 
+* `git tag` will show you list of all tags.
 * Find the tag that corresponds to the release.
 * Use `git checkout <tag-name>` to get this version.
 
@@ -87,31 +69,33 @@ checkout a new branch from this DETACHED HEAD state.
 git checkout -b vors/hotfix
 ```
 
-
-Recommended Git configurations
-==============================
+## Recommended Git configurations
 
 We highly recommend these configurations to help deal with whitespace,
 rebasing, and general use of Git.
 
 > Auto-corrects your command when it's sure (`stats` to `status`)
+
 ```sh
 git config --global help.autoCorrect -1
 ```
 
 > Refuses to merge when pulling, and only pushes to branch with same name.
+
 ```sh
 git config --global pull.ff only
 git config --global push.default current
 ```
 
 > Shows shorter commit hashes and always shows reference names in the log.
+
 ```sh
 git config --global log.abbrevCommit true
 git config --global log.decorate short
 ```
 
 > Ignores whitespace changes and uses more information when merging.
+
 ```sh
 git config --global apply.ignoreWhitespace change
 git config --global rerere.enabled true

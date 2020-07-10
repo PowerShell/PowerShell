@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,24 +12,24 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines generic utilities and helper methods for PowerShell
+    /// Defines generic utilities and helper methods for PowerShell.
     /// </summary>
     internal static class PathUtils
     {
         /// <summary>
-        /// THE method for opening a file for writing.  
+        /// THE method for opening a file for writing.
         /// Should be used by all cmdlets that write to a file.
         /// </summary>
-        /// <param name="cmdlet">cmdlet that is opening the file (used mainly for error reporting)</param>
-        /// <param name="filePath">path to the file (as specified on the command line - this method will resolve the path)</param>
-        /// <param name="encoding">encoding (this method will convert the command line strin to an Encoding instance)</param>
-        /// <param name="defaultEncoding">if <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter</param>
+        /// <param name="cmdlet">Cmdlet that is opening the file (used mainly for error reporting).</param>
+        /// <param name="filePath">Path to the file (as specified on the command line - this method will resolve the path).</param>
+        /// <param name="encoding">Encoding (this method will convert the command line string to an Encoding instance).</param>
+        /// <param name="defaultEncoding">If <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter.</param>
         /// <param name="Append"></param>
         /// <param name="Force"></param>
         /// <param name="NoClobber"></param>
-        /// <param name="fileStream">Result1: <see cref="FileStream"/> opened for writing</param>
-        /// <param name="streamWriter">Result2: <see cref="StreamWriter"/> (inherits from <see cref="TextWriter"/>) opened for writing</param>
-        /// <param name="readOnlyFileInfo">Result3: file info that should be used to restore file attributes after done with the file (<c>null</c> is this is not needed)</param>
+        /// <param name="fileStream">Result1: <see cref="FileStream"/> opened for writing.</param>
+        /// <param name="streamWriter">Result2: <see cref="StreamWriter"/> (inherits from <see cref="TextWriter"/>) opened for writing.</param>
+        /// <param name="readOnlyFileInfo">Result3: file info that should be used to restore file attributes after done with the file (<c>null</c> is this is not needed).</param>
         /// <param name="isLiteralPath">True if wildcard expansion should be bypassed.</param>
         internal static void MasterStreamOpen(
             PSCmdlet cmdlet,
@@ -52,19 +51,19 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// THE method for opening a file for writing.  
+        /// THE method for opening a file for writing.
         /// Should be used by all cmdlets that write to a file.
         /// </summary>
-        /// <param name="cmdlet">cmdlet that is opening the file (used mainly for error reporting)</param>
-        /// <param name="filePath">path to the file (as specified on the command line - this method will resolve the path)</param>
-        /// <param name="resolvedEncoding">encoding (this method will convert the command line strin to an Encoding instance)</param>
-        /// <param name="defaultEncoding">if <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter</param>
+        /// <param name="cmdlet">Cmdlet that is opening the file (used mainly for error reporting).</param>
+        /// <param name="filePath">Path to the file (as specified on the command line - this method will resolve the path).</param>
+        /// <param name="resolvedEncoding">Encoding (this method will convert the command line string to an Encoding instance).</param>
+        /// <param name="defaultEncoding">If <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter.</param>
         /// <param name="Append"></param>
         /// <param name="Force"></param>
         /// <param name="NoClobber"></param>
-        /// <param name="fileStream">Result1: <see cref="FileStream"/> opened for writing</param>
-        /// <param name="streamWriter">Result2: <see cref="StreamWriter"/> (inherits from <see cref="TextWriter"/>) opened for writing</param>
-        /// <param name="readOnlyFileInfo">Result3: file info that should be used to restore file attributes after done with the file (<c>null</c> is this is not needed)</param>
+        /// <param name="fileStream">Result1: <see cref="FileStream"/> opened for writing.</param>
+        /// <param name="streamWriter">Result2: <see cref="StreamWriter"/> (inherits from <see cref="TextWriter"/>) opened for writing.</param>
+        /// <param name="readOnlyFileInfo">Result3: file info that should be used to restore file attributes after done with the file (<c>null</c> is this is not needed).</param>
         /// <param name="isLiteralPath">True if wildcard expansion should be bypassed.</param>
         internal static void MasterStreamOpen(
             PSCmdlet cmdlet,
@@ -173,9 +172,7 @@ namespace System.Management.Automation
                 // NOTE: this call will throw
                 ReportFileOpenFailure(cmdlet, resolvedPath, e);
             }
-        } // void MasterStreamOpen
-
-
+        }
 
         internal static void ReportFileOpenFailure(Cmdlet cmdlet, string filePath, Exception e)
         {
@@ -188,17 +185,10 @@ namespace System.Management.Automation
             cmdlet.ThrowTerminatingError(errorRecord);
         }
 
-        internal static StreamReader OpenStreamReader(PSCmdlet command, string filePath, string encoding, bool isLiteralPath)
+        internal static StreamReader OpenStreamReader(PSCmdlet command, string filePath, Encoding encoding, bool isLiteralPath)
         {
             FileStream fileStream = OpenFileStream(filePath, command, isLiteralPath);
-            if (encoding == null)
-            {
-                return new StreamReader(fileStream);
-            }
-            else
-            {
-                return new StreamReader(fileStream, EncodingConversion.Convert(command, encoding));
-            }
+            return new StreamReader(fileStream, encoding);
         }
 
         internal static FileStream OpenFileStream(string filePath, PSCmdlet command, bool isLiteralPath)
@@ -238,8 +228,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// resolve a user provided file name or path (including globbing characters)
-        /// to a fully qualified file path, using the file system provider
+        /// Resolve a user provided file name or path (including globbing characters)
+        /// to a fully qualified file path, using the file system provider.
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="command"></param>
@@ -250,8 +240,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// resolve a user provided file name or path (including globbing characters)
-        /// to a fully qualified file path, using the file system provider
+        /// Resolve a user provided file name or path (including globbing characters)
+        /// to a fully qualified file path, using the file system provider.
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="command"></param>
@@ -285,6 +275,7 @@ namespace System.Management.Automation
                 {
                     ReportMultipleFilesNotSupported(command);
                 }
+
                 if (filePaths.Count == 0)
                 {
                     ReportWildcardingFailure(command, filePath);
@@ -296,6 +287,7 @@ namespace System.Management.Automation
             {
                 path = null;
             }
+
             if (string.IsNullOrEmpty(path))
             {
                 CmdletProviderContext cmdletProviderContext = new CmdletProviderContext(command);
@@ -310,6 +302,7 @@ namespace System.Management.Automation
                     ReportWrongProviderType(command, provider.FullName);
                 }
             }
+
             return path;
         }
 
@@ -364,11 +357,12 @@ namespace System.Management.Automation
             try
             {
                 string rootedPath = Microsoft.PowerShell.Commands.ModuleCmdletBase.ResolveRootedFilePath(moduleNameOrPath, cmdlet.Context);
-                if (string.IsNullOrEmpty(rootedPath) && moduleNameOrPath.StartsWith(".", StringComparison.OrdinalIgnoreCase))
+                if (string.IsNullOrEmpty(rootedPath) && moduleNameOrPath.StartsWith('.'))
                 {
                     PathInfo currentPath = cmdlet.CurrentProviderLocation(cmdlet.Context.ProviderNames.FileSystem);
                     rootedPath = Path.Combine(currentPath.ProviderPath, moduleNameOrPath);
                 }
+
                 if (string.IsNullOrEmpty(rootedPath))
                 {
                     string personalModuleRoot = ModuleIntrinsics.GetPersonalModulePath();
@@ -400,8 +394,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 string errorMessage = string.Format(
                     CultureInfo.InvariantCulture, // directory name should be treated as culture-invariant
                     PathUtilsStrings.ExportPSSession_CannotCreateOutputDirectory,
@@ -437,85 +429,23 @@ namespace System.Management.Automation
             Directory.CreateDirectory(moduleDirectory.FullName);
             return new DirectoryInfo(moduleDirectory.FullName);
         }
-    }
 
-    internal static class EncodingConversion
-    {
-        internal const string Unknown = "unknown";
-        internal const string String = "string";
-        internal const string Unicode = "unicode";
-        internal const string BigEndianUnicode = "bigendianunicode";
-        internal const string Ascii = "ascii";
-        internal const string Utf8 = "utf8";
-        internal const string Utf7 = "utf7";
-        internal const string Utf32 = "utf32";
-        internal const string Default = "default";
-        internal const string OEM = "oem";
-
-        /// <summary>
-        /// retrieve the encoding paramater from the command line
-        /// it throws if the encoding does not match the known ones
-        /// </summary>
-        /// <returns>a System.Text.Encoding object (null if no encoding specified)</returns>
-        internal static Encoding Convert(Cmdlet cmdlet, string encoding)
+        internal static bool TryDeleteFile(string filepath)
         {
-            if (string.IsNullOrEmpty(encoding))
+            if (IO.File.Exists(filepath))
             {
-                // no parameter passed, default to Unicode (OS preferred)
-                return System.Text.Encoding.Unicode;
+                try
+                {
+                    IO.File.Delete(filepath);
+                    return true;
+                }
+                catch (IOException)
+                {
+                    // file is in use on Windows
+                }
             }
 
-            // Default to unicode (this matches Get-Content)
-            if (string.Equals(encoding, Unknown, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.Unicode;
-
-            if (string.Equals(encoding, String, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.Unicode;
-
-            // these are the encodings the CLR supports
-            if (string.Equals(encoding, Unicode, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.Unicode;
-
-            if (string.Equals(encoding, BigEndianUnicode, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.BigEndianUnicode;
-
-            if (string.Equals(encoding, Utf8, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.UTF8;
-
-            if (string.Equals(encoding, Ascii, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.ASCII;
-
-            if (string.Equals(encoding, Utf7, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.UTF7;
-
-            if (string.Equals(encoding, Utf32, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.UTF32;
-
-            if (string.Equals(encoding, Default, StringComparison.OrdinalIgnoreCase))
-                return ClrFacade.GetDefaultEncoding();
-
-            if (string.Equals(encoding, OEM, StringComparison.OrdinalIgnoreCase))
-            {
-                return ClrFacade.GetOEMEncoding();
-            }
-
-            // error condition: unknown encoding value
-            string validEncodingValues = string.Join(
-                ", ",
-                new string[] { Unknown, String, Unicode, BigEndianUnicode, Ascii, Utf8, Utf7, Utf32, Default, OEM });
-            string msg = StringUtil.Format(PathUtilsStrings.OutFile_WriteToFileEncodingUnknown,
-                encoding, validEncodingValues);
-
-            ErrorRecord errorRecord = new ErrorRecord(
-                PSTraceSource.NewArgumentException("Encoding"),
-                "WriteToFileEncodingUnknown",
-                ErrorCategory.InvalidArgument,
-                null);
-
-            errorRecord.ErrorDetails = new ErrorDetails(msg);
-            cmdlet.ThrowTerminatingError(errorRecord);
-
-            return null;
+            return false;
         }
     }
 }

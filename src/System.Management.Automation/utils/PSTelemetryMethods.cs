@@ -1,6 +1,6 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+#if LEGACYTELEMETRY
 
 using System;
 using System.Collections.Generic;
@@ -11,11 +11,6 @@ using System.Management.Automation;
 using System.Management.Automation.Language;
 using System.Threading;
 using System.Threading.Tasks;
-#if CORECLR
-using Environment = System.Management.Automation.Environment;
-#else
-using Environment = System.Environment;
-#endif
 
 namespace Microsoft.PowerShell.Telemetry.Internal
 {
@@ -24,7 +19,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public static class TelemetryAPI
     {
-        #region Public API
+#region Public API
 
         /// <summary>
         /// Public API to expose Telemetry in PowerShell
@@ -36,7 +31,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             TelemetryWrapper.TraceMessage(message, arguments);
         }
 
-        #endregion
+#endregion
 
         private static int s_anyPowerShellSessionOpen;
         private static DateTime s_sessionStartTime;
@@ -44,7 +39,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         private enum HostIsInteractive
         {
             Unknown,
-            Iteractive,
+            Interactive,
             NonInteractive
         }
 
@@ -58,19 +53,14 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             if (Interlocked.CompareExchange(ref s_anyPowerShellSessionOpen, 1, 0) == 1)
                 return;
 
-            bool is32Bit;
-#if CORECLR
-            is32Bit = IntPtr.Size == 4;
-#else
-            is32Bit = !Environment.Is64BitProcess;
-#endif
+            bool is32Bit = !Environment.Is64BitProcess;
             var psversion = PSVersionInfo.PSVersion.ToString();
             var hostName = Process.GetCurrentProcess().ProcessName;
             if (ihptd != null)
             {
                 TelemetryWrapper.TraceMessage("PSHostStart", new
                 {
-                    Interactive = ihptd.HostIsInteractive ? HostIsInteractive.Iteractive : HostIsInteractive.NonInteractive,
+                    Interactive = ihptd.HostIsInteractive ? HostIsInteractive.Interactive : HostIsInteractive.NonInteractive,
                     ProfileLoadTime = ihptd.ProfileLoadTimeInMS,
                     ReadyForInputTime = ihptd.ReadyForInputTimeInMS,
                     Is32Bit = is32Bit,
@@ -90,6 +80,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
                     ProcessName = hostName,
                 });
             }
+
             s_sessionStartTime = DateTime.Now;
         }
 
@@ -135,7 +126,6 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             TelemetryWrapper.TraceMessage("PSGetCommandFailed", new { TimeInMS = timeInMS, CommandNames = name });
         }
 
-
         private static long[] s_tabCompletionTimes = new long[(int)CompletionResultType.DynamicKeyword + 1];
         private static int[] s_tabCompletionCounts = new int[(int)CompletionResultType.DynamicKeyword + 1];
         private static int[] s_tabCompletionResultCounts = new int[(int)CompletionResultType.DynamicKeyword + 1];
@@ -173,9 +163,9 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             var companyName = foundModule.CompanyName;
             bool couldBeMicrosoftModule =
                 (modulePath != null &&
-                 (modulePath.StartsWith(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID), StringComparison.OrdinalIgnoreCase) ||
+                 (modulePath.StartsWith(Utils.DefaultPowerShellAppBase, StringComparison.OrdinalIgnoreCase) ||
                   // The following covers both 64 and 32 bit Program Files by assuming 32bit is just ...\Program Files + " (x86)"
-                  modulePath.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), StringComparison.OrdinalIgnoreCase))) ||
+                  modulePath.StartsWith(Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles), StringComparison.OrdinalIgnoreCase))) ||
                 (companyName != null &&
                  foundModule.CompanyName.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase));
             if (couldBeMicrosoftModule)
@@ -189,7 +179,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         }
 
         /// <summary>
-        /// Report that a new local session (runspace) is created
+        /// Report that a new local session (runspace) is created.
         /// </summary>
         internal static void ReportLocalSessionCreated(
             System.Management.Automation.Runspaces.InitialSessionState iss,
@@ -224,7 +214,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         }
 
         /// <summary>
-        /// Report that a new remote session (runspace) is created
+        /// Report that a new remote session (runspace) is created.
         /// </summary>
         internal static void ReportRemoteSessionCreated(
             System.Management.Automation.Runspaces.RunspaceConnectionInfo connectionInfo)
@@ -255,6 +245,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
                             configurationName = configurationName.Substring(index + 1);
                         }
                     }
+
                     configurationType = GetConfigurationTypefromName(configurationName);
                 }
                 else
@@ -321,7 +312,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         private static readonly int s_promptHashCode = "prompt".GetHashCode();
 
         /// <summary>
-        /// Report some telemetry about the scripts that are run
+        /// Report some telemetry about the scripts that are run.
         /// </summary>
         internal static void ReportScriptTelemetry(Ast ast, bool dotSourced, long compileTimeInMS)
         {
@@ -404,7 +395,9 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         }
 
         internal Dictionary<string, int> CommandsCalled { get; private set; }
+
         internal int CountOfCommands { get; private set; }
+
         internal int CountOfDotSourcedCommands { get; private set; }
 
         public override AstVisitAction VisitCommand(CommandAst commandAst)
@@ -425,8 +418,11 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         }
 
         internal int MaxStringSize { get; private set; }
+
         internal int StringLiteralCount { get; private set; }
+
         internal int StringLiteralCumulativeSize { get; private set; }
+
         public override AstVisitAction VisitStringConstantExpression(StringConstantExpressionAst stringConstantExpressionAst)
         {
             var stringSize = stringConstantExpressionAst.Value.Length;
@@ -446,8 +442,11 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         }
 
         internal int MaxArraySize { get; private set; }
+
         internal int ArrayLiteralCount { get; private set; }
+
         internal int ArrayLiteralCumulativeSize { get; private set; }
+
         public override AstVisitAction VisitArrayLiteral(ArrayLiteralAst arrayLiteralAst)
         {
             var elementCount = arrayLiteralAst.Elements.Count;
@@ -458,6 +457,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         }
 
         internal int StatementCount { get; private set; }
+
         public override AstVisitAction VisitBlockStatement(BlockStatementAst blockStatementAst)
         {
             StatementCount += blockStatementAst.Body.Statements.Count;
@@ -471,6 +471,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         }
 
         internal int FunctionCount { get; private set; }
+
         public override AstVisitAction VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst)
         {
             FunctionCount += 1;
@@ -478,6 +479,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         }
 
         internal int ScriptBlockCount { get; private set; }
+
         public override AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst)
         {
             ScriptBlockCount += 1;
@@ -485,7 +487,9 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         }
 
         internal int MaxPipelineDepth { get; private set; }
+
         internal int PipelineCount { get; private set; }
+
         public override AstVisitAction VisitPipeline(PipelineAst pipelineAst)
         {
             MaxPipelineDepth = Math.Max(MaxPipelineDepth, pipelineAst.PipelineElements.Count);
@@ -494,7 +498,9 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         }
 
         internal int ClassCount { get; private set; }
+
         internal int EnumCount { get; private set; }
+
         public override AstVisitAction VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst)
         {
             if (typeDefinitionAst.IsClass)
@@ -524,3 +530,4 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         int InteractiveCommandCount { get; }
     }
 }
+#endif

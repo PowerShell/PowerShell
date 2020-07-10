@@ -1,0 +1,36 @@
+# Sync packages from PSGallery to Azure DevOps Artifacts feed
+
+resources:
+- repo: self
+  clean: true
+
+queue:
+  name: Hosted VS2017
+steps:
+  - pwsh: |
+      $minVer = [version]"2.2.3"
+      $curVer = Get-Module PowerShellGet -ListAvailable | Select-Object -First 1 | ForEach-Object Version
+      if (-not $curVer -or $curVer -lt $minVer) {
+        Install-Module -Name PowerShellGet -MinimumVersion 2.2.3 -Force
+      }
+    displayName: Update PSGet and PackageManagement
+    condition: succeededOrFailed()
+
+  - pwsh: |
+      Import-Module -Force "$(Build.SourcesDirectory)/tools/releaseBuild/azureDevOps/AzArtifactFeed/SyncGalleryToAzArtifacts.psm1"
+      SyncGalleryToAzArtifacts -AzDevOpsFeedUserName $(AzDevOpsFeedUserName) -AzDevOpsPAT $(AzDevOpsFeedPAT) -Destination $(Build.ArtifactStagingDirectory)
+    displayName: Download packages from PSGallery that need to be updated
+    condition: succeededOrFailed()
+
+  - pwsh: |
+      Write-Verbose -Verbose "Packages to upload"
+      if(Test-Path $(Build.ArtifactStagingDirectory)) { Get-ChildItem "$(Build.ArtifactStagingDirectory)/*.nupkg" | ForEach-Object { $_.FullName }}
+    displayName: List packages to upload
+    condition: succeededOrFailed()
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet push'
+    inputs:
+      command: push
+      publishVstsFeed: 'pscore-release'
+      publishFeedCredentials: 'AzArtifactsFeed'

@@ -1,39 +1,38 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using System.Management.Automation.Language;
 using System.Threading;
 
 // These APIs are not part of the public contract.
-// They are implementation details and intendent to be called from generated assemlbies for PS classes.
+// They are implementation details and intended to be called from generated assemblies for PS classes.
 //
-// Because they are called from other assemblies, we have to make them public. 
+// Because they are called from other assemblies, we have to make them public.
 // We put them in Internal namespace to emphasise that despite the fact that they are public, it's not part of API contract.
 
 namespace System.Management.Automation.Internal
 {
     /// <summary>
     /// Every Runspace in one process contains SessionStateInternal per module (module SessionState).
-    /// Every RuntimeType is associated to only one SessionState in the Runspace, which creates it: 
+    /// Every RuntimeType is associated to only one SessionState in the Runspace, which creates it:
     /// it's ever global state or a module state.
     /// In the former case, module can be imported from the different runspaces in the same process.
     /// And so runspaces will share RuntimeType. But in every runspace, Type is associated with just one SessionState.
     /// We want type methods to be able access $script: variables and module-specific methods.
-    /// To achive it, we preserve reference to SessionState that creates type in the private field 'SessionStateFieldName'.
+    /// To achieve it, we preserve reference to SessionState that creates type in the private field 'SessionStateFieldName'.
     /// Later, we use it to call scriptBlocks captured in ScriptBlockMemberMethodWrapper with the right sessionState.
     /// </summary>
     public class SessionStateKeeper
     {
-        // We use ConditionalWeakTable, because if GC already collect Runspace, 
-        // then there is no way to call a ctor on the type in this Runspace.
+        // We use ConditionalWeakTable, because if GC already collect Runspace, then there
+        // is no way to call a ctor or a static method on the type in this Runspace.
         private readonly ConditionalWeakTable<Runspace, SessionStateInternal> _stateMap;
 
         internal SessionStateKeeper()
@@ -43,22 +42,54 @@ namespace System.Management.Automation.Internal
 
         internal void RegisterRunspace()
         {
-            // it's not get, but really 'Add' value.
-            // ConditionalWeakTable.Add throw exception, when you are trying to add a value with the same key.
-            _stateMap.GetValue(Runspace.DefaultRunspace, runspace => runspace.ExecutionContext.EngineSessionState);
+            SessionStateInternal sessionStateInMap = null;
+            Runspace runspaceToUse = Runspace.DefaultRunspace;
+            SessionStateInternal sessionStateToUse = runspaceToUse.ExecutionContext.EngineSessionState;
+
+            // Different threads will operate on different key/value pairs (default-runspace/session-state pairs),
+            // and a ConditionalWeakTable itself is thread safe, so there won't be race condition here.
+            if (!_stateMap.TryGetValue(runspaceToUse, out sessionStateInMap))
+            {
+                // If the key doesn't exist yet, add it
+                _stateMap.Add(runspaceToUse, sessionStateToUse);
+            }
+            else if (sessionStateInMap != sessionStateToUse)
+            {
+                // If the key exists but the corresponding value is not what we should use, then remove the key/value pair and add the new pair.
+                // This could happen when a powershell class is defined in a module and the module gets reloaded. In such case, the same TypeDefinitionAst
+                // instance will get reused, but should be associated with the SessionState from the new module, instead of the one from the old module.
+                _stateMap.AddOrUpdate(runspaceToUse, sessionStateToUse);
+            }
+            // If the key exists and the corresponding value is the one we should use, then do nothing.
         }
 
         /// <summary>
-        /// This method should be called only from generated ctors for PowerShell classes.
+        /// This method should be called only from
+        ///  - generated ctors for PowerShell classes, AND
+        ///  - ScriptBlockMemberMethodWrapper when invoking static methods of PowerShell classes.
         /// It's not intended to be a public API, but because we generate type in a different assembly it has to be public.
         /// Return type should be SessionStateInternal, but it violates accessibility consistency, so we use object.
         /// </summary>
-        /// <returns>SessionStateInternal</returns>
+        /// <remarks>
+        /// By default, PowerShell class instantiation usually happens in the same Runspace where the class is defined. In
+        /// that case, the created instance will be bound to the session state used to define that class in the Runspace.
+        /// However, if the instantiation happens in a different Runspace where the class is not defined, or it happens on
+        /// a thread without a default Runspace, then the created instance won't be bound to any session state.
+        /// </remarks>
+        /// <returns>SessionStateInternal.</returns>
         public object GetSessionState()
         {
             SessionStateInternal ss = null;
-            bool found = _stateMap.TryGetValue(Runspace.DefaultRunspace, out ss);
-            Diagnostics.Assert(found, "We always should be able to find corresponding SessionState");
+
+            // DefaultRunspace could be null when we reach here. For example, create instance of
+            // a PowerShell class by using reflection on a thread without DefaultRunspace.
+            // Make sure we call 'TryGetValue' with a non-null key, otherwise ArgumentNullException will be thrown.
+            Runspace defaultRunspace = Runspace.DefaultRunspace;
+            if (defaultRunspace != null)
+            {
+                _stateMap.TryGetValue(defaultRunspace, out ss);
+            }
+
             return ss;
         }
     }
@@ -67,77 +98,173 @@ namespace System.Management.Automation.Internal
     public class ScriptBlockMemberMethodWrapper
     {
         /// <summary>Used in codegen</summary>
-        public static readonly object[] _emptyArgumentArray = Utils.EmptyArray<object>(); // See TypeDefiner.DefineTypeHelper.DefineMethodBody
-
-        // we use this _scriptBlock instance for static methods.
-        private Lazy<ScriptBlock> _scriptBlock;
-        private IParameterMetadataProvider _ast;
+        public static readonly object[] _emptyArgumentArray = Array.Empty<object>(); // See TypeDefiner.DefineTypeHelper.DefineMethodBody
 
         /// <summary>
-        /// We use ThreadLocal boundScriptBlock to allow multi-thread execution of instance methods.
+        /// Indicate the wrapper is for a static member method.
         /// </summary>
-        private ThreadLocal<ScriptBlock> _boundScriptBlock;
+        private readonly bool _isStatic;
 
+        /// <summary>
+        /// The SessionStateKeeper associated with the helper type generated from PowerShell class.
+        /// We query it for the SessionState to run static method in.
+        /// </summary>
+        private readonly SessionStateKeeper _sessionStateKeeper;
+
+        /// <summary>
+        /// We use WeakReference object to point to the default SessionState because if GC already collect the SessionState,
+        /// or the Runspace it chains to is closed and disposed, then we cannot run the static method there anyways.
+        /// </summary>
+        /// <remakr>
+        /// The default SessionState is used only if a static method is called from a Runspace where the PowerShell class is
+        /// never defined, or is called on a thread without a default Runspace. Usage like those should be rare.
+        /// </remakr>
+        private readonly WeakReference<SessionStateInternal> _defaultSessionStateToUse;
+
+        /// <summary>
+        /// The body AST of the member method.
+        /// </summary>
+        private readonly IParameterMetadataProvider _ast;
+
+        /// <summary>
+        /// We use _scriptBlock instance to provide the shared CompiledScriptBlockData.
+        /// </summary>
+        private readonly Lazy<ScriptBlock> _scriptBlock;
+
+        /// <summary>
+        /// We use ThreadLocal boundScriptBlock to allow multi-thread execution of member methods.
+        /// </summary>
+        private readonly ThreadLocal<ScriptBlock> _boundScriptBlock;
+
+        /// <summary>
+        /// Constructor to be called when the wrapper is for a static member method.
+        /// </summary>
+        internal ScriptBlockMemberMethodWrapper(IParameterMetadataProvider ast, SessionStateKeeper sessionStateKeeper)
+            : this(ast)
+        {
+            _isStatic = true;
+            _sessionStateKeeper = sessionStateKeeper;
+            _defaultSessionStateToUse = new WeakReference<SessionStateInternal>(null);
+        }
+
+        /// <summary>
+        /// Constructor to be called when the wrapper is for an instance member method.
+        /// </summary>
         internal ScriptBlockMemberMethodWrapper(IParameterMetadataProvider ast)
         {
             _ast = ast;
+            // This 'Lazy<T>' constructor ensures that only a single thread can initialize the instance in a thread-safe manner.
             _scriptBlock = new Lazy<ScriptBlock>(() => new ScriptBlock(_ast, isFilter: false));
-            _boundScriptBlock = new ThreadLocal<ScriptBlock>(
-                () =>
-                {
-                    var sb = _scriptBlock.Value.Clone();
-                    return sb;
-                });
+            _boundScriptBlock = new ThreadLocal<ScriptBlock>(() => _scriptBlock.Value.Clone());
         }
 
+        /// <summary>
+        /// Initialization happens when the script that defines PowerShell class is executed.
+        /// This initialization is required only if this wrapper is for a static method.
+        /// </summary>
+        /// <remark>
+        /// When the same script file gets executed multiple times, the .NET type generated from the PowerShell class
+        /// defined in the file will be shared in those executions, and thus this method will be called multiple times
+        /// possibly in the contexts of different Runspace/SessionState.
+        ///
+        /// We always use the SessionState from the most recent execution as the default SessionState, so be noted that
+        /// the default SessionState may change over time.
+        ///
+        /// This should be OK because the common usage is to run the static method in the same Runspace where the class
+        /// is declared, and thus we can always get the correct SessionState to use by querying the 'SessionStateKeeper'.
+        /// The default SessionState is used only if a static method is called from a Runspace where the class is never
+        /// defined, or is called on a thread without a default Runspace.
+        /// </remark>
         internal void InitAtRuntime()
         {
-            var context = Runspace.DefaultRunspace.ExecutionContext;
-            _scriptBlock.Value.SessionStateInternal = context.EngineSessionState;
+            if (_isStatic)
+            {
+                // WeakReference<T>'s instance methods are not thread-safe, so we need the lock to guarantee
+                // 'SetTarget' and 'TryGetTarget' are not called by multiple threads at the same time.
+                lock (_defaultSessionStateToUse)
+                {
+                    var context = Runspace.DefaultRunspace.ExecutionContext;
+                    _defaultSessionStateToUse.SetTarget(context.EngineSessionState);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Set the SessionState of the script block appropriately.
+        /// </summary>
+        private void PrepareScriptBlockToInvoke(object instance, object sessionStateInternal)
+        {
+            SessionStateInternal sessionStateToUse = null;
+            if (instance != null)
+            {
+                // Use the SessionState passed in, which is the one associated with the instance.
+                sessionStateToUse = (SessionStateInternal)sessionStateInternal;
+            }
+            else
+            {
+                // For static method, it's a little complex.
+                // - Check if the current default runspace is registered with the SessionStateKeeper. If so, use the registered SessionState.
+                // - Otherwise, check if default SessionState is still alive. If so, use the default SessionState.
+                // - Otherwise, the 'SessionStateInternal' property will be set to null, and thus the default runspace of the current thread will be used.
+                //              If the current thread doesn't have a default Runspace, then an InvalidOperationException will be thrown when invoking the
+                //              script block, which is expected.
+                sessionStateToUse = (SessionStateInternal)_sessionStateKeeper.GetSessionState();
+                if (sessionStateToUse == null)
+                {
+                    lock (_defaultSessionStateToUse)
+                    {
+                        _defaultSessionStateToUse.TryGetTarget(out sessionStateToUse);
+                    }
+                }
+            }
+
+            _boundScriptBlock.Value.SessionStateInternal = sessionStateToUse;
         }
 
         /// <summary>
         /// </summary>
-        /// <param name="instance">target object or null for static call</param>
-        /// <param name="sessionStateInternal">sessionStateInternal from private field of instance or null for static call</param>
+        /// <param name="instance">Target object or null for static call.</param>
+        /// <param name="sessionStateInternal">SessionStateInternal from private field of instance or null for static call.</param>
         /// <param name="args"></param>
         public void InvokeHelper(object instance, object sessionStateInternal, object[] args)
         {
-            ScriptBlock sb;
-            if (instance != null)
+            try
             {
-                _boundScriptBlock.Value.SessionStateInternal = (SessionStateInternal)sessionStateInternal;
-                sb = _boundScriptBlock.Value;
+                PrepareScriptBlockToInvoke(instance, sessionStateInternal);
+                _boundScriptBlock.Value.InvokeAsMemberFunction(instance, args);
             }
-            else
+            finally
             {
-                sb = _scriptBlock.Value;
+                // '_boundScriptBlock.Value' for a thread will live until
+                //  - the thread is gone, OR
+                //  - the dyanmic assembly holding this wrapper instance is GC collected.
+                // We don't hold on the SessionState object, so that GC can collect it as appropriate.
+                _boundScriptBlock.Value.SessionStateInternal = null;
             }
-
-            sb.InvokeAsMemberFunction(instance, args);
         }
 
         /// <summary>
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="instance">target object or null for static call</param>
-        /// <param name="sessionStateInternal">sessionStateInternal from private field of instance or null for static call</param>
+        /// <param name="instance">Target object or null for static call.</param>
+        /// <param name="sessionStateInternal">SessionStateInternal from private field of instance or null for static call.</param>
         /// <param name="args"></param>
         /// <returns></returns>
         public T InvokeHelperT<T>(object instance, object sessionStateInternal, object[] args)
         {
-            ScriptBlock sb;
-            if (instance != null)
+            try
             {
-                _boundScriptBlock.Value.SessionStateInternal = (SessionStateInternal)sessionStateInternal;
-                sb = _boundScriptBlock.Value;
+                PrepareScriptBlockToInvoke(instance, sessionStateInternal);
+                return _boundScriptBlock.Value.InvokeAsMemberFunctionT<T>(instance, args);
             }
-            else
+            finally
             {
-                sb = _scriptBlock.Value;
+                // '_boundScriptBlock.Value' for a thread will live until
+                //  - the thread is gone, OR
+                //  - the dyanmic assembly holding this wrapper instance is GC collected.
+                // We don't hold on the SessionState object, so that GC can collect it as appropriate.
+                _boundScriptBlock.Value.SessionStateInternal = null;
             }
-
-            return sb.InvokeAsMemberFunctionT<T>(instance, args);
         }
     }
 
@@ -148,7 +275,7 @@ namespace System.Management.Automation.Internal
     {
         /// <summary>
         /// This method calls all Validate attributes for the property to validate value.
-        /// Called from class property setters with ValidateArgumentsAttribute attributes. 
+        /// Called from class property setters with ValidateArgumentsAttribute attributes.
         /// </summary>
         /// <param name="type"></param>
         /// <param name="propertyName"></param>
@@ -167,9 +294,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Performs base ctor call as a method call.
         /// </summary>
-        /// <param name="target">object for invocation</param>
-        /// <param name="ci">ctor info for invocation</param>
-        /// <param name="args">arguments for invocation</param>
+        /// <param name="target">Object for invocation.</param>
+        /// <param name="ci">Ctor info for invocation.</param>
+        /// <param name="args">Arguments for invocation.</param>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public static void CallBaseCtor(object target, ConstructorInfo ci, object[] args)
         {
@@ -179,9 +306,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Performs non-virtual method call with return value. Main usage: base class method call inside subclass method.
         /// </summary>
-        /// <param name="target">object for invocation</param>
-        /// <param name="mi">method info for invocation</param>
-        /// <param name="args">arguments for invocation</param>
+        /// <param name="target">Object for invocation.</param>
+        /// <param name="mi">Method info for invocation.</param>
+        /// <param name="args">Arguments for invocation.</param>
         public static object CallMethodNonVirtually(object target, MethodInfo mi, object[] args)
         {
             return CallMethodNonVirtuallyImpl(target, mi, args);
@@ -190,9 +317,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Performs non-virtual void method call. Main usage: base class method call inside subclass method.
         /// </summary>
-        /// <param name="target">object for invocation</param>
-        /// <param name="mi">method info for invocation</param>
-        /// <param name="args">arguments for invocation</param>
+        /// <param name="target">Object for invocation.</param>
+        /// <param name="mi">Method info for invocation.</param>
+        /// <param name="args">Arguments for invocation.</param>
         public static void CallVoidMethodNonVirtually(object target, MethodInfo mi, object[] args)
         {
             CallMethodNonVirtuallyImpl(target, mi, args);
@@ -208,14 +335,14 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Implementation of non-virtual method call.
         /// </summary>
-        /// <param name="target">object for invocation</param>
-        /// <param name="mi">method info for invocation</param>
-        /// <param name="args">arguments for invocation</param>
+        /// <param name="target">Object for invocation.</param>
+        /// <param name="mi">Method info for invocation.</param>
+        /// <param name="args">Arguments for invocation.</param>
         private static object CallMethodNonVirtuallyImpl(object target, MethodInfo mi, object[] args)
         {
             DynamicMethod dm = s_nonVirtualCallCache.GetValue(mi, CreateDynamicMethod);
 
-            // The target object will be passed to the hidden parameter 'this' of the instance method 
+            // The target object will be passed to the hidden parameter 'this' of the instance method
             var newArgs = new List<object>(args.Length + 1) { target };
             newArgs.AddRange(args);
 
@@ -237,6 +364,7 @@ namespace System.Management.Automation.Internal
             {
                 il.Emit(OpCodes.Ldarg, i);
             }
+
             il.Emit(OpCodes.Tailcall);
             il.EmitCall(OpCodes.Call, mi, null);
             il.Emit(OpCodes.Ret);

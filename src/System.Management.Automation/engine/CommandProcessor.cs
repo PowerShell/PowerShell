@@ -1,19 +1,16 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Linq.Expressions;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq.Expressions;
 using System.Management.Automation.Internal;
-using Microsoft.PowerShell.Commands;
-using Dbg = System.Management.Automation.Diagnostics;
 
-#if CORECLR
-using System.Reflection;
-#endif
+using Microsoft.PowerShell.Commands;
+
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
@@ -23,7 +20,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class CommandProcessor : CommandProcessorBase
     {
-#region ctor
+        #region ctor
 
         static CommandProcessor()
         {
@@ -49,19 +46,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes the new instance of CommandProcessor class.
         /// </summary>
-        /// 
         /// <param name="cmdletInfo">
         /// The information about the cmdlet.
         /// </param>
-        /// 
         /// <param name="context">
         /// PowerShell engine execution context for this command.
         /// </param>
-        /// 
         /// <exception cref="CommandNotFoundException">
         /// If there was a failure creating an instance of the cmdlet type.
         /// </exception>
-        /// 
         internal CommandProcessor(CmdletInfo cmdletInfo, ExecutionContext context) : base(cmdletInfo)
         {
             this._context = context;
@@ -69,7 +62,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This is the constructor for script as cmdlet. 
+        /// This is the constructor for script as cmdlet.
         /// </summary>
         /// <param name="scriptCommandInfo">
         /// The information about the cmdlet.
@@ -79,7 +72,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="useLocalScope"></param>
         /// <param name="sessionState"></param>
-        /// <param name="fromScriptFile">True when the script to be executed came from a file (as opposed to a function, or interactive input)</param>
+        /// <param name="fromScriptFile">True when the script to be executed came from a file (as opposed to a function, or interactive input).</param>
         internal CommandProcessor(IScriptCommandInfo scriptCommandInfo, ExecutionContext context, bool useLocalScope, bool fromScriptFile, SessionStateInternal sessionState)
             : base(scriptCommandInfo as CommandInfo)
         {
@@ -90,33 +83,28 @@ namespace System.Management.Automation
             Init(scriptCommandInfo);
         }
 
-        // CommandProcessor
+        #endregion ctor
 
-#endregion ctor
+        #region internal members
 
-#region internal members
         /// <summary>
-        /// Returns a CmdletParameterBinderController for the specified command
+        /// Returns a CmdletParameterBinderController for the specified command.
         /// </summary>
-        /// 
         /// <param name="command">
         /// The cmdlet to bind parameters to.
         /// </param>
-        /// 
         /// <returns>
         /// A new instance of a CmdletParameterBinderController.
         /// </returns>
-        /// 
         /// <exception cref="ArgumentException">
         /// if <paramref name="command"/> is not a Cmdlet.
         /// </exception>
-        /// 
         internal ParameterBinderController NewParameterBinderController(InternalCommand command)
         {
             Cmdlet cmdlet = command as Cmdlet;
             if (cmdlet == null)
             {
-                throw PSTraceSource.NewArgumentException("command");
+                throw PSTraceSource.NewArgumentException(nameof(command));
             }
 
             ParameterBinderBase parameterBinder;
@@ -143,34 +131,34 @@ namespace System.Management.Automation
                 {
                     NewParameterBinderController(this.Command);
                 }
+
                 return _cmdletParameterBinderController;
             }
         }
+
         private CmdletParameterBinderController _cmdletParameterBinderController;
 
         /// <summary>
-        /// Get the ObsoleteAttribute of the current command
+        /// Get the ObsoleteAttribute of the current command.
         /// </summary>
         internal override ObsoleteAttribute ObsoleteAttribute
         {
             get { return _obsoleteAttribute; }
         }
+
         private ObsoleteAttribute _obsoleteAttribute;
 
         /// <summary>
-        /// Binds the specified command-line parameters to the target
+        /// Binds the specified command-line parameters to the target.
         /// </summary>
-        /// 
         /// <returns>
         /// true if encode succeeds otherwise false.
         /// </returns>
-        /// 
         /// <exception cref="ParameterBindingException">
         /// If any parameters fail to bind,
         /// or
         /// If any mandatory parameters are missing.
         /// </exception>
-        /// 
         /// <exception cref="MetadataException">
         /// If there is an error generating the metadata for dynamic parameters.
         /// </exception>
@@ -225,11 +213,70 @@ namespace System.Management.Automation
                 this.Command != null,
                 "CommandProcessor did not initialize Command\n" + this.CommandInfo.Name);
 
-            BindCommandLineParameters();
+            PSLanguageMode? oldLanguageMode = null;
+            bool? oldLangModeTransitionStatus = null;
+            try
+            {
+                var scriptCmdletInfo = this.CommandInfo as IScriptCommandInfo;
+                if (scriptCmdletInfo != null &&
+                    scriptCmdletInfo.ScriptBlock.LanguageMode.HasValue &&
+                    scriptCmdletInfo.ScriptBlock.LanguageMode != Context.LanguageMode)
+                {
+                    // Set the language mode before parameter binding if it's necessary for a script cmdlet, so that the language
+                    // mode is appropriately applied for evaluating parameter defaults and argument type conversion.
+                    oldLanguageMode = Context.LanguageMode;
+                    Context.LanguageMode = scriptCmdletInfo.ScriptBlock.LanguageMode.Value;
+
+                    // If it's from ConstrainedLanguage to FullLanguage, indicate the transition before parameter binding takes place.
+                    if (oldLanguageMode == PSLanguageMode.ConstrainedLanguage && Context.LanguageMode == PSLanguageMode.FullLanguage)
+                    {
+                        oldLangModeTransitionStatus = Context.LanguageModeTransitionInParameterBinding;
+                        Context.LanguageModeTransitionInParameterBinding = true;
+                    }
+                }
+
+                BindCommandLineParameters();
+            }
+            finally
+            {
+                if (oldLanguageMode.HasValue)
+                {
+                    // Revert to the original language mode after doing the parameter binding
+                    Context.LanguageMode = oldLanguageMode.Value;
+                }
+
+                if (oldLangModeTransitionStatus.HasValue)
+                {
+                    // Revert the transition state to old value after doing the parameter binding
+                    Context.LanguageModeTransitionInParameterBinding = oldLangModeTransitionStatus.Value;
+                }
+            }
+        }
+
+        protected override void OnSetCurrentScope()
+        {
+            // When dotting a script cmdlet, push the locals of automatic variables to
+            // the 'DottedScopes' of the current scope.
+            PSScriptCmdlet scriptCmdlet = this.Command as PSScriptCmdlet;
+            if (scriptCmdlet != null && !UseLocalScope)
+            {
+                scriptCmdlet.PushDottedScope(CommandSessionState.CurrentScope);
+            }
+        }
+
+        protected override void OnRestorePreviousScope()
+        {
+            // When dotting a script cmdlet, pop the locals of automatic variables from
+            // the 'DottedScopes' of the current scope.
+            PSScriptCmdlet scriptCmdlet = this.Command as PSScriptCmdlet;
+            if (scriptCmdlet != null && !UseLocalScope)
+            {
+                scriptCmdlet.PopDottedScope(CommandSessionState.CurrentScope);
+            }
         }
 
         /// <summary>
-        /// Execute BeginProcessing part of command
+        /// Execute BeginProcessing part of command.
         /// </summary>
         internal override void DoBegin()
         {
@@ -284,8 +331,6 @@ namespace System.Management.Automation
                 // an FXCOP violation, cleared by KCwalina.
                 catch (Exception e)  // Catch-all OK, 3rd party callout.
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     // This cmdlet threw an exception, so
                     // wrap it and bubble it up.
                     throw ManageInvocationException(e);
@@ -300,8 +345,8 @@ namespace System.Management.Automation
                 Exception exceptionToThrow = null;
                 try
                 {
-                    // 
-                    // On V1 the output pipe was redirected to the command's output pipe only when it 
+                    //
+                    // On V1 the output pipe was redirected to the command's output pipe only when it
                     // was already redirected. This is the original comment explaining this behaviour:
                     //
                     //      NTRAID#Windows Out of Band Releases-926183-2005-12-15
@@ -351,6 +396,7 @@ namespace System.Management.Automation
                     {
                         throw;
                     }
+
                     exceptionToThrow = rte;
                 }
                 catch (LoopFlowException)
@@ -369,10 +415,9 @@ namespace System.Management.Automation
                 {
                     _context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
                 }
+
                 if (exceptionToThrow != null)
                 {
-                    CommandProcessorBase.CheckForSevereException(exceptionToThrow);
-
                     // This cmdlet threw an exception, so
                     // wrap it and bubble it up.
                     throw ManageInvocationException(exceptionToThrow);
@@ -380,29 +425,26 @@ namespace System.Management.Automation
             }
         }
 
-#endregion public_methods
+        #endregion public_methods
 
-#region helper_methods
+        #region helper_methods
 
         /// <summary>
-        /// Tells whether it is the first call to Read 
+        /// Tells whether it is the first call to Read.
         /// </summary>
         private bool _firstCallToRead = true;
 
         /// <summary>
-        /// Tells whether to bail out in the next call to Read
+        /// Tells whether to bail out in the next call to Read.
         /// </summary>
         private bool _bailInNextCall;
-
 
         /// <summary>
         /// Populates the parameters specified from the pipeline.
         /// </summary>
-        /// 
         /// <returns>
         /// A bool indicating whether read succeeded.
         /// </returns>
-        /// 
         /// <exception cref="ParameterBindingException">
         /// If a parameter fails to bind.
         /// or
@@ -411,29 +453,28 @@ namespace System.Management.Automation
         /// <exception cref="PipelineStoppedException">
         /// The pipeline was already stopped.
         /// </exception>
-        /// 
         // 2003/10/07-JonN was public, now internal
         internal sealed override bool Read()
         {
             // (1) If Read() is called for the first time and with pipe closed and
-            //     no object in the input pipe and 
-            //     (typically for the first cmdlet in the pipe & during programmatic 
+            //     no object in the input pipe and
+            //     (typically for the first cmdlet in the pipe & during programmatic
             //     execution of a command), Read() will succeed (return true) for
-            //     only one time (so that the 
+            //     only one time (so that the
             // (2) If Read() is called with some input objects in the pipeline, it
-            //     processes the input 
+            //     processes the input
             //     object one at a time and adds parameters from the input object
-            //     to the list of parameters. If 
+            //     to the list of parameters. If
             //     added to the error pipe and Read() will continue to read the
             //     next object in the pipe.
-            // (3) Read() will return false if there are no objects in the pipe 
+            // (3) Read() will return false if there are no objects in the pipe
             //     for processing.
             // (4) Read() will return true if the parameters are encoded in the
             //     request - signals ready for execution.
             // (5) Read() will refresh the properties that are encoded via pipeline
-            //     parameters in the next 
+            //     parameters in the next
             //     call to Read() [To their default values, so that the
-            //     next execution of the command will 
+            //     next execution of the command will
             //     not work on previously specified parameter].
             // If the flag 'bail in next call' is true, then bail out returning false.
             if (_bailInNextCall)
@@ -478,7 +519,7 @@ namespace System.Management.Automation
                     return false;
                 }
 
-                // If we are reading input for the first command in the pipeline increment PipelineIterationInfo[0], which is the number of items read from the input 
+                // If we are reading input for the first command in the pipeline increment PipelineIterationInfo[0], which is the number of items read from the input
                 if (this.Command.MyInvocation.PipelinePosition == 1)
                 {
                     this.Command.MyInvocation.PipelineIterationInfo[0]++;
@@ -491,7 +532,7 @@ namespace System.Management.Automation
                     {
                         // The input object was not bound to any parameters of the cmdlet.
                         // Write a non-terminating error and continue with the next input
-                        // object. 
+                        // object.
                         WriteInputObjectError(
                             inputObject,
                             ParameterBinderStrings.InputObjectNotBound,
@@ -548,24 +589,19 @@ namespace System.Management.Automation
         /// Writes an ErrorRecord to the commands error pipe because the specified
         /// input object was not bound to the command.
         /// </summary>
-        /// 
         /// <param name="inputObject">
         /// The pipeline input object that was not bound.
         /// </param>
-        /// 
         /// <param name="resourceString">
         /// The error message.
         /// </param>
-        /// 
         /// <param name="errorId">
         /// The resource ID of the error message is also used as error ID
         /// of the ErrorRecord.
         /// </param>
-        /// 
         /// <param name="args">
         /// Additional arguments to be formatted into the error message that represented in <paramref name="resourceString"/>.
         /// </param>
-        /// 
         private void WriteInputObjectError(
             object inputObject,
             string resourceString,
@@ -595,27 +631,23 @@ namespace System.Management.Automation
             errorRecord.SetInvocationInfo(this.Command.MyInvocation);
 
             this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord);
-        } // WriteIgnoredInputObjectError
+        }
 
         /// <summary>
-        /// Reads an object from an input pipeline and attempts to bind the parameters
+        /// Reads an object from an input pipeline and attempts to bind the parameters.
         /// </summary>
-        /// 
         /// <param name="inputObject">
         /// The pipeline input object to be processed.
         /// </param>
-        /// 
         /// <returns>
         /// False the pipeline input object was not bound in any way to the command.
         /// </returns>
-        /// 
         /// <exception cref="ParameterBindingException">
         /// If a ShouldProcess parameter is specified but the cmdlet does not support
         /// ShouldProcess.
         /// or
         /// If an error occurred trying to bind a parameter from the pipeline object.
         /// </exception>
-        /// 
         private bool ProcessInputPipelineObject(object inputObject)
         {
             PSObject inputToOperateOn = null;
@@ -628,12 +660,14 @@ namespace System.Management.Automation
             {
                 inputToOperateOn = PSObject.AsPSObject(inputObject);
             }
+
             Command.CurrentPipelineObject = inputToOperateOn;
 
             return this.CmdletParameterBinderController.BindPipelineParameters(inputToOperateOn);
         }
 
         private static readonly ConcurrentDictionary<Type, Func<Cmdlet>> s_constructInstanceCache;
+
         private static Cmdlet ConstructInstance(Type type)
         {
             // Call the default constructor if type derives from Cmdlet.
@@ -649,29 +683,24 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes the command's request object
+        /// Initializes the command's request object.
         /// </summary>
-        /// 
         /// <param name="cmdletInformation">
         /// The information about the cmdlet.
         /// </param>
-        /// 
         /// <exception cref="CmdletInvocationException">
         /// If the constructor for the cmdlet threw an exception.
         /// </exception>
-        /// 
         /// <exception cref="MemberAccessException">
         /// The type referenced by <paramref name="cmdletInformation"/> refered to an
         /// abstract type or them member was invoked via a late-binding mechanism.
         /// </exception>
-        /// 
         /// <exception cref="TypeLoadException">
         /// If <paramref name="cmdletInformation"/> refers to a type that is invalid.
         /// </exception>
-        /// 
         private void Init(CmdletInfo cmdletInformation)
         {
-            Diagnostics.Assert(cmdletInformation != null, "Constructor should throw exception if LookupCommand returned  null.");
+            Diagnostics.Assert(cmdletInformation != null, "Constructor should throw exception if LookupCommand returned null.");
 
             Cmdlet newCmdlet = null;
             Exception initError = null;
@@ -700,8 +729,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // We don't have a Command or InvocationInfo at this point,
                 // since the command failed to initialize.
                 var commandException = new CmdletInvocationException(e, null);
@@ -714,7 +741,8 @@ namespace System.Management.Automation
 
                 throw commandException;
             }
-            if (null != initError)
+
+            if (initError != null)
             {
                 // Log a command health event
                 MshLog.LogCommandHealthEvent(
@@ -740,13 +768,17 @@ namespace System.Management.Automation
 
         private void Init(IScriptCommandInfo scriptCommandInfo)
         {
-            InternalCommand scriptCmdlet =
-                new PSScriptCmdlet(scriptCommandInfo.ScriptBlock, _useLocalScope, FromScriptFile, _context);
-
+            var scriptCmdlet = new PSScriptCmdlet(scriptCommandInfo.ScriptBlock, UseLocalScope, FromScriptFile, _context);
             this.Command = scriptCmdlet;
-            this.CommandScope = _useLocalScope
+            this.CommandScope = UseLocalScope
                                     ? this.CommandSessionState.NewScope(_fromScriptFile)
                                     : this.CommandSessionState.CurrentScope;
+
+            if (UseLocalScope)
+            {
+                // Set the 'LocalsTuple' of the new scope to that of the scriptCmdlet
+                scriptCmdlet.SetLocalsTupleForNewScope(CommandScope);
+            }
 
             InitCommon();
 
@@ -776,8 +808,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // Log a command health event
 
                 MshLog.LogCommandHealthEvent(
@@ -793,9 +823,9 @@ namespace System.Management.Automation
         /// Checks if user has requested help (for example passing "-?" parameter for a cmdlet)
         /// and if yes, then returns the help target to display.
         /// </summary>
-        /// <param name="helpTarget">help target to request</param>
-        /// <param name="helpCategory">help category to request</param>
-        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise</returns>
+        /// <param name="helpTarget">Help target to request.</param>
+        /// <param name="helpCategory">Help category to request.</param>
+        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
         internal override bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
             if (this.arguments != null)
@@ -806,8 +836,8 @@ namespace System.Management.Automation
                     if (parameter.IsDashQuestion())
                     {
                         helpCategory = HelpCategory.All;
-                        // using InvocationName mainly to avoid bogus this.CommandInfo.Name 
-                        // (when CmdletInfo.Name is initialized from "cmdlet" declaration 
+                        // using InvocationName mainly to avoid bogus this.CommandInfo.Name
+                        // (when CmdletInfo.Name is initialized from "cmdlet" declaration
                         //  of a scriptblock and when "cmdlet" declaration doesn't specify any name)
                         if ((this.Command != null) && (this.Command.MyInvocation != null) &&
                             (!string.IsNullOrEmpty(this.Command.MyInvocation.InvocationName)))
@@ -837,8 +867,7 @@ namespace System.Management.Automation
             return base.IsHelpRequested(out helpTarget, out helpCategory);
         }
 
-#endregion helper_methods
+        #endregion helper_methods
     }
 }
-
 

@@ -1,5 +1,5 @@
-Working with PowerShell Objects
-====
+# Working with PowerShell Objects
+
 When cmdlets are executed in PowerShell, the output is an Object, as opposed to only returning text.
 This provides the ability to store information as properties.
 As a result, handling large amounts of data and getting only specific properties is a trivial task.
@@ -7,8 +7,9 @@ As a result, handling large amounts of data and getting only specific properties
 As a simple example, the following function retrieves information about storage Devices on a Linux or MacOS operating system platform.
 This is accomplished by parsing the output of an existing command, *parted -l* in administrative context, and creating an object from the raw text by using the *New-Object* cmdlet.
 
-```PowerShell
-Function Get-DiskInfo {
+```powershell
+function Get-DiskInfo
+{
     $disks = sudo parted -l | Select-String "Disk /dev/sd*" -Context 1,0
     $diskinfo = @()
     foreach ($disk in $disks) {
@@ -27,7 +28,7 @@ The results are formatted as a table with the default view.
 
 *Note: in this example, the disks are virtual disks in a Microsoft Azure virtual machine.*
 
-```PowerShell
+```powershell
 PS /home/psuser> $d = Get-DiskInfo
 [sudo] password for psuser:
 PS /home/psuser> $d
@@ -44,7 +45,7 @@ This is because the value of *$d* is not just text output.
 The value is actually an array of .Net objects with methods and properties.
 The properties include Device, Friendly Name, and Total Size.
 
-```PowerShell
+```powershell
 PS /home/psuser> $d | Get-Member
 
 
@@ -63,7 +64,7 @@ Total Size    NoteProperty string Total Size= 31.5GB
 
 To confirm, we can call the GetType() method interactively from the console.
 
-```PowerShell
+```powershell
 PS /home/psuser> $d.GetType()
 
 IsPublic IsSerial Name                                     BaseType
@@ -73,7 +74,7 @@ True     True     Object[]                                 System.Array
 
 To index in to the array and return only specific objects, use the square brackets.
 
-```PowerShell
+```powershell
 PS /home/psuser> $d[0]
 
 Friendly Name            Total Size Device
@@ -89,7 +90,7 @@ True     False    PSCustomObject                           System.Object
 
 To return a specific property, the property name can be called interactively from the console.
 
-```PowerShell
+```powershell
 PS /home/psuser> $d.Device
 /dev/sda
 /dev/sdb
@@ -97,7 +98,7 @@ PS /home/psuser> $d.Device
 
 To output a view of the information other than default, such as a view with only specific properties selected, pass the value to the *Select-Object* cmdlet.
 
-```PowerShell
+```powershell
 PS /home/psuser> $d | Select-Object Device, 'Total Size'
 
 Device   Total Size
@@ -107,10 +108,10 @@ Device   Total Size
 ```
 
 Finally, the example below demonstrates use of the *ForEach-Object* cmdlet to iterate through the array and manipulate the value of a specific property of each object.
-In this case the Total Size property, which was given in Gigabytes, is changed to Megabytes. 
+In this case the Total Size property, which was given in Gigabytes, is changed to Megabytes.
 Alternatively, index in to a position in the array as shown below in the third example.
 
-```PowerShell
+```powershell
 PS /home/psuser> $d | ForEach-Object 'Total Size'
  31.5GB
  145GB
@@ -121,4 +122,4 @@ PS /home/psuser> $d | ForEach-Object {$_.'Total Size' / 1MB}
 
 PS /home/psuser> $d[1].'Total Size' / 1MB
 148480
-``` 
+```

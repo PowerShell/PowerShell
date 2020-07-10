@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\PowerShell.Common.props"/>
+
+  <PropertyGroup>
+    <Description>PowerShell top-level project with .NET CLI host</Description>
+    <AssemblyName>pwsh</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <TieredCompilation>true</TieredCompilation>
+    <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
+    <TieredCompilationQuickJitForLoops>true</TieredCompilationQuickJitForLoops>
+    <RuntimeIdentifiers>linux-x64;osx-x64;</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\powershell\Program.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
+    <Content Include="..\Modules\Unix\**\*;..\Modules\Shared\**\*" >
+      <Link>Modules\%(RecursiveDir)\%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="..\Schemas\PSMaml\*">
+      <Link>Schemas\PSMaml\%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="..\..\LICENSE.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="..\..\ThirdPartyNotices.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.PowerShell.SDK\Microsoft.PowerShell.SDK.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-*" />
+  </ItemGroup>
+
+ </Project>

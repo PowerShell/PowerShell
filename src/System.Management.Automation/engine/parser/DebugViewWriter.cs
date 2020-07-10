@@ -1,11 +1,11 @@
 /* ****************************************************************************
  *
- * Copyright (c) Microsoft Corporation. 
+ * Copyright (c) Microsoft Corporation.
  *
- * This source code is subject to terms and conditions of the Microsoft Public License. A 
- * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Microsoft Public License, please send an email to 
- * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
+ * This source code is subject to terms and conditions of the Microsoft Public License. A
+ * copy of the license can be found in the License.html file at the root of this distribution. If
+ * you cannot locate the Microsoft Public License, please send an email to
+ * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Microsoft Public License.
  *
  * You must not remove this notice, or any other, from this software.
@@ -13,11 +13,20 @@
  *
  * ***************************************************************************/
 
+#if ENABLE_BINDER_DEBUG_LOGGING
 
-#if ENABLE_BINDER_DEBUG_LOGGING && !CORECLR
+using System.Linq.Expressions;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Reflection;
+using System.Globalization;
+using System.Diagnostics;
+using System.Dynamic;
+
 namespace System.Management.Automation.Language {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
-    internal sealed class DebugViewWriter : ExpressionVisitor {
+    internal sealed class DebugViewWriter : DynamicExpressionVisitor {
         [Flags]
         private enum Flow {
             None,
@@ -77,6 +86,7 @@ namespace System.Management.Automation.Language {
         private void Indent() {
             _delta += Tab;
         }
+
         private void Dedent() {
             _delta -= Tab;
         }
@@ -97,27 +107,28 @@ namespace System.Management.Automation.Language {
                     id = ids.Count + 1;
                     ids.Add(e, id);
                 }
+
                 return id;
             }
         }
 
         private int GetLambdaId(LambdaExpression le) {
-            Debug.Assert(String.IsNullOrEmpty(le.Name));
+            Debug.Assert(string.IsNullOrEmpty(le.Name));
             return GetId(le, ref _lambdaIds);
         }
 
         private int GetParamId(ParameterExpression p) {
-            Debug.Assert(String.IsNullOrEmpty(p.Name));
+            Debug.Assert(string.IsNullOrEmpty(p.Name));
             return GetId(p, ref _paramIds);
         }
 
         private int GetLabelTargetId(LabelTarget target) {
-            Debug.Assert(String.IsNullOrEmpty(target.Name));
+            Debug.Assert(string.IsNullOrEmpty(target.Name));
             return GetId(target, ref _labelIds);
         }
 
         /// <summary>
-        /// Write out the given AST
+        /// Write out the given AST.
         /// </summary>
         internal static void WriteTo(Expression node, TextWriter writer) {
             Debug.Assert(node != null);
@@ -169,9 +180,10 @@ namespace System.Management.Automation.Language {
                     break;
                 case Flow.NewLine:
                     WriteLine();
-                    Write(new String(' ', Depth));
+                    Write(new string(' ', Depth));
                     break;
             }
+
             Write(s);
             _flow = after;
         }
@@ -180,6 +192,7 @@ namespace System.Management.Automation.Language {
             _out.WriteLine();
             _column = 0;
         }
+
         private void Write(string s) {
             _out.Write(s);
             _column += s.Length;
@@ -203,6 +216,7 @@ namespace System.Management.Automation.Language {
                     flow &= ~Flow.Break;
                 }
             }
+
             return flow;
         }
 
@@ -269,6 +283,7 @@ namespace System.Management.Automation.Language {
                 if (variable.IsByRef) {
                     Out("&");
                 }
+
                 Out(" ");
                 VisitParameter(variable);
             });
@@ -285,12 +300,15 @@ namespace System.Management.Automation.Language {
                         if (open == '{' || expressions.Count > 1) {
                             NewLine();
                         }
+
                         isFirst = false;
                     } else {
                         Out(separator.ToString(), Flow.NewLine);
                     }
+
                     visit(e);
                 }
+
                 Dedent();
             }
 
@@ -309,6 +327,7 @@ namespace System.Management.Automation.Language {
             if (open == '{') {
                 NewLine();
             }
+
             Out(close.ToString(), Flow.Break);
         }
 
@@ -388,29 +407,32 @@ namespace System.Management.Automation.Language {
 
                 // prepend # to the operator to represent checked op
                 if (isChecked) {
-                    op = String.Format(
+                    op = string.Format(
                             CultureInfo.CurrentCulture,
                             "#{0}",
                             op
                     );
                 }
+
                 Out(beforeOp, op, Flow.Space | Flow.Break);
 
                 if (parenthesizeRight) {
                     Out("(", Flow.None);
                 }
+
                 Visit(node.Right);
                 if (parenthesizeRight) {
                     Out(Flow.None, ")", Flow.Break);
                 }
             }
+
             return node;
         }
 
         protected override Expression VisitParameter(ParameterExpression node) {
             // Have '$' for the DebugView of ParameterExpressions
             Out("$");
-            if (String.IsNullOrEmpty(node.Name)) {
+            if (string.IsNullOrEmpty(node.Name)) {
                 // If no name if provided, generate a name as $var1, $var2.
                 // No guarantee for not having name conflicts with user provided variable names.
                 //
@@ -419,12 +441,13 @@ namespace System.Management.Automation.Language {
             } else {
                 Out(GetDisplayName(node.Name));
             }
+
             return node;
         }
 
         protected override Expression VisitLambda<T>(Expression<T> node) {
             Out(
-                String.Format(CultureInfo.CurrentCulture,
+                string.Format(CultureInfo.CurrentCulture,
                     "{0} {1}<{2}>",
                     ".Lambda",
                     GetLambdaName(node),
@@ -465,6 +488,7 @@ namespace System.Management.Automation.Language {
                 Dedent();
                 Out(Flow.NewLine, ") {", Flow.NewLine);
             }
+
             Indent();
             Visit(node.IfTrue);
             Dedent();
@@ -482,12 +506,12 @@ namespace System.Management.Automation.Language {
             if (value == null) {
                 Out("null");
             } else if ((value is string) && node.Type == typeof(string)) {
-                Out(String.Format(
+                Out(string.Format(
                     CultureInfo.CurrentCulture,
                     "\"{0}\"",
                     value));
             } else if ((value is char) && node.Type == typeof(char)) {
-                    Out(String.Format(
+                    Out(string.Format(
                         CultureInfo.CurrentCulture,
                         "'{0}'",
                         value));
@@ -500,13 +524,14 @@ namespace System.Management.Automation.Language {
                     Out(value.ToString());
                     Out(suffix);
                 } else {
-                    Out(String.Format(
+                    Out(string.Format(
                         CultureInfo.CurrentCulture,
                         ".Constant<{0}>({1})",
                         node.Type.ToString(),
                         value));
                 }
             }
+
             return node;
         }
 
@@ -514,21 +539,27 @@ namespace System.Management.Automation.Language {
             if (type == typeof(UInt32)) {
                 return "U";
             }
+
             if (type == typeof(Int64)) {
                 return "L";
             }
+
             if (type == typeof(UInt64)) {
                 return "UL";
             }
-            if (type == typeof(Double)) {
+
+            if (type == typeof(double)) {
                 return "D";
             }
+
             if (type == typeof(Single)) {
                 return "F";
             }
-            if (type == typeof(Decimal)) {
+
+            if (type == typeof(decimal)) {
                 return "M";
             }
+
             return null;
         }
 
@@ -593,7 +624,7 @@ namespace System.Management.Automation.Language {
                 // 3) Parent op is -, / or %, and the child is the left operand.
                 // In this case, if left and right operand are the same, we don't
                 // remove parenthesis, e.g. (x + y) - (x + y)
-                // 
+                //
                 switch (parent.NodeType) {
                     case ExpressionType.AndAlso:
                     case ExpressionType.OrElse:
@@ -619,6 +650,7 @@ namespace System.Management.Automation.Language {
                         // Need to have parenthesis for the right operand.
                         return child == binary.Right;
                 }
+
                 return true;
             }
 
@@ -773,6 +805,7 @@ namespace System.Management.Automation.Language {
             } else {
                 Out("<UnknownType>");
             }
+
             Out(".");
             Out(node.Method.Name);
             VisitExpressions('(', node.Arguments);
@@ -786,9 +819,11 @@ namespace System.Management.Automation.Language {
                 VisitExpressions('[', node.Expressions);
             } else {
                 // .NewArray MyType {expr1, expr2}
+
                 Out(".NewArray " + node.Type.ToString(), Flow.Space);
                 VisitExpressions('{', node.Expressions);
             }
+
             return node;
         }
 
@@ -804,6 +839,7 @@ namespace System.Management.Automation.Language {
             } else {
                 VisitExpressions('{', node.Arguments);
             }
+
             return node;
         }
 
@@ -850,6 +886,7 @@ namespace System.Management.Automation.Language {
                     Out(Flow.Space, ".TypeEqual", Flow.Space);
                     break;
             }
+
             Out(node.TypeOperand.ToString());
             return node;
         }
@@ -893,6 +930,7 @@ namespace System.Management.Automation.Language {
                     } else {
                         Out(".Throw", Flow.Space);
                     }
+
                     break;
                 case ExpressionType.IsFalse:
                     Out(".IsFalse");
@@ -937,6 +975,7 @@ namespace System.Management.Automation.Language {
                     Out("++");
                     break;
             }
+
             return node;
         }
 
@@ -946,7 +985,7 @@ namespace System.Management.Automation.Language {
             // Display <type> if the type of the BlockExpression is different from the
             // last expression's type in the block.
             if (node.Type != node.Expressions[node.Expressions.Count - 1].Type) {
-                Out(String.Format(CultureInfo.CurrentCulture, "<{0}>", node.Type.ToString()));
+                Out(string.Format(CultureInfo.CurrentCulture, "<{0}>", node.Type.ToString()));
             }
 
             VisitDeclarations(node.Variables);
@@ -986,15 +1025,17 @@ namespace System.Management.Automation.Language {
             if (node.ContinueLabel != null) {
                 DumpLabel(node.ContinueLabel);
             }
+
             Out(" {", Flow.NewLine);
             Indent();
             Visit(node.Body);
             Dedent();
             Out(Flow.NewLine, "}");
             if (node.BreakLabel != null) {
-                Out("", Flow.NewLine);
+                Out(string.Empty, Flow.NewLine);
                 DumpLabel(node.BreakLabel);
             }
+
             return node;
         }
 
@@ -1004,6 +1045,7 @@ namespace System.Management.Automation.Language {
                 Visit(test);
                 Out("):", Flow.NewLine);
             }
+
             Indent(); Indent();
             Visit(node.Body);
             Dedent(); Dedent();
@@ -1024,6 +1066,7 @@ namespace System.Management.Automation.Language {
                 Dedent(); Dedent();
                 NewLine();
             }
+
             Out("}");
             return node;
         }
@@ -1031,13 +1074,15 @@ namespace System.Management.Automation.Language {
         protected override CatchBlock VisitCatchBlock(CatchBlock node) {
             Out(Flow.NewLine, "} .Catch (" + node.Test.ToString());
             if (node.Variable != null) {
-                Out(Flow.Space, "");
+                Out(Flow.Space, string.Empty);
                 VisitParameter(node.Variable);
             }
+
             if (node.Filter != null) {
                 Out(") .If (", Flow.Break);
                 Visit(node.Filter);
             }
+
             Out(") {", Flow.NewLine);
             Indent();
             Visit(node.Body);
@@ -1079,7 +1124,7 @@ namespace System.Management.Automation.Language {
         }
 
         protected override Expression VisitExtension(Expression node) {
-            Out(String.Format(CultureInfo.CurrentCulture, ".Extension<{0}>", node.GetType().ToString()));
+            Out(string.Format(CultureInfo.CurrentCulture, ".Extension<{0}>", node.GetType().ToString()));
 
             if (node.CanReduce) {
                 Out(Flow.Space, "{", Flow.NewLine);
@@ -1093,7 +1138,7 @@ namespace System.Management.Automation.Language {
         }
 
         protected override Expression VisitDebugInfo(DebugInfoExpression node) {
-            Out(String.Format(
+            Out(string.Format(
                 CultureInfo.CurrentCulture,
                 ".DebugInfo({0}: {1}, {2} - {3}, {4})",
                 node.Document.FileName,
@@ -1105,15 +1150,14 @@ namespace System.Management.Automation.Language {
             return node;
         }
 
-
         private void DumpLabel(LabelTarget target) {
-            Out(String.Format(CultureInfo.CurrentCulture, ".LabelTarget {0}:", GetLabelTargetName(target)));
+            Out(string.Format(CultureInfo.CurrentCulture, ".LabelTarget {0}:", GetLabelTargetName(target)));
         }
 
         private string GetLabelTargetName(LabelTarget target) {
             if (string.IsNullOrEmpty(target.Name)) {
                 // Create the label target name as #Label1, #Label2, etc.
-                return String.Format(CultureInfo.CurrentCulture, "#Label{0}", GetLabelTargetId(target));
+                return string.Format(CultureInfo.CurrentCulture, "#Label{0}", GetLabelTargetId(target));
             } else {
                 return GetDisplayName(target.Name);
             }
@@ -1121,7 +1165,7 @@ namespace System.Management.Automation.Language {
 
         private void WriteLambda(LambdaExpression lambda) {
             Out(
-                String.Format(
+                string.Format(
                     CultureInfo.CurrentCulture,
                     ".Lambda {0}<{1}>",
                     GetLambdaName(lambda),
@@ -1139,9 +1183,10 @@ namespace System.Management.Automation.Language {
         }
 
         private string GetLambdaName(LambdaExpression lambda) {
-            if (String.IsNullOrEmpty(lambda.Name)) {
+            if (string.IsNullOrEmpty(lambda.Name)) {
                 return "#Lambda" + GetLambdaId(lambda);
             }
+
             return GetDisplayName(lambda.Name);
         }
 
@@ -1151,15 +1196,16 @@ namespace System.Management.Automation.Language {
         /// </summary>
         private static bool ContainsWhiteSpace(string name) {
             foreach (char c in name) {
-                if (Char.IsWhiteSpace(c)) {
+                if (char.IsWhiteSpace(c)) {
                     return true;
                 }
             }
+
             return false;
         }
 
         private static string QuoteName(string name) {
-            return String.Format(CultureInfo.CurrentCulture, "'{0}'", name);
+            return string.Format(CultureInfo.CurrentCulture, "'{0}'", name);
         }
 
         private static string GetDisplayName(string name) {

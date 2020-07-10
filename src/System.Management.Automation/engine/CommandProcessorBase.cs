@@ -1,11 +1,11 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections;
-using System.Management.Automation.Language;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -19,28 +19,41 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
-        /// 
-
         internal CommandProcessorBase()
         {
         }
 
         /// <summary>
-        /// Initializes the base command processor class with the command metadata
+        /// Initializes the base command processor class with the command metadata.
         /// </summary>
-        /// 
         /// <param name="commandInfo">
         /// The metadata about the command to run.
         /// </param>
-        /// 
-        internal CommandProcessorBase(
-            CommandInfo commandInfo)
+        internal CommandProcessorBase(CommandInfo commandInfo)
         {
             if (commandInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
+            }
+
+            if (commandInfo is IScriptCommandInfo scriptCommand)
+            {
+                ExperimentalAttribute expAttribute = scriptCommand.ScriptBlock.ExperimentalAttribute;
+                if (expAttribute != null && expAttribute.ToHide)
+                {
+                    string errorTemplate = expAttribute.ExperimentAction == ExperimentAction.Hide
+                        ? DiscoveryExceptions.ScriptDisabledWhenFeatureOn
+                        : DiscoveryExceptions.ScriptDisabledWhenFeatureOff;
+                    string errorMsg = StringUtil.Format(errorTemplate, expAttribute.ExperimentName);
+                    ErrorRecord errorRecord = new ErrorRecord(
+                        new InvalidOperationException(errorMsg),
+                        "ScriptCommandDisabled",
+                        ErrorCategory.InvalidOperation,
+                        commandInfo);
+                    throw new CmdletInvocationException(errorRecord);
+                }
             }
 
             CommandInfo = commandInfo;
@@ -52,52 +65,54 @@ namespace System.Management.Automation
 
         private InternalCommand _command;
 
-        // marker of whether BeginProcessing() has already run,
-        // also used by CommandProcessor
+        // Marker of whether BeginProcessing() has already run,
+        // also used by CommandProcessor.
         internal bool RanBeginAlready;
 
-        // marker of whether this command has already been added to
-        // a PipelineProcessor.  It is an error to add the same command
+        // Marker of whether this command has already been added to
+        // a PipelineProcessor. It is an error to add the same command
         // more than once.
         internal bool AddedToPipelineAlready
         {
             get { return _addedToPipelineAlready; }
+
             set { _addedToPipelineAlready = value; }
         }
+
         internal bool _addedToPipelineAlready;
 
         /// <summary>
-        /// Gets the CommandInfo for the command this command processor represents
+        /// Gets the CommandInfo for the command this command processor represents.
         /// </summary>
         /// <value></value>
         internal CommandInfo CommandInfo { get; set; }
 
         /// <summary>
         /// This indicates whether this command processor is created from
-        /// a script file. 
+        /// a script file.
         /// </summary>
-        /// <remarks> 
+        /// <remarks>
         /// Script command processor created from a script file is special
-        /// in following two perspect, 
-        /// 
-        ///     1. New scope created needs to be a 'script' scope in the 
-        ///        sense that it needs to handle $script: variables. 
+        /// in following two perspectives,
+        ///
+        ///     1. New scope created needs to be a 'script' scope in the
+        ///        sense that it needs to handle $script: variables.
         ///        For normal functions or scriptblocks, script scope
-        ///        variables are not supported. 
-        ///        
-        ///     2. ExitException will be handled by setting lastExitCode. 
+        ///        variables are not supported.
+        ///
+        ///     2. ExitException will be handled by setting lastExitCode.
         ///        For normal functions or scriptblocks, exit command will
-        ///        kill current powershell session. 
+        ///        kill current powershell session.
         /// </remarks>
         public bool FromScriptFile { get { return _fromScriptFile; } }
+
         protected bool _fromScriptFile = false;
 
         /// <summary>
-        /// If this flag is true, the commands in this Pipeline will redirect 
+        /// If this flag is true, the commands in this Pipeline will redirect
         /// the global error output pipe to the command's error output pipe.
-        /// 
-        /// (see the comment in Pipeline.RedirectShellErrorOutputPipe for an 
-        /// explanation of why this flag is needed)
+        /// (See the comment in Pipeline.RedirectShellErrorOutputPipe for an
+        /// explanation of why this flag is needed).
         /// </summary>
         internal bool RedirectShellErrorOutputPipe { get; set; } = false;
 
@@ -107,6 +122,7 @@ namespace System.Management.Automation
         internal InternalCommand Command
         {
             get { return _command; }
+
             set
             {
                 // The command runtime needs to be set up...
@@ -121,12 +137,13 @@ namespace System.Management.Automation
                     if (value.Context == null && _context != null)
                         value.Context = _context;
                 }
+
                 _command = value;
             }
         }
 
         /// <summary>
-        /// Get the ObsoleteAttribute of the current command
+        /// Get the ObsoleteAttribute of the current command.
         /// </summary>
         internal virtual ObsoleteAttribute ObsoleteAttribute
         {
@@ -139,9 +156,11 @@ namespace System.Management.Automation
         /// The command runtime used for this instance of a command processor.
         /// </summary>
         protected MshCommandRuntime commandRuntime;
+
         internal MshCommandRuntime CommandRuntime
         {
             get { return commandRuntime; }
+
             set { commandRuntime = value; }
         }
 
@@ -153,40 +172,58 @@ namespace System.Management.Automation
         internal bool UseLocalScope
         {
             get { return _useLocalScope; }
+
             set { _useLocalScope = value; }
         }
+
         protected bool _useLocalScope;
 
         /// <summary>
         /// Ensures that the provided script block is compatible with the current language mode - to
         /// be used when a script block is being dotted.
         /// </summary>
-        /// <param name="scriptBlock">The script block being dotted</param>
-        /// <param name="languageMode">The current language mode</param>
-        /// <param name="invocationInfo">The invocation info about the command</param>
-        protected static void ValidateCompatibleLanguageMode(ScriptBlock scriptBlock,
+        /// <param name="scriptBlock">The script block being dotted.</param>
+        /// <param name="languageMode">The current language mode.</param>
+        /// <param name="invocationInfo">The invocation info about the command.</param>
+        protected static void ValidateCompatibleLanguageMode(
+            ScriptBlock scriptBlock,
             PSLanguageMode languageMode,
             InvocationInfo invocationInfo)
         {
             // If we are in a constrained language mode (Core or Restricted), block it.
-            // This goes both ways:
+            // We are currently restricting in one direction:
             //    - Can't dot something from a more permissive mode, since that would probably expose
             //      functions that were never designed to handle untrusted data.
-            //    - Can't dot something from a less permissive mode, since that might introduce tained
-            //      data into the current scope.
+            // This function won't be called for NoLanguage mode so the only direction checked is trusted
+            // (FullLanguage mode) script running in a constrained/restricted session.
             if ((scriptBlock.LanguageMode.HasValue) &&
                 (scriptBlock.LanguageMode != languageMode) &&
                 ((languageMode == PSLanguageMode.RestrictedLanguage) ||
                 (languageMode == PSLanguageMode.ConstrainedLanguage)))
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                // Finally check if script block is really just PowerShell commands plus parameters.
+                // If so then it is safe to dot source across language mode boundaries.
+                bool isSafeToDotSource = false;
+                try
+                {
+                    scriptBlock.GetPowerShell();
+                    isSafeToDotSource = true;
+                }
+                catch (Exception)
+                {
+                }
+
+                if (!isSafeToDotSource)
+                {
+                    ErrorRecord errorRecord = new ErrorRecord(
                     new NotSupportedException(
                         DiscoveryExceptions.DotSourceNotSupported),
                         "DotSourceNotSupported",
                         ErrorCategory.InvalidOperation,
                         null);
-                errorRecord.SetInvocationInfo(invocationInfo);
-                throw new CmdletInvocationException(errorRecord);
+                    errorRecord.SetInvocationInfo(invocationInfo);
+                    throw new CmdletInvocationException(errorRecord);
+                }
             }
         }
 
@@ -194,14 +231,16 @@ namespace System.Management.Automation
         /// The execution context used by the system.
         /// </summary>
         protected ExecutionContext _context;
+
         internal ExecutionContext Context
         {
             get { return _context; }
+
             set { _context = value; }
         }
 
         /// <summary>
-        /// Etw activity for this pipeline
+        /// Etw activity for this pipeline.
         /// </summary>
         internal Guid PipelineActivityId { get; set; } = Guid.Empty;
 
@@ -215,9 +254,9 @@ namespace System.Management.Automation
         /// Checks if user has requested help (for example passing "-?" parameter for a cmdlet)
         /// and if yes, then returns the help target to display.
         /// </summary>
-        /// <param name="helpTarget">help target to request</param>
-        /// <param name="helpCategory">help category to request</param>
-        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise</returns>
+        /// <param name="helpTarget">Help target to request.</param>
+        /// <param name="helpCategory">Help category to request.</param>
+        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
         internal virtual bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
             // by default we don't handle "-?" parameter at all
@@ -228,12 +267,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a command procesor for "get-help [helpTarget]"
+        /// Creates a command processor for "get-help [helpTarget]".
         /// </summary>
-        /// <param name="context">context for the command processor</param>
-        /// <param name="helpTarget">help target</param>
-        /// <param name="helpCategory">help category</param>
-        /// <returns>command processor for "get-help [helpTarget]"</returns>
+        /// <param name="context">Context for the command processor.</param>
+        /// <param name="helpTarget">Help target.</param>
+        /// <param name="helpCategory">Help category.</param>
+        /// <returns>Command processor for "get-help [helpTarget]".</returns>
         internal static CommandProcessorBase CreateGetHelpCommandProcessor(
             ExecutionContext context,
             string helpTarget,
@@ -241,22 +280,23 @@ namespace System.Management.Automation
         {
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
+
             if (string.IsNullOrEmpty(helpTarget))
             {
-                throw PSTraceSource.NewArgumentNullException("helpTarget");
+                throw PSTraceSource.NewArgumentNullException(nameof(helpTarget));
             }
 
             CommandProcessorBase helpCommandProcessor = context.CreateCommand("get-help", false);
             var cpi = CommandParameterInternal.CreateParameterWithArgument(
-                PositionUtilities.EmptyExtent, "Name", "-Name:",
-                PositionUtilities.EmptyExtent, helpTarget,
+                /*parameterAst*/null, "Name", "-Name:",
+                /*argumentAst*/null, helpTarget,
                 false);
             helpCommandProcessor.AddParameter(cpi);
             cpi = CommandParameterInternal.CreateParameterWithArgument(
-                PositionUtilities.EmptyExtent, "Category", "-Category:",
-                PositionUtilities.EmptyExtent, helpCategory.ToString(),
+                /*parameterAst*/null, "Category", "-Category:",
+                /*argumentAst*/null, helpCategory.ToString(),
                 false);
             helpCommandProcessor.AddParameter(cpi);
             return helpCommandProcessor;
@@ -280,7 +320,7 @@ namespace System.Management.Automation
         internal SessionStateInternal CommandSessionState { get; set; }
 
         /// <summary>
-        /// Gets sets the session state scope for this command processor object
+        /// Gets or sets the session state scope for this command processor object.
         /// </summary>
         protected internal SessionStateScope CommandScope { get; protected set; }
 
@@ -321,7 +361,6 @@ namespace System.Management.Automation
         /// Restores the current session state scope to the scope which was active when SetCurrentScopeToExecutionScope
         /// was called.
         /// </summary>
-        /// 
         internal void RestorePreviousScope()
         {
             OnRestorePreviousScope();
@@ -345,7 +384,6 @@ namespace System.Management.Automation
         /// host interfaces. These will be sent to the parameter binder controller
         /// for processing.
         /// </summary>
-        /// 
         internal Collection<CommandParameterInternal> arguments = new Collection<CommandParameterInternal>();
 
         /// <summary>
@@ -358,7 +396,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(parameter != null, "Caller to verify parameter argument");
             arguments.Add(parameter);
-        } // AddParameter
+        }
 
         /// <summary>
         /// Prepares the command for execution.
@@ -367,18 +405,18 @@ namespace System.Management.Automation
         internal abstract void Prepare(IDictionary psDefaultParameterValues);
 
         /// <summary>
-        /// Write warning message for an obsolete command
+        /// Write warning message for an obsolete command.
         /// </summary>
         /// <param name="obsoleteAttr"></param>
         private void HandleObsoleteCommand(ObsoleteAttribute obsoleteAttr)
         {
             string commandName =
-                String.IsNullOrEmpty(CommandInfo.Name)
+                string.IsNullOrEmpty(CommandInfo.Name)
                     ? "script block"
-                    : String.Format(System.Globalization.CultureInfo.InvariantCulture,
+                    : string.Format(System.Globalization.CultureInfo.InvariantCulture,
                                     CommandBaseStrings.ObsoleteCommand, CommandInfo.Name);
 
-            string warningMsg = String.Format(
+            string warningMsg = string.Format(
                 System.Globalization.CultureInfo.InvariantCulture,
                 CommandBaseStrings.UseOfDeprecatedCommandWarning,
                 commandName, obsoleteAttr.Message);
@@ -410,15 +448,15 @@ namespace System.Management.Automation
                     HandleObsoleteCommand(ObsoleteAttribute);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 if (_useLocalScope)
                 {
                     // If we had an exception during Prepare, we're done trying to execute the command
                     // so the scope we created needs to release any resources it hold.s
                     CommandSessionState.RemoveScope(CommandScope);
                 }
+
                 throw;
             }
             finally
@@ -451,8 +489,8 @@ namespace System.Management.Automation
                 CommandProcessorBase oldCurrentCommandProcessor = _context.CurrentCommandProcessor;
                 try
                 {
-                    // 
-                    // On V1 the output pipe was redirected to the command's output pipe only when it 
+                    //
+                    // On V1 the output pipe was redirected to the command's output pipe only when it
                     // was already redirected. This is the original comment explaining this behaviour:
                     //
                     //      NTRAID#Windows Out of Band Releases-926183-2005-12-15
@@ -470,6 +508,7 @@ namespace System.Management.Automation
                     {
                         _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
                     }
+
                     _context.CurrentCommandProcessor = this;
                     using (commandRuntime.AllowThisCommandToWrite(true))
                     {
@@ -489,8 +528,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     // This cmdlet threw an exception, so
                     // wrap it and bubble it up.
                     throw ManageInvocationException(e);
@@ -515,7 +552,6 @@ namespace System.Management.Automation
         /// the ProcessRecord abstract method that derived command processors
         /// override.
         /// </summary>
-        /// 
         internal void DoExecute()
         {
             ExecutionContext.CheckStackDepth();
@@ -539,7 +575,7 @@ namespace System.Management.Automation
         /// Internally it calls EndProcessing() of the InternalCommand.
         /// </summary>
         /// <exception cref="PipelineStoppedException">
-        /// a terminating error occurred, or the pipeline was otherwise stopped
+        /// A terminating error occurred, or the pipeline was otherwise stopped.
         /// </exception>
         internal virtual void Complete()
         {
@@ -561,26 +597,23 @@ namespace System.Management.Automation
             // an FXCOP violation, cleared by KCwalina.
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // This cmdlet threw an exception, so
                 // wrap it and bubble it up.
                 throw ManageInvocationException(e);
             }
-        } // Complete
+        }
 
         /// <summary>
-        /// Calls the virtual Complete method after setting the appropriate session state scope
+        /// Calls the virtual Complete method after setting the appropriate session state scope.
         /// </summary>
-        /// 
         internal void DoComplete()
         {
             Pipe oldErrorOutputPipe = _context.ShellFunctionErrorOutputPipe;
             CommandProcessorBase oldCurrentCommandProcessor = _context.CurrentCommandProcessor;
             try
             {
-                // 
-                // On V1 the output pipe was redirected to the command's output pipe only when it 
+                //
+                // On V1 the output pipe was redirected to the command's output pipe only when it
                 // was already redirected. This is the original comment explaining this behaviour:
                 //
                 //      NTRAID#Windows Out of Band Releases-926183-2005-12-15
@@ -598,6 +631,7 @@ namespace System.Management.Automation
                 {
                     _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
                 }
+
                 _context.CurrentCommandProcessor = this;
 
                 SetCurrentScopeToExecutionScope();
@@ -634,12 +668,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// for diagnostic purposes
+        /// For diagnostic purposes.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
-            if (null != CommandInfo)
+            if (CommandInfo != null)
                 return CommandInfo.ToString();
             return "<NullCommandInfo>"; // does not require localization
         }
@@ -652,16 +685,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Entry point used by the engine to reads the input pipeline object
         /// and binds the parameters.
-        /// 
+        ///
         /// This default implementation reads the next pipeline object and sets
         /// it as the CurrentPipelineObject in the InternalCommand.
+        /// Does not throw.
         /// </summary>
-        /// 
         /// <returns>
         /// True if read succeeds.
         /// </returns>
-        ///
-        /// does not throw
         internal virtual bool Read()
         {
             // Prepare the default value parameter list if this is the first call to Read
@@ -678,7 +709,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            // If we are reading input for the first command in the pipeline increment PipelineIterationInfo[0], which is the number of items read from the input 
+            // If we are reading input for the first command in the pipeline increment PipelineIterationInfo[0], which is the number of items read from the input
             if (this.Command.MyInvocation.PipelinePosition == 1)
             {
                 this.Command.MyInvocation.PipelineIterationInfo[0]++;
@@ -689,93 +720,36 @@ namespace System.Management.Automation
             return true;
         }
 
-#if CORECLR
-        // AccessViolationException/StackOverflowException Not In CoreCLR.
-        // The CoreCLR team told us to not check for these exceptions because they
-        // usually won't be caught.
-        internal static void CheckForSevereException(Exception e) { }
-#else
-        // Keep in sync:
-        // S.M.A.CommandProcessorBase.CheckForSevereException
-        // S.M.A.Internal.ConsoleHost.CheckForSevereException
-        // S.M.A.Commands.CommandsCommon.CheckForSevereException
-        // S.M.A.Commands.UtilityCommon.CheckForSevereException
-        /// <summary>
-        /// Checks whether the exception is a severe exception which should
-        /// cause immediate process failure.
-        /// </summary>
-        /// <param name="e"></param>
-        /// <remarks>
-        /// CB says 02/23/2005: I personally would err on the side
-        /// of treating OOM like an application exception, rather than
-        /// a critical system failure.I think this will be easier to justify
-        /// in Orcas, if we tease apart the two cases of OOM better.
-        /// But even in Whidbey, how likely is it that we couldnt JIT
-        /// some backout code?  At that point, the process or possibly
-        /// the machine is likely to stop executing soon no matter
-        /// what you do in this routine.  So I would just consider
-        /// AccessViolationException.  (I understand why you have SO here,
-        /// at least temporarily).
-        /// </remarks>
-        internal static void CheckForSevereException(Exception e)
-        {
-            if (e is AccessViolationException || e is StackOverflowException)
-            {
-                try
-                {
-                    if (!alreadyFailing)
-                    {
-                        alreadyFailing = true;
-
-                        // Get the ExecutionContext from the thread.
-                        ExecutionContext context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-
-                        // Log a command health event for this critical error.
-                        MshLog.LogCommandHealthEvent(context, e, Severity.Critical);
-                    }
-                }
-                finally
-                {
-                    WindowsErrorReporting.FailFast(e);
-                }
-            }
-        }
-        private static bool alreadyFailing = false;
-#endif
-
         /// <summary>
         /// Wraps the exception which occurred during cmdlet invocation,
         /// stores that as the exception to be returned from
         /// PipelineProcessor.SynchronousExecute, and writes it to
         /// the error variable.
         /// </summary>
-        /// 
         /// <param name="e">
         /// The exception to wrap in a CmdletInvocationException or
         /// CmdletProviderInvocationException.
         /// </param>
-        /// 
         /// <returns>
         /// Always returns PipelineStoppedException.  The caller should
         /// throw this exception.
         /// </returns>
-        /// 
         /// <remarks>
         /// Almost all exceptions which occur during pipeline invocation
         /// are wrapped in CmdletInvocationException before they are stored
         /// in the pipeline.  However, there are several exceptions:
-        /// 
+        ///
         /// AccessViolationException, StackOverflowException:
         /// These are considered to be such severe errors that we
         /// FailFast the process immediately.
-        /// 
+        ///
         /// ProviderInvocationException: In this case, we assume that the
         /// cmdlet is get-item or the like, a thin wrapper around the
         /// provider API.  We discard the original ProviderInvocationException
         /// and re-wrap its InnerException (the real error) in
         /// CmdletProviderInvocationException. This makes it easier to reach
         /// the real error.
-        /// 
+        ///
         /// CmdletInvocationException, ActionPreferenceStopException:
         /// This indicates that the cmdlet itself ran a command which failed.
         /// We could go ahead and wrap the original exception in multiple
@@ -783,7 +757,7 @@ namespace System.Management.Automation
         /// for the caller to access the root problem, plus the serialization
         /// layer might not communicate properties beyond some fixed depth.
         /// Instead, we choose to not re-wrap the exception.
-        /// 
+        ///
         /// PipelineStoppedException: This could mean one of two things.
         /// It usually means that this pipeline has already stopped,
         /// in which case the pipeline already stores the original error.
@@ -795,7 +769,7 @@ namespace System.Management.Automation
         {
             try
             {
-                if (null != Command)
+                if (Command != null)
                 {
                     do // false loop
                     {
@@ -804,7 +778,7 @@ namespace System.Management.Automation
                         {
                             // If a ProviderInvocationException occurred,
                             // discard the ProviderInvocationException and
-                            // re-wrap in CmdletProviderInvocationException 
+                            // re-wrap in CmdletProviderInvocationException
                             e = new CmdletProviderInvocationException(
                                 pie,
                                 Command.MyInvocation);
@@ -895,7 +869,7 @@ namespace System.Management.Automation
             }
             catch (Exception)
             {
-                // this method shoud not throw exceptions; warn about any violations on checked builds and re-throw
+                // this method should not throw exceptions; warn about any violations on checked builds and re-throw
                 Diagnostics.Assert(false, "This method should not throw exceptions!");
                 throw;
             }
@@ -906,11 +880,9 @@ namespace System.Management.Automation
         /// PipelineProcessor.SynchronousExecute, and writes it to
         /// the error variable.
         /// </summary>
-        /// 
         /// <param name="e">
         /// The exception which occurred during script execution
         /// </param>
-        /// 
         /// <exception cref="PipelineStoppedException">
         /// ManageScriptException throws PipelineStoppedException if-and-only-if
         /// the exception is a RuntimeException, otherwise it returns.
@@ -918,7 +890,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void ManageScriptException(RuntimeException e)
         {
-            if (null != Command && null != commandRuntime.PipelineProcessor)
+            if (Command != null && commandRuntime.PipelineProcessor != null)
             {
                 commandRuntime.PipelineProcessor.RecordFailure(e, Command);
 
@@ -937,7 +909,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void ForgetScriptException()
         {
-            if (null != Command && null != commandRuntime.PipelineProcessor)
+            if (Command != null && commandRuntime.PipelineProcessor != null)
             {
                 commandRuntime.PipelineProcessor.ForgetFailure();
             }
@@ -955,7 +927,7 @@ namespace System.Management.Automation
         /// IDisposable implementation
         /// When the command is complete, the CommandProcessorBase should be disposed.
         /// This enables cmdlets to reliably release file handles etc.
-        /// without waiting for garbage collection
+        /// without waiting for garbage collection.
         /// </summary>
         /// <remarks>We use the standard IDispose pattern</remarks>
         public void Dispose()
@@ -975,7 +947,7 @@ namespace System.Management.Automation
                 // whether IDisposable is implemented, in order to avoid
                 // this expensive reflection cast.
                 IDisposable id = Command as IDisposable;
-                if (null != id)
+                if (id != null)
                 {
                     id.Dispose();
                 }
@@ -985,7 +957,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Finalizer for class CommandProcessorBase
+        /// Finalizer for class CommandProcessorBase.
         /// </summary>
         ~CommandProcessorBase()
         {
@@ -995,4 +967,3 @@ namespace System.Management.Automation
         #endregion IDispose
     }
 }
-

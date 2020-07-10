@@ -1,11 +1,10 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Class ScriptCommandHelpProvider implement the help provider for Functions/ExternalScripts. 
+    /// Class ScriptCommandHelpProvider implement the help provider for Functions/ExternalScripts.
     /// This class does the same thing as CommandHelpProvider except for decision making: whether
     /// a particular command is Function/Script or not.
     /// </summary>
@@ -16,7 +15,7 @@ namespace System.Management.Automation
     internal class ScriptCommandHelpProvider : CommandHelpProvider
     {
         /// <summary>
-        /// Constructor for CommandHelpProvider
+        /// Constructor for CommandHelpProvider.
         /// </summary>
         internal ScriptCommandHelpProvider(HelpSystem helpSystem)
             : base(helpSystem)
@@ -38,8 +37,7 @@ namespace System.Management.Automation
                     HelpCategory.Filter |
                     HelpCategory.Function |
                     HelpCategory.Configuration |
-                    HelpCategory.ScriptCommand |
-                    HelpCategory.Workflow;
+                    HelpCategory.ScriptCommand;
             }
         }
 

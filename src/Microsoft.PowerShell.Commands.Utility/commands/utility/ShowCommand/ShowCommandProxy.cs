@@ -1,21 +1,20 @@
-﻿//-----------------------------------------------------------------------
-//     Copyright © Microsoft Corporation.  All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
+using System.Threading;
+
+using Microsoft.PowerShell.Commands.ShowCommandExtension;
 
 namespace Microsoft.PowerShell.Commands
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Management.Automation;
-    using System.Management.Automation.Internal;
-    using System.Threading;
-    using System.Collections.ObjectModel;
-    using Microsoft.PowerShell.Commands.ShowCommandExtension;
-
     /// <summary>
-    /// Help show-command create WPF object and invoke WPF windows with the 
-    /// Microsoft.PowerShell.Commands.ShowCommandInternal.ShowCommandHelperhelp type defined in Microsoft.PowerShell.GraphicalHost.dll
+    /// Help show-command create WPF object and invoke WPF windows with the
+    /// Microsoft.PowerShell.Commands.ShowCommandInternal.ShowCommandHelperhelp type defined in Microsoft.PowerShell.GraphicalHost.dll.
     /// </summary>
     internal class ShowCommandProxy
     {
@@ -76,9 +75,9 @@ namespace Microsoft.PowerShell.Commands
             return (string)_graphicalHostReflectionWrapper.CallStaticMethod("GetShowAllModulesCommand", false, true);
         }
 
-        internal Dictionary<String, ShowCommandModuleInfo> GetImportedModulesDictionary(object[] moduleObjects)
+        internal Dictionary<string, ShowCommandModuleInfo> GetImportedModulesDictionary(object[] moduleObjects)
         {
-            return (Dictionary<String, ShowCommandModuleInfo>)_graphicalHostReflectionWrapper.CallStaticMethod("GetImportedModulesDictionary", new object[] { moduleObjects });
+            return (Dictionary<string, ShowCommandModuleInfo>)_graphicalHostReflectionWrapper.CallStaticMethod("GetImportedModulesDictionary", new object[] { moduleObjects });
         }
 
         internal List<ShowCommandCommandInfo> GetCommandList(object[] commandObjects)
@@ -126,7 +125,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         internal string CommandNeedingHelp
         {
             get
@@ -147,7 +145,6 @@ namespace Microsoft.PowerShell.Commands
         {
             _graphicalHostReflectionWrapper.CallMethod("DisplayHelp", helpResults);
         }
-
 
         internal string GetImportModuleCommand(string module)
         {

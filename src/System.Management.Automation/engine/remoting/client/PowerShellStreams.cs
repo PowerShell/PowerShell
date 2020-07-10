@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 namespace System.Management.Automation
 {
@@ -55,7 +54,7 @@ namespace System.Management.Automation
         private bool _disposed;
 
         /// <summary>
-        /// Private object for thread-safe exection.
+        /// Private object for thread-safe execution.
         /// </summary>
         private readonly object _syncLock = new object();
 
@@ -98,7 +97,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Disope implementation.
+        /// Dispose implementation.
         /// </summary>
         public void Dispose()
         {
@@ -152,6 +151,7 @@ namespace System.Management.Automation
         public PSDataCollection<TInput> InputStream
         {
             get { return _inputStream; }
+
             set { _inputStream = value; }
         }
 
@@ -162,6 +162,7 @@ namespace System.Management.Automation
         public PSDataCollection<TOutput> OutputStream
         {
             get { return _outputStream; }
+
             set { _outputStream = value; }
         }
 
@@ -172,6 +173,7 @@ namespace System.Management.Automation
         public PSDataCollection<ErrorRecord> ErrorStream
         {
             get { return _errorStream; }
+
             set { _errorStream = value; }
         }
 
@@ -182,6 +184,7 @@ namespace System.Management.Automation
         public PSDataCollection<WarningRecord> WarningStream
         {
             get { return _warningStream; }
+
             set { _warningStream = value; }
         }
 
@@ -192,6 +195,7 @@ namespace System.Management.Automation
         public PSDataCollection<ProgressRecord> ProgressStream
         {
             get { return _progressStream; }
+
             set { _progressStream = value; }
         }
 
@@ -202,6 +206,7 @@ namespace System.Management.Automation
         public PSDataCollection<VerboseRecord> VerboseStream
         {
             get { return _verboseStream; }
+
             set { _verboseStream = value; }
         }
 
@@ -212,6 +217,7 @@ namespace System.Management.Automation
         public PSDataCollection<DebugRecord> DebugStream
         {
             get { return _debugStream; }
+
             set { _debugStream = value; }
         }
 
@@ -222,11 +228,12 @@ namespace System.Management.Automation
         public PSDataCollection<InformationRecord> InformationStream
         {
             get { return _informationStream; }
+
             set { _informationStream = value; }
         }
 
         /// <summary>
-        /// Marking all the streams as completed so that no further data can be added and 
+        /// Marking all the streams as completed so that no further data can be added and
         /// jobs will know that there is no more data coming in.
         /// </summary>
         public void CloseAll()

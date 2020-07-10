@@ -1,57 +1,43 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
-
-
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation.Host;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
-
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// 
-    /// ProgressPane is a class that represents the "window" in which outstanding activities for which the host has recevied 
-    /// progress updates are shown. 
-    /// 
+    /// ProgressPane is a class that represents the "window" in which outstanding activities for which the host has received
+    /// progress updates are shown.
+    ///
     ///</summary>
 
     internal
     class ProgressPane
     {
         /// <summary>
-        /// 
         /// Constructs a new instance.
-        /// 
         /// </summary>
         /// <param name="ui">
-        /// 
         /// An implementation of the PSHostRawUserInterface with which the pane will be shown and hidden.
-        /// 
         /// </param>
 
         internal
         ProgressPane(ConsoleHostUserInterface ui)
         {
-            if (ui == null) throw new ArgumentNullException("ui");
+            if (ui == null) throw new ArgumentNullException(nameof(ui));
             _ui = ui;
             _rawui = ui.RawUI;
         }
 
-
-
         /// <summary>
-        /// 
         /// Indicates whether the pane is visible on the screen buffer or not.
-        /// 
         /// </summary>
         /// <value>
-        ///
         /// true if the pane is visible, false if not.
-        /// 
+        ///
         ///</value>
 
         internal
@@ -64,13 +50,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-
-
         /// <summary>
-        /// 
-        /// Shows the pane in the screen buffer.  Saves off the content of the region of the buffer that will be overwritten so 
+        /// Shows the pane in the screen buffer.  Saves off the content of the region of the buffer that will be overwritten so
         /// that it can be restored again.
-        /// 
         /// </summary>
 
         internal
@@ -79,7 +61,7 @@ namespace Microsoft.PowerShell
         {
             if (!IsShowing)
             {
-                // Get temporary reference to the progress region since it can be 
+                // Get temporary reference to the progress region since it can be
                 // changed at any time by a call to WriteProgress.
                 BufferCell[,] tempProgressRegion = _progressRegion;
                 if (tempProgressRegion == null)
@@ -91,32 +73,58 @@ namespace Microsoft.PowerShell
 
                 int rows = tempProgressRegion.GetLength(0);
                 int cols = tempProgressRegion.GetLength(1);
+
+                _savedCursor = _rawui.CursorPosition;
+                _location.X = 0;
+
+#if UNIX
+                _location.Y = _rawui.CursorPosition.Y;
+
+                // if cursor is not on left edge already move down one line
+                if (_rawui.CursorPosition.X != 0)
+                {
+                    _location.Y++;
+                    _rawui.CursorPosition = _location;
+                }
+
+                // if the cursor is at the bottom, create screen buffer space by scrolling
+                int scrollRows = rows - ((_rawui.BufferSize.Height - 1) - _location.Y);
+                if (scrollRows > 0)
+                {
+                    // Scroll the console screen up by 'scrollRows'
+                    var bottomLocation = _location;
+                    bottomLocation.Y = _rawui.BufferSize.Height;
+                    _rawui.CursorPosition = bottomLocation;
+                    for (int i = 0; i < scrollRows; i++)
+                    {
+                        Console.Out.Write('\n');
+                    }
+
+                    _location.Y -= scrollRows;
+                    _savedCursor.Y -= scrollRows;
+                }
+
+                // create cleared region to clear progress bar later
+                _savedRegion = tempProgressRegion;
+                for(int row = 0; row < rows; row++)
+                {
+                    for(int col = 0; col < cols; col++)
+                    {
+                        _savedRegion[row, col].Character = ' ';
+                    }
+                }
+
+                // put cursor back to where output should be
+                _rawui.CursorPosition = _location;
+#else
                 _location = _rawui.WindowPosition;
 
                 // We have to show the progress pane in the first column, as the screen buffer at any point might contain
                 // a CJK double-cell characters, which makes it impractical to try to find a position where the pane would
                 // not slice a character.  Column 0 is the only place where we know for sure we can place the pane.
 
-                _location.X = 0;
                 _location.Y = Math.Min(_location.Y + 2, _bufSize.Height);
 
-#if UNIX
-                // replace the saved region in the screen buffer with our progress display
-                _location = _rawui.CursorPosition;
-
-                //set the cursor position back to the beginning of the region to overwrite write-progress
-                //if the cursor is at the bottom, back it up to overwrite the previous write progress
-                if (_location.Y >= _rawui.BufferSize.Height - rows)
-                {
-                    Console.Out.Write('\n');
-                    if (_location.Y >= rows)
-                    {
-                        _location.Y -= rows;
-                    }
-                }
-
-                _rawui.CursorPosition = _location;
-#else
                 // Save off the current contents of the screen buffer in the region that we will occupy
                 _savedRegion =
                     _rawui.GetBufferContents(
@@ -128,13 +136,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-
-
         /// <summary>
-        /// 
-        /// Hides the pane by restoring the saved contents of the region of the buffer that the pane occupies.  If the pane is 
+        /// Hides the pane by restoring the saved contents of the region of the buffer that the pane occupies.  If the pane is
         /// not showing, then does nothing.
-        /// 
         /// </summary>
 
         internal
@@ -143,27 +147,22 @@ namespace Microsoft.PowerShell
         {
             if (IsShowing)
             {
-                // It would be nice if we knew that the saved region could be kept for the next time Show is called, but alas, 
+                // It would be nice if we knew that the saved region could be kept for the next time Show is called, but alas,
                 // we have no way of knowing if the screen buffer has changed since we were hidden.  By "no good way" I mean that
                 // detecting a change would be at least as expensive as chucking the savedRegion and rebuilding it.  And it would
                 // be very complicated.
 
                 _rawui.SetBufferContents(_location, _savedRegion);
                 _savedRegion = null;
+                _rawui.CursorPosition = _savedCursor;
             }
         }
 
-
-
         /// <summary>
-        /// 
         /// Updates the pane with the rendering of the supplied PendingProgress, and shows it.
-        /// 
         /// </summary>
         /// <param name="pendingProgress">
-        /// 
         /// A PendingProgress instance that represents the outstanding activities that should be shown.
-        /// 
         /// </param>
 
         internal
@@ -174,7 +173,7 @@ namespace Microsoft.PowerShell
 
             _bufSize = _rawui.BufferSize;
 
-            // In order to keep from slicing any CJK double-cell characters that might be present in the screen buffer, 
+            // In order to keep from slicing any CJK double-cell characters that might be present in the screen buffer,
             // we use the full width of the buffer.
 
             int maxWidth = _bufSize.Width;
@@ -205,7 +204,7 @@ namespace Microsoft.PowerShell
             else
             {
                 // We have shown the pane before. We have to be smart about when we restore the saved region to minimize
-                // flicker. We need to decide if the new contents will change the dimmensions of the progress pane
+                // flicker. We need to decide if the new contents will change the dimensions of the progress pane
                 // currently being shown.  If it will, then restore the saved region, and show the new one.  Otherwise,
                 // just blast the new one on top of the last one shown.
 
@@ -226,6 +225,7 @@ namespace Microsoft.PowerShell
                     {
                         Hide();
                     }
+
                     Show();
                 }
                 else
@@ -235,17 +235,13 @@ namespace Microsoft.PowerShell
             }
         }
 
-
-
         private Coordinates _location = new Coordinates(0, 0);
+        private Coordinates _savedCursor;
         private Size _bufSize;
         private BufferCell[,] _savedRegion;
         private BufferCell[,] _progressRegion;
         private PSHostRawUserInterface _rawui;
         private ConsoleHostUserInterface _ui;
     }
-}   // namespace 
-
-
-
+}   // namespace
 

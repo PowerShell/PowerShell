@@ -1,6 +1,5 @@
-﻿//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Linq;
@@ -30,15 +29,6 @@ namespace System.Management.Automation
 
     internal static class EnumerableExtensions
     {
-        // CORECLR has an implementation of Append built-in.
-#if !CORECLR
-        internal static IEnumerable<T> Append<T>(this IEnumerable<T> collection, T element)
-        {
-            foreach (T t in collection)
-                yield return t;
-            yield return element;
-        }
-#endif
         internal static IEnumerable<T> Prepend<T>(this IEnumerable<T> collection, T element)
         {
             yield return element;
@@ -46,13 +36,14 @@ namespace System.Management.Automation
                 yield return t;
         }
 
-        internal static int SequenceGetHashCode<T>(this IEnumerable<T> xs) where T : class
+        internal static int SequenceGetHashCode<T>(this IEnumerable<T> xs)
         {
-            // algorithm based on http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
+            // algorithm based on https://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
             if (xs == null)
             {
                 return 82460653; // random number
             }
+
             unchecked
             {
                 int hash = 41; // 41 is a random prime number
@@ -64,6 +55,7 @@ namespace System.Management.Automation
                         hash = hash + x.GetHashCode();
                     }
                 }
+
                 return hash;
             }
         }
@@ -71,24 +63,18 @@ namespace System.Management.Automation
 
     /// <summary>
     /// The type extension methods within this partial class are used/shared by both FullCLR and CoreCLR powershell.
-    /// 
+    ///
     /// * If you want to add an extension method that will be used by both FullCLR and CoreCLR powershell, please add it here.
     /// * If you want to add an extension method that will be used only by CoreCLR powershell, please add it to the partial
     ///   'PSTypeExtensions' class in 'CorePsExtensions.cs'.
     /// </summary>
-    internal static partial class PSTypeExtensions
+    internal static class PSTypeExtensions
     {
-        /// <summary>
-        /// Type.EmptyTypes is not in CoreCLR. Use this one to replace it.
-        /// </summary>
-        internal static Type[] EmptyTypes = new Type[0];
-        private static readonly Type s_comObjectType = Type.GetType("System.__ComObject");
-
         /// <summary>
         /// Check does the type have an instance default constructor with visibility that allows calling it from subclass.
         /// </summary>
-        /// <param name="type">type</param>
-        /// <returns>true when type has a default ctor.</returns>
+        /// <param name="type">Type.</param>
+        /// <returns>True when type has a default ctor.</returns>
         internal static bool HasDefaultCtor(this Type type)
         {
             var ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
@@ -110,12 +96,12 @@ namespace System.Management.Automation
 
         internal static bool IsNumericOrPrimitive(this Type type)
         {
-            return type.GetTypeInfo().IsPrimitive || LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(type));
+            return type.IsPrimitive || LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(type));
         }
 
         internal static bool IsSafePrimitive(this Type type)
         {
-            return type.GetTypeInfo().IsPrimitive && (type != typeof(IntPtr)) && (type != typeof(UIntPtr));
+            return type.IsPrimitive && (type != typeof(IntPtr)) && (type != typeof(UIntPtr));
         }
 
         internal static bool IsFloating(this Type type)
@@ -129,31 +115,15 @@ namespace System.Management.Automation
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool IsComObject(this Type type)
-        {
-#if UNIX
-            return false;
-#elif CORECLR // Type.IsComObject(Type) is not in CoreCLR
-            return s_comObjectType.IsAssignableFrom(type);
-#else
-            return type.IsCOMObject;
-#endif
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static TypeCode GetTypeCode(this Type type)
         {
-#if CORECLR // Type.GetTypeCode(Type) is not in CoreCLR
-            return GetTypeCodeInCoreClr(type);
-#else
             return Type.GetTypeCode(type);
-#endif
         }
 
         internal static IEnumerable<T> GetCustomAttributes<T>(this Type type, bool inherit)
             where T : Attribute
         {
-            return from attr in type.GetTypeInfo().GetCustomAttributes(typeof(T), inherit)
+            return from attr in type.GetCustomAttributes(typeof(T), inherit)
                    where attr is T
                    select (T)attr;
         }

@@ -11,11 +11,8 @@ Content files includes:
 
 These files are copied as-is by `dotnet`
 
-- Shared (shared between all variations)
-- Windows+Unix-Core
-- Windows-Core
-- Windows-Core+Full
-- Windows-Full
+- Shared (shared between Windows and Unix)
+- Windows
 - Unix
 
 Notes

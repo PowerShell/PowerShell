@@ -1,6 +1,5 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,6 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
+
 using AstUtils = System.Management.Automation.Interpreter.Utils;
 
 namespace System.Management.Automation.Interpreter
@@ -21,23 +21,24 @@ namespace System.Management.Automation.Interpreter
             {
                 return type.GetGenericArguments()[0];
             }
+
             return type;
         }
 
         internal static Type GetNullableType(Type type)
         {
             Debug.Assert(type != null, "type cannot be null");
-            if (type.GetTypeInfo().IsValueType && !IsNullableType(type))
+            if (type.IsValueType && !IsNullableType(type))
             {
                 return typeof(Nullable<>).MakeGenericType(type);
             }
+
             return type;
         }
 
         internal static bool IsNullableType(Type type)
         {
-            var typeInfo = type.GetTypeInfo();
-            return typeInfo.IsGenericType && typeInfo.GetGenericTypeDefinition() == typeof(Nullable<>);
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
         internal static bool IsBool(Type type)
@@ -48,7 +49,7 @@ namespace System.Management.Automation.Interpreter
         internal static bool IsNumeric(Type type)
         {
             type = GetNonNullableType(type);
-            if (!type.GetTypeInfo().IsEnum)
+            if (!type.IsEnum)
             {
                 switch (type.GetTypeCode())
                 {
@@ -66,6 +67,7 @@ namespace System.Management.Automation.Interpreter
                         return true;
                 }
             }
+
             return false;
         }
 
@@ -86,13 +88,14 @@ namespace System.Management.Automation.Interpreter
                 case TypeCode.UInt64:
                     return true;
             }
+
             return false;
         }
 
         internal static bool IsArithmetic(Type type)
         {
             type = GetNonNullableType(type);
-            if (!type.GetTypeInfo().IsEnum)
+            if (!type.IsEnum)
             {
                 switch (type.GetTypeCode())
                 {
@@ -107,6 +110,7 @@ namespace System.Management.Automation.Interpreter
                         return true;
                 }
             }
+
             return false;
         }
     }
@@ -122,7 +126,7 @@ namespace System.Management.Automation.Interpreter
         }
     }
 
-    internal static partial class DelegateHelpers
+    internal static class DelegateHelpers
     {
         #region Generated Maximum Delegate Arity
 
@@ -146,7 +150,7 @@ namespace System.Management.Automation.Interpreter
             if (types.Length > MaximumArity || types.Any(t => t.IsByRef))
             {
                 throw Assert.Unreachable;
-                //return MakeCustomDelegate(types);
+                // return MakeCustomDelegate(types);
             }
 
             Type returnType = types[types.Length - 1];
@@ -215,6 +219,7 @@ namespace System.Management.Automation.Interpreter
                         #endregion
                 }
             }
+
             throw Assert.Unreachable;
         }
     }
@@ -234,17 +239,17 @@ namespace System.Management.Automation.Interpreter
         internal static readonly MethodInfo BooleanToObjectMethod = typeof(ScriptingRuntimeHelpers).GetMethod("BooleanToObject");
         internal static readonly MethodInfo Int32ToObjectMethod = typeof(ScriptingRuntimeHelpers).GetMethod("Int32ToObject");
 
-        internal static object True = true;
-        internal static object False = false;
+        internal static readonly object True = true;
+        internal static readonly object False = false;
 
         internal static object GetPrimitiveDefaultValue(Type type)
         {
             switch (type.GetTypeCode())
             {
                 case TypeCode.Boolean: return ScriptingRuntimeHelpers.False;
-                case TypeCode.SByte: return default(SByte);
-                case TypeCode.Byte: return default(Byte);
-                case TypeCode.Char: return default(Char);
+                case TypeCode.SByte: return default(sbyte);
+                case TypeCode.Byte: return default(byte);
+                case TypeCode.Char: return default(char);
                 case TypeCode.Int16: return default(Int16);
                 case TypeCode.Int32: return ScriptingRuntimeHelpers.Int32ToObject(0);
                 case TypeCode.Int64: return default(Int64);
@@ -252,7 +257,7 @@ namespace System.Management.Automation.Interpreter
                 case TypeCode.UInt32: return default(UInt32);
                 case TypeCode.UInt64: return default(UInt64);
                 case TypeCode.Single: return default(Single);
-                case TypeCode.Double: return default(Double);
+                case TypeCode.Double: return default(double);
                 case TypeCode.DateTime: return default(DateTime);
                 case TypeCode.Decimal: return default(Decimal);
                 // TypeCode.Empty:  null;
@@ -288,7 +293,7 @@ namespace System.Management.Automation.Interpreter
 
         public object GetArgument(int index)
         {
-            //ContractUtils.RequiresArrayIndex(_arguments, index, "index");
+            // ContractUtils.RequiresArrayIndex(_arguments, index, "index");
             return _arguments[_first + index];
         }
 
@@ -304,7 +309,7 @@ namespace System.Management.Automation.Interpreter
             );
         }
 
-        //[CLSCompliant(false)]
+        // [CLSCompliant(false)]
         public static object GetArg(ArgumentArray array, int index)
         {
             return array._arguments[array._first + index];
@@ -342,7 +347,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Returns all the stack traces associates with an exception
+        /// Returns all the stack traces associates with an exception.
         /// </summary>
         public static IList<StackTrace> GetExceptionStackTraces(Exception rethrow)
         {
@@ -370,21 +375,22 @@ namespace System.Management.Automation.Interpreter
         private KeyValuePair<TKey, TValue>[] _keysAndValues;
         private Dictionary<TKey, TValue> _dict;
         private int _count;
+
         private const int _arraySize = 10;
 
         public HybridReferenceDictionary()
         {
         }
 
-        public HybridReferenceDictionary(int initialCapicity)
+        public HybridReferenceDictionary(int initialCapacity)
         {
-            if (initialCapicity > _arraySize)
+            if (initialCapacity > _arraySize)
             {
-                _dict = new Dictionary<TKey, TValue>(initialCapicity);
+                _dict = new Dictionary<TKey, TValue>(initialCapacity);
             }
             else
             {
-                _keysAndValues = new KeyValuePair<TKey, TValue>[initialCapicity];
+                _keysAndValues = new KeyValuePair<TKey, TValue>[initialCapacity];
             }
         }
 
@@ -407,6 +413,7 @@ namespace System.Management.Automation.Interpreter
                     }
                 }
             }
+
             value = default(TValue);
             return false;
         }
@@ -465,6 +472,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     return _dict.Count;
                 }
+
                 return _count;
             }
         }
@@ -507,6 +515,7 @@ namespace System.Management.Automation.Interpreter
 
                 throw new KeyNotFoundException();
             }
+
             set
             {
                 Debug.Assert(key != null);
@@ -552,6 +561,7 @@ namespace System.Management.Automation.Interpreter
                         {
                             _dict[_keysAndValues[i].Key] = _keysAndValues[i].Value;
                         }
+
                         _keysAndValues = null;
 
                         _dict[key] = value;
@@ -564,7 +574,7 @@ namespace System.Management.Automation.Interpreter
     /// <summary>
     /// Provides a dictionary-like object used for caches which holds onto a maximum
     /// number of elements specified at construction time.
-    /// 
+    ///
     /// This class is not thread safe.
     /// </summary>
     internal class CacheDict<TKey, TValue>
@@ -648,8 +658,10 @@ namespace System.Management.Automation.Interpreter
                 {
                     return res;
                 }
+
                 throw new KeyNotFoundException();
             }
+
             set
             {
                 Add(key, value);
@@ -672,9 +684,8 @@ namespace System.Management.Automation.Interpreter
     internal class ThreadLocal<T>
     {
         private StorageInfo[] _stores;                                         // array of storage indexed by managed thread ID
-        private static readonly StorageInfo[] s_updating = Automation.Utils.EmptyArray<StorageInfo>();   // a marker used when updating the array
+        private static readonly StorageInfo[] s_updating = Array.Empty<StorageInfo>();   // a marker used when updating the array
         private readonly bool _refCounted;
-
 
         public ThreadLocal()
         {
@@ -683,7 +694,7 @@ namespace System.Management.Automation.Interpreter
         /// <summary>
         /// True if the caller will guarantee that all cleanup happens as the thread
         /// unwinds.
-        /// 
+        ///
         /// This is typically used in a case where the thread local is surrounded by
         /// a try/finally block.  The try block pushes some state, the finally block
         /// restores the previous state.  Therefore when the thread exits the thread
@@ -706,6 +717,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return GetStorageInfo().Value;
             }
+
             set
             {
                 GetStorageInfo().Value = value;
@@ -757,31 +769,6 @@ namespace System.Management.Automation.Interpreter
 
         #region Storage implementation
 
-#if SILVERLIGHT
-        private static int _cfThreadIdDispenser = 1;
-
-        [ThreadStatic]
-        private static int _cfThreadId;
-
-        private static int GetCurrentThreadId() {
-            if (PlatformAdaptationLayer.IsCompactFramework) {
-                // CF doesn't index threads by small integers, so we need to do the indexing ourselves:
-                int id = _cfThreadId;
-                if (id == 0) {
-                    _cfThreadId = id = Interlocked.Increment(ref _cfThreadIdDispenser);
-                }
-                return id;
-            } else {
-                return Thread.CurrentThread.ManagedThreadId;
-            }
-        }
-#else
-        private static int GetCurrentThreadId()
-        {
-            return Thread.CurrentThread.ManagedThreadId;
-        }
-#endif
-
         /// <summary>
         /// Gets the StorageInfo for the current thread.
         /// </summary>
@@ -792,7 +779,7 @@ namespace System.Management.Automation.Interpreter
 
         private StorageInfo GetStorageInfo(StorageInfo[] curStorage)
         {
-            int threadId = GetCurrentThreadId();
+            int threadId = Thread.CurrentThread.ManagedThreadId;
 
             // fast path if we already have a value in the array
             if (curStorage != null && curStorage.Length > threadId)
@@ -809,8 +796,8 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Called when the fast path storage lookup fails. if we encountered the Empty storage 
-        /// during the initial fast check then spin until we hit non-empty storage and try the fast 
+        /// Called when the fast path storage lookup fails. if we encountered the Empty storage
+        /// during the initial fast check then spin until we hit non-empty storage and try the fast
         /// path again.
         /// </summary>
         private StorageInfo RetryOrCreateStorageInfo(StorageInfo[] curStorage)
@@ -837,17 +824,16 @@ namespace System.Management.Automation.Interpreter
         private StorageInfo CreateStorageInfo()
         {
             // we do our own locking, tell hosts this is a bad time to interrupt us.
-#if !SILVERLIGHT && !CORECLR
             Thread.BeginCriticalRegion();
-#endif
+
             StorageInfo[] curStorage = s_updating;
             try
             {
-                int threadId = GetCurrentThreadId();
+                int threadId = Thread.CurrentThread.ManagedThreadId;
                 StorageInfo newInfo = new StorageInfo(Thread.CurrentThread);
 
                 // set to updating while potentially resizing/mutating, then we'll
-                // set back to the current value.                                        
+                // set back to the current value.
                 while ((curStorage = Interlocked.Exchange(ref _stores, s_updating)) == s_updating)
                 {
                     // another thread is already updating...
@@ -870,6 +856,7 @@ namespace System.Management.Automation.Interpreter
                             newStorage[i] = curStorage[i];
                         }
                     }
+
                     curStorage = newStorage;
                 }
 
@@ -886,9 +873,8 @@ namespace System.Management.Automation.Interpreter
                     // let others access the storage again
                     Interlocked.Exchange(ref _stores, curStorage);
                 }
-#if !SILVERLIGHT && !CORECLR
+
                 Thread.EndCriticalRegion();
-#endif
             }
         }
 
@@ -919,7 +905,7 @@ namespace System.Management.Automation.Interpreter
         {
             get
             {
-                Debug.Assert(false, "Unreachable");
+                Debug.Fail("Unreachable");
                 return new InvalidOperationException("Code supposed to be unreachable");
             }
         }
@@ -955,7 +941,7 @@ namespace System.Management.Automation.Interpreter
         [Conditional("DEBUG")]
         public static void NotEmpty(string str)
         {
-            Debug.Assert(!String.IsNullOrEmpty(str));
+            Debug.Assert(!string.IsNullOrEmpty(str));
         }
     }
 
@@ -984,11 +970,12 @@ namespace System.Management.Automation.Interpreter
 
         public static Expression Void(Expression expression)
         {
-            //ContractUtils.RequiresNotNull(expression, "expression");
+            // ContractUtils.RequiresNotNull(expression, "expression");
             if (expression.Type == typeof(void))
             {
                 return expression;
             }
+
             return Expression.Block(expression, Utils.Empty());
         }
 
@@ -998,12 +985,13 @@ namespace System.Management.Automation.Interpreter
             {
                 return Empty();
             }
+
             return Expression.Default(type);
         }
 
         public static Expression Convert(Expression expression, Type type)
         {
-            //ContractUtils.RequiresNotNull(expression, "expression");
+            // ContractUtils.RequiresNotNull(expression, "expression");
 
             if (expression.Type == type)
             {
@@ -1076,6 +1064,7 @@ namespace System.Management.Automation.Interpreter
                 case ExpressionType.SubtractAssignChecked:
                     return true;
             }
+
             return false;
         }
     }
@@ -1084,8 +1073,8 @@ namespace System.Management.Automation.Interpreter
     {
         internal static bool TrueForAll<T>(this IEnumerable<T> collection, Predicate<T> predicate)
         {
-            //ContractUtils.RequiresNotNull(collection, "collection");
-            //ContractUtils.RequiresNotNull(predicate, "predicate");
+            // ContractUtils.RequiresNotNull(collection, "collection");
+            // ContractUtils.RequiresNotNull(predicate, "predicate");
 
             foreach (T item in collection)
             {
@@ -1104,6 +1093,7 @@ namespace System.Management.Automation.Interpreter
             {
                 result[count++] = select(t);
             }
+
             return result;
         }
 
@@ -1116,6 +1106,7 @@ namespace System.Management.Automation.Interpreter
             {
                 h ^= (h << 5) ^ cmp.GetHashCode(t);
             }
+
             return h;
         }
 
@@ -1125,6 +1116,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return false;
             }
+
             var cmp = EqualityComparer<T>.Default;
             var f = first.GetEnumerator();
             var s = second.GetEnumerator();
@@ -1137,6 +1129,7 @@ namespace System.Management.Automation.Interpreter
                     return false;
                 }
             }
+
             return true;
         }
     }

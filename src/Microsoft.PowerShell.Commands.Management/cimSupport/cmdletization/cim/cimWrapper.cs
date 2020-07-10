@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.ObjectModel;
@@ -9,13 +8,15 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Runtime.CompilerServices;
 using System.Threading;
+
 using Microsoft.Management.Infrastructure;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// CIM-specific ObjectModelWrapper
+    /// CIM-specific ObjectModelWrapper.
     /// </summary>
     public sealed class CimCmdletAdapter :
         SessionBasedCmdletAdapter<CimInstance, CimSession>,
@@ -32,7 +33,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         #region Changing Session parameter to CimSession
 
         /// <summary>
-        /// CimSession to operate on
+        /// CimSession to operate on.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -44,6 +45,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return base.Session;
             }
+
             set
             {
                 base.Session = value;
@@ -65,12 +67,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
                 return this.CmdletDefinitionContext.DefaultThrottleLimit;
             }
+
             set
             {
                 base.ThrottleLimit = value;
                 _throttleLimitIsSetExplicitly = true;
             }
         }
+
         private bool _throttleLimitIsSetExplicitly;
 
         #endregion
@@ -78,9 +82,9 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         #region ObjectModelWrapper overrides
 
         /// <summary>
-        /// Creates a query builder for CIM OM
+        /// Creates a query builder for CIM OM.
         /// </summary>
-        /// <returns>Query builder for CIM OM</returns>
+        /// <returns>Query builder for CIM OM.</returns>
         public override QueryBuilder GetQueryBuilder()
         {
             return new CimQuery();
@@ -97,6 +101,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                         this.GetDynamicNamespace()));
             }
         }
+
         private CimCmdletInvocationContext _cmdletInvocationContext;
 
         internal CimCmdletDefinitionContext CmdletDefinitionContext
@@ -112,9 +117,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                             this.Cmdlet.CommandInfo.CommandMetadata.SupportsShouldProcess,
                             this.PrivateData);
                 }
+
                 return _cmdletDefinitionContext;
             }
         }
+
         private CimCmdletDefinitionContext _cmdletDefinitionContext;
 
         internal InvocationInfo CmdletInvocationInfo
@@ -131,7 +138,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <summary>
         /// Returns a new job name to use for the parent job that handles throttling of the child jobs that actually perform querying and method invocation.
         /// </summary>
-        /// <returns>Job name</returns>
+        /// <returns>Job name.</returns>
         protected override string GenerateParentJobName()
         {
             return "CimJob" + Interlocked.Increment(ref CimCmdletAdapter.s_jobNumber).ToString(CultureInfo.InvariantCulture);
@@ -140,7 +147,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <summary>
         /// Returns default sessions to use when the user doesn't specify the -Session cmdlet parameter.
         /// </summary>
-        /// <returns>Default sessions to use when the user doesn't specify the -Session cmdlet parameter</returns>
+        /// <returns>Default sessions to use when the user doesn't specify the -Session cmdlet parameter.</returns>
         protected override CimSession DefaultSession
         {
             get
@@ -160,15 +167,15 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <summary>
         /// Creates a <see cref="System.Management.Automation.Job"/> object that performs a query against the wrapped object model.
         /// </summary>
-        /// <param name="session">Remote session to query</param>
-        /// <param name="baseQuery">Query parameters</param>
-        /// <returns><see cref="System.Management.Automation.Job"/> object that performs a query against the wrapped object model</returns>
+        /// <param name="session">Remote session to query.</param>
+        /// <param name="baseQuery">Query parameters.</param>
+        /// <returns><see cref="System.Management.Automation.Job"/> object that performs a query against the wrapped object model.</returns>
         internal override StartableJob CreateQueryJob(CimSession session, QueryBuilder baseQuery)
         {
             CimQuery query = baseQuery as CimQuery;
             if (query == null)
             {
-                throw new ArgumentNullException("baseQuery");
+                throw new ArgumentNullException(nameof(baseQuery));
             }
 
             TerminatingErrorTracker tracker = TerminatingErrorTracker.GetTracker(this.CmdletInvocationInfo, isStaticCmdlet: false);
@@ -176,6 +183,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return null;
             }
+
             if (!IsSupportedSession(session, tracker))
             {
                 return null;
@@ -190,10 +198,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <summary>
         /// Creates a <see cref="System.Management.Automation.Job"/> object that invokes an instance method in the wrapped object model.
         /// </summary>
-        /// <param name="session">Remote session to invoke the method in</param>
-        /// <param name="objectInstance">The object on which to invoke the method</param>
-        /// <param name="methodInvocationInfo">Method invocation details</param>
-        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on</param>
+        /// <param name="session">Remote session to invoke the method in.</param>
+        /// <param name="objectInstance">The object on which to invoke the method.</param>
+        /// <param name="methodInvocationInfo">Method invocation details.</param>
+        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
         /// <returns></returns>
         internal override StartableJob CreateInstanceMethodInvocationJob(CimSession session, CimInstance objectInstance, MethodInvocationInfo methodInvocationInfo, bool passThru)
         {
@@ -202,6 +210,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return null;
             }
+
             if (!IsSupportedSession(session, tracker))
             {
                 return null;
@@ -289,12 +298,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         /// <summary>
-        /// Creates a <see cref="System.Management.Automation.Job"/> object that invokes a static method 
-        /// (of the class named by <see cref="Microsoft.PowerShell.Cmdletization.CmdletAdapter&lt;TObjectInstance&gt;.ClassName"/>) 
+        /// Creates a <see cref="System.Management.Automation.Job"/> object that invokes a static method
+        /// (of the class named by <see cref="Microsoft.PowerShell.Cmdletization.CmdletAdapter&lt;TObjectInstance&gt;.ClassName"/>)
         /// in the wrapped object model.
         /// </summary>
-        /// <param name="session">Remote session to invoke the method in</param>
-        /// <param name="methodInvocationInfo">Method invocation details</param>
+        /// <param name="session">Remote session to invoke the method in.</param>
+        /// <param name="methodInvocationInfo">Method invocation details.</param>
         internal override StartableJob CreateStaticMethodInvocationJob(CimSession session, MethodInvocationInfo methodInvocationInfo)
         {
             TerminatingErrorTracker tracker = TerminatingErrorTracker.GetTracker(this.CmdletInvocationInfo, isStaticCmdlet: true);
@@ -302,6 +311,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 return null;
             }
+
             if (!IsSupportedSession(session, tracker))
             {
                 return null;
@@ -345,6 +355,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 s_cimInstanceToSessionOfOrigin.TryGetValue(instance, out result);
             }
+
             return result;
         }
 
@@ -353,11 +364,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             return GetSessionOfOriginFromCimInstance(instance);
         }
 
-        #endregion 
+        #endregion
 
         #region Handling of dynamic parameters
 
         private RuntimeDefinedParameterDictionary _dynamicParameters;
+
         private const string CimNamespaceParameter = "CimNamespace";
 
         private string GetDynamicNamespace()

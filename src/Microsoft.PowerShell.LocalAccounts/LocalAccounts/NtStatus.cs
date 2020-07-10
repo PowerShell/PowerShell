@@ -1,4 +1,6 @@
-﻿
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 using System.Diagnostics.CodeAnalysis;
 
 namespace System.Management.Automation.SecurityAccountsManager.Native
@@ -18,7 +20,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         public const UInt32 STATUS_SEVERITY_INFORMATIONAL   = 0x1;
         public const UInt32 STATUS_SEVERITY_ERROR           = 0x3;
 
-
         public const UInt32 STATUS_SUCCESS                  = 0x00000000;
         //
         // MessageText:
@@ -26,11 +27,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         // Returned by enumeration APIs to indicate more information is available to successive calls.
         //
         public const UInt32 STATUS_MORE_ENTRIES             = 0x00000105;
-
-
-
-
-
 
 
         /////////////////////////////////////////////////////////////////////////
@@ -430,7 +426,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
 
         #region Public Methods
         /// <summary>
-        /// Determine if an NTSTATUS value indicates Success
+        /// Determine if an NTSTATUS value indicates Success.
         /// </summary>
         /// <param name="ntstatus">The NTSTATUS value returned from native functions.</param>
         /// <returns>
@@ -442,7 +438,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         }
 
         /// <summary>
-        /// Determine if an NTSTATUS value indicates an Error
+        /// Determine if an NTSTATUS value indicates an Error.
         /// </summary>
         /// <param name="ntstatus">The NTSTATUS value returned from native functions.</param>
         /// <returns>
@@ -453,9 +449,8 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
             return Severity(ntstatus) == STATUS_SEVERITY_ERROR;
         }
 
-        
         /// <summary>
-        /// Determine if an NTSTATUS value indicates a Warning
+        /// Determine if an NTSTATUS value indicates a Warning.
         /// </summary>
         /// <param name="ntstatus">The NTSTATUS value returned from native functions.</param>
         /// <returns>
@@ -479,10 +474,9 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         {
             return Severity(ntstatus) == STATUS_SEVERITY_INFORMATIONAL;
         }
-        
 
         /// <summary>
-        /// Return the Severity part of an NTSTATUS value
+        /// Return the Severity part of an NTSTATUS value.
         /// </summary>
         /// <param name="ntstatus">The NTSTATUS value returned from native functions.</param>
         /// <returns>
@@ -493,9 +487,8 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
             return ntstatus >> 30;
         }
 
-
         /// <summary>
-        /// Return the Facility part of an NSTATUS value
+        /// Return the Facility part of an NSTATUS value.
         /// </summary>
         /// <param name="ntstatus">The NTSTATUS value returned from native functions.</param>
         /// <returns>
@@ -508,9 +501,8 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
             return (ntstatus >> 16) & 0x0FFF;
         }
 
-
         /// <summary>
-        /// Return the Code part of an NTSTATUS value
+        /// Return the Code part of an NTSTATUS value.
         /// </summary>
         /// <param name="ntstatus">The NTSTATUS value returned from native functions.</param>
         /// <returns>
@@ -521,7 +513,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         {
             return ntstatus & 0xFFFF;
         }
-        
+
         #endregion Public Methods
     }
 }

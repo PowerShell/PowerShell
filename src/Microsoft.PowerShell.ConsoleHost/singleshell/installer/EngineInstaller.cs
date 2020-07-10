@@ -1,38 +1,35 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Reflection;
 using System.IO;
 using System.Management.Automation;
+using System.Reflection;
 
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// 
-    /// EngineInstaller is a class for facilitating registry of necessary 
-    /// information for monad engine. 
-    /// 
-    /// This class will be built with monad console host dll 
-    /// (System.Management.Automation.dll). 
-    /// 
-    /// At install time, installation utilities (like InstallUtil.exe) will 
+    /// EngineInstaller is a class for facilitating registry of necessary
+    /// information for monad engine.
+    ///
+    /// This class will be built with monad console host dll
+    /// (System.Management.Automation.dll).
+    ///
+    /// At install time, installation utilities (like InstallUtil.exe) will
     /// call install this engine assembly based on the implementation in
-    /// this class. 
-    /// 
-    /// This class derives from base class PSInstaller. PSInstaller will 
-    /// handle the details about how information got written into registry. 
-    /// Here, the information about registry content is provided. 
-    /// 
+    /// this class.
+    ///
+    /// This class derives from base class PSInstaller. PSInstaller will
+    /// handle the details about how information got written into registry.
+    /// Here, the information about registry content is provided.
     /// </summary>
     [RunInstaller(true)]
     public sealed class EngineInstaller : PSInstaller
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public EngineInstaller()
             : base()
@@ -40,7 +37,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// 
         /// </summary>
         internal sealed override string RegKey
         {
@@ -58,17 +54,16 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private Dictionary<String, object> _regValues = null;
+        private Dictionary<string, object> _regValues = null;
         /// <summary>
-        /// 
         /// </summary>
-        internal sealed override Dictionary<String, object> RegValues
+        internal sealed override Dictionary<string, object> RegValues
         {
             get
             {
                 if (_regValues == null)
                 {
-                    _regValues = new Dictionary<String, object>();
+                    _regValues = new Dictionary<string, object>();
                     _regValues[RegistryStrings.MonadEngine_MonadVersion] = EngineVersion;
                     _regValues[RegistryStrings.MonadEngine_ApplicationBase] = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                     _regValues[RegistryStrings.MonadEngine_ConsoleHostAssemblyName] = Assembly.GetExecutingAssembly().FullName;

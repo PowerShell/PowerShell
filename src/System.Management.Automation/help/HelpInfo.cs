@@ -1,40 +1,37 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
     /// Class HelpInfo keeps track of help information to be returned by help system.
-    /// 
-    /// HelpInfo includes information in following aspect, 
-    /// 
+    ///
+    /// HelpInfo includes information in following aspect,
+    ///
     ///     a. Name: the target name for help
     ///     b. Category: what category the help belongs to
-    /// This class will be derived to track help info for different help categories like, 
+    /// This class will be derived to track help info for different help categories like,
     ///     AliasHelpInfo
     ///     CommandHelpInfo
     ///     ProviderHelpInfo
-    /// 
+    ///
     /// etc.
-    /// 
+    ///
     /// In general, there will be a specific helpInfo child class for each kind of help provider.
-    /// 
     /// </summary>
     internal abstract class HelpInfo
     {
         /// <summary>
-        /// Constructor for HelpInfo
+        /// Constructor for HelpInfo.
         /// </summary>
         internal HelpInfo()
         {
         }
 
         /// <summary>
-        /// Name for help info
+        /// Name for help info.
         /// </summary>
         /// <value>Name for help info</value>
         internal abstract string Name
@@ -43,7 +40,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Synopsis for help info
+        /// Synopsis for help info.
         /// </summary>
         /// <value>Synopsis for help info</value>
         internal abstract string Synopsis
@@ -79,7 +76,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Help category for help info
+        /// Help category for help info.
         /// </summary>
         /// <value>Help category for help info</value>
         internal abstract HelpCategory HelpCategory
@@ -88,11 +85,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Forward help category for this help info
+        /// Forward help category for this help info.
         /// </summary>
         /// <remarks>
-        /// If this is not HelpCategory.None, then some other help provider 
-        /// (as specified in the HelpCategory bit pattern) need 
+        /// If this is not HelpCategory.None, then some other help provider
+        /// (as specified in the HelpCategory bit pattern) need
         /// to process this helpInfo before it can be returned to end user.
         /// </remarks>
         /// <value>Help category to forward this helpInfo to</value>
@@ -100,18 +97,18 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Target object in forward-help-provider that should process this HelpInfo.
-        /// This will serve as auxilliary information to be passed to forward help provider.
-        /// 
-        /// In the case of AliasHelpInfo, for example, it needs to be forwarded to 
+        /// This will serve as auxiliary information to be passed to forward help provider.
+        ///
+        /// In the case of AliasHelpInfo, for example, it needs to be forwarded to
         /// CommandHelpProvider to fill in detailed helpInfo. In that case, ForwardHelpCategory
-        /// will be HelpCategory.Command and the help target is the cmdlet name that matches this 
+        /// will be HelpCategory.Command and the help target is the cmdlet name that matches this
         /// alias.
         /// </summary>
         /// <value>forward target object name</value>
-        internal string ForwardTarget { get; set; } = "";
+        internal string ForwardTarget { get; set; } = string.Empty;
 
         /// <summary>
-        /// Full help object for this help item. 
+        /// Full help object for this help item.
         /// </summary>
         /// <value>Full help object for this help item</value>
         internal abstract PSObject FullHelp
@@ -120,7 +117,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Short help object for this help item. 
+        /// Short help object for this help item.
         /// </summary>
         /// <value>Short help object for this help item</value>
         internal PSObject ShortHelp
@@ -140,16 +137,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returs help information for a parameter(s) identified by pattern
+        /// Returns help information for a parameter(s) identified by pattern.
         /// </summary>
-        /// <param name="pattern">pattern to search for parameters</param>
-        /// <returns>A collection of parameters that match pattern</returns>
+        /// <param name="pattern">Pattern to search for parameters.</param>
+        /// <returns>A collection of parameters that match pattern.</returns>
         /// <remarks>
         /// The base method returns an empty list.
         /// </remarks>
         internal virtual PSObject[] GetParameter(string pattern)
         {
-            return new PSObject[0];
+            return Array.Empty<PSObject>();
         }
 
         /// <summary>
@@ -157,7 +154,7 @@ namespace System.Management.Automation
         /// online.
         /// </summary>
         /// <returns>
-        /// Null if no Uri is specified by the helpinfo or a 
+        /// Null if no Uri is specified by the helpinfo or a
         /// valid Uri.
         /// </returns>
         /// <exception cref="InvalidOperationException">
@@ -170,7 +167,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns true if help content in help info matches the
-        /// pattern contained in <paramref name="pattern"/>. 
+        /// pattern contained in <paramref name="pattern"/>.
         /// The underlying code will usually run pattern.IsMatch() on
         /// content it wants to search.
         /// </summary>
@@ -185,18 +182,18 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add common help properties to the helpObject which is in PSObject format.
-        /// 
+        ///
         /// Intrinsic help properties include properties like,
-        ///     Name, 
+        ///     Name,
         ///     Synopsis
-        ///     HelpCategory 
-        /// etc. 
-        /// 
-        /// Since help object from different help category has different format, it is 
+        ///     HelpCategory
+        /// etc.
+        ///
+        /// Since help object from different help category has different format, it is
         /// needed that we generate these basic information uniformly in the help object
         /// itself.
-        /// 
-        /// This function is normally called at the end of each child class constructor. 
+        ///
+        /// This function is normally called at the end of each child class constructor.
         /// </summary>
         /// <returns></returns>
         protected void AddCommonHelpProperties()
@@ -206,7 +203,7 @@ namespace System.Management.Automation
 
             if (this.FullHelp.Properties["Name"] == null)
             {
-                this.FullHelp.Properties.Add(new PSNoteProperty("Name", this.Name.ToString()));
+                this.FullHelp.Properties.Add(new PSNoteProperty("Name", this.Name));
             }
 
             if (this.FullHelp.Properties["Category"] == null)
@@ -216,7 +213,7 @@ namespace System.Management.Automation
 
             if (this.FullHelp.Properties["Synopsis"] == null)
             {
-                this.FullHelp.Properties.Add(new PSNoteProperty("Synopsis", this.Synopsis.ToString()));
+                this.FullHelp.Properties.Add(new PSNoteProperty("Synopsis", this.Synopsis));
             }
 
             if (this.FullHelp.Properties["Component"] == null)
@@ -261,7 +258,7 @@ namespace System.Management.Automation
         #region Error handling
 
         /// <summary>
-        /// This is for tracking the set of errors happened during the parsing of 
+        /// This is for tracking the set of errors happened during the parsing of
         /// of this helpinfo.
         /// </summary>
         /// <value></value>

@@ -18,5 +18,5 @@ Most useful commands are 'clrstack', 'clrthreads', and 'pe'.
 EOF
 
 pushd debug
-lldb-3.6 -o "plugin load libsosplugin.so" -- ./powershell $@
+lldb-3.6 -o "plugin load libsosplugin.so" -- ./pwsh $@
 popd

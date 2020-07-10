@@ -1,17 +1,15 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Concurrent;
 using System.Linq;
-using System.Reflection;
 
 namespace System.Management.Automation.Language
 {
-    internal static class VariablePathExtentions
+    internal static class VariablePathExtensions
     {
         internal static bool IsAnyLocal(this VariablePath variablePath)
         {
@@ -39,6 +37,7 @@ namespace System.Management.Automation.Language
     internal class FindAllVariablesVisitor : AstVisitor
     {
         private static readonly HashSet<string> s_hashOfPessimizingCmdlets = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
         private static readonly string[] s_pessimizingCmdlets = new string[]
                                                           {
                                                               "New-Variable",
@@ -103,11 +102,13 @@ namespace System.Management.Automation.Language
             {
                 visitor.VisitParameters(ast.Parameters);
             }
-            localsAllocated = visitor._variables.Where(details => details.Value.LocalTupleIndex != VariableAnalysis.Unanalyzed).Count();
+
+            localsAllocated = visitor._variables.Count(details => details.Value.LocalTupleIndex != VariableAnalysis.Unanalyzed);
             return visitor._variables;
         }
 
         private bool _disableOptimizations;
+
         private readonly Dictionary<string, VariableAnalysisDetails> _variables
             = new Dictionary<string, VariableAnalysisDetails>(StringComparer.OrdinalIgnoreCase);
 
@@ -175,7 +176,8 @@ namespace System.Management.Automation.Language
                         // slot in the tuple.  This only matters for value types where we allow
                         // comparisons with $null and don't try to convert the $null value to the
                         // valuetype because the parameter has no value yet.  For example:
-                        //     & { param([System.Reflection.MemberTypes]$m) ($m -eq $null) }
+                        //     & { param([System.Reflection.MemberTypes]$m) ($null -eq $m) }
+
                         object unused;
                         if (!Compiler.TryGetDefaultParameterValue(analysisDetails.Type, out unused))
                         {
@@ -187,6 +189,25 @@ namespace System.Management.Automation.Language
                         NoteVariable(variableName, VariableAnalysis.Unanalyzed, t.StaticType);
                     }
                 }
+            }
+        }
+
+        // Add a variable to the variable dictionary
+        private void NoteVariable(string variableName, int index, Type type, bool automatic = false, bool preferenceVariable = false)
+        {
+            if (!_variables.ContainsKey(variableName))
+            {
+                var details = new VariableAnalysisDetails
+                {
+                    BitIndex = _variables.Count,
+                    LocalTupleIndex = index,
+                    Name = variableName,
+                    Type = type,
+                    Automatic = automatic,
+                    PreferenceVariable = preferenceVariable,
+                    Assigned = false,
+                };
+                _variables.Add(variableName, details);
             }
         }
 
@@ -224,6 +245,7 @@ namespace System.Management.Automation.Language
                     // TODO: force just this variable to be dynamic, not all variables.
                     _disableOptimizations = true;
                 }
+
                 NoteVariable(VariableAnalysis.GetUnaliasedVariableName(varPath), VariableAnalysis.Unanalyzed, null);
             }
 
@@ -231,6 +253,7 @@ namespace System.Management.Automation.Language
         }
 
         private int _runtimeUsingIndex;
+
         public override AstVisitAction VisitUsingExpression(UsingExpressionAst usingExpressionAst)
         {
             // On the local machine, we may have set the index because of a call to ScriptBlockToPowerShell or Invoke-Command.
@@ -240,6 +263,7 @@ namespace System.Management.Automation.Language
             {
                 usingExpressionAst.RuntimeUsingIndex = _runtimeUsingIndex;
             }
+
             Diagnostics.Assert(usingExpressionAst.RuntimeUsingIndex == _runtimeUsingIndex, "Logic error in visiting using expressions.");
             _runtimeUsingIndex += 1;
 
@@ -290,39 +314,20 @@ namespace System.Management.Automation.Language
             // We don't want to discover any variables in traps - they get their own scope.
             return AstVisitAction.SkipChildren;
         }
-
-        // Return true if the variable is newly allocated and should be allocated in the locals tuple.
-        private void NoteVariable(string variableName, int index, Type type, bool automatic = false, bool preferenceVariable = false)
-        {
-            if (!_variables.ContainsKey(variableName))
-            {
-                var details = new VariableAnalysisDetails
-                {
-                    BitIndex = _variables.Count,
-                    LocalTupleIndex = index,
-                    Name = variableName,
-                    Type = type,
-                    Automatic = automatic,
-                    PreferenceVariable = preferenceVariable,
-                    Assigned = false,
-                };
-                _variables.Add(variableName, details);
-            }
-        }
     }
 
-    internal class VariableAnalysis : ICustomAstVisitor
+    internal class VariableAnalysis : ICustomAstVisitor2
     {
-        // Tuple slots start at index 0.  >= 0 means a variable is allocated in the tuple.  -1 means we don't
-        // we haven't analyzed a specific use of a variable and don't know what slot it might be assigned to yet.
+        // Tuple slots start at index 0.  >= 0 means a variable is allocated in the tuple.  -1 means we haven't
+        // analyzed a specific use of a variable and don't know what slot it might be assigned to yet.
         internal const int Unanalyzed = -1;
 
         // In some cases, we want to force a variable to not be allocated in the tuple, but instead use the variable
-        // table along with a PSVariable instance.  For example, 
+        // table along with a PSVariable instance.  For example,
         //    1. if a variable's type might change in the same scope;
-        //    2. if there might be any validation attributes or more than one argument conversion 
+        //    2. if there might be any validation attributes or more than one argument conversion
         //    3. if there is one argument conversion but the conversion type cannot be resolved at compile time (it's
-        //       possible that the assembly containing the type would be loaded during runtime) 
+        //       possible that the assembly containing the type would be loaded during runtime)
         // in these cases, we rely on the setter PSVariable.Value to handle those attributes.
         internal const int ForceDynamic = -2;
 
@@ -334,8 +339,11 @@ namespace System.Management.Automation.Language
                 this.BreakTarget = breakTarget;
                 this.ContinueTarget = continueTarget;
             }
+
             internal string Label { get; private set; }
+
             internal Block BreakTarget { get; private set; }
+
             internal Block ContinueTarget { get; private set; }
         }
 
@@ -348,6 +356,7 @@ namespace System.Management.Automation.Language
             internal object _visitData;
             internal bool _throws;
             internal bool _returns;
+
             internal bool _unreachable { get; private set; }
 
             // Only Entry block, that can be constructed via NewEntryBlock() is reachable initially.
@@ -380,6 +389,7 @@ namespace System.Management.Automation.Language
                     {
                         next._unreachable = false;
                     }
+
                     _successors.Add(next);
                     next._predecessors.Add(this);
                 }
@@ -452,16 +462,11 @@ namespace System.Management.Automation.Language
                 Diagnostics.Assert(false, "This code is unreachable.");
                 return null;
             }
+
             internal override AstVisitAction InternalVisit(AstVisitor visitor)
             {
                 Diagnostics.Assert(false, "This code is unreachable.");
                 return AstVisitAction.Continue;
-            }
-
-            internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-            {
-                Diagnostics.Assert(false, "This code is unreachable.");
-                return Ast.EmptyPSTypeNameArray;
             }
         }
 
@@ -511,7 +516,7 @@ namespace System.Management.Automation.Language
         {
             _variables = FindAllVariablesVisitor.Visit(exprAst);
 
-            // We disable optimizations for trap because it simplifies what we need to do when invoking
+            // We disable optimizations for expression because it simplifies what we need to do when invoking
             // the default argument, and it's assumed that the code inside a default argument rarely, if ever, actually creates
             // any local variables.
             _disableOptimizations = true;
@@ -672,6 +677,7 @@ namespace System.Management.Automation.Language
                         bitArray.And((BitArray)pred._visitData);
                     }
                 }
+
                 Diagnostics.Assert(predCount != 0, "If we didn't and anything, there is a flaw in the logic and incorrect code may be generated.");
 
                 AnalyzeBlock(bitArray, block);
@@ -691,8 +697,15 @@ namespace System.Management.Automation.Language
                 }
             }
 
+            // Automatic variables from 'SpecialVariables.AutomaticVariables' usually are pre-allocated,
+            // but there could be situations where some of them are forced to be dynamic. We need to count
+            // them in when creating tuple slots in such cases to make sure we create enough slots.
+            // However, $? is not a real automatic variable from 'SpecialVariables.AutomaticVariables'
+            // even though it's marked as so, and thus we need to exclude it.
             var orderedLocals = (from details in _variables.Values
-                                 where (details.LocalTupleIndex >= 0 || (details.LocalTupleIndex == ForceDynamic && details.Automatic))
+                                 where (details.LocalTupleIndex >= 0 || (details.LocalTupleIndex == ForceDynamic &&
+                                                                         details.Automatic &&
+                                                                         details.Name != SpecialVariables.Question))
                                  orderby details.LocalTupleIndex
                                  select details).ToArray();
 
@@ -731,7 +744,7 @@ namespace System.Management.Automation.Language
             //     $value.Property = 42
             // We make sure we never allocate an instance of such mutable types in the MutableType.
 
-            return (type.GetTypeInfo().IsValueType && PSVariableAssignmentBinder.IsValueTypeMutable(type)) && typeof(SwitchParameter) != type;
+            return (type.IsValueType && PSVariableAssignmentBinder.IsValueTypeMutable(type)) && typeof(SwitchParameter) != type;
         }
 
         private static void FixTupleIndex(Ast ast, int newIndex)
@@ -790,6 +803,7 @@ namespace System.Management.Automation.Language
                                                                    : VariableAnalysis.ForceDynamic;
                         }
                     }
+
                     continue;
                 }
 
@@ -804,6 +818,7 @@ namespace System.Management.Automation.Language
                     {
                         CheckLHSAssignVar(assignmentTarget._variableName, assignedBitArray, assignmentTarget._type);
                     }
+
                     continue;
                 }
 
@@ -932,10 +947,12 @@ namespace System.Management.Automation.Language
             {
                 scriptBlockAst.BeginBlock.Accept(this);
             }
+
             if (scriptBlockAst.ProcessBlock != null)
             {
                 scriptBlockAst.ProcessBlock.Accept(this);
             }
+
             if (scriptBlockAst.EndBlock != null)
             {
                 scriptBlockAst.EndBlock.Accept(this);
@@ -1046,6 +1063,28 @@ namespace System.Management.Automation.Language
             return null;
         }
 
+        public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
+        {
+            var ifTrue = new Block();
+            var ifFalse = new Block();
+            var after = new Block();
+
+            ternaryExpressionAst.Condition.Accept(this);
+            _currentBlock.FlowsTo(ifTrue);
+            _currentBlock.FlowsTo(ifFalse);
+            _currentBlock = ifTrue;
+
+            ternaryExpressionAst.IfTrue.Accept(this);
+            _currentBlock.FlowsTo(after);
+            _currentBlock = ifFalse;
+
+            ternaryExpressionAst.IfFalse.Accept(this);
+            _currentBlock.FlowsTo(after);
+            _currentBlock = after;
+
+            return null;
+        }
+
         public object VisitTrap(TrapStatementAst trapStatementAst)
         {
             trapStatementAst.Body.Accept(this);
@@ -1119,6 +1158,7 @@ namespace System.Management.Automation.Language
             {
                 _currentBlock.AddAst(dataStatementAst);
             }
+
             return null;
         }
 
@@ -1166,13 +1206,14 @@ namespace System.Management.Automation.Language
             var breakBlock = new Block();
 
             // Condition can be null from an uncommon for loop: for() {}
+
             if (generateCondition != null)
             {
                 generateCondition();
                 _currentBlock.FlowsTo(breakBlock);
             }
 
-            _loopTargets.Add(new LoopGotoTargets(loopLabel ?? "", breakBlock, continueBlock));
+            _loopTargets.Add(new LoopGotoTargets(loopLabel ?? string.Empty, breakBlock, continueBlock));
             _currentBlock.FlowsTo(bodyBlock);
             _currentBlock = bodyBlock;
             generateLoopBody();
@@ -1202,7 +1243,7 @@ namespace System.Management.Automation.Language
             var breakBlock = new Block();
             var gotoRepeatTargetBlock = new Block();
 
-            _loopTargets.Add(new LoopGotoTargets(loopStatement.Label ?? "", breakBlock, continueBlock));
+            _loopTargets.Add(new LoopGotoTargets(loopStatement.Label ?? string.Empty, breakBlock, continueBlock));
 
             _currentBlock.FlowsTo(bodyBlock);
             _currentBlock = bodyBlock;
@@ -1375,7 +1416,7 @@ namespace System.Management.Automation.Language
             if (label != null)
             {
                 label.Accept(this);
-                if (_loopTargets.Any())
+                if (_loopTargets.Count > 0)
                 {
                     var labelStrAst = label as StringConstantExpressionAst;
                     if (labelStrAst != null)
@@ -1424,6 +1465,7 @@ namespace System.Management.Automation.Language
             {
                 pipelineAst.Accept(this);
             }
+
             _currentBlock.FlowsTo(_exitBlock);
             var lastBlockInStatement = _currentBlock;
 
@@ -1497,6 +1539,7 @@ namespace System.Management.Automation.Language
                     {
                         anyAttributes = true;
                     }
+
                     leftAst = ((AttributedExpressionAst)leftAst).Child;
                 }
 
@@ -1531,6 +1574,7 @@ namespace System.Management.Automation.Language
                     assignTarget.Accept(this);
                 }
             }
+
             return null;
         }
 
@@ -1544,6 +1588,7 @@ namespace System.Management.Automation.Language
                 {
                     invokesCommand = true;
                 }
+
                 foreach (var redir in command.Redirections)
                 {
                     redir.Accept(this);
@@ -1555,7 +1600,7 @@ namespace System.Management.Automation.Language
             // break or continue, so add the appropriate edges to our graph.  These edges occur after visiting
             // the command elements because command arguments could create new blocks, and we won't have executed
             // the command yet.
-            if (invokesCommand && _loopTargets.Any())
+            if (invokesCommand && _loopTargets.Count > 0)
             {
                 foreach (var loopTarget in _loopTargets)
                 {
@@ -1578,6 +1623,7 @@ namespace System.Management.Automation.Language
             {
                 element.Accept(this);
             }
+
             return null;
         }
 
@@ -1593,6 +1639,7 @@ namespace System.Management.Automation.Language
             {
                 commandParameterAst.Argument.Accept(this);
             }
+
             return null;
         }
 
@@ -1615,9 +1662,9 @@ namespace System.Management.Automation.Language
                 // left operand is always evaluated, visit it's expression in the current block.
                 binaryExpressionAst.Left.Accept(this);
 
-                // The right operand is condtionally evaluated.  We aren't generating any code here, just
+                // The right operand is conditionally evaluated.  We aren't generating any code here, just
                 // modeling the flow graph, so we just visit the right operand in a new block, and have
-                // both the current and new blocks both flow to a post-expression block.
+                // both the current and new blocks flow to a post-expression block.
                 var targetBlock = new Block();
                 var nextBlock = new Block();
                 _currentBlock.FlowsTo(targetBlock);
@@ -1728,6 +1775,7 @@ namespace System.Management.Automation.Language
                     arg.Accept(this);
                 }
             }
+
             return null;
         }
 
@@ -1743,6 +1791,7 @@ namespace System.Management.Automation.Language
             {
                 element.Accept(this);
             }
+
             return null;
         }
 
@@ -1753,6 +1802,7 @@ namespace System.Management.Automation.Language
                 pair.Item1.Accept(this);
                 pair.Item2.Accept(this);
             }
+
             return null;
         }
 
@@ -1776,6 +1826,7 @@ namespace System.Management.Automation.Language
             {
                 expr.Accept(this);
             }
+
             return null;
         }
 
@@ -1797,5 +1848,19 @@ namespace System.Management.Automation.Language
             blockStatementAst.Body.Accept(this);
             return null;
         }
+
+        public object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) => null;
+
+        public object VisitPropertyMember(PropertyMemberAst propertyMemberAst) => null;
+
+        public object VisitFunctionMember(FunctionMemberAst functionMemberAst) => null;
+
+        public object VisitBaseCtorInvokeMemberExpression(BaseCtorInvokeMemberExpressionAst baseCtorInvokeMemberExpressionAst) => null;
+
+        public object VisitUsingStatement(UsingStatementAst usingStatement) => null;
+
+        public object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) => null;
+
+        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst) => null;
     }
 }

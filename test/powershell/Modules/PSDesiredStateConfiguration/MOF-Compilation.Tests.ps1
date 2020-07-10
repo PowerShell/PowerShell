@@ -1,16 +1,32 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 Describe "DSC MOF Compilation" -tags "CI" {
 
     AfterAll {
-        $env:PSMODULEPATH = $_modulePath
-    }
-    BeforeAll {
-        $env:DSC_HOME = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath dsc
-        $_modulePath = $env:PSMODULEPATH
-        $powershellexe = (get-process -pid $PID).MainModule.FileName
-        $env:PSMODULEPATH = join-path ([io.path]::GetDirectoryName($powershellexe)) Modules
+        $env:PSModulePath = $_modulePath
     }
 
-    It "Should be able to compile a MOF from a basic configuration" -Skip:($IsOSX -or $IsWindows) {
+    BeforeAll {
+        $platformInfo = Get-PlatformInfo
+        $SkipAdditionalPlatforms =
+            ($platformInfo.Platform -match "alpine|raspbian") -or
+            ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
+            ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8')
+
+        Import-Module PSDesiredStateConfiguration
+        $dscModule = Get-Module PSDesiredStateConfiguration
+        $baseSchemaPath = Join-Path $dscModule.ModuleBase 'Configuration'
+        $testResourceSchemaPath = Join-Path -Path (Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath dsc) schema
+
+        # Copy test resources to PSDesiredStateConfiguration module
+        Copy-Item $testResourceSchemaPath $baseSchemaPath -Recurse -Force
+
+        $_modulePath = $env:PSModulePath
+        $powershellexe = (Get-Process -pid $PID).MainModule.FileName
+        $env:PSModulePath = Join-Path ([io.path]::GetDirectoryName($powershellexe)) Modules
+    }
+
+    It "Should be able to compile a MOF from a basic configuration" -Skip:($IsMacOS -or $IsWindows -or $SkipAdditionalPlatforms) {
         [Scriptblock]::Create(@"
         configuration DSCTestConfig
         {
@@ -23,13 +39,13 @@ Describe "DSC MOF Compilation" -tags "CI" {
             }
         }
 
-        DSCTestConfig
-"@).Invoke()
+        DSCTestConfig -OutputPath TestDrive:\DscTestConfig1
+"@) | Should -Not -Throw
 
-        Remove-Item -Force -Recurse -Path DSCTestConfig 
+        "TestDrive:\DscTestConfig1\localhost.mof" | Should -Exist
     }
 
-    It "Should be able to compile a MOF from another basic configuration" -Skip:($IsOSX -or $IsWindows) {
+    It "Should be able to compile a MOF from another basic configuration" -Skip:($IsMacOS -or $IsWindows -or $SkipAdditionalPlatforms) {
         [Scriptblock]::Create(@"
         configuration DSCTestConfig
         {
@@ -45,124 +61,168 @@ Describe "DSC MOF Compilation" -tags "CI" {
             }
         }
 
-        DSCTestConfig
-"@).Invoke()
+        DSCTestConfig -OutputPath TestDrive:\DscTestConfig2
+"@) | Should -Not -Throw
 
-        Remove-Item -Force -Recurse -Path DSCTestConfig 
+        "TestDrive:\DscTestConfig2\localhost.mof" | Should -Exist
     }
 
-    It "Should be able to compile a MOF from a complex configuration" -Skip:($IsOSX -or $IsWindows) {
+    It "Should be able to compile a MOF from a complex configuration" -Skip:($IsMacOS -or $IsWindows -or $SkipAdditionalPlatforms) {
         [Scriptblock]::Create(@"
-	Configuration WordPressServer{
+    Configuration WordPressServer{
 
-                Import-DscResource -ModuleName PSDesiredStateConfiguration		
+                Import-DscResource -ModuleName PSDesiredStateConfiguration
 
-		Node CentOS{
-		
-			#Ensure Apache packages are installed
-				nxPackage httpd {
-					Ensure = "Present"
-					Name = "httpd"
-					PackageManager = "yum"
-				}
+        Node CentOS{
 
-		#Include vhostdir
-		nxFile vHostDir{
-		   DestinationPath = "/etc/httpd/conf.d/vhosts.conf"
-		   Ensure = "Present"
-		   Contents = "IncludeOptional /etc/httpd/sites-enabled/*.conf`n"
-		   Type = "File"
-		}
+            #Ensure Apache packages are installed
+                nxPackage httpd {
+                    Ensure = "Present"
+                    Name = "httpd"
+                    PackageManager = "yum"
+                }
 
-		nxFile vHostDirectory{
-			DestinationPath = "/etc/httpd/sites-enabled"
-			Type = "Directory"
-			Ensure = "Present"
-		}
+        #Include vhostdir
+        nxFile vHostDir{
+           DestinationPath = "/etc/httpd/conf.d/vhosts.conf"
+           Ensure = "Present"
+           Contents = "IncludeOptional /etc/httpd/sites-enabled/*.conf`n"
+           Type = "File"
+        }
 
+        nxFile vHostDirectory{
+            DestinationPath = "/etc/httpd/sites-enabled"
+            Type = "Directory"
+            Ensure = "Present"
+        }
 
-		#Ensure directory for Wordpress site
-		nxFile wpHttpDir{
-			DestinationPath = "/var/www/wordpress"
-			Type = "Directory"
-			Ensure = "Present"
-			Mode = "755"
-		}
+        #Ensure directory for Wordpress site
+        nxFile wpHttpDir{
+            DestinationPath = "/var/www/wordpress"
+            Type = "Directory"
+            Ensure = "Present"
+            Mode = "755"
+        }
 
-		#Ensure share directory
-		nxFile share{
-			DestinationPath = "/mnt/share"
-			Type = "Directory"
-			Ensure = "Present"
-			Mode = "755"
-		}
+        #Ensure share directory
+        nxFile share{
+            DestinationPath = "/mnt/share"
+            Type = "Directory"
+            Ensure = "Present"
+            Mode = "755"
+        }
 
-		#Bind httpd to port 8080
-		nxFile HttpdPort{
-		   DestinationPath = "/etc/httpd/conf.d/listen.conf"
-		   Ensure = "Present"
-		   Contents = "Listen 8080`n"
-		   Type = "File"
-		}
+        #Bind httpd to port 8080
+        nxFile HttpdPort{
+           DestinationPath = "/etc/httpd/conf.d/listen.conf"
+           Ensure = "Present"
+           Contents = "Listen 8080`n"
+           Type = "File"
+        }
 
-		#nfs mounts
-		nxScript nfsMount{
-			TestScript= "#!/bin/bash"
-			GetScript="#!/bin/bash"
-			SetScript="#!/bin/bash"
+        #nfs mounts
+        nxScript nfsMount{
+            TestScript= "#!/bin/bash"
+            GetScript="#!/bin/bash"
+            SetScript="#!/bin/bash"
 
-		}
+        }
 
-		#Retrieve latest wordpress
-		nxFile WordPressTar{
-			SourcePath = "/mnt/share/latest.zip"
-			DestinationPath = "/tmp/wordpress.zip"
-			Checksum = "md5"
-			Type = "file"    
-			DependsOn = "[nxScript]nfsMount"
-		}
-		 
-		#Extract wordpress if changed
-		nxArchive ExtractSite{
-			SourcePath = "/tmp/wordpress.zip"
-			DestinationPath = "/var/www/wordpress"
-			Ensure = "Present"
-			DependsOn = "[nxFile]WordpressTar"
-		 }
+        #Retrieve latest wordpress
+        nxFile WordPressTar{
+            SourcePath = "/mnt/share/latest.zip"
+            DestinationPath = "/tmp/wordpress.zip"
+            Checksum = "md5"
+            Type = "file"
+            DependsOn = "[nxScript]nfsMount"
+        }
 
-		 #Set wp-config
+        #Extract wordpress if changed
+        nxArchive ExtractSite{
+            SourcePath = "/tmp/wordpress.zip"
+            DestinationPath = "/var/www/wordpress"
+            Ensure = "Present"
+            DependsOn = "[nxFile]WordpressTar"
+         }
 
+         #Set wp-config
 
-		 #Fixup SE Linux context
-		 #nxScript SELinuxContext{
-			#TestScript= "#!/bin/bash"
-			#GetScript = "#!/bin/bash"
-			#SetScript = "#!/bin/bash"
-		 #}
+         #Fixup SE Linux context
+         #nxScript SELinuxContext{
+            #TestScript= "#!/bin/bash"
+            #GetScript = "#!/bin/bash"
+            #SetScript = "#!/bin/bash"
+         #}
 
-		 #Disable SELinux
-		 nxFileLine SELinux {
-			Filepath = "/etc/selinux/config"
-			DoesNotContainPattern = "SELINUX=enforcing"
-			ContainsLine = "SELINUX=disabled"
-		 }
+         #Disable SELinux
+         nxFileLine SELinux {
+            Filepath = "/etc/selinux/config"
+            DoesNotContainPattern = "SELINUX=enforcing"
+            ContainsLine = "SELINUX=disabled"
+         }
 
-		
-		nxScript SELinuxHTTPNet{
-		  GetScript = "#!/bin/bash`ngetsebool httpd_can_network_connect"
-		  setScript = "#!/bin/bash`nsetsebool -P httpd_can_network_connect=1"
-		  TestScript = "#!/bin/bash`n exit 1"
-		}
+        nxScript SELinuxHTTPNet{
+          GetScript = "#!/bin/bash`ngetsebool httpd_can_network_connect"
+          setScript = "#!/bin/bash`nsetsebool -P httpd_can_network_connect=1"
+          TestScript = "#!/bin/bash`n exit 1"
+        }
 
+        }
 
+    }
+        WordPressServer -OutputPath TestDrive:\DscTestConfig3
+"@) | Should -Not -Throw
 
-		}
-
-	}
-        WordPressServer
-"@).Invoke()
-
-        Remove-Item -Force -Recurse -Path WordPressServer
+        "TestDrive:\DscTestConfig3\CentOS.mof" | Should -Exist
     }
 
+    It "Should be able to compile a MOF from a basic configuration on Windows" -Skip:($IsMacOS -or $IsLinux -or $SkipAdditionalPlatforms) {
+        [Scriptblock]::Create(@"
+        configuration DSCTestConfig
+        {
+            Import-DscResource -ModuleName PSDesiredStateConfiguration
+            Node "localhost" {
+                File f1
+                {
+                    DestinationPath = "$env:SystemDrive\\Test.txt";
+                    Ensure = "Present"
+                }
+            }
+        }
+
+        DSCTestConfig -OutputPath TestDrive:\DscTestConfig4
+"@) | Should -Not -Throw
+
+        "TestDrive:\DscTestConfig4\localhost.mof" | Should -Exist
+    }
+
+    It "Should be able to compile a MOF from a configuration with multiple resources on Windows" -Skip:($IsMacOS -or $IsLinux -or $SkipAdditionalPlatforms) {
+        [Scriptblock]::Create(@"
+        configuration DSCTestConfig
+        {
+            Import-DscResource -ModuleName PSDesiredStateConfiguration
+            Node "localhost" {
+                File f1
+                {
+                    DestinationPath = "$env:SystemDrive\\Test.txt";
+                    Ensure = "Present"
+                }
+                Script s1
+                {
+                    GetScript = {return @{}}
+                    SetScript = "Write-Verbose Hello"
+                    TestScript = {return $false}
+                }
+                Log l1
+                {
+                    Message = "This is a log message"
+                }
+            }
+        }
+
+        DSCTestConfig -OutputPath TestDrive:\DscTestConfig5
+"@) | Should -Not -Throw
+
+        "TestDrive:\DscTestConfig5\localhost.mof" | Should -Exist
+    }
 }

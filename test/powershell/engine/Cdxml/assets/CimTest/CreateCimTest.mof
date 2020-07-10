@@ -1,0 +1,66 @@
+class PSCore_subclass
+{
+    [key] string id;
+    string subfield1;
+    sint32 subfield2;
+};
+
+instance of PSCore_subclass 
+{
+    id = "s1";
+    subfield1 = "sub thing";
+    subfield2 = 100;
+};
+
+[HasClassRefs, Association]
+class PSCore_Association
+{
+    [key, classref{ "PSCore_Test1", "PSCore_Test2" }]
+    object ref ep1;
+    [key] object ref ep2;
+};
+
+class PSCore_Test2
+{
+    [key] string id;
+    string field1;
+    sint32 field2;
+};
+
+class PSCore_Test1 
+{
+    [key] string id;
+    string field1;
+    sint32 field2;
+    datetime datetime;
+    PSCore_subclass subclass;
+};
+
+instance of PSCore_Test1
+{
+    id = "1";
+    field1 = "instance 1";
+    field2 = -1;
+    datetime = "20080101000000.000000<UTCOffSet>";
+    subclass = instance of PSCore_subclass{Id="10";subfield1="yup";subfield2=200;};
+};
+
+instance of PSCore_Test1
+{
+    id = "2";
+    field1 = "instance 2";
+    field2 = -2;
+};
+
+instance of PSCore_Test1
+{
+    id = "3";
+    field1 = "instance 3";
+    field2 = -3;
+};
+instance of PSCore_Test1
+{
+    id = "4";
+    field1 = "instance 4";
+    field2 = -4;
+};

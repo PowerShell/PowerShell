@@ -1,52 +1,53 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using Microsoft.Win32;
-using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Collections.Generic;
+
+using Microsoft.Win32;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Represent a control panel item
+    /// Represent a control panel item.
     /// </summary>
     public sealed class ControlPanelItem
     {
         /// <summary>
-        /// Control panel applet name
+        /// Control panel applet name.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// Control panel applet canonical name
+        /// Control panel applet canonical name.
         /// </summary>
         public string CanonicalName { get; }
 
         /// <summary>
-        /// Control panel applet category
+        /// Control panel applet category.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Category { get; }
 
         /// <summary>
-        /// Control panel applet description
+        /// Control panel applet description.
         /// </summary>
         public string Description { get; }
 
         /// <summary>
-        /// Control panel applet path
+        /// Control panel applet path.
         /// </summary>
         internal string Path { get; }
 
         /// <summary>
-        /// Internal constructor for ControlPanelItem
+        /// Internal constructor for ControlPanelItem.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="canonicalName"></param>
@@ -63,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ToString method
+        /// ToString method.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -73,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// This class implements the base for ControlPanelItem commands
+    /// This class implements the base for ControlPanelItem commands.
     /// </summary>
     public abstract class ControlPanelItemBaseCommand : PSCmdlet
     {
@@ -83,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
         private static string s_verbActionOpenName = null;
 
         /// <summary>
-        /// Canonical name of the control panel item used as a refernece to fetch the verb
+        /// Canonical name of the control panel item used as a reference to fetch the verb
         /// action Open string. This control panel item exists on all SKU's.
         /// </summary>
         private const string RegionCanonicalName = "Microsoft.RegionAndLanguage";
@@ -92,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
         private static readonly string[] s_controlPanelItemFilterList = new string[] { "Folder Options", "Taskbar and Start Menu" };
         private const string TestHeadlessServerScript = @"
 $result = $false
-$serverManagerModule = Get-Module -ListAvailable | ? {$_.Name -eq 'ServerManager'}
+$serverManagerModule = Get-Module -ListAvailable | Where-Object {$_.Name -eq 'ServerManager'}
 if ($serverManagerModule -ne $null)
 {
     Import-Module ServerManager
@@ -112,7 +113,7 @@ $result
         internal ControlPanelItem[] ControlPanelItems = new ControlPanelItem[0];
 
         /// <summary>
-        /// Get all executable control panel items
+        /// Get all executable control panel items.
         /// </summary>
         internal List<ShellFolderItem> AllControlPanelItems
         {
@@ -141,6 +142,7 @@ $result
                                     break;
                                 }
                             }
+
                             if (match)
                                 continue;
                         }
@@ -149,15 +151,17 @@ $result
                             _allControlPanelItems.Add(item);
                     }
                 }
+
                 return _allControlPanelItems;
             }
         }
+
         private List<ShellFolderItem> _allControlPanelItems;
 
         #region Cmdlet Overrides
 
         /// <summary>
-        /// Does the preprocessing for ControlPanelItem cmdlets
+        /// Does the preprocessing for ControlPanelItem cmdlets.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -170,8 +174,8 @@ $result
                  ((version.Major == 6) && (version.Minor < 2))
                 ))
             {
-                // Below Win8, this cmdlet is not supported because of Win8:794135 
-                // throw terminating 
+                // Below Win8, this cmdlet is not supported because of Win8:794135
+                // throw terminating
                 string message = string.Format(CultureInfo.InvariantCulture,
                                                ControlPanelResources.ControlPanelItemCmdletNotSupported,
                                                this.CommandInfo.Name);
@@ -182,7 +186,7 @@ $result
         #endregion
 
         /// <summary>
-        /// Test if an item can be invoked
+        /// Test if an item can be invoked.
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -192,7 +196,7 @@ $result
             FolderItemVerbs verbs = item.Verbs();
             foreach (FolderItemVerb verb in verbs)
             {
-                if (!String.IsNullOrEmpty(verb.Name) &&
+                if (!string.IsNullOrEmpty(verb.Name) &&
                     (verb.Name.Equals(ControlPanelResources.VerbActionOpen, StringComparison.OrdinalIgnoreCase) ||
                      CompareVerbActionOpen(verb.Name)))
                 {
@@ -200,14 +204,15 @@ $result
                     break;
                 }
             }
+
             return result;
         }
 
         /// <summary>
         /// CompareVerbActionOpen is a helper function used to perform locale specific
-        /// comparision of the verb action Open exposed by various control panel items.
+        /// comparison of the verb action Open exposed by various control panel items.
         /// </summary>
-        /// <param name="verbActionName">Locale spcific verb action exposed by the control panel item.</param>
+        /// <param name="verbActionName">Locale specific verb action exposed by the control panel item.</param>
         /// <returns>True if the control panel item supports verb action open or else returns false.</returns>
         private static bool CompareVerbActionOpen(string verbActionName)
         {
@@ -221,8 +226,8 @@ $result
                 foreach (ShellFolderItem item in allItems)
                 {
                     string canonicalName = (string)item.ExtendedProperty("System.ApplicationName");
-                    canonicalName = !String.IsNullOrEmpty(canonicalName)
-                                        ? canonicalName.Substring(0, canonicalName.IndexOf("\0", StringComparison.OrdinalIgnoreCase))
+                    canonicalName = !string.IsNullOrEmpty(canonicalName)
+                                        ? canonicalName.Substring(0, canonicalName.IndexOf('\0'))
                                         : null;
 
                     if (canonicalName != null && canonicalName.Equals(RegionCanonicalName, StringComparison.OrdinalIgnoreCase))
@@ -241,10 +246,10 @@ $result
         }
 
         /// <summary>
-        /// IsServerCoreORHeadLessServer is a helper function that checks if the current SKU is a 
+        /// IsServerCoreORHeadLessServer is a helper function that checks if the current SKU is a
         /// Server Core machine or if the Server-GUI-Shell feature is removed on the machine.
         /// </summary>
-        /// <returns>True if the current SKU is a Server Core machine or if the Server-GUI-Shell 
+        /// <returns>True if the current SKU is a Server Core machine or if the Server-GUI-Shell
         /// feature is removed on the machine or else returns false.</returns>
         private bool IsServerCoreOrHeadLessServer()
         {
@@ -254,7 +259,7 @@ $result
             {
                 Dbg.Assert(installation != null, "the CurrentVersion subkey should exist");
 
-                string installationType = (string)installation.GetValue("InstallationType", "");
+                string installationType = (string)installation.GetValue("InstallationType", string.Empty);
 
                 if (installationType.Equals("Server Core"))
                 {
@@ -265,7 +270,7 @@ $result
                     using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
                     {
                         ps.AddScript(TestHeadlessServerScript);
-                        Collection<PSObject> psObjectCollection = ps.Invoke(new object[0]);
+                        Collection<PSObject> psObjectCollection = ps.Invoke(Array.Empty<object>());
                         Dbg.Assert(psObjectCollection != null && psObjectCollection.Count == 1, "invoke should never return null, there should be only one return item");
                         if (LanguagePrimitives.IsTrue(PSObject.Base(psObjectCollection[0])))
                         {
@@ -279,7 +284,7 @@ $result
         }
 
         /// <summary>
-        /// Get the category number and name map
+        /// Get the category number and name map.
         /// </summary>
         internal void GetCategoryMap()
         {
@@ -302,7 +307,7 @@ $result
         }
 
         /// <summary>
-        /// Get control panel item by the category
+        /// Get control panel item by the category.
         /// </summary>
         /// <param name="controlPanelItems"></param>
         /// <returns></returns>
@@ -354,7 +359,7 @@ $result
         }
 
         /// <summary>
-        /// Get control panel item by the regular name
+        /// Get control panel item by the regular name.
         /// </summary>
         /// <param name="controlPanelItems"></param>
         /// <param name="withCategoryFilter"></param>
@@ -402,7 +407,7 @@ $result
         }
 
         /// <summary>
-        /// Get control panel item by the canonical name
+        /// Get control panel item by the canonical name.
         /// </summary>
         /// <param name="controlPanelItems"></param>
         /// <param name="withCategoryFilter"></param>
@@ -430,10 +435,11 @@ $result
                     string errMsg = withCategoryFilter
                                         ? ControlPanelResources.NoControlPanelItemFoundWithNullCanonicalNameWithCategory
                                         : ControlPanelResources.NoControlPanelItemFoundWithNullCanonicalName;
-                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "",
+                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), string.Empty,
                                                         ErrorCategory.InvalidArgument, CanonicalNames);
                     WriteError(error);
                 }
+
                 return list;
             }
 
@@ -446,7 +452,7 @@ $result
                     string path = item.Path;
                     string canonicalName = (string)item.ExtendedProperty("System.ApplicationName");
                     canonicalName = canonicalName != null
-                                        ? canonicalName.Substring(0, canonicalName.IndexOf("\0", StringComparison.OrdinalIgnoreCase))
+                                        ? canonicalName.Substring(0, canonicalName.IndexOf('\0'))
                                         : null;
 
                     if (canonicalName == null)
@@ -494,7 +500,7 @@ $result
         }
 
         /// <summary>
-        /// Get control panel item by the ControlPanelItem instances
+        /// Get control panel item by the ControlPanelItem instances.
         /// </summary>
         /// <param name="controlPanelItems"></param>
         /// <returns></returns>
@@ -540,9 +546,9 @@ $result
     }
 
     /// <summary>
-    /// Get all control panel items that is available in the "All Control Panel Items" category
+    /// Get all control panel items that is available in the "All Control Panel Items" category.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ControlPanelItem", DefaultParameterSetName = RegularNameParameterSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=219982")]
+    [Cmdlet(VerbsCommon.Get, "ControlPanelItem", DefaultParameterSetName = RegularNameParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=219982")]
     [OutputType(typeof(ControlPanelItem))]
     public sealed class GetControlPanelItemCommand : ControlPanelItemBaseCommand
     {
@@ -552,7 +558,7 @@ $result
         #region "Parameters"
 
         /// <summary>
-        /// Control panel item names
+        /// Control panel item names.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = RegularNameParameterSet, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
@@ -560,16 +566,18 @@ $result
         public string[] Name
         {
             get { return RegularNames; }
+
             set
             {
                 RegularNames = value;
                 _nameSpecified = true;
             }
         }
+
         private bool _nameSpecified = false;
 
         /// <summary>
-        /// Canonical names of control panel items
+        /// Canonical names of control panel items.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = CanonicalNameParameterSet)]
         [AllowNull]
@@ -577,16 +585,18 @@ $result
         public string[] CanonicalName
         {
             get { return CanonicalNames; }
+
             set
             {
                 CanonicalNames = value;
                 _canonicalNameSpecified = true;
             }
         }
+
         private bool _canonicalNameSpecified = false;
 
         /// <summary>
-        /// Category of control panel items
+        /// Category of control panel items.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -594,18 +604,19 @@ $result
         public string[] Category
         {
             get { return CategoryNames; }
+
             set
             {
                 CategoryNames = value;
                 _categorySpecified = true;
             }
         }
+
         private bool _categorySpecified = false;
 
         #endregion "Parameters"
 
         /// <summary>
-        /// 
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -629,7 +640,7 @@ $result
                 string description = (string)item.ExtendedProperty("InfoTip");
                 string canonicalName = (string)item.ExtendedProperty("System.ApplicationName");
                 canonicalName = canonicalName != null
-                                        ? canonicalName.Substring(0, canonicalName.IndexOf("\0", StringComparison.OrdinalIgnoreCase))
+                                        ? canonicalName.Substring(0, canonicalName.IndexOf('\0'))
                                         : null;
                 int[] categories = (int[])item.ExtendedProperty("System.ControlPanel.Category");
                 string[] cateStrings = new string[categories.Length];
@@ -644,7 +655,7 @@ $result
                 results.Add(controlPanelItem);
             }
 
-            // Sort the reuslts by Canonical Name
+            // Sort the results by Canonical Name
             results.Sort(CompareControlPanelItems);
             foreach (ControlPanelItem controlPanelItem in results)
             {
@@ -672,9 +683,9 @@ $result
     }
 
     /// <summary>
-    /// Show the specified control panel applet
+    /// Show the specified control panel applet.
     /// </summary>
-    [Cmdlet(VerbsCommon.Show, "ControlPanelItem", DefaultParameterSetName = RegularNameParameterSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=219983")]
+    [Cmdlet(VerbsCommon.Show, "ControlPanelItem", DefaultParameterSetName = RegularNameParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=219983")]
     public sealed class ShowControlPanelItemCommand : ControlPanelItemBaseCommand
     {
         private const string RegularNameParameterSet = "RegularName";
@@ -684,7 +695,7 @@ $result
         #region "Parameters"
 
         /// <summary>
-        /// Control panel item names
+        /// Control panel item names.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = RegularNameParameterSet, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
@@ -692,11 +703,12 @@ $result
         public string[] Name
         {
             get { return RegularNames; }
+
             set { RegularNames = value; }
         }
 
         /// <summary>
-        /// Canonical names of control panel items
+        /// Canonical names of control panel items.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = CanonicalNameParameterSet)]
         [AllowNull]
@@ -704,11 +716,12 @@ $result
         public string[] CanonicalName
         {
             get { return CanonicalNames; }
+
             set { CanonicalNames = value; }
         }
 
         /// <summary>
-        /// Control panel items returned by Get-ControlPanelItem
+        /// Control panel items returned by Get-ControlPanelItem.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = ControlPanelItemParameterSet, ValueFromPipeline = true)]
         [ValidateNotNullOrEmpty]
@@ -716,13 +729,13 @@ $result
         public ControlPanelItem[] InputObject
         {
             get { return ControlPanelItems; }
+
             set { ControlPanelItems = value; }
         }
 
         #endregion "Parameters"
 
         /// <summary>
-        /// 
         /// </summary>
         protected override void ProcessRecord()
         {

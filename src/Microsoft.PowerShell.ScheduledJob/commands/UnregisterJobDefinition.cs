@@ -1,11 +1,10 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
-using System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.ScheduledJob
 {
@@ -14,7 +13,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// Task Scheduler, job store, and local repository.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Unregister, "ScheduledJob", SupportsShouldProcess = true, DefaultParameterSetName = UnregisterScheduledJobCommand.DefinitionParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223925")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223925")]
     public sealed class UnregisterScheduledJobCommand : ScheduleJobCmdletBase
     {
         #region Parameters
@@ -24,31 +23,35 @@ namespace Microsoft.PowerShell.ScheduledJob
         private const string DefinitionParameterSet = "Definition";
 
         /// <summary>
-        /// ScheduledJobDefintion Id.
+        /// ScheduledJobDefinition Id.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, 
+        [Parameter(Position = 0, Mandatory = true,
                    ParameterSetName = UnregisterScheduledJobCommand.DefinitionIdParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Int32[] Id
         {
             get { return _definitionIds; }
+
             set { _definitionIds = value; }
         }
+
         private Int32[] _definitionIds;
 
         /// <summary>
         /// ScheduledJobDefinition Name.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, 
+        [Parameter(Position = 0, Mandatory = true,
                    ParameterSetName = UnregisterScheduledJobCommand.DefinitionNameParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name
         {
             get { return _names; }
+
             set { _names = value; }
         }
+
         private string[] _names;
 
         /// <summary>
@@ -61,8 +64,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobDefinition[] InputObject
         {
             get { return _definitions; }
+
             set { _definitions = value; }
         }
+
         private ScheduledJobDefinition[] _definitions;
 
         /// <summary>
@@ -75,8 +80,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter Force
         {
             get { return _force; }
+
             set { _force = value; }
         }
+
         private SwitchParameter _force;
 
         #endregion
@@ -111,7 +118,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     string targetString = StringUtil.Format(ScheduledJobErrorStrings.DefinitionWhatIf, definition.Name);
                     if (ShouldProcess(targetString, VerbsLifecycle.Unregister))
                     {
-                        // Removes the ScheduledJobDefintion from the job store,
+                        // Removes the ScheduledJobDefinition from the job store,
                         // Task Scheduler, and disposes the object.
                         try
                         {
@@ -133,7 +140,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 (_definitions == null || _definitions.Length < _names.Length))
             {
                 // Make sure there is no PowerShell task in Task Scheduler with removed names.
-                // This covers the case where the scheduled job defintion was manually removed from
+                // This covers the case where the scheduled job definition was manually removed from
                 // the job store but remains as a PowerShell task in Task Scheduler.
                 using (ScheduledJobWTS taskScheduler = new ScheduledJobWTS())
                 {

@@ -1,23 +1,24 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
-using System.Globalization;
-using System.Management.Automation;
-using System.Management;
-using System.Management.Automation.Internal;
-using System.Text;
-using System.Management.Automation.Provider;
-using System.ComponentModel;
 using System.Collections;
 using System.Collections.ObjectModel;
-using System.Security.AccessControl;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Management.Automation.Remoting;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Management;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Provider;
+using System.Management.Automation.Remoting;
+using System.Runtime.InteropServices;
+using System.Security.AccessControl;
+using System.Text;
+using System.Threading;
+
 using Microsoft.PowerShell.Commands.Internal;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -26,13 +27,13 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Base class for all WMI helper classes. This is an abstract class
-    /// and the helpers need to derive from this
+    /// and the helpers need to derive from this.
     /// </summary>
     internal abstract class AsyncCmdletHelper : IThrottleOperation
     {
         /// <summary>
         /// Exception raised internally when any method of this class
-        /// is executed
+        /// is executed.
         /// </summary>
         internal Exception InternalException
         {
@@ -41,6 +42,7 @@ namespace Microsoft.PowerShell.Commands
                 return internalException;
             }
         }
+
         protected Exception internalException = null;
     }
 
@@ -52,12 +54,12 @@ namespace Microsoft.PowerShell.Commands
     internal class WmiAsyncCmdletHelper : AsyncCmdletHelper
     {
         /// <summary>
-        /// Internal Constructor
+        /// Internal Constructor.
         /// </summary>
-        /// <param name="childJob">Job associated with this operation</param>
-        /// <param name="wmiObject">object associated with this operation</param>
-        /// <param name="computerName"> computer on which the operation is invoked </param>
-        /// <param name="results"> sink to get wmi objects </param>
+        /// <param name="childJob">Job associated with this operation.</param>
+        /// <param name="wmiObject">Object associated with this operation.</param>
+        /// <param name="computerName">Computer on which the operation is invoked.</param>
+        /// <param name="results">Sink to get wmi objects.</param>
         internal WmiAsyncCmdletHelper(PSWmiChildJob childJob, Cmdlet wmiObject, string computerName, ManagementOperationObserver results)
         {
             _wmiObject = wmiObject;
@@ -68,14 +70,14 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Internal Constructor.  This variant takes a count parameter that determines how many times 
+        /// Internal Constructor.  This variant takes a count parameter that determines how many times
         /// the WMI command is executed.
         /// </summary>
-        /// <param name="childJob">Job associated with this operation</param>
-        /// <param name="wmiObject">Object associated with this operation</param>
-        /// <param name="computerName">Computer on which the operation is invoked</param>
-        /// <param name="results">Sink to return wmi objects</param>
-        /// <param name="count">Number of times the WMI command is executed</param>
+        /// <param name="childJob">Job associated with this operation.</param>
+        /// <param name="wmiObject">Object associated with this operation.</param>
+        /// <param name="computerName">Computer on which the operation is invoked.</param>
+        /// <param name="results">Sink to return wmi objects.</param>
+        /// <param name="count">Number of times the WMI command is executed.</param>
         internal WmiAsyncCmdletHelper(PSWmiChildJob childJob, Cmdlet wmiObject, string computerName, ManagementOperationObserver results, int count)
             : this(childJob, wmiObject, computerName, results)
         {
@@ -89,18 +91,19 @@ namespace Microsoft.PowerShell.Commands
         private int _cmdCount = 1;
         private PSWmiChildJob _job;
         /// <summary>
-        /// current operation state
+        /// Current operation state.
         /// </summary>
         internal WmiState State
         {
             get { return _state; }
+
             set { _state = value; }
         }
 
         private WmiState _state;
 
         /// <summary>
-        /// Cancel WMI connection
+        /// Cancel WMI connection.
         /// </summary>
         internal override void StopOperation()
         {
@@ -109,20 +112,21 @@ namespace Microsoft.PowerShell.Commands
             RaiseOperationCompleteEvent(null, OperationState.StopComplete);
         }
         /// <summary>
-        /// Uses this.filter, this.wmiClass and this.property to retrieve the filter
+        /// Uses this.filter, this.wmiClass and this.property to retrieve the filter.
         /// </summary>
         private string GetWmiQueryString()
         {
             GetWmiObjectCommand getObject = (GetWmiObjectCommand)_wmiObject;
             StringBuilder returnValue = new StringBuilder("select ");
-            returnValue.Append(String.Join(", ", getObject.Property));
+            returnValue.Append(string.Join(", ", getObject.Property));
             returnValue.Append(" from ");
             returnValue.Append(getObject.Class);
-            if (!String.IsNullOrEmpty(getObject.Filter))
+            if (!string.IsNullOrEmpty(getObject.Filter))
             {
                 returnValue.Append(" where ");
                 returnValue.Append(getObject.Filter);
             }
+
             return returnValue.ToString();
         }
 
@@ -156,27 +160,27 @@ namespace Microsoft.PowerShell.Commands
                 RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                 return;
             }
+
             thread.IsBackground = true;
-            //thread.SetApartmentState( ApartmentState.STA);
+            thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
         }
 
         /// <summary>
-        /// 
         /// </summary>
         internal override event EventHandler<OperationStateEventArgs> OperationComplete;
 
         private Cmdlet _wmiObject;
 
         /// <summary>
-        /// Raise operation completion event
+        /// Raise operation completion event.
         /// </summary>
         internal void RaiseOperationCompleteEvent(EventArgs baseEventArgs, OperationState state)
         {
             OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs();
             operationStateEventArgs.OperationState = state;
             OperationComplete.SafeInvoke(this, operationStateEventArgs);
-        } // RaiseOperationCompleteEvent
+        }
 
         ///<summary>
         /// Raise WMI state changed event
@@ -202,10 +206,10 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     PutOptions pOptions = new PutOptions();
-                    //Extra check
+                    // Extra check
                     if (setObject.InputObject.GetType() == typeof(ManagementClass))
                     {
-                        //Check if Flag specified is CreateOnly or not
+                        // Check if Flag specified is CreateOnly or not
                         if (setObject.flagSpecified && setObject.PutType != PutType.CreateOnly)
                         {
                             InvalidOperationException e = new InvalidOperationException("CreateOnlyFlagNotSpecifiedWithClassPath");
@@ -214,12 +218,13 @@ namespace Microsoft.PowerShell.Commands
                             RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                             return;
                         }
+
                         mObj = ((ManagementClass)setObject.InputObject).CreateInstance();
                         setObject.PutType = PutType.CreateOnly;
                     }
                     else
                     {
-                        //Check if Flag specified is Updateonly or UpdateOrCreateOnly or not
+                        // Check if Flag specified is Updateonly or UpdateOrCreateOnly or not
                         if (setObject.flagSpecified)
                         {
                             if (!(setObject.PutType == PutType.UpdateOnly || setObject.PutType == PutType.UpdateOrCreate))
@@ -238,6 +243,7 @@ namespace Microsoft.PowerShell.Commands
 
                         mObj = (ManagementObject)setObject.InputObject.Clone();
                     }
+
                     if (setObject.Arguments != null)
                     {
                         IDictionaryEnumerator en = setObject.Arguments.GetEnumerator();
@@ -246,6 +252,7 @@ namespace Microsoft.PowerShell.Commands
                             mObj[en.Key as string] = en.Value;
                         }
                     }
+
                     pOptions.Type = setObject.PutType;
                     if (mObj != null)
                     {
@@ -281,7 +288,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 ManagementPath mPath = null;
-                //If Class is specified only CreateOnly flag is supported
+                // If Class is specified only CreateOnly flag is supported
                 if (setObject.Class != null)
                 {
                     if (setObject.flagSpecified && setObject.PutType != PutType.CreateOnly)
@@ -292,12 +299,13 @@ namespace Microsoft.PowerShell.Commands
                         RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                         return;
                     }
+
                     setObject.PutType = PutType.CreateOnly;
                 }
                 else
                 {
                     mPath = new ManagementPath(setObject.Path);
-                    if (String.IsNullOrEmpty(mPath.NamespacePath))
+                    if (string.IsNullOrEmpty(mPath.NamespacePath))
                     {
                         mPath.NamespacePath = setObject.Namespace;
                     }
@@ -318,6 +326,7 @@ namespace Microsoft.PowerShell.Commands
                         RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                         return;
                     }
+
                     if (mPath.IsClass)
                     {
                         if (setObject.flagSpecified && setObject.PutType != PutType.CreateOnly)
@@ -328,6 +337,7 @@ namespace Microsoft.PowerShell.Commands
                             RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                             return;
                         }
+
                         setObject.PutType = PutType.CreateOnly;
                     }
                     else
@@ -349,7 +359,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
-                //If server name is specified loop through it.
+                // If server name is specified loop through it.
                 if (mPath != null)
                 {
                     if (!(mPath.Server == "." && setObject.serverNameSpecified))
@@ -357,6 +367,7 @@ namespace Microsoft.PowerShell.Commands
                         _computerName = mPath.Server;
                     }
                 }
+
                 ConnectionOptions options = setObject.GetConnectionOption();
                 ManagementObject mObject = null;
                 try
@@ -373,7 +384,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            //This can throw if path does not exist caller should catch it.
+                            // This can throw if path does not exist caller should catch it.
                             ManagementObject mInstance = new ManagementObject(mPath);
                             mInstance.Scope = mScope;
                             try
@@ -389,6 +400,7 @@ namespace Microsoft.PowerShell.Commands
                                     RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                                     return;
                                 }
+
                                 int namespaceIndex = setObject.Path.IndexOf(':');
                                 if (namespaceIndex == -1)
                                 {
@@ -397,6 +409,7 @@ namespace Microsoft.PowerShell.Commands
                                     RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                                     return;
                                 }
+
                                 int classIndex = (setObject.Path.Substring(namespaceIndex)).IndexOf('.');
                                 if (classIndex == -1)
                                 {
@@ -405,13 +418,14 @@ namespace Microsoft.PowerShell.Commands
                                     RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                                     return;
                                 }
-                                //Get class object and create instance.
+                                // Get class object and create instance.
                                 string newPath = setObject.Path.Substring(0, classIndex + namespaceIndex);
                                 ManagementPath classPath = new ManagementPath(newPath);
                                 ManagementClass mClass = new ManagementClass(classPath);
                                 mClass.Scope = mScope;
                                 mInstance = mClass.CreateInstance();
                             }
+
                             mObject = mInstance;
                         }
                     }
@@ -422,6 +436,7 @@ namespace Microsoft.PowerShell.Commands
                         mClass.Scope = scope;
                         mObject = mClass.CreateInstance();
                     }
+
                     if (setObject.Arguments != null)
                     {
                         IDictionaryEnumerator en = setObject.Arguments.GetEnumerator();
@@ -430,6 +445,7 @@ namespace Microsoft.PowerShell.Commands
                             mObject[en.Key as string] = en.Value;
                         }
                     }
+
                     PutOptions pOptions = new PutOptions();
                     pOptions.Type = setObject.PutType;
                     if (mObject != null)
@@ -466,7 +482,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Do the actual connection to remote machine for Invokd-WMIMethod cmdlet and raise operation complete event.
+        /// Do the actual connection to remote machine for Invoke-WMIMethod cmdlet and raise operation complete event.
         /// </summary>
         private void ConnectInvokeWmi()
         {
@@ -491,6 +507,7 @@ namespace Microsoft.PowerShell.Commands
                             inParamCount--;
                         }
                     }
+
                     invokeObject.InputObject.InvokeMethod(_results, invokeObject.Name, inputParameters, null);
                 }
                 catch (ManagementException e)
@@ -511,6 +528,7 @@ namespace Microsoft.PowerShell.Commands
                     _state = WmiState.Failed;
                     RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                 }
+
                 return;
             }
             else
@@ -521,7 +539,7 @@ namespace Microsoft.PowerShell.Commands
                 if (invokeObject.Path != null)
                 {
                     mPath = new ManagementPath(invokeObject.Path);
-                    if (String.IsNullOrEmpty(mPath.NamespacePath))
+                    if (string.IsNullOrEmpty(mPath.NamespacePath))
                     {
                         mPath.NamespacePath = invokeObject.Namespace;
                     }
@@ -542,7 +560,7 @@ namespace Microsoft.PowerShell.Commands
                         RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                         return;
                     }
-                    //If server name is specified loop through it.
+                    // If server name is specified loop through it.
                     if (!(mPath.Server == "." && invokeObject.serverNameSpecified))
                     {
                         _computerName = mPath.Server;
@@ -583,6 +601,7 @@ namespace Microsoft.PowerShell.Commands
                             ManagementObject mInstance = new ManagementObject(mPath);
                             mObject = mInstance;
                         }
+
                         ManagementScope mScope = new ManagementScope(mPath, options);
                         mObject.Scope = mScope;
                     }
@@ -660,7 +679,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Check if we need to enable the shutdown privilege
+        /// Check if we need to enable the shutdown privilege.
         /// </summary>
         /// <param name="computer"></param>
         /// <param name="methodName"></param>
@@ -673,11 +692,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = true;
 
-                // CLR 4.0 Port note - use https://msdn.microsoft.com/en-us/library/system.net.networkinformation.ipglobalproperties.hostname(v=vs.110).aspx
+                // CLR 4.0 Port note - use https://msdn.microsoft.com/library/system.net.networkinformation.ipglobalproperties.hostname(v=vs.110).aspx
                 string localName = System.Net.Dns.GetHostName();
 
                 // And for this, use PsUtils.GetHostname()
-                string localFullName = System.Net.Dns.GetHostEntry("").HostName;
+                string localFullName = System.Net.Dns.GetHostEntry(string.Empty).HostName;
                 if (computer.Equals(".") || computer.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
                     computer.Equals(localName, StringComparison.OrdinalIgnoreCase) ||
                     computer.Equals(localFullName, StringComparison.OrdinalIgnoreCase))
@@ -721,6 +740,7 @@ namespace Microsoft.PowerShell.Commands
                     _state = WmiState.Failed;
                     RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                 }
+
                 return;
             }
             else
@@ -731,7 +751,7 @@ namespace Microsoft.PowerShell.Commands
                 if (removeObject.Path != null)
                 {
                     mPath = new ManagementPath(removeObject.Path);
-                    if (String.IsNullOrEmpty(mPath.NamespacePath))
+                    if (string.IsNullOrEmpty(mPath.NamespacePath))
                     {
                         mPath.NamespacePath = removeObject.Namespace;
                     }
@@ -752,11 +772,13 @@ namespace Microsoft.PowerShell.Commands
                         RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                         return;
                     }
+
                     if (!(mPath.Server == "." && removeObject.serverNameSpecified))
                     {
                         _computerName = mPath.Server;
                     }
                 }
+
                 try
                 {
                     if (removeObject.Path != null)
@@ -772,6 +794,7 @@ namespace Microsoft.PowerShell.Commands
                             ManagementObject mInstance = new ManagementObject(mPath);
                             mObject = mInstance;
                         }
+
                         ManagementScope mScope = new ManagementScope(mPath, options);
                         mObject.Scope = mScope;
                     }
@@ -782,6 +805,7 @@ namespace Microsoft.PowerShell.Commands
                         mObject = mClass;
                         mObject.Scope = scope;
                     }
+
                     mObject.Delete(_results);
                 }
                 catch (ManagementException e)
@@ -819,7 +843,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!getObject.ValidateClassFormat())
                 {
                     ArgumentException e = new ArgumentException(
-                        String.Format(
+                        string.Format(
                             Thread.CurrentThread.CurrentCulture,
                             "Class", getObject.Class));
 
@@ -828,6 +852,7 @@ namespace Microsoft.PowerShell.Commands
                     RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                     return;
                 }
+
                 try
                 {
                     if (getObject.Recurse.IsPresent)
@@ -835,12 +860,12 @@ namespace Microsoft.PowerShell.Commands
                         ArrayList namespaceArray = new ArrayList();
                         ArrayList sinkArray = new ArrayList();
                         ArrayList connectArray = new ArrayList(); // Optimization for remote namespace
-                        int currentNamesapceCount = 0;
+                        int currentNamespaceCount = 0;
                         namespaceArray.Add(getObject.Namespace);
                         bool topNamespace = true;
-                        while (currentNamesapceCount < namespaceArray.Count)
+                        while (currentNamespaceCount < namespaceArray.Count)
                         {
-                            string connectNamespace = (string)namespaceArray[currentNamesapceCount];
+                            string connectNamespace = (string)namespaceArray[currentNamespaceCount];
                             ManagementScope scope = new ManagementScope(WMIHelper.GetScopeString(_computerName, connectNamespace), options);
                             scope.Connect();
                             ManagementClass namespaceClass = new ManagementClass(scope, new ManagementPath("__Namespace"), new ObjectGetOptions());
@@ -851,6 +876,7 @@ namespace Microsoft.PowerShell.Commands
                                     namespaceArray.Add(connectNamespace + "\\" + obj["Name"]);
                                 }
                             }
+
                             if (topNamespace)
                             {
                                 topNamespace = false;
@@ -860,8 +886,9 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 sinkArray.Add(_job.GetNewSink());
                             }
+
                             connectArray.Add(scope);
-                            currentNamesapceCount++;
+                            currentNamespaceCount++;
                         }
 
                         if ((sinkArray.Count != namespaceArray.Count) || (connectArray.Count != namespaceArray.Count)) // not expected throw exception
@@ -872,16 +899,17 @@ namespace Microsoft.PowerShell.Commands
                             return;
                         }
 
-                        currentNamesapceCount = 0;
-                        while (currentNamesapceCount < namespaceArray.Count)
+                        currentNamespaceCount = 0;
+                        while (currentNamespaceCount < namespaceArray.Count)
                         {
-                            string connectNamespace = (string)namespaceArray[currentNamesapceCount];
-                            ManagementObjectSearcher searcher = getObject.GetObjectList((ManagementScope)connectArray[currentNamesapceCount]);
+                            string connectNamespace = (string)namespaceArray[currentNamespaceCount];
+                            ManagementObjectSearcher searcher = getObject.GetObjectList((ManagementScope)connectArray[currentNamespaceCount]);
                             if (searcher == null)
                             {
-                                currentNamesapceCount++;
+                                currentNamespaceCount++;
                                 continue;
                             }
+
                             if (topNamespace)
                             {
                                 topNamespace = false;
@@ -889,9 +917,10 @@ namespace Microsoft.PowerShell.Commands
                             }
                             else
                             {
-                                searcher.Get((ManagementOperationObserver)sinkArray[currentNamesapceCount]);
+                                searcher.Get((ManagementOperationObserver)sinkArray[currentNamespaceCount]);
                             }
-                            currentNamesapceCount++;
+
+                            currentNamespaceCount++;
                         }
                     }
                     else
@@ -922,8 +951,10 @@ namespace Microsoft.PowerShell.Commands
                     _state = WmiState.Failed;
                     RaiseOperationCompleteEvent(null, OperationState.StopComplete);
                 }
+
                 return;
             }
+
             string queryString = string.IsNullOrEmpty(getObject.Query) ? GetWmiQueryString() : getObject.Query;
             ObjectQuery query = new ObjectQuery(queryString.ToString());
             try
@@ -975,16 +1006,16 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Enumerated type defining the state of the WMI operation
+    /// Enumerated type defining the state of the WMI operation.
     /// </summary>
     public enum WmiState
     {
         /// <summary>
-        /// The operation has not been started
+        /// The operation has not been started.
         /// </summary>
         NotStarted = 0,
         /// <summary>
-        /// The operation is executing
+        /// The operation is executing.
         /// </summary>
         Running = 1,
         /// <summary>
@@ -1018,22 +1049,21 @@ namespace Microsoft.PowerShell.Commands
     }
     #endregion Helper Classes
 
-
     /// <summary>
-    /// A class to set WMI connection options
+    /// A class to set WMI connection options.
     /// </summary>
     public class WmiBaseCmdlet : Cmdlet
     {
         #region Parameters
 
         /// <summary>
-        /// Perform Async operation
+        /// Perform Async operation.
         /// </summary>
         [Parameter]
         public SwitchParameter AsJob { get; set; } = false;
 
         /// <summary>
-        /// The Impersonation level to use
+        /// The Impersonation level to use.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(ParameterSetName = "class")]
@@ -1043,7 +1073,7 @@ namespace Microsoft.PowerShell.Commands
         public ImpersonationLevel Impersonation { get; set; } = ImpersonationLevel.Impersonate;
 
         /// <summary>
-        /// The Authentication level to use
+        /// The Authentication level to use.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(ParameterSetName = "class")]
@@ -1053,7 +1083,7 @@ namespace Microsoft.PowerShell.Commands
         public AuthenticationLevel Authentication { get; set; } = AuthenticationLevel.PacketPrivacy;
 
         /// <summary>
-        /// The Locale to use
+        /// The Locale to use.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(ParameterSetName = "class")]
@@ -1063,7 +1093,7 @@ namespace Microsoft.PowerShell.Commands
         public string Locale { get; set; } = null;
 
         /// <summary>
-        /// If all Privileges are enabled
+        /// If all Privileges are enabled.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(ParameterSetName = "class")]
@@ -1073,7 +1103,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter EnableAllPrivileges { get; set; }
 
         /// <summary>
-        /// The Authority to use
+        /// The Authority to use.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(ParameterSetName = "class")]
@@ -1083,7 +1113,7 @@ namespace Microsoft.PowerShell.Commands
         public string Authority { get; set; } = null;
 
         /// <summary>
-        /// The credential to use
+        /// The credential to use.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(ParameterSetName = "class")]
@@ -1094,13 +1124,13 @@ namespace Microsoft.PowerShell.Commands
         public PSCredential Credential { get; set; }
 
         /// <summary>
-        /// The credential to use
+        /// The credential to use.
         /// </summary>
         [Parameter]
         public Int32 ThrottleLimit { get; set; } = s_DEFAULT_THROTTLE_LIMIT;
 
         /// <summary>
-        /// The ComputerName in which to query
+        /// The ComputerName in which to query.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(ParameterSetName = "class")]
@@ -1113,10 +1143,11 @@ namespace Microsoft.PowerShell.Commands
         public string[] ComputerName
         {
             get { return _computerName; }
+
             set { _computerName = value; serverNameSpecified = true; }
         }
         /// <summary>
-        /// The WMI namespace to use
+        /// The WMI namespace to use.
         /// </summary>
         [Parameter(ParameterSetName = "path")]
         [Parameter(ParameterSetName = "class")]
@@ -1127,6 +1158,7 @@ namespace Microsoft.PowerShell.Commands
         public string Namespace
         {
             get { return _nameSpace; }
+
             set { _nameSpace = value; namespaceSpecified = true; }
         }
         #endregion Parameters
@@ -1137,7 +1169,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private string[] _computerName = new string[] { "localhost" };
         /// <summary>
-        /// WMI namespace
+        /// WMI namespace.
         /// </summary>
         private string _nameSpace = "root\\cimv2";
         /// <summary>
@@ -1155,7 +1187,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Command code
         /// <summary>
-        /// Get connection options
+        /// Get connection options.
         /// </summary>
         internal ConnectionOptions GetConnectionOption()
         {
@@ -1174,10 +1206,11 @@ namespace Microsoft.PowerShell.Commands
                     options.SecurePassword = this.Credential.Password;
                 }
             }
+
             return options;
         }
         /// <summary>
-        /// Set wmi instance helper
+        /// Set wmi instance helper.
         /// </summary>
         internal ManagementObject SetWmiInstanceGetObject(ManagementPath mPath, string serverName)
         {
@@ -1198,7 +1231,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        //This can throw if path does not exist caller should catch it.
+                        // This can throw if path does not exist caller should catch it.
                         ManagementObject mInstance = new ManagementObject(mPath);
                         mInstance.Scope = mScope;
                         try
@@ -1211,23 +1244,26 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 throw;
                             }
+
                             int namespaceIndex = setObject.Path.IndexOf(':');
                             if (namespaceIndex == -1)
                             {
                                 throw;
                             }
+
                             int classIndex = (setObject.Path.Substring(namespaceIndex)).IndexOf('.');
                             if (classIndex == -1)
                             {
                                 throw;
                             }
-                            //Get class object and create instance.
+                            // Get class object and create instance.
                             string newPath = setObject.Path.Substring(0, classIndex + namespaceIndex);
                             ManagementPath classPath = new ManagementPath(newPath);
                             ManagementClass mClass = new ManagementClass(classPath);
                             mClass.Scope = mScope;
                             mInstance = mClass.CreateInstance();
                         }
+
                         mObject = mInstance;
                     }
                 }
@@ -1238,6 +1274,7 @@ namespace Microsoft.PowerShell.Commands
                     mClass.Scope = scope;
                     mObject = mClass.CreateInstance();
                 }
+
                 if (setObject.Arguments != null)
                 {
                     IDictionaryEnumerator en = setObject.Arguments.GetEnumerator();
@@ -1247,10 +1284,11 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return mObject;
         }
         /// <summary>
-        /// Set wmi instance helper for building management path
+        /// Set wmi instance helper for building management path.
         /// </summary>
         internal ManagementPath SetWmiInstanceBuildManagementPath()
         {
@@ -1258,30 +1296,31 @@ namespace Microsoft.PowerShell.Commands
             var wmiInstance = this as SetWmiInstance;
             if (wmiInstance != null)
             {
-                //If Class is specified only CreateOnly flag is supported
+                // If Class is specified only CreateOnly flag is supported
                 if (wmiInstance.Class != null)
                 {
                     if (wmiInstance.flagSpecified && wmiInstance.PutType != PutType.CreateOnly)
                     {
-                        //Throw Terminating error   
+                        // Throw Terminating error
                         ThrowTerminatingError(new ErrorRecord(
                          new InvalidOperationException(),
                          "CreateOnlyFlagNotSpecifiedWithClassPath",
                          ErrorCategory.InvalidOperation,
                          wmiInstance.PutType));
                     }
+
                     wmiInstance.PutType = PutType.CreateOnly;
                 }
                 else
                 {
                     mPath = new ManagementPath(wmiInstance.Path);
-                    if (String.IsNullOrEmpty(mPath.NamespacePath))
+                    if (string.IsNullOrEmpty(mPath.NamespacePath))
                     {
                         mPath.NamespacePath = wmiInstance.Namespace;
                     }
                     else if (wmiInstance.namespaceSpecified)
                     {
-                        //ThrowTerminatingError
+                        // ThrowTerminatingError
                         ThrowTerminatingError(new ErrorRecord(
                             new InvalidOperationException(),
                             "NamespaceSpecifiedWithPath",
@@ -1291,24 +1330,26 @@ namespace Microsoft.PowerShell.Commands
 
                     if (mPath.Server != "." && wmiInstance.serverNameSpecified)
                     {
-                        //ThrowTerminatingError
+                        // ThrowTerminatingError
                         ThrowTerminatingError(new ErrorRecord(
                             new InvalidOperationException(),
                             "ComputerNameSpecifiedWithPath",
                             ErrorCategory.InvalidOperation,
                             wmiInstance.ComputerName));
                     }
+
                     if (mPath.IsClass)
                     {
                         if (wmiInstance.flagSpecified && wmiInstance.PutType != PutType.CreateOnly)
                         {
-                            //Throw Terminating error   
+                            // Throw Terminating error
                             ThrowTerminatingError(new ErrorRecord(
                              new InvalidOperationException(),
                              "CreateOnlyFlagNotSpecifiedWithClassPath",
                              ErrorCategory.InvalidOperation,
                              wmiInstance.PutType));
                         }
+
                         wmiInstance.PutType = PutType.CreateOnly;
                     }
                     else
@@ -1317,7 +1358,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (!(wmiInstance.PutType == PutType.UpdateOnly || wmiInstance.PutType == PutType.UpdateOrCreate))
                             {
-                                //Throw terminating error
+                                // Throw terminating error
                                 ThrowTerminatingError(new ErrorRecord(
                                 new InvalidOperationException(),
                                 "NonUpdateFlagSpecifiedWithInstancePath",
@@ -1332,45 +1373,47 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return mPath;
         }
 
         /// <summary>
-        /// Set wmi instance helper for pipeline input
+        /// Set wmi instance helper for pipeline input.
         /// </summary>
         internal ManagementObject SetWmiInstanceGetPipelineObject()
         {
-            //Should only be called from Set-WMIInstance cmdlet
+            // Should only be called from Set-WMIInstance cmdlet
             ManagementObject mObj = null;
             var wmiInstance = this as SetWmiInstance;
             if (wmiInstance != null)
             {
-                //Extra check
+                // Extra check
                 if (wmiInstance.InputObject != null)
                 {
                     if (wmiInstance.InputObject.GetType() == typeof(ManagementClass))
                     {
-                        //Check if Flag specified is CreateOnly or not
+                        // Check if Flag specified is CreateOnly or not
                         if (wmiInstance.flagSpecified && wmiInstance.PutType != PutType.CreateOnly)
                         {
-                            //Throw terminating error
+                            // Throw terminating error
                             ThrowTerminatingError(new ErrorRecord(
                             new InvalidOperationException(),
                             "CreateOnlyFlagNotSpecifiedWithClassPath",
                             ErrorCategory.InvalidOperation,
                             wmiInstance.PutType));
                         }
+
                         mObj = ((ManagementClass)wmiInstance.InputObject).CreateInstance();
                         wmiInstance.PutType = PutType.CreateOnly;
                     }
                     else
                     {
-                        //Check if Flag specified is Updateonly or UpdateOrCreateOnly or not
+                        // Check if Flag specified is Updateonly or UpdateOrCreateOnly or not
                         if (wmiInstance.flagSpecified)
                         {
                             if (!(wmiInstance.PutType == PutType.UpdateOnly || wmiInstance.PutType == PutType.UpdateOrCreate))
                             {
-                                //Throw terminating error
+                                // Throw terminating error
                                 ThrowTerminatingError(new ErrorRecord(
                                 new InvalidOperationException(),
                                 "NonUpdateFlagSpecifiedWithInstancePath",
@@ -1385,6 +1428,7 @@ namespace Microsoft.PowerShell.Commands
 
                         mObj = (ManagementObject)wmiInstance.InputObject.Clone();
                     }
+
                     if (wmiInstance.Arguments != null)
                     {
                         IDictionaryEnumerator en = wmiInstance.Arguments.GetEnumerator();
@@ -1395,6 +1439,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return mObj;
         }
 
@@ -1408,6 +1453,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ((System.Management.Automation.Runspaces.LocalRunspace)_context.CurrentRunspace).JobRepository.Add(wmiJob);
             }
+
             WriteObject(wmiJob);
         }
         // Get the PowerShell execution context if it's available at cmdlet creation time...
@@ -1416,7 +1462,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Command code
     }
     /// <summary>
-    /// A class to perform async operations for WMI cmdlets
+    /// A class to perform async operations for WMI cmdlets.
     /// </summary>
 
     internal class PSWmiJob : Job
@@ -1424,7 +1470,7 @@ namespace Microsoft.PowerShell.Commands
         #region internal constructor
 
         /// <summary>
-        ///Internal constructor for initializing WMI jobs
+        ///Internal constructor for initializing WMI jobs.
         /// </summary>
         internal PSWmiJob(Cmdlet cmds, string[] computerName, int throttleLimt, string command)
         : base(command, null)
@@ -1438,6 +1484,7 @@ namespace Microsoft.PowerShell.Commands
                 job.JobUnblocked += new EventHandler(HandleJobUnblocked);
                 ChildJobs.Add(job);
             }
+
             CommonInit(throttleLimt);
         }
 
@@ -1476,7 +1523,7 @@ namespace Microsoft.PowerShell.Commands
         private const string WMIJobType = "WmiJob";
 
         /// <summary>
-        /// Handles the StateChanged event from each of the child job objects
+        /// Handles the StateChanged event from each of the child job objects.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1494,14 +1541,15 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            //Ignore state changes which are not resulting in state change to finished.
+            // Ignore state changes which are not resulting in state change to finished.
             if ((!IsFinishedState(e.JobStateInfo.State)) || (e.JobStateInfo.State == JobState.NotStarted))
             {
                 return;
             }
+
             if (e.JobStateInfo.State == JobState.Failed)
             {
-                //If any of the child job failed, we set status to failed
+                // If any of the child job failed, we set status to failed
                 _atleastOneChildJobFailed = true;
             }
 
@@ -1510,17 +1558,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 _finishedChildJobsCount++;
 
-                //We are done
+                // We are done
                 if (_finishedChildJobsCount == ChildJobs.Count)
                 {
                     allChildJobsFinished = true;
                 }
             }
+
             if (allChildJobsFinished)
             {
-                //if any child job failed, set status to failed
-                //If stop was called set, status to stopped
-                //else completed
+                // if any child job failed, set status to failed
+                // If stop was called set, status to stopped
+                // else completed
                 if (_atleastOneChildJobFailed)
                 {
                     SetJobState(JobState.Failed);
@@ -1539,7 +1588,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _stopIsCalled = false;
         private string _statusMessage;
         /// <summary>
-        /// Message indicating status of the job
+        /// Message indicating status of the job.
         /// </summary>
         public override string StatusMessage
         {
@@ -1548,19 +1597,19 @@ namespace Microsoft.PowerShell.Commands
                 return _statusMessage;
             }
         }
-        //ISSUE: Implement StatusMessage
+        // ISSUE: Implement StatusMessage
         /// <summary>
-        /// Checks the status of remote command execution
+        /// Checks the status of remote command execution.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         private void SetStatusMessage()
         {
             _statusMessage = "test";
-        } // SetStatusMessage
+        }
 
         private bool _moreData = false;
         /// <summary>
-        /// indicates if more data is available
+        /// Indicates if more data is available.
         /// </summary>
         /// <remarks>
         /// This has more data if any of the child jobs have more data.
@@ -1570,10 +1619,10 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 // moreData is set to false and will be set to true
-                //if at least one child is has more data.
+                // if at least one child is has more data.
 
-                //if ( (!moreData))
-                //{
+                // if ( (!moreData))
+                // {
                 bool atleastOneChildHasMoreData = false;
 
                 for (int i = 0; i < ChildJobs.Count; i++)
@@ -1586,14 +1635,14 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 _moreData = atleastOneChildHasMoreData;
-                //}
+                // }
 
                 return _moreData;
             }
         }
 
         /// <summary>
-        /// Computers on which this job is running
+        /// Computers on which this job is running.
         /// </summary>
         public override string Location
         {
@@ -1602,7 +1651,8 @@ namespace Microsoft.PowerShell.Commands
                 return ConstructLocation();
             }
         }
-        private String ConstructLocation()
+
+        private string ConstructLocation()
         {
             StringBuilder location = new StringBuilder();
 
@@ -1611,16 +1661,17 @@ namespace Microsoft.PowerShell.Commands
                 location.Append(job.Location);
                 location.Append(",");
             }
+
             location.Remove(location.Length - 1, 1);
 
             return location.ToString();
         }
         /// <summary>
-        /// Stop Job 
+        /// Stop Job.
         /// </summary>
         public override void StopJob()
         {
-            //AssertNotDisposed();
+            // AssertNotDisposed();
 
             if (!IsFinishedState(JobStateInfo.State))
             {
@@ -1632,7 +1683,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         /// <summary>
-        /// Release all the resources. 
+        /// Release all the resources.
         /// </summary>
         /// <param name="disposing">
         /// if true, release all the managed objects.
@@ -1650,6 +1701,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             StopJob();
                         }
+
                         _throttleManager.Dispose();
                         foreach (Job job in ChildJobs)
                         {
@@ -1666,12 +1718,12 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _isDisposed = false;
         /// <summary>
-        /// Initialization common to both constructors
+        /// Initialization common to both constructors.
         /// </summary>
         private void CommonInit(int throttleLimit)
         {
-            //Since no results are produced by any streams. We should
-            //close all the streams
+            // Since no results are produced by any streams. We should
+            // close all the streams
             base.CloseAllStreams();
 
             // set status to "in progress"
@@ -1683,9 +1735,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles JobUnblocked event from a child job and decrements
         /// count of blocked child jobs. When count reaches 0, sets the
-        /// state of the parent job to running
+        /// state of the parent job to running.
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
+        /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">event arguments, should be empty in this
         /// case</param>
         private void HandleJobUnblocked(object sender, EventArgs eventArgs)
@@ -1708,22 +1760,20 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
-
         private ThrottleManager _throttleManager = new ThrottleManager();
 
         private object _syncObject = new object();           // sync object
     }
 
     /// <summary>
-    /// Class for WmiChildJob object. This job object Execute wmi cmdlet
+    /// Class for WmiChildJob object. This job object Execute wmi cmdlet.
     /// </summary>
     internal class PSWmiChildJob : Job
     {
         #region internal constructor
 
         /// <summary>
-        /// Internal constructor for initializing WMI jobs
+        /// Internal constructor for initializing WMI jobs.
         /// </summary>
         internal PSWmiChildJob(Cmdlet cmds, string computerName, ThrottleManager throttleManager)
         : base(null, null)
@@ -1776,25 +1826,24 @@ namespace Microsoft.PowerShell.Commands
         #endregion internal constructor
 
         private WmiAsyncCmdletHelper _helper;
-        //bool _bFinished;
+        // bool _bFinished;
         private ThrottleManager _throttleManager;
-        private object _syncObject = new object();           // sync object  
+        private object _syncObject = new object();           // sync object
         private int _sinkCompleted;
         private bool _bJobFailed;
         private bool _bAtLeastOneObject;
 
-
         private ArrayList _wmiSinkArray;
         /// <summary>
         /// Event raised by this job to indicate to its parent that
-        /// its now unblocked by the user
+        /// its now unblocked by the user.
         /// </summary>
         internal event EventHandler JobUnblocked;
 
         /// <summary>
         /// Set the state of the current job from blocked to
         /// running and raise an event indicating to this
-        /// parent job that this job is unblocked
+        /// parent job that this job is unblocked.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal void UnblockJob()
@@ -1802,6 +1851,7 @@ namespace Microsoft.PowerShell.Commands
             SetJobState(JobState.Running, null);
             JobUnblocked.SafeInvoke(this, EventArgs.Empty);
         }
+
         internal ManagementOperationObserver GetNewSink()
         {
             ManagementOperationObserver wmiSink = new ManagementOperationObserver();
@@ -1810,13 +1860,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 _sinkCompleted++;
             }
+
             wmiSink.ObjectReady += new ObjectReadyEventHandler(this.NewObject);
             wmiSink.Completed += new CompletedEventHandler(this.JobDone);
             return wmiSink;
         }
 
         /// <summary>
-        /// it recieves Management objects
+        /// It receives Management objects.
         /// </summary>
         private void NewObject(object sender, ObjectReadyEventArgs obj)
         {
@@ -1824,6 +1875,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _bAtLeastOneObject = true;
             }
+
             this.WriteObject(obj.NewObject);
         }
 
@@ -1836,14 +1888,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 _sinkCompleted--;
             }
+
             if (obj.Status != ManagementStatus.NoError)
             {
                 _bJobFailed = true;
             }
+
             if (_sinkCompleted == 0)
             {
-                //Notify throttle manager and change the state to complete
-                //Two cases where _bFinished should be set to false.
+                // Notify throttle manager and change the state to complete
+                // Two cases where _bFinished should be set to false.
                 // 1) Invalid class or some other condition so that after making a connection WMI is throwing an error
                 // 2) We could not get any instance for the class.
                 /*if(bAtLeastOneObject )
@@ -1863,7 +1917,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// It is called when the call to Win32shutdown is successfully completed
+        /// It is called when the call to Win32shutdown is successfully completed.
         /// </summary>
         private void JobDoneForWin32Shutdown(object sender, EventArgs arg)
         {
@@ -1871,6 +1925,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _sinkCompleted--;
             }
+
             if (_sinkCompleted == 0)
             {
                 _helper.RaiseOperationCompleteEvent(null, OperationState.StopComplete);
@@ -1880,14 +1935,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Message indicating status of the job
+        /// Message indicating status of the job.
         /// </summary>
         public override string StatusMessage { get; } = "test";
 
-
         /// <summary>
         /// Indicates if there is more data available in
-        /// this Job
+        /// this Job.
         /// </summary>
         public override bool HasMoreData
         {
@@ -1899,12 +1953,12 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Returns the computer on which this command is
-        /// running
+        /// running.
         /// </summary>
         public override string Location { get; }
 
         /// <summary>
-        /// Stops the job
+        /// Stops the job.
         /// </summary>
         public override void StopJob()
         {
@@ -1920,7 +1974,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Release all the resources. 
+        /// Release all the resources.
         /// </summary>
         /// <param name="disposing">
         /// if true, release all the managed objects.
@@ -1936,10 +1990,11 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private bool _isDisposed;
 
         /// <summary>
-        /// Handles operation complete event
+        /// Handles operation complete event.
         /// </summary>
         private void HandleOperationComplete(object sender, OperationStateEventArgs stateEventArgs)
         {
@@ -1947,7 +2002,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (helper.State == WmiState.NotStarted)
             {
-                //This is a case WMI operation was not started.
+                // This is a case WMI operation was not started.
                 SetJobState(JobState.Stopped, helper.InternalException);
             }
             else if (helper.State == WmiState.Running)
@@ -1968,7 +2023,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         /// <summary>
-        /// Handles WMI state changed
+        /// Handles WMI state changed.
         /// </summary>
         private void HandleWMIState(object sender, WmiJobStateEventArgs stateEventArgs)
         {
@@ -1995,15 +2050,15 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Handle a throttle complete event
+        /// Handle a throttle complete event.
         /// </summary>
-        /// <param name="sender">sender of this event</param>
-        /// <param name="eventArgs">not used in this method</param>
+        /// <param name="sender">Sender of this event.</param>
+        /// <param name="eventArgs">Not used in this method.</param>
         private void HandleThrottleComplete(object sender, EventArgs eventArgs)
         {
             if (_helper.State == WmiState.NotStarted)
             {
-                //This is a case WMI operation was not started.
+                // This is a case WMI operation was not started.
                 SetJobState(JobState.Stopped, _helper.InternalException);
             }
             else if (_helper.State == WmiState.Running)
@@ -2022,7 +2077,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 SetJobState(JobState.Stopped, _helper.InternalException);
             }
-            //Do Nothing
-        } // HandleThrottleComplete
+            // Do Nothing
+        }
     }
 }

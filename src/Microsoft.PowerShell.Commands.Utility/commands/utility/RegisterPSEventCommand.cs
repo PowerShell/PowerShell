@@ -1,6 +1,5 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -10,12 +9,12 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Registers for an event coming from the engine.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Register, "EngineEvent", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135243")]
+    [Cmdlet(VerbsLifecycle.Register, "EngineEvent", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097128")]
     [OutputType(typeof(PSEventJob))]
     public class RegisterEngineEventCommand : ObjectEventRegistrationBase
     {
         /// <summary>
-        /// Parameter for an identifier for this event subscription
+        /// Parameter for an identifier for this event subscription.
         /// </summary>
         [Parameter(Mandatory = true, Position = 100)]
         public new string SourceIdentifier
@@ -24,6 +23,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return base.SourceIdentifier;
             }
+
             set
             {
                 base.SourceIdentifier = value;
@@ -31,9 +31,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns the object that generates events to be monitored
+        /// Returns the object that generates events to be monitored.
         /// </summary>
-        protected override Object GetSourceObject()
+        protected override object GetSourceObject()
         {
             // If it's not a forwarded event, the user must specify
             // an action
@@ -55,9 +55,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns the event name to be monitored on the input object
+        /// Returns the event name to be monitored on the input object.
         /// </summary>
-        protected override String GetSourceObjectEventName()
+        protected override string GetSourceObjectEventName()
         {
             return null;
         }

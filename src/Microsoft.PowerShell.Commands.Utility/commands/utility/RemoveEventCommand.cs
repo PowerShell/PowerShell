@@ -1,6 +1,5 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -10,13 +9,13 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Removes an event from the event queue.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "Event", SupportsShouldProcess = true, DefaultParameterSetName = "BySource", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135247")]
+    [Cmdlet(VerbsCommon.Remove, "Event", SupportsShouldProcess = true, DefaultParameterSetName = "BySource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096715")]
     public class RemoveEventCommand : PSCmdlet
     {
         #region parameters
 
         /// <summary>
-        /// A source identifier for this event subscription
+        /// A source identifier for this event subscription.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "BySource")]
         public string SourceIdentifier
@@ -25,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _sourceIdentifier;
             }
+
             set
             {
                 _sourceIdentifier = value;
@@ -35,10 +35,11 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private string _sourceIdentifier = null;
 
         /// <summary>
-        /// An identifier for this event subscription
+        /// An identifier for this event subscription.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByIdentifier")]
         public int EventIdentifier
@@ -47,11 +48,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _eventIdentifier;
             }
+
             set
             {
                 _eventIdentifier = value;
             }
         }
+
         private int _eventIdentifier = -1;
 
         #endregion parameters
@@ -59,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         private WildcardPattern _matchPattern;
 
         /// <summary>
-        /// Remove the event from the queue
+        /// Remove the event from the queue.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -91,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
 
                     foundMatch = true;
                     if (ShouldProcess(
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             EventingStrings.EventResource,
                             currentEvent.SourceIdentifier),
@@ -110,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new ArgumentException(
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             EventingStrings.SourceIdentifierNotFound, _sourceIdentifier)),
                     "INVALID_SOURCE_IDENTIFIER",
@@ -123,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new ArgumentException(
-                        String.Format(
+                        string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             EventingStrings.EventIdentifierNotFound, _eventIdentifier)),
                     "INVALID_EVENT_IDENTIFIER",

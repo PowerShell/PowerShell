@@ -1,7 +1,5 @@
-/*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
- *============================================================================
- */
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #region Using directives
 
@@ -14,7 +12,6 @@ using System.Threading;
 
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
-
     /// <summary>
     /// <para>
     /// Subscription result event args
@@ -27,14 +24,15 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Returns an Object value for an operation context
         /// </para>
         /// </summary>
-        public Object Context
+        public object Context
         {
             get
             {
                 return context;
             }
         }
-        protected Object context;
+
+        protected object context;
     }
 
     /// <summary>
@@ -56,6 +54,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return result;
             }
         }
+
         private CimSubscriptionResult result;
 
         /// <summary>
@@ -89,6 +88,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return exception;
             }
         }
+
         private Exception exception;
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// <para>
-        /// New subscritpion result event
+        /// New subscription result event
         /// </para>
         /// </summary>
         public event EventHandler<CimSubscriptionEventArgs> OnNewSubscriptionResult;
@@ -129,50 +129,51 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Start an indication subsctiption target to the given computer.
+        /// Start an indication subscription target to the given computer.
         /// </summary>
-        /// <param name="computerName">null stands for localhost</param>
+        /// <param name="computerName">Null stands for localhost.</param>
         /// <param name="nameSpace"></param>
         /// <param name="queryDialect"></param>
         /// <param name="queryExpression"></param>
-        /// <param name="opreationTimeout"></param>
+        /// <param name="operationTimeout"></param>
         public void RegisterCimIndication(
             string computerName,
             string nameSpace,
             string queryDialect,
             string queryExpression,
-            UInt32 opreationTimeout)
+            UInt32 operationTimeout)
         {
             DebugHelper.WriteLogEx("queryDialect = '{0}'; queryExpression = '{1}'", 0, queryDialect, queryExpression);
             this.TargetComputerName = computerName;
-            CimSessionProxy proxy = CreateSessionProxy(computerName, opreationTimeout);
+            CimSessionProxy proxy = CreateSessionProxy(computerName, operationTimeout);
             proxy.SubscribeAsync(nameSpace, queryDialect, queryExpression);
             WaitForAckMessage();
         }
 
         /// <summary>
-        /// Start an indication subsctiption through a given <see cref="CimSession"/>.
+        /// Start an indication subscription through a given <see cref="CimSession"/>.
         /// </summary>
-        /// <param name="cimSession">Cannot be null</param>
+        /// <param name="cimSession">Cannot be null.</param>
         /// <param name="nameSpace"></param>
         /// <param name="queryDialect"></param>
         /// <param name="queryExpression"></param>
-        /// <param name="opreationTimeout"></param>
-        /// <exception cref="ArgumentNullException">throw if cimSession is null</exception>
+        /// <param name="operationTimeout"></param>
+        /// <exception cref="ArgumentNullException">Throw if cimSession is null.</exception>
         public void RegisterCimIndication(
             CimSession cimSession,
             string nameSpace,
             string queryDialect,
             string queryExpression,
-            UInt32 opreationTimeout)
+            UInt32 operationTimeout)
         {
             DebugHelper.WriteLogEx("queryDialect = '{0}'; queryExpression = '{1}'", 0, queryDialect, queryExpression);
             if (cimSession == null)
             {
-                throw new ArgumentNullException(String.Format(CultureInfo.CurrentUICulture, Strings.NullArgument, @"cimSession"));
+                throw new ArgumentNullException(string.Format(CultureInfo.CurrentUICulture, CimCmdletStrings.NullArgument, @"cimSession"));
             }
+
             this.TargetComputerName = cimSession.ComputerName;
-            CimSessionProxy proxy = CreateSessionProxy(cimSession, opreationTimeout);
+            CimSessionProxy proxy = CreateSessionProxy(cimSession, operationTimeout);
             proxy.SubscribeAsync(nameSpace, queryDialect, queryExpression);
             WaitForAckMessage();
         }
@@ -204,7 +205,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cimSession">
         /// <seealso cref="CimSession"/> object raised the event
         /// </param>
-        /// <param name="actionArgs">event argument</param>
+        /// <param name="actionArgs">Event argument.</param>
         private void CimIndicationHandler(object cimSession, CmdletActionEventArgs actionArgs)
         {
             DebugHelper.WriteLogEx("action is {0}. Disposed {1}", 0, actionArgs.Action, this.Disposed);
@@ -226,6 +227,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     this.ackedEvent.Set();
                     return;
                 }
+
                 EventHandler<CimSubscriptionEventArgs> temp = this.OnNewSubscriptionResult;
                 if (temp != null)
                 {
@@ -233,6 +235,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                     temp(this, new CimSubscriptionExceptionEventArgs(this.exception));
                 }
+
                 DebugHelper.WriteLog("Got an exception: {0}", 2, exception);
             }
 
@@ -267,7 +270,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// block the ps thread until ACK message or Error happened.
+        /// Block the ps thread until ACK message or Error happened.
         /// </summary>
         private void WaitForAckMessage()
         {
@@ -292,6 +295,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     throw this.exception;
                 }
             }
+
             DebugHelper.WriteLogEx("ACK happened", 0);
         }
         #endregion
@@ -300,7 +304,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The cmdlet object who issue this subscription,
         /// to throw ThrowTerminatingError
-        /// in case there is a subscription failure
+        /// in case there is a subscription failure.
         /// </summary>
         /// <param name="cmdlet"></param>
         internal Cmdlet Cmdlet
@@ -310,9 +314,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// target computername
+        /// Target computername.
         /// </summary>
-        internal String TargetComputerName
+        internal string TargetComputerName
         {
             set;
             get;
@@ -339,7 +343,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Create <see cref="CimSessionProxy"/> and set properties
+        /// Create <see cref="CimSessionProxy"/> and set properties.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="timeout"></param>
@@ -357,7 +361,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private members
 
         /// <summary>
-        /// Exception occurred while start the subscription
+        /// Exception occurred while start the subscription.
         /// </summary>
         internal Exception Exception
         {
@@ -366,9 +370,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return exception;
             }
         }
+
         private Exception exception;
 
         #endregion
 
-    }//End Class
-}//End namespace
+    }
+}

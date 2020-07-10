@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 
 class CompletionResult
 {
@@ -49,7 +51,7 @@ class CompletionTestCase
 }
 
 function Get-Completions
-{            
+{
     [CmdletBinding()]
     param([string]$InputScript, [int]$CursorColumn, $Options = $null)
 
@@ -93,7 +95,7 @@ function Test-Completions
         [CompletionTestCase[]]$TestCases,
         [string]
         $Description)
-    
+
     process
     {
         foreach ($test in $TestCases)
@@ -101,17 +103,17 @@ function Test-Completions
             Describe $test.Description -Tags "CI" {
                 $hash = $Test.TestInput
                 $results = Get-Completions @hash
-                
+
                 foreach ($expected in $test.ExpectedResults)
                 {
                     foreach ($result in $results.CompletionMatches)
                     {
-                
+
                         if ($expected.Equals($result))
                         {
                             It "Checking for duplicates of: $($expected.CompletionText)" {
                                 # We should only find 1 of each expected result
-                                $expected.Found | Should Be $false
+                                $expected.Found | Should -BeFalse
                             }
                             $expected.Found = $true
                         }
@@ -121,7 +123,7 @@ function Test-Completions
                 foreach ($expected in $test.ExpectedResults)
                 {
                     It "Checking for presence of expected result: $($expected.CompletionText)" {
-                        $expected.Found | Should Be $true
+                        $expected.Found | Should -BeTrue
                     }
                 }
 
@@ -130,13 +132,13 @@ function Test-Completions
                     foreach ($result in $results.CompletionMatches)
                     {
                         It "Checking for results that should not be found: $notExpected" {
-                            $result.CompletionText -cne $notExpected | Should Be $true
+                            $result.CompletionText | Should -Not -Be $notExpected
                         }
                     }
                 }
-                
+
             }
-        }  
-    }  
+        }
+    }
 }
 

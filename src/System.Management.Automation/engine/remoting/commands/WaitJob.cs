@@ -1,6 +1,5 @@
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -8,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
 using System.Threading;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This cmdlet waits for job to complete.
     /// </summary>
-    [Cmdlet("Wait", "Job", DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113422")]
+    [Cmdlet(VerbsLifecycle.Wait, "Job", DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096902")]
     [OutputType(typeof(Job))]
     public class WaitJobCommand : JobCmdletBase, IDisposable
     {
@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Specifies the Jobs objects which need to be
-        /// removed
+        /// removed.
         /// </summary>
         [Parameter(Mandatory = true,
             Position = 0,
@@ -53,11 +53,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _timeoutInSeconds;
             }
+
             set
             {
                 _timeoutInSeconds = value;
             }
         }
+
         private int _timeoutInSeconds = -1; // -1: infinite, this default is to wait for as long as it takes.
 
         /// <summary>
@@ -68,12 +70,11 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force { get; set; }
 
         /// <summary>
-        /// 
         /// </summary>
         public override string[] Command { get; set; }
         #endregion Parameters
 
-        #region Coordinating how different events (timeout, stopprocesing, job finished, job blocked) affect what happens in EndProcessing
+        #region Coordinating how different events (timeout, stopprocessing, job finished, job blocked) affect what happens in EndProcessing
 
         private readonly object _endProcessingActionLock = new object();
         private Action _endProcessingAction;
@@ -93,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void InvokeEndProcesingAction()
+        private void InvokeEndProcessingAction()
         {
             _endProcessingActionIsReady.Wait();
 
@@ -103,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
                 endProcessingAction = _endProcessingAction;
             }
 
-            // Inovke action outside lock.
+            // Invoke action outside lock.
             if (endProcessingAction != null)
             {
                 endProcessingAction();
@@ -117,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-        #region Support for triggering EndProcesing when jobs are finished or blocked
+        #region Support for triggering EndProcessing when jobs are finished or blocked
 
         private readonly HashSet<Job> _finishedJobs = new HashSet<Job>();
         private readonly HashSet<Job> _blockedJobs = new HashSet<Job>();
@@ -157,6 +158,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _warnNotTerminal = true;
                     }
+
                     _finishedJobs.Add(job);
                 }
                 else
@@ -237,6 +239,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 jobsToOutput = _jobsToWaitFor.Where(j => ((!Force && j.IsPersistentState(j.JobStateInfo.State)) || (Force && j.IsFinishedState(j.JobStateInfo.State)))).ToList();
             }
+
             return jobsToOutput;
         }
 
@@ -244,7 +247,7 @@ namespace Microsoft.PowerShell.Commands
         {
             lock (_jobTrackingLock)
             {
-                return _jobsToWaitFor.FirstOrDefault(j => j.JobStateInfo.State == JobState.Blocked);
+                return _jobsToWaitFor.Find(j => j.JobStateInfo.State == JobState.Blocked);
             }
         }
 
@@ -270,7 +273,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void CleanUpTimoutTracking()
+        private void CleanUpTimeoutTracking()
         {
             lock (_timerLock)
             {
@@ -307,7 +310,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            //List of jobs to wait
+            // List of jobs to wait
             List<Job> matches;
 
             switch (ParameterSetName)
@@ -346,7 +349,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void EndProcessing()
         {
             this.StartJobChangesTracking();
-            this.InvokeEndProcesingAction();
+            this.InvokeEndProcessingAction();
             if (_warnNotTerminal)
             {
                 WriteWarning(RemotingErrorIdStrings.JobSuspendedDisconnectedWaitWithForce);
@@ -405,7 +408,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Release all the resources. 
+        /// Release all the resources.
         /// </summary>
         /// <param name="disposing">
         /// if true, release all the managed objects.
@@ -420,7 +423,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _isDisposed = true;
 
-                        this.CleanUpTimoutTracking();
+                        this.CleanUpTimeoutTracking();
                         this.CleanUpJobChangesTracking();
                         this.CleanUpEndProcessing(); // <- has to be last
                     }

@@ -1,14 +1,13 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using System.Management.Automation.Runspaces;
 using System.Collections.ObjectModel;
+using System.Management.Automation.Runspaces;
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// The command information for MSH scripts that are directly executable by MSH
+    /// The command information for MSH scripts that are directly executable by MSH.
     /// </summary>
     public class ScriptInfo : CommandInfo, IScriptCommandInfo
     {
@@ -17,33 +16,28 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the ScriptInfo class with the specified name, and script.
         /// </summary>
-        /// 
         /// <param name="name">
         /// The name of the script.
         /// </param>
-        /// 
         /// <param name="script">
         /// The script definition
         /// </param>
-        /// 
         /// <param name="context">
         /// The execution context for the script.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="script"/> is null.
         /// </exception>
-        /// 
         internal ScriptInfo(string name, ScriptBlock script, ExecutionContext context)
             : base(name, CommandTypes.Script, context)
         {
             if (script == null)
             {
-                throw PSTraceSource.NewArgumentException("script");
+                throw PSTraceSource.NewArgumentException(nameof(script));
             }
 
             this.ScriptBlock = script;
-        } // ScriptInfo ctor
+        }
 
         /// <summary>
         /// This is a copy constructor, used primarily for get-command.
@@ -91,7 +85,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The output type(s) is specified in the script block
+        /// The output type(s) is specified in the script block.
         /// </summary>
         public override ReadOnlyCollection<PSTypeName> OutputType
         {
@@ -99,7 +93,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// for diagnostic purposes
+        /// For diagnostic purposes.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -127,6 +121,7 @@ namespace System.Management.Automation
                         new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
             }
         }
+
         private CommandMetadata _commandMetadata;
-    } // ScriptInfo
-} // namespace System.Management.Automation
+    }
+}

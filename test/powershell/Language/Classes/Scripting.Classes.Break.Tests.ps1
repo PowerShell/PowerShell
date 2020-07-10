@@ -1,12 +1,14 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 Describe 'Break statements with classes' -Tags "CI" {
-    
+
     function Get-Errors([string]$sourceCode) {
-        $tokens = $null 
+        $tokens = $null
         $errors = $null
         $ast = [System.Management.Automation.Language.Parser]::ParseInput($sourceCode, [ref] $tokens, [ref] $errors)
         return $errors
     }
-    
+
     Context 'break is inside a class method' {
         It 'reports parse error for break on non-existing label' {
             $errors = Get-Errors @'
@@ -18,9 +20,9 @@ class A
         return 1
     }
 }
-'@        
-            $errors.Count | Should be 1
-            $errors[0].ErrorId | Should be 'LabelNotFound'
+'@
+            $errors.Count | Should -Be 1
+            $errors[0].ErrorId | Should -BeExactly 'LabelNotFound'
         }
 
         It 'reports parse error for break outside of loop' {
@@ -33,12 +35,12 @@ class A
         return 1
     }
 }
-'@        
-            $errors.Count | Should be 1
-            $errors[0].ErrorId | Should be 'LabelNotFound'
+'@
+            $errors.Count | Should -Be 1
+            $errors[0].ErrorId | Should -BeExactly 'LabelNotFound'
         }
 
-        It 'work fine, when break is legite' {
+        It 'work fine, when break is legit' {
             class C
             {
                 static [int] foo()
@@ -49,7 +51,7 @@ class A
                     return $i
                 }
             }
-            [C]::foo() | Should be 101
+            [C]::foo() | Should -Be 101
         }
     }
 
@@ -64,15 +66,15 @@ class A
         return 1
     }
 }
-'@        
-            $errors.Count | Should be 1
-            $errors[0].ErrorId | Should be 'LabelNotFound'
+'@
+            $errors.Count | Should -Be 1
+            $errors[0].ErrorId | Should -BeExactly 'LabelNotFound'
         }
     }
 
     Context 'break is in called function'  {
         It 'doesn''t terminate caller method' -Skip {
-            
+
             function ImBreak() {
                 break
             }
@@ -85,18 +87,18 @@ class A
                     return 123
                 }
             }
-        
+
             $canary = $false
             try {
-                [C]::getInt() | Should Be 123
+                [C]::getInt() | Should -Be 123
                 $canary = $true
             } finally {
-                $canary | Should be $true
+                $canary | Should -BeTrue
             }
         }
 
         It 'doesn''t allow goto outside of function with break' -Skip {
-            
+
             function ImBreak() {
                 break label1
             }
@@ -107,8 +109,8 @@ class A
                 {
                     $count = 123
                     :label1
-                    foreach ($i in 0..3) { 
-                        foreach ($i in 0..3) { 
+                    foreach ($i in 0..3) {
+                        foreach ($i in 0..3) {
                             ImBreak
                             $count++
                         }
@@ -116,19 +118,19 @@ class A
                     return $count
                 }
             }
-        
+
             $canary = $false
             try {
-                [C]::getInt() | Should Be (123 + 4*4)
+                [C]::getInt() | Should -Be (123 + 4*4)
                 $canary = $true
             } finally {
-                $canary | Should be $true
+                $canary | Should -BeTrue
             }
         }
     }
 
     Context 'no classes involved' {
-         
+
          It 'doesn''t report parse error for non-existing label' {
             $errors = Get-Errors @'
 function foo()
@@ -137,8 +139,8 @@ function foo()
     while (1) { continue another_label }
     return 1
 }
-'@        
-            $errors.Count | Should be 0
+'@
+            $errors.Count | Should -Be 0
         }
 
     }

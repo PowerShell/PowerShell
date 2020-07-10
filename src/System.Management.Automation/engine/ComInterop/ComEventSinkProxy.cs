@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #if !SILVERLIGHT // ComObject
 
@@ -16,24 +15,24 @@ using System.Runtime.Remoting.Proxies;
 namespace System.Management.Automation.ComInterop
 {
     /// <summary>
-    /// ComEventSinkProxy class is responsible for handling QIs for sourceIid 
+    /// ComEventSinkProxy class is responsible for handling QIs for sourceIid
     /// on instances of ComEventSink.
-    /// 
-    /// Background: When a COM even sink advises to a connection point it is 
+    ///
+    /// Background: When a COM even sink advises to a connection point it is
     /// supposed to hand over the dispinterface. Now, some hosts will trust
     /// the COM client to pass the correct pointer, but some will not.
     /// E.g. Excel's implementation of Connection Points will not cause a
     /// QI on the pointer that has been passed, however Word will QI the
     /// pointer to return the required interface.
-    /// 
-    /// ComEventSink does not, strongly speaking, implements the interface 
+    ///
+    /// ComEventSink does not, strongly speaking, implements the interface
     /// that it claims to implement - it is just "faking" it by using IReflect.
     /// Thus, Word's QIs on the pointer passed to ICP::Advise would fail. To
-    /// prevent this we take advangate of RealProxy's ability of
-    /// "dressing up" like other classes and hence successfully respond to QIs 
-    /// for interfaces that it does not really support( it is OK to say 
-    /// "I implement this interface" for event sinks only since the common 
-    /// practice is to use IDistpach.Invoke when calling into event sinks). 
+    /// prevent this we take advantage of RealProxy's ability of
+    /// "dressing up" like other classes and hence successfully respond to QIs
+    /// for interfaces that it does not really support( it is OK to say
+    /// "I implement this interface" for event sinks only since the common
+    /// practice is to use IDispatch.Invoke when calling into event sinks).
     /// </summary>
     internal sealed class ComEventSinkProxy : RealProxy
     {
@@ -74,7 +73,7 @@ namespace System.Management.Automation.ComInterop
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public override IMessage Invoke(IMessage msg)
         {
-            //Only know how to handle method calls (property and fields accessors count as methods)
+            // Only know how to handle method calls (property and fields accessors count as methods)
             IMethodCallMessage methodCallMessage = msg as IMethodCallMessage;
             if (methodCallMessage == null)
                 throw new NotSupportedException();

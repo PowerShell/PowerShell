@@ -1,29 +1,12 @@
-﻿//------------------------------------------------------------------
-// <copyright file="CurrentConfigurations.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//
-// <author email="psarda">
-//     Pankaj Sarda
-// </author>
-//
-// <summary>
-// Class that queries the server and gets current configurations.
-// Also provides a generic way to update the configurations.
-// </summary>
-//
-// <remarks/>
-//------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
+using System.Globalization;
+using System.Xml;
 
 namespace Microsoft.WSMan.Management
 {
-    using System;
-    using System.Globalization;
-    using System.Xml;
-    #if CORECLR
-    using System.Xml.XPath;
-    #endif
-
     /// <summary>
     /// Class that queries the server and gets current configurations.
     /// Also provides a generic way to update the configurations.
@@ -41,7 +24,7 @@ namespace Microsoft.WSMan.Management
         private XmlDocument rootDocument;
 
         /// <summary>
-        /// Holds the referance to the current document element.
+        /// Holds the reference to the current document element.
         /// </summary>
         private XmlElement documentElement;
 
@@ -80,7 +63,7 @@ namespace Microsoft.WSMan.Management
         {
             if (serverSession == null)
             {
-                throw new ArgumentNullException("serverSession");
+                throw new ArgumentNullException(nameof(serverSession));
             }
 
             this.rootDocument = new XmlDocument();
@@ -88,17 +71,17 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// Refresh the CurrentConfiguration. This method calls GET operation for the given 
-        /// URI on the server and update the current configuraition. It also intialize some
+        /// Refresh the CurrentConfiguration. This method calls GET operation for the given
+        /// URI on the server and update the current configuration. It also initialize some
         /// of required class members.
         /// </summary>
         /// <param name="responseOfGet">Plugin configuration.</param>
         /// <returns>False, if operation failed.</returns>
         public bool RefreshCurrentConfiguration(string responseOfGet)
         {
-            if (String.IsNullOrEmpty(responseOfGet))
+            if (string.IsNullOrEmpty(responseOfGet))
             {
-                throw new ArgumentNullException("responseOfGet");
+                throw new ArgumentNullException(nameof(responseOfGet));
             }
 
             this.rootDocument.LoadXml(responseOfGet);
@@ -107,7 +90,7 @@ namespace Microsoft.WSMan.Management
             this.nameSpaceManger = new XmlNamespaceManager(this.rootDocument.NameTable);
             this.nameSpaceManger.AddNamespace(CurrentConfigurations.DefaultNameSpacePrefix, this.documentElement.NamespaceURI);
 
-            return String.IsNullOrEmpty(this.serverSession.Error);
+            return string.IsNullOrEmpty(this.serverSession.Error);
         }
 
         /// <summary>
@@ -115,12 +98,12 @@ namespace Microsoft.WSMan.Management
         /// Issues a PUT request with the ResourceUri provided.
         /// </summary>
         /// <param name="resourceUri">Resource URI to use.</param>
-        /// <returns>Fales, if operation is not succesful.</returns>
-        public void PutConfiguraitonOnServer(string resourceUri)
+        /// <returns>False, if operation is not succesful.</returns>
+        public void PutConfigurationOnServer(string resourceUri)
         {
-            if (String.IsNullOrEmpty(resourceUri))
+            if (string.IsNullOrEmpty(resourceUri))
             {
-                throw new ArgumentNullException("resourceUri");
+                throw new ArgumentNullException(nameof(resourceUri));
             }
 
             this.serverSession.Put(resourceUri, this.rootDocument.InnerXml, 0);
@@ -128,7 +111,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// This method will remove the configuration from the XML.
-        /// Currently the method will only remove the attributes. But it is extensible enough to support 
+        /// Currently the method will only remove the attributes. But it is extensible enough to support
         /// Node removals in future.
         /// </summary>
         /// <param name="pathToNodeFromRoot">Path with namespace to the node from Root element. Must not end with '/'.</param>
@@ -136,7 +119,7 @@ namespace Microsoft.WSMan.Management
         {
             if (pathToNodeFromRoot == null)
             {
-                throw new ArgumentNullException("pathToNodeFromRoot");
+                throw new ArgumentNullException(nameof(pathToNodeFromRoot));
             }
 
             XmlNode nodeToRemove =
@@ -153,12 +136,12 @@ namespace Microsoft.WSMan.Management
             }
             else
             {
-                throw new ArgumentException("Node is not present in the XML, Please give valid XPath", "pathToNodeFromRoot");
+                throw new ArgumentException("Node is not present in the XML, Please give valid XPath", nameof(pathToNodeFromRoot));
             }
         }
 
         /// <summary>
-        /// Create or Update the value of the configuration on the given Node. Currently this 
+        /// Create or Update the value of the configuration on the given Node. Currently this
         /// method is supported for updating attributes, but can be easily updated for nodes.
         /// Caller should call this method to add a new attribute to the Node.
         /// </summary>
@@ -169,17 +152,17 @@ namespace Microsoft.WSMan.Management
         {
             if (pathToNodeFromRoot == null)
             {
-                throw new ArgumentNullException("pathToNodeFromRoot");
+                throw new ArgumentNullException(nameof(pathToNodeFromRoot));
             }
 
-            if (String.IsNullOrEmpty(configurationName))
+            if (string.IsNullOrEmpty(configurationName))
             {
-                throw new ArgumentNullException("configurationName");
+                throw new ArgumentNullException(nameof(configurationName));
             }
 
             if (configurationValue == null)
             {
-                throw new ArgumentNullException("configurationValue");
+                throw new ArgumentNullException(nameof(configurationValue));
             }
 
             XmlNode nodeToUpdate =
@@ -198,9 +181,9 @@ namespace Microsoft.WSMan.Management
                     }
                 }
 
-                XmlNode attr = this.rootDocument.CreateNode(XmlNodeType.Attribute, configurationName, String.Empty);
+                XmlNode attr = this.rootDocument.CreateNode(XmlNodeType.Attribute, configurationName, string.Empty);
                 attr.Value = configurationValue;
-                                
+
                 nodeToUpdate.Attributes.SetNamedItem(attr);
             }
         }
@@ -214,7 +197,7 @@ namespace Microsoft.WSMan.Management
         {
             if (pathFromRoot == null)
             {
-                throw new ArgumentNullException("pathFromRoot");
+                throw new ArgumentNullException(nameof(pathFromRoot));
             }
 
             XmlNode requiredNode =

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #if !SILVERLIGHT // ComObject
 
@@ -23,7 +22,7 @@ namespace System.Management.Automation.ComInterop
 
         public override string ToString()
         {
-            return String.Format(CultureInfo.CurrentCulture, "<enum '{0}'>", TypeName);
+            return string.Format(CultureInfo.CurrentCulture, "<enum '{0}'>", TypeName);
         }
 
         internal ComTypeEnumDesc(ComTypes.ITypeInfo typeInfo, ComTypeLibDesc typeLibDesc) :

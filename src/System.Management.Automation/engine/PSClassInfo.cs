@@ -1,8 +1,5 @@
-//-----------------------------------------------------------------------
-// <copyright file="DscResourceInfo.cs" company="Microsoft Corporation">
-//     Copyright (C) 2013 Microsoft Corporation
-// </copyright>
-//-----------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,14 +7,14 @@ using System.Collections.ObjectModel;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Contains a PS Class information
+    /// Contains a PS Class information.
     /// </summary>
     public sealed class PSClassInfo
     {
         /// <summary>
-        /// Initializes a new instance of the PSClassInfo class
+        /// Initializes a new instance of the PSClassInfo class.
         /// </summary>
-        /// <param name="name">Name of the PS Class.</param>        
+        /// <param name="name">Name of the PS Class.</param>
         internal PSClassInfo(string name)
         {
             this.Name = name;
@@ -36,7 +33,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Updates members of the class.
         /// </summary>
-        /// <param name="members">Updated members</param>
+        /// <param name="members">Updated members.</param>
         public void UpdateMembers(IList<PSClassMemberInfo> members)
         {
             if (members != null)
@@ -51,22 +48,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the help file path for the cmdlet.
         /// </summary>
-        public string HelpFile { get; internal set; } = String.Empty;
+        public string HelpFile { get; internal set; } = string.Empty;
     }
 
-
     /// <summary>
-    /// Contains a class field information
+    /// Contains a class field information.
     /// </summary>
     public sealed class PSClassMemberInfo
     {
         /// <summary>
-        /// Initializes a new instance of the PSClassMemberInfo class
+        /// Initializes a new instance of the PSClassMemberInfo class.
         /// </summary>
         internal PSClassMemberInfo(string name, string memberType, string defaultValue)
         {
-            if (String.IsNullOrEmpty(name))
-                throw new ArgumentNullException("name");
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException(nameof(name));
 
             this.Name = name;
             this.TypeName = memberType;
@@ -74,12 +70,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets name of the member
+        /// Gets or sets name of the member.
         /// </summary>
         public string Name { get; private set; }
 
         /// <summary>
-        /// Gets or sets type of the member
+        /// Gets or sets type of the member.
         /// </summary>
         public string TypeName { get; private set; }
 

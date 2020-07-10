@@ -1,30 +1,29 @@
-﻿//-----------------------------------------------------------------------
-//     Copyright © Microsoft Corporation.  All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Management.Automation;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+
+using Microsoft.PowerShell.Commands.ShowCommandExtension;
 
 namespace Microsoft.PowerShell.Commands
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Globalization;
-    using System.Management.Automation;
-    using System.Reflection;
-    using System.Runtime.InteropServices;
-    using System.Text;
-    using System.Threading;
-    using Microsoft.PowerShell.Commands.ShowCommandExtension;
-
     /// <summary>
     /// Show-Command displays a GUI for a cmdlet, or for all cmdlets if no specific cmdlet is specified.
     /// </summary>
-    [Cmdlet(VerbsCommon.Show, "Command", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217448")]
+    [Cmdlet(VerbsCommon.Show, "Command", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2109589")]
     public class ShowCommandCommand : PSCmdlet, IDisposable
     {
         #region Private Fields
         /// <summary>
-        /// Set to true when ProcessRecord is reached, since it will allways open a window
+        /// Set to true when ProcessRecord is reached, since it will always open a window.
         /// </summary>
         private bool _hasOpenedWindow;
 
@@ -34,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _passThrough;
 
         /// <summary>
-        /// Uses ShowCommandProxy to invoke WPF GUI object. 
+        /// Uses ShowCommandProxy to invoke WPF GUI object.
         /// </summary>
         private ShowCommandProxy _showCommandProxy;
 
@@ -44,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         private List<ShowCommandCommandInfo> _commands;
 
         /// <summary>
-        /// List of modules that have been loaded indexed by module name
+        /// List of modules that have been loaded indexed by module name.
         /// </summary>
         private Dictionary<string, ShowCommandModuleInfo> _importedModules;
 
@@ -59,13 +58,13 @@ namespace Microsoft.PowerShell.Commands
         private SwitchParameter _noCommonParameter;
 
         /// <summary>
-        /// Object used for ShowCommand with a command name that holds the view model created for the command
+        /// Object used for ShowCommand with a command name that holds the view model created for the command.
         /// </summary>
         private object _commandViewModelObj;
         #endregion
 
         /// <summary>
-        /// Finalizes an instance of the ShowCommandCommand class
+        /// Finalizes an instance of the ShowCommandCommand class.
         /// </summary>
         ~ShowCommandCommand()
         {
@@ -95,37 +94,39 @@ namespace Microsoft.PowerShell.Commands
         public double Width { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating Common Parameters should not be displayed
+        /// Gets or sets a value indicating Common Parameters should not be displayed.
         /// </summary>
         [Parameter]
         public SwitchParameter NoCommonParameter
         {
             get { return _noCommonParameter; }
+
             set { _noCommonParameter = value; }
         }
 
         /// <summary>
-        /// Gets or sets a value indicating errors should not cause a message window to be displayed
+        /// Gets or sets a value indicating errors should not cause a message window to be displayed.
         /// </summary>
         [Parameter]
         public SwitchParameter ErrorPopup { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating the command should be sent to the pipeline as a string instead of run
+        /// Gets or sets a value indicating the command should be sent to the pipeline as a string instead of run.
         /// </summary>
         [Parameter]
         public SwitchParameter PassThru
         {
             get { return _passThrough; }
+
             set { _passThrough = value; }
-        } // PassThru
+        }
         #endregion
 
         #region Public and Protected Methods
         /// <summary>
         /// Executes a PowerShell script, writing the output objects to the pipeline.
         /// </summary>
-        /// <param name="script">Script to execute</param>
+        /// <param name="script">Script to execute.</param>
         public void RunScript(string script)
         {
             if (_showCommandProxy == null || string.IsNullOrEmpty(script))
@@ -155,7 +156,8 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (!ConsoleInputWithNativeMethods.AddToConsoleInputBuffer(script, true))
+            // Don't send newline at end as PSReadLine shows it rather than executing
+            if (!ConsoleInputWithNativeMethods.AddToConsoleInputBuffer(script, newLine: false))
             {
                 this.WriteDebug(FormatAndOut_out_gridview.CannotWriteToConsoleInputBuffer);
                 this.RunScriptSilentlyAndWithErrorHookup(script);
@@ -163,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Dispose method in IDisposeable
+        /// Dispose method in IDisposable.
         /// </summary>
         public void Dispose()
         {
@@ -181,7 +183,7 @@ namespace Microsoft.PowerShell.Commands
             if (_showCommandProxy.ScreenHeight < this.Height)
             {
                 ErrorRecord error = new ErrorRecord(
-                                    new NotSupportedException(String.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Height", _showCommandProxy.ScreenHeight)),
+                                    new NotSupportedException(string.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Height", _showCommandProxy.ScreenHeight)),
                                     "PARAMETER_DATA_ERROR",
                                     ErrorCategory.InvalidData,
                                     null);
@@ -191,7 +193,7 @@ namespace Microsoft.PowerShell.Commands
             if (_showCommandProxy.ScreenWidth < this.Width)
             {
                 ErrorRecord error = new ErrorRecord(
-                                    new NotSupportedException(String.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Width", _showCommandProxy.ScreenWidth)),
+                                    new NotSupportedException(string.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Width", _showCommandProxy.ScreenWidth)),
                                     "PARAMETER_DATA_ERROR",
                                     ErrorCategory.InvalidData,
                                     null);
@@ -215,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Optionally displays errors in a message
+        /// Optionally displays errors in a message.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -224,8 +226,8 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // We wait untill the window is loaded and then activate it
-            // to work arround the console window gaining activation somewhere 
+            // We wait until the window is loaded and then activate it
+            // to work around the console window gaining activation somewhere
             // in the end of ProcessRecord, which causes the keyboard focus
             // (and use oif tab key to focus controls) to go away from the window
             _showCommandProxy.WindowLoaded.WaitOne();
@@ -267,10 +269,10 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
         /// <summary>
-        /// Runs the script in a new PowerShell instance and  hooks up error stream to pottentlially display error popup.
+        /// Runs the script in a new PowerShell instance and hooks up error stream to potentially display error popup.
         /// This method has the inconvenience of not showing to the console user the script being executed.
         /// </summary>
-        /// <param name="script">script to be run</param>
+        /// <param name="script">Script to be run.</param>
         private void RunScriptSilentlyAndWithErrorHookup(string script)
         {
             // errors are not created here, because there is a field for it used in the final pop up
@@ -279,7 +281,7 @@ namespace Microsoft.PowerShell.Commands
             output.DataAdded += new EventHandler<DataAddedEventArgs>(this.Output_DataAdded);
             _errors.DataAdded += new EventHandler<DataAddedEventArgs>(this.Error_DataAdded);
 
-            PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
+            System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
             ps.Streams.Error = _errors;
 
             ps.Commands.AddScript(script);
@@ -288,12 +290,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Issues an error when this.commandName was not found
+        /// Issues an error when this.commandName was not found.
         /// </summary>
         private void IssueErrorForNoCommand()
         {
             InvalidOperationException errorException = new InvalidOperationException(
-                String.Format(
+                string.Format(
                     CultureInfo.CurrentUICulture,
                     FormatAndOut_out_gridview.CommandNotFound,
                     Name));
@@ -301,12 +303,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Issues an error when there is more than one command matching this.commandName
+        /// Issues an error when there is more than one command matching this.commandName.
         /// </summary>
         private void IssueErrorForMoreThanOneCommand()
         {
             InvalidOperationException errorException = new InvalidOperationException(
-                String.Format(
+                string.Format(
                     CultureInfo.CurrentUICulture,
                     FormatAndOut_out_gridview.MoreThanOneCommand,
                     Name,
@@ -315,10 +317,10 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Called from CommandProcessRecord to run the command that will get the CommandInfo and list of modules
+        /// Called from CommandProcessRecord to run the command that will get the CommandInfo and list of modules.
         /// </summary>
-        /// <param name="command">command to be retrieved</param>
-        /// <param name="modules">list of loaded modules</param>
+        /// <param name="command">Command to be retrieved.</param>
+        /// <param name="modules">List of loaded modules.</param>
         private void GetCommandInfoAndModules(out CommandInfo command, out Dictionary<string, ShowCommandModuleInfo> modules)
         {
             command = null;
@@ -366,16 +368,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ProcessRecord when a command name is specified.
         /// </summary>
-        /// <returns>true if there was no exception processing this record</returns>
+        /// <returns>True if there was no exception processing this record.</returns>
         private bool CanProcessRecordForOneCommand()
         {
             CommandInfo commandInfo;
             this.GetCommandInfoAndModules(out commandInfo, out _importedModules);
-            Diagnostics.Assert(commandInfo != null, "GetCommandInfoAndModules would throw a termninating error/exception");
+            Diagnostics.Assert(commandInfo != null, "GetCommandInfoAndModules would throw a terminating error/exception");
 
             try
             {
-                _commandViewModelObj = _showCommandProxy.GetCommandViewModel(new ShowCommandCommandInfo(commandInfo), _noCommonParameter.ToBool(), _importedModules, this.Name.IndexOf('\\') != -1);
+                _commandViewModelObj = _showCommandProxy.GetCommandViewModel(new ShowCommandCommandInfo(commandInfo), _noCommonParameter.ToBool(), _importedModules, this.Name.Contains('\\'));
                 _showCommandProxy.ShowCommandWindow(_commandViewModelObj, _passThrough);
             }
             catch (TargetInvocationException ti)
@@ -390,7 +392,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ProcessRecord when a command name is not specified.
         /// </summary>
-        /// <returns>true if there was no exception processing this record</returns>
+        /// <returns>True if there was no exception processing this record.</returns>
         private bool CanProcessRecordForAllCommands()
         {
             Collection<PSObject> rawCommands = this.InvokeCommand.InvokeScript(_showCommandProxy.GetShowAllModulesCommand());
@@ -412,7 +414,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Waits untill the window has been closed answering HelpNeeded events
+        /// Waits until the window has been closed answering HelpNeeded events.
         /// </summary>
         private void WaitForWindowClosedOrHelpNeeded()
         {
@@ -454,29 +456,29 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Writes the output of a script being run into the pipeline
+        /// Writes the output of a script being run into the pipeline.
         /// </summary>
-        /// <param name="sender">output collection</param>
-        /// <param name="e">output event</param>
+        /// <param name="sender">Output collection.</param>
+        /// <param name="e">Output event.</param>
         private void Output_DataAdded(object sender, DataAddedEventArgs e)
         {
             this.WriteObject(((PSDataCollection<object>)sender)[e.Index]);
         }
 
         /// <summary>
-        /// Writes the errors of a script being run into the pipeline
+        /// Writes the errors of a script being run into the pipeline.
         /// </summary>
-        /// <param name="sender">error collection</param>
-        /// <param name="e">error event</param>
+        /// <param name="sender">Error collection.</param>
+        /// <param name="e">Error event.</param>
         private void Error_DataAdded(object sender, DataAddedEventArgs e)
         {
             this.WriteError(((PSDataCollection<ErrorRecord>)sender)[e.Index]);
         }
 
         /// <summary>
-        /// Implements IDisposable logic
+        /// Implements IDisposable logic.
         /// </summary>
-        /// <param name="isDisposing">true if being called from Dispose</param>
+        /// <param name="isDisposing">True if being called from Dispose.</param>
         private void Dispose(bool isDisposing)
         {
             if (isDisposing)
@@ -491,21 +493,21 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         /// <summary>
-        /// Wraps interop code for console input buffer
+        /// Wraps interop code for console input buffer.
         /// </summary>
         internal static class ConsoleInputWithNativeMethods
         {
             /// <summary>
-            /// Constant used in calls to GetStdHandle
+            /// Constant used in calls to GetStdHandle.
             /// </summary>
             internal const int STD_INPUT_HANDLE = -10;
 
             /// <summary>
-            /// Adds a string to the console input buffer
+            /// Adds a string to the console input buffer.
             /// </summary>
-            /// <param name="str">string to add to console input buffer</param>
-            /// <param name="newLine">true to add Enter after the string</param>
-            /// <returns>true if it was succesfull in adding all characters to console input buffer</returns>
+            /// <param name="str">String to add to console input buffer.</param>
+            /// <param name="newLine">True to add Enter after the string.</param>
+            /// <returns>True if it was successful in adding all characters to console input buffer.</returns>
             internal static bool AddToConsoleInputBuffer(string str, bool newLine)
             {
                 IntPtr handle = ConsoleInputWithNativeMethods.GetStdHandle(ConsoleInputWithNativeMethods.STD_INPUT_HANDLE);
@@ -526,13 +528,13 @@ namespace Microsoft.PowerShell.Commands
                 uint written;
                 if (!ConsoleInputWithNativeMethods.WriteConsoleInput(handle, records, strLen, out written) || written != strLen)
                 {
-                    // I do not know of a case where written is not going to be strlen. Maybe for some charcater that
-                    // is not supported in the console. The API suggests this can happen, 
+                    // I do not know of a case where written is not going to be strlen. Maybe for some character that
+                    // is not supported in the console. The API suggests this can happen,
                     // so we handle it by returning false
                     return false;
                 }
 
-                // Enter is written separetely, because if this is a command, and one of the characters in the command was not written
+                // Enter is written separately, because if this is a command, and one of the characters in the command was not written
                 // (written != strLen) it is desireable to fail (return false) before typing enter and running the command
                 if (newLine)
                 {
@@ -553,21 +555,21 @@ namespace Microsoft.PowerShell.Commands
             }
 
             /// <summary>
-            /// Gets the console handle
+            /// Gets the console handle.
             /// </summary>
-            /// <param name="nStdHandle">which console handle to get</param>
-            /// <returns>the console handle</returns>
+            /// <param name="nStdHandle">Which console handle to get.</param>
+            /// <returns>The console handle.</returns>
             [DllImport("kernel32.dll", SetLastError = true)]
             internal static extern IntPtr GetStdHandle(int nStdHandle);
 
             /// <summary>
-            /// Writes to the console input buffer
+            /// Writes to the console input buffer.
             /// </summary>
-            /// <param name="hConsoleInput">console handle</param>
-            /// <param name="lpBuffer">inputs to be written</param>
-            /// <param name="nLength">number of inputs to be written</param>
-            /// <param name="lpNumberOfEventsWritten">returned number of inputs actually written</param>
-            /// <returns>0 if the function fails</returns>
+            /// <param name="hConsoleInput">Console handle.</param>
+            /// <param name="lpBuffer">Inputs to be written.</param>
+            /// <param name="nLength">Number of inputs to be written.</param>
+            /// <param name="lpNumberOfEventsWritten">Returned number of inputs actually written.</param>
+            /// <returns>0 if the function fails.</returns>
             [DllImport("kernel32.dll", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool WriteConsoleInput(
@@ -577,31 +579,31 @@ namespace Microsoft.PowerShell.Commands
                 out uint lpNumberOfEventsWritten);
 
             /// <summary>
-            /// A record to be added to the console buffer
+            /// A record to be added to the console buffer.
             /// </summary>
             internal struct INPUT_RECORD
             {
                 /// <summary>
-                /// The proper event type for a KeyEvent KEY_EVENT_RECORD
+                /// The proper event type for a KeyEvent KEY_EVENT_RECORD.
                 /// </summary>
                 internal const int KEY_EVENT = 0x0001;
 
                 /// <summary>
-                /// input buffer event type
+                /// Input buffer event type.
                 /// </summary>
                 internal ushort EventType;
 
                 /// <summary>
-                /// The actual event. The original structure is a union of many others, but this is the largest of them
-                /// And we don't need other kinds of events
+                /// The actual event. The original structure is a union of many others, but this is the largest of them.
+                /// And we don't need other kinds of events.
                 /// </summary>
                 internal KEY_EVENT_RECORD KeyEvent;
 
                 /// <summary>
                 /// Sets the necessary fields of <paramref name="inputRecord"/> for a KeyDown event for the <paramref name="character"/>
                 /// </summary>
-                /// <param name="inputRecord">input record to be set</param>
-                /// <param name="character">character to set the record with</param>
+                /// <param name="inputRecord">Input record to be set.</param>
+                /// <param name="character">Character to set the record with.</param>
                 internal static void SetInputRecord(ref INPUT_RECORD inputRecord, char character)
                 {
                     inputRecord.EventType = INPUT_RECORD.KEY_EVENT;
@@ -611,38 +613,38 @@ namespace Microsoft.PowerShell.Commands
             }
 
             /// <summary>
-            /// Type of INPUT_RECORD which is a key
+            /// Type of INPUT_RECORD which is a key.
             /// </summary>
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
             internal struct KEY_EVENT_RECORD
             {
                 /// <summary>
-                /// true for key down and false for key up, but only needed if wVirtualKeyCode is used
+                /// True for key down and false for key up, but only needed if wVirtualKeyCode is used.
                 /// </summary>
                 internal bool bKeyDown;
 
                 /// <summary>
-                /// repeat count
+                /// Repeat count.
                 /// </summary>
                 internal ushort wRepeatCount;
 
                 /// <summary>
-                /// virtual key code
+                /// Virtual key code.
                 /// </summary>
                 internal ushort wVirtualKeyCode;
 
                 /// <summary>
-                /// virtual key scan code
+                /// Virtual key scan code.
                 /// </summary>
                 internal ushort wVirtualScanCode;
 
                 /// <summary>
-                /// character in input. If this is specified, wVirtualKeyCode, and others don't need to be
+                /// Character in input. If this is specified, wVirtualKeyCode, and others don't need to be.
                 /// </summary>
                 internal char UnicodeChar;
 
                 /// <summary>
-                /// State of keys like Shift and control
+                /// State of keys like Shift and control.
                 /// </summary>
                 internal uint dwControlKeyState;
             }

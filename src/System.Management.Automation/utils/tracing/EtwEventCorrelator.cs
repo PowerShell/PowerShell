@@ -1,8 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 #if !UNIX
-//-----------------------------------------------------------------------
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
 
 namespace System.Management.Automation.Tracing
 {
@@ -65,7 +63,7 @@ namespace System.Management.Automation.Tracing
         {
             if (transferProvider == null)
             {
-                throw new ArgumentNullException("transferProvider");
+                throw new ArgumentNullException(nameof(transferProvider));
             }
 
             _transferProvider = transferProvider;
@@ -114,6 +112,5 @@ namespace System.Management.Automation.Tracing
         }
     }
 }
-
 
 #endif

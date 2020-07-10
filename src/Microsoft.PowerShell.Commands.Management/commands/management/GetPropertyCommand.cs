@@ -1,24 +1,24 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to get the property of an item at a specified path
+    /// A command to get the property of an item at a specified path.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ItemProperty", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113320")]
+    [Cmdlet(VerbsCommon.Get, "ItemProperty", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096493")]
     public class GetItemPropertyCommand : ItemPropertyCommandBase
     {
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -27,38 +27,37 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 paths = value;
-            } // set
-        } // Path
+            }
+        }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath")]
+        [Alias("PSPath", "LP")]
         public string[] LiteralPath
         {
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
                 paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
-        /// The properties to retrieve from the item
+        /// The properties to retrieve from the item.
         /// </summary>
-        ///
         [Parameter(Position = 1)]
         [Alias("PSProperty")]
         public string[] Name
@@ -66,29 +65,26 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _property;
-            } // get
+            }
 
             set
             {
                 _property = value;
             }
-        } // Property
+        }
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        /// 
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -97,10 +93,11 @@ namespace Microsoft.PowerShell.Commands
                     Path[0],
                     SessionStateUtilities.ConvertArrayToCollection<string>(_property), context);
             }
+
             return InvokeProvider.Property.GetPropertyDynamicParameters(
                 ".",
                 SessionStateUtilities.ConvertArrayToCollection<string>(_property), context);
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -116,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command code
 
         /// <summary>
-        /// Gets the properties of an item at the specified path
+        /// Gets the properties of an item at the specified path.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -162,21 +159,21 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
             }
-        } // ProcessRecord
+        }
 
         #endregion Command code
-    } // GetItemPropertyCommand
+    }
 
     /// <summary>
     /// A command to get the property value of an item at a specified path.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ItemPropertyValue", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=389281")]
+    [Cmdlet(VerbsCommon.Get, "ItemPropertyValue", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096906")]
     public sealed class GetItemPropertyValueCommand : ItemPropertyCommandBase
     {
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the path parameter to the command
+        /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path", Mandatory = false, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
@@ -186,38 +183,37 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 paths = value;
-            } // set
-        } // Path
+            }
+        }
 
         /// <summary>
-        /// Gets or sets the literal path parameter to the command
+        /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath", Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath")]
+        [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
                 paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
-        /// The properties to retrieve from the item
+        /// The properties to retrieve from the item.
         /// </summary>
-        ///
         [Parameter(Position = 1, Mandatory = true)]
         [Alias("PSProperty")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -226,29 +222,26 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _property;
-            } // get
+            }
 
             set
             {
                 _property = value;
             }
-        } // Property
+        }
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        /// 
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -257,10 +250,11 @@ namespace Microsoft.PowerShell.Commands
                     Path[0],
                     SessionStateUtilities.ConvertArrayToCollection<string>(_property), context);
             }
+
             return InvokeProvider.Property.GetPropertyDynamicParameters(
                 ".",
                 SessionStateUtilities.ConvertArrayToCollection<string>(_property), context);
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -284,6 +278,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 paths = new string[] { "." };
             }
+
             foreach (string path in Path)
             {
                 try
@@ -349,4 +344,4 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Command code
     }
-} // namespace Microsoft.PowerShell.Commands
+}

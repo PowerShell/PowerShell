@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -27,8 +26,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter RunElevated
         {
             get { return _runElevated; }
+
             set { _runElevated = value; }
         }
+
         private SwitchParameter _runElevated = false;
 
         /// <summary>
@@ -38,8 +39,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter HideInTaskScheduler
         {
             get { return _hideInTaskScheduler; }
+
             set { _hideInTaskScheduler = value; }
         }
+
         private SwitchParameter _hideInTaskScheduler = false;
 
         /// <summary>
@@ -50,8 +53,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter RestartOnIdleResume
         {
             get { return _restartOnIdleResume; }
+
             set { _restartOnIdleResume = value; }
         }
+
         private SwitchParameter _restartOnIdleResume = false;
 
         /// <summary>
@@ -61,8 +66,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TaskMultipleInstancePolicy MultipleInstancePolicy
         {
             get { return _multipleInstancePolicy; }
+
             set { _multipleInstancePolicy = value; }
         }
+
         private TaskMultipleInstancePolicy _multipleInstancePolicy = TaskMultipleInstancePolicy.IgnoreNew;
 
         /// <summary>
@@ -72,8 +79,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter DoNotAllowDemandStart
         {
             get { return _doNotAllowDemandStart; }
+
             set { _doNotAllowDemandStart = value; }
         }
+
         private SwitchParameter _doNotAllowDemandStart = false;
 
         /// <summary>
@@ -83,8 +92,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter RequireNetwork
         {
             get { return _requireNetwork; }
+
             set { _requireNetwork = value; }
         }
+
         private SwitchParameter _requireNetwork = false;
 
         /// <summary>
@@ -94,20 +105,24 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter StopIfGoingOffIdle
         {
             get { return _stopIfGoingOffIdle; }
+
             set { _stopIfGoingOffIdle = value; }
         }
+
         private SwitchParameter _stopIfGoingOffIdle = false;
 
         /// <summary>
-        /// Will wake the computer to run the job if computer is in sleep mode when 
+        /// Will wake the computer to run the job if computer is in sleep mode when
         /// trigger activates.
         /// </summary>
         [Parameter(ParameterSetName = ScheduledJobOptionCmdletBase.OptionsParameterSet)]
         public SwitchParameter WakeToRun
         {
             get { return _wakeToRun; }
+
             set { _wakeToRun = value; }
         }
+
         private SwitchParameter _wakeToRun = false;
 
         /// <summary>
@@ -117,8 +132,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter ContinueIfGoingOnBattery
         {
             get { return _continueIfGoingOnBattery; }
+
             set { _continueIfGoingOnBattery = value; }
         }
+
         private SwitchParameter _continueIfGoingOnBattery = false;
 
         /// <summary>
@@ -128,8 +145,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter StartIfOnBattery
         {
             get { return _startIfOnBattery; }
+
             set { _startIfOnBattery = value; }
         }
+
         private SwitchParameter _startIfOnBattery = false;
 
         /// <summary>
@@ -140,8 +159,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan IdleTimeout
         {
             get { return _idleTimeout; }
+
             set { _idleTimeout = value; }
         }
+
         private TimeSpan _idleTimeout = new TimeSpan(1, 0, 0);
 
         /// <summary>
@@ -151,8 +172,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan IdleDuration
         {
             get { return _idleDuration; }
+
             set { _idleDuration = value; }
         }
+
         private TimeSpan _idleDuration = new TimeSpan(0, 10, 0);
 
         /// <summary>
@@ -162,8 +185,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         public SwitchParameter StartIfIdle
         {
             get { return _startIfIdle; }
+
             set { _startIfIdle = value; }
         }
+
         private SwitchParameter _startIfIdle = false;
 
         #endregion
@@ -176,13 +201,13 @@ namespace Microsoft.PowerShell.ScheduledJob
         protected override void BeginProcessing()
         {
             // Validate parameters.
-            if (MyInvocation.BoundParameters.ContainsKey("IdleTimeout") &&
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(IdleTimeout)) &&
                 _idleTimeout < TimeSpan.Zero)
             {
                 throw new PSArgumentException(ScheduledJobErrorStrings.InvalidIdleTimeout);
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("IdleDuration") &&
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(IdleDuration)) &&
                 _idleDuration < TimeSpan.Zero)
             {
                 throw new PSArgumentException(ScheduledJobErrorStrings.InvalidIdleDuration);

@@ -1,8 +1,8 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
+
 using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
@@ -15,40 +15,36 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of SessionState
+        /// Hide the default constructor since we always require an instance of SessionState.
         /// </summary>
         private PathIntrinsics()
         {
             Dbg.Diagnostics.Assert(
                 false,
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
-        } // PathInterfaces private
+        }
 
         /// <summary>
         /// Internal constructor for the PathIntrinsics facade.
         /// </summary>
-        /// 
         /// <param name="sessionState">
         /// The session for which this is a facade.
         /// </param>
-        /// 
         /// <remarks>
         /// This is only public for testing purposes.
         /// </remarks>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="sessionState"/> is null.
         /// </exception>
-        /// 
         internal PathIntrinsics(SessionStateInternal sessionState)
         {
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
             _sessionState = sessionState;
-        } // PathInterfaces internal
+        }
 
         #endregion Constructors
 
@@ -57,7 +53,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the current location.
         /// </summary>
-        /// 
         /// <exception cref="InvalidOperationException">
         /// If a location has not been set yet.
         /// </exception>
@@ -70,25 +65,21 @@ namespace System.Management.Automation
                     "The only constructor for this class should always set the sessionState field");
 
                 return _sessionState.CurrentLocation;
-            } // get
-        } // CurrentLocation
+            }
+        }
 
         /// <summary>
-        /// Gets the current location for a specific provider
+        /// Gets the current location for a specific provider.
         /// </summary>
-        /// 
         /// <param name="providerName">
         /// The name of the provider to get the current location for.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="providerName"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="namespacesID"/> refers to a provider that does not exist.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If a current drive cannot be found for the provider <paramref name="providerName"/>
         /// </exception>
@@ -101,12 +92,11 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetNamespaceCurrentLocation(providerName);
-        } // CurrentProviderLocation
+        }
 
         /// <summary>
-        /// Gets the current location for the file system provider
+        /// Gets the current location for the file system provider.
         /// </summary>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If a current drive cannot be found for the FileSystem provider
         /// </exception>
@@ -119,39 +109,32 @@ namespace System.Management.Automation
                     "The only constructor for this class should always set the sessionState field");
 
                 return CurrentProviderLocation(_sessionState.ExecutionContext.ProviderNames.FileSystem);
-            } // get
-        } // CurrentFileSystemLocation
+            }
+        }
 
         /// <summary>
         /// Changes the current location to the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to change the location to. This can be either a drive-relative or provider-relative
         /// path. It cannot be a provider-internal path.
         /// </param>
-        ///
         /// <returns>
         /// The path of the new current location.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ArgumentException">
         /// If <paramref name="path"/> does not exist, is not a container, or
         /// resolved to multiple containers.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="path"/> refers to a provider that does not exist.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If <paramref name="path"/> refers to a drive that does not exist.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider associated with <paramref name="path"/> threw an
         /// exception.
@@ -165,42 +148,34 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.SetLocation(path);
-        } // SetLocation
+        }
 
         /// <summary>
         /// Changes the current location to the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to change the location to. This can be either a drive-relative or provider-relative
         /// path. It cannot be a provider-internal path.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// The path of the new current location.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ArgumentException">
         /// If <paramref name="path"/> does not exist, is not a container, or
         /// resolved to multiple containers.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="path"/> refers to a provider that does not exist.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If <paramref name="path"/> refers to a drive that does not exist.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider associated with <paramref name="path"/> threw an
         /// exception.
@@ -214,51 +189,85 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.SetLocation(path, context);
-        } // SetLocation
+        }
+
+        /// <summary>
+        /// Changes the current location to the specified path.
+        /// </summary>
+        /// <param name="path">
+        /// The path to change the location to. This can be either a drive-relative or provider-relative
+        /// path. It cannot be a provider-internal path.
+        /// </param>
+        /// <param name="context">
+        /// The context under which the command is running.
+        /// </param>
+        /// <param name="literalPath">
+        /// Indicates if the path is a literal path.
+        /// </param>
+        /// <returns>
+        /// The path of the new current location.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="path"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="path"/> does not exist, is not a container, or
+        /// resolved to multiple containers.
+        /// </exception>
+        /// <exception cref="ProviderNotFoundException">
+        /// If <paramref name="path"/> refers to a provider that does not exist.
+        /// </exception>
+        /// <exception cref="DriveNotFoundException">
+        /// If <paramref name="path"/> refers to a drive that does not exist.
+        /// </exception>
+        /// <exception cref="ProviderInvocationException">
+        /// If the provider associated with <paramref name="path"/> threw an
+        /// exception.
+        /// </exception>
+        internal PathInfo SetLocation(string path, CmdletProviderContext context, bool literalPath)
+        {
+            Dbg.Diagnostics.Assert(
+                _sessionState != null,
+                "The only constructor for this class should always set the sessionState field");
+
+            // Parameter validation is done in the session state object
+
+            return _sessionState.SetLocation(path, context, literalPath);
+        }
 
         /// <summary>
         /// Determines if the specified path is the current location or a parent of the current location.
         /// </summary>
-        ///
         /// <param name="path">
         /// A drive or provider-qualified path to be compared against the current location.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// True if the path is the current location or a parent of the current location. False otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the path is a provider-qualified path for a provider that is
         /// not loaded into the system.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        /// 
         /// <exception cref="InvalidOperationException">
-        /// If the <paramref name="path"/> starts with "~" and the home location is not set for 
+        /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider specified by <paramref name="providerId"/> threw an
         /// exception when its GetParentPath or MakePath was called while
@@ -273,12 +282,11 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.IsCurrentLocationOrAncestor(path, context);
-        } // IsCurrentLocationOrAncestor
+        }
 
         /// <summary>
         /// Pushes the current location onto the location stack so that it can be retrieved later.
         /// </summary>
-        ///
         /// <param name="stackName">
         /// The ID of the stack to push the location onto.
         /// </param>
@@ -289,21 +297,18 @@ namespace System.Management.Automation
                 "The only constructor for this class should always set the sessionState field");
 
             _sessionState.PushCurrentLocation(stackName);
-        } // PushCurrentLocation
+        }
 
         /// <summary>
         /// Gets the location off the top of the location stack.
         /// </summary>
-        ///
         /// <param name="stackName">
         /// The ID of the stack to pop the location from. If stackName is null or empty
         /// the default stack is used.
         /// </param>
-        ///
         /// <returns>
         /// The path information for the location that was on the top of the location stack.
         /// </returns>
-        ///
         /// <exception cref="ArgumentException">
         /// If the path on the stack does not exist, is not a container, or
         /// resolved to multiple containers.
@@ -313,15 +318,12 @@ namespace System.Management.Automation
         /// or
         /// A stack was not found with the specified name.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the path on the stack refers to a provider that does not exist.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the path on the stack refers to a drive that does not exist.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider associated with the path on the stack threw an
         /// exception.
@@ -333,12 +335,11 @@ namespace System.Management.Automation
                 "The only constructor for this class should always set the sessionState field");
 
             return _sessionState.PopLocation(stackName);
-        } // PopLocation
+        }
 
         /// <summary>
         /// Gets the location stack and all the locations on it.
         /// </summary>
-        /// 
         /// <param name="stackName">
         /// The stack ID of the stack to get the stack info for.
         /// </param>
@@ -349,16 +350,14 @@ namespace System.Management.Automation
                 "The only constructor for this class should always set the sessionState field");
 
             return _sessionState.LocationStack(stackName);
-        } // LocationStack
+        }
 
         /// <summary>
         /// Sets the default location stack to that specified by the stack ID.
         /// </summary>
-        ///
         /// <param name="stackName">
         /// The stack ID of the stack to use as the default location stack.
         /// </param>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="stackName"/> does not exist as a location stack.
         /// </exception>
@@ -375,44 +374,35 @@ namespace System.Management.Automation
         /// Resolves a drive or provider qualified absolute or relative path that may contain
         /// wildcard characters into one or more absolute drive or provider qualified paths.
         /// </summary>
-        ///
         /// <param name="path">
         /// The drive or provider qualified path to be resolved. This path may contain wildcard
         /// characters which will get resolved.
         /// </param>
-        ///
         /// <returns>
         /// An array of Msh paths that resolved from the given path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
-        /// If <paramref name="path"/> is a provider-qualified path 
+        /// If <paramref name="path"/> is a provider-qualified path
         /// and the specified provider does not exist.
         /// </exception>
-        ///  
         /// <exception cref="DriveNotFoundException">
         /// If <paramref name="path"/> is a drive-qualified path and
         /// the specified drive does not exist.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider throws an exception when its MakePath gets
         /// called.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider does not support multiple items.
         /// </exception>
-        /// 
         /// <exception cref="InvalidOperationException">
         /// If the home location for the provider is not set and
         /// <paramref name="path"/> starts with a "~".
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain wildcard characters and
         /// could not be found.
@@ -422,49 +412,40 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
             Provider.CmdletProvider providerInstance = null;
             return PathResolver.GetGlobbedMonadPathsFromMonadPath(path, false, out providerInstance);
-        } // GetResolvedPSPathFromPSPath
+        }
 
         /// <summary>
         /// Resolves a drive or provider qualified absolute or relative path that may contain
         /// wildcard characters into one or more absolute drive or provider qualified paths.
         /// </summary>
-        ///
         /// <param name="path">
         /// The drive or provider qualified path to be resolved. This path may contain wildcard
         /// characters which will get resolved.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An array of Msh paths that resolved from the given path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="context"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
-        /// If <paramref name="path"/> is a provider-qualified path 
+        /// If <paramref name="path"/> is a provider-qualified path
         /// and the specified provider does not exist.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider throws an exception when its MakePath gets
         /// called.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider does not support multiple items.
         /// </exception>
-        /// 
         /// <exception cref="InvalidOperationException">
         /// If the home location for the provider is not set and
         /// <paramref name="path"/> starts with a "~".
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain wildcard characters and
         /// could not be found.
@@ -476,58 +457,47 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
             Provider.CmdletProvider providerInstance = null;
             return PathResolver.GetGlobbedMonadPathsFromMonadPath(path, false, context, out providerInstance);
-        } // GetResolvedPSPathFromPSPath
+        }
 
         /// <summary>
         /// Resolves a drive or provider qualified absolute or relative path that may contain
         /// wildcard characters into one or more provider-internal paths.
         /// </summary>
-        ///
         /// <param name="path">
         /// The drive or provider qualified path to be resolved. This path may contain wildcard
         /// characters which will get resolved.
         /// </param>
-        ///
         /// <param name="provider">
         /// The provider for which the returned paths should be used.
         /// </param>
-        ///
         /// <returns>
         /// An array of provider-internal paths that resolved from the given path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the path is a provider-qualified path for a provider that is
         /// not loaded into the system.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        /// 
         /// <exception cref="InvalidOperationException">
-        /// If the <paramref name="path"/> starts with "~" and the home location is not set for 
+        /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider associated with the <paramref name="path"/> threw an
         /// exception when building its path.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain wildcard characters and
         /// could not be found.
@@ -539,7 +509,7 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
             Provider.CmdletProvider providerInstance = null;
             return PathResolver.GetGlobbedProviderPathsFromMonadPath(path, false, out provider, out providerInstance);
-        } // GetResolvedProviderPathFromPSPath
+        }
 
         internal Collection<string> GetResolvedProviderPathFromPSPath(
             string path,
@@ -549,63 +519,51 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
             Provider.CmdletProvider providerInstance = null;
             return PathResolver.GetGlobbedProviderPathsFromMonadPath(path, allowNonexistingPaths, out provider, out providerInstance);
-        } // GetResolvedProviderPathFromPSPath
+        }
 
         /// <summary>
         /// Resolves a drive or provider qualified absolute or relative path that may contain
         /// wildcard characters into one or more provider-internal paths.
         /// </summary>
-        ///
         /// <param name="path">
         /// The drive or provider qualified path to be resolved. This path may contain wildcard
         /// characters which will get resolved.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <param name="provider">
         /// The provider for which the returned paths should be used.
         /// </param>
-        ///
         /// <returns>
         /// An array of provider-internal paths that resolved from the given path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="context"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the path is a provider-qualified path for a provider that is
         /// not loaded into the system.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        /// 
         /// <exception cref="InvalidOperationException">
-        /// If the <paramref name="path"/> starts with "~" and the home location is not set for 
+        /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider associated with the <paramref name="path"/> threw an
         /// exception when its GetParentPath or MakePath was called while
         /// processing the <paramref name="path"/>.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain wildcard characters and
         /// could not be found.
@@ -619,48 +577,39 @@ namespace System.Management.Automation
 
             Provider.CmdletProvider providerInstance = null;
             return PathResolver.GetGlobbedProviderPathsFromMonadPath(path, false, context, out provider, out providerInstance);
-        } // GetResolvedProviderPathFromPSPath        
+        }
 
         /// <summary>
         /// Resolves a drive or provider qualified absolute or relative path that may contain
         /// wildcard characters into one or more provider-internal paths.
         /// </summary>
-        ///
         /// <param name="path">
         /// The drive or provider qualified path to be resolved. This path may contain wildcard
         /// characters which will get resolved.
         /// </param>
-        ///
         /// <param name="providerId">
         /// The provider for which the returned paths should be used.
         /// </param>
-        ///
         /// <returns>
         /// An array of provider-internal paths that resolved from the given path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="providerId"/> references a provider that does not exist.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerId"/> references a provider that is not
         /// a ContainerCmdletProvider.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        /// 
         /// <exception cref="InvalidOperationException">
-        /// If the <paramref name="path"/> starts with "~" and the home location is not set for 
+        /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain wildcard characters and
         /// could not be found.
@@ -672,53 +621,43 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
             Provider.CmdletProvider providerInstance = null;
             return PathResolver.GetGlobbedProviderPathsFromProviderPath(path, false, providerId, out providerInstance);
-        } // GetResolvedProviderPathFromProviderPath
+        }
 
         /// <summary>
         /// Resolves a drive or provider qualified absolute or relative path that may contain
         /// wildcard characters into one or more provider-internal paths.
         /// </summary>
-        ///
         /// <param name="path">
         /// The drive or provider qualified path to be resolved. This path may contain wildcard
         /// characters which will get resolved.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <param name="providerId">
         /// The provider for which the returned paths should be used.
         /// </param>
-        ///
         /// <returns>
         /// An array of provider-internal paths that resolved from the given path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/>, <paramref name="providerId"/>, or
         /// <paramref name="context"/> is null.
         ///  </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="providerId"/> references a provider that does not exist.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerId"/> references a provider that is not
         /// a ContainerCmdletProvider.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        /// 
         /// <exception cref="InvalidOperationException">
-        /// If the <paramref name="path"/> starts with "~" and the home location is not set for 
+        /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain wildcard characters and
         /// could not be found.
@@ -732,49 +671,40 @@ namespace System.Management.Automation
 
             Provider.CmdletProvider providerInstance = null;
             return PathResolver.GetGlobbedProviderPathsFromProviderPath(path, false, providerId, context, out providerInstance);
-        } // GetResolvedProviderPathFromProviderPath        
+        }
 
         /// <summary>
         /// Converts a drive or provider qualified absolute or relative path that may contain
         /// wildcard characters into one a provider-internal path still containing the wildcard characters.
         /// </summary>
-        ///
         /// <param name="path">
         /// The drive or provider qualified path to be converted. This path may contain wildcard
         /// characters which will not get resolved.
         /// </param>
-        ///
         /// <returns>
         /// A provider-internal path that does not have the wildcard characters resolved.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the path is a provider-qualified path for a provider that is
         /// not loaded into the system.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        /// 
         /// <exception cref="InvalidOperationException">
-        /// If the <paramref name="path"/> starts with "~" and the home location is not set for 
+        /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider specified by <paramref name="path"/> threw an
         /// exception.
@@ -784,58 +714,47 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
 
             return PathResolver.GetProviderPath(path);
-        } // GetUnresolvedProviderPathFromPSPath 
+        }
 
         /// <summary>
         /// Converts a drive or provider qualified absolute or relative path that may contain
         /// wildcard characters into one a provider-internal path still containing the wildcard characters.
         /// </summary>
-        ///
         /// <param name="path">
         /// The drive or provider qualified path to be converted. This path may contain wildcard
         /// characters which will not get resolved.
         /// </param>
-        ///
         /// <param name="provider">
         /// The information for the provider for which the returned path should be used.
         /// </param>
-        ///
         /// <param name="drive">
         /// The drive of the Msh path that was used to convert the path. Note, this may be null
         /// if the <paramref name="path"/> was a provider-qualified path.
         /// </param>
-        ///
         /// <returns>
         /// A provider-internal path that does not have the wildcard characters resolved.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="context"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the path is a provider-qualified path for a provider that is
         /// not loaded into the system.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        /// 
         /// <exception cref="InvalidOperationException">
-        /// If the <paramref name="path"/> starts with "~" and the home location is not set for 
+        /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider specified by <paramref name="provider"/> threw an
         /// exception when its GetParentPath or MakePath was called while
@@ -855,61 +774,49 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return result;
-        } // GetUnresolvedProviderPathFromPSPath 
+        }
 
         /// <summary>
         /// Converts a drive or provider qualified absolute or relative path that may contain
         /// wildcard characters into one a provider-internal path still containing the wildcard characters.
         /// </summary>
-        ///
         /// <param name="path">
         /// The drive or provider qualified path to be converted. This path may contain wildcard
         /// characters which will not get resolved.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which this command is running.
         /// </param>
-        ///
         /// <param name="provider">
         /// The information for the provider for which the returned path should be used.
         /// </param>
-        ///
         /// <param name="drive">
         /// The drive of the Msh path that was used to convert the path.
         /// </param>
-        ///
         /// <returns>
         /// A provider-internal path that does not have the wildcard characters resolved.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="context"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the path is a provider-qualified path for a provider that is
         /// not loaded into the system.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        /// 
         /// <exception cref="InvalidOperationException">
-        /// If the <paramref name="path"/> starts with "~" and the home location is not set for 
+        /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider specified by <paramref name="provider"/> threw an
         /// exception when its GetParentPath or MakePath was called while
@@ -924,25 +831,21 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
 
             return PathResolver.GetProviderPath(path, context, out provider, out drive);
-        } // GetUnresolvedProviderPathFromPSPath #endregion Public methods
+        }
 
         /// <summary>
         /// Determines if the give path is an Msh provider-qualified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to check.
         /// </param>
-        ///
         /// <returns>
         /// True if the specified path is provider-qualified, false otherwise.
         /// </returns>
-        ///
         /// <remarks>
         /// A provider-qualified path is a path in the following form:
         /// providerId::provider-internal-path
         /// </remarks>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
@@ -951,32 +854,27 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
 
             return LocationGlobber.IsProviderQualifiedPath(path);
-        } // IsProviderQualifiedPath
+        }
 
         /// <summary>
         /// Determines if the given path is a drive-qualified absolute path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to check.
         /// </param>
-        ///
         /// <param name="driveName">
         /// If the path is an Msh absolute path then the returned value is
         /// the name of the drive that the path is absolute to.
         /// </param>
-        ///
         /// <returns>
         /// True if the specified path is an Msh absolute drive-qualified path.
         /// False otherwise.
         /// </returns>
-        ///
         /// <remarks>
         /// A path is an absolute drive-qualified path if it has the following
         /// form:
         /// drive-name:drive-relative-path
         /// </remarks>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
@@ -985,43 +883,35 @@ namespace System.Management.Automation
             // The parameters will be verified by the path resolver
 
             return PathResolver.IsAbsolutePath(path, out driveName);
-        } // IsPSAbsolutePath
+        }
 
         #region Combine
 
         /// <summary>
         /// Combines two strings with a provider specific path separator.
         /// </summary>
-        ///
         /// <param name="parent">
         /// The parent path to be joined with the child.
         /// </param>
-        ///
         /// <param name="child">
         /// The child path to be joined with the parent.
         /// </param>
-        ///
         /// <returns>
         /// The combined path of the parent and child with the provider
         /// specific path separator between them.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="context"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ArgumentException">
         /// If both <paramref name="parent"/> and <paramref name="child"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerId"/> does not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="PipelineStoppedException">
         /// If the pipeline is being stopped while executing the command.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1034,45 +924,36 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.MakePath(parent, child);
-        } // Combine
+        }
 
         /// <summary>
         /// Combines two strings with a provider specific path separator.
         /// </summary>
-        ///
         /// <param name="parent">
         /// The parent path to be joined with the child.
         /// </param>
-        ///
         /// <param name="child">
         /// The child path to be joined with the parent.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which this command is running.
         /// </param>
-        ///
         /// <returns>
         /// The combined path of the parent and child with the provider
         /// specific path separator between them.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="context"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ArgumentException">
         /// If both <paramref name="parent"/> and <paramref name="child"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerId"/> does not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="PipelineStoppedException">
         /// If the pipeline is being stopped while executing the command.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1085,7 +966,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.MakePath(parent, child, context);
-        } // Combine
+        }
 
         #endregion Combine
 
@@ -1094,31 +975,24 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the parent path of the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to get the parent path from.
         /// </param>
-        ///
         /// <param name="root">
         /// If the root is specified the path returned will not be any higher than the root.
         /// </param>
-        ///
         /// <returns>
         /// The parent path of the specified path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerInstance"/> does not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="PipelineStoppedException">
         /// If the pipeline is being stopped while executing the command.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1131,40 +1005,32 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetParentPath(path, root);
-        } // GetParentPath
+        }
 
         /// <summary>
         /// Gets the parent path of the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to get the parent path from.
         /// </param>
-        ///
         /// <param name="root">
         /// If the root is specified the path returned will not be any higher than the root.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// The parent path of the specified path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerInstance"/> does not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="PipelineStoppedException">
         /// If the pipeline is being stopped while executing the command.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1180,47 +1046,37 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetParentPath(path, root, context, false);
-        } // GetParentPath
-
+        }
 
         /// <summary>
         /// Gets the parent path of the specified path.
         /// Allow to use FileSystem as the default provider when the
         /// given path is drive-qualified and the drive cannot be found.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to get the parent path from.
         /// </param>
-        ///
         /// <param name="root">
         /// If the root is specified the path returned will not be any higher than the root.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
         /// <param name="useDefaultProvider">
         /// to use default provider when needed.
         /// </param>
-        ///
         /// <returns>
         /// The parent path of the specified path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerInstance"/> does not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="PipelineStoppedException">
         /// If the pipeline is being stopped while executing the command.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1246,32 +1102,25 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the child name of the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to get the child name from.
         /// </param>
-        ///
         /// <returns>
         /// The last element of the path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1284,41 +1133,33 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetChildName(path);
-        } // ParseChildName
+        }
 
         /// <summary>
         /// Gets the child name of the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to get the child name from.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// The last element of the path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1333,48 +1174,38 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetChildName(path, context, false);
-        } // ParseChildName
-
+        }
 
         /// <summary>
         /// Gets the child name of the specified path.
         /// Allow to use FileSystem as the default provider when the
         /// given path is drive-qualified and the drive cannot be found.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to get the child name from.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
         /// <param name="useDefaultProvider">
         /// to use default provider when needed.
         /// </param>
-        ///
         /// <returns>
         /// The last element of the path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1390,7 +1221,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetChildName(path, context, useDefaultProvider);
-        } // ParseChildName
+        }
 
         #endregion ParseChildName
 
@@ -1400,32 +1231,25 @@ namespace System.Management.Automation
         /// Normalizes the path that was passed in and returns the normalized path
         /// as a relative path to the basePath that was passed.
         /// </summary>
-        /// 
         /// <param name="path">
         /// An MSH path to an item. The item should exist
         /// or the provider should write out an error.
         /// </param>
-        /// 
         /// <param name="basePath">
         /// The path that the return value should be relative to.
         /// </param>
-        /// 
         /// <returns>
-        /// A normalized path that is relative to the basePath that was passed. 
+        /// A normalized path that is relative to the basePath that was passed.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerInstance"/> does not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="PipelineStoppedException">
         /// If the pipeline is being stopped while executing the command.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1438,42 +1262,34 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.NormalizeRelativePath(path, basePath);
-        } // NormalizeRelativePath
+        }
 
         /// <summary>
         /// Normalizes the path that was passed in and returns the normalized path
         /// as a relative path to the basePath that was passed.
         /// </summary>
-        /// 
         /// <param name="path">
         /// An MSH path to an item. The item should exist
         /// or the provider should write out an error.
         /// </param>
-        /// 
         /// <param name="basePath">
         /// The path that the return value should be relative to.
         /// </param>
-        /// 
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
         /// <returns>
-        /// A normalized path that is relative to the basePath that was passed. 
+        /// A normalized path that is relative to the basePath that was passed.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerInstance"/> does not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="PipelineStoppedException">
         /// If the pipeline is being stopped while executing the command.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1489,7 +1305,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.NormalizeRelativePath(path, basePath, context);
-        } // NormalizeRelativePath
+        }
 
         #endregion NormalizeRelativePath
 
@@ -1498,32 +1314,25 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if the MSH path is a syntactically and semantically valid path for the provider.
         /// </summary>
-        /// 
         /// <param name="path">
         /// The path to validate.
         /// </param>
-        /// 
         /// <returns>
         /// true if the object specified by path is syntactically and semantically valid, false otherwise.
         /// </returns>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1536,41 +1345,33 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.IsValidPath(path);
-        } // IsValid
+        }
 
         /// <summary>
         /// Determines if the MSH path is a syntactically and semantically valid path for the provider.
         /// </summary>
-        /// 
         /// <param name="path">
         /// The path to validate.
         /// </param>
-        /// 
         /// <param name="context">
         /// The context under which the call is being made.
         /// </param>
-        /// 
         /// <returns>
         /// true if the object specified by path is syntactically and semantically valid, false otherwise.
         /// </returns>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1585,7 +1386,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.IsValidPath(path, context);
-        } // IsValid
+        }
 
         #endregion IsValid
 
@@ -1602,13 +1403,13 @@ namespace System.Management.Automation
                     "The only constructor for this class should always set the sessionState field");
 
                 return _pathResolver ?? (_pathResolver = _sessionState.ExecutionContext.LocationGlobber);
-            } // get
-        } // PathResolver
+            }
+        }
 
         private LocationGlobber _pathResolver;
         private SessionStateInternal _sessionState;
 
         #endregion private data
-    } // PathIntrinsics
+    }
 }
 

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -11,14 +10,13 @@ namespace System.Management.Automation
     /// <summary>
     /// Implements the help provider for alias help.
     /// </summary>
-    /// 
     /// <remarks>
     /// Unlike other help providers, AliasHelpProvider directly inherits from HelpProvider
     /// instead of HelpProviderWithCache. This is because alias can be created/removed/updated
     /// in a Microsoft Command Shell session. And thus caching may result in old alias being cached.
-    /// 
-    /// The real information for alias is stored in command help. To retrieve the real 
-    /// help information, help forwarding is needed. 
+    ///
+    /// The real information for alias is stored in command help. To retrieve the real
+    /// help information, help forwarding is needed.
     /// </remarks>
     internal class AliasHelpProvider : HelpProvider
     {
@@ -35,7 +33,7 @@ namespace System.Management.Automation
         private readonly ExecutionContext _context;
 
         /// <summary>
-        /// Session state for current Microsoft Command Shell session
+        /// Session state for current Microsoft Command Shell session.
         /// </summary>
         /// <remarks>
         /// _sessionState is mainly used for alias help search in the case
@@ -57,7 +55,7 @@ namespace System.Management.Automation
         #region Common Properties
 
         /// <summary>
-        /// Name of alias help provider
+        /// Name of alias help provider.
         /// </summary>
         /// <value>Name of alias help provider</value>
         internal override string Name
@@ -69,7 +67,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Help category of alias help provider, which is a constant: HelpCategory.Alias. 
+        /// Help category of alias help provider, which is a constant: HelpCategory.Alias.
         /// </summary>
         /// <value>Help category of alias help provider.</value>
         internal override HelpCategory HelpCategory
@@ -88,12 +86,12 @@ namespace System.Management.Automation
         /// Exact match an alias help target.
         /// </summary>
         /// <remarks>
-        /// This will 
-        ///     a. use _commandDiscovery object to retrieve AliasInfo object. 
+        /// This will
+        ///     a. use _commandDiscovery object to retrieve AliasInfo object.
         ///     b. Create AliasHelpInfo object based on AliasInfo object
         /// </remarks>
-        /// <param name="helpRequest">help request object</param> 
-        /// <returns>help info found</returns>
+        /// <param name="helpRequest">Help request object.</param>
+        /// <returns>Help info found.</returns>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             CommandInfo commandInfo = null;
@@ -121,21 +119,21 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Search an alias help target. 
+        /// Search an alias help target.
         /// </summary>
         /// <remarks>
-        /// This will, 
+        /// This will,
         ///     a. use _sessionState object to get a list of alias that match the target.
-        ///     b. for each alias, retrive help info as in ExactMatchHelp.
+        ///     b. for each alias, retrieve help info as in ExactMatchHelp.
         /// </remarks>
-        /// <param name="helpRequest">help request object</param>   
+        /// <param name="helpRequest">Help request object.</param>
         /// <param name="searchOnlyContent">
-        /// If true, searches for pattern in the help content. Individual 
+        /// If true, searches for pattern in the help content. Individual
         /// provider can decide which content to search in.
-        /// 
-        /// If false, seraches for pattern in the command names.
-        /// </param> 
-        /// <returns>a IEnumerable of helpinfo object</returns>
+        ///
+        /// If false, searches for pattern in the command names.
+        /// </param>
+        /// <returns>A IEnumerable of helpinfo object.</returns>
         internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
             // aliases do not have help content...so doing nothing in that case
@@ -143,7 +141,7 @@ namespace System.Management.Automation
             {
                 string target = helpRequest.Target;
                 string pattern = target;
-                Hashtable hashtable = new Hashtable(StringComparer.OrdinalIgnoreCase);
+                var allAliases = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
                 if (!WildcardPattern.ContainsWildcardCharacters(target))
                 {
@@ -164,19 +162,19 @@ namespace System.Management.Automation
                         {
                             // Component/Role/Functionality match is done only for SearchHelp
                             // as "get-help * -category alias" should not forwad help to
-                            // CommandHelpProvider..(ExactMatchHelp does forward help to 
+                            // CommandHelpProvider..(ExactMatchHelp does forward help to
                             // CommandHelpProvider)
                             if (!Match(helpInfo, helpRequest))
                             {
                                 continue;
                             }
 
-                            if (hashtable.ContainsKey(name))
+                            if (allAliases.Contains(name))
                             {
                                 continue;
                             }
 
-                            hashtable.Add(name, null);
+                            allAliases.Add(name);
 
                             yield return helpInfo;
                         }
@@ -211,19 +209,19 @@ namespace System.Management.Automation
                         {
                             // Component/Role/Functionality match is done only for SearchHelp
                             // as "get-help * -category alias" should not forwad help to
-                            // CommandHelpProvider..(ExactMatchHelp does forward help to 
+                            // CommandHelpProvider..(ExactMatchHelp does forward help to
                             // CommandHelpProvider)
                             if (!Match(helpInfo, helpRequest))
                             {
                                 continue;
                             }
 
-                            if (hashtable.ContainsKey(name))
+                            if (allAliases.Contains(name))
                             {
                                 continue;
                             }
 
-                            hashtable.Add(name, null);
+                            allAliases.Add(name);
 
                             yield return helpInfo;
                         }
@@ -245,12 +243,12 @@ namespace System.Management.Automation
 
                         HelpInfo helpInfo = AliasHelpInfo.GetHelpInfo(alias);
 
-                        if (hashtable.ContainsKey(name))
+                        if (allAliases.Contains(name))
                         {
                             continue;
                         }
 
-                        hashtable.Add(name, null);
+                        allAliases.Add(name);
 
                         yield return helpInfo;
                     }
@@ -308,11 +306,11 @@ namespace System.Management.Automation
 
         private static bool Match(string target, string pattern)
         {
-            if (String.IsNullOrEmpty(pattern))
+            if (string.IsNullOrEmpty(pattern))
                 return true;
 
-            if (String.IsNullOrEmpty(target))
-                target = "";
+            if (string.IsNullOrEmpty(target))
+                target = string.Empty;
 
             WildcardPattern matcher = WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase);
 

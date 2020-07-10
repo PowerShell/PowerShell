@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Internal;
 
@@ -9,7 +8,6 @@ namespace System.Management.Automation
     /// <summary>
     /// The parameter binder for runtime-defined parameters which are declared through the RuntimeDefinedParameterDictionary.
     /// </summary>
-    /// 
     internal class RuntimeDefinedParameterBinder : ParameterBinderBase
     {
         #region ctor
@@ -18,19 +16,15 @@ namespace System.Management.Automation
         /// Constructs the parameter binder with the specified type metadata. The binder is only valid
         /// for a single instance of a bindable runtime-defined parameter collection and only for the duration of a command.
         /// </summary>
-        /// 
         /// <param name="target">
         /// The target runtime-defined parameter collection that the parameter values will be bound to.
         /// </param>
-        /// 
         /// <param name="command">
         /// An instance of the command so that attributes can access the context.
         /// </param>
-        /// 
         /// <param name="commandLineParameters">
         /// The Command line parameter collection to update...
         /// </param>
-        /// 
         internal RuntimeDefinedParameterBinder(
             RuntimeDefinedParameterDictionary target,
             InternalCommand command,
@@ -42,8 +36,8 @@ namespace System.Management.Automation
             {
                 string key = pair.Key;
                 RuntimeDefinedParameter pp = pair.Value;
-                string ppName = (null == pp) ? null : pp.Name;
-                if (null == pp || key != ppName)
+                string ppName = (pp == null) ? null : pp.Name;
+                if (pp == null || key != ppName)
                 {
                     ParameterBindingException bindingException =
                         new ParameterBindingException(
@@ -60,6 +54,7 @@ namespace System.Management.Automation
                     throw bindingException;
                 }
             }
+
             this.CommandLineParameters = commandLineParameters;
         }
 
@@ -69,9 +64,8 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Hides the base class Target property to ensure the target
-        /// is always a RuntimeDefinedParameterDictionary
+        /// is always a RuntimeDefinedParameterDictionary.
         /// </summary>
-        /// 
         internal new RuntimeDefinedParameterDictionary Target
         {
             get
@@ -83,22 +77,19 @@ namespace System.Management.Automation
             {
                 base.Target = value;
             }
-        } // Target
+        }
 
         #region Parameter default values
 
         /// <summary>
-        /// Gets the default value for the specified parameter
+        /// Gets the default value for the specified parameter.
         /// </summary>
-        /// 
         /// <param name="name">
         /// The name of the parameter to get the value for.
         /// </param>
-        /// 
         /// <returns>
         /// The value of the specified parameter
         /// </returns>
-        /// 
         internal override object GetDefaultParameterValue(string name)
         {
             object result = null;
@@ -107,8 +98,9 @@ namespace System.Management.Automation
             {
                 result = parameter.Value;
             }
+
             return result;
-        } // GetDefaultParameterValue
+        }
 
         #endregion Parameter default values
 
@@ -130,15 +122,15 @@ namespace System.Management.Automation
         /// </exception>
         internal override void BindParameter(string name, object value, CompiledCommandParameter parameterMetadata)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             Target[name].Value = value;
             this.CommandLineParameters.Add(name, value);
-        } // BindParameter
+        }
 
         #endregion Parameter binding
-    } // RuntimeDefinedParameterBinder
-} // namespace System.Management.Automation
+    }
+}

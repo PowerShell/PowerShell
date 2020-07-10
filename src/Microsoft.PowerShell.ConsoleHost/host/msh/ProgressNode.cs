@@ -1,8 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
-
-
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -12,14 +9,11 @@ using System.Management.Automation.Internal;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
-
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// 
-    /// ProgressNode is an augmentation of the ProgressRecord type that adds extra fields for the purposes of tracking 
+    /// ProgressNode is an augmentation of the ProgressRecord type that adds extra fields for the purposes of tracking
     /// outstanding activities received by the host, and rendering them in the console.
-    /// 
     /// </summary>
 
     internal
@@ -27,9 +21,7 @@ namespace Microsoft.PowerShell
     ProgressNode : ProgressRecord
     {
         /// <summary>
-        /// 
         /// Indicates the various layouts for rendering a particular node.  Each style is progressively less terse.
-        /// 
         /// </summary>
 
         internal
@@ -41,8 +33,8 @@ namespace Microsoft.PowerShell
             Compact = 2,
 
             /// <summary>
-            /// Allocate only one line for displaying the StatusDescription or the CurrentOperation, 
-            /// truncate the rest if the StatusDescription or CurrentOperation doesn't fit in one line
+            /// Allocate only one line for displaying the StatusDescription or the CurrentOperation,
+            /// truncate the rest if the StatusDescription or CurrentOperation doesn't fit in one line.
             /// </summary>
             Full = 3,
 
@@ -52,12 +44,8 @@ namespace Microsoft.PowerShell
             FullPlus = 4,
         };
 
-
-
         /// <summary>
-        /// 
         /// Constructs an instance from a ProgressRecord.
-        /// 
         /// </summary>
 
         internal
@@ -76,33 +64,21 @@ namespace Microsoft.PowerShell
             this.SourceId = sourceId;
         }
 
-
-
         /// <summary>
-        /// 
-        /// Renders a single progress node as strings of text according to that node's style. The text is appended to the 
+        /// Renders a single progress node as strings of text according to that node's style. The text is appended to the
         /// supplied list of strings.
-        /// 
         /// </summary>
         /// <param name="strCollection">
-        /// 
         /// List of strings to which the node's rendering will be appended.
-        /// 
         /// </param>
         /// <param name="indentation">
-        /// 
         /// The indentation level (in BufferCells) at which the node should be rendered.
-        /// 
         /// </param>
         /// <param name="maxWidth">
-        /// 
         /// The maximum number of BufferCells that the rendering is allowed to consume.
-        /// 
         /// </param>
         /// <param name="rawUI">
-        /// 
         /// The PSHostRawUserInterface used to gauge string widths in the rendering.
-        /// 
         /// </param>
 
         internal
@@ -137,41 +113,29 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// 
         /// Renders a node in the "Full" style.
-        /// 
         /// </summary>
         /// <param name="strCollection">
-        /// 
         /// List of strings to which the node's rendering will be appended.
-        /// 
         /// </param>
         /// <param name="indentation">
-        /// 
         /// The indentation level (in BufferCells) at which the node should be rendered.
-        /// 
         /// </param>
         /// <param name="maxWidth">
-        /// 
         /// The maximum number of BufferCells that the rendering is allowed to consume.
-        /// 
         /// </param>
         /// <param name="rawUI">
-        /// 
         /// The PSHostRawUserInterface used to gauge string widths in the rendering.
-        /// 
         /// </param>
         /// <param name="isFullPlus">
-        /// 
         /// Indicate if the full StatusDescription and CurrentOperation should be displayed.
-        /// 
         /// </param>
 
         private
         void
         RenderFull(ArrayList strCollection, int indentation, int maxWidth, PSHostRawUserInterface rawUI, bool isFullPlus)
         {
-            string indent = new string(' ', indentation);
+            string indent = StringUtil.Padding(indentation);
 
             // First line: the activity
 
@@ -180,13 +144,13 @@ namespace Microsoft.PowerShell
                     rawUI, StringUtil.Format(" {0}{1} ", indent, this.Activity), maxWidth));
 
             indentation += 3;
-            indent = new string(' ', indentation);
+            indent = StringUtil.Padding(indentation);
 
             // Second line: the status description
 
             RenderFullDescription(this.StatusDescription, indent, maxWidth, rawUI, strCollection, isFullPlus);
 
-            // Third line: the percentage thermometer. The size of this is proportional to the width we're allowed 
+            // Third line: the percentage thermometer. The size of this is proportional to the width we're allowed
             // to consume. -2 for the whitespace, -2 again for the brackets around thermo, -5 to not be too big
 
             if (PercentComplete >= 0)
@@ -196,7 +160,7 @@ namespace Microsoft.PowerShell
                 mercuryWidth = PercentComplete * thermoWidth / 100;
                 if (PercentComplete < 100 && mercuryWidth == thermoWidth)
                 {
-                    // back off a tad unless we're totally complete to prevent the appearance of completion before 
+                    // back off a tad unless we're totally complete to prevent the appearance of completion before
                     // the fact.
 
                     --mercuryWidth;
@@ -209,7 +173,7 @@ namespace Microsoft.PowerShell
                             " {0}[{1}{2}] ",
                             indent,
                             new string('o', mercuryWidth),
-                            new string(' ', thermoWidth - mercuryWidth)),
+                            StringUtil.Padding(thermoWidth - mercuryWidth)),
                         maxWidth));
             }
 
@@ -233,7 +197,7 @@ namespace Microsoft.PowerShell
 
             // Fifth and Sixth lines: The current operation
 
-            if (!String.IsNullOrEmpty(CurrentOperation))
+            if (!string.IsNullOrEmpty(CurrentOperation))
             {
                 strCollection.Add(" ");
                 RenderFullDescription(this.CurrentOperation, indent, maxWidth, rawUI, strCollection, isFullPlus);
@@ -262,36 +226,26 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// 
         /// Renders a node in the "Compact" style.
-        /// 
         /// </summary>
         /// <param name="strCollection">
-        /// 
         /// List of strings to which the node's rendering will be appended.
-        /// 
         /// </param>
         /// <param name="indentation">
-        /// 
         /// The indentation level (in BufferCells) at which the node should be rendered.
-        /// 
         /// </param>
         /// <param name="maxWidth">
-        /// 
         /// The maximum number of BufferCells that the rendering is allowed to consume.
-        /// 
         /// </param>
         /// <param name="rawUI">
-        /// 
         /// The PSHostRawUserInterface used to gauge string widths in the rendering.
-        /// 
         /// </param>
 
         private
         void
         RenderCompact(ArrayList strCollection, int indentation, int maxWidth, PSHostRawUserInterface rawUI)
         {
-            string indent = new string(' ', indentation);
+            string indent = StringUtil.Padding(indentation);
 
             // First line: the activity
 
@@ -301,17 +255,17 @@ namespace Microsoft.PowerShell
                     StringUtil.Format(" {0}{1} ", indent, this.Activity), maxWidth));
 
             indentation += 3;
-            indent = new string(' ', indentation);
+            indent = StringUtil.Padding(indentation);
 
             // Second line: the status description with percentage and time remaining, if applicable.
 
-            string percent = "";
+            string percent = string.Empty;
             if (PercentComplete >= 0)
             {
                 percent = StringUtil.Format("{0}% ", PercentComplete);
             }
 
-            string secRemain = "";
+            string secRemain = string.Empty;
             if (SecondsRemaining >= 0)
             {
                 TimeSpan span = new TimeSpan(0, 0, SecondsRemaining);
@@ -331,7 +285,7 @@ namespace Microsoft.PowerShell
 
             // Third line: The current operation
 
-            if (!String.IsNullOrEmpty(CurrentOperation))
+            if (!string.IsNullOrEmpty(CurrentOperation))
             {
                 strCollection.Add(
                     StringUtil.TruncateToBufferCellWidth(
@@ -340,49 +294,37 @@ namespace Microsoft.PowerShell
             }
         }
 
-
-
         /// <summary>
-        /// 
         /// Renders a node in the "Minimal" style.
-        /// 
         /// </summary>
         /// <param name="strCollection">
-        /// 
         /// List of strings to which the node's rendering will be appended.
-        /// 
         /// </param>
         /// <param name="indentation">
-        /// 
         /// The indentation level (in BufferCells) at which the node should be rendered.
-        /// 
         /// </param>
         /// <param name="maxWidth">
-        /// 
         /// The maximum number of BufferCells that the rendering is allowed to consume.
-        /// 
         /// </param>
         /// <param name="rawUI">
-        /// 
         /// The PSHostRawUserInterface used to gauge string widths in the rendering.
-        /// 
         /// </param>
 
         private
         void
         RenderMinimal(ArrayList strCollection, int indentation, int maxWidth, PSHostRawUserInterface rawUI)
         {
-            string indent = new string(' ', indentation);
+            string indent = StringUtil.Padding(indentation);
 
             // First line: Everything mushed into one line
 
-            string percent = "";
+            string percent = string.Empty;
             if (PercentComplete >= 0)
             {
                 percent = StringUtil.Format("{0}% ", PercentComplete);
             }
 
-            string secRemain = "";
+            string secRemain = string.Empty;
             if (SecondsRemaining >= 0)
             {
                 TimeSpan span = new TimeSpan(0, 0, SecondsRemaining);
@@ -402,66 +344,47 @@ namespace Microsoft.PowerShell
                     maxWidth));
         }
 
-
-
         /// <summary>
-        /// 
         /// The nodes that have this node as their parent.
-        /// 
         /// </summary>
 
         internal
         ArrayList
         Children;
 
-
-
         /// <summary>
-        /// 
         /// The "age" of the node.  A node's age is incremented by PendingProgress.Update each time a new ProgressRecord is
-        /// received by the host. A node's age is reset when a corresponding ProgressRecord is received.  Thus, the age of 
-        /// a node reflects the number of ProgressRecord that have been received since the node was last updated.  
-        /// 
+        /// received by the host. A node's age is reset when a corresponding ProgressRecord is received.  Thus, the age of
+        /// a node reflects the number of ProgressRecord that have been received since the node was last updated.
+        ///
         /// The age is used by PendingProgress.Render to determine which nodes should be rendered on the display, and how. As the
         /// display has finite size, it may be possible to have many more outstanding progress activities than will fit in that
-        /// space. The rendering of nodes can be progressively "compressed" into a more terse format, or not rendered at all in 
+        /// space. The rendering of nodes can be progressively "compressed" into a more terse format, or not rendered at all in
         /// order to fit as many nodes as possible in the available space. The oldest nodes are compressed or skipped first.
-        /// 
         /// </summary>
 
         internal
         int
         Age;
 
-
-
         /// <summary>
-        /// 
         /// The style in which this node should be rendered.
-        /// 
         /// </summary>
 
         internal
         RenderStyle
         Style = RenderStyle.FullPlus;
 
-
-
         /// <summary>
-        /// 
         /// Identifies the source of the progress record.
-        /// 
         /// </summary>
 
         internal
         Int64
         SourceId;
 
-
         /// <summary>
-        /// 
         /// The number of vertical BufferCells that are required to render the node in its current style.
-        /// 
         /// </summary>
         /// <value></value>
 
@@ -494,17 +417,14 @@ namespace Microsoft.PowerShell
             return 0;
         }
 
-
         /// <summary>
-        /// 
         /// The number of vertical BufferCells that are required to render the node in the Full style.
-        /// 
         /// </summary>
         /// <value></value>
 
         private int LinesRequiredInFullStyleMethod(PSHostRawUserInterface rawUi, int maxWidth, bool isFullPlus)
         {
-            // Since the fields of this instance could have been changed, we compute this on-the-fly. 
+            // Since the fields of this instance could have been changed, we compute this on-the-fly.
 
             // NTRAID#Windows OS Bugs-1062104-2004/12/15-sburns we assume 1 line for each field.  If we ever need to
             // word-wrap text fields, then this calculation will need updating.
@@ -512,7 +432,7 @@ namespace Microsoft.PowerShell
             // Start with 1 for the Activity
             int lines = 1;
             // Use 5 spaces as the heuristic indent. 5 spaces stand for the indent for the CurrentOperation of the first-level child node
-            var indent = new string(' ', 5);
+            var indent = StringUtil.Padding(5);
             var temp = new ArrayList();
 
             if (isFullPlus)
@@ -531,11 +451,13 @@ namespace Microsoft.PowerShell
             {
                 ++lines;
             }
+
             if (SecondsRemaining >= 0)
             {
                 ++lines;
             }
-            if (!String.IsNullOrEmpty(CurrentOperation))
+
+            if (!string.IsNullOrEmpty(CurrentOperation))
             {
                 if (isFullPlus)
                 {
@@ -553,11 +475,8 @@ namespace Microsoft.PowerShell
             return lines;
         }
 
-
         /// <summary>
-        /// 
         /// The number of vertical BufferCells that are required to render the node in the Compact style.
-        /// 
         /// </summary>
         /// <value></value>
 
@@ -567,7 +486,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                // Since the fields of this instance could have been changed, we compute this on-the-fly. 
+                // Since the fields of this instance could have been changed, we compute this on-the-fly.
 
                 // NTRAID#Windows OS Bugs-1062104-2004/12/15-sburns we assume 1 line for each field.  If we ever need to
                 // word-wrap text fields, then this calculation will need updating.
@@ -575,7 +494,7 @@ namespace Microsoft.PowerShell
                 // Start with 1 for the Activity, and 1 for the Status.
 
                 int lines = 2;
-                if (!String.IsNullOrEmpty(CurrentOperation))
+                if (!string.IsNullOrEmpty(CurrentOperation))
                 {
                     ++lines;
                 }
@@ -584,6 +503,5 @@ namespace Microsoft.PowerShell
             }
         }
     }
-}   // namespace 
-
+}   // namespace
 

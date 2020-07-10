@@ -1,32 +1,25 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 using System;
-using System.IO;
-using System.Reflection;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-using System.Management.Automation;
-using System.Management.Automation.Provider;
-using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Provider;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
-#if CORECLR
-// Use stub for TypeLibTypeAttribute
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
+using System.Xml;
 
 #pragma warning disable 1591
 
 namespace Microsoft.WSMan.Management
 {
-    
     #region "public Api"
-
-    
 
     #region WsManEnumFlags
     /// <summary><para>_WSManEnumFlags enumeration.</para></summary>
@@ -57,19 +50,15 @@ namespace Microsoft.WSMan.Management
 
         /// <summary><para><c>WSManFlagHierarchyDeepBasePropsOnly</c> constant of <c>_WSManEnumFlags</c> enumeration.  </para><para>Constant value is 64.</para></summary>
         WSManFlagHierarchyDeepBasePropsOnly = 64,
-        
+
         /// <summary><para><c>WSManFlagAssociationInstance </c> constant of <c>_WSManEnumFlags</c> enumeration.  </para><para>Constant value is 64.</para></summary>
         WSManFlagAssociationInstance = 128
     }
 
     #endregion WsManEnumFlags
 
-
-
-
     #region WsManSessionFlags
     /// <summary><para>WSManSessionFlags enumeration.</para></summary>
-    /// 
     [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     [TypeLibType((short)0)]
     public enum WSManSessionFlags
@@ -136,44 +125,43 @@ namespace Microsoft.WSMan.Management
 
     #region AuthenticationMechanism
     /// <summary>WSManEnumFlags enumeration</summary>
-    /// 
     [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     public enum AuthenticationMechanism
     {
         /// <summary>
-        /// Use no authentication
+        /// Use no authentication.
         /// </summary>
         None = 0x0,
         /// <summary>
-        /// Use Default authentication
+        /// Use Default authentication.
         /// </summary>
         Default = 0x1,
         /// <summary>
-        /// Use digest authentication for a remote operation
+        /// Use digest authentication for a remote operation.
         /// </summary>
         Digest = 0x2,
         /// <summary>
-        /// Use negotiate authentication for a remote operation (may use kerboros or ntlm)
+        /// Use negotiate authentication for a remote operation (may use kerberos or ntlm)
         /// </summary>
         Negotiate = 0x4,
         /// <summary>
-        /// Use basic authentication for a remote operation
+        /// Use basic authentication for a remote operation.
         /// </summary>
         Basic = 0x8,
         /// <summary>
-        /// Use kerberos authentication for a remote operation 
+        /// Use kerberos authentication for a remote operation.
         /// </summary>
         Kerberos = 0x10,
         /// <summary>
-        /// Use client certificate authentication for a remote operation 
+        /// Use client certificate authentication for a remote operation.
         /// </summary>
         ClientCertificate = 0x20,
         /// <summary>
-        /// Use CredSSP authentication for a remote operation
+        /// Use CredSSP authentication for a remote operation.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Credssp")]
         Credssp = 0x80,
-   }
+    }
 
     #endregion AuthenticationMechanism
 
@@ -190,7 +178,7 @@ namespace Microsoft.WSMan.Management
 #else
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
 #endif
-    
+
     public interface IWSMan
     {
 #if CORECLR
@@ -208,8 +196,8 @@ namespace Microsoft.WSMan.Management
 #endif
 
         /// <summary><para><c>CreateSession</c> method of <c>IWSMan</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>CreateSession</c> method was the following:  <c>HRESULT CreateSession ([optional, defaultvalue("")] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
-        // IDL: HRESULT CreateSession ([optional, defaultvalue("")] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue);
+        /// <remarks><para>An original IDL definition of <c>CreateSession</c> method was the following:  <c>HRESULT CreateSession ([optional, defaultvalue(string.Empty)] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
+        // IDL: HRESULT CreateSession ([optional, defaultvalue(string.Empty)] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue);
 
         [DispId(1)]
 #if CORECLR
@@ -222,7 +210,7 @@ namespace Microsoft.WSMan.Management
         /// <summary><para><c>CreateConnectionOptions</c> method of <c>IWSMan</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>CreateConnectionOptions</c> method was the following:  <c>HRESULT CreateConnectionOptions ([out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
         // IDL: HRESULT CreateConnectionOptions ([out, retval] IDispatch** ReturnValue);
-        // 
+        //
         [DispId(2)]
 #if CORECLR
         [return: MarshalAs(UnmanagedType.IUnknown)]
@@ -234,7 +222,7 @@ namespace Microsoft.WSMan.Management
         /// <summary><para><c>CommandLine</c> property of <c>IWSMan</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>CommandLine</c> property was the following:  <c>BSTR CommandLine</c>;</para></remarks>
         // IDL: BSTR CommandLine;
-        // 
+        //
         string CommandLine
         {
             // IDL: HRESULT CommandLine ([out, retval] BSTR* ReturnValue);
@@ -247,7 +235,7 @@ namespace Microsoft.WSMan.Management
         /// <summary><para><c>Error</c> property of <c>IWSMan</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>Error</c> property was the following:  <c>BSTR Error</c>;</para></remarks>
         // IDL: BSTR Error;
-        // 
+        //
 
         [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Error")]
         string Error
@@ -342,7 +330,6 @@ namespace Microsoft.WSMan.Management
             [DispId(1)]
             set;
         }
-
     }
 
     /// <summary><para><c>IWSManConnectionOptions</c> interface.</para></summary>
@@ -392,7 +379,6 @@ namespace Microsoft.WSMan.Management
         int ProxyAuthenticationUseDigest();
     };
 
-
     #endregion IWSManConnectionOptions
 
     #region IWSManEnumerator
@@ -405,7 +391,7 @@ namespace Microsoft.WSMan.Management
 #else
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
 #endif
-    
+
     public interface IWSManEnumerator
     {
 #if CORECLR
@@ -490,8 +476,8 @@ namespace Microsoft.WSMan.Management
 #endif
 
         /// <summary><para><c>CreateSession</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>CreateSession</c> method was the following:  <c>HRESULT CreateSession ([optional, defaultvalue("")] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
-        // IDL: HRESULT CreateSession ([optional, defaultvalue("")] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue);
+        /// <remarks><para>An original IDL definition of <c>CreateSession</c> method was the following:  <c>HRESULT CreateSession ([optional, defaultvalue(string.Empty)] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
+        // IDL: HRESULT CreateSession ([optional, defaultvalue(string.Empty)] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue);
 
         [DispId(1)]
 #if CORECLR
@@ -501,7 +487,6 @@ namespace Microsoft.WSMan.Management
         [return: MarshalAs(UnmanagedType.IDispatch)]
         object CreateSession([MarshalAs(UnmanagedType.BStr)] string connection, int flags, [MarshalAs(UnmanagedType.IDispatch)] object connectionOptions);
 #endif
-
 
         /// <summary><para><c>CreateConnectionOptions</c> method of <c>IWSManEx</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>CreateConnectionOptions</c> method was the following:  <c>HRESULT CreateConnectionOptions ([out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
@@ -515,9 +500,7 @@ namespace Microsoft.WSMan.Management
 #endif
         object CreateConnectionOptions();
 
-
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
         string CommandLine
@@ -544,11 +527,9 @@ namespace Microsoft.WSMan.Management
             get;
         }
 
-
         /// <summary><para><c>CreateResourceLocator</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>CreateResourceLocator</c> method was the following:  <c>HRESULT CreateResourceLocator ([optional, defaultvalue("")] BSTR strResourceLocator, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
-        // IDL: HRESULT CreateResourceLocator ([optional, defaultvalue("")] BSTR strResourceLocator, [out, retval] IDispatch** ReturnValue);
-
+        /// <remarks><para>An original IDL definition of <c>CreateResourceLocator</c> method was the following:  <c>HRESULT CreateResourceLocator ([optional, defaultvalue(string.Empty)] BSTR strResourceLocator, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
+        // IDL: HRESULT CreateResourceLocator ([optional, defaultvalue(string.Empty)] BSTR strResourceLocator, [out, retval] IDispatch** ReturnValue);
 
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "str")]
         [DispId(5)]
@@ -570,7 +551,6 @@ namespace Microsoft.WSMan.Management
         /// <summary><para><c>SessionFlagCredUsernamePassword</c> method of <c>IWSManEx</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>SessionFlagCredUsernamePassword</c> method was the following:  <c>HRESULT SessionFlagCredUsernamePassword ([out, retval] long* ReturnValue)</c>;</para></remarks>
         // IDL: HRESULT SessionFlagCredUsernamePassword ([out, retval] long* ReturnValue);
-
 
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Username")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
@@ -712,18 +692,17 @@ namespace Microsoft.WSMan.Management
         [DispId(29)]
         int EnumerationFlagAssociatedInstance();
     }
-#endregion IWsManEx
+    #endregion IWsManEx
 
-#region IWsManResourceLocator
+    #region IWsManResourceLocator
 
     /// <summary><para><c>IWSManResourceLocator</c> interface.</para></summary>
     [SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces")]
-    
+
     [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
-    
-    
+
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sel")]
-    
+
     [Guid("A7A1BA28-DE41-466A-AD0A-C4059EAD7428")]
     [ComImport]
     [TypeLibType((short)4288)]
@@ -732,8 +711,7 @@ namespace Microsoft.WSMan.Management
 #else
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
 #endif
-    
-    
+
     public interface IWSManResourceLocator
     {
 #if CORECLR
@@ -757,7 +735,6 @@ namespace Microsoft.WSMan.Management
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
         string ResourceUri
         {
-
             // IDL: HRESULT resourceUri (BSTR value);
             [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "resource")]
             [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
@@ -771,7 +748,6 @@ namespace Microsoft.WSMan.Management
             [DispId(1)]
             [return: MarshalAs(UnmanagedType.BStr)]
             get;
-
         }
 
         /// <summary><para><c>AddSelector</c> method of <c>IWSManResourceLocator</c> interface.  </para><para>Add selector to resource locator</para></summary>
@@ -779,11 +755,10 @@ namespace Microsoft.WSMan.Management
         // Add selector to resource locator
         // IDL: HRESULT AddSelector (BSTR resourceSelName, VARIANT selValue);
 
-
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "resource")]        
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "resource")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "sel")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sel")]
-        [DispId(2)]  
+        [DispId(2)]
         void AddSelector([MarshalAs(UnmanagedType.BStr)] string resourceSelName, object selValue);
 
         /// <summary><para><c>ClearSelectors</c> method of <c>IWSManResourceLocator</c> interface.  </para><para>Clear all selectors</para></summary>
@@ -791,8 +766,6 @@ namespace Microsoft.WSMan.Management
         // Clear all selectors
         // IDL: HRESULT ClearSelectors (void);
 
-
-        
         [DispId(3)]
         void ClearSelectors();
 
@@ -813,7 +786,6 @@ namespace Microsoft.WSMan.Management
             [DispId(4)]
             set;
         }
-
 
         /// <summary><para><c>FragmentDialect</c> property of <c>IWSManResourceLocator</c> interface.  </para><para>Gets the Fragment dialect</para></summary>
         /// <remarks><para>An original IDL definition of <c>FragmentDialect</c> property was the following:  <c>BSTR FragmentDialect</c>;</para></remarks>
@@ -841,10 +813,9 @@ namespace Microsoft.WSMan.Management
         [DispId(6)]
         void AddOption([MarshalAs(UnmanagedType.BStr)] string OptionName, object OptionValue, int mustComply);
 
-
-        /// <summary><para><c>MustUnderstandOptions</c> property of <c>IWSManResourceLocator</c> interface.  </para><para>Sets the  MustUnderstandOptions value</para></summary>
+        /// <summary><para><c>MustUnderstandOptions</c> property of <c>IWSManResourceLocator</c> interface.  </para><para>Sets the MustUnderstandOptions value</para></summary>
         /// <remarks><para>An original IDL definition of <c>MustUnderstandOptions</c> property was the following:  <c>long MustUnderstandOptions</c>;</para></remarks>
-        // Sets the  MustUnderstandOptions value
+        // Sets the MustUnderstandOptions value
         // IDL: long MustUnderstandOptions;
 
         int MustUnderstandOptions
@@ -859,7 +830,6 @@ namespace Microsoft.WSMan.Management
             set;
         }
 
-
         /// <summary><para><c>ClearOptions</c> method of <c>IWSManResourceLocator</c> interface.  </para><para>Clear all options</para></summary>
         /// <remarks><para>An original IDL definition of <c>ClearOptions</c> method was the following:  <c>HRESULT ClearOptions (void)</c>;</para></remarks>
         // Clear all options
@@ -867,8 +837,6 @@ namespace Microsoft.WSMan.Management
 
         [DispId(8)]
         void ClearOptions();
-
-
 
         /// <summary><para><c>Error</c> property of <c>IWSManResourceLocator</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>Error</c> property was the following:  <c>BSTR Error</c>;</para></remarks>
@@ -885,13 +853,10 @@ namespace Microsoft.WSMan.Management
             [return: MarshalAs(UnmanagedType.BStr)]
             get;
         }
-
-
-
     }
-#endregion IWsManResourceLocator
+    #endregion IWsManResourceLocator
 
-#region IWSManSession
+    #region IWSManSession
     /// <summary><para><c>IWSManSession</c> interface.</para></summary>
     [Guid("FC84FC58-1286-40C4-9DA0-C8EF6EC241E0")]
     [ComImport]
@@ -926,7 +891,6 @@ namespace Microsoft.WSMan.Management
         /// <remarks><para>An original IDL definition of <c>Get</c> method was the following:  <c>HRESULT Get (VARIANT resourceUri, [optional, defaultvalue(0)] long flags, [out, retval] BSTR* ReturnValue)</c>;</para></remarks>
         // IDL: HRESULT Get (VARIANT resourceUri, [optional, defaultvalue(0)] long flags, [out, retval] BSTR* ReturnValue);
 
-
         [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Get")]
         [DispId(1)]
         [return: MarshalAs(UnmanagedType.BStr)]
@@ -956,7 +920,6 @@ namespace Microsoft.WSMan.Management
         void Delete(object resourceUri, int flags);
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="actionURI"></param>
         /// <param name="resourceUri"></param>
@@ -967,12 +930,11 @@ namespace Microsoft.WSMan.Management
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "URI")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "0#")]
         [DispId(5)]
-        String Invoke([MarshalAs(UnmanagedType.BStr)] string actionURI, [In] object resourceUri, [MarshalAs(UnmanagedType.BStr)] string parameters, [In] int flags);
-
+        string Invoke([MarshalAs(UnmanagedType.BStr)] string actionURI, [In] object resourceUri, [MarshalAs(UnmanagedType.BStr)] string parameters, [In] int flags);
 
         /// <summary><para><c>Enumerate</c> method of <c>IWSManSession</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>Enumerate</c> method was the following:  <c>HRESULT Enumerate (VARIANT resourceUri, [optional, defaultvalue("")] BSTR filter, [optional, defaultvalue("")] BSTR dialect, [optional, defaultvalue(0)] long flags, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
-        // IDL: HRESULT Enumerate (VARIANT resourceUri, [optional, defaultvalue("")] BSTR filter, [optional, defaultvalue("")] BSTR dialect, [optional, defaultvalue(0)] long flags, [out, retval] IDispatch** ReturnValue);
+        /// <remarks><para>An original IDL definition of <c>Enumerate</c> method was the following:  <c>HRESULT Enumerate (VARIANT resourceUri, [optional, defaultvalue(string.Empty)] BSTR filter, [optional, defaultvalue(string.Empty)] BSTR dialect, [optional, defaultvalue(0)] long flags, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
+        // IDL: HRESULT Enumerate (VARIANT resourceUri, [optional, defaultvalue(string.Empty)] BSTR filter, [optional, defaultvalue(string.Empty)] BSTR dialect, [optional, defaultvalue(0)] long flags, [out, retval] IDispatch** ReturnValue);
 
         [DispId(6)]
 #if CORECLR
@@ -1005,7 +967,6 @@ namespace Microsoft.WSMan.Management
             get;
         }
 
-
         /// <summary><para><c>BatchItems</c> property of <c>IWSManSession</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>BatchItems</c> property was the following:  <c>long BatchItems</c>;</para></remarks>
         // IDL: long BatchItems;
@@ -1021,7 +982,6 @@ namespace Microsoft.WSMan.Management
             [DispId(9)]
             set;
         }
-
 
         /// <summary><para><c>Timeout</c> property of <c>IWSManSession</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>Timeout</c> property was the following:  <c>long Timeout</c>;</para></remarks>
@@ -1040,9 +1000,9 @@ namespace Microsoft.WSMan.Management
         }
     }
 
-#endregion IWSManSession
+    #endregion IWSManSession
 
-#region IWSManResourceLocatorInternal
+    #region IWSManResourceLocatorInternal
     /// <summary><para><c>IWSManResourceLocatorInternal</c> interface.</para></summary>
     [Guid("EFFAEAD7-7EC8-4716-B9BE-F2E7E9FB4ADB")]
     [ComImport]
@@ -1072,7 +1032,6 @@ namespace Microsoft.WSMan.Management
 
     #endregion IWSManResourceLocatorInternal
 
-
     /// <summary><para><c>WSMan</c> interface.</para></summary>
     [Guid("BCED617B-EC03-420b-8508-977DC7A686BD")]
     [ComImport]
@@ -1094,9 +1053,10 @@ namespace Microsoft.WSMan.Management
     public class GPClass
     {
     }
+
     [ComImport, Guid("EA502723-A23D-11d1-A7D3-0000F87571E3"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    interface IGroupPolicyObject
+    internal interface IGroupPolicyObject
     {
         void New(
           [MarshalAs(UnmanagedType.LPWStr)] string pszDomainName,
@@ -1159,7 +1119,7 @@ namespace Microsoft.WSMan.Management
         uint GetPropertySheetPages(out IntPtr hPages);
     }
 
-#endregion IGroupPolicyObject
+    #endregion IGroupPolicyObject
 
     /// <summary><para><c>GpoNativeApi</c></para></summary>
     public sealed class GpoNativeApi
@@ -1171,11 +1131,11 @@ namespace Microsoft.WSMan.Management
              [In, MarshalAs(UnmanagedType.Bool)] bool bMachine);
 
         [DllImport("Userenv.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool LeaveCriticalPolicySection(
              [In] System.IntPtr hSection);
     }
-#endregion
-
+    #endregion
 }
 
 #pragma warning restore 1591

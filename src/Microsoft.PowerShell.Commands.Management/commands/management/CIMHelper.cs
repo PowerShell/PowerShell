@@ -1,4 +1,7 @@
-﻿using System;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -77,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
         internal static T GetFirst<T>(CimSession session, string nameSpace, string wmiClassName) where T : class, new()
         {
             if (string.IsNullOrEmpty(wmiClassName))
-                throw new ArgumentException("String argument may not be null or empty", "wmiClassName");
+                throw new ArgumentException("String argument may not be null or empty", nameof(wmiClassName));
 
             try
             {
@@ -130,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
         internal static T[] GetAll<T>(CimSession session, string nameSpace, string wmiClassName) where T : class, new()
         {
             if (string.IsNullOrEmpty(wmiClassName))
-                throw new ArgumentException("String argument may not be null or empty", "wmiClassName");
+                throw new ArgumentException("String argument may not be null or empty", nameof(wmiClassName));
 
             var rv = new List<T>();
 
@@ -228,7 +231,7 @@ namespace Microsoft.PowerShell.Commands
         /// A string that may contain backslash characters.
         /// </param>
         /// <returns>
-        /// A new string in which any backshlash characters have been "escaped"
+        /// A new string in which any backslash characters have been "escaped"
         /// by prefacing then with an additional backslash
         /// </returns>
         internal static string EscapePath(string path)
@@ -247,11 +250,11 @@ namespace Extensions
         /// <summary>
         /// An "overload" of the
         /// <see cref="Microsoft.Management.Infrastructure.CimSession"/>.QueryInstances
-        /// method that takes only the namespace and query string as a parameters
+        /// method that takes only the namespace and query string as a parameters.
         /// </summary>
-        /// <param name="session">The CimSession to be queried</param>
-        /// <param name="nameSpace">A string containing the namespace to run the query against</param>
-        /// <param name="query">A string containing the query to be run</param>
+        /// <param name="session">The CimSession to be queried.</param>
+        /// <param name="nameSpace">A string containing the namespace to run the query against.</param>
+        /// <param name="query">A string containing the query to be run.</param>
         /// <returns>
         /// An IEnumerable interface that can be used to enumerate the instances
         /// </returns>
@@ -261,11 +264,11 @@ namespace Extensions
         }
 
         /// <summary>
-        /// Execute a CIM query and return only the first intance in the result.
+        /// Execute a CIM query and return only the first instance in the result.
         /// </summary>
-        /// <param name="session">The CimSesson to be queried</param>
-        /// <param name="nameSpace">A string containing the namespace to run the query against</param>
-        /// <param name="query">A string containing the query to be run</param>
+        /// <param name="session">The CimSession to be queried.</param>
+        /// <param name="nameSpace">A string containing the namespace to run the query against.</param>
+        /// <param name="query">A string containing the query to be run.</param>
         /// <returns>
         /// A <see cref="Microsoft.Management.Infrastructure.CimInstance"/> object
         /// representing the first instance in a query result if successful, null
@@ -290,10 +293,10 @@ namespace Extensions
         }
 
         /// <summary>
-        /// Execute a CIM query and return only the first intance in the result.
+        /// Execute a CIM query and return only the first instance in the result.
         /// </summary>
-        /// <param name="session">The CimSesson to be queried</param>
-        /// <param name="query">A string containing the query to be run</param>
+        /// <param name="session">The CimSession to be queried.</param>
+        /// <param name="query">A string containing the query to be run.</param>
         /// <returns>
         /// A <see cref="Microsoft.Management.Infrastructure.CimInstance"/> object
         /// representing the first instance in a query result if successful, null

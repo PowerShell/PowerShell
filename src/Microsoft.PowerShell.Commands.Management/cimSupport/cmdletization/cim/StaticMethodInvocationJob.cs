@@ -1,15 +1,15 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
+
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Options;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Job wrapping invocation of a static CIM method
+    /// Job wrapping invocation of a static CIM method.
     /// </summary>
     internal class StaticMethodInvocationJob : ExtrinsicMethodInvocationJob
     {

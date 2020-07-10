@@ -19,7 +19,6 @@
    -->
   <!-- include and import declarations -->
   <include schemaLocation="hierarchy.xsd"/>
-  <include schemaLocation="faq.xsd"/>
   <include schemaLocation="troubleshooting.xsd"/>
   <include schemaLocation="task.xsd"/>
   <include schemaLocation="shellExecute.xsd"/>

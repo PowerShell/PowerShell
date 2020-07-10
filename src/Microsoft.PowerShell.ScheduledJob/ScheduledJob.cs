@@ -1,17 +1,17 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
-using System.Runtime.Serialization;
-using System.Management.Automation;
-using System.Management.Automation.Runspaces;
-using System.IO;
 using System.ComponentModel;
-using System.Security.Permissions;
+using System.IO;
+using System.Management.Automation;
 using System.Management.Automation.Host;
+using System.Management.Automation.Runspaces;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
+using System.Text;
 
 namespace Microsoft.PowerShell.ScheduledJob
 {
@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// running job definition based jobs but can also save and load job
     /// results data from file.  This class is used to load job result
     /// data from previously run jobs so that a user can view results of
-    /// scheduled job runs.  This class also contains the defintion of 
+    /// scheduled job runs.  This class also contains the definition of
     /// the scheduled job and so can run an instance of the scheduled
     /// job and optionally save results to file.
     /// </summary>
@@ -51,6 +51,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public ScheduledJobDefinition Definition
         {
             get { return _jobDefinition; }
+
             internal set { _jobDefinition = value; }
         }
 
@@ -115,6 +116,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         internal bool AllowSetShouldExit
         {
             get { return _allowSetShouldExit; }
+
             set { _allowSetShouldExit = value; }
         }
 
@@ -125,9 +127,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="command">Job command string for display</param>
-        /// <param name="name">Name of job</param>
-        /// <param name="jobDefinition">ScheduledJobDefinition defining job to run</param>
+        /// <param name="command">Job command string for display.</param>
+        /// <param name="name">Name of job.</param>
+        /// <param name="jobDefinition">ScheduledJobDefinition defining job to run.</param>
         public ScheduledJob(
             string command,
             string name,
@@ -138,10 +140,12 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 throw new PSArgumentNullException("command");
             }
+
             if (name == null)
             {
                 throw new PSArgumentNullException("name");
             }
+
             if (jobDefinition == null)
             {
                 throw new PSArgumentNullException("jobDefinition");
@@ -201,7 +205,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 _job.StateChanged += new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
                 SetJobState(_job.JobStateInfo.State);
 
-                // Add all child jobs to this object's list so that 
+                // Add all child jobs to this object's list so that
                 // the user and Receive-Job can retrieve results.
                 foreach (Job childJob in _job.ChildJobs)
                 {
@@ -210,7 +214,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
                 // Add this job to the local repository.
                 ScheduledJobSourceAdapter.AddToRepository(this);
-            } // lock
+            }
         }
 
         /// <summary>
@@ -218,7 +222,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         public override void StartJobAsync()
         {
-            //StartJob();
+            // StartJob();
             throw new PSNotSupportedException();
         }
 
@@ -335,9 +339,8 @@ namespace Microsoft.PowerShell.ScheduledJob
             throw new PSNotSupportedException();
         }
 
-
         /// <summary>
-        /// StopJob
+        /// StopJob.
         /// </summary>
         /// <param name="force"></param>
         /// <param name="reason"></param>
@@ -347,7 +350,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// StopJobAsync
+        /// StopJobAsync.
         /// </summary>
         /// <param name="force"></param>
         /// <param name="reason"></param>
@@ -356,7 +359,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             throw new PSNotSupportedException();
         }
         /// <summary>
-        /// SuspendJob
+        /// SuspendJob.
         /// </summary>
         /// <param name="force"></param>
         /// <param name="reason"></param>
@@ -366,7 +369,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// SuspendJobAsync
+        /// SuspendJobAsync.
         /// </summary>
         /// <param name="force"></param>
         /// <param name="reason"></param>
@@ -375,7 +378,6 @@ namespace Microsoft.PowerShell.ScheduledJob
             throw new PSNotSupportedException();
         }
 
-
         #endregion
 
         #region Implementation of ISerializable
@@ -383,8 +385,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Deserialize constructor.
         /// </summary>
-        /// <param name="info">SerializationInfo</param>
-        /// <param name="context">StreamingContext</param>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         private ScheduledJob(
             SerializationInfo info,
@@ -403,8 +405,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Serialize method.
         /// </summary>
-        /// <param name="info">SerializationInfo</param>
-        /// <param name="context">StreamingContext</param>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public void GetObjectData(
             SerializationInfo info,
@@ -600,7 +602,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         #region Internal Methods
 
         /// <summary>
-        /// Method to update a ScheduledJob based on new state and 
+        /// Method to update a ScheduledJob based on new state and
         /// result data from a provided Job.
         /// </summary>
         /// <param name="fromJob">ScheduledJob to update from.</param>
@@ -739,10 +741,12 @@ namespace Microsoft.PowerShell.ScheduledJob
                         _runspace = null;
                     }
                 }
+
                 if (disposePowerShell != null)
                 {
                     disposePowerShell.Dispose();
                 }
+
                 if (disposeRunspace != null)
                 {
                     disposeRunspace.Dispose();
@@ -1013,26 +1017,32 @@ namespace Microsoft.PowerShell.ScheduledJob
                 {
                     throw new PSArgumentNullException("output");
                 }
+
                 if (error == null)
                 {
                     throw new PSArgumentNullException("error");
                 }
+
                 if (warning == null)
                 {
                     throw new PSArgumentNullException("warning");
                 }
+
                 if (verbose == null)
                 {
                     throw new PSArgumentNullException("verbose");
                 }
+
                 if (progress == null)
                 {
                     throw new PSArgumentNullException("progress");
                 }
+
                 if (debug == null)
                 {
                     throw new PSArgumentNullException("debug");
                 }
+
                 if (information == null)
                 {
                     throw new PSArgumentNullException("information");
@@ -1226,6 +1236,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 _startTime = null;
             }
+
             DateTime stopTime = info.GetDateTime("Status_StopTime");
             if (stopTime != DateTime.MinValue)
             {
@@ -1264,6 +1275,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 info.AddValue("Status_StartTime", DateTime.MinValue);
             }
+
             if (_stopTime != null)
             {
                 info.AddValue("Status_StopTime", _stopTime);

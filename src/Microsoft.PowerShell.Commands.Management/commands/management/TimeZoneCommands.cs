@@ -1,13 +1,14 @@
-#if !UNIX
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Management.Automation;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
-using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Management.Automation;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -15,11 +16,11 @@ namespace Microsoft.PowerShell.Commands
     /// A cmdlet to retrieve time zone information.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TimeZone", DefaultParameterSetName = "Name",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=799468")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096904")]
     [Alias("gtz")]
     public class GetTimeZoneCommand : PSCmdlet
     {
-#region Parameters
+        #region Parameters
 
         /// <summary>
         /// A list of the local time zone ids that the cmdlet should look up.
@@ -29,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Id { get; set; }
 
         /// <summary>
-        /// Specifies that the cmdlet should produce a collection of the 
+        /// Specifies that the cmdlet should produce a collection of the
         /// TimeZoneInfo objects that are available on the system.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ListAvailable")]
@@ -42,15 +43,15 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name { get; set; }
 
-#endregion Parameters
+        #endregion Parameters
 
         /// <summary>
-        /// Implementation of the ProcessRecord method for Get-TimeZone
+        /// Implementation of the ProcessRecord method for Get-TimeZone.
         /// </summary>
         protected override void ProcessRecord()
         {
             // make sure we've got the latest time zone settings
-            TimeZoneHelper.ClearCachedData();
+            TimeZoneInfo.ClearCachedData();
 
             if (this.ParameterSetName.Equals("ListAvailable", StringComparison.OrdinalIgnoreCase))
             {
@@ -66,15 +67,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteObject(TimeZoneInfo.FindSystemTimeZoneById(tzid));
                     }
-#if CORECLR
-                    // TimeZoneNotFoundException is thrown by TimeZoneInfo, but not
-                    // publicly visible (so can't be caught), so for now we're catching
-                    // the parent exception time. This should be removed once the more
-                    // specific exception is available.
-                    catch (Exception e)
-#else
                     catch (TimeZoneNotFoundException e)
-#endif
                     {
                         WriteError(new ErrorRecord(e, TimeZoneHelper.TimeZoneNotFoundError,
                             ErrorCategory.InvalidArgument, "Id"));
@@ -83,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else // ParameterSetName == "Name"
             {
-                if (null != Name)
+                if (Name != null)
                 {
                     // lookup each time zone name (or wildcard pattern)
                     foreach (string tzname in Name)
@@ -103,14 +96,8 @@ namespace Microsoft.PowerShell.Commands
                         {
                             string message = string.Format(CultureInfo.InvariantCulture,
                                 TimeZoneResources.TimeZoneNameNotFound, tzname);
-#if CORECLR
-                        // Because .NET Core does not currently expose the TimeZoneNotFoundException
-                        // we need to throw the more generic parent exception class for the time being.
-                        // This should be removed once the correct exception class is available.
-                        Exception e = new Exception(message);
-#else
+
                             Exception e = new TimeZoneNotFoundException(message);
-#endif
                             WriteError(new ErrorRecord(e, TimeZoneHelper.TimeZoneNotFoundError,
                                 ErrorCategory.InvalidArgument, "Name"));
                         }
@@ -125,6 +112,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
+#if !UNIX
 
     /// <summary>
     /// A cmdlet to set the system's local time zone.
@@ -132,17 +120,17 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.Set, "TimeZone",
         SupportsShouldProcess = true,
         DefaultParameterSetName = "Name",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=799469")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097056")]
     [Alias("stz")]
     public class SetTimeZoneCommand : PSCmdlet
     {
-#region string constants
+        #region string constants
 
         private const string TimeZoneTarget = "Local System";
 
-#endregion string constants
+        #endregion string constants
 
-#region Parameters
+        #region Parameters
 
         /// <summary>
         /// The name of the local time zone that the system should use.
@@ -163,22 +151,22 @@ namespace Microsoft.PowerShell.Commands
         public string Name { get; set; }
 
         /// <summary>
-        /// Request return of the new local time zone as a TimeZoneInfo object
+        /// Request return of the new local time zone as a TimeZoneInfo object.
         /// </summary>
         [Parameter]
         public SwitchParameter PassThru { get; set; }
 
-#endregion Parameters
+        #endregion Parameters
 
         /// <summary>
-        /// Implementation of the ProcessRecord method for Get-TimeZone
+        /// Implementation of the ProcessRecord method for Get-TimeZone.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Justification = "Since Name is not a parameter of this method, it confuses FXCop. It is the appropriate value for the exception.")]
         protected override void ProcessRecord()
         {
             // make sure we've got fresh data, in case the requested time zone was added
             // to the system (registry) after our process was started
-            TimeZoneHelper.ClearCachedData();
+            TimeZoneInfo.ClearCachedData();
 
             // acquire a TimeZoneInfo if one wasn't supplied.
             if (this.ParameterSetName.Equals("Id", StringComparison.OrdinalIgnoreCase))
@@ -187,15 +175,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     InputObject = TimeZoneInfo.FindSystemTimeZoneById(Id);
                 }
-#if CORECLR
-                // TimeZoneNotFoundException is thrown by TimeZoneInfo, but not
-                // publicly visible (so can't be caught), so for now we're catching
-                // the parent exception time. This should be removed once the more
-                // specific exception is available.
-                catch (Exception e)
-#else
                 catch (TimeZoneNotFoundException e)
-#endif
                 {
                     ThrowTerminatingError(new ErrorRecord(
                         e,
@@ -212,14 +192,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string message = string.Format(CultureInfo.InvariantCulture,
                         TimeZoneResources.TimeZoneNameNotFound, Name);
-#if CORECLR
-                    // Because .NET Core does not currently expose the TimeZoneNotFoundException
-                    // we need to throw the more generic parent exception class for the time being.
-                    // This should be removed once the correct exception class is available.
-                    Exception e = new Exception(message);
-#else
                     Exception e = new TimeZoneNotFoundException(message);
-#endif
                     ThrowTerminatingError(new ErrorRecord(e,
                         TimeZoneHelper.TimeZoneNotFoundError,
                         ErrorCategory.InvalidArgument,
@@ -248,15 +221,7 @@ namespace Microsoft.PowerShell.Commands
                     // a backing system time zone, otherwise it's an error condition
                     InputObject = TimeZoneInfo.FindSystemTimeZoneById(InputObject.Id);
                 }
-#if CORECLR
-                // TimeZoneNotFoundException is thrown by TimeZoneInfo, but not
-                // publicly visible (so can't be caught), so for now we're catching
-                // the parent exception time. This should be removed once the more
-                // specific exception is available.
-                catch (Exception e)
-#else
                 catch (TimeZoneNotFoundException e)
-#endif
                 {
                     ThrowTerminatingError(new ErrorRecord(
                         e,
@@ -314,17 +279,15 @@ namespace Microsoft.PowerShell.Commands
                         ThrowWin32Error();
                     }
 
-#if !CORECLR
                     // broadcast a WM_SETTINGCHANGE notification message to all top-level windows so that they
                     // know to update their notion of the current system time (and time zone) if applicable
                     int result = 0;
                     NativeMethods.SendMessageTimeout((IntPtr)NativeMethods.HWND_BROADCAST, NativeMethods.WM_SETTINGCHANGE,
                         (IntPtr)0, "intl", NativeMethods.SMTO_ABORTIFHUNG, 5000, ref result);
-#endif
 
                     // clear the time zone data or this PowerShell session
                     // will not recognize the new time zone settings
-                    TimeZoneHelper.ClearCachedData();
+                    TimeZoneInfo.ClearCachedData();
 
                     if (PassThru.IsPresent)
                     {
@@ -357,7 +320,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-#region Helper functions
+        #region Helper functions
 
         /// <summary>
         /// True if the current process has access to change the time zone setting.
@@ -410,7 +373,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Set the SeTimeZonePrivilege, which controls access to the SetDynamicTimeZoneInformation API
+        /// Set the SeTimeZonePrivilege, which controls access to the SetDynamicTimeZoneInformation API.
         /// </summary>
         /// <param name="enable">Set to true to enable (or false to disable) the privilege.</param>
         protected void SetAccessToken(bool enable)
@@ -461,22 +424,21 @@ namespace Microsoft.PowerShell.Commands
             throw new Win32Exception(error);
         }
 
-#endregion Helper functions
+        #endregion Helper functions
 
-#region Win32 interop helper
+        #region Win32 interop helper
 
         internal class NativeMethods
         {
             /// <summary>
-            /// Private constructor to prevent instantiation
+            /// Private constructor to prevent instantiation.
             /// </summary>
             private NativeMethods()
             {
             }
 
-#region Native DLL locations
+            #region Native DLL locations
 
-#if CORECLR
             private const string SetDynamicTimeZoneApiDllName = "api-ms-win-core-timezone-l1-1-0.dll";
             private const string GetTimeZoneInformationForYearApiDllName = "api-ms-win-core-timezone-l1-1-0.dll";
             private const string GetCurrentProcessApiDllName = "api-ms-win-downlevel-kernel32-l1-1-0.dll";
@@ -485,25 +447,14 @@ namespace Microsoft.PowerShell.Commands
             private const string PrivilegeCheckApiDllName = "api-ms-win-downlevel-advapi32-l1-1-1.dll";
             private const string AdjustTokenPrivilegesApiDllName = "api-ms-win-downlevel-advapi32-l1-1-1.dll";
             private const string CloseHandleApiDllName = "api-ms-win-downlevel-kernel32-l1-1-0.dll";
-            private const string SendMessageTimeoutApiDllName = "ext-ms-win-rtcore-ntuser-window-ext-l1-1-0.dll";            
-#else
-            private const string SetDynamicTimeZoneApiDllName = "kernel32.dll";
-            private const string GetTimeZoneInformationForYearApiDllName = "kernel32.dll";
-            private const string GetCurrentProcessApiDllName = "kernel32.dll";
-            private const string OpenProcessTokenApiDllName = "advapi32.dll";
-            private const string LookupPrivilegeTokenApiDllName = "advapi32.dll";
-            private const string PrivilegeCheckApiDllName = "advapi32.dll";
-            private const string AdjustTokenPrivilegesApiDllName = "advapi32.dll";
-            private const string CloseHandleApiDllName = "kernel32.dll";
-            private const string SendMessageTimeoutApiDllName = "user32.dll";
-#endif
+            private const string SendMessageTimeoutApiDllName = "ext-ms-win-rtcore-ntuser-window-ext-l1-1-0.dll";
 
-#endregion Native DLL locations
+            #endregion Native DLL locations
 
-#region Win32 SetDynamicTimeZoneInformation imports
+            #region Win32 SetDynamicTimeZoneInformation imports
 
             /// <summary>
-            /// Used to marshal win32 SystemTime structure to managed code layer
+            /// Used to marshal win32 SystemTime structure to managed code layer.
             /// </summary>
             [StructLayout(LayoutKind.Sequential)]
             public struct SystemTime
@@ -551,7 +502,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             /// <summary>
-            /// Used to marshal win32 DYNAMIC_TIME_ZONE_INFORMATION structure to managed code layer
+            /// Used to marshal win32 DYNAMIC_TIME_ZONE_INFORMATION structure to managed code layer.
             /// </summary>
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
             public struct DYNAMIC_TIME_ZONE_INFORMATION
@@ -602,7 +553,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             /// <summary>
-            /// Used to marshal win32 TIME_ZONE_INFORMATION structure to managed code layer
+            /// Used to marshal win32 TIME_ZONE_INFORMATION structure to managed code layer.
             /// </summary>
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
             public struct TIME_ZONE_INFORMATION
@@ -643,49 +594,51 @@ namespace Microsoft.PowerShell.Commands
             }
 
             /// <summary>
-            /// PInvoke SetDynamicTimeZoneInformation API
+            /// PInvoke SetDynamicTimeZoneInformation API.
             /// </summary>
             /// <param name="lpTimeZoneInformation">A DYNAMIC_TIME_ZONE_INFORMATION structure representing the desired local time zone.</param>
             /// <returns></returns>
             [DllImport(SetDynamicTimeZoneApiDllName, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             public static extern bool SetDynamicTimeZoneInformation([In] ref DYNAMIC_TIME_ZONE_INFORMATION lpTimeZoneInformation);
 
             [DllImport(GetTimeZoneInformationForYearApiDllName, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             public static extern bool GetTimeZoneInformationForYear([In] ushort wYear, [In] ref DYNAMIC_TIME_ZONE_INFORMATION pdtzi, ref TIME_ZONE_INFORMATION ptzi);
 
-#endregion Win32 SetDynamicTimeZoneInformation imports
+            #endregion Win32 SetDynamicTimeZoneInformation imports
 
-#region Win32 AdjustTokenPrivilege imports
+            #region Win32 AdjustTokenPrivilege imports
 
             /// <summary>
-            /// Definition of TOKEN_QUERY constant from Win32 API
+            /// Definition of TOKEN_QUERY constant from Win32 API.
             /// </summary>
             public const int TOKEN_QUERY = 0x00000008;
 
             /// <summary>
-            /// Definition of TOKEN_ADJUST_PRIVILEGES constant from Win32 API
+            /// Definition of TOKEN_ADJUST_PRIVILEGES constant from Win32 API.
             /// </summary>
             public const int TOKEN_ADJUST_PRIVILEGES = 0x00000020;
 
             /// <summary>
-            /// Definition of SE_PRIVILEGE_ENABLED constant from Win32 API
+            /// Definition of SE_PRIVILEGE_ENABLED constant from Win32 API.
             /// </summary>
             public const int SE_PRIVILEGE_ENABLED = 0x00000002;
 
             /// <summary>
-            /// Definition of SE_TIME_ZONE_NAME constant from Win32 API
+            /// Definition of SE_TIME_ZONE_NAME constant from Win32 API.
             /// </summary>
-            public const string SE_TIME_ZONE_NAME = "SeTimeZonePrivilege"; //http://msdn.microsoft.com/en-us/library/bb530716(VS.85).aspx
+            public const string SE_TIME_ZONE_NAME = "SeTimeZonePrivilege"; // https://msdn.microsoft.com/library/bb530716(VS.85).aspx
 
             /// <summary>
-            /// PInvoke GetCurrentProcess API
+            /// PInvoke GetCurrentProcess API.
             /// </summary>
             /// <returns></returns>
             [DllImport(GetCurrentProcessApiDllName, ExactSpelling = true)]
             public static extern IntPtr GetCurrentProcess();
 
             /// <summary>
-            /// PInvoke OpenProcessToken API
+            /// PInvoke OpenProcessToken API.
             /// </summary>
             /// <param name="ProcessHandle"></param>
             /// <param name="DesiredAccess"></param>
@@ -696,7 +649,7 @@ namespace Microsoft.PowerShell.Commands
             public static extern bool OpenProcessToken(IntPtr ProcessHandle, int DesiredAccess, ref IntPtr TokenHandle);
 
             /// <summary>
-            /// PInvoke LookupPrivilegeValue API
+            /// PInvoke LookupPrivilegeValue API.
             /// </summary>
             /// <param name="lpSystemName"></param>
             /// <param name="lpName"></param>
@@ -707,7 +660,7 @@ namespace Microsoft.PowerShell.Commands
             public static extern bool LookupPrivilegeValue(string lpSystemName, string lpName, ref long lpLuid);
 
             /// <summary>
-            /// PInvoke PrivilegeCheck API
+            /// PInvoke PrivilegeCheck API.
             /// </summary>
             /// <param name="ClientToken"></param>
             /// <param name="RequiredPrivileges"></param>
@@ -717,12 +670,11 @@ namespace Microsoft.PowerShell.Commands
             [return: MarshalAs(UnmanagedType.Bool)]
             public static extern bool PrivilegeCheck(IntPtr ClientToken, ref PRIVILEGE_SET RequiredPrivileges, ref bool pfResult);
 
-
             /// <summary>
-            /// PInvoke AdjustTokenPrivilege API
+            /// PInvoke AdjustTokenPrivilege API.
             /// </summary>
             /// <param name="TokenHandle"></param>
-            /// <param name="DisableAllPrivilegs"></param>
+            /// <param name="DisableAllPrivileges"></param>
             /// <param name="NewState"></param>
             /// <param name="BufferLength"></param>
             /// <param name="PreviousState"></param>
@@ -730,11 +682,11 @@ namespace Microsoft.PowerShell.Commands
             /// <returns></returns>
             [DllImport(AdjustTokenPrivilegesApiDllName, SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool AdjustTokenPrivileges(IntPtr TokenHandle, bool DisableAllPrivilegs,
+            public static extern bool AdjustTokenPrivileges(IntPtr TokenHandle, bool DisableAllPrivileges,
                 ref TOKEN_PRIVILEGES NewState, int BufferLength, IntPtr PreviousState, IntPtr ReturnLength);
 
             /// <summary>
-            /// PInvoke CloseHandle API
+            /// PInvoke CloseHandle API.
             /// </summary>
             /// <param name="hObject"></param>
             /// <returns></returns>
@@ -743,7 +695,7 @@ namespace Microsoft.PowerShell.Commands
             public static extern bool CloseHandle(IntPtr hObject);
 
             /// <summary>
-            /// Used to marshal win32 PRIVILEGE_SET structure to managed code layer
+            /// Used to marshal win32 PRIVILEGE_SET structure to managed code layer.
             /// </summary>
             [StructLayout(LayoutKind.Sequential, Pack = 1)]
             public struct PRIVILEGE_SET
@@ -755,7 +707,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             /// <summary>
-            /// Used to marshal win32 TOKEN_PRIVILEGES structure to managed code layer
+            /// Used to marshal win32 TOKEN_PRIVILEGES structure to managed code layer.
             /// </summary>
             [StructLayout(LayoutKind.Sequential, Pack = 1)]
             public struct TOKEN_PRIVILEGES
@@ -765,27 +717,27 @@ namespace Microsoft.PowerShell.Commands
                 public int Attributes;
             }
 
-#endregion Win32 AdjustTokenPrivilege imports
+            #endregion Win32 AdjustTokenPrivilege imports
 
-#region Win32 SendMessage imports
+            #region Win32 SendMessage imports
 
             /// <summary>
-            /// Definition of WM_SETTINGCHANGE constant from Win32 API
+            /// Definition of WM_SETTINGCHANGE constant from Win32 API.
             /// </summary>
             public const int WM_SETTINGCHANGE = 0x001A;
 
             /// <summary>
-            /// Definition of HWND_BROADCAST constant from Win32 API
+            /// Definition of HWND_BROADCAST constant from Win32 API.
             /// </summary>
             public const int HWND_BROADCAST = (-1);
 
             /// <summary>
-            /// Definition of SMTO_ABORTIFHUNG constant from Win32 API
+            /// Definition of SMTO_ABORTIFHUNG constant from Win32 API.
             /// </summary>
             public const int SMTO_ABORTIFHUNG = 0x0002;
 
             /// <summary>
-            /// PInvoke SendMessageTimeout API
+            /// PInvoke SendMessageTimeout API.
             /// </summary>
             /// <param name="hWnd"></param>
             /// <param name="Msg"></param>
@@ -798,45 +750,29 @@ namespace Microsoft.PowerShell.Commands
             [DllImport(SendMessageTimeoutApiDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             public static extern IntPtr SendMessageTimeout(IntPtr hWnd, int Msg, IntPtr wParam, string lParam, int fuFlags, int uTimeout, ref int lpdwResult);
 
-#endregion Win32 SendMessage imports
+            #endregion Win32 SendMessage imports
         }
 
-#endregion Win32 interop helper
+        #endregion Win32 interop helper
     }
 
-
+#endif
     /// <summary>
-    /// static Helper class for working with system time zones.
+    /// Static Helper class for working with system time zones.
     /// </summary>
     internal static class TimeZoneHelper
     {
-#region Error Ids
+        #region Error Ids
 
         internal const string TimeZoneNotFoundError = "TimeZoneNotFound";
         internal const string MultipleMatchingTimeZonesError = "MultipleMatchingTimeZones";
         internal const string InsufficientPermissionsError = "InsufficientPermissions";
         internal const string SetTimeZoneFailedError = "SetTimeZoneFailed";
 
-#endregion Error Ids
+        #endregion Error Ids
 
         /// <summary>
-        /// Clear the cached TimeZoneInfo data.  Note that since TimeZoneInfo.ClearCachedData
-        /// does not exist in .NET Core there is an alternative mechanism (which doesn't seem
-        /// to affect clearing out the cache under the full desktop version of .NET)
-        /// </summary>
-        internal static void ClearCachedData()
-        {
-#if CORECLR
-            // NOTE: .NET Core does not expose the ClearCachedData method, but executing
-            // the specific ConvertTime request below should have the same effect.
-            TimeZoneInfo.ConvertTime(new DateTime(0), TimeZoneInfo.Local);
-#else
-            TimeZoneInfo.ClearCachedData();
-#endif
-        }
-
-        /// <summary>
-        /// Find the system time zone by checking first against StandardName and then, 
+        /// Find the system time zone by checking first against StandardName and then,
         /// if no matches were found, against the DaylightName.
         /// </summary>
         /// <param name="name">The name (or wildcard pattern) of the system time zone to find.</param>
@@ -862,5 +798,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-
-#endif

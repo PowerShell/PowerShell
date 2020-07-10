@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,41 +26,41 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -132,9 +132,6 @@
   <data name="ServiceHasDependentServicesNoForce" xml:space="preserve">
     <value>Cannot stop service '{1} ({0})' because it has dependent services.</value>
   </data>
-  <data name="ServiceIsDependentOnNoForce" xml:space="preserve">
-    <value>Cannot stop service '{1} ({0})' because it is dependent on other services.</value>
-  </data>
   <data name="CouldNotStopService" xml:space="preserve">
     <value>Service '{1} ({0})' cannot be stopped due to the following error: {2}</value>
   </data>
@@ -162,14 +159,29 @@
   <data name="CouldNotSetService" xml:space="preserve">
     <value>Service '{1} ({0})' cannot be configured due to the following error: {2}</value>
   </data>
+  <data name="CouldNotGetServiceInfo" xml:space="preserve">
+    <value>Service '{1} ({0})' cannot be queried due to the following error: {2}</value>
+  </data>
   <data name="CouldNotSetServiceDescription" xml:space="preserve">
     <value>Service '{1} ({0})' description cannot be configured due to the following error: {2}</value>
+  </data>
+  <data name="CouldNotSetServiceDelayedAutoStart" xml:space="preserve">
+    <value>Service '{1} ({0})' automatic (delayed start) cannot be configured due to the following error: {2}</value>
+  </data>
+  <data name="CouldNotSetServiceSecurityDescriptorSddl" xml:space="preserve">
+    <value>Service '{0}' security descriptor cannot be configured due to the following error: {1}</value>
   </data>
   <data name="CouldNotNewService" xml:space="preserve">
     <value>Service '{1} ({0})' cannot be created due to the following error: {2}</value>
   </data>
   <data name="CouldNotNewServiceDescription" xml:space="preserve">
     <value>Service '{1} ({0})' was created, but its description cannot be configured due to the following error: {2}</value>
+  </data>
+  <data name="CouldNotNewServiceDelayedAutoStart" xml:space="preserve">
+    <value>Service '{1} ({0})' was created, but its StartupType 'Automatic (Delayed Start)' could not be configured due to the following error: {2}</value>
+  </data>
+  <data name="CouldNotRemoveService" xml:space="preserve">
+    <value>Service '{1} ({0})' cannot be removed due to the following error: {2}</value>
   </data>
   <data name="CouldNotAccessDependentServices" xml:space="preserve">
     <value>'Cannot access dependent services of '{1} ({0})'</value>
@@ -198,7 +210,10 @@
   <data name="ResumeServiceFailed" xml:space="preserve">
     <value>Service '{1} ({0})' resume failed.</value>
   </data>
-  <data name="ComputerAccessDenied" xml:space="preserve">
-    <value>The command cannot be used to configure the service '{0}' because access to computer '{1}' is denied. Run Windows PowerShell as admin and run your command again.</value>
+  <data name="FailToOpenServiceControlManager" xml:space="preserve">
+    <value>Failed to configure the service '{1} ({0})' due to the following error: {2}. Run PowerShell as admin and run your command again.</value>
+  </data>
+  <data name="UnsupportedStartupType" xml:space="preserve">
+    <value>The startup type '{0}' is not supported by {1}.</value>
   </data>
 </root>

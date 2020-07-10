@@ -1,11 +1,10 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
-using System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation;
 
 //
 // Now define the set of commands for manipulating modules.
@@ -18,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that creates a dynamic module from a scriptblock..
     /// </summary>
-    [Cmdlet("New", "Module", DefaultParameterSetName = "ScriptBlock", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=141554")]
+    [Cmdlet(VerbsCommon.New, "Module", DefaultParameterSetName = "ScriptBlock", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096698")]
     [OutputType(typeof(PSModuleInfo))]
     public sealed class NewModuleCommand : ModuleCmdletBase
     {
@@ -29,8 +28,10 @@ namespace Microsoft.PowerShell.Commands
         public string Name
         {
             set { _name = value; }
+
             get { return _name; }
         }
+
         private string _name;
 
         /// <summary>
@@ -42,11 +43,13 @@ namespace Microsoft.PowerShell.Commands
         public ScriptBlock ScriptBlock
         {
             get { return _scriptBlock; }
+
             set
             {
                 _scriptBlock = value;
             }
         }
+
         private ScriptBlock _scriptBlock;
 
         /// <summary>
@@ -63,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
 
                 _functionImportList = value;
-                // Create the list of patterns to match at patameter bind time
+                // Create the list of patterns to match at parameter bind time
                 // so errors will be reported before loading the module...
                 BaseFunctionPatterns = new List<WildcardPattern>();
                 foreach (string pattern in _functionImportList)
@@ -71,9 +74,11 @@ namespace Microsoft.PowerShell.Commands
                     BaseFunctionPatterns.Add(WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase));
                 }
             }
+
             get { return _functionImportList; }
         }
-        private string[] _functionImportList = Utils.EmptyArray<string>();
+
+        private string[] _functionImportList = Array.Empty<string>();
 
         /// <summary>
         /// This parameter specifies the patterns matching the cmdlets to import from the module...
@@ -89,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
 
                 _cmdletImportList = value;
-                // Create the list of patterns to match at patameter bind time
+                // Create the list of patterns to match at parameter bind time
                 // so errors will be reported before loading the module...
                 BaseCmdletPatterns = new List<WildcardPattern>();
                 foreach (string pattern in _cmdletImportList)
@@ -97,9 +102,11 @@ namespace Microsoft.PowerShell.Commands
                     BaseCmdletPatterns.Add(WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase));
                 }
             }
+
             get { return _cmdletImportList; }
         }
-        private string[] _cmdletImportList = Utils.EmptyArray<string>();
+
+        private string[] _cmdletImportList = Array.Empty<string>();
 
         /// <summary>
         /// This parameter causes the session state instance to be written...
@@ -108,8 +115,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter ReturnResult
         {
             get { return (SwitchParameter)_returnResult; }
+
             set { _returnResult = value; }
         }
+
         private bool _returnResult;
 
         /// <summary>
@@ -119,12 +128,14 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsCustomObject
         {
             get { return (SwitchParameter)_asCustomObject; }
+
             set { _asCustomObject = value; }
         }
+
         private bool _asCustomObject;
 
         /// <summary>
-        /// The arguments to pass to the scriptblock used to create the module
+        /// The arguments to pass to the scriptblock used to create the module.
         /// </summary>
         [Parameter(ValueFromRemainingArguments = true)]
         [Alias("Args")]
@@ -132,8 +143,10 @@ namespace Microsoft.PowerShell.Commands
         public object[] ArgumentList
         {
             get { return _arguments; }
+
             set { _arguments = value; }
         }
+
         private object[] _arguments;
 
         /// <summary>
@@ -144,8 +157,21 @@ namespace Microsoft.PowerShell.Commands
             // Create a module from a scriptblock...
             if (_scriptBlock != null)
             {
+                // Check ScriptBlock language mode.  If it is different than the context language mode
+                // then throw error since private trusted script functions may be exposed.
+                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
+                    _scriptBlock.LanguageMode == PSLanguageMode.FullLanguage)
+                {
+                    this.ThrowTerminatingError(
+                        new ErrorRecord(
+                            new PSSecurityException(Modules.CannotCreateModuleWithScriptBlock),
+                            "Modules_CannotCreateModuleWithFullLanguageScriptBlock",
+                            ErrorCategory.SecurityError,
+                            null));
+                }
+
                 string gs = System.Guid.NewGuid().ToString();
-                if (String.IsNullOrEmpty(_name))
+                if (string.IsNullOrEmpty(_name))
                 {
                     _name = PSModuleInfo.DynamicModulePrefixString + gs;
                 }
@@ -204,10 +230,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Context.Modules.DecrementModuleNestingCount();
                 }
+
                 return;
             }
         }
     }
 
     #endregion
-} // Microsoft.PowerShell.Commands
+}

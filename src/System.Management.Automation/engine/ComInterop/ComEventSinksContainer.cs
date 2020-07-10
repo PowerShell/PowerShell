@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #if !SILVERLIGHT // ComObject
 
@@ -11,7 +10,7 @@ namespace System.Management.Automation.ComInterop
 {
     /// <summary>
     /// ComEventSinksContainer is just a regular list with a finalizer.
-    /// This list is usually attached as a custom data for RCW object and 
+    /// This list is usually attached as a custom data for RCW object and
     /// is finalized whenever RCW is finalized.
     /// </summary>
     internal class ComEventSinksContainer : List<ComEventSink>, IDisposable

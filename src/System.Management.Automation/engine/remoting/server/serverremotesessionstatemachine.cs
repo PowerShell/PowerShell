@@ -1,9 +1,9 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation.  All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using System.Threading;
 using System.Collections.Generic;
+using System.Threading;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
@@ -11,19 +11,19 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This class implements a Finite State Machine (FSM) to control the remote connection on the server side.
     /// There is a similar but not identical FSM on the client side for this connection.
-    /// 
-    /// The FSM's states and events are defined to be the same for both the client FSM and the server FSM. 
+    ///
+    /// The FSM's states and events are defined to be the same for both the client FSM and the server FSM.
     /// This design allows the client and server FSM's to
     /// be as similar as possible, so that the complexity of maintaining them is minimized.
-    /// 
+    ///
     /// This FSM only controls the remote connection state. States related to runspace and pipeline are managed by runspace
     /// pipeline themselves.
-    /// 
+    ///
     /// This FSM defines an event handling matrix, which is filled by the event handlers.
-    /// The state transitions can only be performed by these event handlers, which are private 
+    /// The state transitions can only be performed by these event handlers, which are private
     /// to this class. The event handling is done by a single thread, which makes this
     /// implementation solid and thread safe.
-    /// 
+    ///
     /// This implementation of the FSM does not allow the remote session to be reused for a connection
     /// after it is been closed. This design decision is made to simplify the implementation.
     /// However, the design can be easily modified to allow the reuse of the remote session
@@ -36,6 +36,7 @@ namespace System.Management.Automation.Remoting
 
         private ServerRemoteSession _session;
         private object _syncObject;
+
         private Queue<RemoteSessionStateMachineEventArgs> _processPendingEventsQueue
             = new Queue<RemoteSessionStateMachineEventArgs>();
         // whether some thread is actively processing events
@@ -50,12 +51,11 @@ namespace System.Management.Automation.Remoting
         private RemoteSessionState _state;
 
         /// <summary>
-        /// timer used for key exchange
+        /// Timer used for key exchange.
         /// </summary>
         private Timer _keyExchangeTimer;
 
         #region Constructors
-
 
         /// <summary>
         /// This constructor instantiates a FSM object for the server side to control the remote connection.
@@ -72,7 +72,7 @@ namespace System.Management.Automation.Remoting
         {
             if (session == null)
             {
-                throw PSTraceSource.NewArgumentNullException("session");
+                throw PSTraceSource.NewArgumentNullException(nameof(session));
             }
 
             _session = session;
@@ -123,12 +123,10 @@ namespace System.Management.Automation.Remoting
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyReceived, (int)RemoteSessionEvent.KeySendFailed] += DoKeyExchange;
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyReceived, (int)RemoteSessionEvent.KeySent] += DoKeyExchange;
 
-            //with connect, a new client can negotiate a key change to a server that has already negotiated key exchange with a previous client
+            // with connect, a new client can negotiate a key change to a server that has already negotiated key exchange with a previous client
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyExchanged, (int)RemoteSessionEvent.KeyReceived] += DoKeyExchange; //
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyExchanged, (int)RemoteSessionEvent.KeyRequested] += DoKeyExchange; //
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyExchanged, (int)RemoteSessionEvent.KeyReceiveFailed] += DoKeyExchange; //
-
-
 
             for (int i = 0; i < _stateMachineHandle.GetLength(0); i++)
             {
@@ -171,7 +169,7 @@ namespace System.Management.Automation.Remoting
             if (arg.StateEvent == RemoteSessionEvent.MessageReceived)
             {
                 if (_state == RemoteSessionState.Established ||
-                    _state == RemoteSessionState.EstablishedAndKeySent || //server session will never be in this state.. TODO- remove this
+                    _state == RemoteSessionState.EstablishedAndKeySent || // server session will never be in this state.. TODO- remove this
                     _state == RemoteSessionState.EstablishedAndKeyReceived ||
                     _state == RemoteSessionState.EstablishedAndKeyExchanged)
                 {
@@ -205,6 +203,7 @@ namespace System.Management.Automation.Remoting
                 {
                     return;
                 }
+
                 _eventsInProcess = true;
             }
 
@@ -212,15 +211,15 @@ namespace System.Management.Automation.Remoting
 
             // currently server state machine doesn't raise events
             // this will allow server state machine to raise events.
-            //RaiseStateMachineEvents();
+            // RaiseStateMachineEvents();
         }
 
         /// <summary>
-        /// processes events in the queue. If there are no 
+        /// Processes events in the queue. If there are no
         /// more events to process, then sets eventsInProcess
         /// variable to false. This will ensure that another
         /// thread which raises an event can then take control
-        /// of processing the events
+        /// of processing the events.
         /// </summary>
         private void ProcessEvents()
         {
@@ -235,6 +234,7 @@ namespace System.Management.Automation.Remoting
                         _eventsInProcess = false;
                         break;
                     }
+
                     eventArgs = _processPendingEventsQueue.Dequeue();
                 }
 
@@ -243,7 +243,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This is the private version of raising a FSM event. 
+        /// This is the private version of raising a FSM event.
         /// It can only be called by the dedicated thread that processes the event queue.
         /// It calls the event handler
         /// in the right position of the event handling matrix.
@@ -251,7 +251,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// The parameter contains the actual FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter is null.
         /// </exception>
@@ -259,7 +258,7 @@ namespace System.Management.Automation.Remoting
         {
             if (fsmEventArg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
             }
 
             EventHandler<RemoteSessionStateMachineEventArgs> handler = _stateMachineHandle[(int)_state, (int)fsmEventArg.StateEvent];
@@ -276,7 +275,7 @@ namespace System.Management.Automation.Remoting
         #region Event Handlers
 
         /// <summary>
-        /// This is the handler for Start event of the FSM. This is the begining of everything
+        /// This is the handler for Start event of the FSM. This is the beginning of everything
         /// else. From this moment on, the FSM will proceeds step by step to eventually reach
         /// Established state or Closed state.
         /// </summary>
@@ -284,7 +283,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -294,7 +292,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.CreateSession, "StateEvent must be CreateSession");
@@ -305,7 +303,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This is the handler for NegotiationPending event. 
+        /// This is the handler for NegotiationPending event.
         /// NegotiationPending state can be in reached in the following cases
         /// 1. From Idle to NegotiationPending (during startup)
         /// 2. From Negotiation(Response)Sent to NegotiationPending.
@@ -323,7 +321,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert((_state == RemoteSessionState.Idle) || (_state == RemoteSessionState.NegotiationSent),
@@ -341,7 +339,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -356,7 +353,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.NegotiationReceived, "StateEvent must be NegotiationReceived");
@@ -365,12 +362,12 @@ namespace System.Management.Automation.Remoting
 
                 if (fsmEventArg.StateEvent != RemoteSessionEvent.NegotiationReceived)
                 {
-                    throw PSTraceSource.NewArgumentException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentException(nameof(fsmEventArg));
                 }
 
                 if (fsmEventArg.RemoteSessionCapability == null)
                 {
-                    throw PSTraceSource.NewArgumentException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentException(nameof(fsmEventArg));
                 }
 
                 SetState(RemoteSessionState.NegotiationReceived, null);
@@ -379,14 +376,13 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This is the handler for NegotiationSending event.
-        /// It sets the new state to be NegotiationSending, and sends the server side 
+        /// It sets the new state to be NegotiationSending, and sends the server side
         /// negotiation packet by queuing it on the output queue.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -395,7 +391,7 @@ namespace System.Management.Automation.Remoting
         {
             if (fsmEventArg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
             }
 
             Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.NegotiationSending, "Event must be NegotiationSending");
@@ -414,7 +410,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -425,7 +420,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(_state == RemoteSessionState.NegotiationSending, "State must be NegotiationSending");
@@ -443,7 +438,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -454,15 +448,15 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
-                Dbg.Assert(_state == RemoteSessionState.NegotiationSent, "State must be NeogtiationReceived");
+                Dbg.Assert(_state == RemoteSessionState.NegotiationSent, "State must be NegotiationReceived");
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.NegotiationCompleted, "StateEvent must be NegotiationCompleted");
 
                 if (fsmEventArg.StateEvent != RemoteSessionEvent.NegotiationCompleted)
                 {
-                    throw PSTraceSource.NewArgumentException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentException(nameof(fsmEventArg));
                 }
 
                 if (_state != RemoteSessionState.NegotiationSent)
@@ -482,31 +476,30 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// If the parameter <paramref name="fsmEventArg"/> does not contain remote data.
-        /// </exception>        
+        /// </exception>
         internal void DoMessageReceived(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
             using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 if (fsmEventArg.RemoteData == null)
                 {
-                    throw PSTraceSource.NewArgumentException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(_state == RemoteSessionState.Established ||
                            _state == RemoteSessionState.EstablishedAndKeyExchanged ||
                            _state == RemoteSessionState.EstablishedAndKeyReceived ||
-                           _state == RemoteSessionState.EstablishedAndKeySent,  //server session will never be in this state.. TODO- remove this
+                           _state == RemoteSessionState.EstablishedAndKeySent,  // server session will never be in this state.. TODO- remove this
                            "State must be Established or EstablishedAndKeySent or EstablishedAndKeyReceived or EstablishedAndKeyExchanged");
 
                 RemotingTargetInterface targetInterface = fsmEventArg.RemoteData.TargetInterface;
@@ -514,7 +507,7 @@ namespace System.Management.Automation.Remoting
 
                 Guid clientRunspacePoolId;
                 ServerRunspacePoolDriver runspacePoolDriver;
-                //string errorMessage = null;
+                // string errorMessage = null;
 
                 RemoteDataEventArgs remoteDataForSessionArg = null;
 
@@ -535,6 +528,7 @@ namespace System.Management.Automation.Remoting
                                     break;
                             }
                         }
+
                         break;
 
                     case RemotingTargetInterface.RunspacePool:
@@ -548,7 +542,7 @@ namespace System.Management.Automation.Remoting
                         }
                         else
                         {
-                            s_trace.WriteLine(@"Server received data for Runspace (id: {0}), 
+                            s_trace.WriteLine(@"Server received data for Runspace (id: {0}),
                                 but the Runspace cannot be found", clientRunspacePoolId);
 
                             PSRemotingDataStructureException reasonOfFailure = new
@@ -587,27 +581,26 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// If the parameter <paramref name="fsmEventArg"/> does not contain ConnectFailed event.
-        /// </exception>   
+        /// </exception>
         private void DoConnectFailed(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
             using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.ConnectFailed, "StateEvent must be ConnectFailed");
 
                 if (fsmEventArg.StateEvent != RemoteSessionEvent.ConnectFailed)
                 {
-                    throw PSTraceSource.NewArgumentException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(_state == RemoteSessionState.Connecting, "session State must be Connecting");
@@ -625,11 +618,9 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> does not contains FatalError event.
         /// </exception>
@@ -639,14 +630,14 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.FatalError, "StateEvent must be FatalError");
 
                 if (fsmEventArg.StateEvent != RemoteSessionEvent.FatalError)
                 {
-                    throw PSTraceSource.NewArgumentException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentException(nameof(fsmEventArg));
                 }
 
                 DoClose(this, fsmEventArg);
@@ -655,7 +646,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Handle connect event - this is raised when a new client tries to connect to an existing session
-        /// No changes to state. Calls into the session to handle any post connect operations
+        /// No changes to state. Calls into the session to handle any post connect operations.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="fsmEventArg"></param>
@@ -675,7 +666,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -685,7 +675,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 RemoteSessionState oldState = _state;
@@ -700,7 +690,7 @@ namespace System.Management.Automation.Remoting
                     case RemoteSessionState.Connecting:
                     case RemoteSessionState.Connected:
                     case RemoteSessionState.Established:
-                    case RemoteSessionState.EstablishedAndKeySent:  //server session will never be in this state.. TODO- remove this
+                    case RemoteSessionState.EstablishedAndKeySent:  // server session will never be in this state.. TODO- remove this
                     case RemoteSessionState.EstablishedAndKeyReceived:
                     case RemoteSessionState.EstablishedAndKeyExchanged:
                     case RemoteSessionState.NegotiationReceived:
@@ -730,7 +720,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -740,7 +729,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.CloseFailed, "StateEvent must be CloseFailed");
@@ -761,7 +750,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -771,7 +759,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.CloseCompleted, "StateEvent must be CloseCompleted");
@@ -792,7 +780,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -802,7 +789,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.NegotiationFailed, "StateEvent must be NegotiationFailed");
@@ -822,7 +809,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -832,7 +818,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.NegotiationTimeout, "StateEvent must be NegotiationTimeout");
@@ -858,7 +844,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -868,7 +853,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.SendFailed, "StateEvent must be SendFailed");
@@ -888,7 +873,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -898,7 +882,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.ReceiveFailed, "StateEvent must be ReceivedFailed");
@@ -911,23 +895,23 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This method contains all the logic for handling the state machine
-        /// for key exchange. All the different scenarios are covered in this
+        /// for key exchange. All the different scenarios are covered in this.
         /// </summary>
-        /// <param name="sender">sender of this event, unused</param>
-        /// <param name="eventArgs">event args</param>
+        /// <param name="sender">Sender of this event, unused.</param>
+        /// <param name="eventArgs">Event args.</param>
         private void DoKeyExchange(object sender, RemoteSessionStateMachineEventArgs eventArgs)
         {
-            //There are corner cases with disconnect that can result in client receiving outdated key exchange packets
-            //***TODO*** Deal with this on the client side. Key exchange packets should have additional information
-            //that identify the context of negotiation. Just like callId in SetMax and SetMinRunspaces messages
+            // There are corner cases with disconnect that can result in client receiving outdated key exchange packets
+            // ***TODO*** Deal with this on the client side. Key exchange packets should have additional information
+            // that identify the context of negotiation. Just like callId in SetMax and SetMinRunspaces messages
             Dbg.Assert(_state >= RemoteSessionState.Established,
-                "Key Receving can only be raised after reaching the Established state");
+                "Key Receiving can only be raised after reaching the Established state");
 
             switch (eventArgs.StateEvent)
             {
                 case RemoteSessionEvent.KeyReceived:
                     {
-                        //does the server ever start key exchange process??? This may not be required
+                        // does the server ever start key exchange process??? This may not be required
                         if (_state == RemoteSessionState.EstablishedAndKeyRequested)
                         {
                             // reset the timer
@@ -945,6 +929,7 @@ namespace System.Management.Automation.Remoting
                         // you need to send an encrypted session key to the client
                         _session.SendEncryptedSessionKey();
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeySent:
@@ -955,6 +940,7 @@ namespace System.Management.Automation.Remoting
                             SetState(RemoteSessionState.EstablishedAndKeyExchanged, eventArgs.Reason);
                         }
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeyRequested:
@@ -968,6 +954,7 @@ namespace System.Management.Automation.Remoting
                             _keyExchangeTimer = new Timer(HandleKeyExchangeTimeout, null, BaseTransportManager.ServerDefaultKeepAliveTimeoutMs, Timeout.Infinite);
                         }
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeyReceiveFailed:
@@ -979,20 +966,22 @@ namespace System.Management.Automation.Remoting
 
                         DoClose(this, eventArgs);
                     }
+
                     break;
 
                 case RemoteSessionEvent.KeySendFailed:
                     {
                         DoClose(this, eventArgs);
                     }
+
                     break;
             }
         }
 
         /// <summary>
-        /// Handles the timeout for key exchange
+        /// Handles the timeout for key exchange.
         /// </summary>
-        /// <param name="sender">sender of this event</param>
+        /// <param name="sender">Sender of this event.</param>
         private void HandleKeyExchangeTimeout(object sender)
         {
             Dbg.Assert(_state == RemoteSessionState.EstablishedAndKeyRequested, "timeout should only happen when waiting for a key");
@@ -1007,7 +996,7 @@ namespace System.Management.Automation.Remoting
                 new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerKeyExchangeFailed);
 
             RaiseEvent(new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.KeyReceiveFailed, exception));
-        } // SetStateHandler
+        }
 
         #endregion Event Handlers
 
@@ -1026,10 +1015,10 @@ namespace System.Management.Automation.Remoting
         /// <param name="newState">
         /// The new state.
         /// </param>
-        /// <param name="reasion">
+        /// <param name="reason">
         /// Optional parameter that can provide additional information. This is currently not used.
         /// </param>
-        private void SetState(RemoteSessionState newState, Exception reasion)
+        private void SetState(RemoteSessionState newState, Exception reason)
         {
             RemoteSessionState oldState = _state;
             if (newState != oldState)

@@ -1,30 +1,27 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Class HelpFileHelpProvider implement the help provider for help.txt kinds of 
+    /// Class HelpFileHelpProvider implement the help provider for help.txt kinds of
     /// help contents.
-    /// 
+    ///
     /// Help File help information are stored in '.help.txt' files. These files are
     /// located in the Monad / CustomShell Path as well as in the Application Base
-    /// of PSSnapIns
-    /// 
+    /// of PSSnapIns.
     /// </summary>
     internal class HelpFileHelpProvider : HelpProviderWithCache
     {
         /// <summary>
-        /// Constructor for HelpProvider
+        /// Constructor for HelpProvider.
         /// </summary>
         internal HelpFileHelpProvider(HelpSystem helpSystem) : base(helpSystem)
         {
@@ -33,7 +30,7 @@ namespace System.Management.Automation
         #region Common Properties
 
         /// <summary>
-        /// Name of the provider
+        /// Name of the provider.
         /// </summary>
         /// <value>Name of the provider</value>
         internal override string Name
@@ -45,7 +42,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Help category of the provider
+        /// Help category of the provider.
         /// </summary>
         /// <value>Help category of the provider</value>
         internal override HelpCategory HelpCategory
@@ -110,7 +107,7 @@ namespace System.Management.Automation
 
             if (filesMatched.Count > 1)
             {
-                //Dictionary<<ModuleName,fileName>, <Version, helpFileFullName>>
+                // Dictionary<<ModuleName,fileName>, <Version, helpFileFullName>>
                 Dictionary<Tuple<string, string>, Tuple<string, Version>> modulesAndVersion = new Dictionary<Tuple<string, string>, Tuple<string, Version>>();
                 HashSet<string> filesProcessed = new HashSet<string>();
 
@@ -128,33 +125,33 @@ namespace System.Management.Automation
                         string moduleName = null;
                         GetModuleNameAndVersion(psModulePath, fileFullName, out moduleName, out moduleVersionFromPath);
 
-                        //Skip modules whose root we cannot determine or which do not have versions.
+                        // Skip modules whose root we cannot determine or which do not have versions.
                         if (moduleVersionFromPath != null && moduleName != null)
                         {
                             Tuple<string, Version> moduleVersion = null;
                             Tuple<string, string> key = new Tuple<string, string>(moduleName, fileName);
                             if (modulesAndVersion.TryGetValue(key, out moduleVersion))
                             {
-                                //Consider for further processing only if the help file name is same.
+                                // Consider for further processing only if the help file name is same.
                                 if (filesProcessed.Contains(fileName))
                                 {
                                     if (moduleVersionFromPath > moduleVersion.Item2)
                                     {
                                         modulesAndVersion[key] = new Tuple<string, Version>(fileFullName, moduleVersionFromPath);
 
-                                        //Remove the old file since we found a newer version.
+                                        // Remove the old file since we found a newer version.
                                         matchedFilesToRemove.Add(moduleVersion.Item1);
                                     }
                                     else
                                     {
-                                        //Remove the new file as higher version item is already in dictionary.
+                                        // Remove the new file as higher version item is already in dictionary.
                                         matchedFilesToRemove.Add(fileFullName);
                                     }
                                 }
                             }
                             else
                             {
-                                //Add the module to the dictionary as it was not processes earlier.
+                                // Add the module to the dictionary as it was not processes earlier.
                                 modulesAndVersion.Add(new Tuple<string, string>(moduleName, fileName),
                                                       new Tuple<string, Version>(fileFullName, moduleVersionFromPath));
                             }
@@ -162,6 +159,28 @@ namespace System.Management.Automation
                     }
 
                     filesProcessed.Add(fileName);
+                }
+            }
+
+            // Deduplicate by filename to compensate for two sources, currentuser scope and allusers scope.
+            // This is done after the version check filtering to ensure we do not remove later version files.
+            HashSet<string> fileNameHash = new HashSet<string>();
+
+            foreach (var file in filesMatched)
+            {
+                string fileName = Path.GetFileName(file);
+
+                if (!fileNameHash.Contains(fileName))
+                {
+                    fileNameHash.Add(fileName);
+                }
+                else
+                {
+                    // If the file need to be removed, add it to matchedFilesToRemove, if not already present.
+                    if (!matchedFilesToRemove.Contains(file))
+                    {
+                        matchedFilesToRemove.Add(file);
+                    }
                 }
             }
 
@@ -199,7 +218,7 @@ namespace System.Management.Automation
 
             pattern += ".help.txt";
 
-            Collection<String> files = MUIFileSearcher.SearchFiles(pattern, GetExtendedSearchPaths());
+            Collection<string> files = MUIFileSearcher.SearchFiles(pattern, GetExtendedSearchPaths());
 
             var matchedFilesToRemove = FilterToLatestModuleVersion(files);
 
@@ -272,17 +291,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Load help file based on the file path.
         /// </summary>
-        /// <param name="path">file path to load help from</param>
-        /// <returns>Help info object loaded from the file</returns>
+        /// <param name="path">File path to load help from.</param>
+        /// <returns>Help info object loaded from the file.</returns>
         private HelpInfo LoadHelpFile(string path)
         {
             string fileName = Path.GetFileName(path);
 
-            //Bug906435: Get-help for special devices throws an exception
-            //There might be situations where path does not end with .help.txt extension
-            //The assumption that path ends with .help.txt is broken under special 
-            //conditions when user uses "get-help" with device names like "prn","com1" etc.
-            //First check whether path ends with .help.txt.                
+            // Bug906435: Get-help for special devices throws an exception
+            // There might be situations where path does not end with .help.txt extension
+            // The assumption that path ends with .help.txt is broken under special
+            // conditions when user uses "get-help" with device names like "prn","com1" etc.
+            // First check whether path ends with .help.txt.
 
             // If path does not end with ".help.txt" return.
             if (!path.EndsWith(".help.txt", StringComparison.OrdinalIgnoreCase))
@@ -290,7 +309,7 @@ namespace System.Management.Automation
 
             string name = fileName.Substring(0, fileName.Length - 9 /* ".help.txt".Length */);
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
                 return null;
 
             HelpInfo helpInfo = GetCache(path);
@@ -317,13 +336,14 @@ namespace System.Management.Automation
         /// Gets the extended search paths for about_topics help. To be able to get about_topics help from unloaded modules,
         /// we will add $pshome and the folders under PS module paths to the collection of paths to search.
         /// </summary>
-        /// <returns>a collection of string representing locations</returns>
+        /// <returns>A collection of string representing locations.</returns>
         internal Collection<string> GetExtendedSearchPaths()
         {
-            Collection<String> searchPaths = GetSearchPaths();
+            Collection<string> searchPaths = GetSearchPaths();
 
             // Add $pshome at the top of the list
-            String defaultShellSearchPath = GetDefaultShellSearchPath();
+            string defaultShellSearchPath = GetDefaultShellSearchPath();
+
             int index = searchPaths.IndexOf(defaultShellSearchPath);
             if (index != 0)
             {
@@ -331,8 +351,12 @@ namespace System.Management.Automation
                 {
                     searchPaths.RemoveAt(index);
                 }
+
                 searchPaths.Insert(0, defaultShellSearchPath);
             }
+
+            // Add the CurrentUser help path.
+            searchPaths.Add(HelpUtils.GetUserHomeHelpSearchPath());
 
             // Add modules that are not loaded. Since using 'get-module -listavailable' is very expensive,
             // we load all the directories (which are not empty) under the module path.
@@ -346,7 +370,7 @@ namespace System.Management.Automation
                         // * and SearchOption.AllDirectories gets all the version directories.
                         string[] directories = Directory.GetDirectories(psModulePath, "*", SearchOption.AllDirectories);
 
-                        var possibleModuleDirectories = directories.Where(directory => ModuleUtils.IsPossibleModuleDirectory(directory));
+                        var possibleModuleDirectories = directories.Where(directory => !ModuleUtils.IsPossibleResourceDirectory(directory));
 
                         foreach (string directory in possibleModuleDirectories)
                         {
@@ -367,12 +391,13 @@ namespace System.Management.Automation
                     catch (System.Security.SecurityException) { }
                 }
             }
+
             return searchPaths;
         }
 
         /// <summary>
-        /// This will reset the help cache. Normally this corresponds to a 
-        /// help culture change. 
+        /// This will reset the help cache. Normally this corresponds to a
+        /// help culture change.
         /// </summary>
         internal override void Reset()
         {
@@ -386,9 +411,9 @@ namespace System.Management.Automation
         #region Private Data
 
         /// <summary>
-        /// This is a hashtable to track which help files are loaded already. 
-        /// 
-        /// This will avoid one help file getting loaded again and again. 
+        /// This is a hashtable to track which help files are loaded already.
+        ///
+        /// This will avoid one help file getting loaded again and again.
         /// </summary>
         private Hashtable _helpFiles = new Hashtable();
 

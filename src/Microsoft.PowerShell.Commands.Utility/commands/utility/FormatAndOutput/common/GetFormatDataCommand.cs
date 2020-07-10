@@ -1,24 +1,24 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
-using System.Linq;
-using System.Management.Automation;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Management.Automation;
+using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
+
 using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Gets formatting information from the loading
-    /// format information database
+    /// Gets formatting information from the loading format information database.
     /// </summary>
     /// <remarks>Currently supports only table controls
     /// </remarks>
-    [Cmdlet(VerbsCommon.Get, "FormatData", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144303")]
+    [Cmdlet(VerbsCommon.Get, "FormatData", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096614")]
     [OutputType(typeof(System.Management.Automation.ExtendedTypeDefinition))]
     public class GetFormatDataCommand : PSCmdlet
     {
@@ -26,25 +26,25 @@ namespace Microsoft.PowerShell.Commands
         private WildcardPattern[] _filter = new WildcardPattern[1];
 
         /// <summary>
-        /// Get Formatting information only for the specified
-        /// typename
+        /// Get Formatting information only for the specified typename.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [ValidateNotNullOrEmpty]
         [Parameter(Position = 0)]
-        public String[] TypeName
+        public string[] TypeName
         {
             get
             {
                 return _typename;
             }
+
             set
             {
                 _typename = value;
 
                 if (_typename == null)
                 {
-                    _filter = Utils.EmptyArray<WildcardPattern>();
+                    _filter = Array.Empty<WildcardPattern>();
                 }
                 else
                 {
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
         public Version PowerShellVersion { get; set; }
 
         /// <summary>
-        /// set the default filter
+        /// Set the default filter.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -75,7 +75,6 @@ namespace Microsoft.PowerShell.Commands
                 _filter[0] = WildcardPattern.Get("*", WildcardOptions.None);
             }
         }
-
 
         private static Dictionary<string, List<string>> GetTypeGroupMap(IEnumerable<TypeGroupDefinition> groupDefinitions)
         {
@@ -95,14 +94,32 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Takes out the content from the database and writes them
-        /// out
+        /// Takes out the content from the database and writes them out.
         /// </summary>
         protected override void ProcessRecord()
         {
-            bool writeOldWay = PowerShellVersion == null ||
-                               PowerShellVersion.Major < 5 ||
-                               PowerShellVersion.Build < 11086;
+            // Remoting detection: 
+            //   * Automatic variable $PSSenderInfo is defined in true remoting contexts as well as in background jobs.
+            //   * $PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion contains the client version, as a [version] instance.
+            //      Note: Even though $PSVersionTable.PSVersion is of type [semver] in PowerShell 6+, it is of type [version] here,
+            //            presumably because only the latter type deserializes type-faithfully.
+            var clientVersion = PowerShellVersion;
+            PSSenderInfo remotingClientInfo = GetVariableValue("PSSenderInfo") as PSSenderInfo;
+            if (clientVersion == null && remotingClientInfo != null)
+            {
+                clientVersion = PSObject.Base((PSObject.Base(remotingClientInfo.ApplicationArguments["PSVersionTable"]) as PSPrimitiveDictionary)?["PSVersion"]) as Version;
+            }
+
+            // During remoting, remain compatible with v5.0- clients by default.
+            // Passing a -PowerShellVersion argument allows overriding the client version.
+            bool writeOldWay =
+                (remotingClientInfo != null && clientVersion == null)  // To be safe: Remoting client version could unexpectedly not be determined.
+                ||
+                (clientVersion != null
+                    &&
+                    (clientVersion.Major < 5
+                        ||
+                    (clientVersion.Major == 5 && clientVersion.Minor < 1)));
 
             TypeInfoDataBase db = this.Context.FormatDBManager.Database;
 
@@ -158,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                // Older version of PowerShell do not know about someting in the control, so
+                // Older version of PowerShell do not know about something in the control, so
                 // don't return it.
                 if (writeOldWay && !control.CompatibleWithOldPowerShell())
                     continue;
@@ -171,8 +188,9 @@ namespace Microsoft.PowerShell.Commands
                     viewList = new List<FormatViewDefinition>();
                     typedefs.Add(consolidatedTypeName, viewList);
                 }
+
                 viewList.Add(formatdef);
-            }// foreach(ViewDefinition...
+            }
 
             // write out all the available type definitions
             foreach (var pair in typedefs)
@@ -194,6 +212,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         etd.TypeNames.Add(typeNames[i]);
                     }
+
                     WriteObject(etd);
                 }
             }
@@ -224,6 +243,7 @@ namespace Microsoft.PowerShell.Commands
                     consolidatedTypeName.Add(item.name);
                 }
             }
+
             return consolidatedTypeName;
         }
 
@@ -239,6 +259,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return false;
         }
     }

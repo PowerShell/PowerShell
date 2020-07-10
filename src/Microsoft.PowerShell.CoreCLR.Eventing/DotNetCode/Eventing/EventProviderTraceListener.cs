@@ -1,12 +1,9 @@
-//------------------------------------------------------------------------------
-// <copyright file="EtwListener.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using System.Text;
-using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Text;
 
 namespace System.Diagnostics.Eventing
 {
@@ -15,18 +12,21 @@ namespace System.Diagnostics.Eventing
         //
         // The listener uses the EtwProvider base class.
         // Because Listener data is not schematized at the moment the listener will
-        // log events using WriteMessageEvent method. 
-        // 
-        // Because WriteMessageEvent takes a string as the event payload 
-        // all the overriden loging methods convert the arguments into strings.
+        // log events using WriteMessageEvent method.
+        //
+        // Because WriteMessageEvent takes a string as the event payload
+        // all the overridden logging methods convert the arguments into strings.
         // Event payload is "delimiter" separated, which can be configured
-        // 
-        // 
+        //
+        //
         private EventProvider _provider;
+
         private const string s_nullStringValue = "null";
         private const string s_nullStringComaValue = "null,";
         private const string s_nullCStringValue = ": null";
+
         private string _delimiter = ";";
+
         private const uint s_keyWordMask = 0xFFFFFF00;
         private const int s_defaultPayloadSize = 512;
 
@@ -53,10 +53,10 @@ namespace System.Diagnostics.Eventing
 
         /// <summary>
         /// This method creates an instance of the ETW provider.
-        /// The guid argument must be a valid GUID or a format exeption will be
-        /// thrown when creating an instance of the ControlGuid. 
-        /// We need to be running on Vista or above. If not an 
-        /// PlatformNotSupported exception will be thrown by the EventProvider. 
+        /// The guid argument must be a valid GUID or a format exception will be
+        /// thrown when creating an instance of the ControlGuid.
+        /// We need to be running on Vista or above. If not an
+        /// PlatformNotSupported exception will be thrown by the EventProvider.
         /// </summary>
         public EventProviderTraceListener(string providerId)
         {
@@ -73,7 +73,7 @@ namespace System.Diagnostics.Eventing
             : base(name)
         {
             if (delimiter == null)
-                throw new ArgumentNullException("delimiter");
+                throw new ArgumentNullException(nameof(delimiter));
 
             if (delimiter.Length == 0)
                 throw new ArgumentException(DotNetEventingStrings.Argument_NeedNonemptyDelimiter);
@@ -87,7 +87,7 @@ namespace System.Diagnostics.Eventing
             Guid controlGuid = new Guid(providerId);
             //
             // Create The ETW TraceProvider
-            //			
+            //
 
             _provider = new EventProvider(controlGuid);
         }
@@ -132,10 +132,10 @@ namespace System.Diagnostics.Eventing
 
         //
         // For all the methods below the string to be logged contains:
-        // m_delimeter seperated data converted to string
+        // m_delimiter separated data converted to string
         //
         // The source parameter is ignored.
-        // 
+        //
         public sealed override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id, object data)
         {
             if (!_provider.IsEnabled())
@@ -164,7 +164,7 @@ namespace System.Diagnostics.Eventing
                             (long)eventType & s_keyWordMask);
         }
 
-        public sealed override void TraceData(TraceEventCache eventCache, String source, TraceEventType eventType, int id, params object[] data)
+        public sealed override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id, params object[] data)
         {
             if (!_provider.IsEnabled())
             {
@@ -225,7 +225,7 @@ namespace System.Diagnostics.Eventing
                 return;
             }
 
-            _provider.WriteMessageEvent(String.Empty,
+            _provider.WriteMessageEvent(string.Empty,
                             (byte)eventType,
                             (long)eventType & s_keyWordMask);
         }
@@ -270,7 +270,7 @@ namespace System.Diagnostics.Eventing
             }
             else
             {
-                _provider.WriteMessageEvent(String.Format(CultureInfo.InvariantCulture, format, args),
+                _provider.WriteMessageEvent(string.Format(CultureInfo.InvariantCulture, format, args),
                                 (byte)eventType,
                                 (long)eventType & s_keyWordMask);
             }

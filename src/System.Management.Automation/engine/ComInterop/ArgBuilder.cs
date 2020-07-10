@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 #if !SILVERLIGHT
 
@@ -14,8 +13,8 @@ namespace System.Management.Automation.ComInterop
 {
     /// <summary>
     /// ArgBuilder provides an argument value used by the MethodBinder.  One ArgBuilder exists for each
-    /// physical parameter defined on a method.  
-    /// 
+    /// physical parameter defined on a method.
+    ///
     /// Contrast this with ParameterWrapper which represents the logical argument passed to the method.
     /// </summary>
     internal abstract class ArgBuilder

@@ -1,12 +1,12 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Management.Automation.Language;
 using System.Globalization;
+using System.Management.Automation.Language;
+
 using Microsoft.PowerShell.Commands;
 
 using System.Management.Automation.Runspaces;
@@ -15,83 +15,82 @@ using System.Management.Automation.Internal;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Monad help is an architecture made up of three layers: 
-    ///     1. At the top is get-help commandlet from where help functionality is accessed. 
-    ///     2. At the middel is the help system which collects help objects based on user's request. 
+    /// Monad help is an architecture made up of three layers:
+    ///     1. At the top is get-help commandlet from where help functionality is accessed.
+    ///     2. At the middle is the help system which collects help objects based on user's request.
     ///     3. At the bottom are different help providers which provide help contents for different kinds of information requested.
-    /// 
+    ///
     /// Class HelpSystem implements the middle layer of Monad Help.
-    /// 
+    ///
     /// HelpSystem will provide functionalitys in following areas,
     ///     1. Initialization and management of help providers
     ///     2. Help engine: this will invoke different providers based on user's request.
     ///     3. Help API: this is the API HelpSystem provide to get-help commandlet.
-    /// 
+    ///
     /// Initialization:
     ///     Initialization of different help providers needs some context information like "ExecutionContext"
-    /// 
+    ///
     /// Help engine:
-    ///     By default, HelpInfo will be retrieved in two phase: exact-match phase and search phase.     
-    /// 
-    ///     Exact-match phase: help providers will be called in appropriate order to retrieve HelpInfo. 
+    ///     By default, HelpInfo will be retrieved in two phase: exact-match phase and search phase.
+    ///
+    ///     Exact-match phase: help providers will be called in appropriate order to retrieve HelpInfo.
     ///         If a match is found, help engine will stop and return the one and only HelpInfo retrieved.
-    /// 
+    ///
     ///     Search phase: all relevant help providers will be called to retrieve HelpInfo. (Order doesn't
     ///         matter in this case) Help engine will not stop until all help providers are called.
-    /// 
-    ///     Behaviour of help engine can be modified based on Help API parameters in following ways, 
+    ///
+    ///     Behaviour of help engine can be modified based on Help API parameters in following ways,
     ///         1. limit the number of HelpInfo to be returned.
     ///         2. specify which providers will be used.
     ///         3. general help info returned in case the search target is empty.
     ///         4. default help info (or hint) returned in case no match is found.
-    ///         
+    ///
     /// Help Api:
-    ///     Help Api is the function to be called by get-help commandlet. 
-    /// 
-    ///     Following information needs to be provided in Help Api paramters, 
+    ///     Help Api is the function to be called by get-help commandlet.
+    ///
+    ///     Following information needs to be provided in Help Api parameters,
     ///         1. search target: (which can be one or multiple strings)
     ///         2. help type: limit the type of help to be searched.
     ///         3. included fields: the fields to be included in the help info
-    ///         4. excluded fields: the fields to be excluded in the help info 
+    ///         4. excluded fields: the fields to be excluded in the help info
     ///         5. max number of results to be returned:
     ///         6. scoring algorithm for help results?
-    ///         7. help reason: help can be directly invoked by end user or as a result of 
+    ///         7. help reason: help can be directly invoked by end user or as a result of
     ///             some command syntax error.
-    ///         
-    ///     [gxie, 7-25-04]: included fields, excluded fields and help reason will be handled in 
-    ///         get-help commandlet. 
-    /// 
-    ///     Help API's are internal. The only way to access help is by 
+    ///
+    ///     [gxie, 7-25-04]: included fields, excluded fields and help reason will be handled in
+    ///         get-help commandlet.
+    ///
+    ///     Help API's are internal. The only way to access help is by
     ///     invoking the get-help command.
-    /// 
+    ///
     ///     To support the scenario where multiple monad engine running in one process. It
-    ///     is required that each monad engine has its one help system instance. 
-    /// 
+    ///     is required that each monad engine has its one help system instance.
+    ///
     ///     Currently each ExecutionContext has a help system instance as its member.
-    /// 
+    ///
     /// Help Providers:
-    ///     The basic contract for help providers is to provide help based on the 
-    ///     search target. 
-    /// 
+    ///     The basic contract for help providers is to provide help based on the
+    ///     search target.
+    ///
     ///     The result of help provider invocation can be three things:
     ///         a. Full help info. (in the case of exact-match and single search result)
     ///         b. Short help info. (in the case of multiple search result)
-    ///         c. Partial help info. (in the case of some commandlet help info, which 
+    ///         c. Partial help info. (in the case of some commandlet help info, which
     ///                                 should be supplemented by provider help info)
     ///         d. Help forwarding info. (in the case of alias, which will change the target
     ///                                   for alias)
-    /// 
+    ///
     ///     Help providers may need to provide functionality in following two area,
     ///         a. caching and indexing to boost performance
-    ///         b. localization
-    ///             
+    ///         b. localization.
     /// </summary>
     internal class HelpSystem
     {
         /// <summary>
-        /// Constructor for HelpSystem. 
+        /// Constructor for HelpSystem.
         /// </summary>
-        /// <param name="context">Execution context for this help system</param>
+        /// <param name="context">Execution context for this help system.</param>
         internal HelpSystem(ExecutionContext context)
         {
             if (context == null)
@@ -145,19 +144,19 @@ namespace System.Management.Automation
             InitializeHelpProviders();
         }
 
-        #endregion Initalization
+        #endregion Initialization
 
         #region Help API
 
         /// <summary>
-        /// Get Help api function. This is the basic form of the Help API using help 
-        /// request. 
-        /// 
+        /// Get Help api function. This is the basic form of the Help API using help
+        /// request.
+        ///
         /// Variants of this function are defined below, which will create help request
         /// object on fly.
         /// </summary>
-        /// <param name="helpRequest">helpRequest object</param>
-        /// <returns>An array of HelpInfo object</returns>
+        /// <param name="helpRequest">HelpRequest object.</param>
+        /// <returns>An array of HelpInfo object.</returns>
         internal IEnumerable<HelpInfo> GetHelp(HelpRequest helpRequest)
         {
             if (helpRequest == null)
@@ -210,16 +209,16 @@ namespace System.Management.Automation
         private bool _verboseHelpErrors = false;
 
         /// <summary>
-        /// VerboseHelpErrors is used in the case when end user is interested 
+        /// VerboseHelpErrors is used in the case when end user is interested
         /// to know all errors happened during a help search. This property
-        /// is false by default. 
-        /// 
+        /// is false by default.
+        ///
         /// If this property is turned on (by setting session variable "VerboseHelpError"),
-        /// following two behaviours will be different, 
-        ///     a. Help errors will be written to error pipeline regardless the situation. 
+        /// following two behaviours will be different,
+        ///     a. Help errors will be written to error pipeline regardless the situation.
         ///        (Normally, help errors will be written to error pipeline if there is no
         ///         help found and there is no wildcard in help search target).
-        ///     b. Some additional warnings, including maml processing warnings, will be 
+        ///     b. Some additional warnings, including maml processing warnings, will be
         ///        written to error pipeline.
         /// </summary>
         /// <value></value>
@@ -237,43 +236,26 @@ namespace System.Management.Automation
 
         // Cache of search paths that are currently active.
         // This will save a lot time when help providers do their searching
-        private Collection<String> _searchPaths = null;
+        private Collection<string> _searchPaths = null;
 
         /// <summary>
         /// Gets the search paths for external snapins/modules that are currently loaded.
         /// If the current shell is single-shell based, then the returned
         /// search path contains all the directories of currently active PSSnapIns/modules.
         /// </summary>
-        /// <returns>a collection of strings representing locations</returns>
+        /// <returns>A collection of strings representing locations.</returns>
         internal Collection<string> GetSearchPaths()
         {
             // return the cache if already present.
-            if (null != _searchPaths)
+            if (_searchPaths != null)
             {
                 return _searchPaths;
             }
-            _searchPaths = new Collection<String>();
 
-            RunspaceConfigForSingleShell runspace = this.ExecutionContext.RunspaceConfiguration as RunspaceConfigForSingleShell;
-
-            if (null != runspace)
-            {
-                // SingleShell case. Check active snapins...
-                MshConsoleInfo currentConsole = runspace.ConsoleInfo;
-
-                if ((null == currentConsole) || (null == currentConsole.ExternalPSSnapIns))
-                {
-                    return _searchPaths;
-                }
-
-                foreach (PSSnapInInfo snapin in currentConsole.ExternalPSSnapIns)
-                {
-                    _searchPaths.Add(snapin.ApplicationBase);
-                }
-            }
+            _searchPaths = new Collection<string>();
 
             // add loaded modules paths to the search path
-            if (null != ExecutionContext.Modules)
+            if (ExecutionContext.Modules != null)
             {
                 foreach (PSModuleInfo loadedModule in ExecutionContext.Modules.ModuleTable.Values)
                 {
@@ -289,18 +271,17 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get help based on the target, help type, etc
-        /// 
-        /// Help eninge retrieve help based on following schemes,
-        /// 
+        ///
+        /// Help engine retrieve help based on following schemes,
+        ///
         ///     1. if help target is empty, get default help
         ///     2. if help target is not a search pattern, try to retrieve exact help
         ///     3. if help target is a search pattern or step 2 returns no helpInfo, try to search for help
         ///        (Search for pattern in command name followed by pattern match in help content)
         ///     4. if step 3 returns exact one helpInfo object, try to retrieve exact help.
-        /// 
         /// </summary>
-        /// <param name="helpRequest">Help request object</param>
-        /// <returns>An array of HelpInfo object</returns>
+        /// <param name="helpRequest">Help request object.</param>
+        /// <returns>An array of HelpInfo object.</returns>
         private IEnumerable<HelpInfo> DoGetHelp(HelpRequest helpRequest)
         {
             _lastErrors.Clear();
@@ -309,7 +290,7 @@ namespace System.Management.Automation
 
             _lastHelpCategory = helpRequest.HelpCategory;
 
-            if (String.IsNullOrEmpty(helpRequest.Target))
+            if (string.IsNullOrEmpty(helpRequest.Target))
             {
                 HelpInfo helpInfo = GetDefaultHelp();
 
@@ -342,11 +323,11 @@ namespace System.Management.Automation
 
                     if (!isMatchFound)
                     {
-                        // Throwing exception here may not be the 
+                        // Throwing exception here may not be the
                         // best thing to do. Instead we can choose to
                         //    a. give a hint
                         //    b. just silently return an empty search result.
-                        // Solution: 
+                        // Solution:
                         //    If it is an exact help target, throw exception.
                         //    Otherwise, return empty result set.
                         if (!WildcardPattern.ContainsWildcardCharacters(helpRequest.Target) && this.LastErrors.Count == 0)
@@ -362,14 +343,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get help that exactly match the target. 
-        /// 
-        /// If the helpInfo returned is not complete, we will forward the 
+        /// Get help that exactly match the target.
+        ///
+        /// If the helpInfo returned is not complete, we will forward the
         /// helpInfo object to appropriate help provider for further processing.
         /// (this is implemented by ForwardHelp)
-        /// 
         /// </summary>
-        /// <param name="helpRequest">Help request object</param>
+        /// <param name="helpRequest">Help request object.</param>
         /// <returns>HelpInfo object retrieved. Can be Null.</returns>
         internal IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
@@ -401,20 +381,18 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Forward help to the help provider with type forwardHelpCategory. 
-        /// 
+        /// Forward help to the help provider with type forwardHelpCategory.
+        ///
         /// This is used in the following known scenarios so far
-        ///     1. Alias: helpInfo returned by Alias is not what end user needed. 
+        ///     1. Alias: helpInfo returned by Alias is not what end user needed.
         ///               The real help can be retrieved from Command help provider.
-        /// 
         /// </summary>
         /// <param name="helpInfo"></param>
-        /// <param name="helpRequest">Help request object</param>        
+        /// <param name="helpRequest">Help request object.</param>
         /// <returns>Never returns null.</returns>
-        /// <remarks>helpInfos is not null or emtpy.</remarks>
+        /// <remarks>helpInfos is not null or empty.</remarks>
         private IEnumerable<HelpInfo> ForwardHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
-            Collection<HelpInfo> result = new Collection<HelpInfo>();
             // findout if this helpInfo needs to be processed further..
             if (helpInfo.ForwardHelpCategory == HelpCategory.None && string.IsNullOrEmpty(helpInfo.ForwardTarget))
             {
@@ -475,10 +453,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get help that exactly match the target
+        /// Get help that exactly match the target.
         /// </summary>
-        /// <param name="helpRequest">help request object</param>
-        /// <returns>An IEnumerable of HelpInfo object</returns>
+        /// <param name="helpRequest">Help request object.</param>
+        /// <returns>An IEnumerable of HelpInfo object.</returns>
         private IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest)
         {
             int countOfHelpInfosFound = 0;
@@ -500,8 +478,8 @@ namespace System.Management.Automation
                 // 2. If Step 1 fails then search for pattern in help content
                 do
                 {
-                    // we should not continue the search loop if we are 
-                    // searching in the help content (as this is the last step 
+                    // we should not continue the search loop if we are
+                    // searching in the help content (as this is the last step
                     // in our search algorithm).
                     if (searchInHelpContent)
                     {
@@ -565,7 +543,7 @@ namespace System.Management.Automation
         private ArrayList _helpProviders = new ArrayList();
 
         /// <summary>
-        /// return the list of help providers initialized
+        /// Return the list of help providers initialized.
         /// </summary>
         /// <value>a list of help providers</value>
         internal ArrayList HelpProviders
@@ -577,7 +555,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initialize help providers. 
+        /// Initialize help providers.
         /// </summary>
         /// <remarks>
         /// Currently we hardcode the sequence of help provider initialization.
@@ -612,34 +590,25 @@ namespace System.Management.Automation
             helpProvider = new HelpFileHelpProvider(this);
             _helpProviders.Add(helpProvider);
 
-            helpProvider = new FaqHelpProvider(this);
-            _helpProviders.Add(helpProvider);
-
-            helpProvider = new GlossaryHelpProvider(this);
-            _helpProviders.Add(helpProvider);
-
-            helpProvider = new GeneralHelpProvider(this);
-            _helpProviders.Add(helpProvider);
-
             helpProvider = new DefaultHelpProvider(this);
             _helpProviders.Add(helpProvider);
         }
 
 #if _HelpProviderReflection
 
-        // Eventually we will publicize the provider api and initialize 
+        // Eventually we will publicize the provider api and initialize
         // help providers using reflection. This is not in v1 right now.
-        // 
+        //
         private static HelpProviderInfo[] _providerInfos = new HelpProviderInfo[]
-                            { new HelpProviderInfo("", "AliasHelpProvider", HelpCategory.Alias),
-                              new HelpProviderInfo("", "CommandHelpProvider", HelpCategory.Command),
-                              new HelpProviderInfo("", "ProviderHelpProvider", HelpCategory.Provider),
-                              new HelpProviderInfo("", "OverviewHelpProvider", HelpCategory.Overview),
-                              new HelpProviderInfo("", "GeneralHelpProvider", HelpCategory.General),
-                              new HelpProviderInfo("", "FAQHelpProvider", HelpCategory.FAQ),
-                              new HelpProviderInfo("", "GlossaryHelpProvider", HelpCategory.Glossary),
-                              new HelpProviderInfo("", "HelpFileHelpProvider", HelpCategory.HelpFile),
-                              new HelpProviderInfo("", "DefaultHelpHelpProvider", HelpCategory.DefaultHelp)
+                            { new HelpProviderInfo(string.Empty, "AliasHelpProvider", HelpCategory.Alias),
+                              new HelpProviderInfo(string.Empty, "CommandHelpProvider", HelpCategory.Command),
+                              new HelpProviderInfo(string.Empty, "ProviderHelpProvider", HelpCategory.Provider),
+                              new HelpProviderInfo(string.Empty, "OverviewHelpProvider", HelpCategory.Overview),
+                              new HelpProviderInfo(string.Empty, "GeneralHelpProvider", HelpCategory.General),
+                              new HelpProviderInfo(string.Empty, "FAQHelpProvider", HelpCategory.FAQ),
+                              new HelpProviderInfo(string.Empty, "GlossaryHelpProvider", HelpCategory.Glossary),
+                              new HelpProviderInfo(string.Empty, "HelpFileHelpProvider", HelpCategory.HelpFile),
+                              new HelpProviderInfo(string.Empty, "DefaultHelpHelpProvider", HelpCategory.DefaultHelp)
                             };
 
         private void InitializeHelpProviders()
@@ -660,7 +629,7 @@ namespace System.Management.Automation
         {
             Assembly providerAssembly = null;
 
-            if (String.IsNullOrEmpty(providerInfo.AssemblyName))
+            if (string.IsNullOrEmpty(providerInfo.AssemblyName))
             {
                 providerAssembly = Assembly.GetExecutingAssembly();
             }
@@ -699,7 +668,7 @@ namespace System.Management.Automation
             return null;
         }
 
-#endif        
+#endif
 
         #endregion Help Provider Manager
 
@@ -708,7 +677,7 @@ namespace System.Management.Automation
         private HelpErrorTracer _helpErrorTracer;
 
         /// <summary>
-        /// The error tracer for this help system
+        /// The error tracer for this help system.
         /// </summary>
         /// <value></value>
         internal HelpErrorTracer HelpErrorTracer
@@ -720,7 +689,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Start a trace frame for a help file
+        /// Start a trace frame for a help file.
         /// </summary>
         /// <param name="helpFile"></param>
         /// <returns></returns>
@@ -745,7 +714,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Trace a collection of errors within a help frame, which is tracked by 
+        /// Trace a collection of errors within a help frame, which is tracked by
         /// help tracer itself.
         /// </summary>
         /// <param name="errorRecords"></param>
@@ -765,8 +734,8 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Before each help request is serviced, current thread culture will validate
-        /// against the current culture of help system. If there is a miss match, each 
-        /// help provider will be notified of the culture change. 
+        /// against the current culture of help system. If there is a miss match, each
+        /// help provider will be notified of the culture change.
         /// </summary>
         private void ValidateHelpCulture()
         {
@@ -789,10 +758,9 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Reset help providers providers. This normally corresponds to help culture change.
-        /// 
+        ///
         /// Normally help providers will remove cached help content to make sure new help
-        /// requests will be served with content of right culture. 
-        /// 
+        /// requests will be served with content of right culture.
         /// </summary>
         internal void ResetHelpProviders()
         {
@@ -832,7 +800,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Help progress info
+    /// Help progress info.
     /// </summary>
     internal class HelpProgressInfo
     {
@@ -846,16 +814,16 @@ namespace System.Management.Automation
     /// </summary>
     internal class HelpProviderInfo
     {
-        internal string AssemblyName = "";
-        internal string ClassName = "";
+        internal string AssemblyName = string.Empty;
+        internal string ClassName = string.Empty;
         internal HelpCategory HelpCategory = HelpCategory.None;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="assemblyName">assembly that contains this help provider</param>
-        /// <param name="className">the class that implements this help provider</param>
-        /// <param name="helpCategory">help category of this help provider</param>
+        /// <param name="assemblyName">Assembly that contains this help provider.</param>
+        /// <param name="className">The class that implements this help provider.</param>
+        /// <param name="helpCategory">Help category of this help provider.</param>
         internal HelpProviderInfo(string assemblyName, string className, HelpCategory helpCategory)
         {
             this.AssemblyName = assemblyName;
@@ -865,63 +833,63 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Help categories
+    /// Help categories.
     /// </summary>
     [Flags]
     internal enum HelpCategory
     {
         /// <summary>
-        /// Undefined help category
+        /// Undefined help category.
         /// </summary>
         None = 0x00,
 
         /// <summary>
-        /// Alias help
+        /// Alias help.
         /// </summary>
         Alias = 0x01,
 
         /// <summary>
-        /// Cmdlet help
+        /// Cmdlet help.
         /// </summary>
         Cmdlet = 0x02,
 
         /// <summary>
-        /// Provider help
+        /// Provider help.
         /// </summary>
         Provider = 0x04,
 
         /// <summary>
-        /// General keyword help
+        /// General keyword help.
         /// </summary>
         General = 0x10,
 
         /// <summary>
-        /// FAQ's
+        /// FAQ's.
         /// </summary>
         FAQ = 0x20,
 
         /// <summary>
-        /// Glossary and term definitions
+        /// Glossary and term definitions.
         /// </summary>
         Glossary = 0x40,
 
         /// <summary>
-        /// Help that is contained in help file
+        /// Help that is contained in help file.
         /// </summary>
         HelpFile = 0x80,
 
         /// <summary>
-        /// Help from a script block
+        /// Help from a script block.
         /// </summary>
         ScriptCommand = 0x100,
 
         /// <summary>
-        /// Help for a function
+        /// Help for a function.
         /// </summary>
         Function = 0x200,
 
         /// <summary>
-        /// Help for a filter
+        /// Help for a filter.
         /// </summary>
         Filter = 0x400,
 
@@ -936,27 +904,22 @@ namespace System.Management.Automation
         All = 0xFFFFF,
 
         ///<summary>
-        /// Default Help
+        /// Default Help.
         /// </summary>
         DefaultHelp = 0x1000,
 
         ///<summary>
-        /// Help for a Workflow
-        /// </summary>
-        Workflow = 0x2000,
-
-        ///<summary>
-        /// Help for a Configuration
+        /// Help for a Configuration.
         /// </summary>
         Configuration = 0x4000,
 
         /// <summary>
-        /// Help for DSC Resource
+        /// Help for DSC Resource.
         /// </summary>
         DscResource = 0x8000,
 
         /// <summary>
-        /// Help for PS Classes
+        /// Help for PS Classes.
         /// </summary>
         Class = 0x10000
     }

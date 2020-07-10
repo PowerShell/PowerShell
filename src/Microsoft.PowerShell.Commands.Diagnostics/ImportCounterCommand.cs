@@ -1,44 +1,42 @@
-//
-// Copyright (c) 2008 Microsoft Corporation. All rights reserved.
-// 
-
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
-using System.Text;
-using System.IO;
-using System.Xml;
-using System.Net;
-using System.Management.Automation;
-using System.ComponentModel;
-using System.Reflection;
-using System.Globalization;
-using System.Management.Automation.Runspaces;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
+using System.Net;
+using System.Reflection;
+using System.Resources;
 using System.Security;
 using System.Security.Principal;
-using System.Resources;
+using System.Text;
 using System.Threading;
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.Powershell.Commands.GetCounter.PdhNative;
-using Microsoft.PowerShell.Commands.GetCounter;
-using Microsoft.PowerShell.Commands.Diagnostics.Common;
+using System.Xml;
 
+using Microsoft.PowerShell.Commands.Diagnostics.Common;
+using Microsoft.PowerShell.Commands.GetCounter;
+using Microsoft.Powershell.Commands.GetCounter.PdhNative;
 
 namespace Microsoft.PowerShell.Commands
 {
-    /// 
+    ///
     /// Class that implements the Get-Counter cmdlet.
-    /// 
-    [Cmdlet("Import", "Counter", DefaultParameterSetName = "GetCounterSet", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=138338")]
+    ///
+    [Cmdlet(VerbsData.Import, "Counter", DefaultParameterSetName = "GetCounterSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=138338")]
     public sealed class ImportCounterCommand : PSCmdlet
     {
         //
         // Path parameter
-        //  
+        //
         [Parameter(
                 Position = 0,
                 Mandatory = true,
@@ -54,18 +52,19 @@ namespace Microsoft.PowerShell.Commands
         public string[] Path
         {
             get { return _path; }
+
             set { _path = value; }
         }
+
         private string[] _path;
 
         private StringCollection _resolvedPaths = new StringCollection();
 
         private List<string> _accumulatedFileNames = new List<string>();
 
-
         //
         // ListSet parameter
-        //  
+        //
         [Parameter(
                 Mandatory = true,
                 ParameterSetName = "ListSetSet",
@@ -80,10 +79,11 @@ namespace Microsoft.PowerShell.Commands
         public string[] ListSet
         {
             get { return _listSet; }
+
             set { _listSet = value; }
         }
-        private string[] _listSet = new string[0];
 
+        private string[] _listSet = Array.Empty<string>();
 
         //
         // StartTime parameter
@@ -96,10 +96,11 @@ namespace Microsoft.PowerShell.Commands
         public DateTime StartTime
         {
             get { return _startTime; }
+
             set { _startTime = value; }
         }
-        private DateTime _startTime = DateTime.MinValue;
 
+        private DateTime _startTime = DateTime.MinValue;
 
         //
         // EndTime parameter
@@ -112,14 +113,15 @@ namespace Microsoft.PowerShell.Commands
         public DateTime EndTime
         {
             get { return _endTime; }
+
             set { _endTime = value; }
         }
-        private DateTime _endTime = DateTime.MaxValue;
 
+        private DateTime _endTime = DateTime.MaxValue;
 
         //
         // Counter parameter
-        //  
+        //
         [Parameter(
                 Mandatory = false,
                 ParameterSetName = "GetCounterSet",
@@ -133,9 +135,11 @@ namespace Microsoft.PowerShell.Commands
         public string[] Counter
         {
             get { return _counter; }
+
             set { _counter = value; }
         }
-        private string[] _counter = new string[0];
+
+        private string[] _counter = Array.Empty<string>();
 
         //
         // Summary switch
@@ -144,8 +148,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Summary
         {
             get { return _summary; }
+
             set { _summary = value; }
         }
+
         private SwitchParameter _summary;
 
         //
@@ -161,17 +167,17 @@ namespace Microsoft.PowerShell.Commands
         public Int64 MaxSamples
         {
             get { return _maxSamples; }
+
             set { _maxSamples = value; }
         }
-        private Int64 _maxSamples = KEEP_ON_SAMPLING;
 
+        private Int64 _maxSamples = KEEP_ON_SAMPLING;
 
         private ResourceManager _resourceMgr = null;
 
         private PdhHelper _pdhHelper = null;
 
         private bool _stopping = false;
-
 
         //
         // AccumulatePipelineFileNames() accumulates counter file paths in the pipeline scenario:
@@ -182,14 +188,26 @@ namespace Microsoft.PowerShell.Commands
             _accumulatedFileNames.AddRange(_path);
         }
 
-
         //
         // BeginProcessing() is invoked once per pipeline
         //
         protected override void BeginProcessing()
         {
-            _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
+
+#if CORECLR
+            if (Platform.IsIoT)
+            {
+                // IoT does not have the '$env:windir\System32\pdh.dll' assembly which is required by this cmdlet.
+                throw new PlatformNotSupportedException();
+            }
+
+            // PowerShell 7 requires at least Windows 7,
+            // so no version test is needed
+            _pdhHelper = new PdhHelper(false);
+#else
             _pdhHelper = new PdhHelper(System.Environment.OSVersion.Version.Major < 6);
+#endif
+            _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
         }
 
         //
@@ -199,11 +217,12 @@ namespace Microsoft.PowerShell.Commands
         {
             //
             // Resolve and validate the Path argument: present for all parametersets.
-            //            
+            //
             if (!ResolveFilePaths())
             {
                 return;
             }
+
             ValidateFilePaths();
 
             switch (ParameterSetName)
@@ -228,21 +247,19 @@ namespace Microsoft.PowerShell.Commands
             _pdhHelper.Dispose();
         }
 
-
-        // 
+        //
         // Handle Control-C
-        // 
+        //
         protected override void StopProcessing()
         {
             _stopping = true;
             _pdhHelper.Dispose();
         }
 
-
         //
         // ProcessRecord() override.
         // This is the main entry point for the cmdlet.
-        //       
+        //
         protected override void ProcessRecord()
         {
             AccumulatePipelineFileNames();
@@ -251,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // ProcessSummary().
         // Does the work to process Summary parameter set.
-        //       
+        //
         private void ProcessSummary()
         {
             uint res = _pdhHelper.ConnectToDataSource(_resolvedPaths);
@@ -276,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // ProcessListSet().
         // Does the work to process ListSet parameter set.
-        //       
+        //
         private void ProcessListSet()
         {
             uint res = _pdhHelper.ConnectToDataSource(_resolvedPaths);
@@ -318,7 +335,6 @@ namespace Microsoft.PowerShell.Commands
                             continue;
                         }
 
-
                         StringCollection counterSetCounters = new StringCollection();
                         StringCollection counterSetInstances = new StringCollection();
 
@@ -347,7 +363,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             categoryType = PerformanceCounterCategoryType.MultiInstance;
                         }
-                        else //if (counterSetInstances.Count == 1) //???
+                        else // if (counterSetInstances.Count == 1) //???
                         {
                             categoryType = PerformanceCounterCategoryType.SingleInstance;
                         }
@@ -358,6 +374,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteObject(setObj);
                         bMatched = true;
                     }
+
                     if (!bMatched)
                     {
                         string msg = _resourceMgr.GetString("NoMatchingCounterSetsInFile");
@@ -373,7 +390,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // ProcessGetCounter()
         // Does the work to process GetCounterSet parameter set.
-        //      
+        //
         private void ProcessGetCounter()
         {
             // Validate StartTime-EndTime, if present
@@ -419,9 +436,11 @@ namespace Microsoft.PowerShell.Commands
 
                             continue;
                         }
+
                         validPaths.Add(expandedPath);
                     }
                 }
+
                 if (validPaths.Count == 0)
                 {
                     return;
@@ -475,6 +494,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     break;
                 }
+
                 if (res != 0 && res != PdhResults.PDH_INVALID_DATA)
                 {
                     ReportPdhError(res, false);
@@ -495,7 +515,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         //
         // ValidateFilePaths() helper.
         // Validates the _resolvedPaths: present for all parametersets.
@@ -512,9 +531,9 @@ namespace Microsoft.PowerShell.Commands
                 WriteVerbose(fileName);
                 string curExtension = System.IO.Path.GetExtension(fileName);
 
-                if (!curExtension.Equals(".blg", StringComparison.CurrentCultureIgnoreCase)
-                    && !curExtension.Equals(".csv", StringComparison.CurrentCultureIgnoreCase)
-                    && !curExtension.Equals(".tsv", StringComparison.CurrentCultureIgnoreCase))
+                if (!curExtension.Equals(".blg", StringComparison.OrdinalIgnoreCase)
+                    && !curExtension.Equals(".csv", StringComparison.OrdinalIgnoreCase)
+                    && !curExtension.Equals(".tsv", StringComparison.OrdinalIgnoreCase))
                 {
                     string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterNotALogFile"), fileName);
                     Exception exc = new Exception(msg);
@@ -522,7 +541,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                if (!curExtension.Equals(firstExt, StringComparison.CurrentCultureIgnoreCase))
+                if (!curExtension.Equals(firstExt, StringComparison.OrdinalIgnoreCase))
                 {
                     string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterNoMixedLogTypes"), fileName);
                     Exception exc = new Exception(msg);
@@ -531,7 +550,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (firstExt.Equals(".blg", StringComparison.CurrentCultureIgnoreCase))
+            if (firstExt.Equals(".blg", StringComparison.OrdinalIgnoreCase))
             {
                 if (_resolvedPaths.Count > 32)
                 {
@@ -550,13 +569,12 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         //
         // ResolveFilePath helper.
         // Returns a string collection of resolved file paths.
         // Writes non-terminating errors for invalid paths
-        // and returns an empty colleciton.
-        // 
+        // and returns an empty collection.
+        //
         private bool ResolveFilePaths()
         {
             StringCollection retColl = new StringCollection();
@@ -570,27 +588,27 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (PSNotSupportedException notSupported)
                 {
-                    WriteError(new ErrorRecord(notSupported, "", ErrorCategory.ObjectNotFound, origPath));
+                    WriteError(new ErrorRecord(notSupported, string.Empty, ErrorCategory.ObjectNotFound, origPath));
                     continue;
                 }
                 catch (System.Management.Automation.DriveNotFoundException driveNotFound)
                 {
-                    WriteError(new ErrorRecord(driveNotFound, "", ErrorCategory.ObjectNotFound, origPath));
+                    WriteError(new ErrorRecord(driveNotFound, string.Empty, ErrorCategory.ObjectNotFound, origPath));
                     continue;
                 }
                 catch (ProviderNotFoundException providerNotFound)
                 {
-                    WriteError(new ErrorRecord(providerNotFound, "", ErrorCategory.ObjectNotFound, origPath));
+                    WriteError(new ErrorRecord(providerNotFound, string.Empty, ErrorCategory.ObjectNotFound, origPath));
                     continue;
                 }
                 catch (ItemNotFoundException pathNotFound)
                 {
-                    WriteError(new ErrorRecord(pathNotFound, "", ErrorCategory.ObjectNotFound, origPath));
+                    WriteError(new ErrorRecord(pathNotFound, string.Empty, ErrorCategory.ObjectNotFound, origPath));
                     continue;
                 }
                 catch (Exception exc)
                 {
-                    WriteError(new ErrorRecord(exc, "", ErrorCategory.ObjectNotFound, origPath));
+                    WriteError(new ErrorRecord(exc, string.Empty, ErrorCategory.ObjectNotFound, origPath));
                     continue;
                 }
 
@@ -607,7 +625,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    _resolvedPaths.Add(pi.ProviderPath.ToLower(CultureInfo.InvariantCulture));
+                    _resolvedPaths.Add(pi.ProviderPath.ToLowerInvariant());
                 }
             }
 
@@ -622,6 +640,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterApiError"), res);
             }
+
             Exception exc = new Exception(msg);
             if (bTerminate)
             {
@@ -635,9 +654,9 @@ namespace Microsoft.PowerShell.Commands
 
         //
         // WriteSampleSetObject() helper.
-        // In addition to writing the PerformanceCounterSampleSet object, 
+        // In addition to writing the PerformanceCounterSampleSet object,
         // it writes a single error if one of the samples has an invalid (non-zero) status.
-        // The only exception is the first set, where we allow for the formatted value to be 0 - 
+        // The only exception is the first set, where we allow for the formatted value to be 0 -
         // this is expected for CSV and TSV files.
 
         private void WriteSampleSetObject(PerformanceCounterSampleSet set, bool firstSet)
@@ -660,5 +679,4 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-
 

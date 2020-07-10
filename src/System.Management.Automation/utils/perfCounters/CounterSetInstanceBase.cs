@@ -1,13 +1,12 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.PerformanceData;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.PerformanceData;
+using System.Globalization;
 using System.Management.Automation.Tracing;
 
 namespace System.Management.Automation.PerformanceData
@@ -47,7 +46,7 @@ namespace System.Management.Automation.PerformanceData
 
         #region Constructors
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         protected CounterSetInstanceBase(CounterSetRegistrarBase counterSetRegistrarInst)
         {
@@ -97,19 +96,22 @@ namespace System.Management.Automation.PerformanceData
                         isDenominatorValid = true;
                         break;
                 }
+
                 if (isDenominatorValid == false)
                 {
                     InvalidOperationException invalidOperationException =
                         new InvalidOperationException(
-                            String.Format(
+                            string.Format(
                             CultureInfo.InvariantCulture,
                             "Denominator for update not valid for the given counter id {0}",
                             counterId));
                     _tracer.TraceException(invalidOperationException);
                     return false;
                 }
+
                 targetCounterId = counterId + 1;
             }
+
             return true;
         }
 
@@ -119,7 +121,7 @@ namespace System.Management.Automation.PerformanceData
 
         /// <summary>
         /// If isNumerator is true, then updates the numerator component
-        /// of target counter 'counterId' by a value given by 'stepAmount'. 
+        /// of target counter 'counterId' by a value given by 'stepAmount'.
         /// Otherwise, updates the denominator component by 'stepAmount'.
         /// </summary>
         public abstract bool UpdateCounterByValue(
@@ -127,11 +129,10 @@ namespace System.Management.Automation.PerformanceData
             long stepAmount,
             bool isNumerator);
 
-
         /// <summary>
         /// If isNumerator is true, then updates the numerator component
-        /// of target counter 'counterName' by a value given by 'stepAmount'. 
-        /// Otherwise, updaqtes the denominator component by 'stepAmount'.
+        /// of target counter 'counterName' by a value given by 'stepAmount'.
+        /// Otherwise, updates the denominator component by 'stepAmount'.
         /// </summary>
         public abstract bool UpdateCounterByValue(
             string counterName,
@@ -139,7 +140,7 @@ namespace System.Management.Automation.PerformanceData
             bool isNumerator);
 
         /// <summary>
-        /// If isNumerator is true, then sets the numerator component of target 
+        /// If isNumerator is true, then sets the numerator component of target
         /// counter 'counterId' to 'counterValue'.
         /// Otherwise, sets the denominator component to 'counterValue'.
         /// </summary>
@@ -149,7 +150,7 @@ namespace System.Management.Automation.PerformanceData
             bool isNumerator);
 
         /// <summary>
-        /// If isNumerator is true, then sets the numerator component of target 
+        /// If isNumerator is true, then sets the numerator component of target
         /// Counter 'counterName' to 'counterValue'.
         /// Otherwise, sets the denominator component to 'counterValue'.
         /// </summary>
@@ -198,14 +199,14 @@ namespace System.Management.Automation.PerformanceData
         {
             this.SetCounterValue(counterName, 0, true);
             this.SetCounterValue(counterName, 0, false);
-        }       
+        }
         */
         #endregion
     }
 
     /// <summary>
-    /// PSCounterSetInstance is a thin wrapper 
-    /// on System.Diagnostics.PerformanceData.CounterSetInstance
+    /// PSCounterSetInstance is a thin wrapper
+    /// on System.Diagnostics.PerformanceData.CounterSetInstance.
     /// </summary>
     public class PSCounterSetInstance : CounterSetInstanceBase
     {
@@ -266,7 +267,7 @@ namespace System.Management.Automation.PerformanceData
 
         #region Constructors
         /// <summary>
-        /// Constructor for creating an instance of PSCounterSetInstance
+        /// Constructor for creating an instance of PSCounterSetInstance.
         /// </summary>
         public PSCounterSetInstance(CounterSetRegistrarBase counterSetRegBaseObj)
             : base(counterSetRegBaseObj)
@@ -328,7 +329,7 @@ namespace System.Management.Automation.PerformanceData
         {
             this.Dispose(true);
             // This object will be cleaned up by the Dispose method.
-            // Therefore, you should call GC.SupressFinalize to
+            // Therefore, you should call GC.SuppressFinalize to
             // take this object off the finalization queue
             // and prevent finalization code for this object
             // from executing a second time.
@@ -343,7 +344,7 @@ namespace System.Management.Automation.PerformanceData
 
         /// <summary>
         /// If isNumerator is true, then updates the numerator component
-        /// of target counter 'counterId' by a value given by 'stepAmount'. 
+        /// of target counter 'counterId' by a value given by 'stepAmount'.
         /// Otherwise, updates the denominator component by 'stepAmount'.
         /// </summary>
         public override bool UpdateCounterByValue(int counterId, long stepAmount, bool isNumerator)
@@ -369,7 +370,7 @@ namespace System.Management.Automation.PerformanceData
                 {
                     InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
-                        String.Format(
+                        string.Format(
                         CultureInfo.InvariantCulture,
                         "Lookup for counter corresponding to counter id {0} failed",
                         counterId));
@@ -384,7 +385,7 @@ namespace System.Management.Automation.PerformanceData
         }
         /// <summary>
         /// If isNumerator is true, then updates the numerator component
-        /// of target counter 'counterName' by a value given by 'stepAmount'. 
+        /// of target counter 'counterName' by a value given by 'stepAmount'.
         /// Otherwise, updates the denominator component by 'stepAmount'.
         /// </summary>
         public override bool UpdateCounterByValue(string counterName, long stepAmount, bool isNumerator)
@@ -413,7 +414,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
-                    String.Format(
+                    string.Format(
                     CultureInfo.InvariantCulture,
                     "Lookup for counter corresponding to counter name {0} failed",
                     counterName));
@@ -424,7 +425,7 @@ namespace System.Management.Automation.PerformanceData
 
         /// <summary>
         /// If isNumerator is true, then sets the numerator component
-        /// of target counter 'counterId' to 'counterValue'. 
+        /// of target counter 'counterId' to 'counterValue'.
         /// Otherwise, sets the denominator component to 'counterValue'.
         /// </summary>
         public override bool SetCounterValue(int counterId, long counterValue, bool isNumerator)
@@ -451,7 +452,7 @@ namespace System.Management.Automation.PerformanceData
                 {
                     InvalidOperationException invalidOperationException =
                         new InvalidOperationException(
-                            String.Format(
+                            string.Format(
                             CultureInfo.InvariantCulture,
                             "Lookup for counter corresponding to counter id {0} failed",
                             counterId));
@@ -467,7 +468,7 @@ namespace System.Management.Automation.PerformanceData
 
         /// <summary>
         /// If isNumerator is true, then updates the numerator component
-        /// of target counter 'counterName' by a value given by 'counterValue'. 
+        /// of target counter 'counterName' by a value given by 'counterValue'.
         /// Otherwise, sets the denominator component to 'counterValue'.
         /// </summary>
         public override bool SetCounterValue(string counterName, long counterValue, bool isNumerator)
@@ -487,6 +488,7 @@ namespace System.Management.Automation.PerformanceData
                 _tracer.TraceException(argNullException);
                 return false;
             }
+
             try
             {
                 int targetCounterId = this._counterNameToIdMapping[counterName];
@@ -496,7 +498,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
-                    String.Format(
+                    string.Format(
                     CultureInfo.InvariantCulture,
                     "Lookup for counter corresponding to counter name {0} failed",
                     counterName));
@@ -519,6 +521,7 @@ namespace System.Management.Automation.PerformanceData
                 _tracer.TraceException(objectDisposedException);
                 return false;
             }
+
             int targetCounterId;
             if (base.RetrieveTargetCounterIdIfValid(counterId, isNumerator, out targetCounterId))
             {
@@ -533,7 +536,7 @@ namespace System.Management.Automation.PerformanceData
                 {
                     InvalidOperationException invalidOperationException =
                         new InvalidOperationException(
-                            String.Format(
+                            string.Format(
                             CultureInfo.InvariantCulture,
                             "Lookup for counter corresponding to counter id {0} failed",
                             counterId));
@@ -546,7 +549,6 @@ namespace System.Management.Automation.PerformanceData
                 return false;
             }
         }
-
 
         /// <summary>
         /// This method retrieves the counter value associated with counter 'counterName'
@@ -570,6 +572,7 @@ namespace System.Management.Automation.PerformanceData
                 _tracer.TraceException(argNullException);
                 return false;
             }
+
             try
             {
                 int targetCounterId = this._counterNameToIdMapping[counterName];
@@ -579,7 +582,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
-                        String.Format(
+                        string.Format(
                         CultureInfo.InvariantCulture,
                         "Lookup for counter corresponding to counter name {0} failed",
                         counterName));

@@ -1,12 +1,12 @@
-﻿using System;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
 using System.Management.Automation;
 using System.Management.Automation.SecurityAccountsManager;
 using System.Runtime.Serialization;
-using Microsoft.PowerShell.LocalAccounts;
 
-#if CORECLR
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
+using Microsoft.PowerShell.LocalAccounts;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -65,37 +65,27 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         public LocalAccountsException() : base() { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
-        public LocalAccountsException(String message) : base(message) { }
+        public LocalAccountsException(string message) : base(message) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public LocalAccountsException(String message, Exception ex) : base(message, ex) { }
+        public LocalAccountsException(string message, Exception ex) : base(message, ex) { }
 
-#if CORECLR
         /// <summary>
-        /// Compliance Constructor
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="ctx"></param>
-        // This is not supported for CoreCLR
-        protected LocalAccountsException(SerializationInfo info, StreamingContext ctx) : base() { }
-#else
-        /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
         protected LocalAccountsException(SerializationInfo info, StreamingContext ctx) : base(info, ctx) { }
-#endif
     }
 
     /// <summary>
@@ -135,22 +125,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         public InternalException() : base() { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
-        public InternalException(String message) : base(message) { }
+        public InternalException(string message) : base(message) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public InternalException(String message, Exception ex) : base(message, ex) { }
+        public InternalException(string message, Exception ex) : base(message, ex) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
@@ -195,22 +185,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         public Win32InternalException() : base() {}
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
-        public Win32InternalException(String message) : base(message) { }
+        public Win32InternalException(string message) : base(message) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public Win32InternalException(String message, Exception ex) : base(message, ex) { }
+        public Win32InternalException(string message, Exception ex) : base(message, ex) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
@@ -249,13 +239,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public InvalidPasswordException(String message, Exception ex) : base(message, ex) { }
+        public InvalidPasswordException(string message, Exception ex) : base(message, ex) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
@@ -282,17 +272,17 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         public InvalidParametersException() : base() { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public InvalidParametersException(String message, Exception ex) : base(message, ex) { }
+        public InvalidParametersException(string message, Exception ex) : base(message, ex) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
@@ -310,22 +300,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         public AccessDeniedException() : base() { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
-        public AccessDeniedException(String message) : base(message) { }
+        public AccessDeniedException(string message) : base(message) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public AccessDeniedException(String message, Exception ex) : base(message, ex) { }
+        public AccessDeniedException(string message, Exception ex) : base(message, ex) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
@@ -343,22 +333,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         public InvalidNameException() : base() { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
-        public InvalidNameException(String message) : base(message) { }
+        public InvalidNameException(string message) : base(message) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public InvalidNameException(String message, Exception ex) : base(message, ex) { }
+        public InvalidNameException(string message, Exception ex) : base(message, ex) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
@@ -376,22 +366,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         public NameInUseException() : base() { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
-        public NameInUseException(String message) : base(message) { }
+        public NameInUseException(string message) : base(message) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public NameInUseException(String message, Exception ex) : base(message, ex) { }
+        public NameInUseException(string message, Exception ex) : base(message, ex) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
@@ -410,22 +400,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         public NotFoundException() : base() { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
-        public NotFoundException(String message) : base(message) { }
+        public NotFoundException(string message) : base(message) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public NotFoundException(String message, Exception ex) : base(message, ex) { }
+        public NotFoundException(string message, Exception ex) : base(message, ex) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
@@ -433,7 +423,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Exception indicating that a principal was not Found
+    /// Exception indicating that a principal was not Found.
     /// </summary>
     public class PrincipalNotFoundException : NotFoundException
     {
@@ -443,22 +433,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         public PrincipalNotFoundException() : base() { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
-        public PrincipalNotFoundException(String message) : base(message) { }
+        public PrincipalNotFoundException(string message) : base(message) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public PrincipalNotFoundException(String message, Exception ex) : base(message, ex) { }
+        public PrincipalNotFoundException(string message, Exception ex) : base(message, ex) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
@@ -476,22 +466,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         public GroupNotFoundException() : base() { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
-        public GroupNotFoundException(String message) : base(message) { }
+        public GroupNotFoundException(string message) : base(message) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public GroupNotFoundException(String message, Exception ex) : base(message, ex) { }
+        public GroupNotFoundException(string message, Exception ex) : base(message, ex) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
@@ -509,22 +499,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         public UserNotFoundException() : base() { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
-        public UserNotFoundException(String message) : base(message) { }
+        public UserNotFoundException(string message) : base(message) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public UserNotFoundException(String message, Exception ex) : base(message, ex) { }
+        public UserNotFoundException(string message, Exception ex) : base(message, ex) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
@@ -542,22 +532,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         public MemberNotFoundException() : base() { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
-        public MemberNotFoundException(String message) : base(message) { }
+        public MemberNotFoundException(string message) : base(message) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public MemberNotFoundException(String message, Exception ex) : base(message, ex) { }
+        public MemberNotFoundException(string message, Exception ex) : base(message, ex) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
@@ -576,22 +566,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         public ObjectExistsException() : base() { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
-        public ObjectExistsException(String message) : base(message) { }
+        public ObjectExistsException(string message) : base(message) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public ObjectExistsException(String message, Exception ex) : base(message, ex) { }
+        public ObjectExistsException(string message, Exception ex) : base(message, ex) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
@@ -609,22 +599,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         public GroupExistsException() : base() { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
-        public GroupExistsException(String message) : base(message) { }
+        public GroupExistsException(string message) : base(message) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public GroupExistsException(String message, Exception ex) : base(message, ex) { }
+        public GroupExistsException(string message, Exception ex) : base(message, ex) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
@@ -642,22 +632,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         public UserExistsException() : base() { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
-        public UserExistsException(String message) : base(message) { }
+        public UserExistsException(string message) : base(message) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public UserExistsException(String message, Exception ex) : base(message, ex) { }
+        public UserExistsException(string message, Exception ex) : base(message, ex) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
@@ -675,22 +665,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         public MemberExistsException() : base() { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
-        public MemberExistsException(String message) : base(message) { }
+        public MemberExistsException(string message) : base(message) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public MemberExistsException(String message, Exception ex) : base(message, ex) { }
+        public MemberExistsException(string message, Exception ex) : base(message, ex) { }
         /// <summary>
-        /// Compliance Constructor
+        /// Compliance Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>

@@ -1,12 +1,10 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Linq;
 using System.Management.Automation.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-
 
 namespace System.Management.Automation
 {
@@ -26,75 +24,44 @@ namespace System.Management.Automation
         internal ExecutionContext Context { get; }
 
         /// <summary>
-        /// Gets the CommandDiscovery instance for the current engine
+        /// Gets the CommandDiscovery instance for the current engine.
         /// </summary>
-        /// 
         internal CommandDiscovery CommandDiscovery { get; }
-
 
         /// <summary>
         /// The principal constructor that most hosts will use when creating
         /// an instance of the automation engine. It allows you to pass in an
         /// instance of PSHost that provides the host-specific I/O routines, etc.
         /// </summary>
-        internal AutomationEngine(PSHost hostInterface, RunspaceConfiguration runspaceConfiguration, InitialSessionState iss)
+        internal AutomationEngine(PSHost hostInterface, InitialSessionState iss)
         {
-#if !CORECLR// There is no control panel items in CSS
-            // Update the env variable PathEXT to contain .CPL
-            var pathext = Environment.GetEnvironmentVariable("PathEXT");
-            pathext = pathext ?? string.Empty;
-            bool cplExist = false;
-            if (pathext != string.Empty)
+#if !UNIX
+            // Update the env variable PATHEXT to contain .CPL
+            var pathext = Environment.GetEnvironmentVariable("PATHEXT");
+
+            if (string.IsNullOrEmpty(pathext))
             {
-                string[] entries = pathext.Split(Utils.Separators.Semicolon);
-                foreach (string entry in entries)
-                {
-                    string ext = entry.Trim();
-                    if (ext.Equals(".CPL", StringComparison.OrdinalIgnoreCase))
-                    {
-                        cplExist = true;
-                        break;
-                    }
-                }
+                Environment.SetEnvironmentVariable("PATHEXT", ".CPL");
             }
-            if (!cplExist)
+            else if (!(pathext.EndsWith(";.CPL", StringComparison.OrdinalIgnoreCase) ||
+                       pathext.StartsWith(".CPL;", StringComparison.OrdinalIgnoreCase) ||
+                       pathext.Contains(";.CPL;", StringComparison.OrdinalIgnoreCase) ||
+                       pathext.Equals(".CPL", StringComparison.OrdinalIgnoreCase)))
             {
-                pathext = (pathext == string.Empty) ? ".CPL" :
-                    pathext.EndsWith(";", StringComparison.OrdinalIgnoreCase)
-                    ? (pathext + ".CPL") : (pathext + ";.CPL");
-                Environment.SetEnvironmentVariable("PathEXT", pathext);
+                // Fast skip if we already added the extention as ";.CPL".
+                // Fast skip if user already added the extention.
+                pathext += pathext[pathext.Length - 1] == ';' ? ".CPL" : ";.CPL";
+                Environment.SetEnvironmentVariable("PATHEXT", pathext);
             }
 #endif
-            if (runspaceConfiguration != null)
-            {
-                Context = new ExecutionContext(this, hostInterface, runspaceConfiguration);
-            }
-            else
-            {
-                Context = new ExecutionContext(this, hostInterface, iss);
-            }
+
+            Context = new ExecutionContext(this, hostInterface, iss);
 
             EngineParser = new Language.Parser();
             CommandDiscovery = new CommandDiscovery(Context);
 
-            // Initialize providers before loading types so that any ScriptBlocks in the
-            // types.ps1xml file can be parsed.
-
-            // Bind the execution context with RunspaceConfiguration. 
-            // This has the side effect of initializing cmdlet cache and providers from runspace configuration.
-            if (runspaceConfiguration != null)
-            {
-                runspaceConfiguration.Bind(Context);
-            }
-            else
-            {
-                // Load the iss, resetting everything to it's defaults...
-                iss.Bind(Context, /*updateOnly*/ false);
-            }
-
-            InitialSessionState.SetSessionStateDrive(Context, true);
-
-            InitialSessionState.CreateQuestionVariable(Context);
+            // Load the iss, resetting everything to it's defaults...
+            iss.Bind(Context, updateOnly: false, module: null, noClobber: false, local: false, setLocation: true);
         }
 
         /// <summary>
@@ -105,36 +72,37 @@ namespace System.Management.Automation
             var ast = Parser.ScanString(s);
 
             // ExpandString is assumed to invoke code, so passing 'IsTrustedInput'
-            return Compiler.GetExpressionValue(ast, true, Context, Context.EngineSessionState) as string ?? "";
+            return Compiler.GetExpressionValue(ast, true, Context, Context.EngineSessionState) as string ?? string.Empty;
         }
 
         /// <summary>
         /// Compile a piece of text into a parse tree for later execution.
         /// </summary>
-        /// <param name="script">The text to parse</param>
-        /// <param name="interactiveCommand"></param>
+        /// <param name="script">The text to parse.</param>
+        /// <param name="addToHistory">True iff the scriptblock will be added to history.</param>
         /// <returns>The parse text as a parsetree node.</returns>
-        internal ScriptBlock ParseScriptBlock(string script, bool interactiveCommand)
+        internal ScriptBlock ParseScriptBlock(string script, bool addToHistory)
         {
-            return ParseScriptBlock(script, null, interactiveCommand);
+            return ParseScriptBlock(script, null, addToHistory);
         }
 
-        internal ScriptBlock ParseScriptBlock(string script, string fileName, bool interactiveCommand)
+        internal ScriptBlock ParseScriptBlock(string script, string fileName, bool addToHistory)
         {
             ParseError[] errors;
             var ast = EngineParser.Parse(fileName, script, null, out errors, ParseMode.Default);
 
-            if (interactiveCommand)
+            if (addToHistory)
             {
                 EngineParser.SetPreviousFirstLastToken(Context);
             }
 
-            if (errors.Any())
+            if (errors.Length > 0)
             {
                 if (errors[0].IncompleteInput)
                 {
                     throw new IncompleteParseException(errors[0].Message, errors[0].ErrorId);
                 }
+
                 throw new ParseException(errors);
             }
 

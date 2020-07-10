@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 
@@ -17,28 +16,26 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the delimiter that separates the values
+        /// Gets or sets the delimiter that separates the values.
         /// </summary>
-        /// 
         internal char Delimiter { get; } = ',';
 
         /// <summary>
-        /// Parse a CSV String.
+        /// Parse a CSV string.
         /// </summary>
-        /// 
         /// <param name="csv">
-        /// String to be parsed
+        /// String to be parsed.
         /// </param>
-        ///
         internal Collection<string> ParseCsv(string csv)
         {
             Collection<string> result = new Collection<string>();
-            string tempString = "";
+            string tempString = string.Empty;
             csv = csv.Trim();
             if (csv.Length == 0 || csv[0] == '#')
             {
                 return result;
             }
+
             bool inQuote = false;
             for (int i = 0; i < csv.Length; i++)
             {
@@ -48,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!inQuote)
                     {
                         result.Add(tempString);
-                        tempString = "";
+                        tempString = string.Empty;
                     }
                     else
                     {
@@ -62,12 +59,12 @@ namespace Microsoft.PowerShell.Commands
                         case '"':
                             if (inQuote)
                             {
-                                //If we are at the end of the string or the end of the segment, create a new value
-                                //Otherwise we have an error
+                                // If we are at the end of the string or the end of the segment, create a new value
+                                // Otherwise we have an error
                                 if (i == csv.Length - 1)
                                 {
                                     result.Add(tempString);
-                                    tempString = "";
+                                    tempString = string.Empty;
                                     inQuote = false;
                                     break;
                                 }
@@ -75,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (csv[i + 1] == Delimiter)
                                 {
                                     result.Add(tempString);
-                                    tempString = "";
+                                    tempString = string.Empty;
                                     inQuote = false;
                                     i++;
                                 }
@@ -99,15 +96,16 @@ namespace Microsoft.PowerShell.Commands
                         default:
                             tempString += c;
                             break;
-                    }//switch
-                }//else
-            }//for int
+                    }
+                }
+            }
+
             if (tempString.Length > 0)
             {
                 result.Add(tempString);
             }
+
             return result;
         }
     }
 }
-

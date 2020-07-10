@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 //
 // NOTE: A vast majority of this code was copied from BCL in
@@ -13,14 +15,13 @@ namespace Microsoft.PowerShell.Commands.Internal
     using System.Runtime.Versioning;
     using System.Diagnostics.CodeAnalysis;
 
-
     /**
      * Registry encapsulation. Contains members representing all top level system
      * keys.
      *
      * @security(checkClassLinking=on)
      */
-    //This class contains only static members and does not need to be serializable.
+    // This class contains only static members and does not need to be serializable.
     [ComVisible(true)]
     // Suppressed because these objects need to be accessed from CmdLets.
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
@@ -29,7 +30,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         private const string resBaseName = "RegistryProviderStrings";
         /**
          * Current User Key.
-         * 
+         *
          * This key should be used as the root for all user specific settings.
          */
         /// <summary>TransactedRegistry.CurrentUser
@@ -48,7 +49,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         /**
          * Local Machine Key.
-         * 
+         *
          * This key should be used as the root for all machine specific settings.
          */
         /// <summary>TransactedRegistry.LocalMachine
@@ -67,7 +68,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         /**
          * Classes Root Key.
-         * 
+         *
          * This is the root key of class information.
          */
         /// <summary>TransactedRegistry.ClassesRoot
@@ -86,7 +87,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         /**
          * Users Root Key.
-         * 
+         *
          * This is the root of users.
          */
         /// <summary>TransactedRegistry.Users
@@ -105,7 +106,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         /**
          * Current Config Root Key.
-         * 
+         *
          * This is where current configuration information is stored.
          */
         /// <summary>TransactedRegistry.CurrentConfig

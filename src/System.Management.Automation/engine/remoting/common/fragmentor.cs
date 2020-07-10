@@ -1,14 +1,14 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation.  All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Management.Automation.Tracing;
-using System.Xml;
-using System.Text;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Tracing;
+using System.Text;
+using System.Xml;
+
 using Dbg = System.Management.Automation.Diagnostics;
 using TypeTable = System.Management.Automation.Runspaces.TypeTable;
 
@@ -16,12 +16,12 @@ namespace System.Management.Automation.Remoting
 {
     /// <summary>
     /// This class is used to hold a fragment of remoting PSObject for transporting to remote computer.
-    /// 
-    /// A large remoting PSObject will be broken into fragments. Each fragment has a ObjectId and a FragementId.
-    /// The first fragment has a StartFragment marker. The last fragment also an EndFragment marker. 
+    ///
+    /// A large remoting PSObject will be broken into fragments. Each fragment has a ObjectId and a FragmentId.
+    /// The first fragment has a StartFragment marker. The last fragment also an EndFragment marker.
     /// These fragments can be reassembled on the receiving
     /// end by sequencing the fragment ids.
-    /// 
+    ///
     /// Currently control objects (Control-C for stopping a pipeline execution) is not
     /// really fragmented. These objects are small. They are just wrapped into a single
     /// fragment.
@@ -74,7 +74,7 @@ namespace System.Management.Automation.Remoting
         #region Constructors
 
         /// <summary>
-        /// Default Constructor
+        /// Default Constructor.
         /// </summary>
         internal FragmentedRemoteObject()
         {
@@ -98,7 +98,7 @@ namespace System.Management.Automation.Remoting
         internal FragmentedRemoteObject(byte[] blob, long objectId, long fragmentId,
             bool isEndFragment)
         {
-            Dbg.Assert((null != blob) || (blob.Length == 0), "Cannot create a fragment for null or empty data.");
+            Dbg.Assert((blob != null) || (blob.Length == 0), "Cannot create a fragment for null or empty data.");
             Dbg.Assert(objectId >= 0, "Object Id cannot be < 0");
             Dbg.Assert(fragmentId >= 0, "Fragment Id cannot be < 0");
 
@@ -117,7 +117,7 @@ namespace System.Management.Automation.Remoting
         #region Data Fields being sent
 
         /// <summary>
-        /// All fragments of the same PSObject have the same ObjectId
+        /// All fragments of the same PSObject have the same ObjectId.
         /// </summary>
         internal long ObjectId { get; set; }
 
@@ -137,12 +137,13 @@ namespace System.Management.Automation.Remoting
         internal bool IsEndFragment { get; set; }
 
         /// <summary>
-        /// Blob length. This enables scenarios where entire  byte[] is
+        /// Blob length. This enables scenarios where entire byte[] is
         /// not filled for the fragment.
         /// </summary>
         internal int BlobLength
         {
             get { return _blobLength; }
+
             set
             {
                 Dbg.Assert(value >= 0, "BlobLength cannot be less than 0.");
@@ -156,9 +157,10 @@ namespace System.Management.Automation.Remoting
         internal byte[] Blob
         {
             get { return _blob; }
+
             set
             {
-                Dbg.Assert(null != value, "Blob cannot be null");
+                Dbg.Assert(value != null, "Blob cannot be null");
                 _blob = value;
             }
         }
@@ -173,13 +175,13 @@ namespace System.Management.Automation.Remoting
         ///       0x1 if IsStartOfFragment is true: This is called S-flag.
         ///       0x2 if IsEndOfFragment is true: This is called the E-flag.
         ///       0x4 if IsControl is true: This is called the C-flag.
-        ///                                        
-        ///       The other bits are reserved for future use. 
-        ///       Now they must be zero when sending, 
+        ///
+        ///       The other bits are reserved for future use.
+        ///       Now they must be zero when sending,
         ///       and they are ignored when receiving.
         /// BlobLength: 4 bytes as int, byte order is big-endian. this value can only be non-negative.
         /// Blob: BlobLength number of bytes.
-        /// 
+        ///
         ///     0                   1                   2                   3
         ///     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
         ///     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -191,13 +193,12 @@ namespace System.Management.Automation.Remoting
         ///     +-+-+-+-+-+-+-+-        FragmentId              +-+-+-+-+-+-+-+-+
         ///     |                                                               |
         ///     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-        ///     |reserved |C|E|S|                    
+        ///     |reserved |C|E|S|
         ///     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         ///     |                        BlobLength                             |
         ///     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         ///     |     Blob ...
         ///     +-+-+-+-+-+-+-+-
-        /// 
         /// </summary>
         /// <returns>
         /// The binary encoded FragmentedRemoteObject to be ready to pass to WinRS Send API.
@@ -271,12 +272,12 @@ namespace System.Management.Automation.Remoting
         /// If fragmentBytes is null.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// If startIndex is negative or fragmentBytes is not large enought to hold the entire header of
+        /// If startIndex is negative or fragmentBytes is not large enough to hold the entire header of
         /// a binary encoded FragmentedRemoteObject.
         /// </exception>
         internal static long GetObjectId(byte[] fragmentBytes, int startIndex)
         {
-            Dbg.Assert(null != fragmentBytes, "fragmentBytes cannot be null");
+            Dbg.Assert(fragmentBytes != null, "fragmentBytes cannot be null");
             Dbg.Assert(fragmentBytes.Length >= HeaderLength, "not enough data to decode object id");
             long objectId = 0;
 
@@ -305,12 +306,12 @@ namespace System.Management.Automation.Remoting
         /// If fragmentBytes is null.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// If startIndex is negative or fragmentBytes is not large enought to hold the entire header of
+        /// If startIndex is negative or fragmentBytes is not large enough to hold the entire header of
         /// a binary encoded FragmentedRemoteObject.
         /// </exception>
         internal static long GetFragmentId(byte[] fragmentBytes, int startIndex)
         {
-            Dbg.Assert(null != fragmentBytes, "fragmentBytes cannot be null");
+            Dbg.Assert(fragmentBytes != null, "fragmentBytes cannot be null");
             Dbg.Assert(fragmentBytes.Length >= HeaderLength, "not enough data to decode fragment id");
             long fragmentId = 0;
             int idx = startIndex + _fragmentIdOffset;
@@ -340,12 +341,12 @@ namespace System.Management.Automation.Remoting
         /// If fragmentBytes is null.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// If startIndex is negative or fragmentBytes is not large enought to hold the entire header of
+        /// If startIndex is negative or fragmentBytes is not large enough to hold the entire header of
         /// a binary encoded FragmentedRemoteObject.
         /// </exception>
         internal static bool GetIsStartFragment(byte[] fragmentBytes, int startIndex)
         {
-            Dbg.Assert(null != fragmentBytes, "fragment cannot be null");
+            Dbg.Assert(fragmentBytes != null, "fragment cannot be null");
             Dbg.Assert(fragmentBytes.Length >= HeaderLength, "not enough data to decode if it is a start fragment.");
 
             if ((fragmentBytes[startIndex + _flagsOffset] & SFlag) != 0)
@@ -369,12 +370,12 @@ namespace System.Management.Automation.Remoting
         /// If fragmentBytes is null.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// If startIndex is negative or fragmentBytes is not large enought to hold the entire header of
+        /// If startIndex is negative or fragmentBytes is not large enough to hold the entire header of
         /// a binary encoded FragmentedRemoteObject.
         /// </exception>
         internal static bool GetIsEndFragment(byte[] fragmentBytes, int startIndex)
         {
-            Dbg.Assert(null != fragmentBytes, "fragment cannot be null");
+            Dbg.Assert(fragmentBytes != null, "fragment cannot be null");
             Dbg.Assert(fragmentBytes.Length >= HeaderLength, "not enough data to decode if it is an end fragment.");
 
             if ((fragmentBytes[startIndex + _flagsOffset] & EFlag) != 0)
@@ -398,12 +399,12 @@ namespace System.Management.Automation.Remoting
         /// If fragmentBytes is null.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// If startIndex is negative or fragmentBytes is not large enought to hold the entire header of
+        /// If startIndex is negative or fragmentBytes is not large enough to hold the entire header of
         /// a binary encoded FragmentedRemoteObject.
         /// </exception>
         internal static int GetBlobLength(byte[] fragmentBytes, int startIndex)
         {
-            Dbg.Assert(null != fragmentBytes, "fragment cannot be null");
+            Dbg.Assert(fragmentBytes != null, "fragment cannot be null");
             Dbg.Assert(fragmentBytes.Length >= HeaderLength, "not enough data to decode blob length.");
 
             int blobLength = 0;
@@ -418,11 +419,10 @@ namespace System.Management.Automation.Remoting
         }
     }
 
-
     /// <summary>
     /// A stream used to store serialized data. This stream holds serialized data in the
-    /// form of fragments. Every "fragment size" data will hold a blob identifying the fragment. 
-    /// The blob has "ObjectId","FragmentId","Properties like Start,End","BlobLength"   
+    /// form of fragments. Every "fragment size" data will hold a blob identifying the fragment.
+    /// The blob has "ObjectId","FragmentId","Properties like Start,End","BlobLength"
     /// </summary>
     internal class SerializedDataStream : Stream, IDisposable
     {
@@ -467,6 +467,7 @@ namespace System.Management.Automation.Remoting
         /// true if data represents EndFragment of an object.
         /// </param>
         internal delegate void OnDataAvailableCallback(byte[] data, bool isEndFragment);
+
         private OnDataAvailableCallback _onDataAvailableCallback;
 
         #endregion
@@ -505,7 +506,7 @@ namespace System.Management.Automation.Remoting
         internal SerializedDataStream(int fragmentSize,
             OnDataAvailableCallback callbackToNotify) : this(fragmentSize)
         {
-            if (null != callbackToNotify)
+            if (callbackToNotify != null)
             {
                 _notifyOnWriteFragmentImmediately = true;
                 _onDataAvailableCallback = callbackToNotify;
@@ -613,7 +614,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Returns a byte[] which holds data of fragment size (or) serialized data of
         /// one object, which ever is greater. If data is not currently available, then
-        /// the callback is registerd and called whenever the data is available.
+        /// the callback is registered and called whenever the data is available.
         /// </summary>
         /// <param name="callback">
         /// callback to call once the data becomes available.
@@ -639,7 +640,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Read the currently accumulated data in queued memory streams
+        /// Read the currently accumulated data in queued memory streams.
         /// </summary>
         /// <returns></returns>
         internal byte[] Read()
@@ -666,7 +667,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
@@ -693,7 +693,7 @@ namespace System.Management.Automation.Remoting
 
                 while (dataWritten < count)
                 {
-                    if (null == _readStream)
+                    if (_readStream == null)
                     {
                         if (_queuedStreams.Count > 0)
                         {
@@ -781,7 +781,7 @@ namespace System.Management.Automation.Remoting
                         return;
                     }
 
-                    if (null == _writeStream)
+                    if (_writeStream == null)
                     {
                         _writeStream = new MemoryStream(_fragmentSize);
                         s_trace.WriteLine("Created write stream: {0}", _writeStream.GetHashCode());
@@ -811,7 +811,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // call the callback since we have data available
-            if (null != _onDataAvailableCallback)
+            if (_onDataAvailableCallback != null)
             {
                 _onDataAvailableCallback(data, _currentFragment.IsEndFragment);
             }
@@ -864,12 +864,12 @@ namespace System.Management.Automation.Remoting
                         }
                     }
 
-                    if ((null != _readStream) && (_readStream.CanRead))
+                    if ((_readStream != null) && (_readStream.CanRead))
                     {
                         _readStream.Dispose();
                     }
 
-                    if ((null != _writeStream) && (_writeStream.CanRead))
+                    if ((_writeStream != null) && (_writeStream.CanRead))
                     {
                         _writeStream.Dispose();
                     }
@@ -884,15 +884,12 @@ namespace System.Management.Automation.Remoting
         #region Stream Overrides
 
         /// <summary>
-        /// 
         /// </summary>
         public override bool CanRead { get { return true; } }
         /// <summary>
-        /// 
         /// </summary>
         public override bool CanSeek { get { return false; } }
         /// <summary>
-        /// 
         /// </summary>
         public override bool CanWrite { get { return true; } }
         /// <summary>
@@ -900,22 +897,21 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override long Length { get { return _length; } }
         /// <summary>
-        /// 
         /// </summary>
         public override long Position
         {
             get { throw new NotSupportedException(); }
+
             set { throw new NotSupportedException(); }
         }
         /// <summary>
-        /// This is a No-Op intentionally as there is nothing 
+        /// This is a No-Op intentionally as there is nothing
         /// to flush.
         /// </summary>
         public override void Flush()
         {
         }
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="offset"></param>
         /// <param name="origin"></param>
@@ -925,7 +921,6 @@ namespace System.Management.Automation.Remoting
             throw new NotSupportedException();
         }
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="value"></param>
         public override void SetLength(long value)
@@ -946,6 +941,7 @@ namespace System.Management.Automation.Remoting
                 GC.SuppressFinalize(this);
                 _disposed = true;
             }
+
             base.Dispose();
         }
 
@@ -953,9 +949,9 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    /// This class performs the fragmentation as well as defragmentation operations of large objects to be sent 
-    /// to the other side. A large remoting PSObject will be broken into fragments. Each fragment has a ObjectId 
-    /// and a FragementId. The last fragment also has an end of fragment marker. These fragments can be reassembled 
+    /// This class performs the fragmentation as well as defragmentation operations of large objects to be sent
+    /// to the other side. A large remoting PSObject will be broken into fragments. Each fragment has a ObjectId
+    /// and a FragmentId. The last fragment also has an end of fragment marker. These fragments can be reassembled
     /// on the receiving end by sequencing the fragment ids.
     /// </summary>
     internal class Fragmentor
@@ -1005,13 +1001,13 @@ namespace System.Management.Automation.Remoting
         /// The object to be fragmented. Caller should make sure this is not null.
         /// </param>
         /// <param name="dataToBeSent">
-        /// Caller specified dataToStore to which the fragements are added 
+        /// Caller specified dataToStore to which the fragments are added
         /// one-by-one
         /// </param>
         internal void Fragment<T>(RemoteDataObject<T> obj, SerializedDataStream dataToBeSent)
         {
-            Dbg.Assert(null != obj, "Cannot fragment a null object");
-            Dbg.Assert(null != dataToBeSent, "SendDataCollection cannot be null");
+            Dbg.Assert(obj != null, "Cannot fragment a null object");
+            Dbg.Assert(dataToBeSent != null, "SendDataCollection cannot be null");
 
             dataToBeSent.Enter();
             try
@@ -1039,6 +1035,7 @@ namespace System.Management.Automation.Remoting
             {
                 return _fragmentSize;
             }
+
             set
             {
                 Dbg.Assert(value > 0, "FragmentSize cannot be less than 0.");
@@ -1056,8 +1053,8 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void SerializeToBytes(object obj, Stream streamToWriteTo)
         {
-            Dbg.Assert(null != obj, "Cannot serialize a null object");
-            Dbg.Assert(null != streamToWriteTo, "Stream to write to cannot be null");
+            Dbg.Assert(obj != null, "Cannot serialize a null object");
+            Dbg.Assert(streamToWriteTo != null, "Stream to write to cannot be null");
 
             XmlWriterSettings xmlSettings = new XmlWriterSettings();
             xmlSettings.CheckCharacters = false;
@@ -1097,8 +1094,8 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         internal PSObject DeserializeToPSObject(Stream serializedDataStream)
         {
-            Dbg.Assert(null != serializedDataStream, "Cannot Deserialize null data");
-            Dbg.Assert(serializedDataStream.Length != 0, "Cannot Deserialze empty data");
+            Dbg.Assert(serializedDataStream != null, "Cannot Deserialize null data");
+            Dbg.Assert(serializedDataStream.Length != 0, "Cannot Deserialize empty data");
 
             object result = null;
             using (XmlReader xmlReader = XmlReader.Create(serializedDataStream, InternalDeserializer.XmlReaderSettingsForCliXml))

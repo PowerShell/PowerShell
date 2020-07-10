@@ -1,17 +1,15 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Class MamlCommandHelpInfo keeps track of help information to be returned by 
+    /// Class MamlCommandHelpInfo keeps track of help information to be returned by
     /// command help provider.
-    /// 
     /// </summary>
     internal class RemoteHelpInfo : BaseCommandHelpInfo
     {
@@ -35,6 +33,7 @@ namespace System.Management.Automation
                 {
                     powerShell.AddParameter("Category", remoteHelpCategory);
                 }
+
                 powerShell.Runspace = remoteRunspace;
 
                 Collection<PSObject> helpResults;
@@ -52,7 +51,7 @@ namespace System.Management.Automation
                 _deserializedRemoteHelp = helpResults[0];
                 _deserializedRemoteHelp.Methods.Remove("ToString");
                 // Win8: bug9457: Remote proxy command's name can be changed locally using -Prefix
-                // parameter of the Import-PSSession cmdlet. To give better user expereience for
+                // parameter of the Import-PSSession cmdlet. To give better user experience for
                 // get-help (on par with get-command), it was decided to use the local command name
                 // for the help content.
                 PSPropertyInfo nameInfo = _deserializedRemoteHelp.Properties["Name"];
@@ -60,6 +59,7 @@ namespace System.Management.Automation
                 {
                     nameInfo.Value = localCommandName;
                 }
+
                 PSObject commandDetails = this.Details;
                 if (commandDetails != null)
                 {

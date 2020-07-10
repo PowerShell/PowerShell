@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 namespace System.Management.Automation
 {
@@ -10,14 +9,14 @@ namespace System.Management.Automation
     using System.Management.Automation.Runspaces;
 
     /// <summary>
-    /// Defines a class which allows simple execution of commands from CLR languages
+    /// Defines a class which allows simple execution of commands from CLR languages.
     /// </summary>
     public class RunspaceInvoke : IDisposable
     {
         #region constructors
 
         /// <summary>
-        /// Runspace on which commands are invoked
+        /// Runspace on which commands are invoked.
         /// </summary>
         private Runspace _runspace;
 
@@ -27,8 +26,7 @@ namespace System.Management.Automation
         /// </summary>
         public RunspaceInvoke()
         {
-            RunspaceConfiguration rc = RunspaceConfiguration.Create();
-            _runspace = RunspaceFactory.CreateRunspace(rc);
+            _runspace = RunspaceFactory.CreateRunspace();
             _runspace.Open();
             if (Runspace.DefaultRunspace == null)
             {
@@ -37,63 +35,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a RunspaceInvoke for invoking commands. Underlying Runspace is created using
-        /// specified RunspaceConfiguration
-        /// </summary>
-        /// <param name="runspaceConfiguration">RunspaceConfiguration used for creating the runspace
-        /// </param>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when runspaceConfiguration is null
-        /// </exception>    
-        public RunspaceInvoke(RunspaceConfiguration runspaceConfiguration)
-        {
-            if (runspaceConfiguration == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("runspaceConfiguration");
-            }
-            _runspace = RunspaceFactory.CreateRunspace(runspaceConfiguration);
-            _runspace.Open();
-            if (Runspace.DefaultRunspace == null)
-            {
-                Runspace.DefaultRunspace = _runspace;
-            }
-        }
-
-        /// <summary>
-        /// Creates a RunspaceInvoke for invoking commands. Underlying Runspace is created using the
-        /// specified console file.
-        /// </summary>
-        /// <param name="consoleFilePath">Console file used for creating the underlying 
-        /// runspace.</param>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when consoleFilePath is null
-        /// </exception>    
-        /// <exception cref="PSConsoleLoadException">
-        /// Thrown when errors occurs in loading one or more PSSnapins.
-        /// </exception>    
-        public RunspaceInvoke(string consoleFilePath)
-        {
-            if (consoleFilePath == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("consoleFilePath");
-            }
-
-            PSConsoleLoadException warnings;
-            RunspaceConfiguration rc = RunspaceConfiguration.Create(consoleFilePath, out warnings);
-            if (warnings != null)
-            {
-                throw warnings;
-            }
-            _runspace = RunspaceFactory.CreateRunspace(rc);
-            _runspace.Open();
-            if (Runspace.DefaultRunspace == null)
-            {
-                Runspace.DefaultRunspace = _runspace;
-            }
-        }
-
-        /// <summary>
-        /// Create RunspaceInvoke for invoking command in specified 
+        /// Create RunspaceInvoke for invoking command in specified
         /// runspace.
         /// </summary>
         /// <param name="runspace"></param>
@@ -104,6 +46,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("runspace");
             }
+
             _runspace = runspace;
             if (Runspace.DefaultRunspace == null)
             {
@@ -111,26 +54,26 @@ namespace System.Management.Automation
             }
         }
 
-        #endregion  constructors
+        #endregion constructors
 
         #region invoke
 
         /// <summary>
-        /// Invoke the specified script
+        /// Invoke the specified script.
         /// </summary>
-        /// <param name="script">msh script to invoke</param>
-        /// <returns>Output of invocation</returns>
+        /// <param name="script">Msh script to invoke.</param>
+        /// <returns>Output of invocation.</returns>
         public Collection<PSObject> Invoke(string script)
         {
             return Invoke(script, null);
         }
 
         /// <summary>
-        /// Invoke the specified script and passes specified input to the script
+        /// Invoke the specified script and passes specified input to the script.
         /// </summary>
-        /// <param name="script">msh script to invoke</param>
-        /// <param name="input">input to script</param>
-        /// <returns>Output of invocation</returns>
+        /// <param name="script">Msh script to invoke.</param>
+        /// <param name="input">Input to script.</param>
+        /// <returns>Output of invocation.</returns>
         public Collection<PSObject> Invoke(string script, IEnumerable input)
         {
             if (_disposed == true)
@@ -142,6 +85,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("script");
             }
+
             Pipeline p = _runspace.CreatePipeline(script);
             return p.Invoke(input);
         }
@@ -149,10 +93,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Invoke the specified script and passes specified input to the script.
         /// </summary>
-        /// <param name="script">msh script to invoke</param>
-        /// <param name="input">input to script</param>
-        /// <param name="errors">this gets errors from script</param>
-        /// <returns>output of invocation</returns>
+        /// <param name="script">Msh script to invoke.</param>
+        /// <param name="input">Input to script.</param>
+        /// <param name="errors">This gets errors from script.</param>
+        /// <returns>Output of invocation.</returns>
         /// <remarks>
         /// <paramref name="errors"/> is the non-terminating error stream
         /// from the command.
@@ -170,6 +114,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("script");
             }
+
             Pipeline p = _runspace.CreatePipeline(script);
             Collection<PSObject> output = p.Invoke(input);
             // 2004/06/30-JonN was ReadAll() which was non-blocking
@@ -182,12 +127,12 @@ namespace System.Management.Automation
         #region IDisposable Members
 
         /// <summary>
-        /// Set to true when object is disposed
+        /// Set to true when object is disposed.
         /// </summary>
         private bool _disposed;
 
         /// <summary>
-        /// Dispose underlying Runspace
+        /// Dispose underlying Runspace.
         /// </summary>
         public void Dispose()
         {
@@ -209,13 +154,11 @@ namespace System.Management.Automation
                     _runspace = null;
                 }
             }
+
             _disposed = true;
         }
 
         #endregion IDisposable Members
     }
 }
-
-
-
 

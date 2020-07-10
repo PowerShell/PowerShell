@@ -1,8 +1,8 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Host;
+
 using Dbg = System.Management.Automation.Diagnostics;
 // Stops compiler from warning about unknown warnings
 #pragma warning disable 1634, 1691
@@ -345,8 +345,9 @@ namespace System.Management.Automation.Remoting
         {
             if (source == null)
             {
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             }
+
             return source.Length;
         }
 
@@ -355,7 +356,7 @@ namespace System.Management.Automation.Remoting
         {
             if (source == null)
             {
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             }
 
             Dbg.Assert(offset >= 0, "offset >= 0");

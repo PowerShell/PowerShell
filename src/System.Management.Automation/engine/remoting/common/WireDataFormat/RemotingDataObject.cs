@@ -1,8 +1,8 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation.  All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.IO;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
@@ -110,7 +110,6 @@ namespace System.Management.Automation.Remoting
         #endregion Properties
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="dataType"></param>
@@ -127,19 +126,18 @@ namespace System.Management.Automation.Remoting
             return new RemoteDataObject<T>(destination, dataType, runspacePoolId, powerShellId, data);
         }
 
-
         /// <summary>
-        /// Creates a RemoteDataObject by deserialzing <paramref name="data"/>.
+        /// Creates a RemoteDataObject by deserializing <paramref name="data"/>.
         /// </summary>
         /// <param name="serializedDataStream"></param>
         /// <param name="defragmentor">
-        /// Defragmetor used to deserialize an object.
+        /// Defragmentor used to deserialize an object.
         /// </param>
         /// <returns></returns>
         internal static RemoteDataObject<T> CreateFrom(Stream serializedDataStream, Fragmentor defragmentor)
         {
-            Dbg.Assert(null != serializedDataStream, "cannot construct a RemoteDataObject from null data");
-            Dbg.Assert(null != defragmentor, "defragmentor cannot be null.");
+            Dbg.Assert(serializedDataStream != null, "cannot construct a RemoteDataObject from null data");
+            Dbg.Assert(defragmentor != null, "defragmentor cannot be null.");
 
             if ((serializedDataStream.Length - serializedDataStream.Position) < headerLength)
             {
@@ -170,7 +168,7 @@ namespace System.Management.Automation.Remoting
         #region Serialize / Deserialize
 
         /// <summary>
-        /// Seriliazes the object into the stream specified. The serialization mechanism uses
+        /// Serializes the object into the stream specified. The serialization mechanism uses
         /// UTF8 encoding to encode data.
         /// </summary>
         /// <param name="streamToWriteTo"></param>
@@ -179,11 +177,11 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal virtual void Serialize(Stream streamToWriteTo, Fragmentor fragmentor)
         {
-            Dbg.Assert(null != streamToWriteTo, "Stream to write to cannot be null.");
-            Dbg.Assert(null != fragmentor, "Fragmentor cannot be null.");
+            Dbg.Assert(streamToWriteTo != null, "Stream to write to cannot be null.");
+            Dbg.Assert(fragmentor != null, "Fragmentor cannot be null.");
             SerializeHeader(streamToWriteTo);
 
-            if (null != Data)
+            if (Data != null)
             {
                 fragmentor.SerializeToBytes(Data, streamToWriteTo);
             }
@@ -193,7 +191,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Serializes only the header portion of the object. ie., runspaceId,
-        /// powerShellId, destinaion and dataType.
+        /// powerShellId, destination and dataType.
         /// </summary>
         /// <param name="streamToWriteTo">
         /// place where the serialized data is stored into.
@@ -201,7 +199,7 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         private void SerializeHeader(Stream streamToWriteTo)
         {
-            Dbg.Assert(null != streamToWriteTo, "stream to write to cannot be null");
+            Dbg.Assert(streamToWriteTo != null, "stream to write to cannot be null");
 
             // Serialize destination
             SerializeUInt((uint)Destination, streamToWriteTo);
@@ -217,7 +215,7 @@ namespace System.Management.Automation.Remoting
 
         private void SerializeUInt(uint data, Stream streamToWriteTo)
         {
-            Dbg.Assert(null != streamToWriteTo, "stream to write to cannot be null");
+            Dbg.Assert(streamToWriteTo != null, "stream to write to cannot be null");
 
             byte[] result = new byte[4]; // size of int
 
@@ -245,7 +243,7 @@ namespace System.Management.Automation.Remoting
 
         private void SerializeGuid(Guid guid, Stream streamToWriteTo)
         {
-            Dbg.Assert(null != streamToWriteTo, "stream to write to cannot be null");
+            Dbg.Assert(streamToWriteTo != null, "stream to write to cannot be null");
 
             byte[] guidArray = guid.ToByteArray();
 
@@ -274,7 +272,6 @@ namespace System.Management.Automation.Remoting
         #region Constructors / Factory
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="dataType"></param>
@@ -290,7 +287,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="dataType"></param>
@@ -298,7 +294,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="powerShellId"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        internal new static RemoteDataObject CreateFrom(RemotingDestination destination,
+        internal static new RemoteDataObject CreateFrom(RemotingDestination destination,
             RemotingDataType dataType,
             Guid runspacePoolId,
             Guid powerShellId,

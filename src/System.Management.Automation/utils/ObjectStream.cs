@@ -1,7 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
-
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 namespace System.Management.Automation.Internal
 {
@@ -17,14 +15,14 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// Base class representing a FIFO memory based object stream.
     /// The purpose of this abstraction is to provide the
-    /// semantics of a unidirectional stream of objects 
+    /// semantics of a unidirectional stream of objects
     /// between two threads using a dynamic memory buffer.
-    /// </summary>    
+    /// </summary>
     internal abstract class ObjectStreamBase : IDisposable
     {
         #region Public events
         /// <summary>
-        /// Event fired when data is added to the buffer
+        /// Event fired when data is added to the buffer.
         /// </summary>
         internal event EventHandler DataReady = null;
 
@@ -47,7 +45,7 @@ namespace System.Management.Automation.Internal
         #region Virtual Properties
 
         /// <summary>
-        /// Get the capacity of the stream
+        /// Get the capacity of the stream.
         /// </summary>
         /// <value>
         /// The capacity of the stream.
@@ -64,11 +62,11 @@ namespace System.Management.Automation.Internal
         /// Waitable handle for callers to wait on until data ready to read.
         /// </summary>
         /// <remarks>
-        /// The handle is set when data becomes available to read or 
+        /// The handle is set when data becomes available to read or
         /// when a partial read has completed.  If multiple readers
         /// are used, setting the handle does not guarantee that
-        /// a read operation will return data. If using multiple 
-        /// reader threads, <see cref="NonBlockingRead"/> for 
+        /// a read operation will return data. If using multiple
+        /// reader threads, <see cref="NonBlockingRead"/> for
         /// performing non-blocking reads.
         /// </remarks>
         internal virtual WaitHandle ReadHandle
@@ -87,7 +85,7 @@ namespace System.Management.Automation.Internal
         /// Waitable handle for callers to block until buffer space becomes available.
         /// </summary>
         /// <remarks>
-        /// The handle is set when space becomes available for writing. For multiple 
+        /// The handle is set when space becomes available for writing. For multiple
         /// writer threads writing to a bounded stream, the writer may still block
         /// if another thread fills the stream to capacity.
         /// </remarks>
@@ -104,7 +102,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Determine if we are at the end of the stream
+        /// Determine if we are at the end of the stream.
         /// </summary>
         /// <remarks>
         /// EndOfPipeline is defined as the stream being closed and containing
@@ -117,7 +115,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Check if the stream is open for further writes.
         /// </summary>
-        /// <returns>true if the stream is open, false if not.</returns>
+        /// <returns>True if the stream is open, false if not.</returns>
         /// <remarks>
         /// IsOpen returns true until the first call to Close(). Writers should
         /// check IsOpen to determine if a write operation can be made.  Note that
@@ -127,23 +125,23 @@ namespace System.Management.Automation.Internal
         internal abstract bool IsOpen { get; }
 
         /// <summary>
-        /// Returns the number of objects in the stream
+        /// Returns the number of objects in the stream.
         /// </summary>
         internal abstract int Count { get; }
 
         /// <summary>
-        /// Return a PipelineReader(object) for this stream
+        /// Return a PipelineReader(object) for this stream.
         /// </summary>
         internal abstract PipelineReader<object> ObjectReader { get; }
 
         /// <summary>
-        /// Return a PipelineReader(PSObject) for this stream
+        /// Return a PipelineReader(PSObject) for this stream.
         /// </summary>
         internal abstract PipelineReader<PSObject> PSObjectReader { get; }
 
         // 913921-2005/07/08 ObjectWriter can be retrieved on a closed stream
         /// <summary>
-        /// Return an PipelineWriter for this stream
+        /// Return an PipelineWriter for this stream.
         /// </summary>
         internal abstract PipelineWriter ObjectWriter { get; }
 
@@ -152,9 +150,9 @@ namespace System.Management.Automation.Internal
         #region Read Abstractions
 
         /// <summary>
-        /// Read a single object from the stream
+        /// Read a single object from the stream.
         /// </summary>
-        /// <returns>The next object in the stream or AutomationNull if EndOfPipeline is reached</returns>
+        /// <returns>The next object in the stream or AutomationNull if EndOfPipeline is reached.</returns>
         /// <remarks>This method blocks if the stream is empty</remarks>
         internal virtual object Read()
         {
@@ -162,17 +160,17 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Read at most <paramref name="count"/> objects
+        /// Read at most <paramref name="count"/> objects.
         /// </summary>
-        /// <param name="count">The maximum number of objects to read</param>
-        /// <returns>The objects read</returns>
+        /// <param name="count">The maximum number of objects to read.</param>
+        /// <returns>The objects read.</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="count"/> is less than 0
         /// </exception>
         /// <remarks>
         /// This method blocks if the number of objects in the stream is less than <paramref name="count"/>
         /// and the stream is not closed.
-        /// 
+        ///
         /// If there are multiple reader threads, the objects returned
         /// to blocking reads Read(int count) and ReadToEnd()
         /// are not necessarily single blocks of objects added to the
@@ -181,7 +179,7 @@ namespace System.Management.Automation.Internal
         /// Each reader reads items from the stream as they become available.
         /// Otherwise, if a maximum _capacity has been imposed, the writer
         /// and reader could become mutually deadlocked.
-        /// 
+        ///
         /// When there are multiple blocked readers, any of the readers
         /// may get the next object(s) added.
         /// </remarks>
@@ -196,7 +194,7 @@ namespace System.Management.Automation.Internal
         /// <returns>A collection of zero or more objects.</returns>
         /// <remarks>
         /// If the stream is empty, a collection of size zero is returned.
-        /// 
+        ///
         /// If there are multiple reader threads, the objects returned
         /// to blocking reads Read(int count) and ReadToEnd()
         /// are not necessarily single blocks of objects added to the
@@ -205,7 +203,7 @@ namespace System.Management.Automation.Internal
         /// Each reader reads items from the stream as they become available.
         /// Otherwise, if a maximum _capacity has been imposed, the writer
         /// and reader could become mutually deadlocked.
-        /// 
+        ///
         /// When there are multiple blocked readers, any of the readers
         /// may get the next object(s) added.
         /// </remarks>
@@ -221,7 +219,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// This method performs a read of objects currently in the
         /// stream. The method will block until exclusive access to the
-        /// stream is acquired.  If there are no objects in the stream, 
+        /// stream is acquired.  If there are no objects in the stream,
         /// an empty array is returned.
         /// </remarks>
         /// <param name="maxRequested">
@@ -236,12 +234,12 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Peek the next object
+        /// Peek the next object.
         /// </summary>
         /// <returns>
         /// The next object in the stream or AutomationNull.Value if the stream is empty
         /// </returns>
-        /// <exception cref="PipelineClosedException">The ObjectStream is closed</exception>
+        /// <exception cref="PipelineClosedException">The ObjectStream is closed.</exception>
         internal virtual object Peek()
         {
             throw PSTraceSource.NewNotSupportedException();
@@ -273,17 +271,17 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Write objects to the underlying stream
+        /// Write objects to the underlying stream.
         /// </summary>
-        /// <param name="obj">object or enumeration to read from</param>
+        /// <param name="obj">Object or enumeration to read from.</param>
         /// <param name="enumerateCollection">
         /// If enumerateCollection is true, and <paramref name="obj"/>
         /// is an enumeration according to LanguagePrimitives.GetEnumerable,
         /// the objects in the enumeration will be unrolled and
-        /// written seperately.  Otherwise, <paramref name="obj"/>
+        /// written separately.  Otherwise, <paramref name="obj"/>
         /// will be written as a single object.
         /// </param>
-        /// <returns>The number of objects written</returns>
+        /// <returns>The number of objects written.</returns>
         /// <exception cref="PipelineClosedException">
         /// The underlying stream is closed
         /// </exception>
@@ -303,7 +301,7 @@ namespace System.Management.Automation.Internal
         #region Close / Flush
 
         /// <summary>
-        /// Close the stream
+        /// Close the stream.
         /// </summary>
         /// <remarks>
         /// Causes subsequent calls to IsOpen to return false and calls to
@@ -328,7 +326,7 @@ namespace System.Management.Automation.Internal
         #region IDisposable
 
         /// <summary>
-        /// public method for dispose
+        /// Public method for dispose.
         /// </summary>
         public void Dispose()
         {
@@ -338,9 +336,9 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// release all resources
+        /// Release all resources.
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources</param>
+        /// <param name="disposing">If true, release all managed resources.</param>
         protected abstract void Dispose(bool disposing);
 
         #endregion IDisposable
@@ -349,47 +347,47 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// A FIFO memory based object stream.
     /// The purpose of this stream class is to provide the
-    /// semantics of a unidirectional stream of objects 
+    /// semantics of a unidirectional stream of objects
     /// between two threads using a dynamic memory buffer.
     /// </summary>
     /// <remarks>
     /// The stream may be bound or unbounded.  Bounded streams
     /// are created via passing a capacity to the constructor.
     /// Unbounded streams are created using the default constructor.
-    /// 
-    /// The capacity of the stream can not be changed after 
+    ///
+    /// The capacity of the stream can not be changed after
     /// construction.
-    /// 
+    ///
     /// For bounded streams, attempts to write to the stream when
     /// the capacity has been reached causes the writer to block
     /// until objects are read.
-    /// 
+    ///
     /// For unbounded streams, writers only block for the amount
-    /// of time needed to acquire exclusive access to the 
+    /// of time needed to acquire exclusive access to the
     /// stream.  Note that unbounded streams have a capacity of
     /// of Int32.MaxValue objects.  In theory, if this limit were
     /// reached, the stream would function as a bounded stream.
-    /// 
+    ///
     /// This class is safe for multi-threaded use with the following
     /// side-effects:
-    /// 
-    /// > For bounded streams, write operations are not guaranteed to 
+    ///
+    /// > For bounded streams, write operations are not guaranteed to
     /// be atomic.  If a write operation causes the capacity to be
     /// reached without writing all data, a partial write occurs and
     /// the writer blocks until data is read from the stream.
-    /// 
+    ///
     /// > When multiple writer or reader threads are used, the order
-    /// the reader or writer acquires a lock on the stream is 
+    /// the reader or writer acquires a lock on the stream is
     /// undefined.  This means that the first call to write does not
     /// guarantee the writer will acquire a write lock first.  The first
     /// call to read does not guarantee the reader will acquire the
-    /// read lock first.  
-    /// 
-    /// > Reads and writes may occur in any order. With a bounded 
-    /// stream, write operations between threads may also result in 
+    /// read lock first.
+    ///
+    /// > Reads and writes may occur in any order. With a bounded
+    /// stream, write operations between threads may also result in
     /// interleaved write operations.
-    /// 
-    /// The result is that the order of data is only guaranteed if there is a 
+    ///
+    /// The result is that the order of data is only guaranteed if there is a
     /// single writer.
     /// </remarks>
     // 897230-2003/10/29-JonN marked sealed
@@ -398,7 +396,7 @@ namespace System.Management.Automation.Internal
     {
         #region Private Fields
         /// <summary>
-        /// Objects in the stream
+        /// Objects in the stream.
         /// </summary>
         // PERF-2003/08/22-JonN We should probably use Queue instead
         // PERF-2004/06/30-JonN Probably more efficient to use type
@@ -412,7 +410,7 @@ namespace System.Management.Automation.Internal
 
         #region Synchronization handles
         /// <summary>
-        /// Read handle - signaled when data is ready to read
+        /// Read handle - signaled when data is ready to read.
         /// </summary>
         /// <remarks>
         /// This event may, on occasion, be signalled even when there is
@@ -425,7 +423,7 @@ namespace System.Management.Automation.Internal
         private AutoResetEvent _readHandle;
 
         /// <summary>
-        /// Handle returned to callers for blocking on data ready
+        /// Handle returned to callers for blocking on data ready.
         /// </summary>
         private ManualResetEvent _readWaitHandle;
 
@@ -464,28 +462,28 @@ namespace System.Management.Automation.Internal
         #endregion Synchronization handles
 
         /// <summary>
-        /// The object reader for this stream. 
+        /// The object reader for this stream.
         /// </summary>
         /// <remarks>
-        /// This field is allocated on first demand and 
+        /// This field is allocated on first demand and
         /// returned on subsequent calls.
         /// </remarks>
         private PipelineReader<object> _reader = null;
 
         /// <summary>
-        /// The PSObject reader for this stream. 
+        /// The PSObject reader for this stream.
         /// </summary>
         /// <remarks>
-        /// This field is allocated on first demand and 
+        /// This field is allocated on first demand and
         /// returned on subsequent calls.
         /// </remarks>
         private PipelineReader<PSObject> _mshreader = null;
 
         /// <summary>
-        /// The object writer for this stream. 
+        /// The object writer for this stream.
         /// </summary>
         /// <remarks>
-        /// This field is allocated on first demand and 
+        /// This field is allocated on first demand and
         /// returned on subsequent calls.
         /// </remarks>
         private PipelineWriter _writer = null;
@@ -493,22 +491,22 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Maximum number of objects allowed in the stream
         /// Note that this is not permitted to be more than Int32.MaxValue,
-        /// since the underlying list has this limitation
+        /// since the underlying list has this limitation.
         /// </summary>
         private int _capacity = Int32.MaxValue;
 
         /// <summary>
-        /// This object is used to acquire an exclusive lock on the stream
+        /// This object is used to acquire an exclusive lock on the stream.
         /// </summary>
         /// <remarks>
         /// Note that we lock _monitorObject rather than "this" so that
         /// we are protected from outside code interfering in our
         /// critical section.  Thanks to Wintellect for the hint.
         /// </remarks>
-        private object _monitorObject = new Object();
+        private object _monitorObject = new object();
 
         /// <summary>
-        /// Indicates if this stream has already been disposed
+        /// Indicates if this stream has already been disposed.
         /// </summary>
         private bool _disposed = false;
 
@@ -517,10 +515,10 @@ namespace System.Management.Automation.Internal
         #region Ctor
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         /// <remarks>
-        /// Constructs a stream with a miximum size of Int32.Max
+        /// Constructs a stream with a maximum size of Int32.Max
         /// </remarks>
         internal ObjectStream()
             : this(Int32.MaxValue)
@@ -528,7 +526,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Allocate the stream with an initial size
+        /// Allocate the stream with an initial size.
         /// </summary>
         /// <param name="capacity">
         /// The maximum number of objects to allow in the buffer at a time.
@@ -543,7 +541,7 @@ namespace System.Management.Automation.Internal
         {
             if (capacity <= 0 || capacity > Int32.MaxValue)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("capacity", capacity);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(capacity), capacity);
             }
 
             // the maximum number of objects to allow in the stream at a given time.
@@ -573,7 +571,7 @@ namespace System.Management.Automation.Internal
         #region internal properties
 
         /// <summary>
-        /// Get the capacity of the stream
+        /// Get the capacity of the stream.
         /// </summary>
         /// <value>
         /// The capacity of the stream.
@@ -596,11 +594,11 @@ namespace System.Management.Automation.Internal
         /// Waitable handle for callers to wait on until data ready to read.
         /// </summary>
         /// <remarks>
-        /// The handle is set when data becomes available to read or 
+        /// The handle is set when data becomes available to read or
         /// when a partial read has completed.  If multiple readers
         /// are used, setting the handle does not guarantee that
-        /// a read operation will return data. If using multiple 
-        /// reader threads, <see cref="NonBlockingRead"/> for 
+        /// a read operation will return data. If using multiple
+        /// reader threads, <see cref="NonBlockingRead"/> for
         /// performing non-blocking reads.
         /// </remarks>
         internal override WaitHandle ReadHandle
@@ -613,7 +611,7 @@ namespace System.Management.Automation.Internal
                 {
                     if (_readWaitHandle == null)
                     {
-                        // Create the handle signaled if there are objects in the stream 
+                        // Create the handle signaled if there are objects in the stream
                         // or the stream has been closed.  The closed scenario addresses
                         // Pipeline readers that execute asynchronously.  Since the pipeline
                         // may complete with zero objects before the caller objects this
@@ -623,6 +621,7 @@ namespace System.Management.Automation.Internal
 
                     handle = _readWaitHandle;
                 }
+
                 return handle;
             }
         }
@@ -631,7 +630,7 @@ namespace System.Management.Automation.Internal
         /// Waitable handle for callers to block until buffer space becomes available.
         /// </summary>
         /// <remarks>
-        /// The handle is set when space becomes available for writing. For multiple 
+        /// The handle is set when space becomes available for writing. For multiple
         /// writer threads writing to a bounded stream, the writer may still block
         /// if another thread fills the stream to capacity.
         /// </remarks>
@@ -650,12 +649,13 @@ namespace System.Management.Automation.Internal
 
                     handle = _writeWaitHandle;
                 }
+
                 return handle;
             }
         }
 
         /// <summary>
-        /// Return a PipelineReader(object) for this stream
+        /// Return a PipelineReader(object) for this stream.
         /// </summary>
         internal override PipelineReader<object> ObjectReader
         {
@@ -670,8 +670,8 @@ namespace System.Management.Automation.Internal
                         // Always return an object reader, even if the stream
                         // is closed. This is to address requesting the object reader
                         // after calling Pipeline.Execute(). NOTE: If Execute completes
-                        // without writing data to the output queue, the 
-                        // stream will be in the EndOfPipeline state because the 
+                        // without writing data to the output queue, the
+                        // stream will be in the EndOfPipeline state because the
                         // stream is closed and has zero data.  Since this is a valid
                         // and expected execution path, we don't want to throw an exception.
                         _reader = new ObjectReader(this);
@@ -685,7 +685,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Return a PipelineReader(PSObject) for this stream
+        /// Return a PipelineReader(PSObject) for this stream.
         /// </summary>
         internal override PipelineReader<PSObject> PSObjectReader
         {
@@ -700,8 +700,8 @@ namespace System.Management.Automation.Internal
                         // Always return an object reader, even if the stream
                         // is closed. This is to address requesting the object reader
                         // after calling Pipeline.Execute(). NOTE: If Execute completes
-                        // without writing data to the output queue, the 
-                        // stream will be in the EndOfPipeline state because the 
+                        // without writing data to the output queue, the
+                        // stream will be in the EndOfPipeline state because the
                         // stream is closed and has zero data.  Since this is a valid
                         // and expected execution path, we don't want to throw an exception.
                         _mshreader = new PSObjectReader(this);
@@ -716,7 +716,7 @@ namespace System.Management.Automation.Internal
 
         // 913921-2005/07/08 ObjectWriter can be retrieved on a closed stream
         /// <summary>
-        /// Return an PipelineWriter for this stream
+        /// Return an PipelineWriter for this stream.
         /// </summary>
         internal override PipelineWriter ObjectWriter
         {
@@ -733,12 +733,13 @@ namespace System.Management.Automation.Internal
 
                     writer = _writer;
                 }
+
                 return writer;
             }
         }
 
         /// <summary>
-        /// Determine if we are at the end of the stream
+        /// Determine if we are at the end of the stream.
         /// </summary>
         /// <remarks>
         /// EndOfPipeline is defined as the stream being closed and containing
@@ -756,6 +757,7 @@ namespace System.Management.Automation.Internal
                 {
                     endOfStream = (_objects.Count == 0 && _isOpen == false);
                 }
+
                 return endOfStream;
             }
         }
@@ -763,7 +765,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Check if the stream is open for further writes.
         /// </summary>
-        /// <returns>true if the stream is open, false if not.</returns>
+        /// <returns>True if the stream is open, false if not.</returns>
         /// <remarks>
         /// IsOpen returns true until the first call to Close(). Writers should
         /// check IsOpen to determine if a write operation can be made.  Note that
@@ -782,12 +784,13 @@ namespace System.Management.Automation.Internal
                 {
                     isOpen = _isOpen;
                 }
+
                 return isOpen;
             }
         }
 
         /// <summary>
-        /// Returns the number of objects in the stream
+        /// Returns the number of objects in the stream.
         /// </summary>
         internal override int Count
         {
@@ -799,6 +802,7 @@ namespace System.Management.Automation.Internal
                 {
                     count = _objects.Count;
                 }
+
                 return count;
             }
         }
@@ -808,11 +812,11 @@ namespace System.Management.Automation.Internal
         #region private locking code
 
         /// <summary>
-        /// Wait for data to be readable
+        /// Wait for data to be readable.
         /// </summary>
-        /// <returns>true if EndOfPipeline is not reached.</returns>
+        /// <returns>True if EndOfPipeline is not reached.</returns>
         /// <remarks>
-        /// WaitRead does not guarantee that data is present in the stream, 
+        /// WaitRead does not guarantee that data is present in the stream,
         /// only that data was added when the event was signaled.  Since there may be
         /// multiple readers, data may be removed from the stream
         /// before the caller has a chance to read the data.
@@ -829,8 +833,8 @@ namespace System.Management.Automation.Internal
                 }
                 catch (ObjectDisposedException)
                 {
-                    // Since the _readHandle must be acquired outside 
-                    // a lock there's a chance that it was 
+                    // Since the _readHandle must be acquired outside
+                    // a lock there's a chance that it was
                     // disposed after checking EndOfPipeline
                 }
             }
@@ -839,11 +843,11 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Wait for data to be writeable
+        /// Wait for data to be writeable.
         /// </summary>
         /// <returns>True if the stream is writeable, otherwise; false.</returns>
         /// <remarks>
-        /// WaitWrite does not guarantee that buffer space will be available in the stream 
+        /// WaitWrite does not guarantee that buffer space will be available in the stream
         /// when the caller attempts to write, only that buffer space was available
         /// when the event was signaled.
         /// This method should never be called within a lock(_monitorObject).
@@ -859,8 +863,8 @@ namespace System.Management.Automation.Internal
                 }
                 catch (ObjectDisposedException)
                 {
-                    // Since the _writeHandle must be acquired outside 
-                    // a lock there's a chance that it was 
+                    // Since the _writeHandle must be acquired outside
+                    // a lock there's a chance that it was
                     // disposed after checking IsOpen
                 }
             }
@@ -916,6 +920,7 @@ namespace System.Management.Automation.Internal
                         {
                         }
                     }
+
                     if (_writeWaitHandle != null)
                     {
                         try
@@ -951,6 +956,7 @@ namespace System.Management.Automation.Internal
                     {
                     }
                 }
+
                 if (unblockWriters)
                 {
                     try
@@ -983,15 +989,15 @@ namespace System.Management.Automation.Internal
 #if (false)
             //
             // NOTE: Event delegates are called only after the internal
-            // AutoResetEvents are set to ensure that an exception in an 
+            // AutoResetEvents are set to ensure that an exception in an
             // event delegate does not leave the reset events in a bad
             // state.
             if (unblockWriters && WriteReady != null)
             {
                 WriteReady (this, new EventArgs ());
             }
-#endif                
-        } // RaiseEvents
+#endif
+        }
 
         #endregion private locking code
 
@@ -1025,7 +1031,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Close the stream
+        /// Close the stream.
         /// </summary>
         /// <remarks>
         /// Causes subsequent calls to IsOpen to return false and calls to
@@ -1062,19 +1068,20 @@ namespace System.Management.Automation.Internal
                     catch (ObjectDisposedException)
                     {
                     }
+
                     RaiseEvents();
                 }
             }
-        } // RaiseEvents
+        }
 
         #endregion internal methods
 
         #region Read Methods
 
         /// <summary>
-        /// Read a single object from the stream
+        /// Read a single object from the stream.
         /// </summary>
-        /// <returns>The next object in the stream or AutomationNull if EndOfPipeline is reached</returns>
+        /// <returns>The next object in the stream or AutomationNull if EndOfPipeline is reached.</returns>
         /// <remarks>This method blocks if the stream is empty</remarks>
         internal override object Read()
         {
@@ -1083,23 +1090,24 @@ namespace System.Management.Automation.Internal
             {
                 return result[0];
             }
+
             Diagnostics.Assert(result.Count == 0, "Invalid number of objects returned");
 
             return AutomationNull.Value;
         }
 
         /// <summary>
-        /// Read at most <paramref name="count"/> objects
+        /// Read at most <paramref name="count"/> objects.
         /// </summary>
-        /// <param name="count">The maximum number of objects to read</param>
-        /// <returns>The objects read</returns>
+        /// <param name="count">The maximum number of objects to read.</param>
+        /// <returns>The objects read.</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="count"/> is less than 0
         /// </exception>
         /// <remarks>
         /// This method blocks if the number of objects in the stream is less than <paramref name="count"/>
         /// and the stream is not closed.
-        /// 
+        ///
         /// If there are multiple reader threads, the objects returned
         /// to blocking reads Read(int count) and ReadToEnd()
         /// are not necessarily single blocks of objects added to the
@@ -1108,7 +1116,7 @@ namespace System.Management.Automation.Internal
         /// Each reader reads items from the stream as they become available.
         /// Otherwise, if a maximum _capacity has been imposed, the writer
         /// and reader could become mutually deadlocked.
-        /// 
+        ///
         /// When there are multiple blocked readers, any of the readers
         /// may get the next object(s) added.
         /// </remarks>
@@ -1116,8 +1124,9 @@ namespace System.Management.Automation.Internal
         {
             if (count < 0)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("count", count);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(count), count);
             }
+
             if (count == 0)
             {
                 return new Collection<object>();
@@ -1137,6 +1146,7 @@ namespace System.Management.Automation.Internal
                         {
                             continue;    // wait some more
                         }
+
                         raiseEvents = true;
                         // NTRAID#Windows Out Of Band Releases-925566-2005/12/07-JonN
                         int objectsAdded = 0;
@@ -1147,13 +1157,14 @@ namespace System.Management.Automation.Internal
                             if (--count <= 0)
                                 break;
                         }
+
                         _objects.RemoveRange(0, objectsAdded);
                     }
                 }
                 finally
                 {
                     // Raise the appropriate read/write events outside the lock. This is
-                    // inside the while loop to ensure writers can have a chance to 
+                    // inside the while loop to ensure writers can have a chance to
                     // write otherwise the reader will starve.
                     // NOTE: This must occur in the finally block to ensure
                     // the AutoResetEvents are left in the appropriate state, even
@@ -1166,7 +1177,7 @@ namespace System.Management.Automation.Internal
             }
 
             return results;
-        } // Read (int count)
+        }
 
         /// <summary>
         /// Blocks until the pipeline closes and reads all objects.
@@ -1174,7 +1185,7 @@ namespace System.Management.Automation.Internal
         /// <returns>A collection of zero or more objects.</returns>
         /// <remarks>
         /// If the stream is empty, a collection of size zero is returned.
-        /// 
+        ///
         /// If there are multiple reader threads, the objects returned
         /// to blocking reads Read(int count) and ReadToEnd()
         /// are not necessarily single blocks of objects added to the
@@ -1183,7 +1194,7 @@ namespace System.Management.Automation.Internal
         /// Each reader reads items from the stream as they become available.
         /// Otherwise, if a maximum _capacity has been imposed, the writer
         /// and reader could become mutually deadlocked.
-        /// 
+        ///
         /// When there are multiple blocked readers, any of the readers
         /// may get the next object(s) added.
         /// </remarks>
@@ -1191,7 +1202,7 @@ namespace System.Management.Automation.Internal
         {
             // NTRAID#Windows Out Of Band Releases-925566-2005/12/07-JonN
             return Read(Int32.MaxValue);
-        } // ReadToEnd
+        }
 
         /// <summary>
         /// Reads objects currently in the stream, but does not block.
@@ -1200,7 +1211,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// This method performs a read of objects currently in the
         /// stream. The method will block until exclusive access to the
-        /// stream is acquired.  If there are no objects in the stream, 
+        /// stream is acquired.  If there are no objects in the stream,
         /// an empty array is returned.
         /// </remarks>
         /// <param name="maxRequested">
@@ -1218,9 +1229,10 @@ namespace System.Management.Automation.Internal
             {
                 return new Collection<object>();
             }
+
             if (maxRequested < 0)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("maxRequested", maxRequested);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(maxRequested), maxRequested);
             }
 
             try
@@ -1241,6 +1253,7 @@ namespace System.Management.Automation.Internal
                         {
                             results.Add(_objects[i]);
                         }
+
                         raiseEvents = true;
                         _objects.RemoveRange(0, readCount);
                     }
@@ -1253,16 +1266,17 @@ namespace System.Management.Automation.Internal
                     RaiseEvents();
                 }
             }
+
             return results ?? new Collection<object>();
-        } // NonBlockingRead
+        }
 
         /// <summary>
-        /// Peek the next object
+        /// Peek the next object.
         /// </summary>
         /// <returns>
         /// The next object in the stream or AutomationNull.Value if the stream is empty
         /// </returns>
-        /// <exception cref="PipelineClosedException">The ObjectStream is closed</exception>
+        /// <exception cref="PipelineClosedException">The ObjectStream is closed.</exception>
         internal override object Peek()
         {
             object result = null;
@@ -1278,6 +1292,7 @@ namespace System.Management.Automation.Internal
                     result = _objects[0];
                 }
             }
+
             return result;
         }
 
@@ -1286,17 +1301,17 @@ namespace System.Management.Automation.Internal
         #region Write Methods
 
         /// <summary>
-        /// Write objects to the underlying stream
+        /// Write objects to the underlying stream.
         /// </summary>
-        /// <param name="obj">object or enumeration to read from</param>
+        /// <param name="obj">Object or enumeration to read from.</param>
         /// <param name="enumerateCollection">
         /// If enumerateCollection is true, and <paramref name="obj"/>
         /// is an enumeration according to LanguagePrimitives.GetEnumerable,
         /// the objects in the enumeration will be unrolled and
-        /// written seperately.  Otherwise, <paramref name="obj"/>
+        /// written separately.  Otherwise, <paramref name="obj"/>
         /// will be written as a single object.
         /// </param>
-        /// <returns>The number of objects written</returns>
+        /// <returns>The number of objects written.</returns>
         /// <exception cref="PipelineClosedException">
         /// The underlying stream is closed
         /// </exception>
@@ -1335,14 +1350,15 @@ namespace System.Management.Automation.Internal
             {
                 enumerable = LanguagePrimitives.GetEnumerable(obj);
             }
-            if (null == enumerable)
+
+            if (enumerable == null)
                 a.Add(obj);
             else
             {
                 foreach (object o in enumerable)
                 {
                     // 879023-2003/10/28-JonN
-                    //  Outputting stops when recieving a AutomationNull.Value
+                    //  Outputting stops when receiving a AutomationNull.Value
                     // 2003/10/28-JonN There is a window where another
                     //  thread could modify the array to contain
                     //  AutomationNull.Value, but I'm not going to deal with it.
@@ -1353,8 +1369,9 @@ namespace System.Management.Automation.Internal
                         // we just ignore it
                         continue;
                     }
+
                     a.Add(o);
-                } // foreach
+                }
             }
 
             int objectsWritten = 0;
@@ -1438,10 +1455,10 @@ namespace System.Management.Automation.Internal
                         RaiseEvents();
                     }
                 }
-            } // end while (count > 0)
+            }
 
             return objectsWritten;
-        } // Write (object obj, bool enumerateCollection)
+        }
 
         #endregion Write Methods
 
@@ -1458,6 +1475,7 @@ namespace System.Management.Automation.Internal
         {
             DataReady += eventHandler;
         }
+
         private void DFT_RemoveHandler_OnDataReady(EventHandler eventHandler)
         {
             DataReady -= eventHandler;
@@ -1467,9 +1485,9 @@ namespace System.Management.Automation.Internal
         #region IDisposable
 
         /// <summary>
-        /// release all resources
+        /// Release all resources.
         /// </summary>
-        /// <param name="disposing">if true, release all managed resources</param>
+        /// <param name="disposing">If true, release all managed resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (_disposed)
@@ -1519,13 +1537,13 @@ namespace System.Management.Automation.Internal
         }
 
         #endregion IDisposable
-    } // class ObjectStream
+    }
 
     /// <summary>
     /// An object stream using a PSDataCollection as the object store.
     /// This stream lets user to supply a custom PSDataCollection instance
     /// to use as the stream's object store.
-    /// 
+    ///
     /// This stream is designed to be used with the user supplied
     /// PSDataBuffers. For internal only purposes use ObjectStream.
     /// </summary>
@@ -1550,7 +1568,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// Creates the stream and uses the supplied <paramref name="storeToUse"/>
-        /// as the object store
+        /// as the object store.
         /// </summary>
         /// <param name="psInstanceId">
         /// Guid of Powershell instance creating this stream.
@@ -1563,9 +1581,9 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal PSDataCollectionStream(Guid psInstanceId, PSDataCollection<T> storeToUse)
         {
-            if (null == storeToUse)
+            if (storeToUse == null)
             {
-                throw PSTraceSource.NewArgumentNullException("storeToUse");
+                throw PSTraceSource.NewArgumentNullException(nameof(storeToUse));
             }
 
             _objects = storeToUse;
@@ -1599,7 +1617,7 @@ namespace System.Management.Automation.Internal
         #region Virtual Implementation
 
         /// <summary>
-        /// Returns the number of objects in the stream
+        /// Returns the number of objects in the stream.
         /// </summary>
         internal override int Count
         {
@@ -1610,7 +1628,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// This is not supported
+        /// This is not supported.
         /// </summary>
         internal override bool EndOfPipeline
         {
@@ -1622,6 +1640,7 @@ namespace System.Management.Automation.Internal
                 {
                     endOfStream = (_objects.Count == 0 && !_isOpen);
                 }
+
                 return endOfStream;
             }
         }
@@ -1629,10 +1648,10 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Check if the stream is open for further writes.
         /// </summary>
-        /// <returns>true if the stream is open, false if not.</returns>
+        /// <returns>True if the stream is open, false if not.</returns>
         /// <remarks>
         /// IsOpen returns true until the first call to Close(). Writers should
-        /// check IsOpen to determine if a write operation can be made. 
+        /// check IsOpen to determine if a write operation can be made.
         /// </remarks>
         internal override bool IsOpen
         {
@@ -1657,17 +1676,17 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Return a PipelineReader(object) for this stream
+        /// Return a PipelineReader(object) for this stream.
         /// </summary>
         internal override PipelineReader<object> ObjectReader
         {
             get
             {
-                if (null == _objectReader)
+                if (_objectReader == null)
                 {
                     lock (_syncObject)
                     {
-                        if (null == _objectReader)
+                        if (_objectReader == null)
                         {
                             _objectReader = new PSDataCollectionReader<T, object>(this);
                         }
@@ -1679,20 +1698,20 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Creates an Object Reader for the pipeline
+        /// Creates an Object Reader for the pipeline.
         /// </summary>
-        /// <param name="computerName">computer name that the pipeline specifies</param>
-        /// <param name="runspaceId">runspace id that the pipeline specifies</param>
+        /// <param name="computerName">Computer name that the pipeline specifies.</param>
+        /// <param name="runspaceId">Runspace id that the pipeline specifies.</param>
         /// <remarks>the computer name and runspace id are associated with the
         /// reader so as to enable cmdlets to identify which computer name runspace does
         /// the object that this stream writes belongs to</remarks>
-        internal PipelineReader<object> GetObjectReaderForPipeline(String computerName, Guid runspaceId)
+        internal PipelineReader<object> GetObjectReaderForPipeline(string computerName, Guid runspaceId)
         {
-            if (null == _objectReaderForPipeline)
+            if (_objectReaderForPipeline == null)
             {
                 lock (_syncObject)
                 {
-                    if (null == _objectReaderForPipeline)
+                    if (_objectReaderForPipeline == null)
                     {
                         _objectReaderForPipeline =
                             new PSDataCollectionPipelineReader<T, object>(this, computerName, runspaceId);
@@ -1704,17 +1723,17 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Return a PipelineReader(PSObject) for this stream
+        /// Return a PipelineReader(PSObject) for this stream.
         /// </summary>
         internal override PipelineReader<PSObject> PSObjectReader
         {
             get
             {
-                if (null == _psobjectReader)
+                if (_psobjectReader == null)
                 {
                     lock (_syncObject)
                     {
-                        if (null == _psobjectReader)
+                        if (_psobjectReader == null)
                         {
                             _psobjectReader = new PSDataCollectionReader<T, PSObject>(this);
                         }
@@ -1726,20 +1745,20 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Creates a PSObject Reader for this pipeline
+        /// Creates a PSObject Reader for this pipeline.
         /// </summary>
-        /// <param name="computerName">computer name that the pipeline specifies</param>
-        /// <param name="runspaceId">runspace id that the pipeline specifies</param>
+        /// <param name="computerName">Computer name that the pipeline specifies.</param>
+        /// <param name="runspaceId">Runspace id that the pipeline specifies.</param>
         /// <remarks>the computer name and runspace id are associated with the
         /// reader so as to enable cmdlets to identify which computer name runspace does
         /// the object that this stream writes belongs to</remarks>
-        internal PipelineReader<PSObject> GetPSObjectReaderForPipeline(String computerName, Guid runspaceId)
+        internal PipelineReader<PSObject> GetPSObjectReaderForPipeline(string computerName, Guid runspaceId)
         {
-            if (null == _psobjectReaderForPipeline)
+            if (_psobjectReaderForPipeline == null)
             {
                 lock (_syncObject)
                 {
-                    if (null == _psobjectReaderForPipeline)
+                    if (_psobjectReaderForPipeline == null)
                     {
                         _psobjectReaderForPipeline =
                             new PSDataCollectionPipelineReader<T, PSObject>(this, computerName, runspaceId);
@@ -1751,32 +1770,33 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// The object writer for this stream. 
+        /// The object writer for this stream.
         /// </summary>
         /// <remarks>
-        /// This field is allocated on first demand and 
+        /// This field is allocated on first demand and
         /// returned on subsequent calls.
         /// </remarks>
         internal override PipelineWriter ObjectWriter
         {
             get
             {
-                if (null == _writer)
+                if (_writer == null)
                 {
                     lock (_syncObject)
                     {
-                        if (null == _writer)
+                        if (_writer == null)
                         {
                             _writer = new PSDataCollectionWriter<T>(this) as PipelineWriter;
                         }
                     }
                 }
+
                 return _writer;
             }
         }
 
         /// <summary>
-        /// Read handle associated with this stream
+        /// Read handle associated with this stream.
         /// </summary>
         internal override WaitHandle ReadHandle
         {
@@ -1824,7 +1844,8 @@ namespace System.Management.Automation.Internal
             {
                 enumerable = LanguagePrimitives.GetEnumerable(obj);
             }
-            if (null == enumerable)
+
+            if (enumerable == null)
             {
                 objectsToAdd.Add((T)LanguagePrimitives.ConvertTo(obj,
                     typeof(T), Globalization.CultureInfo.InvariantCulture));
@@ -1833,9 +1854,9 @@ namespace System.Management.Automation.Internal
             {
                 foreach (object o in enumerable)
                 {
-                    //  Outputting stops when recieving a AutomationNull.Value
-                    //  There is a window where another thread could modify the 
-                    //  array to contain AutomationNull.Value, 
+                    //  Outputting stops when receiving a AutomationNull.Value
+                    //  There is a window where another thread could modify the
+                    //  array to contain AutomationNull.Value,
                     //  but I'm not going to deal with it.
                     if (AutomationNull.Value == o)
                     {
@@ -1843,9 +1864,10 @@ namespace System.Management.Automation.Internal
                         // we just ignore it
                         continue;
                     }
+
                     objectsToAdd.Add((T)LanguagePrimitives.ConvertTo(obj,
                         typeof(T), Globalization.CultureInfo.InvariantCulture));
-                } // foreach
+                }
             }
 
             _objects.InternalAddRange(_psInstanceId, objectsToAdd);
@@ -1873,7 +1895,7 @@ namespace System.Management.Automation.Internal
                 // isOpen controls if this current stream is open or not.
                 if (_isOpen)
                 {
-                    // Decrement ref count (and other event handlers) for the store. 
+                    // Decrement ref count (and other event handlers) for the store.
                     // PowerShell engine is done using this store.
                     _objects.DecrementRef();
                     _objects.DataAdded -= HandleDataAdded;
@@ -1895,7 +1917,6 @@ namespace System.Management.Automation.Internal
         #region Event Handlers
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1905,7 +1926,6 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1919,9 +1939,9 @@ namespace System.Management.Automation.Internal
         #region IDisposable
 
         /// <summary>
-        /// release all resources
+        /// Release all resources.
         /// </summary>
-        /// <param name="disposing">if true, release all resources</param>        
+        /// <param name="disposing">If true, release all resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (_disposed)
@@ -1958,5 +1978,5 @@ namespace System.Management.Automation.Internal
         }
         #endregion IDisposable
     }
-} // namespace System.Management.Automation
+}
 

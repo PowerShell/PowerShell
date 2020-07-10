@@ -1,8 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
-
-
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.ObjectModel;
@@ -10,25 +7,20 @@ using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// 
-    /// Implements the start-transcript cmdlet
-    /// 
+    /// Implements the start-transcript cmdlet.
     /// </summary>
 
-    [Cmdlet(VerbsLifecycle.Start, "Transcript", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113408")]
-    [OutputType(typeof(String))]
+    [Cmdlet(VerbsLifecycle.Start, "Transcript", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096485")]
+    [OutputType(typeof(string))]
     public sealed class StartTranscriptCommand : PSCmdlet
     {
         /// <summary>
-        /// 
-        /// The name of the file in which to write the transcript. If not provided, the file indicated by the variable 
+        /// The name of the file in which to write the transcript. If not provided, the file indicated by the variable
         /// $TRANSCRIPT is used.  If neither the filename is supplied or $TRANSCRIPT is not set, the filename shall be $HOME/My
-        /// Documents/PowerShell_transcript.YYYYMMDDmmss.txt
-        /// 
+        /// Documents/PowerShell_transcript.YYYYMMDDmmss.txt.
         /// </summary>
         /// <value></value>
 
@@ -40,6 +32,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _outFilename;
             }
+
             set
             {
                 _isFilenameSet = true;
@@ -51,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// The literal name of the file in which to write the transcript.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "ByLiteralPath")]
-        [Alias("PSPath")]
+        [Alias("PSPath", "LP")]
         [ValidateNotNullOrEmpty]
         public string LiteralPath
         {
@@ -59,6 +52,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _outFilename;
             }
+
             set
             {
                 _isFilenameSet = true;
@@ -66,6 +60,7 @@ namespace Microsoft.PowerShell.Commands
                 _isLiteralPath = true;
             }
         }
+
         private bool _isLiteralPath = false;
 
         /// <summary>
@@ -79,9 +74,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
         /// Describes the current state of the activity.
-        /// 
         /// </summary>
         /// <value></value>
 
@@ -92,6 +85,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _shouldAppend;
             }
+
             set
             {
                 _shouldAppend = value;
@@ -113,11 +107,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _force;
             }
+
             set
             {
                 _force = value;
             }
         }
+
         private bool _force;
 
         /// <summary>
@@ -131,11 +127,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _noclobber;
             }
+
             set
             {
                 _noclobber = value;
             }
         }
+
         private bool _noclobber;
 
         /// <summary>
@@ -147,10 +145,17 @@ namespace Microsoft.PowerShell.Commands
             get; set;
         }
 
+        /// <summary>
+        /// Gets or sets whether to use minimal transcript header.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter UseMinimalHeader
+        {
+            get; set;
+        }
 
         /// <summary>
-        /// 
-        /// Starts the transcription
+        /// Starts the transcription.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -209,29 +214,31 @@ namespace Microsoft.PowerShell.Commands
                         // Save some disk write time by checking whether file is readonly..
                         if (Force)
                         {
-                            //Make sure the file is not read only
+                            // Make sure the file is not read only
                             // Note that we will not clear the ReadOnly flag later
                             fInfo.Attributes &= ~(FileAttributes.ReadOnly);
                         }
                         else
                         {
-                            Exception innerException = PSTraceSource.NewArgumentException(effectiveFilePath,
+                            string errorMessage = string.Format(
+                                System.Globalization.CultureInfo.CurrentCulture,
                                 TranscriptStrings.TranscriptFileReadOnly,
                                 effectiveFilePath);
+                            Exception innerException = new ArgumentException(errorMessage);
                             ThrowTerminatingError(new ErrorRecord(innerException, "FileReadOnly", ErrorCategory.InvalidArgument, effectiveFilePath));
                         }
                     }
 
-                    // If they didn't specify -Append, delete the file
+                    // If they didn't specify -Append, empty the file
                     if (!_shouldAppend)
                     {
-                        System.IO.File.Delete(effectiveFilePath);
+                        System.IO.File.WriteAllText(effectiveFilePath, string.Empty);
                     }
                 }
 
                 System.Management.Automation.Remoting.PSSenderInfo psSenderInfo =
                     this.SessionState.PSVariable.GetValue("PSSenderInfo") as System.Management.Automation.Remoting.PSSenderInfo;
-                Host.UI.StartTranscribing(effectiveFilePath, psSenderInfo, IncludeInvocationHeader.ToBool());
+                Host.UI.StartTranscribing(effectiveFilePath, psSenderInfo, IncludeInvocationHeader.ToBool(), UseMinimalHeader.IsPresent);
 
                 // ch.StartTranscribing(effectiveFilePath, Append);
 
@@ -251,17 +258,20 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
 
+                string errorMessage = string.Format(
+                    System.Globalization.CultureInfo.CurrentCulture,
+                    TranscriptStrings.CannotStartTranscription,
+                    e.Message);
                 ErrorRecord er = new ErrorRecord(
-                    PSTraceSource.NewInvalidOperationException(e, TranscriptStrings.CannotStartTranscription),
+                    PSTraceSource.NewInvalidOperationException(e, errorMessage),
                     "CannotStartTranscription", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }
         }
 
-        /// resolve a user provided file name or path (cluding globbing characters)
+        /// resolve a user provided file name or path (including globbing characters)
         /// to a fully qualified file path, using the file system provider
         private string ResolveFilePath(string filePath, bool isLiteralPath)
         {
@@ -296,6 +306,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 path = null;
             }
+
             if (string.IsNullOrEmpty(path))
             {
                 CmdletProviderContext cmdletProviderContext = new CmdletProviderContext(this);
@@ -310,6 +321,7 @@ namespace Microsoft.PowerShell.Commands
                     ReportWrongProviderType(provider.FullName);
                 }
             }
+
             return path;
         }
 
@@ -338,6 +350,4 @@ namespace Microsoft.PowerShell.Commands
         private bool _isFilenameSet;
     }
 }
-
-
 

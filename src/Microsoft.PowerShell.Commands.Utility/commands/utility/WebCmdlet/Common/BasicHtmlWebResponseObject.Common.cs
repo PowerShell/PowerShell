@@ -1,34 +1,84 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
-using System.Management.Automation;
-using System.Net;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Management.Automation;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Response object for html content without DOM parsing
+    /// Response object for html content without DOM parsing.
     /// </summary>
-    public partial class BasicHtmlWebResponseObject : WebResponseObject
+    public class BasicHtmlWebResponseObject : WebResponseObject
     {
+        #region Private Fields
+
+        private static Regex s_attribNameValueRegex;
+        private static Regex s_attribsRegex;
+        private static Regex s_imageRegex;
+        private static Regex s_inputFieldRegex;
+        private static Regex s_linkRegex;
+        private static Regex s_tagRegex;
+
+        #endregion Private Fields
+
+        #region Constructors
+
+        /// <summary>
+        /// Constructor for BasicHtmlWebResponseObject.
+        /// </summary>
+        /// <param name="response"></param>
+        public BasicHtmlWebResponseObject(HttpResponseMessage response)
+            : this(response, null)
+        { }
+
+        /// <summary>
+        /// Constructor for HtmlWebResponseObject with memory stream.
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="contentStream"></param>
+        public BasicHtmlWebResponseObject(HttpResponseMessage response, Stream contentStream)
+            : base(response, contentStream)
+        {
+            EnsureHtmlParser();
+            InitializeContent();
+            InitializeRawContent(response);
+        }
+
+        #endregion Constructors
+
         #region Properties
 
         /// <summary>
-        /// gets or protected sets the Content property
+        /// Gets the text body content of this response.
         /// </summary>
+        /// <value>
+        /// Content of the response body, decoded using <see cref="Encoding"/>,
+        /// if the <c>Content-Type</c> response header is a recognized text
+        /// type.  Otherwise <c>null</c>.
+        /// </value>
         public new string Content { get; private set; }
+
+        /// <summary>
+        /// Gets the encoding of the text body content of this response.
+        /// </summary>
+        /// <value>
+        /// Encoding of the response body from the <c>Content-Type</c> header,
+        /// or <c>null</c> if the encoding could not be determined.
+        /// </value>
+        public Encoding Encoding { get; private set; }
 
         private WebCmdletElementCollection _inputFields;
 
         /// <summary>
-        /// gets the Fields property
+        /// Gets the HTML input field elements parsed from <see cref="Content"/>.
         /// </summary>
         public WebCmdletElementCollection InputFields
         {
@@ -55,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         private WebCmdletElementCollection _links;
 
         /// <summary>
-        /// gets the Links property
+        /// Gets the HTML a link elements parsed from <see cref="Content"/>.
         /// </summary>
         public WebCmdletElementCollection Links
         {
@@ -82,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
         private WebCmdletElementCollection _images;
 
         /// <summary>
-        /// gets the Images property
+        /// Gets the HTML img elements parsed from <see cref="Content"/>.
         /// </summary>
         public WebCmdletElementCollection Images
         {
@@ -108,18 +158,45 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Properties
 
-        #region Private Fields
-
-        private static Regex s_tagRegex;
-        private static Regex s_attribsRegex;
-        private static Regex s_attribNameValueRegex;
-        private static Regex s_inputFieldRegex;
-        private static Regex s_linkRegex;
-        private static Regex s_imageRegex;
-
-        #endregion Private Fields
-
         #region Methods
+
+        /// <summary>
+        /// Reads the response content from the web response.
+        /// </summary>
+        protected void InitializeContent()
+        {
+            string contentType = ContentHelper.GetContentType(BaseResponse);
+            if (ContentHelper.IsText(contentType))
+            {
+                Encoding encoding = null;
+                // fill the Content buffer
+                string characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
+
+                if (string.IsNullOrEmpty(characterSet) && ContentHelper.IsJson(contentType))
+                {
+                    characterSet = Encoding.UTF8.HeaderName;
+                }
+
+                this.Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out encoding);
+                this.Encoding = encoding;
+            }
+            else
+            {
+                this.Content = string.Empty;
+            }
+        }
+
+        private PSObject CreateHtmlObject(string html, string tagName)
+        {
+            PSObject elementObject = new PSObject();
+
+            elementObject.Properties.Add(new PSNoteProperty("outerHTML", html));
+            elementObject.Properties.Add(new PSNoteProperty("tagName", tagName));
+
+            ParseAttributes(html, elementObject);
+
+            return elementObject;
+        }
 
         private void EnsureHtmlParser()
         {
@@ -155,21 +232,16 @@ namespace Microsoft.PowerShell.Commands
 
             if (s_imageRegex == null)
             {
-                s_imageRegex = new Regex(@"<img\s+[^>]*>",
+                s_imageRegex = new Regex(@"<img\s[^>]*?>",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }
         }
 
-        private PSObject CreateHtmlObject(string html, string tagName)
+        private void InitializeRawContent(HttpResponseMessage baseResponse)
         {
-            PSObject elementObject = new PSObject();
-
-            elementObject.Properties.Add(new PSNoteProperty("outerHTML", html));
-            elementObject.Properties.Add(new PSNoteProperty("tagName", tagName));
-
-            ParseAttributes(html, elementObject);
-
-            return elementObject;
+            StringBuilder raw = ContentHelper.GetRawContentHeader(baseResponse);
+            raw.Append(Content);
+            this.RawContent = raw.ToString();
         }
 
         private void ParseAttributes(string outerHtml, PSObject elementObject)
@@ -177,7 +249,7 @@ namespace Microsoft.PowerShell.Commands
             // We might get an empty input for a directive from the HTML file
             if (!string.IsNullOrEmpty(outerHtml))
             {
-                // Extract just the opening tag of the HTML element (omitting the closing tag and any contents, 
+                // Extract just the opening tag of the HTML element (omitting the closing tag and any contents,
                 // including contained HTML elements)
                 var match = s_tagRegex.Match(outerHtml);
 
@@ -211,24 +283,6 @@ namespace Microsoft.PowerShell.Commands
 
                     elementObject.Properties.Add(new PSNoteProperty(name, value));
                 }
-            }
-        }
-
-        /// <summary>
-        /// Reads the response content from the web response.
-        /// </summary>
-        private void InitializeContent()
-        {
-            string contentType = ContentHelper.GetContentType(BaseResponse);
-            if (ContentHelper.IsText(contentType))
-            {
-                // fill the Content buffer
-                string characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
-                this.Content = StreamHelper.DecodeStream(RawContentStream, characterSet);
-            }
-            else
-            {
-                this.Content = string.Empty;
             }
         }
 

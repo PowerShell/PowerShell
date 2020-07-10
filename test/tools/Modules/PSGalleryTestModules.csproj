@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+
+  <Import Project="..\..\Test.Common.props" />
+
+  <ItemGroup>
+    <PackageReference Include="SelfSignedCertificate" Version="0.0.4" />
+  </ItemGroup>
+
+</Project>

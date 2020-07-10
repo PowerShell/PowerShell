@@ -1,8 +1,8 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
+
 using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
@@ -16,56 +16,50 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Hide the default constructor since we always require an instance of SessionState
+        /// Hide the default constructor since we always require an instance of SessionState.
         /// </summary>
         private ChildItemCmdletProviderIntrinsics()
         {
             Dbg.Diagnostics.Assert(
                 false,
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
-        } // CmdletProviderIntrinsics private
-
+        }
 
         /// <summary>
-        /// Constructs a facade over the "real" session state API
+        /// Constructs a facade over the "real" session state API.
         /// </summary>
-        ///
         /// <param name="cmdlet">
         /// An instance of the cmdlet that this class is acting as a facade for.
         /// </param>
-        ///
         internal ChildItemCmdletProviderIntrinsics(Cmdlet cmdlet)
         {
             if (cmdlet == null)
             {
-                throw PSTraceSource.NewArgumentNullException("cmdlet");
+                throw PSTraceSource.NewArgumentNullException(nameof(cmdlet));
             }
 
             _cmdlet = cmdlet;
             _sessionState = cmdlet.Context.EngineSessionState;
-        } // ChildItemCmdletProviderIntrinsics internal
+        }
 
         /// <summary>
-        /// Constructs a facade over the "real" session state API
+        /// Constructs a facade over the "real" session state API.
         /// </summary>
-        ///
         /// <param name="sessionState">
         /// An instance of the "real" session state.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="sessionState"/> is null.
         /// </exception>
-        /// 
         internal ChildItemCmdletProviderIntrinsics(SessionStateInternal sessionState)
         {
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
             _sessionState = sessionState;
-        } // ChildItemCmdletProviderIntrinsics internal
+        }
         #endregion Constructors
 
         #region Public methods
@@ -75,45 +69,36 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the child items of the container at the given path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to retrieve. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="recurse">
         /// If true, gets all the children in all the sub-containers of the specified
         /// container. If false, only gets the immediate children of the specified
         /// container.
         /// </param>
-        /// 
         /// <returns>
         /// The children of the container at the specified path. The type of the objects returned are
         /// determined by the provider that supports the given path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="context"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -126,66 +111,53 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetChildItems(new string[] { path }, recurse, uint.MaxValue, false, false);
-        } // GetChildItems
+        }
 
         /// <summary>
         /// Gets the child items of the container at the given path(s).
         /// </summary>
-        /// 
         /// <param name="path">
         /// The path(s) to the item(s) to retrieve. They may be drive or provider-qualified paths and may include
         /// glob characters.
         /// </param>
-        /// 
         /// <param name="recurse">
         /// If true, gets all the children in all the sub-containers of the specified
         /// container. If false, only gets the immediate children of the specified
         /// container.
         /// </param>
-        ///
         /// <param name="depth">
         /// Limits the depth of recursion; uint.MaxValue performs full recursion.
         /// </param>
-        /// 
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        /// 
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        /// 
         /// <returns>
         /// The children of the container at the specified path. The type of the objects returned are
         /// determined by the provider that supports the given path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="context"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
         public Collection<PSObject> Get(string[] path, bool recurse, uint depth, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
@@ -200,57 +172,45 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the child items of the container at the given path(s).
         /// </summary>
-        /// 
         /// <param name="path">
         /// The path(s) to the item(s) to retrieve. They may be drive or provider-qualified paths and may include
         /// glob characters.
         /// </param>
-        /// 
         /// <param name="recurse">
         /// If true, gets all the children in all the sub-containers of the specified
         /// container. If false, only gets the immediate children of the specified
         /// container.
         /// </param>
-        /// 
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        /// 
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        /// 
         /// <returns>
         /// The children of the container at the specified path. The type of the objects returned are
         /// determined by the provider that supports the given path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="context"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
         public Collection<PSObject> Get(string[] path, bool recurse, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
@@ -265,52 +225,41 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the child items of the container at the given path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to retrieve. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="recurse">
         /// If true, gets all the children in all the sub-containers of the specified
         /// container. If false, only gets the immediate children of the specified
         /// container.
         /// </param>
-        /// 
         /// <param name="depth">
         /// Limits the depth of recursion; uint.MaxValue performs full recursion.
         /// </param>
-        ///
         /// <param name="context">
-        /// The context under which the command is running. 
+        /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// Nothing. The children of the container at the specified path are written to the context.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="context"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -327,49 +276,40 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.GetChildItems(path, recurse, depth, context);
-        } // GetChildItems
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-childitem cmdlet.
         /// </summary>
-        /// 
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        /// 
         /// <param name="recurse">
         /// If true, gets all the children in all the sub-containers of the specified
         /// container. If false, only gets the immediate children of the specified
         /// container.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -385,8 +325,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetChildItemsDynamicParameters(path, recurse, context);
-        } // GetChildItemsDynamicParameters
-
+        }
 
         #endregion GetChildItems
 
@@ -395,51 +334,41 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the child names of the container at the given path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to retrieve. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="returnContainers">
         /// Determines if all containers should be returned or only those containers that match the
         /// filter(s).
         /// </param>
-        ///
         /// <param name="recurse">
-        /// If true, gets all the relative paths of all the children 
+        /// If true, gets all the relative paths of all the children
         /// in all the sub-containers of the specified
         /// container. If false, only gets the immediate child names of the specified
         /// container.
         /// </param>
-        ///
         /// <returns>
         /// The children of the container at the specified path. The type of the objects returned are
         /// determined by the provider that supports the given path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="propertyToClear"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -455,68 +384,55 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetChildNames(new string[] { path }, returnContainers, recurse, uint.MaxValue, false, false);
-        } // GetChildNames
+        }
 
         /// <summary>
         /// Gets the child names of the container at the given path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path(s) to the item(s) to retrieve. They may be drive or provider-qualified paths and may include
         /// glob characters.
         /// </param>
-        /// 
         /// <param name="returnContainers">
         /// Determines if all containers should be returned or only those containers that match the
         /// filter(s).
         /// </param>
-        ///
         /// <param name="recurse">
-        /// If true, gets all the relative paths of all the children 
+        /// If true, gets all the relative paths of all the children
         /// in all the sub-containers of the specified
         /// container. If false, only gets the immediate child names of the specified
         /// container.
         /// </param>
-        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        /// 
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        /// 
         /// <returns>
         /// The children of the container at the specified path. The type of the objects returned are
         /// determined by the provider that supports the given path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="propertyToClear"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
         public Collection<string> GetNames(
             string[] path,
             ReturnContainers returnContainers,
@@ -534,67 +450,53 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the child names of the container at the given path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path(s) to the item(s) to retrieve. They may be drive or provider-qualified paths and may include
         /// glob characters.
         /// </param>
-        /// 
         /// <param name="returnContainers">
         /// Determines if all containers should be returned or only those containers that match the
         /// filter(s).
         /// </param>
-        ///
         /// <param name="recurse">
-        /// If true, gets all the relative paths of all the children 
+        /// If true, gets all the relative paths of all the children
         /// in all the sub-containers of the specified
         /// container. If false, only gets the immediate child names of the specified
         /// container.
         /// </param>
-        ///
         /// <param name="depth">
         /// Limits the depth of recursion; uint.MaxValue performs full recursion.
         /// </param>
-        /// 
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        /// 
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        /// 
         /// <returns>
         /// The children of the container at the specified path. The type of the objects returned are
         /// determined by the provider that supports the given path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="propertyToClear"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
         public Collection<string> GetNames(
             string[] path,
             ReturnContainers returnContainers,
@@ -613,58 +515,46 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the child names of the container at the given path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to retrieve. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="returnContainers">
         /// Determines if all containers should be returned or only those containers that match the
         /// filter(s).
         /// </param>
-        ///
         /// <param name="recurse">
-        /// If true, gets all the relative paths of all the children 
+        /// If true, gets all the relative paths of all the children
         /// in all the sub-containers of the specified
         /// container. If false, only gets the immediate child names of the specified
         /// container.
         /// </param>
-        ///
         /// <param name="depth">
         /// Limits the depth of recursion; uint.MaxValue performs full recursion.
         /// </param>
-        /// 
         /// <param name="context">
-        /// The context under which the command is running. 
+        /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// Nothing.  The names of the children of the specified container are written to the context.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="propertyToClear"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -682,43 +572,35 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.GetChildNames(path, returnContainers, recurse, depth, context);
-        } // GetChildNames
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-childitem -name cmdlet.
         /// </summary>
-        /// 
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        /// 
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -733,7 +615,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetChildNamesDynamicParameters(path, context);
-        } // GetChildNamesDynamicParameters
+        }
 
         #endregion GetChildNames
 
@@ -742,38 +624,30 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if an item at the given path has children.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to determine if it has children. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <returns>
         /// True if the item at the specified path has children. False otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -786,51 +660,41 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.HasChildItems(path, false, false);
-        } // HasChildItems
+        }
 
         /// <summary>
         /// Determines if an item at the given path has children.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to determine if it has children. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        /// 
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        /// 
         /// <returns>
         /// True if the item at the specified path has children. False otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -848,42 +712,33 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if an item at the given path has children.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to determine if it has children. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="context">
-        /// The context under which the command is running. 
+        /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// True if the item at the specified path has children. False otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -898,8 +753,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.HasChildItems(path, context);
-        } // HasChildItems
-
+        }
 
         #endregion HasChildItems
 
@@ -911,13 +765,12 @@ namespace System.Management.Automation
         private SessionStateInternal _sessionState;
 
         #endregion private data
-    } // ChildItemCmdletProviderIntrinsics
+    }
 
     /// <summary>
     /// This enum determines which types of containers are returned from some of
     /// the provider methods.
     /// </summary>
-    /// 
     public enum ReturnContainers
     {
         /// <summary>

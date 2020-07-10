@@ -1,12 +1,11 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
+using System.Collections.ObjectModel;
 
 namespace Microsoft.PowerShell.Cmdletization
 {
-    using System;
-    using System.Collections.ObjectModel;
-
     /// <summary>
     /// Collection of method parameters and their arguments
     /// used to invoke a method in an object model wrapped by <see cref="CmdletAdapter&lt;TObjectInstance&gt;"/>
@@ -14,7 +13,7 @@ namespace Microsoft.PowerShell.Cmdletization
     internal sealed class MethodParametersCollection : KeyedCollection<string, MethodParameter>
     {
         /// <summary>
-        /// Creates an empty collection of method parameters
+        /// Creates an empty collection of method parameters.
         /// </summary>
         public MethodParametersCollection()
             : base(StringComparer.Ordinal, 5)
@@ -22,7 +21,7 @@ namespace Microsoft.PowerShell.Cmdletization
         }
 
         /// <summary>
-        /// Gets key for a method parameter
+        /// Gets key for a method parameter.
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>

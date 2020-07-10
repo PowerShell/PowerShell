@@ -1,0 +1,758 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xml:lang="en">
+  <xs:element name="Configuration">
+    <xs:annotation>
+      <xs:documentation>Represents the top-level element of a formatting file.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:all>
+        <xs:element minOccurs="0" name="DefaultSettings" maxOccurs="1" type="DefaultSettings">
+          <xs:annotation>
+            <xs:documentation>Optional element. Defines common settings that apply to all the views of the formatting file.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element minOccurs="0" name="SelectionSets" maxOccurs="1" type="SelectionSets">
+          <xs:annotation>
+            <xs:documentation>Optional element. Defines the common sets of .NET objects that can be used by all views of the formatting file.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element minOccurs="0" name="Controls" maxOccurs="1" type="Controls">
+          <xs:annotation>
+            <xs:documentation>Optional element. Defines the common controls that can be used by all views of the formatting file.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element minOccurs="0" name="ViewDefinitions" maxOccurs="1" type="ViewDefinitions">
+          <xs:annotation>
+            <xs:documentation>Optional element. Defines the views used to display objects.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="DefaultSettings">
+    <xs:annotation>
+      <xs:documentation>Defines common settings that apply to all the views of the formatting file. Common settings include displaying errors, wrapping text in tables, defining how collections are expanded, and more.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element default="false" minOccurs="0" name="ShowError" maxOccurs="1" type="Boolean">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies that the full error record is displayed when an error occurs while displaying a piece of data.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element default="false" minOccurs="0" name="DisplayError" maxOccurs="1" type="Boolean">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies that the string #ERR is displayed when an error occurs while displaying a piece of data.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element default="4" minOccurs="0" name="PropertyCountForTable" maxOccurs="1" type="xs:nonNegativeInteger">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies the minimum number of properties that an object must have to display the object in a table view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element default="false" minOccurs="0" name="WrapTables" maxOccurs="1" type="Boolean">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies that data in a table is moved to the next line if it does not fit into the width of the column.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="EnumerableExpansions" maxOccurs="1" type="EnumerableExpansions">
+        <xs:annotation>
+          <xs:documentation>Optional element. Defines the different ways that .NET objects are expanded when they are displayed in a view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="EnumerableExpansions">
+    <xs:annotation>
+      <xs:documentation>Defines how .NET collection objects are expanded when they are displayed in a view.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" name="EnumerableExpansion" maxOccurs="unbounded" type="EnumerableExpansion">
+        <xs:annotation>
+          <xs:documentation>Optional element. Defines the specific .NET collection objects that are expanded when they are displayed in a view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="EnumerableExpansion">
+    <xs:annotation>
+      <xs:documentation>Defines how specific .NET collection objects are expanded when they are displayed in a view.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element minOccurs="0" name="EntrySelectedBy" maxOccurs="1" type="EntrySelectedBy">
+        <xs:annotation>
+          <xs:documentation>Optional element. Defines which .NET collection objects are expanded by this definition.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Expand" maxOccurs="1" type="Expand">
+        <xs:annotation>
+          <xs:documentation>Specifies how the collection object is expanded for this definition.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+  <xs:simpleType name="Expand">
+    <xs:annotation>
+      <xs:documentation>Specifies how the collection object is expanded for this definition.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="CoreOnly" />
+      <xs:enumeration value="EnumOnly" />
+      <xs:enumeration value="Both" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="ViewDefinitions">
+    <xs:annotation>
+      <xs:documentation>Defines the views used to display .NET objects. These views can display the properties and script values of an object  in a table format, list format, wide format, and custom control format.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="View" maxOccurs="unbounded" type="View">
+        <xs:annotation>
+          <xs:documentation>Defines a view that is used to display one or more .NET objects.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="View">
+    <xs:annotation>
+      <xs:documentation>Defines a view that displays one or more .NET objects. There is no limit to the number of views that can be defined in a formatting file.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="ViewCommon">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="TableControl" type="TableControl">
+              <xs:annotation>
+                <xs:documentation>Optional element. Defines a table format for the view.</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="ListControl" type="ListControl">
+              <xs:annotation>
+                <xs:documentation>Optional element. Defines a list format for the view.</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="WideControl" type="WideControl">
+              <xs:annotation>
+                <xs:documentation>Optional element. Defines a wide (single value) list format for the view.</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="CustomControl" type="CustomControl">
+              <xs:annotation>
+                <xs:documentation>Optional element. Defines a custom control format for the view.</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ViewCommon">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element minOccurs="0" name="OutOfBand" type="Boolean" />
+      <xs:element name="ViewSelectedBy" type="ViewSelectedBy" />
+      <xs:element minOccurs="0" name="Controls" type="Controls" />
+      <xs:element minOccurs="0" name="GroupBy" type="GroupBy" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ViewSelectedBy">
+    <xs:annotation>
+      <xs:documentation>Defines the .NET objects that are displayed by the view. Each view must specify at least one .NET object.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+      <xs:element minOccurs="0" name="SelectionSetName" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies a set of .NET objects that are displayed by the view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="TypeName" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies a .NET object that is displayed by the view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="TableControl">
+    <xs:annotation>
+      <xs:documentation>Defines a table format for a view.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element minOccurs="0" name="AutoSize" type="Boolean">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies whether the column size and the number of columns are adjusted based on the size of the data.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="HideTableHeaders" type="Boolean">
+        <xs:annotation>
+          <xs:documentation>Optional element. Indicates whether the header of the table is not displayed.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="TableHeaders" type="TableHeaders">
+        <xs:annotation>
+          <xs:documentation>Required element. Defines the labels, the widths, and the alignment of the data for the columns of the table view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="TableRowEntries" type="TableRowEntries">
+        <xs:annotation>
+          <xs:documentation>Optional element. Provides the definitions of the table view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="TableHeaders">
+    <xs:annotation>
+      <xs:documentation>Defines the headers for the columns of a table.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" name="TableColumnHeader" maxOccurs="unbounded" type="TableColumnHeader">
+        <xs:annotation>
+          <xs:documentation>Optional element. Defines the label, the width, and the alignment of the data for a column of a table view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="TableColumnHeader">
+    <xs:annotation>
+      <xs:documentation>Defines the label, the width of the column, and the alignment of the label for a column of the table.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element minOccurs="0" name="Label" type="Text">
+        <xs:annotation>
+          <xs:documentation>Optional element. Defines the label that is displayed at the top of the column. If no label is specified, the name of the property whose value is displayed in the rows is used.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Width" type="xs:positiveInteger">
+        <xs:annotation>
+          <xs:documentation>Required element. Specifies the width (in characters) of the column.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Alignment" type="Alignment">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies how the label of the column is displayed. If no alignment is specified, the label is aligned on the left.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="TableColumnItems">
+    <xs:annotation>
+      <xs:documentation>Defines the properties or scripts whose values are displayed in a row.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="1" name="TableColumnItem" maxOccurs="unbounded" type="TableColumnItem">
+        <xs:annotation>
+          <xs:documentation>Required element. Defines the property or script whose value is displayed in a column of the row.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="TableColumnItem">
+    <xs:annotation>
+      <xs:documentation>Defines the property or script whose value is displayed in the column of the row.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:sequence minOccurs="0">
+        <xs:group ref="Expression" maxOccurs="1" />
+        <xs:element minOccurs="0" name="FormatString" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>Specifies a format pattern that is used to format the data in the column of the row.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+      <xs:element minOccurs="0" name="Alignment" type="Alignment">
+        <xs:annotation>
+          <xs:documentation>Optional element. Defines how the data in a column of the row is displayed.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:group name="Expression">
+    <xs:choice>
+      <xs:element name="PropertyName" type="xs:string" />
+      <xs:element name="ScriptBlock" type="xs:string" />
+    </xs:choice>
+  </xs:group>
+  <xs:simpleType name="Alignment">
+    <xs:annotation>
+      <xs:documentation>Defines how the data in a column header is displayed.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Left" />
+      <xs:enumeration value="Right" />
+      <xs:enumeration value="Center" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="TableRowEntries">
+    <xs:annotation>
+      <xs:documentation>Defines the rows of the table.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="TableRowEntry" maxOccurs="unbounded" type="TableRowEntry">
+        <xs:annotation>
+          <xs:documentation>Required element. Defines the data that is displayed in a row of the table.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="TableRowEntry">
+    <xs:annotation>
+      <xs:documentation>Defines the data that is displayed in a row of the table.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element minOccurs="0" name="EntrySelectedBy" maxOccurs="1" type="EntrySelectedBy">
+        <xs:annotation>
+          <xs:documentation>Required element. Defines the objects whose property values are displayed in the row.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="TableColumnItems" maxOccurs="1" type="TableColumnItems">
+        <xs:annotation>
+          <xs:documentation>Required element. Defines the properties or scripts whose values are displayed.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element default="false" minOccurs="0" name="Wrap" maxOccurs="1" type="Boolean">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies that text that exceeds the column width is displayed on the next line.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="ListControl">
+    <xs:annotation>
+      <xs:documentation>Defines a list format for the view.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ListEntries" type="ListEntries">
+        <xs:annotation>
+          <xs:documentation>Required element. Provides the definitions of the list view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ListEntries">
+    <xs:annotation>
+      <xs:documentation>Provides the definitions of the list view. The list view must specify one or more definitions.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ListEntry" maxOccurs="unbounded" type="ListEntry">
+        <xs:annotation>
+          <xs:documentation>Provides a definition of the list view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ListEntry">
+    <xs:annotation>
+      <xs:documentation>Provides a definition of the list view.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" name="EntrySelectedBy" type="EntrySelectedBy">
+        <xs:annotation>
+          <xs:documentation>Optional element. Defines the .NET objects that use this list view definition or the condition that must exist for this definition to be used.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" name="ListItems" type="ListItems">
+        <xs:annotation>
+          <xs:documentation>Required element. Defines the properties and scripts whose values are displayed by the list view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ListItems">
+    <xs:annotation>
+      <xs:documentation>Defines the properties and scripts whose values are displayed in the rows of the list view.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="1" name="ListItem" maxOccurs="unbounded" type="ListItem">
+        <xs:annotation>
+          <xs:documentation>Required element. Defines the property or script whose value is displayed by the list view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ListItem">
+    <xs:annotation>
+      <xs:documentation>Defines the property or script whose value is displayed in a row of the list view.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Label" type="Text">
+        <xs:annotation>
+          <xs:documentation>Optional element Specifies the label that is displayed to the left of the property or script value in the row.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="ItemSelectionCondition" type="ItemSelectionCondition">
+        <xs:annotation>
+          <xs:documentation>Optional element. Defines the condition that must exist for this list item to be used.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:group ref="Expression" maxOccurs="1" />
+      <xs:element minOccurs="0" name="FormatString" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies a format string that defines how the property or script value is displayed.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="WideControl">
+    <xs:annotation>
+      <xs:documentation>Defines a wide (single value) list format for the view. This view displays a single property value or script value for each object.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:choice minOccurs="0">
+        <xs:element name="AutoSize" type="Boolean">
+          <xs:annotation>
+            <xs:documentation>Optional element. Specifies whether the column size and the number of columns are adjusted based on the size of the data.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="ColumnNumber" type="xs:positiveInteger">
+          <xs:annotation>
+            <xs:documentation>Optional element. Specifies the number of columns displayed in the wide view.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+      <xs:element name="WideEntries" type="WideEntries">
+        <xs:annotation>
+          <xs:documentation>Required element. Provides the definitions of the wide view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="WideEntries">
+    <xs:annotation>
+      <xs:documentation>Provides the definitions of the wide view. The wide view must specify one or more definitions.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="WideEntry" maxOccurs="unbounded" type="WideEntry">
+        <xs:annotation>
+          <xs:documentation>Provides a definition of the wide view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="WideEntry">
+    <xs:annotation>
+      <xs:documentation>Provides a definition of the wide view.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <!-- "EntrySelectedBy" is optional, but it can be omitted in at most one WideEntry -->
+      <xs:element minOccurs="0" name="EntrySelectedBy" type="EntrySelectedBy">
+        <xs:annotation>
+          <xs:documentation>Optional element. Defines the .NET types that use this wide entry definition or the condition that must exist for this definition to be used.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="WideItem" type="WideItem">
+        <xs:annotation>
+          <xs:documentation>Required element. Defines the property or script whose value is displayed.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="WideItem">
+    <xs:annotation>
+      <xs:documentation>Defines the property or script whose value is displayed.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence minOccurs="0">
+      <xs:group ref="Expression" maxOccurs="1" />
+      <xs:element minOccurs="0" name="FormatString" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies a format pattern that defines how the property or script value is displayed in the view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Controls">
+    <xs:annotation>
+      <xs:documentation>Defines the common controls that can be used by all views of the formatting file.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Control" maxOccurs="unbounded" type="Control">
+        <xs:annotation>
+          <xs:documentation>Required element. Defines a common control that can be used by all views of the formatting file.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Control">
+    <xs:annotation>
+      <xs:documentation>Defines a common control that can be used by all the views of the formatting file and the name that is used to reference the control.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element minOccurs="1" name="Name" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Required element. Specifies the name used to reference the control.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" name="CustomControl" type="CustomControl">
+        <xs:annotation>
+          <xs:documentation>Required element. Defines the control.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="CustomControl">
+    <xs:annotation>
+      <xs:documentation>Defines the custom control that displays the new group.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="1" name="CustomEntries" type="CustomEntries">
+        <xs:annotation>
+          <xs:documentation>Required element. Provides the definitions for the control.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CustomEntries">
+    <xs:annotation>
+      <xs:documentation>Provides the definitions of a common control. This element is used when defining a common control that can be used by all the views in the formatting file.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="1" name="CustomEntry" maxOccurs="unbounded" type="CustomEntry">
+        <xs:annotation>
+          <xs:documentation>Provides a definition of the common control.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CustomEntry">
+    <xs:annotation>
+      <xs:documentation>Provides a definition of the common control. This element is used when defining a common control that can be used by all the views in the formatting file.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element minOccurs="0" name="EntrySelectedBy" maxOccurs="1" type="EntrySelectedBy">
+        <xs:annotation>
+          <xs:documentation>Optional element. Defines the .NET types that use the definition of the common control or the condition that must exist for this control to be used.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" name="CustomItem" type="CustomItem">
+        <xs:annotation>
+          <xs:documentation>Required element. Defines what data is displayed by the control and how it is displayed.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="CustomItem">
+    <xs:annotation>
+      <xs:documentation>Defines what data is displayed by the custom control view and how it is displayed. This element is used when defining how a new group of objects is displayed.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element minOccurs="0" name="ExpressionBinding" maxOccurs="unbounded" type="ExpressionBinding">
+        <xs:annotation>
+          <xs:documentation>Optional element. Defines the data that is displayed by the control.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="NewLine" type="NewLine">
+        <xs:annotation>
+          <xs:documentation>Optional element. Adds a blank line to the display of the control.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Text" type="Text">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies additional text to the data displayed by the control.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Frame" type="Frame">
+        <xs:annotation>
+          <xs:documentation>Optional element. Defines what data is displayed by the custom control view and how it is displayed.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ExpressionBinding">
+    <xs:annotation>
+      <xs:documentation>Defines the data that is displayed by the control. This element is used when defining a common control that can be used by all the views in the formatting file.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:group ref="Expression" minOccurs="0" maxOccurs="1" />
+      <xs:element minOccurs="0" name="EnumerateCollection" type="Boolean">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specified that the elements of collections are displayed by the control.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="ItemSelectionCondition" type="ItemSelectionCondition">
+        <xs:annotation>
+          <xs:documentation>Optional element. Defines the condition that must exist for this common control to be used.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomControl" type="CustomControl">
+        <xs:annotation>
+          <xs:documentation>Optional element. Defines a control that is used by this control.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomControlName" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies the name of a common control or a view control.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Types">
+    <xs:annotation>
+      <xs:documentation>Defines the .NET objects that are in the selection set.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="TypeName" maxOccurs="unbounded" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Required element. Specifies the .NET object that belongs to the selection set.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="EntrySelectedBy">
+    <xs:annotation>
+      <xs:documentation>Defines the .NET types that use this custom entry or the condition that must exist for this entry to be used.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+      <xs:element minOccurs="0" name="SelectionSetName" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies a set of .NET types that use this definition of the control view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="TypeName" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies a .NET type that uses this definition of the control view.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="SelectionCondition" type="SelectionCondition">
+        <xs:annotation>
+          <xs:documentation>Optional element. Defines the condition that must exist for this definition to be used.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="SelectionCondition">
+    <xs:annotation>
+      <xs:documentation>Defines the condition that must exist for this definition to be used. There is no limit to the number of selection conditions that can be specified for a wide entry definition.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:choice>
+        <xs:element name="SelectionSetName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>Optional element. Specifies the set of .NET types that triggers the condition.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="TypeName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>Optional element. Specifies a .NET type that triggers the condition.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+      <xs:group ref="Expression" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="SelectionSets">
+    <xs:annotation>
+      <xs:documentation>Defines the common sets of .NET objects that can be used by all views of the formatting file. The views and controls of the formatting file can reference the complete set of objects by using only the name of the selection set.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" name="SelectionSet" maxOccurs="unbounded" type="SelectionSet">
+        <xs:annotation>
+          <xs:documentation>Required element. Defines a single set of .NET objects that can be referenced by the name of the set.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="SelectionSet">
+    <xs:annotation>
+      <xs:documentation>Defines a set of .NET objects that can be referenced by the name of the set.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="1" name="Name" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Required element. Specifies the name used to reference the selection set.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Types" type="Types">
+        <xs:annotation>
+          <xs:documentation>Required element. Defines the .NET objects that are in the selection set.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GroupBy">
+    <xs:annotation>
+      <xs:documentation>Defines how a new group of objects is displayed. This element is used when defining a table, list, wide, or custom control view.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:group ref="Expression" maxOccurs="1" />
+      <xs:element minOccurs="0" name="Label" type="Text">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies a label that is displayed when a new group is encountered.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice minOccurs="0">
+        <xs:element name="CustomControl" type="CustomControl">
+          <xs:annotation>
+            <xs:documentation>Optional element. Defines the custom control that display new groups.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="CustomControlName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>Optional element. Specifies the name of a control that is used to display the new group.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Frame">
+    <xs:annotation>
+      <xs:documentation>Defines how the data is displayed, such as shifting the data to the left or right. This element is used when defining a custom control view.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" name="LeftIndent" type="xs:nonNegativeInteger">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies how many characters the data is shifted away from the left margin.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="RightIndent" type="xs:nonNegativeInteger">
+        <xs:annotation>
+          <xs:documentation>Optional element. Specifies how many characters the data is shifted away from the right margin.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice minOccurs="0">
+        <xs:element name="FirstLineHanging" type="xs:nonNegativeInteger">
+          <xs:annotation>
+            <xs:documentation>Optional element. Specifies how many characters the first line of data is shifted to the left.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="FirstLineIndent" type="xs:nonNegativeInteger">
+          <xs:annotation>
+            <xs:documentation>Optional element. Specifies how many characters the first line of data is shifted to the right.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+      <xs:element minOccurs="1" name="CustomItem" type="CustomItem">
+        <xs:annotation>
+          <xs:documentation>Required Element</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemSelectionCondition">
+    <xs:annotation>
+      <xs:documentation>Defines the condition that must exist for this control to be used. This element is used when defining a common control that can be used by all the views in the formatting file.</xs:documentation>
+    </xs:annotation>
+    <xs:group ref="Expression" maxOccurs="1" />
+  </xs:complexType>
+  <xs:complexType name="Text">
+    <xs:annotation>
+      <xs:documentation>Specifies text that is added to the data that is displayed by the control, such as a label, brackets to enclose the data, and spaces to indent the data. This element is used when defining a common control that can be used by all the views in the formatting file.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="ResourceId" type="xs:string" />
+        <xs:attribute name="BaseName" type="xs:string" />
+        <xs:attribute name="AssemblyName" type="xs:string" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="Boolean">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="false" />
+      <xs:enumeration value="true" />
+      <!--empty indicates "true"-->
+      <xs:enumeration value="" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="NewLine">
+    <xs:annotation>
+      <xs:documentation>Adds a blank line to the display of the control. This element is used when defining how a new group of objects is displayed.</xs:documentation>
+    </xs:annotation>
+  </xs:complexType>
+</xs:schema>
