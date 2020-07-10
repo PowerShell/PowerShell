@@ -3111,8 +3111,6 @@ function Start-MsiBuild {
 
     $buildArguments = New-MsiArgsArray -Argument $Argument
 
-    $buildArguments | Out-String | Write-Verbose -Verbose
-
     $objectPaths = @()
     foreach ($file in $WxsFile) {
         $fileName = [system.io.path]::GetFileNameWithoutExtension($file)
