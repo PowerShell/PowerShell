@@ -266,7 +266,7 @@ namespace System.Management.Automation
             Collection<CommandParameterInternal> paramsFromSplatting = null;
             foreach (CommandParameterInternal argument in arguments)
             {
-                if (argument.ParameterComesFromSplatting)
+                if (argument.FromHashtableSplatting)
                 {
                     paramsFromSplatting ??= new Collection<CommandParameterInternal>();
                     paramsFromSplatting.Add(argument);
@@ -601,7 +601,7 @@ namespace System.Management.Automation
                 {
                     string formalParamName = parameter.Parameter.Name;
 
-                    if (argument.ParameterComesFromSplatting)
+                    if (argument.FromHashtableSplatting)
                     {
                         boundExplicitNamedParams ??= new HashSet<string>(
                             BoundParameters.Keys,

@@ -29,7 +29,7 @@ namespace System.Management.Automation
         private Parameter _parameter;
         private Argument _argument;
         private bool _spaceAfterParameter;
-        private bool _comesFromSplatting;
+        private bool _fromHashtableSplatting;
 
         internal bool SpaceAfterParameter => _spaceAfterParameter;
 
@@ -39,7 +39,7 @@ namespace System.Management.Automation
 
         internal bool ParameterAndArgumentSpecified => ParameterNameSpecified && ArgumentSpecified;
 
-        internal bool ParameterComesFromSplatting => _comesFromSplatting;
+        internal bool FromHashtableSplatting => _fromHashtableSplatting;
 
         /// <summary>
         /// Gets and sets the string that represents parameter name, which does not include the '-' (dash).
@@ -219,7 +219,7 @@ namespace System.Management.Automation
                 _parameter = new Parameter { ast = parameterAst, parameterName = parameterName, parameterText = parameterText },
                 _argument = new Argument { ast = argumentAst, value = value },
                 _spaceAfterParameter = spaceAfterParameter,
-                _comesFromSplatting = fromSplatting,
+                _fromHashtableSplatting = fromSplatting,
             };
         }
 
