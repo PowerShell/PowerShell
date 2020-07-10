@@ -3034,7 +3034,7 @@ function New-MSIPackage
         FileArchitecture       = $fileArchitecture
     }
 
-    $buildArguments = New-MsiArgsArray -Argment $arguments
+    $buildArguments = New-MsiArgsArray -Argument $arguments
 
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  VersionFolder -cg ApplicationFiles -ag -sfrag -srd -scom -sreg -out $wixFragmentPath -var var.ProductSourcePath $buildArguments -v}
 
@@ -3077,6 +3077,7 @@ function New-MSIPackage
 
 function New-MsiArgsArray {
     param(
+        [Parameter(Mandatory)]
         [Hashtable]$Argument
     )
 
@@ -3108,7 +3109,7 @@ function Start-MsiBuild {
         $extensionArgs += $extensionName
     }
 
-    $buildArguments = New-MsiArgsArray -Argment $Argument
+    $buildArguments = New-MsiArgsArray -Argument $Argument
 
     $buildArguments | Out-String | Write-Verbose -Verbose
 
