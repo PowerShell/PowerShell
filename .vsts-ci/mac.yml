@@ -31,6 +31,8 @@ pr:
     - .dependabot/config.yml
     - tools/releaseBuild/*
     - tools/releaseBuild/azureDevOps/templates/*
+    - /.vsts-ci/windows.yml
+    - /.vsts-ci/windows/*
 
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
