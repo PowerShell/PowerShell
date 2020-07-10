@@ -3,10 +3,7 @@
 Describe "Acl cmdlets are available and operate properly" -Tag CI {
     Context "Windows ACL test" {
         BeforeAll {
-            if ( !$IsWindows )
-            {
-                return
-            }
+            $PSDefaultParameterValues["It:Skip"] = -not $IsWindows
         }
 
         It "Get-Acl returns an ACL DirectorySecurity object"  {
@@ -78,6 +75,10 @@ Describe "Acl cmdlets are available and operate properly" -Tag CI {
             $newacl = Get-Acl $directory
             $newrule = $newacl.Access | Where-Object { $accessrule.FileSystemRights -eq $_.FileSystemRights -and $accessrule.AccessControlType -eq $_.AccessControlType -and $accessrule.IdentityReference -eq $_.IdentityReference }
             $newrule | Should -Not -BeNullOrEmpty
+        }
+
+        AfterAll {
+            $PSDefaultParameterValues.Remove("It:Skip")
         }
     }
 }
