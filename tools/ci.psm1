@@ -437,6 +437,9 @@ function Get-ReleaseTag
 # Implements CI 'on_finish' step
 function Invoke-CIFinish
 {
+    param(
+        [string] $Runtime = 'win7-x64'
+    )
     if($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS))
     {
         return New-LinuxPackage
@@ -457,10 +460,10 @@ function Invoke-CIFinish
         $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
 
         # Build clean before backing to remove files from testing
-        Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean
+        Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime
 
         # Build packages
-        $packages = Start-PSPackage -Type msi,nupkg,zip,zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks
+        $packages = Start-PSPackage -Type msi,nupkg,zip,zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks -Runtime $Runtime
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
