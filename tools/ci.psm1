@@ -438,29 +438,42 @@ function Get-ReleaseTag
 function Invoke-CIFinish
 {
     param(
-        [string] $Runtime = 'win7-x64'
+        [string] $Runtime = 'win7-x64',
+        [string] $Channel = 'preview'
     )
+
     if($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS))
     {
         return New-LinuxPackage
     }
 
     try {
-        $releaseTag = Get-ReleaseTag
 
-        $previewVersion = $releaseTag.Split('-')
-        $previewPrefix = $previewVersion[0]
-        $previewLabel = $previewVersion[1].replace('.','')
-
-        if(Test-DailyBuild)
+        if($Channel -eq 'preview')
         {
-            $previewLabel= "daily{0}" -f $previewLabel
+            $releaseTag = Get-ReleaseTag
+
+            $previewVersion = $releaseTag.Split('-')
+            $previewPrefix = $previewVersion[0]
+            $previewLabel = $previewVersion[1].replace('.','')
+
+            if(Test-DailyBuild)
+            {
+                $previewLabel= "daily{0}" -f $previewLabel
+            }
+
+            $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
+            # Build clean before backing to remove files from testing
+            Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime
+        }
+        else {
+            $releaseTag = Get-ReleaseTag
+            $releaseTagParts = $releaseTag.split('.')
+            $newPSReleaseTag = $releaseTagParts[0]+ ".9.9"
+            Write-Verbose "newPSReleaseTag: $newPSReleaseTag" -Verbose
+            Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $newPSReleaseTag -Clean -Runtime $Runtime
         }
 
-        $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
-
-        # Build clean before backing to remove files from testing
-        Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime
 
         # Build packages
         $packages = Start-PSPackage -Type msi,nupkg,zip,zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
