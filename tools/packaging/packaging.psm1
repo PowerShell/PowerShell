@@ -3108,10 +3108,7 @@ function Start-MsiBuild {
         $extensionArgs += $extensionName
     }
 
-    $buildArguments = @()
-    foreach ($key in $Argument.Keys) {
-        $buildArguments += "-d$key=`"$($Argument.$key)`""
-    }
+    $buildArguments = New-MsiArgsArray -Argment $Argument
 
     $objectPaths = @()
     foreach ($file in $WxsFile) {
