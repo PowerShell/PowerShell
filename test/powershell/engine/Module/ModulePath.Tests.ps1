@@ -187,4 +187,12 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
             Remove-Item -Path $userConfigPath -Force
         }
     }
+
+    It 'Path with trailing separator' {
+        $env:PSModulePath = $env:PSModulePath.Replace($expectedUserPath, $expectedUserPath + [System.IO.Path]::PathSeparator)
+        $out = pwsh -noprofile -command '$env:PSModulePath'
+        $out.Split([System.IO.Path]::PathSeparator, [System.StringSplitOptions]::RemoveEmptyEntries).ForEach{
+            $_ | Should -Exist
+        }
+    }
 }
