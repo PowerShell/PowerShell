@@ -463,7 +463,7 @@ function Invoke-CIFinish
         Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime
 
         # Build packages
-        $packages = Start-PSPackage -Type msi,nupkg,zip,zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks -Runtime $Runtime
+        $packages = Start-PSPackage -Type msi,nupkg,zip,zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
