@@ -470,10 +470,13 @@ function Invoke-CIFinish
         else {
             $releaseTag = Get-ReleaseTag
             $releaseTagParts = $releaseTag.split('.')
-            $newPSReleaseTag = $releaseTagParts[0]+ ".9.9"
-            Write-Verbose "newPSReleaseTag: $newPSReleaseTag" -Verbose
-            Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $newPSReleaseTag -Clean -Runtime $Runtime
+            $preReleaseVersion = $releaseTagParts[0]+ ".9.9"
+            Write-Verbose "newPSReleaseTag: $preReleaseVersion" -Verbose
+            Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime
         }
+
+        # Build packages	            $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
+        $packages = Start-PSPackage -Type msi,nupkg,zip,zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
