@@ -75,3 +75,6 @@ stages:
   jobs:
   # Unlike daily builds, we do not upload nuget package to MyGet so we do not wait on tests to finish.
   - template: templates/windows-packaging.yml
+  - template: templates/windows-packaging.yml
+    parameters:
+      channel: stable
