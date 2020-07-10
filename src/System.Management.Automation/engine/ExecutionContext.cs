@@ -1158,7 +1158,7 @@ namespace System.Management.Automation
         {
             get => GetEnumPreference(
                 SpecialVariables.ProgressPreferenceVarPath,
-                InitialSessionState.defaultProgressPreference,
+                InitialSessionState.DefaultProgressPreference,
                 out _);
 
             set => EngineSessionState.SetVariable(

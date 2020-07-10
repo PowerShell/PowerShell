@@ -3459,7 +3459,7 @@ namespace System.Management.Automation
 
         internal bool IsErrorActionSet { get; private set; } = false;
 
-        private ActionPreference _progressPreference = InitialSessionState.defaultProgressPreference;
+        private ActionPreference _progressPreference = InitialSessionState.DefaultProgressPreference;
         private bool _readCommandProgressPreference = false;
 
         /// <summary>
