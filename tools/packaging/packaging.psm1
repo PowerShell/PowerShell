@@ -3091,7 +3091,7 @@ function New-MsiArgsArray {
 function Start-MsiBuild {
     param(
         [string[]] $WxsFile,
-        [string[]] $Extension = @('WixUIExtension', 'WixUtilExtension'),
+        [string[]] $Extension = @('WixUIExtension', 'WixUtilExtension', 'WixBalExtension'),
         [string] $ProductTargetArchitecture,
         [Hashtable] $Argument,
         [string] $MsiLocationPath,
