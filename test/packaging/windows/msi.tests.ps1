@@ -53,6 +53,7 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         $msiX64Path = $env:PsMsiX64Path
+        $channel = $env:PSMsiChannel
 
         # Get any existing powershell in the path
         $beforePath = @(([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
@@ -82,12 +83,16 @@ Describe -Name "Windows MSI" -Fixture {
 
     Context "Upgrade code" {
         BeforeAll {
-            $previewUpgladeCode = '39243d76-adaf-42b1-94fb-16ecf83237c8'
+            if ($channel -eq 'preview') {
+                $msiUpgradeCode = '39243d76-adaf-42b1-94fb-16ecf83237c8'
+            } else {
+                $msiUpgradeCode = '31ab5147-9a97-4452-8443-d9709f0516e1'
+            }
         }
 
-        It "Preview MSI should not be installed before test" -Skip:(!(Test-Elevated)) {
-            $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$previewUpgladeCode}'")
-            $result.Count | Should -Be 0 -Because 'Query should return nothing if preview x64 is not installed'
+        It "$Channel MSI should not be installed before test" -Skip:(!(Test-Elevated)) {
+            $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$msiUpgradeCode}'")
+            $result.Count | Should -Be 0 -Because "Query should return nothing if $channel x64 is not installed"
         }
 
         It "MSI should install without error" -Skip:(!(Test-Elevated)) {
@@ -97,8 +102,8 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         It "Upgrade code should be correct" -Skip:(!(Test-Elevated)) {
-            $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$previewUpgladeCode}'")
-            $result.Count | Should -Be 1 -Because 'Query should return 1 result if Upgrade code is for x64 preview'
+            $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$msiUpgradeCode}'")
+            $result.Count | Should -Be 1 -Because "Query should return 1 result if Upgrade code is for x64 $channel"
         }
 
         It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
@@ -137,8 +142,13 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         It "MSI should have updated path" -Skip:(!(Test-Elevated)) {
+            if ($channel -eq 'preview') {
+                $pattern = '*files\powershell*\preview*'
+            } else {
+                $pattern = '*files\powershell*'
+            }
             $psPath = ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
-                Where-Object {$_ -like '*files\powershell*\preview*' -and $_ -notin $beforePath}
+                Where-Object {$_ -like $pattern -and $_ -notin $beforePath}
 
             $psPath | Should -Not -BeNullOrEmpty
         }

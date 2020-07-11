@@ -502,6 +502,7 @@ function Invoke-CIFinish
 
         # the packaging tests find the MSI package using env:PSMsiX64Path
         $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
+        $env:PSMsiChannel = $Channel
 
         # Install the latest Pester and import it
         $maximumPesterVersion = '4.99'
