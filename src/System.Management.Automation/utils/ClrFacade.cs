@@ -211,7 +211,7 @@ namespace System.Management.Automation
         {
             // WSL introduces a new filesystem path to access the Linux filesystem from Windows, like '\\wsl$\ubuntu'.
             // If the given file path is such a special case, we consider it's in 'MyComputer' zone.
-            if (filePath.StartsWith(@"\\wsl$", StringComparison.OrdinalIgnoreCase))
+            if (filePath.StartsWith(Utils.WslRootPath, StringComparison.OrdinalIgnoreCase))
             {
                 return SecurityZone.MyComputer;
             }

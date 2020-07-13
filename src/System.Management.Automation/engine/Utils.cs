@@ -733,6 +733,11 @@ namespace System.Management.Automation
         internal const string ProductNameForDirectory = "PowerShell";
 
         /// <summary>
+        /// WSL introduces a new filesystem path to access the Linux filesystem from Windows, like '\\wsl$\ubuntu'.
+        /// </summary>
+        internal const string WslRootPath = @"\\wsl$";
+
+        /// <summary>
         /// The subdirectory of module paths
         /// e.g. ~\Documents\WindowsPowerShell\Modules and %ProgramFiles%\WindowsPowerShell\Modules.
         /// </summary>
@@ -1289,7 +1294,7 @@ namespace System.Management.Automation
             }
 
             // handle special cases like \\wsl$\ubuntu which isn't a UNC path, but we can say it is so the filesystemprovider can use it
-            if (path.StartsWith(@"\\wsl$", StringComparison.OrdinalIgnoreCase))
+            if (path.StartsWith(WslRootPath, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
