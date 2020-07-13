@@ -12,7 +12,7 @@ steps:
     artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msi
     condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
 
-- task: AzureFileCopy@3
+- task: AzureFileCopy@4
   displayName: 'upload signed msi to Azure - ${{ parameters.architecture }}'
   inputs:
     SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msi'
@@ -28,7 +28,7 @@ steps:
     artifactPath: $(System.ArtifactsDirectory)\signed
     artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.zip
 
-- task: AzureFileCopy@3
+- task: AzureFileCopy@4
   displayName: 'upload signed zip to Azure - ${{ parameters.architecture }}'
   inputs:
     SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.zip'
@@ -56,7 +56,7 @@ steps:
     artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msix
     condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'))
 
-- task: AzureFileCopy@3
+- task: AzureFileCopy@4
   displayName: 'upload signed msix to Azure - ${{ parameters.architecture }}'
   inputs:
     SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msix'
