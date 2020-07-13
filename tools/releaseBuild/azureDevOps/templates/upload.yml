@@ -20,6 +20,7 @@ steps:
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)'
+    resourceGroup: '$(StorageResourceGroup)'
   condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
 
 - template: upload-final-results.yml
@@ -35,6 +36,7 @@ steps:
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)'
+    resourceGroup: '$(StorageResourceGroup)'
   condition: succeeded()
 
 # Disable upload task as the symbols package is not currently used and we want to avoid publishing this in releases
@@ -62,4 +64,5 @@ steps:
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)-private'
+    resourceGroup: '$(StorageResourceGroup)'
   condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'), eq(variables['SHOULD_SIGN'], 'true'))
