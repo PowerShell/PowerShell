@@ -36,13 +36,6 @@
                 "${command:SpecifyScriptArgs}"
             ],
             "cwd": "${file}"
-        },
-        {
-          // Used to debug build script and packaging scripts
-          "name": "PowerShell Interactive Session",
-          "type": "PowerShell",
-          "request": "launch",
-          "cwd": ""
         }
     ]
 }
