@@ -957,7 +957,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             // NOTE: 1-based enumeration because the name strings follow index strings in the array
             Int32 counterIndex = -1;
             Int32 objIndex = -1;
-            for (uint enumIndex = 1; enumIndex < regCounters.Length; enumIndex++)
+            for (int enumIndex = 1; enumIndex < regCounters.Length; enumIndex++)
             {
                 string regString = regCounters[enumIndex];
                 if (regString.ToLowerInvariant() == lowerEngCtrName)
