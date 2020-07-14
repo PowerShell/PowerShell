@@ -4,7 +4,7 @@ jobs:
   dependsOn: build_macOS
   condition: succeeded()
   pool:
-    name: Package ES CodeHub Lab E
+    name: Package ES Standard Build
   variables:
     BuildConfiguration: release
     BuildPlatform: any cpu
@@ -97,7 +97,7 @@ jobs:
     displayName: 'Create unsigned folder to upload'
     condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
 
-  - task: AzureFileCopy@1
+  - task: AzureFileCopy@4
     displayName: 'AzureBlob File Copy - unsigned'
     inputs:
       SourcePath: '$(Build.StagingDirectory)\macos-unsigned'
@@ -107,7 +107,7 @@ jobs:
       ContainerName: '$(AzureVersion)'
     condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
 
-  - task: AzureFileCopy@1
+  - task: AzureFileCopy@4
     displayName: 'AzureBlob File Copy - signed'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\azureMacOs'
