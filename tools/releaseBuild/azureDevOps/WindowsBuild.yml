@@ -247,7 +247,7 @@ jobs:
   dependsOn: BuildJob
   condition: succeeded()
   pool:
-    name: Package ES CodeHub Lab E
+    name: Package ES Standard Build
   strategy:
     matrix:
       release-anycpu:
@@ -332,7 +332,7 @@ jobs:
     continueOnError: true
     condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
 
-  - task: AzureFileCopy@1
+  - task: AzureFileCopy@4
     displayName: 'upload signed msi to Azure - x64'
     inputs:
       SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-$(Version)-win-x64.msi'
@@ -352,7 +352,7 @@ jobs:
     displayName: '[create script] upload signed msi - x86'
     continueOnError: true
 
-  - task: AzureFileCopy@1
+  - task: AzureFileCopy@4
     displayName: 'upload signed msi to Azure - x86'
     inputs:
       SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-$(Version)-win-x86.msi'
@@ -372,7 +372,7 @@ jobs:
     displayName: '[Create script] upload signed zip - x64'
     continueOnError: true
 
-  - task: AzureFileCopy@1
+  - task: AzureFileCopy@4
     displayName: 'upload signed zip to Azure - x64'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.zip'
@@ -392,7 +392,7 @@ jobs:
     displayName: '[create script] upload signed zip - x86'
     continueOnError: true
 
-  - task: AzureFileCopy@1
+  - task: AzureFileCopy@4
     displayName: 'upload signed zip to Azure - x86'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.zip'
@@ -412,7 +412,7 @@ jobs:
     displayName: '[create script] upload signed zip - arm'
     continueOnError: true
 
-  - task: AzureFileCopy@1
+  - task: AzureFileCopy@4
     displayName: 'upload signed zip to Azure - arm'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm32.zip'
@@ -432,7 +432,7 @@ jobs:
     displayName: '[create script] upload signed zip - arm64'
     continueOnError: true
 
-  - task: AzureFileCopy@1
+  - task: AzureFileCopy@4
     displayName: 'upload signed zip to Azure - arm64'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm64.zip'
@@ -452,7 +452,7 @@ jobs:
     displayName: '[create script] upload signed zip - fxdependent'
     continueOnError: true
 
-  - task: AzureFileCopy@1
+  - task: AzureFileCopy@4
     displayName: 'upload signed zip to Azure - fxdependent'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-fxdependent.zip'
