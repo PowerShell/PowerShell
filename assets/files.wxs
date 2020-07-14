@@ -1820,9 +1820,6 @@
           <Component Id="cmpE48B7EDF48A04D1C82A32EDBCD2E8E07" Guid="{637acb8e-5ed5-4b03-8442-9f9ec0c83106}">
             <File Id="filD267FC3422004444A1D7A446CC13ABAE" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.psd1" />
           </Component>
-          <Component Id="cmpD495CAB0DC4146199E0475F16EFCBE66" Guid="{1f3d41d9-ec3e-4480-93a0-5eead90681fc}">
-            <File Id="fil79DFD803DEF74E17BAF56B187959025D" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.cat" />
-          </Component>
         </Directory>
         <Directory Name="Microsoft.PowerShell.Archive" Id="dirD041DEE4F67848958E0D4AF104E4088C">
           <Component Id="cmp27E5DBB49A7A4962BD6C74C79276DAA5" Guid="{2c3ef1f6-4448-49bb-a8e4-4c2d0deb5217}">
@@ -1892,9 +1889,6 @@
           <Component Id="cmpA3A50C81E1704ABF9022F6ECE265165E" Guid="{cc4abf21-d396-400c-aec3-a7ba03320bf8}">
             <File Id="fil08AD7407549745D196FA8B37C8D2507F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\PSGet.Resource.psd1" />
           </Component>
-          <Component Id="cmpFB8B96A05278462A97061B8C5FE3C92E" Guid="{a977e452-4f7d-446c-beb3-3e5ace52f9eb}">
-            <File Id="fil31F5B43EF5C248EB878EB1D25D292ECC" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\PowerShellGet.cat" />
-          </Component>
           <Directory Name="DSCResources" Id="dirAB16AE2D3D8B4288AE7576FDEC086E52">
             <Directory Name="MSFT_PSRepository" Id="dirDD4171A90E3249BAAE0CBA188ACFAEA9">
               <Component Id="cmp0744A0E2DA694EFB97172A770E654F92" Guid="{05bcef22-d7b0-4ca6-94dd-327356079096}">
@@ -1946,6 +1940,24 @@
               </Component>
             </Directory>
           </Directory>
+          <Component Id="cmpF13697663FB34052A68E6D323D073453" Guid="{869218b1-1d89-41a8-96d8-b18537b28c1e}">
+            <File Id="fil8F351C758ABA4FDE855162F46365C59A" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Log_20200422202439.log" />
+          </Component>
+          <Component Id="cmpFB6591BEDC9242D2BD827BEF7C3D3852" Guid="{6a717758-bff1-4c5f-a6ce-7d0e5781b7c6}">
+            <File Id="filE655B0E0FCFF484B9B7D3B61E5D535E4" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Metadata_20200422202439.json" />
+          </Component>
+          <Component Id="cmpC829EE6AFA81430A9DC8A9517FE37B75" Guid="{bf6d54dd-cc1a-4e0e-9138-7b30d31ec846}">
+            <File Id="filAD694F06057649F497AA6CFE4BEFC87B" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Manifest_20200422202439.json" />
+          </Component>
+          <Component Id="cmpA5FCB1CC1E8643FFA9C11CF8AB57328D" Guid="{e3c6bccf-fdc1-4317-a9fa-50ae928490fb}">
+            <File Id="fil546A0FBC61FA4D0081E34ABD7649FA03" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Log_20200422202549.log" />
+          </Component>
+          <Component Id="cmp2315C92A6900449E85558C6F9A75D3C3" Guid="{1fa2d063-92aa-4c97-b109-c2a8eaa1c817}">
+            <File Id="fil350DDBC70F8849F29F1EF59E3BC9973E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Metadata_20200422202549.json" />
+          </Component>
+          <Component Id="cmp313E535FFA29467F8E2D4D0E353016EE" Guid="{dd853094-4bfb-443b-b799-cd394fa91f71}">
+            <File Id="fil7F6CD1E71C694183978275D008B10599" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Manifest_20200422202549.json" />
+          </Component>
         </Directory>
         <Directory Name="ThreadJob" Id="dir507D08FD3D324A449516FEFAFCC90874">
           <Component Id="cmpD84D3B43B60040C8BF73D30F89F14AA5" Guid="{4ba93428-ae32-4a1d-9f84-0989a2da8eab}">
@@ -3659,7 +3671,6 @@
       <ComponentRef Id="cmpE9DB812405C44652B6BEF707AFDC345E" />
       <ComponentRef Id="cmp988678E2987C440F828A11DC2BDC7BFB" />
       <ComponentRef Id="cmpE48B7EDF48A04D1C82A32EDBCD2E8E07" />
-      <ComponentRef Id="cmpD495CAB0DC4146199E0475F16EFCBE66" />
       <ComponentRef Id="cmp27E5DBB49A7A4962BD6C74C79276DAA5" />
       <ComponentRef Id="cmpBCEF6DF1461C426BB07539392C7299E1" />
       <ComponentRef Id="cmpF26771D0C4AC49DDB2A5231B9DD191E8" />
@@ -3679,7 +3690,6 @@
       <ComponentRef Id="cmpDCFC0B0822274CA2A1C954DF2E407911" />
       <ComponentRef Id="cmpE773C5B7686C496DAD2111AF1950D73E" />
       <ComponentRef Id="cmpA3A50C81E1704ABF9022F6ECE265165E" />
-      <ComponentRef Id="cmpFB8B96A05278462A97061B8C5FE3C92E" />
       <ComponentRef Id="cmp0744A0E2DA694EFB97172A770E654F92" />
       <ComponentRef Id="cmpFD06F9A229864F5790E63806319F83AD" />
       <ComponentRef Id="cmp15C7696A8C674672B37E17B47362007E" />
@@ -4052,6 +4062,12 @@
       <ComponentRef Id="cmpAC984FA3A67247BC996F60290C87D0A1" />
       <ComponentRef Id="cmp2E32A6E773F543F0A150B972F8D3E23A" />
       <ComponentRef Id="cmp2DD86631184942F1A98A1DCCD3D1F732" />
+      <ComponentRef Id="cmpF13697663FB34052A68E6D323D073453" />
+      <ComponentRef Id="cmpFB6591BEDC9242D2BD827BEF7C3D3852" />
+      <ComponentRef Id="cmpC829EE6AFA81430A9DC8A9517FE37B75" />
+      <ComponentRef Id="cmpA5FCB1CC1E8643FFA9C11CF8AB57328D" />
+      <ComponentRef Id="cmp2315C92A6900449E85558C6F9A75D3C3" />
+      <ComponentRef Id="cmp313E535FFA29467F8E2D4D0E353016EE" />
     </ComponentGroup>
   </Fragment>
 </Wix>
