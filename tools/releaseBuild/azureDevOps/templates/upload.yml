@@ -40,7 +40,7 @@ steps:
   condition: succeeded()
 
 # Disable upload task as the symbols package is not currently used and we want to avoid publishing this in releases
-#- task: AzureFileCopy@3
+#- task: AzureFileCopy@4
 #  displayName: 'upload pbd zip to Azure - ${{ parameters.architecture }}'
 #  inputs:
 #    SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-Symbols-${{ parameters.version }}-win-${{ parameters.architecture }}.zip'
