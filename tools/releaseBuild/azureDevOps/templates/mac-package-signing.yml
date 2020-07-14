@@ -4,7 +4,7 @@ jobs:
   dependsOn: build_macOS
   condition: succeeded()
   pool:
-    name: Package ES CodeHub Lab E
+    name: Package ES Standard Build
   variables:
     BuildConfiguration: release
     BuildPlatform: any cpu

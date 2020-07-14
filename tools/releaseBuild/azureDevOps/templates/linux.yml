@@ -49,7 +49,7 @@ jobs:
   displayName: ${{ parameters.uploadDisplayName }} ${{ parameters.buildName }}
   dependsOn: build_${{ parameters.buildName }}
   condition: succeeded()
-  pool: Package ES CodeHub Lab E
+  pool: Package ES Standard Build
   variables:
     buildName: ${{ parameters.buildName }}
   steps:
