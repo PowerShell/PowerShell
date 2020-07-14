@@ -1818,6 +1818,9 @@
           <Component Id="cmpC0582B8F392548248FA3DE3080069F68" Guid="{25d67b86-aec7-40fc-8fe9-7b2ecefb4f9c}">
             <File Id="fil1A3F0A1371A643AFAA4F896D9D5CBF70" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\Microsoft.PowerShell.PSReadLine2.dll" />
           </Component>
+          <Component Id="cmpAD72B21C62F745099122CCF2176CC84B" Guid="{725b7b6f-3511-4560-a77b-6b471b777aee}">
+            <File Id="filA4EDBC31A04842F0B101648311C4980B" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\PSReadLine.cat" />
+          </Component>
         </Directory>
         <Directory Name="PowerShellGet" Id="dir49159A33EB06456C9C2C971815311A6A">
           <Directory Name="en-US" Id="dirF5EBE6CBD04149359D3582351CB4438D">
@@ -2185,11 +2188,11 @@
       <Component Id="cmp003E42DEEEA8449C88B2A23B92E0AE39" Guid="{50d7aa94-fcaa-4418-8a7f-2cafd3dee77c}">
         <File Id="fil58F60CDE7E154249820022F5280A3C80" KeyPath="yes" Source="$(env.ProductSourcePath)\Markdig.Signed.dll" />
       </Component>
-      <Component Id="cmp2E15C82B7BA843C9B789BD0D6A146BE3" Guid="{76d63c89-b0e2-492b-aea5-6c123cbf03ba}">
-        <File Id="filC97E387EF8BF4C719589995389D08837" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.28928.01.dll" />
+      <Component Id="cmpE292883034874A9D98D35703C9495F65" Guid="{f1cdeeb5-bf50-411f-b847-0428098f4d91}">
+        <File Id="fil1A704DB7E1CC4DFB850F89FA8F5F2C4B" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.29017.01.dll" />
       </Component>
-      <Component Id="cmp03E24B7E7B7D4055867621E578F67586" Guid="{ff62a1f3-db60-45b6-8dc6-b15ba22b7b9f}">
-        <File Id="filA3D33FA04A1E450D92BDBE47697F5451" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.28928.01.dll" />
+      <Component Id="cmpB037FDC7FED943A08534FFE0FE8EF906" Guid="{3f45e0a8-e135-4289-abe3-1baa026dd967}">
+        <File Id="filAEA617ECD72E4A9A971D6CB72D5C65AE" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.29017.01.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -2888,8 +2891,9 @@
       <ComponentRef Id="cmp75D079D2DE8545BB962554C7EFE6A37C" />
       <ComponentRef Id="cmp8A4E5A03C2644F199C7395C8EA350F65" />
       <ComponentRef Id="cmp003E42DEEEA8449C88B2A23B92E0AE39" />
-      <ComponentRef Id="cmp2E15C82B7BA843C9B789BD0D6A146BE3" />
-      <ComponentRef Id="cmp03E24B7E7B7D4055867621E578F67586" />
+      <ComponentRef Id="cmpE292883034874A9D98D35703C9495F65" />
+      <ComponentRef Id="cmpB037FDC7FED943A08534FFE0FE8EF906" />
+      <ComponentRef Id="cmpAD72B21C62F745099122CCF2176CC84B" />
     </ComponentGroup>
   </Fragment>
 </Wix>
