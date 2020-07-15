@@ -202,11 +202,11 @@ namespace Microsoft.PowerShell.Commands
                             return false;
                         }
 
-                        return string.Compare(
+                        return string.Equals(
                             SessionState.Path.GetUnresolvedProviderPathFromPSPath(breakpoint.Script),
                             SessionState.Path.GetUnresolvedProviderPathFromPSPath(script),
                             StringComparison.OrdinalIgnoreCase
-                        ) == 0;
+                        );
                     });
             }
 

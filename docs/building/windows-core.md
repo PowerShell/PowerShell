@@ -18,7 +18,9 @@ This guide assumes that you have recursively cloned the PowerShell repository an
 
 ### Visual Studio
 
-This repository requires at least Visual Studio 2019 16.6 Preview 2. The free Community edition of Visual Studio can be downloaded from [Microsoft](https://visualstudio.microsoft.com/downloads/).
+Install [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/). The Community edition is available free of charge.
+
+The PowerShell/PowerShell repository requires at least Visual Studio 2019 16.6.
 
 ### Visual Studio Code
 

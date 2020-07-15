@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
         /// The qualifier is the drive or provider that is qualifying
         /// the MSH path.
         /// </value>
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ParameterSetName = qualifierSet, Mandatory = false)]
+        [Parameter(ParameterSetName = qualifierSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Qualifier { get; set; }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
         /// The qualifier is the drive or provider that is qualifying
         /// the MSH path.
         /// </value>
-        [Parameter(ParameterSetName = noQualifierSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = noQualifierSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter NoQualifier { get; set; }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value>
         /// If true the leaf name of the path will be returned.
         /// </value>
-        [Parameter(ParameterSetName = leafSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = leafSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Leaf { get; set; }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value>
         /// If true the leaf base name of the path will be returned.
         /// </value>
-        [Parameter(ParameterSetName = leafBaseSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = leafBaseSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter LeafBase { get; set; }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value>
         /// If true the extension of the path will be returned.
         /// </value>
-        [Parameter(ParameterSetName = extensionSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = extensionSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Extension { get; set; }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Determines if the path is an absolute path.
         /// </summary>
-        [Parameter(ParameterSetName = isAbsoluteSet)]
+        [Parameter(ParameterSetName = isAbsoluteSet, Mandatory = true)]
         public SwitchParameter IsAbsolute { get; set; }
 
         #endregion Parameters
@@ -476,4 +476,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

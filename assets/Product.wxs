@@ -4,35 +4,39 @@
   <!-- The URL for add/remove programs -->
   <!-- TBD:Point to the actual release -->
   <?define InfoURL="https://github.com/PowerShell/PowerShell" ?>
-  <?define ProductName = "$(env.ProductName)" ?>
-  <?define ProductSimpleVersionWithNameAndOptionalArchitecture = "$(var.ProductName) $(env.SimpleProductVersion) ($(sys.BUILDARCH))"?>
+  <?define ProductSimpleVersionWithNameAndOptionalArchitecture = "$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))"?>
+  <?if $(var.IsPreview)=True?>
+    <?define PwshPath = "[VersionFolder]preview"?>
+    <?define IconPath = "assets\Powershell_av_colors.ico"?>
+  <?else?>
+    <?define PwshPath = "[VersionFolder]"?>
+    <?define IconPath = "assets\Powershell_black.ico"?>
+  <?endif?>
   <!-- UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS, otherwise, updates won't occur. -->
   <?if $(sys.BUILDARCH)=x64?>
-    <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(env.SimpleProductVersion)"?>
-    <?define UpgradeCodePreview = "31ab5147-9a97-4452-8443-d9709f0516e1"?>
-    <?define UpgradeCodeRelease = "39243d76-adaf-42b1-94fb-16ecf83237c8"?>
+    <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(var.SimpleProductVersion)"?>
+    <?define UpgradeCodePreview = "39243d76-adaf-42b1-94fb-16ecf83237c8"?>
+    <?define UpgradeCodeRelease = "31ab5147-9a97-4452-8443-d9709f0516e1"?>
     <?if $(var.IsPreview)=True?>
       <?define UpgradeCode = $(var.UpgradeCodePreview)?>
     <?else?>
       <?define UpgradeCode = $(var.UpgradeCodeRelease)?>
     <?endif?>
   <?else?>
-    <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(env.SimpleProductVersion) ($(sys.BUILDARCH))"?>
-    <?define UpgradeCodePreview = "1d00683b-0f84-4db8-a64f-2f98ad42fe06"?>
-    <?define UpgradeCodeRelease = "86abcfbd-1ccc-4a88-b8b2-0facfde29094"?>
+    <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))"?>
+    <?define UpgradeCodePreview = "86abcfbd-1ccc-4a88-b8b2-0facfde29094"?>
+    <?define UpgradeCodeRelease = "1d00683b-0f84-4db8-a64f-2f98ad42fe06"?>
     <?if $(var.IsPreview)=True?>
       <?define UpgradeCode = $(var.UpgradeCodePreview)?>
     <?else?>
       <?define UpgradeCode = $(var.UpgradeCodeRelease)?>
     <?endif?>
   <?endif?>
-  <?define ProductVersion = "$(env.ProductVersion)" ?>
-  <?define SimpleProductVersion = "$(env.SimpleProductVersion)" ?>
-  <?define ProductSemanticVersion = "$(env.ProductSemanticVersion)" ?>
-  <?define ProductProgFilesDir = "$(env.ProductProgFilesDir)" ?>
   <!-- Explorer context submenu entries. The ampersand denotes the keyboard shortcut. -->
   <?define ExplorerContextSubMenuDialogText = "Open &here"?>
   <?define ExplorerContextSubMenuElevatedDialogText = "Open here as &Administrator"?>
+  <!-- ps1 context submenu entries. -->
+  <?define PowerShellFileContextSubMenuDialogText = "Run with $(var.ProductName) $(var.SimpleProductVersion)"?>
   <Product
     Id="*"
     Name="PowerShell $(var.SimpleProductVersion)-$(sys.BUILDARCH)"
@@ -43,7 +47,7 @@
     <!-- Properties About The Package -->
     <Package Id="*" Keywords="Installer" Platform="$(sys.BUILDARCH)" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="PowerShell package" Comments="PowerShell for every system" />
     <!-- Add PowerShell icon for executable -->
-    <Icon Id="PowerShellExe.ico" SourceFile="$(env.IconPath)" />
+    <Icon Id="PowerShellExe.ico" SourceFile="$(var.IconPath)" />
     <!-- Add PowerShell icon in Add/Remove Programs -->
     <Property Id="ARPPRODUCTICON" Value="PowerShellExe.ico" />
     <!-- Set properties for add/remove programs -->
@@ -53,7 +57,7 @@
     <WixVariable Id="WixUIDialogBmp" Value="assets\WixUIDialogBmp.png" />
     <WixVariable Id="WixUIExclamationIco" Value="assets\WixUIInfoIco.png" />
     <WixVariable Id="WixUIInfoIco" Value="assets\ps_black_32x32.ico" />
-    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open $(env.ProductName)" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open $(var.ProductName)" />
     <!-- Default value of Checkbox of starting PowerShell after installation -->
     <Property Id="WixShellExecTarget" Value="[VersionFolder]pwsh.exe"/>
     <!-- This changes the default setting from "reinstall if the file is a newer version" to "reinstall if the file is a different version" -->
@@ -99,7 +103,7 @@
         <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"  />
         <!-- Button row -->
         <!-- Checkbox to allow starting PowerShell after the installation (in UI mode only) -->
-        <Control Id="LaunchCheckBox" Type="CheckBox" X="10" Y="243" Width="170" Height="17" Property="LAUNCHAPPONEXIT" Hidden="yes" CheckBoxValue="1" Text="Launch $(env.ProductName)" >
+        <Control Id="LaunchCheckBox" Type="CheckBox" X="10" Y="243" Width="170" Height="17" Property="LAUNCHAPPONEXIT" Hidden="yes" CheckBoxValue="1" Text="Launch $(var.ProductName)" >
           <Condition Action="show">NOT Installed</Condition>
         </Control>
         <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUIBack)" />
@@ -122,7 +126,7 @@
       <![CDATA[ Installed OR $(var.MinOSVersionSupported) ]]>
     </Condition>
     <!-- Information About When Older Versions Are Trying To Be Installed-->
-    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of $(env.ProductName) is already installed." />
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of $(var.ProductName) is already installed." />
     <!-- Embed Cabinet Files in Product-->
     <MediaTemplate EmbedCab="yes" />
     <!-- In Your Wix Setup Project, Add A Reference To WixUIExtension.dll -->
@@ -136,6 +140,7 @@
       <ComponentRef Id="SetPath"/>
       <ComponentRef Id="Telemetry"/>
       <ComponentRef Id="ExplorerContextMenu"/>
+      <ComponentRef Id="PowerShellFileContextMenu"/>
     </Feature>
     <!-- We need to show EULA, and provide option to customize download location -->
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
@@ -151,7 +156,7 @@
         </DirectorySearch>
       </DirectorySearch>
     </Property>
-    <Condition Message="$(env.ProductName) requires the Universal C Runtime to be installed to enable remoting over WinRM. You can find a download link to it here: https://aka.ms/pscore6-prereq">
+    <Condition Message="$(var.ProductName) requires the Universal C Runtime to be installed to enable remoting over WinRM. You can find a download link to it here: https://aka.ms/pscore6-prereq">
       <![CDATA[Installed OR UNIVERSAL_C_RUNTIME_INSTALLED]]>
     </Condition>
     <!-- Prerequisite check for Windows Management Framework -->
@@ -160,7 +165,7 @@
         <FileSearch Id="pwrshplugin" Name="pwrshplugin.dll" MinVersion="6.3.9600.16383"/>
       </DirectorySearchRef>
     </Property>
-    <Condition Message="$(env.ProductName) requires the Windows Management Framework 4.0 or newer to be installed to enable remoting over WinRM. You can find download links here: https://aka.ms/pscore6-prereq">
+    <Condition Message="$(var.ProductName) requires the Windows Management Framework 4.0 or newer to be installed to enable remoting over WinRM. You can find download links here: https://aka.ms/pscore6-prereq">
       <![CDATA[Installed OR PWRSHPLUGIN_VERSION ]]>
     </Condition>
     <Directory Id="TARGETDIR" Name="SourceDir">
@@ -188,7 +193,7 @@
             <!-- add ourselves to %PATH% so pwsh.exe can be started from Windows PowerShell or cmd.exe -->
             <Component Id="SetPath">
               <Condition>ADD_PATH=1</Condition>
-              <Environment Id="PATH" Action="set" Name="PATH" Part="last" Permanent="no" System="yes" Value="[VersionFolder]"/>
+              <Environment Id="PATH" Action="set" Name="PATH" Part="last" Permanent="no" System="yes" Value="$(var.PwshPath)"/>
               <!-- Can't use a shared component GUID here either since the path we add to PATH varies on the actual directory path. Use a key that represents this same path. -->
               <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)">
                 <RegistryValue Type="string" Name="InstallDir" Value="[VersionFolder]" KeyPath="yes"/>
@@ -246,6 +251,17 @@
               </RegistryKey>
               <RemoveRegistryKey Id="RemoveOldOpenKey" Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\open" Action="removeOnInstall"/>
             </Component>
+            <Component Id="PowerShellFileContextMenu">
+              <Condition>ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL</Condition>
+              <!-- When right-clicking ps1 file -->
+              <RegistryKey Root="HKCR" Key="Microsoft.PowerShellScript.1\Shell\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)">
+                <RegistryValue Type="string" Name="MUIVerb" Value="$(var.PowerShellFileContextSubMenuDialogText)"/>
+                <RegistryValue Type="string" Name="Icon" Value="[VersionFolder]pwsh.exe" KeyPath="yes"/>
+                <RegistryKey Key="Command">
+                  <RegistryValue Type="string" Value="[VersionFolder]pwsh.exe -Command &quot;$host.UI.RawUI.WindowTitle = '$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))'; if((Get-ExecutionPolicy ) -ne 'AllSigned') { Set-ExecutionPolicy -Scope Process Bypass }; &amp; '%1'&quot;"/>
+                </RegistryKey>
+              </RegistryKey>
+            </Component>
           </Directory>
         </Directory>
       </Directory>
@@ -282,6 +298,7 @@
       <Control Id="RegisterManifestCheckBox" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Windows Event Logging Manifest"/>
       <Control Id="EnablePSRemotingCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting"/>
       <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
+      <Control Id="ContextMenuRunPowerShell" Type="CheckBox" X="20" Y="140" Width="290" Height="17" Property="ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.PowerShellFileContextSubMenuDialogText)' context menu for PowerShell files"/>
       <Control Id="LicenseLink" Type="Hyperlink" X="20" Y="190" Width="214" Height="17">
         <Text><![CDATA[<a href="https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt">The application is distributed under the MIT license.</a>]]></Text>
       </Control>

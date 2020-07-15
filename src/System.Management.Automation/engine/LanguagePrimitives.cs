@@ -1506,47 +1506,38 @@ namespace System.Management.Automation
 
         private static object NewConverterInstance(string assemblyQualifiedTypeName)
         {
-            int typeSeparator = assemblyQualifiedTypeName.IndexOf(',');
-            if (typeSeparator == -1)
+            if (assemblyQualifiedTypeName.IndexOf(',') == -1)
             {
                 typeConversion.WriteLine("Type name \"{0}\" should be assembly qualified.", assemblyQualifiedTypeName);
                 return null;
             }
 
-            string assemblyName = assemblyQualifiedTypeName.Substring(typeSeparator + 2);
-            string typeName = assemblyQualifiedTypeName.Substring(0, typeSeparator);
-
-            foreach (Assembly assembly in ClrFacade.GetAssemblies(typeName))
+            Type converterType;
+            try
             {
-                if (assembly.FullName == assemblyName)
-                {
-                    Type converterType = null;
-                    try
-                    {
-                        converterType = assembly.GetType(typeName, false, false);
-                    }
-                    catch (ArgumentException e)
-                    {
-                        typeConversion.WriteLine("Assembly \"{0}\" threw an exception when retrieving the type \"{1}\": \"{2}\".", assemblyName, typeName, e.Message);
-                        return null;
-                    }
-
-                    try
-                    {
-                        return Activator.CreateInstance(converterType);
-                    }
-                    catch (Exception e)
-                    {
-                        TargetInvocationException inner = e as TargetInvocationException;
-                        string message = (inner == null) || (inner.InnerException == null) ? e.Message : inner.InnerException.Message;
-                        typeConversion.WriteLine("Creating an instance of type \"{0}\" caused an exception to be thrown: \"{1}\"", assemblyQualifiedTypeName, message);
-                        return null;
-                    }
-                }
+                // Type.GetType() can load an assembly.
+                // PowerShell is allowed to load only TPA.
+                // Since a type is already loaded we trust to an attribute assigned to the type
+                // and can use Type.GetType() without additional checks.
+                converterType = Type.GetType(assemblyQualifiedTypeName, throwOnError: true, ignoreCase: false);
+            }
+            catch (Exception e)
+            {
+                typeConversion.WriteLine("Threw an exception when retrieving the type \"{1}\": \"{2}\".", assemblyQualifiedTypeName, e.Message);
+                return null;
             }
 
-            typeConversion.WriteLine("Could not create an instance of type \"{0}\".", assemblyQualifiedTypeName);
-            return null;
+            try
+            {
+                return Activator.CreateInstance(converterType);
+            }
+            catch (Exception e)
+            {
+                TargetInvocationException inner = e as TargetInvocationException;
+                string message = (inner == null) || (inner.InnerException == null) ? e.Message : inner.InnerException.Message;
+                typeConversion.WriteLine("Creating an instance of type \"{0}\" caused an exception to be thrown: \"{1}\"", assemblyQualifiedTypeName, message);
+                return null;
+            }
         }
 
         /// <summary>
@@ -1973,7 +1964,7 @@ namespace System.Management.Automation
 
                     // See if the [Flag] attribute is set on this type...
                     // MemberInfo.GetCustomAttributes returns IEnumerable<Attribute> in CoreCLR.
-                    bool hasFlagsAttribute = enumType.GetCustomAttributes(typeof(FlagsAttribute), false).Any();
+                    bool hasFlagsAttribute = enumType.GetCustomAttributes(typeof(FlagsAttribute), false).Length > 0;
 
                     returnValue = new EnumHashEntry(Enum.GetNames(enumType), values, allValues, hasNegativeValue, hasFlagsAttribute);
                     s_enumTable.Add(enumType, returnValue);
@@ -2212,7 +2203,7 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            if (string.Compare(sourceValueEntry, name, ignoreCaseOpt) != 0)
+                            if (!string.Equals(sourceValueEntry, name, ignoreCaseOpt))
                                 continue;
                         }
 
@@ -5522,7 +5513,7 @@ namespace System.Management.Automation
 
             // GetCustomAttributes returns IEnumerable<Attribute> in CoreCLR
             var typeConverters = type.GetCustomAttributes(typeof(TypeConverterAttribute), false);
-            if (typeConverters.Any())
+            if (typeConverters.Length > 0)
             {
                 return true;
             }

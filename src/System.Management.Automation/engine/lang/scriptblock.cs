@@ -463,7 +463,7 @@ namespace System.Management.Automation
             if (variablesToDefine != null)
             {
                 // Extract the special variables "this", "input" and "_"
-                PSVariable located = variablesToDefine.FirstOrDefault(
+                PSVariable located = variablesToDefine.Find(
                     v => string.Equals(v.Name, "this", StringComparison.OrdinalIgnoreCase));
                 if (located != null)
                 {
@@ -471,7 +471,7 @@ namespace System.Management.Automation
                     variablesToDefine.Remove(located);
                 }
 
-                located = variablesToDefine.FirstOrDefault(
+                located = variablesToDefine.Find(
                     v => string.Equals(v.Name, "_", StringComparison.Ordinal));
                 if (located != null)
                 {
@@ -479,7 +479,7 @@ namespace System.Management.Automation
                     variablesToDefine.Remove(located);
                 }
 
-                located = variablesToDefine.FirstOrDefault(
+                located = variablesToDefine.Find(
                     v => string.Equals(v.Name, "input", StringComparison.OrdinalIgnoreCase));
                 if (located != null)
                 {

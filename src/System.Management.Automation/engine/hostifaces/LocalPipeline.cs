@@ -249,7 +249,7 @@ namespace System.Management.Automation.Runspaces
                     }
 
                 default:
-                    Debug.Assert(false);
+                    Debug.Fail("");
                     break;
             }
         }

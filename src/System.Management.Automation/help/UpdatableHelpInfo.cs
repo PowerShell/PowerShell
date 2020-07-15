@@ -107,8 +107,8 @@ namespace System.Management.Automation.Help
 
             foreach (CultureSpecificUpdatableHelp updatableHelpItem in UpdatableHelpItems)
             {
-                if (string.Compare(updatableHelpItem.Culture.Name, culture.Name,
-                    StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals(updatableHelpItem.Culture.Name, culture.Name,
+                    StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
@@ -152,8 +152,8 @@ namespace System.Management.Automation.Help
         {
             foreach (CultureSpecificUpdatableHelp updatableHelpItem in UpdatableHelpItems)
             {
-                if (string.Compare(updatableHelpItem.Culture.Name, culture.Name,
-                    StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals(updatableHelpItem.Culture.Name, culture.Name,
+                    StringComparison.OrdinalIgnoreCase))
                 {
                     return updatableHelpItem.Version;
                 }

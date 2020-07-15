@@ -1719,20 +1719,20 @@ namespace System.Management.Automation
 
             bool result = false;
 
-            if (string.Compare(
+            if (string.Equals(
                     driveName,
                     StringLiterals.Global,
-                    StringComparison.OrdinalIgnoreCase) == 0)
+                    StringComparison.OrdinalIgnoreCase))
             {
                 // It's the global scope.
                 s_tracer.WriteLine("match found: {0}", StringLiterals.Global);
                 result = true;
                 scope = _sessionState.Internal.GlobalScope;
             }
-            else if (string.Compare(
+            else if (string.Equals(
                         driveName,
                         StringLiterals.Local,
-                        StringComparison.OrdinalIgnoreCase) == 0)
+                        StringComparison.OrdinalIgnoreCase))
             {
                 // It's the local scope.
                 s_tracer.WriteLine("match found: {0}", driveName);
