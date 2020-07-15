@@ -78,7 +78,7 @@ jobs:
       $destination = "$(System.ArtifactsDirectory)\azureMacOs"
       New-Item -Path $destination -Type Directory
       $zipPath = dir "$(Build.StagingDirectory)\signedMacOSPackages\powershell-*.zip" -Recurse | select-object -expandproperty fullname
-      Expand-Archive -Path $zipPath -DestinationPath $destination
+      foreach ($z in $zipPath) { Expand-Archive -Path $z -DestinationPath $destination }
       $targzPath = dir "$(System.ArtifactsDirectory)\*osx*.tar.gz" -Recurse | select-object -expandproperty fullname
       Copy-Item -Path $targzPath -Destination $destination
     displayName: 'Extract and copy macOS artifacts for upload'
