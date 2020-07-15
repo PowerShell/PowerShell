@@ -79,7 +79,7 @@ jobs:
       New-Item -Path $destination -Type Directory
       $zipPath = dir "$(Build.StagingDirectory)\signedMacOSPackages\powershell-*.zip" -Recurse | select-object -expandproperty fullname
       foreach ($z in $zipPath) { Expand-Archive -Path $z -DestinationPath $destination }
-      $targzPath = dir "$(System.ArtifactsDirectory)\*.tar.gz" -Recurse | select-object -expandproperty fullname
+      $targzPath = dir "$(System.ArtifactsDirectory)\*osx*.tar.gz" -Recurse | select-object -expandproperty fullname
       Copy-Item -Path $targzPath -Destination $destination
     displayName: 'Extract and copy macOS artifacts for upload'
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
@@ -100,7 +100,7 @@ jobs:
   - task: AzureFileCopy@4
     displayName: 'AzureBlob File Copy - unsigned'
     inputs:
-      SourcePath: '$(Build.StagingDirectory)\macos-unsigned'
+      SourcePath: '$(Build.StagingDirectory)\macos-unsigned\*'
       azureSubscription: '$(AzureFileCopySubscription)'
       Destination: AzureBlob
       storage: '$(StorageAccount)'
@@ -110,7 +110,7 @@ jobs:
   - task: AzureFileCopy@4
     displayName: 'AzureBlob File Copy - signed'
     inputs:
-      SourcePath: '$(System.ArtifactsDirectory)\azureMacOs'
+      SourcePath: '$(System.ArtifactsDirectory)\azureMacOs\*'
       azureSubscription: '$(AzureFileCopySubscription)'
       Destination: AzureBlob
       storage: '$(StorageAccount)'
