@@ -112,7 +112,7 @@ jobs:
   - task: AzureFileCopy@4
     displayName: 'Upload to Azure - DEB and tar.gz'
     inputs:
-      SourcePath: '$(System.ArtifactsDirectory)\finished\release'
+      SourcePath: '$(System.ArtifactsDirectory)\finished\release\*'
       azureSubscription: '$(AzureFileCopySubscription)'
       Destination: AzureBlob
       storage: '$(StorageAccount)'
@@ -125,7 +125,7 @@ jobs:
   - task: AzureFileCopy@4
     displayName: 'Upload to Azure - RPM - Unsigned'
     inputs:
-      SourcePath: '$(System.ArtifactsDirectory)\rpm\release'
+      SourcePath: '$(System.ArtifactsDirectory)\rpm\release\*'
       azureSubscription: '$(AzureFileCopySubscription)'
       Destination: AzureBlob
       storage: '$(StorageAccount)'
@@ -135,7 +135,7 @@ jobs:
   - task: AzureFileCopy@4
     displayName: 'Upload to Azure - RPM - Signed'
     inputs:
-      SourcePath: '$(Build.StagingDirectory)\signedPackages'
+      SourcePath: '$(Build.StagingDirectory)\signedPackages\*'
       azureSubscription: '$(AzureFileCopySubscription)'
       Destination: AzureBlob
       storage: '$(StorageAccount)'
