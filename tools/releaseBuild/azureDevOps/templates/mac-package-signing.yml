@@ -100,7 +100,7 @@ jobs:
   - task: AzureFileCopy@4
     displayName: 'AzureBlob File Copy - unsigned'
     inputs:
-      SourcePath: '$(Build.StagingDirectory)\macos-unsigned'
+      SourcePath: '$(Build.StagingDirectory)\macos-unsigned\*'
       azureSubscription: '$(AzureFileCopySubscription)'
       Destination: AzureBlob
       storage: '$(StorageAccount)'
@@ -110,7 +110,7 @@ jobs:
   - task: AzureFileCopy@4
     displayName: 'AzureBlob File Copy - signed'
     inputs:
-      SourcePath: '$(System.ArtifactsDirectory)\azureMacOs'
+      SourcePath: '$(System.ArtifactsDirectory)\azureMacOs\*'
       azureSubscription: '$(AzureFileCopySubscription)'
       Destination: AzureBlob
       storage: '$(StorageAccount)'
