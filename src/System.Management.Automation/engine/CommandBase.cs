@@ -266,6 +266,389 @@ namespace System.Management.Automation.Internal
 
 namespace System.Management.Automation
 {
+    #region OutputRendering
+    /// <summary>
+    /// Defines the options for output rendering.
+    /// </summary>
+    public enum OutputRendering
+    {
+        /// <summary>Automatic by PowerShell</summary>
+        Automatic = 0,
+
+        /// <summary>Render as plaintext</summary>
+        PlainText = 1,
+
+        /// <summary>Render as ANSI</summary>
+        Ansi = 2,
+
+        /// <summary>Render ANSI only to host</summary>
+
+        Host = 3,
+    }
+    #endregion OutputRendering
+
+    #region PSStyle
+    /// <summary>
+    /// Contains configuration for how PowerShell renders text.
+    /// </summary>
+    public class PSStyle
+    {
+        /// <summary>
+        /// Contains foreground colors.
+        /// </summary>
+        public class ForegroundColor
+        {
+            /// <summary>
+            /// The color black.
+            /// </summary>
+            public string Black { get; set; } = "\x1b[30m";
+
+            /// <summary>
+            /// The color blue.
+            /// </summary>
+            public string Blue { get; set; } = "\x1b[34m";
+
+            /// <summary>
+            /// The color cyan.
+            /// </summary>
+            public string Cyan { get; set; } = "\x1b[36m";
+
+            /// <summary>
+            /// The color dark gray.
+            /// </summary>
+            public string DarkGray { get; set; } = "\x1b[90m]";
+
+            /// <summary>
+            /// The color green.
+            /// </summary>
+            public string Green { get; set; } = "\x1b[32m";
+
+            /// <summary>
+            /// The color light blue.
+            /// </summary>
+            public string LightBlue { get; set; } = "\x1b[94m";
+
+            /// <summary>
+            /// The color light cyan.
+            /// </summary>
+            public string LightCyan { get; set; } = "\x1b[96m";
+
+            /// <summary>
+            /// The color light gray.
+            /// </summary>
+            public string LightGray { get; set; } = "\x1b[97m";
+
+            /// <summary>
+            /// The color light green.
+            /// </summary>
+            public string LightGreen { get; set; } = "\x1b[92m";
+
+            /// <summary>
+            /// The color light magenta.
+            /// </summary>
+            public string LightMagenta { get; set; } = "\x1b[95m";
+
+            /// <summary>
+            /// The color light red.
+            /// </summary>
+            public string LightRed { get; set; } = "\x1b[91m";
+
+            /// <summary>
+            /// The color light yellow.
+            /// </summary>
+            public string LightYellow { get; set; } = "\x1b[93m";
+
+            /// <summary>
+            /// The color magenta.
+            /// </summary>
+            public string Magenta { get; set; } = "\x1b[35m";
+
+            /// <summary>
+            /// The color read.
+            /// </summary>
+            public string Red { get; set; } = "\x1b[31m";
+
+            /// <summary>
+            /// The color white.
+            /// </summary>
+            public string White { get; set; } = "\x1b[37m";
+
+            /// <summary>
+            /// The color yellow.
+            /// </summary>
+            public string Yellow { get; set; } = "\x1b[33m";
+
+            /// <summary>
+            /// The color set as RGB (Red, Green, Blue).
+            /// </summary>
+            public string Rgb(byte red, byte green, byte blue)
+            {
+                return $"\x1b[38;2;{red};{green};{blue}m";
+            }
+
+            /// <summary>
+            /// The color set as RGB as a single number.
+            /// </summary>
+            public string Rgb(int rgb)
+            {
+                byte red, green, blue;
+                blue = (byte)(rgb & 0xFF);
+                rgb >>= 8;
+                green = (byte)(rgb & 0xFF);
+                rgb >>= 8;
+                red = (byte)(rgb & 0xFF);
+
+                return Rgb(red, green, blue);
+            }
+        }
+
+        /// <summary>
+        /// Contains background colors.
+        /// </summary>
+        public class BackgroundColor
+        {
+            /// <summary>
+            /// The color black.
+            /// </summary>
+            public string Black { get; set; } = "\x1b[40m";
+
+            /// <summary>
+            /// The color blue.
+            /// </summary>
+            public string Blue { get; set; } = "\x1b[44m";
+
+            /// <summary>
+            /// The color cyan.
+            /// </summary>
+            public string Cyan { get; set; } = "\x1b[46m";
+
+            /// <summary>
+            /// The color dark gray.
+            /// </summary>
+            public string DarkGray { get; set; } = "\x1b[100m";
+
+            /// <summary>
+            /// The color green.
+            /// </summary>
+            public string Green { get; set; } = "\x1b[42m";
+
+            /// <summary>
+            /// The color light blue.
+            /// </summary>
+            public string LightBlue { get; set; } = "\x1b[104m";
+
+            /// <summary>
+            /// The color light cyan.
+            /// </summary>
+            public string LightCyan { get; set; } = "\x1b[106m";
+
+            /// <summary>
+            /// The color light gray.
+            /// </summary>
+            public string LightGray { get; set; } = "\x1b[107m";
+
+            /// <summary>
+            /// The color light green.
+            /// </summary>
+            public string LightGreen { get; set; } = "\x1b[102m";
+
+            /// <summary>
+            /// The color light magenta.
+            /// </summary>
+            public string LightMagenta { get; set; } = "\x1b[105m";
+
+            /// <summary>
+            /// The color light red.
+            /// </summary>
+            public string LightRed { get; set; } = "\x1b[101m";
+
+            /// <summary>
+            /// The color light yellow.
+            /// </summary>
+            public string LightYellow { get; set; } = "\x1b[103m";
+            /// <summary>
+            /// The color magenta.
+            /// </summary>
+            public string Magenta { get; set; } = "\x1b[45m";
+
+            /// <summary>
+            /// The color read.
+            /// </summary>
+            public string Red { get; set; } = "\x1b[41m";
+
+            /// <summary>
+            /// The color white.
+            /// </summary>
+            public string White { get; set; } = "\x1b[47m";
+
+            /// <summary>
+            /// The color yellow.
+            /// </summary>
+            public string Yellow { get; set; } = "\x1b[43m";
+
+            /// <summary>
+            /// The color set as RGB (Red, Green, Blue).
+            /// </summary>
+            public string Rgb(byte red, byte green, byte blue)
+            {
+                return $"\x1b[48;2;{red};{green};{blue}m";
+            }
+
+            /// <summary>
+            /// The color set as RGB as a single number.
+            /// </summary>
+            public string Rgb(int rgb)
+            {
+                byte red, green, blue;
+                blue = (byte)(rgb & 0xFF);
+                rgb >>= 8;
+                green = (byte)(rgb & 0xFF);
+                rgb >>= 8;
+                red = (byte)(rgb & 0xFF);
+
+                return Rgb(red, green, blue);
+            }
+        }
+
+        /// <summary>
+        /// Contains formatting styles for steams and objects.
+        /// </summary>
+        public class FormattingData
+        {
+            /// <summary>
+            /// Accent style for formatting.
+            /// </summary>
+            public string FormatAccent { get; set; } = "\x1b[32m";
+
+            /// <summary>
+            /// Accent style for errors.
+            /// </summary>
+            public string ErrorAccent { get; set; } = "\x1b[36m";
+
+            /// <summary>
+            /// Style for error messages.
+            /// </summary>
+            public string Error { get;set; } = "\x1b[31m";
+
+            /// <summary>
+            /// Style for warning messages.
+            /// </summary>
+            public string Warning { get; set; } = "\x1b[33m";
+
+            /// <summary>
+            /// Style for verbose messages.
+            /// </summary>
+            public string Verbose { get; set; } = "\x1b[33m";
+
+            /// <summary>
+            /// Style for debug messages.
+            /// </summary>
+            public string Debug { get; set; } = "\x1b[33m";
+
+            /// <summary>
+            /// Style for progress messages.
+            /// </summary>
+            public string Progress { get; set; } = "\x1b[30;43m";
+        }
+
+        /// <summary>
+        /// The current rendering mode for output.
+        /// </summary>
+        public OutputRendering OutputRendering;
+
+        /// <summary>
+        /// Turn off all attributes.
+        /// </summary>
+
+        public string Reset { get; set; } = "\x1b[0m";
+
+        /// <summary>
+        /// Turn off blink.
+        /// </summary>
+        public string BlinkOff { get; set; } = "\x1b[5m";
+
+        /// <summary>
+        /// Turn on blink.
+        /// </summary>
+        public string Blink { get; set; } = "\x1b[25m";
+
+        /// <summary>
+        /// Turn off bold.
+        /// </summary>
+        public string BoldOff { get; set; } = "\x1b[22m";
+
+        /// <summary>
+        /// Turn on blink.
+        /// </summary>
+        public string Bold { get; set; } = "\x1b[1m";
+
+        /// <summary>
+        /// Turn on hidden.
+        /// </summary>
+        public string Hidden { get; set; } = "\x1b[8m";
+
+        /// <summary>
+        /// Turn off hidden.
+        /// </summary>
+        public string HiddenOff { get; set; } = "\x1b[28m";
+
+        /// <summary>
+        /// Turn on reverse.
+        /// </summary>
+        public string Reverse { get; set; } = "\x1b[7m";
+
+        /// <summary>
+        /// Turn off reverse.
+        /// </summary>
+        public string ReverseOff { get; set; } = "\x1b[27m";
+
+        /// <summary>
+        /// Turn off standout.
+        /// </summary>
+        public string ItalicOff { get; set; } = "\x1b[23m";
+
+        /// <summary>
+        /// Turn on standout.
+        /// </summary>
+        public string Italic { get; set; } = "\x1b[3m";
+
+        /// <summary>
+        /// Turn off underlined.
+        /// </summary>
+        public string UnderlineOff { get; set; } = "\x1b[24m";
+
+        /// <summary>
+        /// Turn on underlined.
+        /// </summary>
+        public string Underline { get;set; } = "\x1b[4m";
+
+        /// <summary>
+        /// Contains current formatting rendering settings.
+        /// </summary>
+        public FormattingData Formatting;
+
+        /// <summary>
+        /// Contains foreground colors.
+        /// </summary>
+        public ForegroundColor Foreground;
+
+        /// <summary>
+        /// Contains background colors.
+        /// </summary>
+        public BackgroundColor Background;
+
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public PSStyle()
+        {
+            Formatting = new FormattingData();
+            Foreground = new ForegroundColor();
+            Background = new BackgroundColor();
+        }
+    }
+    #endregion PSStyle
+
     #region ErrorView
     /// <summary>
     /// Defines the potential ErrorView options.

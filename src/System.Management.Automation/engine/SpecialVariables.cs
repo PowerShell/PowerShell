@@ -32,6 +32,10 @@ namespace System.Management.Automation
 
         internal static readonly VariablePath OFSVarPath = new VariablePath(OFS);
 
+        internal const string PSStyle = "PSStyle";
+
+        internal static readonly VariablePath PSStyleVarPath = new VariablePath(PSStyle);
+
         internal const string OutputEncoding = "OutputEncoding";
 
         internal static readonly VariablePath OutputEncodingVarPath = new VariablePath(OutputEncoding);
