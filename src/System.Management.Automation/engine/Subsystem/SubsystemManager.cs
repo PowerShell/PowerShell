@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.Subsystem
 {
@@ -61,7 +62,10 @@ namespace System.Management.Automation.Subsystem
                 return subsystemInfoImpl.GetImplementation();
             }
 
-            throw new ArgumentException("The specified subsystem type '{0}' is unknown.");
+            throw new ArgumentException(
+                StringUtil.Format(
+                    SubsystemStrings.SubsystemTypeUnknown,
+                    typeof(TConcreteSubsystem).FullName));
         }
 
         /// <summary>
@@ -77,7 +81,10 @@ namespace System.Management.Automation.Subsystem
                 return subsystemInfoImpl.GetAllImplementations();
             }
 
-            throw new ArgumentException("The specified subsystem type '{0}' is unknown.");
+            throw new ArgumentException(
+                StringUtil.Format(
+                    SubsystemStrings.SubsystemTypeUnknown,
+                    typeof(TConcreteSubsystem).FullName));
         }
 
         #endregion
@@ -103,9 +110,8 @@ namespace System.Management.Automation.Subsystem
             }
 
             throw new ArgumentException(
-                string.Format(
-                    CultureInfo.CurrentCulture,
-                    "The specified subsystem type '{0}' is unknown.",
+                StringUtil.Format(
+                    SubsystemStrings.SubsystemTypeUnknown,
                     subsystemType.FullName));
         }
 
@@ -120,9 +126,8 @@ namespace System.Management.Automation.Subsystem
             }
 
             throw new ArgumentException(
-                string.Format(
-                    CultureInfo.CurrentCulture,
-                    "The specified subsystem kind '{0}' is unknown.",
+                StringUtil.Format(
+                    SubsystemStrings.SubsystemKindUnknown,
                     kind.ToString()));
         }
 
@@ -157,7 +162,12 @@ namespace System.Management.Automation.Subsystem
 
             if (kind != proxy.Kind)
             {
-                throw new ArgumentException("Invalid subsystem implementation.", nameof(proxy));
+                throw new ArgumentException(
+                    StringUtil.Format(
+                        SubsystemStrings.ImplementationMismatch,
+                        proxy.Kind.ToString(),
+                        kind.ToString()),
+                    nameof(proxy));
             }
 
             RegisterSubsystem(GetSubsystemInfo(kind), proxy);

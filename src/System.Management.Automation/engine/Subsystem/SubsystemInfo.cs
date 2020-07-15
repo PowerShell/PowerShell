@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.Subsystem
 {
@@ -208,7 +209,10 @@ namespace System.Management.Automation.Subsystem
 
                 if (!AllowMultipleRegistration)
                 {
-                    throw new InvalidOperationException("The subsystem '{0}' does not allow more than one implementation registration.");
+                    throw new InvalidOperationException(
+                        StringUtil.Format(
+                            SubsystemStrings.MultipleRegistrationNotAllowed,
+                            Kind.ToString()));
                 }
 
                 bool targetExists = false;
@@ -223,7 +227,11 @@ namespace System.Management.Automation.Subsystem
 
                 if (targetExists)
                 {
-                    throw new InvalidOperationException("The implementation with ID was already registered.");
+                    throw new InvalidOperationException(
+                        StringUtil.Format(
+                            SubsystemStrings.ImplementationAlreadyRegistered,
+                            impl.Id,
+                            Kind.ToString()));
                 }
 
                 var list = new List<TConcreteSubsystem>(_registeredImpls.Count + 1);
@@ -239,14 +247,20 @@ namespace System.Management.Automation.Subsystem
         {
             if (!AllowUnregistration)
             {
-                throw new InvalidOperationException("The subsystem '{0}' does not allow unregistration of an implementation.");
+                throw new InvalidOperationException(
+                    StringUtil.Format(
+                        SubsystemStrings.UnregistrationNotAllowed,
+                        Kind.ToString()));
             }
 
             lock (_syncObj)
             {
                 if (_registeredImpls.Count == 0)
                 {
-                    throw new InvalidOperationException("No implementation was registered to the subsystem '{0}'.");
+                    throw new InvalidOperationException(
+                        StringUtil.Format(
+                            SubsystemStrings.NoImplementationRegistered,
+                            Kind.ToString()));
                 }
 
                 int index = -1;
@@ -261,7 +275,10 @@ namespace System.Management.Automation.Subsystem
 
                 if (index == -1)
                 {
-                    throw new InvalidOperationException($"Cannot find a registered implementation with the ID '$id'");
+                    throw new InvalidOperationException(
+                        StringUtil.Format(
+                            SubsystemStrings.ImplementationNotFound,
+                            id.ToString()));
                 }
 
                 ISubsystem target = _registeredImpls[index];
