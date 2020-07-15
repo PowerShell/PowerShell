@@ -733,6 +733,11 @@ namespace System.Management.Automation
         internal const string ProductNameForDirectory = "PowerShell";
 
         /// <summary>
+        /// WSL introduces a new filesystem path to access the Linux filesystem from Windows, like '\\wsl$\ubuntu'.
+        /// </summary>
+        internal const string WslRootPath = @"\\wsl$";
+
+        /// <summary>
         /// The subdirectory of module paths
         /// e.g. ~\Documents\WindowsPowerShell\Modules and %ProgramFiles%\WindowsPowerShell\Modules.
         /// </summary>
@@ -1261,7 +1266,7 @@ namespace System.Management.Automation
             }
 
             // handle special cases like \\wsl$\ubuntu which isn't a UNC path, but we can say it is so the filesystemprovider can use it
-            if (path.StartsWith(@"\\wsl$", StringComparison.OrdinalIgnoreCase))
+            if (path.StartsWith(WslRootPath, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -2105,7 +2110,7 @@ namespace System.Management.Automation.Internal
         private readonly BoundedStack<T> _boundedUndoStack;
         private readonly BoundedStack<T> _boundedRedoStack;
 
-        internal HistoryStack(uint capacity)
+        internal HistoryStack(int capacity)
         {
             _boundedUndoStack = new BoundedStack<T>(capacity);
             _boundedRedoStack = new BoundedStack<T>(capacity);
@@ -2150,13 +2155,13 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal class BoundedStack<T> : LinkedList<T>
     {
-        private readonly uint _capacity;
+        private readonly int _capacity;
 
         /// <summary>
         /// Lazy initialisation, i.e. it sets only its limit but does not allocate the memory for the given capacity.
         /// </summary>
         /// <param name="capacity"></param>
-        internal BoundedStack(uint capacity)
+        internal BoundedStack(int capacity)
         {
             _capacity = capacity;
         }
