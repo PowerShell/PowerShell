@@ -205,7 +205,7 @@ jobs:
   - task: AzureFileCopy@4
     displayName: 'Upload NuGet packages to Azure'
     inputs:
-      SourcePath: '$(System.ArtifactsDirectory)\signed\'
+      SourcePath: '$(System.ArtifactsDirectory)\signed\*'
       azureSubscription: '$(AzureFileCopySubscription)'
       Destination: AzureBlob
       storage: '$(StorageAccount)'
@@ -215,7 +215,7 @@ jobs:
   - task: AzureFileCopy@4
     displayName: 'Upload global tool packages to Azure'
     inputs:
-      sourcePath: '$(System.ArtifactsDirectory)\signed\globaltool'
+      sourcePath: '$(System.ArtifactsDirectory)\signed\globaltool\*'
       azureSubscription: '$(GlobalToolSubscription)'
       Destination: AzureBlob
       storage: '$(GlobalToolStorageAccount)'
