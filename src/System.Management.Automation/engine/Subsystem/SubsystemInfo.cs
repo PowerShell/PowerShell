@@ -90,9 +90,9 @@ namespace System.Management.Automation.Subsystem
         private protected abstract void AddImplementation(ISubsystem impl);
         private protected abstract ISubsystem RemoveImplementation(Guid id);
 
-        internal void RegisterImplementation(ISubsystem impl)
+        internal void RegisterImplementation(ISubsystem rawImpl)
         {
-            AddImplementation(impl);
+            AddImplementation(rawImpl);
         }
 
         internal ISubsystem UnregisterImplementation(Guid id)
@@ -157,27 +157,27 @@ namespace System.Management.Automation.Subsystem
             /// <summary>
             /// Gets the unique identifier for a subsystem implementation.
             /// </summary>
-            public readonly Guid Id;
+            public Guid Id { get; }
 
             /// <summary>
             /// Gets the kind of subsystem.
             /// </summary>
-            public readonly SubsystemKind Kind;
+            public SubsystemKind Kind { get; }
 
             /// <summary>
             /// Gets the name of a subsystem implementation.
             /// </summary>
-            public readonly string Name;
+            public string Name { get; }
 
             /// <summary>
             /// Gets the description of a subsystem implementation.
             /// </summary>
-            public readonly string Description;
+            public string Description { get; }
 
             /// <summary>
             /// Gets the implementation type.
             /// </summary>
-            public readonly Type ImplementationType;
+            public Type ImplementationType { get; }
         }
 
         #endregion

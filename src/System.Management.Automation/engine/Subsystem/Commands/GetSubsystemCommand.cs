@@ -15,13 +15,13 @@ namespace System.Management.Automation.Subsystem
         private const string KindSet = "GetByKindSet";
 
         /// <summary>
-        /// The kind of a concrete subsystem.
+        /// Gets or sets a concrete subsystem kind.
         /// </summary>
         [Parameter(ParameterSetName = KindSet, ValueFromPipeline = true)]
         public SubsystemKind Kind { get; set; }
 
         /// <summary>
-        /// The interface or abstract class type of a concrete subsystem.
+        /// Gets or sets the interface or abstract class type of a concrete subsystem.
         /// </summary>
         [Parameter(ParameterSetName = TypeSet, ValueFromPipeline = true)]
         public Type SubsystemType { get; set; }
@@ -31,7 +31,7 @@ namespace System.Management.Automation.Subsystem
         /// </summary>
         protected override void ProcessRecord()
         {
-            switch(ParameterSetName)
+            switch (ParameterSetName)
             {
                 case AllSet:
                     WriteObject(SubsystemManager.GetAllSubsystemInfo());

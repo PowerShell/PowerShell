@@ -11,7 +11,7 @@ namespace PSTests.Sequential
 {
     public static class SubsystemTests
     {
-        private readonly static MyPredictor predictor1, predictor2;
+        private static readonly MyPredictor predictor1, predictor2;
 
         static SubsystemTests()
         {
@@ -36,7 +36,6 @@ namespace PSTests.Sequential
             SubsystemInfo ssInfo = SubsystemManager.GetSubsystemInfo(typeof(IPredictor));
 
             VerifySubsystemMetadata(ssInfo);
-            // Subsystem status
             Assert.False(ssInfo.IsRegistered);
             Assert.Empty(ssInfo.Implementations);
 
@@ -74,7 +73,6 @@ namespace PSTests.Sequential
                 // Now validate the SubsystemInfo of the 'IPredictor' subsystem
                 SubsystemInfo ssInfo = SubsystemManager.GetSubsystemInfo(typeof(IPredictor));
                 VerifySubsystemMetadata(ssInfo);
-                // Subsystem status changed
                 Assert.True(ssInfo.IsRegistered);
                 Assert.Single(ssInfo.Implementations);
 
@@ -157,7 +155,6 @@ namespace PSTests.Sequential
 
             SubsystemInfo ssInfo = SubsystemManager.GetSubsystemInfo(SubsystemKind.CommandPredictor);
             VerifySubsystemMetadata(ssInfo);
-            // Subsystem status changed
             Assert.True(ssInfo.IsRegistered);
             Assert.Single(ssInfo.Implementations);
 

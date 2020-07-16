@@ -24,12 +24,12 @@ namespace System.Management.Automation.Subsystem
         SubsystemKind ISubsystem.Kind => SubsystemKind.CommandPredictor;
 
         /// <summary>
-        /// Gets whether the predictor supports early processing.
+        /// Gets a value indicating whether the predictor supports early processing.
         /// </summary>
         bool SupportEarlyProcessing { get; }
 
         /// <summary>
-        /// Gets whether the predictor accepts feedback about the previous suggestion.
+        /// Gets a value indicating whether the predictor accepts feedback about the previous suggestion.
         /// </summary>
         bool AcceptFeedback { get; }
 
@@ -37,11 +37,13 @@ namespace System.Management.Automation.Subsystem
         /// A command line was accepted to execute.
         /// The predictor can start processing early as needed with the latest history.
         /// </summary>
+        /// <param name="history">History command lines provided as references for prediction.</param>
         void EarlyProcessWithHistory(IReadOnlyList<string> history);
 
         /// <summary>
         /// The suggestion given by the predictor was accepted.
         /// </summary>
+        /// <param name="acceptedSuggestion">The accepted suggestion text.</param>
         void LastSuggestionAccepted(string acceptedSuggestion);
 
         /// <summary>
@@ -52,6 +54,9 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Get the predictive suggestions.
         /// </summary>
+        /// <param name="context">The <see cref="PredictionContext"/> object to be used for prediction.</param>
+        /// <param name="cancellationToken">The cancellation token to cancel the prediction.</param>
+        /// <returns>A list of predictive suggestions.</returns>
         List<string> GetSuggestion(PredictionContext context, CancellationToken cancellationToken);
     }
 
@@ -104,6 +109,8 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Creates a context instance from the user input line.
         /// </summary>
+        /// <param name="input">The user input.</param>
+        /// <returns>A <see cref="PredictionContext"/> object.</returns>
         public static PredictionContext Create(string input)
         {
             Ast ast = Parser.ParseInput(input, out Token[] tokens, out _);

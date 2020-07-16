@@ -13,7 +13,7 @@ namespace System.Management.Automation.Subsystem
     /// <summary>
     /// Class used to manage subsystems.
     /// </summary>
-    public class SubsystemManager
+    public static class SubsystemManager
     {
         private static readonly ReadOnlyCollection<SubsystemInfo> s_subsystems;
         private static readonly ReadOnlyDictionary<Type, SubsystemInfo> s_subSystemTypeMap;
@@ -49,16 +49,17 @@ namespace System.Management.Automation.Subsystem
         /// Design point:
         /// The implemnentation proxy object is not supposed to expose to users.
         /// Users shouldn't depend on a implementation proxy object directly, but instead should depend on PowerShell APIs.
-        ///
+        /// <para>
         /// Example: if a user want to use prediction functionality, he/she should use the PowerShell prediction API instead of
         /// directly interacting with the implementation proxy object of `IPrediction`.
         /// </remarks>
+        /// <typeparam name="TConcreteSubsystem">The concrete subsystem base type.</typeparam>
         internal static TConcreteSubsystem GetSubsystem<TConcreteSubsystem>()
             where TConcreteSubsystem : class, ISubsystem
         {
             if (s_subSystemTypeMap.TryGetValue(typeof(TConcreteSubsystem), out SubsystemInfo subsystemInfo))
             {
-                var subsystemInfoImpl = (SubsystemInfoImpl<TConcreteSubsystem>) subsystemInfo;
+                var subsystemInfoImpl = (SubsystemInfoImpl<TConcreteSubsystem>)subsystemInfo;
                 return subsystemInfoImpl.GetImplementation();
             }
 
@@ -72,12 +73,13 @@ namespace System.Management.Automation.Subsystem
         /// Get all the proxy objects registered for a specific subsystem.
         /// Return an empty collection when the given subsystem is not registered.
         /// </summary>
+        /// <typeparam name="TConcreteSubsystem">The concrete subsystem base type.</typeparam>
         internal static ReadOnlyCollection<TConcreteSubsystem> GetSubsystems<TConcreteSubsystem>()
             where TConcreteSubsystem : class, ISubsystem
         {
             if (s_subSystemTypeMap.TryGetValue(typeof(TConcreteSubsystem), out SubsystemInfo subsystemInfo))
             {
-                var subsystemInfoImpl = (SubsystemInfoImpl<TConcreteSubsystem>) subsystemInfo;
+                var subsystemInfoImpl = (SubsystemInfoImpl<TConcreteSubsystem>)subsystemInfo;
                 return subsystemInfoImpl.GetAllImplementations();
             }
 
@@ -94,6 +96,7 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Get the information about all subsystems.
         /// </summary>
+        /// <returns>A readonly collection of all <see cref="SubsystemInfo"/> objects.</returns>
         public static ReadOnlyCollection<SubsystemInfo> GetAllSubsystemInfo()
         {
             return s_subsystems;
@@ -102,6 +105,8 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Get the information about a subsystem by the subsystem type.
         /// </summary>
+        /// <param name="subsystemType">The base type of a specific concrete subsystem.</param>
+        /// <returns>The <see cref="SubsystemInfo"/> object that represents the concrete subsystem.</returns>
         public static SubsystemInfo GetSubsystemInfo(Type subsystemType)
         {
             if (s_subSystemTypeMap.TryGetValue(subsystemType, out SubsystemInfo subsystemInfo))
@@ -118,6 +123,8 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Get the information about a subsystem by the subsystem kind.
         /// </summary>
+        /// <param name="kind">A specific <see cref="SubsystemKind"/>.</param>
+        /// <returns>The <see cref="SubsystemInfo"/> object that represents the concrete subsystem.</returns>
         public static SubsystemInfo GetSubsystemInfo(SubsystemKind kind)
         {
             if (s_subSystemKindMap.TryGetValue(kind, out SubsystemInfo subsystemInfo))
@@ -138,6 +145,9 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Subsystem registration.
         /// </summary>
+        /// <typeparam name="TConcreteSubsystem">The concrete subsystem base type.</typeparam>
+        /// <typeparam name="TImplementation">The implementation type of that concrete subsystem.</typeparam>
+        /// <param name="proxy">An instance of the implementation.</param>
         public static void RegisterSubsystem<TConcreteSubsystem, TImplementation>(TImplementation proxy)
             where TConcreteSubsystem : class, ISubsystem
             where TImplementation : class, TConcreteSubsystem
@@ -151,8 +161,10 @@ namespace System.Management.Automation.Subsystem
         }
 
         /// <summary>
-        /// Subsystem registration.
+        /// Register an implementation for a subsystem.
         /// </summary>
+        /// <param name="kind">The target <see cref="SubsystemKind"/> of the registration.</param>
+        /// <param name="proxy">An instance of the implementation.</param>
         public static void RegisterSubsystem(SubsystemKind kind, ISubsystem proxy)
         {
             if (proxy == null)
@@ -202,6 +214,8 @@ namespace System.Management.Automation.Subsystem
         /// Subsystem unregistration.
         /// Throw 'InvalidOperationException' when called for subsystems that cannot be unregistered.
         /// </summary>
+        /// <typeparam name="TConcreteSubsystem">The base type of the target concrete subsystem of the un-registration.</typeparam>
+        /// <param name="id">The Id of the implementation to be unregistered.</param>
         public static void UnregisterSubsystem<TConcreteSubsystem>(Guid id)
             where TConcreteSubsystem : class, ISubsystem
         {
@@ -212,6 +226,8 @@ namespace System.Management.Automation.Subsystem
         /// Subsystem unregistration.
         /// Throw 'InvalidOperationException' when called for subsystems that cannot be unregistered.
         /// </summary>
+        /// <param name="kind">The target <see cref="SubsystemKind"/> of the un-registration.</param>
+        /// <param name="id">The Id of the implementation to be unregistered.</param>
         public static void UnregisterSubsystem(SubsystemKind kind, Guid id)
         {
             UnregisterSubsystem(GetSubsystemInfo(kind), id);

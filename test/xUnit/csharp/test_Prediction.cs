@@ -12,16 +12,16 @@ namespace PSTests.Sequential
 {
     public class MyPredictor : IPredictor
     {
-        private Guid _id;
-        private string _name, _description;
-        private bool _delay;
+        private readonly Guid _id;
+        private readonly string _name, _description;
+        private readonly bool _delay;
 
-        public List<string> History;
-        public List<string> AcceptedSuggestions;
-        public int DenialCount;
+        public List<string> History { get; }
+        public List<string> AcceptedSuggestions { get; }
+        public int DenialCount { get; private set; }
 
-        public readonly static MyPredictor SlowPredictor;
-        public readonly static MyPredictor FastPredictor;
+        public static readonly MyPredictor SlowPredictor;
+        public static readonly MyPredictor FastPredictor;
 
         static MyPredictor()
         {
@@ -51,12 +51,13 @@ namespace PSTests.Sequential
         }
 
         public Guid Id => _id;
+
         public string Name => _name;
+
         public string Description => _description;
 
-        // No early processing, no suggestion feedback.
-        public bool SupportEarlyProcessing => true;
-        public bool AcceptFeedback => true;
+        bool IPredictor.SupportEarlyProcessing => true;
+        bool IPredictor.AcceptFeedback => true;
 
         public void EarlyProcessWithHistory(IReadOnlyList<string> history)
         {
@@ -84,7 +85,7 @@ namespace PSTests.Sequential
 
             // You can get the user input from the AST.
             var userInput = context.InputAst.Extent.Text;
-            return new List<string>() {
+            return new List<string> {
                 $"{userInput} TEST-1 from {Name}",
                 $"{userInput} TeSt-2 from {Name}",
             };
@@ -160,8 +161,8 @@ namespace PSTests.Sequential
                 SubsystemManager.RegisterSubsystem<IPredictor, MyPredictor>(slow);
                 SubsystemManager.RegisterSubsystem(SubsystemKind.CommandPredictor, fast);
 
-                var history = new string[] { "hello", "world" };
-                var ids = new HashSet<Guid>() { slow.Id, fast.Id };
+                var history = new[] { "hello", "world" };
+                var ids = new HashSet<Guid> { slow.Id, fast.Id };
 
                 CommandPrediction.LineAccepted(history);
                 CommandPrediction.SuggestionFeedback(ids, slow.Id, "Yeah");

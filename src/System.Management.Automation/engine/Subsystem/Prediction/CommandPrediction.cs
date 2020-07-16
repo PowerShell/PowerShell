@@ -37,9 +37,24 @@ namespace System.Management.Automation.Subsystem
     public static class CommandPrediction
     {
         /// <summary>
-        /// Collect the predictive suggestions from registered predictors.
+        /// Collect the predictive suggestions from registered predictors using the default timeout.
         /// </summary>
-        public static async Task<List<PredictionResult>> PredictInput(Ast ast, Token[] astTokens, int millisecondsTimeout = 20)
+        /// <param name="ast">The <see cref="Ast"/> object from parsing the current command line input.</param>
+        /// <param name="astTokens">The <see cref="Token"/> objects from parsing the current command line input.</param>
+        /// <returns>A list of <see cref="PredictionResult"/> objects.</returns>
+        public static Task<List<PredictionResult>> PredictInput(Ast ast, Token[] astTokens)
+        {
+            return PredictInput(ast, astTokens, millisecondsTimeout: 20);
+        }
+
+        /// <summary>
+        /// Collect the predictive suggestions from registered predictors using the specified timeout.
+        /// </summary>
+        /// <param name="ast">The <see cref="Ast"/> object from parsing the current command line input.</param>
+        /// <param name="astTokens">The <see cref="Token"/> objects from parsing the current command line input.</param>
+        /// <param name="millisecondsTimeout">The milliseconds to timeout.</param>
+        /// <returns>A list of <see cref="PredictionResult"/> objects.</returns>
+        public static async Task<List<PredictionResult>> PredictInput(Ast ast, Token[] astTokens, int millisecondsTimeout)
         {
             var predictors = SubsystemManager.GetSubsystems<IPredictor>();
             if (predictors.Count == 0)
@@ -58,7 +73,7 @@ namespace System.Management.Automation.Subsystem
 
                 tasks[i] = Task.Factory.StartNew(
                     state => {
-                        var predictor = (IPredictor) state;
+                        var predictor = (IPredictor)state;
                         List<string> texts = predictor.GetSuggestion(context, cancellationToken);
                         return texts?.Count > 0 ? new PredictionResult(predictor.Id, texts) : null;
                     }, predictor);
@@ -66,7 +81,10 @@ namespace System.Management.Automation.Subsystem
 
             try
             {
-                await Task.WhenAny(Task.WhenAll(tasks), Task.Delay(millisecondsTimeout, cancellationToken));
+                await Task.WhenAny(
+                    Task.WhenAll(tasks),
+                    Task.Delay(millisecondsTimeout, cancellationToken)
+                ).ConfigureAwait(false);
                 cancellationSource.Cancel();
 
                 var results = new List<PredictionResult>(predictors.Count);
@@ -93,6 +111,7 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Allow registered predictors to do early processing when a command line is accepted.
         /// </summary>
+        /// <param name="history">History command lines provided as references for prediction.</param>
         public static void LineAccepted(IReadOnlyList<string> history)
         {
             var predictors = SubsystemManager.GetSubsystems<IPredictor>();
@@ -115,6 +134,9 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Send feedback to predictors about their last suggestions.
         /// </summary>
+        /// <param name="predictorIds">Identifiers of the predictors from which we received prediction results.</param>
+        /// <param name="acceptedId">The identifier of the predictor whose prediction result was accepted.</param>
+        /// <param name="acceptedSuggestion">The accepted suggestion text.</param>
         public static void SuggestionFeedback(HashSet<Guid> predictorIds, Guid acceptedId, string acceptedSuggestion = null)
         {
             if (acceptedId != Guid.Empty && string.IsNullOrEmpty(acceptedSuggestion))
