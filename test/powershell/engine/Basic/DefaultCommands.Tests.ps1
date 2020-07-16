@@ -516,6 +516,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Write-Progress",                   "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Write-Verbose",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Write-Warning",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
+"Cmdlet",       "Get-Subsystem",                    "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "@
 
             # We control only default engine aliases (Source -eq "") and aliases from following default loaded modules
