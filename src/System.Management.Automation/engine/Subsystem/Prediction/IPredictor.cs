@@ -92,7 +92,7 @@ namespace System.Management.Automation.Subsystem
         public IReadOnlyList<Ast> RelatedAsts { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PredictionContext"/> from the AST and tokens that represent the user input.
+        /// Initializes a new instance of the <see cref="PredictionContext"/> class from the AST and tokens that represent the user input.
         /// </summary>
         /// <param name="inputAst">The <see cref="Ast"/> object from parsing the current command line input.</param>
         /// <param name="inputTokens">The <see cref="Token"/> objects from parsing the current command line input.</param>
