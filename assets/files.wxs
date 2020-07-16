@@ -3105,8 +3105,8 @@
       <Component Id="cmpC0FFB3F4FB30438082D2DC0F4E4BF12D">
         <File Id="fil8FEEEB3B27DF40148EB85CE6AE1A420B" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.DiaSymReader.Native.$(var.FileArchitecture).dll" />
       </Component>
-      <Component Id="cmp8748A4997DE943ED89DD2BD6857CBD9D">
-        <File Id="filB58564890E2E4613BE329374BD67BB92" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_5.0.20.32601.dll" />
+      <Component Id="cmpF65478926051451688800150DBAEE4BC">
+        <File Id="fil99692697F55D4B1B9D28FDBD439A11BA" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_5.0.20.36411.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -4109,7 +4109,7 @@
       <ComponentRef Id="cmp72C41225E0B4457C8CB5F4C5FE6E3187" />
       <ComponentRef Id="cmp0BD7D15E0377407FA4C43BFE89F0C12E" />
       <ComponentRef Id="cmpC0FFB3F4FB30438082D2DC0F4E4BF12D" />
-      <ComponentRef Id="cmp8748A4997DE943ED89DD2BD6857CBD9D" />
+      <ComponentRef Id="cmpF65478926051451688800150DBAEE4BC" />
     </ComponentGroup>
   </Fragment>
 </Wix>
