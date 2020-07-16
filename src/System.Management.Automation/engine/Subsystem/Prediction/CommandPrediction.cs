@@ -83,8 +83,7 @@ namespace System.Management.Automation.Subsystem
             {
                 await Task.WhenAny(
                     Task.WhenAll(tasks),
-                    Task.Delay(millisecondsTimeout, cancellationToken)
-                ).ConfigureAwait(false);
+                    Task.Delay(millisecondsTimeout, cancellationToken)).ConfigureAwait(false);
                 cancellationSource.Cancel();
 
                 var results = new List<PredictionResult>(predictors.Count);

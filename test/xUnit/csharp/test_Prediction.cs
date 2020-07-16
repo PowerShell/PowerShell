@@ -17,10 +17,13 @@ namespace PSTests.Sequential
         private readonly bool _delay;
 
         public List<string> History { get; }
+
         public List<string> AcceptedSuggestions { get; }
+
         public int DenialCount { get; private set; }
 
         public static readonly MyPredictor SlowPredictor;
+
         public static readonly MyPredictor FastPredictor;
 
         static MyPredictor()
@@ -57,6 +60,7 @@ namespace PSTests.Sequential
         public string Description => _description;
 
         bool IPredictor.SupportEarlyProcessing => true;
+
         bool IPredictor.AcceptFeedback => true;
 
         public void EarlyProcessWithHistory(IReadOnlyList<string> history)

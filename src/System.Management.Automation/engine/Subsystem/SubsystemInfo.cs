@@ -87,12 +87,12 @@ namespace System.Management.Automation.Subsystem
             RequiredFunctions = Utils.EmptyReadOnlyCollection<string>();
         }
 
-        private protected abstract void AddImplementation(ISubsystem impl);
+        private protected abstract void AddImplementation(ISubsystem rawImpl);
         private protected abstract ISubsystem RemoveImplementation(Guid id);
 
-        internal void RegisterImplementation(ISubsystem rawImpl)
+        internal void RegisterImplementation(ISubsystem impl)
         {
-            AddImplementation(rawImpl);
+            AddImplementation(impl);
         }
 
         internal ISubsystem UnregisterImplementation(Guid id)

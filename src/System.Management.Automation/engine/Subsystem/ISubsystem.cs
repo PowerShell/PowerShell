@@ -25,7 +25,7 @@ namespace System.Management.Automation.Subsystem
     /// There are two purposes to have the internal member `Kind` declared in 'ISubsystem':
     /// 1. Make the mapping from an `ISubsystem` implementation to the `SubsystemKind` easy;
     /// 2. Make sure a user cannot directly implement 'ISubsystem', but have to derive from one of the concrete subsystem interface or abstract class.
-    /// <para>
+    /// <para/>
     /// The internal member needs to have a default implementation defined by the specific subsystem interfaces or abstract class,
     /// because it should be the same for a specific kind of subsystem.
     /// </remarks>
