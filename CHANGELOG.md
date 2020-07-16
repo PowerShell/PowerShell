@@ -1,5 +1,21 @@
 # Changelog
 
+## [6.2.7] - 2020-07-16
+
+### Build and Packaging Improvements
+
+<details>
+
+<ul>
+<li>Fix Azure file copy issues in release build by fixing the path to upload directory content (#13182)</li>
+<li>Update .NET Core to version 2.1.808 (Internal 12003)</li>
+<li>Fix Azure file copy break in AzDevOps by updating task version to latest (#13173)</li>
+</ul>
+
+</details>
+
+[6.2.7]: https://github.com/PowerShell/PowerShell/compare/v6.2.6...v6.2.7
+
 ## [6.2.6] - 2020-06-11
 
 ### Engine Updates and Fixes
