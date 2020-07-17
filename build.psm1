@@ -1692,8 +1692,8 @@ function Install-Dotnet {
             }
         } else {
             # dotnet-install.ps1 uses APIs that are not supported in .NET Core, so we run it with Windows PowerShell
-            $fullPSPath = Join-Path -Path $env:windir -ChildPath "System32\WindowsPowerShell\v1.0\powershell.exe"
-            $fullDotnetInstallPath = Join-Path -Path $PWD.Path -ChildPath $installScript
+            [String] $fullPSPath = Join-Path -Path $env:windir -ChildPath "System32\WindowsPowerShell\v1.0\powershell.exe"
+            [System.IO.FileInfo] $fullDotnetInstallPath = Get-Item $installScript
             Start-NativeExecution {
                 if (-not $InstallDir) {
                     & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version
