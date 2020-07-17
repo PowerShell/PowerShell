@@ -921,7 +921,7 @@ namespace Microsoft.PowerShell
                     ParseFormat(args, ref i, ref _outFormat, CommandLineParameterParserStrings.MissingOutputFormatParameter);
                     _outputFormatSpecified = true;
                 }
-                else if (MatchSwitch(switchKey, "inputformat", "in") || MatchSwitch(switchKey, "if", "if"))
+                else if (MatchSwitch(switchKey, "inputformat", "inp") || MatchSwitch(switchKey, "if", "if"))
                 {
                     ParseFormat(args, ref i, ref _inFormat, CommandLineParameterParserStrings.MissingInputFormatParameter);
                 }
