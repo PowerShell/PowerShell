@@ -1487,17 +1487,17 @@ function Test-XUnitTestResults
 
     foreach($failure in $failedTests)
     {
-        $description = $failure.test.type
-        $name = $failure.test.method
-        $message = $failure.test.failure.message.'#cdata-section'
-        $StackTrace = $failure.test.failure.'stack-trace'.'#cdata-section'
+        [String] $description = $failure.test.type
+        [String] $name = $failure.test.method
+        [String] $message = $failure.test.failure.message.'#cdata-section'
+        [String] $TestStackTrace = $failure.test.failure.'stack-trace'.'#cdata-section'
 
         Write-Log -isError -message ("Description: " + $description)
         Write-Log -isError -message ("Name:        " + $name)
         Write-Log -isError -message "message:"
         Write-Log -isError -message $message
         Write-Log -isError -message "stack-trace:"
-        Write-Log -isError -message $StackTrace
+        Write-Log -isError -message $TestStackTrace
     }
 
     throw "$($failedTests.failed) tests failed"
