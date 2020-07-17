@@ -1430,17 +1430,17 @@ function Show-PSPesterError
 
     if ($PSCmdlet.ParameterSetName -eq 'xml')
     {
-        $description = $testFailure.description
-        $name = $testFailure.name
-        $message = $testFailure.failure.message
-        $StackTrace = $testFailure.failure."stack-trace"
+        [String] $description = $testFailure.description
+        [String] $name = $testFailure.name
+        [String] $message = $testFailure.failure.message
+        [String] $TestStackTrace = $testFailure.failure."stack-trace"
     }
     elseif ($PSCmdlet.ParameterSetName -eq 'object')
     {
-        $description = $testFailureObject.Describe + '/' + $testFailureObject.Context
-        $name = $testFailureObject.Name
-        $message = $testFailureObject.FailureMessage
-        $StackTrace = $testFailureObject.StackTrace
+        [String] $description = $testFailureObject.Describe + '/' + $testFailureObject.Context
+        [String] $name = $testFailureObject.Name
+        [String] $message = $testFailureObject.FailureMessage
+        [String] $TestStackTrace = $testFailureObject.StackTrace
     }
     else
     {
@@ -1452,7 +1452,7 @@ function Show-PSPesterError
     Write-Log -isError -message "message:"
     Write-Log -isError -message $message
     Write-Log -isError -message "stack-trace:"
-    Write-Log -isError -message $StackTrace
+    Write-Log -isError -message $TestStackTrace
 
 }
 
