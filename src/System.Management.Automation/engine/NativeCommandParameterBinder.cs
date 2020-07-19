@@ -260,7 +260,7 @@ namespace System.Management.Automation
         /// <param name="stringConstantType">Bare, SingleQuoted, or DoubleQuoted.</param>
         private void PossiblyGlobArg(string arg, StringConstantType stringConstantType)
         {
-            const bool argExpanded = false;
+            bool argExpanded = false;
 
 #if UNIX
             // On UNIX systems, we expand arguments containing wildcard expressions against

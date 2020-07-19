@@ -2051,7 +2051,7 @@ namespace System.Management.Automation.Runspaces
         {
             string filePath = string.Empty;
 #if UNIX
-            string sshCommand = "ssh";
+            const string sshCommand = "ssh";
 #else
             const string sshCommand = "ssh.exe";
 #endif
