@@ -57,7 +57,6 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
 
             try
             {
-                const uint dwFormatFlags = FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_FROM_HMODULE;
                 uint LANGID = (uint)GetUserDefaultLangID();
                 uint langError = (uint)Marshal.GetLastWin32Error();
                 if (langError != 0)
@@ -66,13 +65,14 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
                 }
 
                 StringBuilder outStringBuilder = new StringBuilder(1024);
-                uint nChars = FormatMessage(dwFormatFlags,
-                    moduleHandle,
-                    lastError,
-                    LANGID,
-                    outStringBuilder,
-                    (uint)outStringBuilder.Capacity,
-                    IntPtr.Zero);
+                uint nChars = FormatMessage(
+                    dwFlags: FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_FROM_HMODULE,
+                    lpSource: moduleHandle,
+                    dwMessageId: lastError,
+                    dwLanguageId: LANGID,
+                    lpBuffer: outStringBuilder,
+                    nSize: (uint)outStringBuilder.Capacity,
+                    Arguments: IntPtr.Zero);
 
                 if (nChars == 0)
                 {

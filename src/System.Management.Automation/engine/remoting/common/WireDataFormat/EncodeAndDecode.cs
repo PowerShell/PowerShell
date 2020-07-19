@@ -1196,10 +1196,10 @@ namespace System.Management.Automation
             // Add Reason property
             if (stateInfo.Reason != null)
             {
-                // If Reason is of not type IContainsErrorRecord, a new ErrorRecord is
-                // created using this errorId
-                const string errorId = "RemoteRunspaceStateInfoReason";
-                PSNoteProperty exceptionProperty = GetExceptionProperty(stateInfo.Reason, errorId, ErrorCategory.NotSpecified);
+                PSNoteProperty exceptionProperty = GetExceptionProperty(
+                    exception: stateInfo.Reason,
+                    errorId: "RemoteRunspaceStateInfoReason",
+                    category: ErrorCategory.NotSpecified);
                 dataAsPSObject.Properties.Add(exceptionProperty);
             }
 
@@ -1515,12 +1515,10 @@ namespace System.Management.Automation
             // Add exception property
             if (stateInfo.Reason != null)
             {
-                // If Reason is of not type IContainsErrorRecord,
-                // a new ErrorRecord is created using this errorId
-                const string errorId = "RemotePSInvocationStateInfoReason";
-                PSNoteProperty exceptionProperty =
-                    GetExceptionProperty(stateInfo.Reason, errorId,
-                        ErrorCategory.NotSpecified);
+                PSNoteProperty exceptionProperty = GetExceptionProperty(
+                    exception: stateInfo.Reason,
+                    errorId: "RemotePSInvocationStateInfoReason",
+                    category: ErrorCategory.NotSpecified);
                 dataAsPSObject.Properties.Add(exceptionProperty);
             }
 
@@ -1563,6 +1561,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a Note Property for the exception.
         /// </summary>
+        /// <remarks>
+        /// If <paramref name="exception"/> is of not type IContainsErrorRecord, a new ErrorRecord is created.
+        /// </remarks>
         /// <param name="exception"></param>
         /// <param name="errorId">ErrorId to use if exception is not of type IContainsErrorRecord.</param>
         /// <param name="category">ErrorCategory to use if exception is not of type IContainsErrorRecord.</param>

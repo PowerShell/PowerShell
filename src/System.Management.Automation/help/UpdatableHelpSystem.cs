@@ -586,8 +586,9 @@ namespace System.Management.Automation.Help
 
             if (!string.IsNullOrEmpty(currentCulture))
             {
-                const WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
-                IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(new string[1] { currentCulture }, wildcardOptions);
+                IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(
+                    globPatterns: new string[1] { currentCulture },
+                    options: WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
                 for (int i = 0; i < updatableHelpItem.Length; i++)
                 {

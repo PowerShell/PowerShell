@@ -1818,7 +1818,7 @@ namespace Microsoft.PowerShell.Commands
                     // as the property name when adding the note, as
                     // PSObject does not allow an empty propertyName
 
-                    notePropertyName = GetLocalizedDefaultToken();
+                    notePropertyName = LocalizedDefaultToken;
                 }
 
                 propertyResults.Properties.Add(new PSNoteProperty(notePropertyName, key.GetValue(valueName)));
@@ -2023,7 +2023,7 @@ namespace Microsoft.PowerShell.Commands
                     string propertyNameToAdd = valueName;
                     if (string.IsNullOrEmpty(valueName))
                     {
-                        propertyNameToAdd = GetLocalizedDefaultToken();
+                        propertyNameToAdd = LocalizedDefaultToken;
                     }
 
                     result.Properties.Add(new PSNoteProperty(propertyNameToAdd, defaultValue));
@@ -3055,7 +3055,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (!string.IsNullOrEmpty(requestedValueName))
                         {
-                            valueNameToMatch = GetLocalizedDefaultToken();
+                            valueNameToMatch = LocalizedDefaultToken;
                         }
                     }
 
@@ -3070,7 +3070,7 @@ namespace Microsoft.PowerShell.Commands
                             // as the property name when adding the note, as
                             // PSObject does not allow an empty propertyName
 
-                            valueNameToMatch = GetLocalizedDefaultToken();
+                            valueNameToMatch = LocalizedDefaultToken;
                         }
 
                         hadAMatch = true;
@@ -3782,7 +3782,7 @@ namespace Microsoft.PowerShell.Commands
             string propertyNameToAdd = propertyName;
             if (string.IsNullOrEmpty(propertyName))
             {
-                propertyNameToAdd = GetLocalizedDefaultToken();
+                propertyNameToAdd = LocalizedDefaultToken;
             }
 
             result.Properties.Add(new PSNoteProperty(propertyNameToAdd, value));
@@ -4028,7 +4028,7 @@ namespace Microsoft.PowerShell.Commands
                 if (string.IsNullOrEmpty(valueNames[index]))
                 {
                     // The first unnamed value becomes the default value
-                    valueNames[index] = GetLocalizedDefaultToken();
+                    valueNames[index] = LocalizedDefaultToken;
                     break;
                 }
             }
@@ -4103,16 +4103,13 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the default value name token from the resource.
         /// In English that token is "(default)" without the quotes.
         /// </summary>
+        /// <remarks>
+        /// This should not be localized as it will break scripts.
+        /// </remarks>
         /// <returns>
         /// A string containing the default value name.
         /// </returns>
-        private string GetLocalizedDefaultToken()
-        {
-            // This shouldn't be localized as it will break scripts
-
-            const string defaultValueName = "(default)";
-            return defaultValueName;
-        }
+        private string LocalizedDefaultToken => "(default)";
 
         /// <summary>
         /// Converts an empty or null userEnteredPropertyName to the localized
@@ -4135,7 +4132,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (stringComparer.Compare(
                         userEnteredPropertyName,
-                        GetLocalizedDefaultToken(),
+                        LocalizedDefaultToken,
                         CompareOptions.IgnoreCase) == 0)
                 {
                     result = null;

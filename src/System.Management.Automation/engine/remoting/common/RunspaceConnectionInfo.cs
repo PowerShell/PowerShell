@@ -2626,21 +2626,15 @@ namespace System.Management.Automation.Runspaces
 
         private static SafePipeHandle GetNamedPipeHandle(string pipeName)
         {
-            // Create pipe flags for asynchronous pipes.
-            const uint pipeFlags = NamedPipeNative.FILE_FLAG_OVERLAPPED;
-
-            // We want an inheritable handle.
-            PlatformInvokes.SECURITY_ATTRIBUTES securityAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
-
             // Get handle to pipe.
             var fileHandle = PlatformInvokes.CreateFileW(
-                pipeName,
-                NamedPipeNative.GENERIC_READ | NamedPipeNative.GENERIC_WRITE,
-                0,
-                securityAttributes,
-                NamedPipeNative.OPEN_EXISTING,
-                pipeFlags,
-                IntPtr.Zero);
+                lpFileName: pipeName,
+                dwDesiredAccess: NamedPipeNative.GENERIC_READ | NamedPipeNative.GENERIC_WRITE,
+                dwShareMode: 0,
+                lpSecurityAttributes: new PlatformInvokes.SECURITY_ATTRIBUTES(), // Create an inheritable handle.
+                dwCreationDisposition: NamedPipeNative.OPEN_EXISTING,
+                dwFlagsAndAttributes: NamedPipeNative.FILE_FLAG_OVERLAPPED, // Open in asynchronous mode.
+                hTemplateFile: IntPtr.Zero);
 
             int lastError = Marshal.GetLastWin32Error();
             if (fileHandle == PlatformInvokes.INVALID_HANDLE_VALUE)
