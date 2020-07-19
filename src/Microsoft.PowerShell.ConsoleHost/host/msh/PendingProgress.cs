@@ -836,11 +836,9 @@ namespace Microsoft.PowerShell
         {
             nodesCompressed = 0;
 
-            const int age = 0;
-
             while (true)
             {
-                ProgressNode node = FindOldestNodeOfGivenStyle(_topLevelNodes, age, priorStyle);
+                ProgressNode node = FindOldestNodeOfGivenStyle(_topLevelNodes, oldestSoFar: 0, priorStyle);
                 if (node == null)
                 {
                     // We've compressed every node of the prior style already.

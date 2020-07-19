@@ -4796,9 +4796,8 @@ namespace System.Management.Automation
                 if (languageMode.HasValue &&
                     (languageMode.Value == PSLanguageMode.ConstrainedLanguage || languageMode.Value == PSLanguageMode.NoLanguage))
                 {
-                    const string psRemoteUtilsName = CopyFileRemoteUtils.PSCopyRemoteUtilsName;
                     ps.Runspace = session.Runspace;
-                    ps.AddCommand("Get-Command").AddArgument(psRemoteUtilsName);
+                    ps.AddCommand("Get-Command").AddArgument(CopyFileRemoteUtils.PSCopyRemoteUtilsName);
                     var result = ps.Invoke<bool>();
 
                     if (result.Count == 0)
@@ -4822,12 +4821,11 @@ namespace System.Management.Automation
 
                     ps.Commands.Clear();
                     ps.Streams.ClearStreams();
-                    ps.AddCommand(psRemoteUtilsName);
+                    ps.AddCommand(CopyFileRemoteUtils.PSCopyRemoteUtilsName);
                 }
                 else
                 {
-                    const string remoteScript = CopyFileRemoteUtils.PSValidatePathDefinition;
-                    ps.AddScript(remoteScript);
+                    ps.AddScript(CopyFileRemoteUtils.PSValidatePathDefinition);
                 }
 
                 ps.AddParameter("pathToValidate", path);

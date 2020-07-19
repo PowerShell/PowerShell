@@ -148,8 +148,6 @@ namespace Microsoft.PowerShell
                     string fieldPrompt = null;
                     fieldPrompt = desc.Name;
 
-                    const bool fieldEchoOnPrompt = true;
-
                     // FieldDescription.ParameterAssemblyFullName never returns null. But this is
                     // defense in depth.
                     if (string.IsNullOrEmpty(desc.ParameterAssemblyFullName))
@@ -211,7 +209,7 @@ namespace Microsoft.PowerShell
                             bool inputListEnd = false;
                             object convertedObj = null;
                             string inputString = PromptForSingleItem(elementType, fieldPromptList.ToString(), fieldPrompt, caption, message,
-                                desc, fieldEchoOnPrompt, true, out inputListEnd, out cancelInput, out convertedObj);
+                                desc, fieldEchoOnPrompt: true, true, out inputListEnd, out cancelInput, out convertedObj);
 
                             if (cancelInput || inputListEnd)
                             {
@@ -247,7 +245,7 @@ namespace Microsoft.PowerShell
                         bool dummy = false;
 
                         PromptForSingleItem(fieldType, printFieldPrompt, fieldPrompt, caption, message, desc,
-                                            fieldEchoOnPrompt, false, out dummy, out cancelInput, out convertedObj);
+                                            fieldEchoOnPrompt: true, false, out dummy, out cancelInput, out convertedObj);
                         if (!cancelInput)
                         {
                             inputPSObject = PSObject.AsPSObject(convertedObj);
