@@ -343,7 +343,7 @@ namespace System.Management.Automation.Remoting.Server
 
             try
             {
-                do
+                while (true)
                 {
                     string data = originalStdIn.ReadLine();
                     lock (_syncObject)
@@ -381,7 +381,6 @@ namespace System.Management.Automation.Remoting.Server
                     ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessingThreadStart), data);
 #endif
                 }
-                while (true);
             }
             catch (Exception e)
             {

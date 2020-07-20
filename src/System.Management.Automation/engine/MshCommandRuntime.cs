@@ -3620,7 +3620,7 @@ namespace System.Management.Automation
                 inquireCaption = CommandBaseStrings.InquireCaptionDefault;
             }
 
-            do
+            while (true)
             {
                 // Transcribe the confirmation message
                 CBhost.InternalUI.TranscribeResult(inquireCaption);
@@ -3694,7 +3694,7 @@ namespace System.Management.Automation
                         PSTraceSource.NewInvalidOperationException();
                     throw ManageException(e);
                 }
-            } while (true);
+            }
         }
 
         /// <summary>
