@@ -18,6 +18,13 @@ namespace System.Management.Automation
     {
         private static string _tempDirectory = null;
 
+#if UNIX
+        // Cache the path so that GetTemporaryDirectory() does not create
+        // a temp directory for every new runspace if HOME environment variable is not present or empty.
+        private static string s_envHome =
+            System.Environment.GetEnvironmentVariable(CommonEnvVariableNames.Home) ?? GetTemporaryDirectory();
+#endif
+
         /// <summary>
         /// True if the current platform is Linux.
         /// </summary>
@@ -249,16 +256,11 @@ namespace System.Management.Automation
             string xdgconfighome = System.Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
             string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
-            string envHome = System.Environment.GetEnvironmentVariable(CommonEnvVariableNames.Home);
-            if (envHome == null)
-            {
-                envHome = GetTemporaryDirectory();
-            }
 
-            string xdgConfigHomeDefault = Path.Combine(envHome, ".config", "powershell");
-            string xdgDataHomeDefault = Path.Combine(envHome, ".local", "share", "powershell");
+            string xdgConfigHomeDefault = Path.Combine(s_envHome, ".config", "powershell");
+            string xdgDataHomeDefault = Path.Combine(s_envHome, ".local", "share", "powershell");
             string xdgModuleDefault = Path.Combine(xdgDataHomeDefault, "Modules");
-            string xdgCacheDefault = Path.Combine(envHome, ".cache", "powershell");
+            string xdgCacheDefault = Path.Combine(s_envHome, ".cache", "powershell");
 
             switch (dirpath)
             {
@@ -410,10 +412,10 @@ namespace System.Management.Automation
         {
             string folderPath = null;
 #if UNIX
-            string envHome = System.Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
-            if (envHome == null)
+            string s_envHome = System.Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
+            if (s_envHome == null)
             {
-                envHome = Platform.GetTemporaryDirectory();
+                s_envHome = Platform.GetTemporaryDirectory();
             }
 
             switch (folder)
@@ -435,10 +437,10 @@ namespace System.Management.Automation
 
                     break;
                 case System.Environment.SpecialFolder.Personal:
-                    folderPath = envHome;
+                    folderPath = s_envHome;
                     break;
                 case System.Environment.SpecialFolder.LocalApplicationData:
-                    folderPath = System.IO.Path.Combine(envHome, ".config");
+                    folderPath = System.IO.Path.Combine(s_envHome, ".config");
                     if (!System.IO.Directory.Exists(folderPath))
                     {
                         try
