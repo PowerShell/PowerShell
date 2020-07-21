@@ -49,6 +49,7 @@ updates:
 
   - package_manager: "dotnet:nuget"
     directory: "/src/Modules"
-    update_schedule: "live"
+    schedule:
+      interval: "live"
     labels:
       - "CL-BuildPackaging"
