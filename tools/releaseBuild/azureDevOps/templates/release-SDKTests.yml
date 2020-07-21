@@ -71,7 +71,7 @@ jobs:
         </packageSources>
         "@
 
-        $releaseVersion = Get-Content "$(Pipeline.Workspace)/release.json" | ConvertFrom-Json | Select-Object -ExpandProperty 'ReleaseVersion'
+        $releaseVersion = Get-Content "$(Pipeline.Workspace)/metadata/release.json" | ConvertFrom-Json | Select-Object -ExpandProperty 'ReleaseVersion'
 
         Set-Location -Path $(Build.SourcesDirectory)/test/hosting
 

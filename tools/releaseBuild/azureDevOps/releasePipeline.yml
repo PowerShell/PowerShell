@@ -13,14 +13,6 @@ stages:
 - stage: ValidateSDK
   dependsOn: []
   jobs:
-  - job: WinSDK_XXX
-    pool:
-      vmImage: windows-latest
-    steps:
-      - pwsh: |
-          Write-Host 'Testing for pre-conditions'
-        displayName: Test pre-conditions
-
   - template: templates/release-SDKTests.yml
     parameters:
       jobName: WinSDK
@@ -47,16 +39,9 @@ stages:
     pool: server
     environment: PSReleaseCreatePR
 
-- stage: ValidateGobalTool
+- stage: ValidateGlobalTool
   dependsOn: []
   jobs:
-  - job: WinGblTool_XXX
-    pool:
-      vmImage: windows-latest
-    steps:
-      - pwsh: |
-          Write-Host 'Testing for pre-conditions'
-        displayName: Test pre-conditions
   - template: templates/release-GlobalToolTest.yml
     parameters:
       jobName: WinGblTool
