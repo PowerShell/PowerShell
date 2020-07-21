@@ -27,7 +27,7 @@ jobs:
     displayName: Bootstrap
     condition: succeededOrFailed()
 
-  - powershell: |
+  - pwsh: |
       Import-Module .\tools\ci.psm1
       New-CodeCoverageAndTestPackage
       Invoke-CIFinish -NuGetKey $(NUGET_KEY)
