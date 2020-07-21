@@ -29,7 +29,7 @@ updates:
     directory: "/tools/packaging/projects/reference/System.Management.Automation"
     schedule:
       interval: "live"
-    default_labels:
+    labels:
       - "CL-BuildPackaging"
     ignored_updates:
       - dependency-name: "System.*"
