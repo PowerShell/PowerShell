@@ -344,8 +344,14 @@ function Start-PSBuild {
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
+    # Verify we have git in place to do the build, and abort if the precheck failed
+    $precheck = precheck 'git' "Build dependency 'git' not found in PATH. See <URL: https://docs.github.com/en/github/getting-started-with-github/set-up-git#setting-up-git >"
+    if (-not $precheck) {
+        return
+    }
+
     # Verify we have .NET SDK in place to do the build, and abort if the precheck failed
-    $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
+    $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see <URL: https://dotnet.github.io/getting-started/ >"
     if (-not $precheck) {
         return
     }
