@@ -138,6 +138,7 @@ jobs:
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - pwsh: |
+      if (-not (Test-Path '$(System.ArtifactsDirectory)\signed\')) { $null = New-Item -ItemType Directory -Path '$(System.ArtifactsDirectory)\signed\' }
       Copy-Item -Path '$(PackagePath)\*.nupkg' -Destination '$(System.ArtifactsDirectory)\signed\' -Verbose -Force
       Copy-Item -Path '$(PackagePath)\globaltool\*.nupkg' -Destination '$(System.ArtifactsDirectory)\signed\' -Verbose -Force
     displayName: Fake copy when not signing
