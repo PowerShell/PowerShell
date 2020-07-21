@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
             Type type = null;
             PSArgumentException mshArgE = null;
 
-            if (string.Compare(ParameterSetName, netSetName, StringComparison.Ordinal) == 0)
+            if (string.Equals(ParameterSetName, netSetName, StringComparison.Ordinal))
             {
                 object _newObject = null;
                 try

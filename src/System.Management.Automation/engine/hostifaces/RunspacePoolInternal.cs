@@ -1510,7 +1510,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             try
             {
-                do
+                while (true)
                 {
                     lock (ultimateRequestQueue)
                     {
@@ -1591,7 +1591,7 @@ namespace System.Management.Automation.Runspaces.Internal
                             ultimateRequestQueue.Enqueue(runspaceRequestQueue.Dequeue());
                         }
                     }
-                } while (true);
+                }
             endOuterWhile:;
             }
             finally

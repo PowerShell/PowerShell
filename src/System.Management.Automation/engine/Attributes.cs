@@ -1432,7 +1432,7 @@ namespace System.Management.Automation
         /// </exception>
         protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
         {
-            UInt32 len = 0;
+            int len = 0;
             if (arguments == null || arguments == AutomationNull.Value)
             {
                 // treat a nul list the same as an empty list
@@ -1441,11 +1441,11 @@ namespace System.Management.Automation
             }
             else if (arguments is IList il)
             {
-                len = (UInt32)il.Count;
+                len = il.Count;
             }
             else if (arguments is ICollection ic)
             {
-                len = (UInt32)ic.Count;
+                len = ic.Count;
             }
             else if (arguments is IEnumerable ie)
             {

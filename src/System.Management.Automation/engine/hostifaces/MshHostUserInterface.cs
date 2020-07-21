@@ -1288,7 +1288,7 @@ namespace System.Management.Automation.Host
                 #endregion SplitLabel
 
                 // ? is not localizable
-                if (string.Compare(hotkeysAndPlainLabels[0, i], "?", StringComparison.Ordinal) == 0)
+                if (string.Equals(hotkeysAndPlainLabels[0, i], "?", StringComparison.Ordinal))
                 {
                     Exception e = PSTraceSource.NewArgumentException(
                         string.Format(Globalization.CultureInfo.InvariantCulture, "choices[{0}].Label", i),
@@ -1320,7 +1320,7 @@ namespace System.Management.Automation.Host
             for (int i = 0; i < choices.Count; ++i)
             {
                 // pick the one that matches either the hot key or the full label
-                if (string.Compare(response, hotkeysAndPlainLabels[1, i], StringComparison.CurrentCultureIgnoreCase) == 0)
+                if (string.Equals(response, hotkeysAndPlainLabels[1, i], StringComparison.CurrentCultureIgnoreCase))
                 {
                     result = i;
                     break;
@@ -1335,7 +1335,7 @@ namespace System.Management.Automation.Host
                     // Ignore labels with empty hotkeys
                     if (hotkeysAndPlainLabels[0, i].Length > 0)
                     {
-                        if (string.Compare(response, hotkeysAndPlainLabels[0, i], StringComparison.CurrentCultureIgnoreCase) == 0)
+                        if (string.Equals(response, hotkeysAndPlainLabels[0, i], StringComparison.CurrentCultureIgnoreCase))
                         {
                             result = i;
                             break;

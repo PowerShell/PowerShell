@@ -1034,7 +1034,7 @@ namespace System.Management.Automation.Internal.Host
             // read choices from the user
             Collection<int> result = new Collection<int>();
             int choicesSelected = 0;
-            do
+            while (true)
             {
                 string choiceMsg = StringUtil.Format(InternalHostUserInterfaceStrings.ChoiceMessage, choicesSelected);
                 messageToBeDisplayed += choiceMsg;
@@ -1071,7 +1071,7 @@ namespace System.Management.Automation.Internal.Host
                 }
                 // reset messageToBeDisplayed
                 messageToBeDisplayed = string.Empty;
-            } while (true);
+            }
 
             return result;
         }

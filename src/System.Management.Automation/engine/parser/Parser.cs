@@ -880,7 +880,7 @@ namespace System.Management.Automation.Language
 
                 UngetToken(rParen);
                 endExtent = Before(rParen);
-                ReportIncompleteInput(After(parameters != null && parameters.Any() ? parameters.Last().Extent : lparen.Extent),
+                ReportIncompleteInput(After(parameters != null && parameters.Count > 0 ? parameters.Last().Extent : lparen.Extent),
                     nameof(ParserStrings.MissingEndParenthesisInFunctionParameterList),
                     ParserStrings.MissingEndParenthesisInFunctionParameterList);
             }
@@ -3936,7 +3936,7 @@ namespace System.Management.Automation.Language
                 else if (keywordData.BodyMode == DynamicKeywordBodyMode.Hashtable)
                 {
                     // Resource property value could be set to nested DSC resources except Script resource
-                    bool isScriptResource = string.Compare(functionName.Text, @"Script", StringComparison.OrdinalIgnoreCase) == 0;
+                    bool isScriptResource = string.Equals(functionName.Text, @"Script", StringComparison.OrdinalIgnoreCase);
                     try
                     {
                         if (isScriptResource)
@@ -5369,7 +5369,7 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: assume a body follows, so just keep parsing.
 
                     UngetToken(rParen);
-                    endErrorStatement = parameters.Any() ? parameters.Last().Extent : lParen.Extent;
+                    endErrorStatement = parameters.Count > 0 ? parameters.Last().Extent : lParen.Extent;
                     ReportIncompleteInput(After(endErrorStatement),
                         nameof(ParserStrings.MissingEndParenthesisInFunctionParameterList),
                         ParserStrings.MissingEndParenthesisInFunctionParameterList);
@@ -5444,7 +5444,7 @@ namespace System.Management.Automation.Language
 
             List<TypeConstraintAst> exceptionTypes = null;
             Token commaToken = null;
-            do
+            while (true)
             {
                 var restorePoint = _tokenizer.GetRestorePoint();
                 SkipNewlines();
@@ -5493,7 +5493,7 @@ namespace System.Management.Automation.Language
                 }
 
                 SkipToken();
-            } while (true);
+            }
 
             StatementBlockAst handler = StatementBlockRule();
             if (handler == null)
@@ -6277,7 +6277,7 @@ namespace System.Management.Automation.Language
                             nameof(ParserStrings.MissingExpression),
                             ParserStrings.MissingExpression,
                             ",");
-                        return new ErrorExpressionAst(ExtentOf(commandArgs.First(), commaToken), commandArgs);
+                        return new ErrorExpressionAst(ExtentOf(commandArgs[0], commaToken), commandArgs);
 
                     case TokenKind.SplattedVariable:
                     case TokenKind.Variable:
@@ -7577,7 +7577,7 @@ namespace System.Management.Automation.Language
             List<Token> newNestedTokens = _savingTokens ? new List<Token>() : null;
             foreach (var token in expandableStringToken.NestedTokens)
             {
-                Diagnostics.Assert(!token.HasError || ErrorList.Any(), "No nested tokens should have unreported errors.");
+                Diagnostics.Assert(!token.HasError || ErrorList.Count > 0, "No nested tokens should have unreported errors.");
 
                 ExpressionAst exprAst;
                 var varToken = token as VariableToken;
@@ -7807,7 +7807,7 @@ namespace System.Management.Automation.Language
                     UngetToken(rParen);
                     if (!reportedError)
                     {
-                        ReportIncompleteInput(arguments.Any() ? After(arguments.Last()) : After(lParen),
+                        ReportIncompleteInput(arguments.Count > 0 ? After(arguments.Last()) : After(lParen),
                             nameof(ParserStrings.MissingEndParenthesisInMethodCall),
                             ParserStrings.MissingEndParenthesisInMethodCall);
                     }
@@ -7893,7 +7893,7 @@ namespace System.Management.Automation.Language
         {
             AssertErrorIdCorrespondsToMsgString(errorId, errorMsg);
 
-            if (args != null && args.Any())
+            if (args != null && args.Length > 0)
             {
                 errorMsg = string.Format(CultureInfo.CurrentCulture, errorMsg, args);
             }

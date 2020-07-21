@@ -27,152 +27,97 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Get-PSBreakpoint.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PSBreakpoint", DefaultParameterSetName = "Script", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097108")]
-    [OutputType(typeof(Breakpoint))]
-    public class GetPSBreakpointCommand : PSCmdlet
+    [Cmdlet(VerbsCommon.Get, "PSBreakpoint", DefaultParameterSetName = LineParameterSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097108")]
+    [OutputType(typeof(CommandBreakpoint), ParameterSetName = new[] { CommandParameterSetName })]
+    [OutputType(typeof(LineBreakpoint), ParameterSetName = new[] { LineParameterSetName })]
+    [OutputType(typeof(VariableBreakpoint), ParameterSetName = new[] { VariableParameterSetName })]
+    [OutputType(typeof(Breakpoint), ParameterSetName = new[] { TypeParameterSetName, IdParameterSetName })]
+    public class GetPSBreakpointCommand : PSBreakpointAccessorCommandBase
     {
+        #region strings
+
+        internal const string TypeParameterSetName = "Type";
+        internal const string IdParameterSetName = "Id";
+
+        #endregion strings
+
         #region parameters
         /// <summary>
         /// Scripts of the breakpoints to output.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "It's OK to use arrays for cmdlet parameters")]
-        [Parameter(ParameterSetName = "Script", Position = 0, ValueFromPipeline = true)]
-        [Parameter(ParameterSetName = "Variable")]
-        [Parameter(ParameterSetName = "Command")]
-        [Parameter(ParameterSetName = "Type")]
+        [Parameter(ParameterSetName = LineParameterSetName, Position = 0, ValueFromPipeline = true)]
+        [Parameter(ParameterSetName = CommandParameterSetName)]
+        [Parameter(ParameterSetName = VariableParameterSetName)]
+        [Parameter(ParameterSetName = TypeParameterSetName)]
         [ValidateNotNullOrEmpty()]
-        public string[] Script
-        {
-            get
-            {
-                return _script;
-            }
-
-            set
-            {
-                _script = value;
-            }
-        }
-
-        private string[] _script;
+        public string[] Script { get; set; }
 
         /// <summary>
         /// IDs of the breakpoints to output.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "It's OK to use arrays for cmdlet parameters")]
-        [Parameter(ParameterSetName = "Id", Mandatory = true, Position = 0, ValueFromPipeline = true)]
+        [Parameter(ParameterSetName = IdParameterSetName, Mandatory = true, Position = 0, ValueFromPipeline = true)]
         [ValidateNotNull]
-        public int[] Id
-        {
-            get
-            {
-                return _id;
-            }
-
-            set
-            {
-                _id = value;
-            }
-        }
-
-        private int[] _id;
+        public int[] Id { get; set; }
 
         /// <summary>
         /// Variables of the breakpoints to output.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "It's OK to use arrays for cmdlet parameters")]
-        [Parameter(ParameterSetName = "Variable", Mandatory = true)]
+        [Parameter(ParameterSetName = VariableParameterSetName, Mandatory = true)]
         [ValidateNotNull]
-        public string[] Variable
-        {
-            get
-            {
-                return _variable;
-            }
-
-            set
-            {
-                _variable = value;
-            }
-        }
-
-        private string[] _variable;
+        public string[] Variable { get; set; }
 
         /// <summary>
         /// Commands of the breakpoints to output.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "It's OK to use arrays for cmdlet parameters")]
-        [Parameter(ParameterSetName = "Command", Mandatory = true)]
+        [Parameter(ParameterSetName = CommandParameterSetName, Mandatory = true)]
         [ValidateNotNull]
-        public string[] Command
-        {
-            get
-            {
-                return _command;
-            }
-
-            set
-            {
-                _command = value;
-            }
-        }
-
-        private string[] _command;
+        public string[] Command { get; set; }
 
         /// <summary>
         /// Commands of the breakpoints to output.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "It's OK to use arrays for cmdlet parameters")]
         [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Type is OK for a cmdlet parameter")]
-        [Parameter(ParameterSetName = "Type", Mandatory = true, Position = 0, ValueFromPipeline = true)]
+        [Parameter(ParameterSetName = TypeParameterSetName, Mandatory = true, Position = 0, ValueFromPipeline = true)]
         [ValidateNotNull]
-        public BreakpointType[] Type
-        {
-            get
-            {
-                return _type;
-            }
-
-            set
-            {
-                _type = value;
-            }
-        }
-
-        private BreakpointType[] _type;
+        public BreakpointType[] Type { get; set; }
 
         #endregion parameters
+
+        #region overrides
 
         /// <summary>
         /// Remove breakpoints.
         /// </summary>
         protected override void ProcessRecord()
         {
-            List<Breakpoint> breakpoints = Context.Debugger.GetBreakpoints();
+            List<Breakpoint> breakpoints = Runspace.Debugger.GetBreakpoints();
 
-            //
             // Filter by parameter set
-            //
-            if (this.ParameterSetName.Equals("Script", StringComparison.OrdinalIgnoreCase))
+            if (ParameterSetName.Equals(LineParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 // no filter
             }
-            else if (this.ParameterSetName.Equals("Id", StringComparison.OrdinalIgnoreCase))
+            else if (ParameterSetName.Equals(IdParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 breakpoints = Filter(
                     breakpoints,
-                    _id,
+                    Id,
                     delegate (Breakpoint breakpoint, int id)
                     {
                         return breakpoint.Id == id;
                     }
                 );
             }
-            else if (this.ParameterSetName.Equals("Command", StringComparison.OrdinalIgnoreCase))
+            else if (ParameterSetName.Equals(CommandParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 breakpoints = Filter(
                     breakpoints,
-                    _command,
+                    Command,
                     delegate (Breakpoint breakpoint, string command)
                     {
                         CommandBreakpoint commandBreakpoint = breakpoint as CommandBreakpoint;
@@ -185,11 +130,11 @@ namespace Microsoft.PowerShell.Commands
                         return commandBreakpoint.Command.Equals(command, StringComparison.OrdinalIgnoreCase);
                     });
             }
-            else if (this.ParameterSetName.Equals("Variable", StringComparison.OrdinalIgnoreCase))
+            else if (ParameterSetName.Equals(VariableParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 breakpoints = Filter(
                     breakpoints,
-                    _variable,
+                    Variable,
                     delegate (Breakpoint breakpoint, string variable)
                     {
                         VariableBreakpoint variableBreakpoint = breakpoint as VariableBreakpoint;
@@ -202,11 +147,11 @@ namespace Microsoft.PowerShell.Commands
                         return variableBreakpoint.Variable.Equals(variable, StringComparison.OrdinalIgnoreCase);
                     });
             }
-            else if (this.ParameterSetName.Equals("Type", StringComparison.OrdinalIgnoreCase))
+            else if (ParameterSetName.Equals(TypeParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 breakpoints = Filter(
                     breakpoints,
-                    _type,
+                    Type,
                     delegate (Breakpoint breakpoint, BreakpointType type)
                     {
                         switch (type)
@@ -244,14 +189,12 @@ namespace Microsoft.PowerShell.Commands
                 Diagnostics.Assert(false, "Invalid parameter set: {0}", this.ParameterSetName);
             }
 
-            //
             // Filter by script
-            //
-            if (_script != null)
+            if (Script != null)
             {
                 breakpoints = Filter(
                     breakpoints,
-                    _script,
+                    Script,
                     delegate (Breakpoint breakpoint, string script)
                     {
                         if (breakpoint.Script == null)
@@ -259,22 +202,24 @@ namespace Microsoft.PowerShell.Commands
                             return false;
                         }
 
-                        return string.Compare(
+                        return string.Equals(
                             SessionState.Path.GetUnresolvedProviderPathFromPSPath(breakpoint.Script),
                             SessionState.Path.GetUnresolvedProviderPathFromPSPath(script),
                             StringComparison.OrdinalIgnoreCase
-                        ) == 0;
+                        );
                     });
             }
 
-            //
             // Output results
-            //
             foreach (Breakpoint b in breakpoints)
             {
-                WriteObject(b);
+                ProcessBreakpoint(b);
             }
         }
+
+        #endregion overrides
+
+        #region private methods
 
         /// <summary>
         /// Gives the criteria to filter breakpoints.
@@ -303,5 +248,7 @@ namespace Microsoft.PowerShell.Commands
 
             return output;
         }
+
+        #endregion private methods
     }
 }

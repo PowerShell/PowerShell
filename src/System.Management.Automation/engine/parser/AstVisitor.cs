@@ -374,7 +374,7 @@ namespace System.Management.Automation.Language
 
             var searcher = new AstSearcher(predicate, stopOnFirst: true, searchNestedScriptBlocks: searchNestedScriptBlocks);
             ast.InternalVisit(searcher);
-            return searcher.Results.FirstOrDefault() != null;
+            return searcher.Results.Any();
         }
 
         internal static bool IsUsingDollarInput(Ast ast)

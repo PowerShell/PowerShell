@@ -83,10 +83,8 @@ jobs:
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
 
-  - task: NuGetToolInstaller@0
-    displayName: 'Install NuGet 4.9.3'
-    inputs:
-      versionSpec: 4.9.3
+  - task: NuGetToolInstaller@1
+    displayName: 'Install NuGet.exe'
 
   - powershell: |
       Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
@@ -162,20 +160,20 @@ jobs:
       Get-ChildItem "$(System.ArtifactsDirectory)\signed\globaltool" -Recurse
     displayName: Move global tool packages to subfolder and capture
 
-  - task: AzureFileCopy@3
+  - task: AzureFileCopy@4
     displayName: 'Upload NuGet packages to Azure'
     inputs:
-      SourcePath: '$(System.ArtifactsDirectory)\signed\'
+      SourcePath: '$(System.ArtifactsDirectory)\signed\*'
       azureSubscription: '$(AzureFileCopySubscription)'
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)-nuget'
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
-  - task: AzureFileCopy@3
+  - task: AzureFileCopy@4
     displayName: 'Upload global tool packages to Azure'
     inputs:
-      sourcePath: '$(System.ArtifactsDirectory)\signed\globaltool'
+      sourcePath: '$(System.ArtifactsDirectory)\signed\globaltool\*'
       azureSubscription: '$(GlobalToolSubscription)'
       Destination: AzureBlob
       storage: '$(GlobalToolStorageAccount)'

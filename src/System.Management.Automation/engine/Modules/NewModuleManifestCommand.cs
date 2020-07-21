@@ -965,7 +965,7 @@ namespace Microsoft.PowerShell.Commands
                 ValidateUriParameterValue(new Uri(_helpInfoUri), "HelpInfoUri");
             }
 
-            if (CompatiblePSEditions != null && (CompatiblePSEditions.Distinct(StringComparer.OrdinalIgnoreCase).Count() != CompatiblePSEditions.Count()))
+            if (CompatiblePSEditions != null && (CompatiblePSEditions.Distinct(StringComparer.OrdinalIgnoreCase).Count() != CompatiblePSEditions.Length))
             {
                 string message = StringUtil.Format(Modules.DuplicateEntriesInCompatiblePSEditions, string.Join(",", CompatiblePSEditions));
                 var ioe = new InvalidOperationException(message);

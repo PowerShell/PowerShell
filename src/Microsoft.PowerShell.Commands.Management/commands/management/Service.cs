@@ -857,7 +857,7 @@ namespace Microsoft.PowerShell.Commands
             string errorId,
             string errorMessage)
         {
-            do
+            while (true)
             {
                 try
                 {
@@ -891,7 +891,7 @@ namespace Microsoft.PowerShell.Commands
                     // will throw PipelineStoppedException if user hit CTRL-C
                     WriteWarning(message);
                 }
-            } while (true);
+            }
         }
 
         /// <summary>

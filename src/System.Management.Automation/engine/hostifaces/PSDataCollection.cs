@@ -1940,7 +1940,7 @@ namespace System.Management.Automation
         {
             lock (_collToEnumerate.SyncObject)
             {
-                do
+                while (true)
                 {
                     if (_index < _collToEnumerate.Count)
                     {
@@ -1979,7 +1979,7 @@ namespace System.Management.Automation
                     {
                         return false;
                     }
-                } while (true);
+                }
             }
         }
 
