@@ -63,7 +63,8 @@
       <PackageVersion>$(PSCoreBuildVersion)</PackageVersion>
 
       <ApplicationIcon Condition="$(ProductVersion.Contains('preview'))">..\..\assets\Powershell_av_colors.ico</ApplicationIcon>
-      <ApplicationIcon Condition="!$(ProductVersion.Contains('preview'))">..\..\assets\Powershell_black.ico</ApplicationIcon>
+      <ApplicationIcon Condition="$(ProductVersion.Contains('daily'))">..\..\assets\Powershell_avatar.ico</ApplicationIcon>
+      <ApplicationIcon Condition="!$(ProductVersion.Contains('preview')) And !$(ProductVersion.Contains('daily'))">..\..\assets\Powershell_black.ico</ApplicationIcon>
 
     </PropertyGroup>
 
