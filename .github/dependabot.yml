@@ -1,0 +1,54 @@
+version: 2
+
+# update_schedule: live is only supported on javascript, ruby:bundler, python, php:composer, dotnet:nuget, rust:cargo, elixir:hex
+
+updates:
+  - package-ecosystem: "dotnet:nuget"
+    directory: "/"
+    schedule:
+      interval: "live"
+    labels:
+      - "CL-BuildPackaging"
+    ignore:
+      - dependency-name: "System.*"
+      - dependency-name: "Microsoft.Win32.Registry.AccessControl"
+      - dependency-name: "Microsoft.Windows.Compatibility"
+
+  - package-ecosystem: "dotnet:nuget"
+    directory: "/tools/packaging/projects/reference/Microsoft.PowerShell.Commands.Utility"
+    schedule:
+      interval: "live"
+    labels:
+      - "CL-BuildPackaging"
+    ignored_updates:
+      - dependency-name: "System.*"
+      - dependency-name: "Microsoft.Win32.Registry.AccessControl"
+      - dependency-name: "Microsoft.Windows.Compatibility"
+
+  - package-ecosystem: "dotnet:nuget"
+    directory: "/tools/packaging/projects/reference/System.Management.Automation"
+    schedule:
+      interval: "live"
+    default_labels:
+      - "CL-BuildPackaging"
+    ignored_updates:
+      - dependency-name: "System.*"
+      - dependency-name: "Microsoft.Win32.Registry.AccessControl"
+      - dependency-name: "Microsoft.Windows.Compatibility"
+
+  - package-ecosystem: "dotnet:nuget"
+    directory: "/test/tools/Modules"
+    schedule:
+      interval: "live"
+    labels:
+      - "CL-BuildPackaging"
+    ignored_updates:
+      - dependency-name: "System.*"
+      - dependency-name: "Microsoft.Win32.Registry.AccessControl"
+      - dependency-name: "Microsoft.Windows.Compatibility"
+
+  - package_manager: "dotnet:nuget"
+    directory: "/src/Modules"
+    update_schedule: "live"
+    labels:
+      - "CL-BuildPackaging"
