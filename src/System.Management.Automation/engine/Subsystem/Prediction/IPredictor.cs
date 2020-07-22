@@ -47,11 +47,6 @@ namespace System.Management.Automation.Subsystem
         void LastSuggestionAccepted(string acceptedSuggestion);
 
         /// <summary>
-        /// The suggestion given by the predictor was denied.
-        /// </summary>
-        void LastSuggestionDenied();
-
-        /// <summary>
         /// Get the predictive suggestions.
         /// </summary>
         /// <param name="context">The <see cref="PredictionContext"/> object to be used for prediction.</param>

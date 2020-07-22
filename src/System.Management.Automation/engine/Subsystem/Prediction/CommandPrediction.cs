@@ -123,9 +123,10 @@ namespace System.Management.Automation.Subsystem
             {
                 if (predictor.SupportEarlyProcessing)
                 {
-                    ThreadPool.QueueUserWorkItem(
-                        state => ((IPredictor)state).EarlyProcessWithHistory(history),
-                        predictor);
+                    ThreadPool.QueueUserWorkItem<IPredictor>(
+                        state => state.EarlyProcessWithHistory(history),
+                        predictor,
+                        preferLocal: false);
                 }
             }
         }
@@ -133,14 +134,13 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Send feedback to predictors about their last suggestions.
         /// </summary>
-        /// <param name="predictorIds">Identifiers of the predictors from which we received prediction results.</param>
-        /// <param name="acceptedId">The identifier of the predictor whose prediction result was accepted.</param>
-        /// <param name="acceptedSuggestion">The accepted suggestion text.</param>
-        public static void SuggestionFeedback(HashSet<Guid> predictorIds, Guid acceptedId, string acceptedSuggestion = null)
+        /// <param name="predictorId">The identifier of the predictor whose prediction result was accepted.</param>
+        /// <param name="suggestionText">The accepted suggestion text.</param>
+        public static void SuggestionAccepted(Guid predictorId, string suggestionText)
         {
-            if (acceptedId != Guid.Empty && string.IsNullOrEmpty(acceptedSuggestion))
+            if (string.IsNullOrEmpty(suggestionText))
             {
-                throw new ArgumentNullException(nameof(acceptedSuggestion));
+                throw new ArgumentNullException(nameof(suggestionText));
             }
 
             var predictors = SubsystemManager.GetSubsystems<IPredictor>();
@@ -151,22 +151,12 @@ namespace System.Management.Automation.Subsystem
 
             foreach (IPredictor predictor in predictors)
             {
-                if (!predictor.AcceptFeedback || !predictorIds.Contains(predictor.Id))
+                if (predictor.AcceptFeedback && predictor.Id == predictorId)
                 {
-                    continue;
-                }
-
-                if (predictor.Id == acceptedId)
-                {
-                    ThreadPool.QueueUserWorkItem(
-                        state => ((IPredictor)state).LastSuggestionAccepted(acceptedSuggestion),
-                        predictor);
-                }
-                else
-                {
-                    ThreadPool.QueueUserWorkItem(
-                        state => ((IPredictor)state).LastSuggestionDenied(),
-                        predictor);
+                    ThreadPool.QueueUserWorkItem<IPredictor>(
+                        state => state.LastSuggestionAccepted(suggestionText),
+                        predictor,
+                        preferLocal: false);
                 }
             }
         }

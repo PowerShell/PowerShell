@@ -20,8 +20,6 @@ namespace PSTests.Sequential
 
         public List<string> AcceptedSuggestions { get; }
 
-        public int DenialCount { get; private set; }
-
         public static readonly MyPredictor SlowPredictor;
 
         public static readonly MyPredictor FastPredictor;
@@ -50,7 +48,6 @@ namespace PSTests.Sequential
 
             History = new List<string>();
             AcceptedSuggestions = new List<string>();
-            DenialCount = 0;
         }
 
         public Guid Id => _id;
@@ -71,11 +68,6 @@ namespace PSTests.Sequential
         public void LastSuggestionAccepted(string acceptedSuggestion)
         {
             AcceptedSuggestions.Add(acceptedSuggestion);
-        }
-
-        public void LastSuggestionDenied()
-        {
-            DenialCount++;
         }
 
         public List<string> GetSuggestion(PredictionContext context, CancellationToken cancellationToken)
@@ -169,7 +161,7 @@ namespace PSTests.Sequential
                 var ids = new HashSet<Guid> { slow.Id, fast.Id };
 
                 CommandPrediction.LineAccepted(history);
-                CommandPrediction.SuggestionFeedback(ids, slow.Id, "Yeah");
+                CommandPrediction.SuggestionAccepted(slow.Id, "Yeah");
 
                 // The calls to 'EarlyProcessWithHistory' and the feedback methods are queued in thread pool,
                 // so we wait a bit to make sure the calls are done.
@@ -185,10 +177,8 @@ namespace PSTests.Sequential
 
                 Assert.Single(slow.AcceptedSuggestions);
                 Assert.Equal("Yeah", slow.AcceptedSuggestions[0]);
-                Assert.Equal(0, slow.DenialCount);
 
                 Assert.Empty(fast.AcceptedSuggestions);
-                Assert.Equal(1, fast.DenialCount);
             }
             finally
             {
