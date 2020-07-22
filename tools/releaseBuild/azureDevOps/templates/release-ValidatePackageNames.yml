@@ -1,7 +1,13 @@
 steps:
 - pwsh: |
+    Get-ChildItem ENV:
+  displayName: Capture environment
+
+- pwsh: |
     $variable = 'releaseTag'
-    $branch = '$(resource.pipeline.releasePipeline.sourceBranch)'
+    $branch = $ENV:RESOURCE_PIPELINE_RELEASEPIPELINE_SOURCEBRANCH'
+
+    Write-Verbose -Verbose "SourceBranch == $branch"
 
     if ($branch -notmatch '^.*(release[-/])') {
         throw "Branch name is not in release format: '$branch'"
