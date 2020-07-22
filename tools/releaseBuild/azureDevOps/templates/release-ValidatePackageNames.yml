@@ -23,7 +23,7 @@ steps:
 - pwsh: |
     $name = "{0}_{1:x}" -f '$(releaseTag)', (Get-Date).Ticks
     Write-Host $name
-    Write-Host "##vso[release.updatereleasename]$name"
+    Write-Host "##vso[build.updatebuildnumber]$name"
   displayName: Set Release Name
 
 - pwsh: |

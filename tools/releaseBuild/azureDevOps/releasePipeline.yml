@@ -64,7 +64,7 @@ stages:
   jobs:
   - job: ValidatePkgNames
     pool:
-      vmImage: macOS-latest
+      vmImage: windows-latest
     steps:
       - template: templates/release-ValidatePackageNames.yml
 

@@ -53,7 +53,7 @@ jobs:
       displayName: Install .NET
 
     - pwsh: |
-        $branch = '$(Build.SourceBranch)'
+        $branch = $ENV:RESOURCES_PIPELINE_RELEASEPIPELINE_SOURCEBRANCH
         $version = $branch -replace '^.*(release[-/])v'
         $vstsCommandString = "vso[task.setvariable variable=PowerShellVersion]$version"
         Write-Verbose -Message "Version is $version" -Verbose
