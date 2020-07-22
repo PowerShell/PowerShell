@@ -107,7 +107,7 @@ stages:
   dependsOn:
   - ValidateSDK
   - PRCreation
-  - ValidateGobalTool
+  - ValidateGlobalTool
   - ValidatePkgNames
   - StartDocker
   - ManualValidation
