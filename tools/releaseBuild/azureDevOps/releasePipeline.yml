@@ -11,7 +11,7 @@ resources:
 
   - pipeline: releasePipeline
     source: 'Co-ordinated Build'
-    branch: 'release/v7.1.0-preview.5'
+    #branch: 'release/v7.1.0-preview.5'
 
 stages:
 - stage: ValidateSDK
