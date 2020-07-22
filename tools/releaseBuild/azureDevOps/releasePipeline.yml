@@ -11,6 +11,7 @@ resources:
 
   - pipeline: releasePipeline
     source: Co-ordinated Build Test
+    branch: release/v7.1.0-preview.5
 
 stages:
 - stage: ValidateSDK
