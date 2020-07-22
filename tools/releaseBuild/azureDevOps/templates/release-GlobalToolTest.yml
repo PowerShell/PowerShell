@@ -26,20 +26,20 @@ jobs:
     #    itemPattern: '*.nupkg'
 
     - pwsh: |
-        $dotnetMetadataPath = "$(Build.SourcesDirectory)/source/DotnetRuntimeMetadata.json"
+        $dotnetMetadataPath = "$(Build.SourcesDirectory)/DotnetRuntimeMetadata.json"
         $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
 
         # Channel is like: $Channel = "5.0.1xx-preview2"
         $Channel = $dotnetMetadataJson.sdk.channel
 
-        $sdkVersion = (Get-Content "$(Build.SourcesDirectory)/source/global.json" -Raw | ConvertFrom-Json).sdk.version
-        Import-Module "$(Build.SourcesDirectory)/source/build.psm1" -Force
+        $sdkVersion = (Get-Content "$(Build.SourcesDirectory)/global.json" -Raw | ConvertFrom-Json).sdk.version
+        Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
 
         Find-Dotnet
 
         if(-not (Get-PackageSource -Name 'dotnet5' -ErrorAction SilentlyContinue))
         {
-            $nugetFeed = ([xml](Get-Content $(Build.SourcesDirectory)/source/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet5' } | Select-Object -ExpandProperty Value
+            $nugetFeed = ([xml](Get-Content $(Build.SourcesDirectory)/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet5' } | Select-Object -ExpandProperty Value
             Register-PackageSource -Name 'dotnet5' -Location $nugetFeed -ProviderName NuGet
             Write-Verbose -Message "Register new package source 'dotnet5'" -verbose
         }
@@ -67,7 +67,7 @@ jobs:
 
         $toolPath = New-Item -ItemType Directory "$(System.DefaultWorkingDirectory)/toolPath" | Select-Object -ExpandProperty FullName
 
-        dotnet tool install --add-source $(Pipeline.Workspace) --tool-path $toolPath --version '$(PowerShellVersion)' PowerShell.Windows.x64
+        dotnet tool install --add-source "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults" --tool-path $toolPath --version '$(PowerShellVersion)' PowerShell.Windows.x64
       displayName: Install global tool
 
     - pwsh: |

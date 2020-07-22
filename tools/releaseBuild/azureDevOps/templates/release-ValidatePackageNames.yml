@@ -5,7 +5,7 @@ steps:
 
 - pwsh: |
     $variable = 'releaseTag'
-    $branch = $ENV:RESOURCE_PIPELINE_RELEASEPIPELINE_SOURCEBRANCH'
+    $branch = $ENV:RESOURCES_PIPELINE_RELEASEPIPELINE_SOURCEBRANCH
 
     Write-Verbose -Verbose "SourceBranch == $branch"
 

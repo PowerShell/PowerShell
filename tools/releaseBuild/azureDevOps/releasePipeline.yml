@@ -66,9 +66,6 @@ stages:
     pool:
       vmImage: macOS-latest
     steps:
-      - pwsh: |
-          Write-Host 'Testing for pre-conditions'
-        displayName: Test pre-conditions
       - template: templates/release-ValidatePackageNames.yml
 
 - stage: StartDocker
