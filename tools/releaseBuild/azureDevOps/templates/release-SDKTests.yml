@@ -9,17 +9,12 @@ jobs:
   pool:
     vmImage: ${{ parameters.imageName }}
   steps:
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        preferTriggeringPipeline: true
-        artifact: finalResults
-        patterns: '**/*.nupkg'
+    - download: releasePipeline
+      artifact: finalResults
+      patterns: '**/*.nupkg'
 
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        preferTriggeringPipeline: true
-        artifact: metadata
-        patterns: '**/*.nupkg'
+    - download: releasePipeline
+      artifact: metadata
 
     #- task: DownloadBuildArtifacts@0
     #  inputs:
