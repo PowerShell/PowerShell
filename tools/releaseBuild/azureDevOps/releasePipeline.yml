@@ -10,8 +10,8 @@ resources:
   #    - releaseYml
 
   - pipeline: releasePipeline
-    source: 'Co-ordinated Build'
-    #branch: 'release/v7.1.0-preview.5'
+    source: 'Co-ordinated Packages'
+    branch: 'release/v7.1.0-preview.5'
 
 stages:
 - stage: ValidateSDK
