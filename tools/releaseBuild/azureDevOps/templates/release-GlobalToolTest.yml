@@ -90,7 +90,9 @@ jobs:
         Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
         Start-PSBootstrap -Force
 
-        $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/pwsh.exe"
+        $exeName = if ($IsWindows) { "pwsh.exe" } else { "pwsh" }
+
+        $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/$exeName"
 
         $versionFound = & $toolPath -c '$PSVersionTable.PSVersion.ToString()'
 
