@@ -68,6 +68,9 @@ jobs:
         $toolPath = New-Item -ItemType Directory "$(System.DefaultWorkingDirectory)/toolPath" | Select-Object -ExpandProperty FullName
 
         dotnet tool install --add-source "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults" --tool-path $toolPath --version '$(PowerShellVersion)' PowerShell.Windows.x64
+
+        Get-ChildItem -Path $toolPath
+
       displayName: Install global tool
 
     - pwsh: |
