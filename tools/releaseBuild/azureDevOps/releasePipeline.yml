@@ -2,12 +2,16 @@ trigger: none
 
 resources:
   pipelines:
+  #- pipeline: releasePipeline
+  #  source: Co-ordinated Build Test
+  #  trigger:
+  #    branches:
+  #    - release/*
+  #    - releaseYml
+
   - pipeline: releasePipeline
     source: Co-ordinated Build Test
-    trigger:
-      branches:
-      - releases/*
-      - releaseYml
+    version: 143428
 
 stages:
 - stage: ValidateSDK
