@@ -2,6 +2,9 @@ parameters:
   jobName: ""
   displayName: ""
   imageName: ""
+  globalToolExeName: 'pwsh.exe'
+  globalToolPackageName: 'PowerShell.Windows.x64'
+
 
 jobs:
 - job: ${{ parameters.jobName }}
@@ -67,15 +70,14 @@ jobs:
 
         $toolPath = New-Item -ItemType Directory "$(System.DefaultWorkingDirectory)/toolPath" | Select-Object -ExpandProperty FullName
 
-        dotnet tool install --add-source "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults" --tool-path $toolPath --version '$(PowerShellVersion)' PowerShell.Windows.x64
+        dotnet tool install --add-source "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults" --tool-path $toolPath --version '$(PowerShellVersion)' '${{ parameters.globalToolPackageName }}'
 
         Get-ChildItem -Path $toolPath
 
       displayName: Install global tool
 
     - pwsh: |
-        $exeName = if ($IsWindows) { "pwsh.exe" } else { "pwsh" }
-        $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/$exeName"
+        $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/${{ parameters.globalToolExeName }}"
 
         if (-not (Test-Path $toolPath))
         {
@@ -93,7 +95,7 @@ jobs:
 
         $exeName = if ($IsWindows) { "pwsh.exe" } else { "pwsh" }
 
-        $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/$exeName"
+        $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/${{ parameters.globalToolExeName }}"
 
         $versionFound = & $toolPath -c '$PSVersionTable.PSVersion.ToString()'
 

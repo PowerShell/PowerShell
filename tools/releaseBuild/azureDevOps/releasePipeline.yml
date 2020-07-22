@@ -51,12 +51,16 @@ stages:
       jobName: WinGblTool
       displayName: Global Tool Test Windows
       imageName: windows-latest
+      globalToolExeName: 'pwsh.exe'
+      globalToolPackageName: 'PowerShell.Windows.x64'
 
   - template: templates/release-GlobalToolTest.yml
     parameters:
       jobName: LinuxWinGblTool
       displayName: Global Tool Test Linux
       imageName: ubuntu-latest
+      globalToolExeName: 'pwsh'
+      globalToolPackageName: 'PowerShell.Linux.x64'
 
 - stage: ValidatePkgNames
   dependsOn: []
