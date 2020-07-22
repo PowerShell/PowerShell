@@ -9,17 +9,29 @@ jobs:
   pool:
     vmImage: ${{ parameters.imageName }}
   steps:
-    - task: DownloadBuildArtifacts@0
+    - task: DownloadPipelineArtifact@2
       inputs:
-        buildType: specific
-        project: PowerShellCore
-        pipeline: Co-ordinated Build Test
-        specificBuildWithTriggering: true
-        buildVersionToDownload: latest
-        downloadType: single
-        artifactName: finalResults
-        downloadPath: '$(Pipeline.Workspace)'
-        itemPattern: '*.nupkg'
+        preferTriggeringPipeline: true
+        artifact: finalResults
+        patterns: '**/*.nupkg'
+
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        preferTriggeringPipeline: true
+        artifact: metadata
+        patterns: '**/*.nupkg'
+
+    #- task: DownloadBuildArtifacts@0
+    #  inputs:
+    #    buildType: specific
+    #    project: PowerShellCore
+    #    pipeline: Co-ordinated Build Test
+    #    specificBuildWithTriggering: true
+    #    buildVersionToDownload: latest
+    #    downloadType: single
+    #    artifactName: finalResults
+    #    downloadPath: '$(Pipeline.Workspace)'
+    #    itemPattern: '*.nupkg'
 
     - task: DownloadBuildArtifacts@0
       inputs:
