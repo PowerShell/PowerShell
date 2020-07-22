@@ -74,7 +74,8 @@ jobs:
       displayName: Install global tool
 
     - pwsh: |
-        $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/pwsh.exe"
+        $exeName = if ($IsWindows) { "pwsh.exe" } else { "pwsh" }
+        $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/$exeName"
 
         if (-not (Test-Path $toolPath))
         {
