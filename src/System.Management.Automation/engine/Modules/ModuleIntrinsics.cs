@@ -703,7 +703,7 @@ namespace System.Management.Automation
             }
 
 #if UNIX
-            StringComparison strcmp = StringComparison.Ordinal;
+            const StringComparison strcmp = StringComparison.Ordinal;
 #else
             const StringComparison strcmp = StringComparison.OrdinalIgnoreCase;
 #endif
