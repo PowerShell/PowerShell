@@ -3311,17 +3311,7 @@ namespace System.Management.Automation
             {
             }
 
-            // We use ComEnumerator to enumerate COM collections because the following code doesn't work in .NET Core
-            //   IEnumerator enumerator = targetValue as IEnumerator;
-            //   if (enumerator != null)
-            //   {
-            //       enumerable.MoveNext();
-            //       ...
-            //   }
-            // The call to 'MoveNext()' throws exception because COM is not fully supported in .NET Core.
-            // See https://github.com/dotnet/runtime/issues/21690 for more information.
-            // When COM support is fully back to .NET Core, we need to change back to directly use the type cast.
-            return ComEnumerator.Create(targetValue) ?? NonEnumerableObjectEnumerator.Create(obj);
+            return targetValue as IEnumerator ?? NonEnumerableObjectEnumerator.Create(obj);
         }
 
         internal static IEnumerator GetGenericEnumerator<T>(IEnumerable<T> enumerable)
