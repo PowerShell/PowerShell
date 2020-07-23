@@ -1,10 +1,14 @@
 steps:
+- download: releasePipeline
+  artifact: finalResults
+  patterns: "**/*.nupkg"
+
 - pwsh: |
     #Exclude all global tool packages. Their names start with 'PowerShell.'
-    Copy-Item "_Packages/finalResults/*.nupkg" -Destination "$(Agent.ReleaseDirectory)" -Exclude "PowerShell.*.nupkg" -Force
+    Copy-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/*.nupkg" -Destination "$(Agent.ReleaseDirectory)" -Exclude "PowerShell.*.nupkg" -Force
 
     $releaseVersion = Get-Content "_Packages/metadata/release.json" | ConvertFrom-Json | Select-Object -ExpandProperty 'ReleaseVersion'
-    $globalToolPath = "_Packages/finalResults/PowerShell.$releaseVersion.nupkg"
+    $globalToolPath = "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/PowerShell.$releaseVersion.nupkg"
     ### -WhatIf to make sure we do not release global tool. Remove -WhatIf when the PowerShell name reservation is done.
     Copy-Item $globalToolPath -Destination "$(Agent.ReleaseDirectory)" -WhatIf
 

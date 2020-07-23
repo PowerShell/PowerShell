@@ -1,6 +1,9 @@
 steps:
+- download: releasePipeline
+  artifact: BuildInfoJson
+
 - pwsh: |
-    $jsonFile = Get-Item "$(System.DefaultWorkingDirectory)/_Packages/BuildInfoJson/*.json"
+    $jsonFile = Get-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/BuildInfoJson/*.json"
     $fileName = Split-Path $jsonFile -Leaf
 
     $dateTime = [datetime]::UtcNow

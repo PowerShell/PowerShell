@@ -1,17 +1,5 @@
 steps:
-- pwsh: |
-    $variable = 'releaseTag'
-    $branch = '$(Release.Artifacts._Packages.SourceBranch)'
-    if($branch -notmatch  '^.*(release[-/])')
-    {
-        throw "Branch name is not in release format: '$branch'"
-    }
-
-    $releaseTag = $Branch -replace '^.*(release[-/])'
-    $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
-    Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
-    Write-Host -Object "##$vstsCommandString"
-  displayName: Set Release Tag
+- template: SetReleaseTagAndContainerName.yml
 
 - pwsh: |
     $packageVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '^v',''
@@ -24,7 +12,10 @@ steps:
    git clone https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools ./tools
   displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
 
+- download: releasePipeline
+  artifact: metadata
+
 - pwsh: |
-    $metadata = Get-Content -Path "_Packages/metadata/release.json" -Raw | ConvertFrom-Json
+    $metadata = Get-Content -Path "$ENV:PIPELINE_WORKSPACE/releasePipeline/metadata/release.json" -Raw | ConvertFrom-Json
     ./tools/packages.microsoft.com/upload.ps1 -ReleaseTag "$(releaseTag)" -Secret "$(PackagesRepoPassword)" -BlobFolderName "$(AzureVersion)" -LTS:($metadata.LTSRelease)
   displayName: Run release script
