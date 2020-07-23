@@ -1,5 +1,5 @@
 steps:
-- template: SetReleaseTagAndContainerName.yml
+- template: release-SetReleaseTagAndContainerName.yml
 
 - pwsh: |
     $packageVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '^v',''
