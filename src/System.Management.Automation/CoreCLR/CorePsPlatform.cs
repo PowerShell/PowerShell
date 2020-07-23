@@ -239,6 +239,8 @@ namespace System.Management.Automation
             DEFAULT
         }
 
+        private static string s_tempHomeDir = null;
+
         /// <summary>
         /// Function for choosing directory location of PowerShell for profile loading.
         /// </summary>
@@ -252,7 +254,8 @@ namespace System.Management.Automation
             string envHome = System.Environment.GetEnvironmentVariable(CommonEnvVariableNames.Home);
             if (envHome == null)
             {
-                envHome = GetTemporaryDirectory();
+                s_tempHomeDir ??= GetTemporaryDirectory();
+                envHome = s_tempHomeDir;
             }
 
             string xdgConfigHomeDefault = Path.Combine(envHome, ".config", "powershell");
