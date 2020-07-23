@@ -1,7 +1,7 @@
 steps:
 - download: none
 
-- template: templates/release-SetReleaseTagAndContainerName.yml
+- template: release-SetReleaseTagAndContainerName.yml
 
 - pwsh: |
     az login --service-principal -u $(az_url) -p $(az_key) --tenant $(az_name)

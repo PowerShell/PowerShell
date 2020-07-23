@@ -3,7 +3,7 @@ steps:
     Get-ChildItem ENV:
   displayName: Capture environment
 
-- template: templates/release-SetReleaseTagAndContainerName.yml
+- template: release-SetReleaseTagAndContainerName.yml
 
 - pwsh: |
     $name = "{0}_{1:x}" -f '$(releaseTag)', (Get-Date).Ticks

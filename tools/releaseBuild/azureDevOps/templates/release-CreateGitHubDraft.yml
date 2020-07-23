@@ -1,7 +1,7 @@
 steps:
 - download: none
 
-- template: templates/release-SetReleaseTagAndContainerName.yml
+- template: release-SetReleaseTagAndContainerName.yml
 
 - pwsh: |
     $azcopy = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
