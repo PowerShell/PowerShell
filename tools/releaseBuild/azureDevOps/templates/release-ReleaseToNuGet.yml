@@ -13,7 +13,7 @@ steps:
 
 - task: NuGetCommand@2
   displayName: 'NuGet push'
-    inputs:
+  inputs:
     command: push
     packagesToPush: '$(Agent.ReleaseDirectory)/*.nupkg'
     nuGetFeedType: external
