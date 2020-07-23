@@ -74,7 +74,7 @@ namespace System.Management.Automation.Internal
 
         private static byte[] GetBytesLE(int val)
         {
-            return new [] {
+            return new[] {
                 (byte)(val & 0xff),
                 (byte)((val >> 8) & 0xff),
                 (byte)((val >> 16) & 0xff),
