@@ -300,7 +300,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(
-                globPatterns: new string[1] { moduleNamePattern },
+                globPatterns: new[] { moduleNamePattern },
                 options: WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
             foreach (KeyValuePair<string, string> name in s_metadataCache)

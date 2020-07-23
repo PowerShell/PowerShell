@@ -590,7 +590,7 @@ namespace System.Management.Automation.Help
             if (!string.IsNullOrEmpty(currentCulture))
             {
                 IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(
-                    globPatterns: new string[1] { currentCulture },
+                    globPatterns: new[] { currentCulture },
                     options: WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
                 for (int i = 0; i < updatableHelpItem.Length; i++)
