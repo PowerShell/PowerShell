@@ -604,7 +604,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Returns id for the entry. This id should be used to fetch
         /// the entry from the buffer.</returns>
         /// <remarks>Id starts from 1 and is incremented by 1 for each new entry</remarks>
-
         private long Add(HistoryInfo entry)
         {
             if (entry == null)
@@ -818,6 +817,31 @@ namespace Microsoft.PowerShell.Commands
         {
             return _countEntriesAdded + 1;
         }
+
+        #region invoke_loop_detection
+
+        /// <summary>
+        /// This is a set of HistoryInfo ids which are currently being executed in the
+        /// pipelines of the Runspace that is holding this 'History' instance.
+        /// </summary>
+        private HashSet<long> _invokeHistoryIds = new HashSet<long>();
+
+        internal bool PresentInInvokeHistoryEntrySet(HistoryInfo entry)
+        {
+            return _invokeHistoryIds.Contains(entry.Id);
+        }
+
+        internal void AddToInvokeHistoryEntrySet(HistoryInfo entry)
+        {
+            _invokeHistoryIds.Add(entry.Id);
+        }
+
+        internal void RemoveFromInvokeHistoryEntrySet(HistoryInfo entry)
+        {
+            _invokeHistoryIds.Remove(entry.Id);
+        }
+
+        #endregion invoke_loop_detection
     }
 
     /// <summary>
@@ -995,6 +1019,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
+<<<<<<< HEAD
             History history = ((LocalRunspace)Context.CurrentRunspace).History;
             Dbg.Assert(history != null, "History should be non null");
 
@@ -1049,6 +1074,61 @@ namespace Microsoft.PowerShell.Commands
                         (
                             StringUtil.Format(HistoryStrings.InvokeHistoryLoopDetected)
                         );
+=======
+            // Invoke-history can execute only one command. If multiple
+            // ids were provided, throw exception
+            if (_multipleIdProvided)
+            {
+                ThrowTerminatingError(
+                    new ErrorRecord(
+                        new ArgumentException(HistoryStrings.InvokeHistoryMultipleCommandsError),
+                        "InvokeHistoryMultipleCommandsError",
+                        ErrorCategory.InvalidArgument,
+                        targetObject: null));
+            }
+
+            var ctxRunspace = (LocalRunspace)Context.CurrentRunspace;
+            History history = ctxRunspace.History;
+            Dbg.Assert(history != null, "History should be non null");
+
+            // Get the history entry to invoke
+            HistoryInfo entry = GetHistoryEntryToInvoke(history);
+            string commandToInvoke = entry.CommandLine;
+
+            if (!ShouldProcess(commandToInvoke))
+            {
+                return;
+            }
+
+            // Check if there is a loop in invoke-history
+            if (history.PresentInInvokeHistoryEntrySet(entry))
+            {
+                ThrowTerminatingError(
+                    new ErrorRecord(
+                        new InvalidOperationException(HistoryStrings.InvokeHistoryLoopDetected),
+                        "InvokeHistoryLoopDetected",
+                        ErrorCategory.InvalidOperation,
+                        targetObject: null));
+            }
+            else
+            {
+                history.AddToInvokeHistoryEntrySet(entry);
+            }
+
+            // Replace Invoke-History with string which is getting invoked
+            ReplaceHistoryString(entry, ctxRunspace);
+
+            try
+            {
+                // Echo command
+                Host.UI.WriteLine(commandToInvoke);
+            }
+            catch (HostException)
+            {
+                // when the host is not interactive, HostException is thrown
+                // do nothing
+            }
+>>>>>>> f6f966b3d... Fix `Invoke-Command` to detect recursive call of the same history entry (#13197)
 
                     ThrowTerminatingError
                     (
@@ -1092,6 +1172,7 @@ namespace Microsoft.PowerShell.Commands
 
                     EventHandler<DataAddedEventArgs> debugAdded = delegate (object sender, DataAddedEventArgs e)
                     {
+<<<<<<< HEAD
                         DebugRecord record = (DebugRecord)((PSDataCollection<DebugRecord>)sender)[e.Index];
                         WriteDebug(record.Message);
                     };
@@ -1131,6 +1212,16 @@ namespace Microsoft.PowerShell.Commands
                     LocalRunspace localRunspace = ps.Runspace as LocalRunspace;
 
                     try
+=======
+                        WriteObject(results, true);
+                    }
+                }
+                finally
+                {
+                    history.RemoveFromInvokeHistoryEntrySet(entry);
+
+                    if (localRunspace != null)
+>>>>>>> f6f966b3d... Fix `Invoke-Command` to detect recursive call of the same history entry (#13197)
                     {
                         // Indicate to the system that we are in nested prompt mode, since we are emulating running the command at the prompt.
                         // This ensures that the command being run as nested runs in the correct language mode, because CreatePipelineProcessor()
@@ -1332,10 +1423,9 @@ namespace Microsoft.PowerShell.Commands
         /// in the pipeline. If there are more than one element in pipeline
         /// (ex A | Invoke-History 2 | B) then we cannot do this replacement.
         /// </summary>
-        private void ReplaceHistoryString(HistoryInfo entry)
+        private void ReplaceHistoryString(HistoryInfo entry, LocalRunspace localRunspace)
         {
-            // Get the current pipeline
-            LocalPipeline pipeline = (LocalPipeline)((LocalRunspace)Context.CurrentRunspace).GetCurrentlyRunningPipeline();
+            var pipeline = (LocalPipeline)localRunspace.GetCurrentlyRunningPipeline();
             if (pipeline.AddToHistory)
             {
                 pipeline.HistoryString = entry.CommandLine;

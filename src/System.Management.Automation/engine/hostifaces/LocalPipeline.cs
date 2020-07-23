@@ -1114,31 +1114,6 @@ namespace System.Management.Automation.Runspaces
 
         #endregion private_fields
 
-        #region invoke_loop_detection
-
-        /// <summary>
-        /// This is list of HistoryInfo ids which have been executed in
-        /// this pipeline.
-        /// </summary>
-        private List<long> _invokeHistoryIds = new List<long>();
-
-        internal bool PresentInInvokeHistoryEntryList(HistoryInfo entry)
-        {
-            return _invokeHistoryIds.Contains(entry.Id);
-        }
-
-        internal void AddToInvokeHistoryEntryList(HistoryInfo entry)
-        {
-            _invokeHistoryIds.Add(entry.Id);
-        }
-
-        internal void RemoveFromInvokeHistoryEntryList(HistoryInfo entry)
-        {
-            _invokeHistoryIds.Remove(entry.Id);
-        }
-
-        #endregion invoke_loop_detection
-
         #region IDisposable Members
 
         /// <summary>
