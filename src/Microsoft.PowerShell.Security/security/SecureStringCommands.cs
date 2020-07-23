@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (SecureKey != null)
             {
-                Dbg.Diagnostics.Assert(Key == null, "Only one encryption key should be specified");
+                Dbg.Diagnostics.Assert(Key is null, "Only one encryption key should be specified");
                 encryptionResult = SecureStringHelper.Encrypt(SecureString, SecureKey);
             }
             else if (Key != null)
@@ -348,7 +348,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (SecureKey != null)
                 {
-                    Dbg.Diagnostics.Assert(Key == null, "Only one encryption key should be specified");
+                    Dbg.Diagnostics.Assert(Key is null, "Only one encryption key should be specified");
                     importedString = SecureStringHelper.Decrypt(encryptedContent, SecureKey, iv);
                 }
                 else if (Key != null)

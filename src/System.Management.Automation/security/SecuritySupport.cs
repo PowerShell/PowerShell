@@ -868,7 +868,7 @@ namespace System.Management.Automation
         {
             error = null;
 
-            if ((contentBytes == null) || (contentBytes.Length == 0))
+            if ((contentBytes is null) || (contentBytes.Length == 0))
             {
                 return string.Empty;
             }
@@ -1099,7 +1099,7 @@ namespace System.Management.Automation
             }
 
             // Didn't have the sigil
-            if (messageBytes == null)
+            if (messageBytes is null)
             {
                 return;
             }

@@ -43,12 +43,12 @@ namespace System.Management.Automation
             var mi = PSObject.Base(commandElements[0].ArgumentValue) as PSModuleInfo;
             if (mi != null)
             {
-                if (mi.ModuleType == ModuleType.Binary && mi.SessionState == null)
+                if (mi.ModuleType == ModuleType.Binary && mi.SessionState is null)
                 {
                     throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                         null, "CantInvokeInBinaryModule", ParserStrings.CantInvokeInBinaryModule, mi.Name);
                 }
-                else if (mi.SessionState == null)
+                else if (mi.SessionState is null)
                 {
                     throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                         null, "CantInvokeInNonImportedModule", ParserStrings.CantInvokeInNonImportedModule, mi.Name);
@@ -144,7 +144,7 @@ namespace System.Management.Automation
                     {
                         // CreateCommand doesn't have the context to set InvocationInfo properly
                         // so we'll do it here instead...
-                        if (rte.ErrorRecord.InvocationInfo == null)
+                        if (rte.ErrorRecord.InvocationInfo is null)
                         {
                             InvocationInfo invocationInfo = new InvocationInfo(null, commandExtent, context)
                             { InvocationName = invocationName };
@@ -540,7 +540,7 @@ namespace System.Management.Automation
                     var variableName = ((VariableExpressionAst)v).VariablePath.UserPath;
 
                     // Skip variables that don't exist
-                    if (funcContext._executionContext.EngineSessionState.GetVariable(variableName) == null)
+                    if (funcContext._executionContext.EngineSessionState.GetVariable(variableName) is null)
                     {
                         continue;
                     }
@@ -634,7 +634,7 @@ namespace System.Management.Automation
             var commandTuples = new List<Tuple<CommandAst, List<CommandParameterInternal>, List<CommandRedirection>>>();
 
             ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
-            if (context == null)
+            if (context is null)
             {
                 // If ExecutionContext from TLS is null then we are not in powershell engine thread.
                 string scriptText = scriptBlock.ToString();
@@ -756,7 +756,7 @@ namespace System.Management.Automation
             var argumentAst = commandParameterAst.Argument;
             var errorPos = commandParameterAst.ErrorPosition;
 
-            if (argumentAst == null)
+            if (argumentAst is null)
             {
                 return CommandParameterInternal.CreateParameter(commandParameterAst.ParameterName, errorPos.Text, commandParameterAst);
             }
@@ -859,7 +859,7 @@ namespace System.Management.Automation
 
         internal void UnbindForExpression(FunctionContext funcContext, Pipe[] pipes)
         {
-            if (pipes == null)
+            if (pipes is null)
             {
                 // The pipes can be null if there was an exception (ideally we'd just call unbind
                 // from a fault, but that isn't supported in a clr dynamic method.
@@ -1267,7 +1267,7 @@ namespace System.Management.Automation
                     context, functionDefinitionAst.IsFilter);
 
                 var expAttribute = scriptBlock.ExperimentalAttribute;
-                if (expAttribute == null || expAttribute.ToShow)
+                if (expAttribute is null || expAttribute.ToShow)
                 {
                     context.EngineSessionState.SetFunctionRaw(functionDefinitionAst.Name,
                         scriptBlock, context.EngineSessionState.CurrentScope.ScopeOrigin);
@@ -1276,7 +1276,7 @@ namespace System.Management.Automation
             catch (Exception exception)
             {
                 var rte = exception as RuntimeException;
-                if (rte == null)
+                if (rte is null)
                 {
                     throw ExceptionHandlingOps.ConvertToRuntimeException(exception, functionDefinitionAst.Extent);
                 }
@@ -1301,7 +1301,7 @@ namespace System.Management.Automation
         {
             // We always clone the result, even when creating a new script block, so that the cached
             // value doesn't hold on to any session state.
-            Diagnostics.Assert(_scriptBlock == null || _scriptBlock.SessionStateInternal == null,
+            Diagnostics.Assert(_scriptBlock is null || _scriptBlock.SessionStateInternal is null,
                 "Cached script block should not hold on to session state");
 
             var result = (_scriptBlock ?? (_scriptBlock = new ScriptBlock(_ast, isFilter))).Clone();
@@ -1315,7 +1315,7 @@ namespace System.Management.Automation
         internal static void AddKeyValuePair(IDictionary hashtable, object key, object value, IScriptExtent errorExtent)
         {
             key = PSObject.Base(key);
-            if (key == null)
+            if (key is null)
             {
                 throw InterpreterError.NewInterpreterException(hashtable, typeof(RuntimeException), errorExtent,
                                                                "InvalidNullKey", ParserStrings.InvalidNullKey);
@@ -1603,7 +1603,7 @@ namespace System.Management.Automation
             }
 
             var rte = exception as RuntimeException;
-            if (rte == null)
+            if (rte is null)
             {
                 rte = ConvertToRuntimeException(exception, funcContext.CurrentPosition);
             }
@@ -1627,7 +1627,7 @@ namespace System.Management.Automation
             // handling an exception, then the exception is new, and we
             // can break on it if requested.
             if (!rte.WasRethrown &&
-                context.CurrentExceptionBeingHandled == null &&
+                context.CurrentExceptionBeingHandled is null &&
                 preference == ActionPreference.Break)
             {
                 context.Debugger?.Break(rte);
@@ -1931,7 +1931,7 @@ namespace System.Management.Automation
         internal static bool ExceptionCannotBeStoppedContinuedOrIgnored(RuntimeException rte, ExecutionContext context)
         {
             return context.PropagateExceptionsToEnclosingStatementBlock
-                   || context.ShellFunctionErrorOutputPipe == null
+                   || context.ShellFunctionErrorOutputPipe is null
                    || context.CurrentPipelineStopping
                    || rte.SuppressPromptInInterpreter
                    || rte is PipelineStoppedException;
@@ -1946,12 +1946,12 @@ namespace System.Management.Automation
         /// <returns>True if it was able to report the error.</returns>
         internal static bool ReportErrorRecord(IScriptExtent extent, RuntimeException rte, ExecutionContext context)
         {
-            if (context.ShellFunctionErrorOutputPipe == null)
+            if (context.ShellFunctionErrorOutputPipe is null)
                 return false;
 
             Diagnostics.Assert(rte.ErrorRecord != null, "The runtime exception's error record was null");
 
-            if (rte.ErrorRecord.InvocationInfo == null && extent != null && extent != PositionUtilities.EmptyExtent)
+            if (rte.ErrorRecord.InvocationInfo is null && extent != null && extent != PositionUtilities.EmptyExtent)
                 rte.ErrorRecord.SetInvocationInfo(new InvocationInfo(null, extent, context));
             PSObject errorWrap = PSObject.AsPSObject(new ErrorRecord(rte.ErrorRecord, rte));
 
@@ -2019,7 +2019,7 @@ namespace System.Management.Automation
         internal static RuntimeException ConvertToRuntimeException(Exception exception, IScriptExtent extent)
         {
             RuntimeException runtimeException = exception as RuntimeException;
-            if (runtimeException == null)
+            if (runtimeException is null)
             {
                 var icer = exception as IContainsErrorRecord;
                 var er = icer != null
@@ -2050,7 +2050,7 @@ namespace System.Management.Automation
             if ((exception is FlowControlException ||
                 exception is ScriptCallDepthException ||
                 exception is PipelineStoppedException) &&
-                ((memberInfo == null) || ((memberInfo.DeclaringType != typeof(PowerShell)) && (memberInfo.DeclaringType != typeof(Pipeline)))))
+                ((memberInfo is null) || ((memberInfo.DeclaringType != typeof(PowerShell)) && (memberInfo.DeclaringType != typeof(Pipeline)))))
             {
                 return;
             }
@@ -2104,7 +2104,7 @@ namespace System.Management.Automation
             Exception exception;
             var result = TypeResolver.ResolveITypeName(typeName, out exception);
 
-            if (result == null)
+            if (result is null)
             {
                 if (exception != null)
                 {
@@ -2167,11 +2167,11 @@ namespace System.Management.Automation
 
             Type rType = rval as Type;
 
-            if (rType == null)
+            if (rType is null)
             {
                 rType = ParserOps.ConvertTo<Type>(rval, null);
 
-                if (rType == null)
+                if (rType is null)
                 {
                     // "the right operand of '-is' must be a type"
                     throw InterpreterError.NewInterpreterException(rval, typeof(RuntimeException),
@@ -2195,7 +2195,7 @@ namespace System.Management.Automation
 
         internal static object AsOperator(object left, Type type)
         {
-            if (type == null)
+            if (type is null)
             {
                 throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException), null,
                                                                "AsOperatorRequiresType", ParserStrings.AsOperatorRequiresType);
@@ -2459,7 +2459,7 @@ namespace System.Management.Automation
                 }
 
                 // Make sure at least one file was found...
-                if (filePaths == null || filePaths.Count < 1)
+                if (filePaths is null || filePaths.Count < 1)
                 {
                     // "No files matching '{0}' were found.."
                     throw InterpreterError.NewInterpreterException(filePath, typeof(RuntimeException), errorExtent,
@@ -2478,7 +2478,7 @@ namespace System.Management.Automation
             catch (RuntimeException rte)
             {
                 // Add the invocation info to this command...
-                if (rte.ErrorRecord != null && rte.ErrorRecord.InvocationInfo == null)
+                if (rte.ErrorRecord != null && rte.ErrorRecord.InvocationInfo is null)
                     rte.ErrorRecord.SetInvocationInfo(new InvocationInfo(null, errorExtent, context));
                 throw;
             }
@@ -2546,7 +2546,7 @@ namespace System.Management.Automation
             // Optimization to speed up the case where there is no condition expression
             // Useful when using selection mode and number to return to do fast list
             // slicing.
-            if (expressionSB == null)
+            if (expressionSB is null)
             {
                 if (selectionMode == WhereOperatorSelectionMode.Default)
                 {
@@ -2653,7 +2653,7 @@ namespace System.Management.Automation
 
                 if (returnTheRest)
                 {
-                    matches.Add(ie == null ? null : PSObject.AsPSObject(ie));
+                    matches.Add(ie is null ? null : PSObject.AsPSObject(ie));
                     if (numberToReturn > 0 && matches.Count >= numberToReturn)
                     {
                         break;
@@ -2683,30 +2683,30 @@ namespace System.Management.Automation
 
                         if (matches.Count < numberToReturn)
                         {
-                            matches.Add(ie == null ? null : PSObject.AsPSObject(ie));
+                            matches.Add(ie is null ? null : PSObject.AsPSObject(ie));
                         }
                         else
                         {
                             if (numberToReturn == 1)
                             {
-                                matches[0] = ie == null ? null : PSObject.AsPSObject(ie);
+                                matches[0] = ie is null ? null : PSObject.AsPSObject(ie);
                             }
                             else
                             {
                                 // Maintains a sliding window
                                 matches.RemoveAt(0);
-                                matches.Add(ie == null ? null : PSObject.AsPSObject(ie));
+                                matches.Add(ie is null ? null : PSObject.AsPSObject(ie));
                             }
                         }
                     }
                     else if (selectionMode == WhereOperatorSelectionMode.SkipUntil)
                     {
-                        matches.Add(ie == null ? null : PSObject.AsPSObject(ie));
+                        matches.Add(ie is null ? null : PSObject.AsPSObject(ie));
                         returnTheRest = true;
                     }
                     else
                     {
-                        matches.Add(ie == null ? null : PSObject.AsPSObject(ie));
+                        matches.Add(ie is null ? null : PSObject.AsPSObject(ie));
                     }
 
                     if (selectionMode != WhereOperatorSelectionMode.Last)
@@ -2726,7 +2726,7 @@ namespace System.Management.Automation
                 else if (selectionMode == WhereOperatorSelectionMode.Until)
                 {
                     // no match so in the until case, we add the value until the count is reached
-                    matches.Add(ie == null ? null : PSObject.AsPSObject(ie));
+                    matches.Add(ie is null ? null : PSObject.AsPSObject(ie));
                     if (numberToReturn > 0 && matches.Count >= numberToReturn)
                     {
                         break;
@@ -2735,7 +2735,7 @@ namespace System.Management.Automation
                 else if (selectionMode == WhereOperatorSelectionMode.Split)
                 {
                     // If in split mode, record both matched and noteMatched elements.
-                    notMatched.Add(ie == null ? null : PSObject.AsPSObject(ie));
+                    notMatched.Add(ie is null ? null : PSObject.AsPSObject(ie));
                 }
             }
 
@@ -2748,7 +2748,7 @@ namespace System.Management.Automation
                 while (MoveNext(context, enumerator))
                 {
                     var ie = Current(enumerator);
-                    notMatched.Add(ie == null ? null : PSObject.AsPSObject(ie));
+                    notMatched.Add(ie is null ? null : PSObject.AsPSObject(ie));
                 }
 
                 return new object[] { matches, notMatched };
@@ -2769,7 +2769,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(enumerator != null, "The ForEach() operator should never receive a null enumerator value from the runtime.");
             Diagnostics.Assert(arguments != null, "The ForEach() operator should never receive a null value for the 'arguments' parameter from the runtime.");
-            if (expression == null)
+            if (expression is null)
             {
                 throw new ArgumentNullException(nameof(expression));
             }
@@ -2836,7 +2836,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (resultCollection == null)
+                if (resultCollection is null)
                 {
                     throw InterpreterError.NewInterpreterException(expression, typeof(RuntimeException),
                         null, "ForEachTypeConversionFailed", ParserStrings.ForEachTypeConversionFailed, ParserOps.ConvertTo<string>(targetType, null));
@@ -2913,7 +2913,7 @@ namespace System.Management.Automation
                         // handle the null case with PowerShell semantics:
                         // - retrieving a property on null adds a null to the result set
                         // - setting a property on null or trying to invoke a method is an error
-                        if (current == null)
+                        if (current is null)
                         {
                             if (arguments.Length == 0)
                             {
@@ -2938,7 +2938,7 @@ namespace System.Management.Automation
                             PSMemberInfo member = ie.Members[name];
 
                             // If the property was not found, check strict mode...
-                            if (member == null)
+                            if (member is null)
                             {
                                 if (context.IsStrictVersion(2))
                                 {

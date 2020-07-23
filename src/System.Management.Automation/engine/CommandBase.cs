@@ -159,7 +159,7 @@ namespace System.Management.Automation.Internal
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Context");
                 }
@@ -482,7 +482,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (providerId == null)
+                if (providerId is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(providerId));
                 }

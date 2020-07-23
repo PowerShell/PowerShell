@@ -53,7 +53,7 @@ namespace System.Management.Automation
         /// <param name="maml2"></param>
         internal static void AddCommonProperties(PSObject maml1, PSObject maml2)
         {
-            if (maml1.Properties["PSSnapIn"] == null)
+            if (maml1.Properties["PSSnapIn"] is null)
             {
                 PSPropertyInfo snapInProperty = maml2.Properties["PSSnapIn"];
                 if (snapInProperty != null)
@@ -62,7 +62,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (maml1.Properties["ModuleName"] == null)
+            if (maml1.Properties["ModuleName"] is null)
             {
                 PSPropertyInfo moduleNameProperty = maml2.Properties["ModuleName"];
                 if (moduleNameProperty != null)
@@ -206,7 +206,7 @@ namespace System.Management.Automation
                     return propertyInfo;
                 }
 
-                if (propertyInfo == null || !(propertyInfo.Value is PSObject))
+                if (propertyInfo is null || !(propertyInfo.Value is PSObject))
                 {
                     return null;
                 }
@@ -302,7 +302,7 @@ namespace System.Management.Automation
                 PSPropertyInfo propertyInfo = psObject.Properties[propertyName];
 
                 // Add a property info here if none was found.
-                if (propertyInfo == null)
+                if (propertyInfo is null)
                 {
                     // Add null on the last one, since we don't need to extend path further.
                     object propertyValue = (i < path.Length - 1) ? new PSObject() : null;
@@ -317,7 +317,7 @@ namespace System.Management.Automation
                 }
 
                 // If we are not on the last path element, let's make sure we can extend the path.
-                if (propertyInfo.Value == null || !(propertyInfo.Value is PSObject))
+                if (propertyInfo.Value is null || !(propertyInfo.Value is PSObject))
                 {
                     propertyInfo.Value = new PSObject();
                 }

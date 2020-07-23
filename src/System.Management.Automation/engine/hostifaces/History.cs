@@ -287,7 +287,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentOutOfRangeException(nameof(count), count);
             }
 
-            if (newest.ToString() == null)
+            if (newest.ToString() is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(newest));
             }
@@ -329,7 +329,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (firstId <= 1) break;
                             // if entry is null , continue the loop with the next entry
-                            if (_buffer[GetIndexFromId(i)] == null) continue;
+                            if (_buffer[GetIndexFromId(i)] is null) continue;
                             if (_buffer[GetIndexFromId(i)].Cleared)
                             {
                                 // we have to clear count entries before an id, so if an entry is null,decrement
@@ -343,7 +343,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // if an entry is null after being cleared by clear-history cmdlet,
                             // continue with the next entry
-                            if (_buffer[GetIndexFromId(i)] == null || _buffer[GetIndexFromId(i)].Cleared)
+                            if (_buffer[GetIndexFromId(i)] is null || _buffer[GetIndexFromId(i)].Cleared)
                                 continue;
                             entriesList.Add(_buffer[GetIndexFromId(i)].Clone());
                         }
@@ -362,7 +362,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (firstId >= _countEntriesAdded) break;
                             // if entry is null , continue the loop with the next entry
-                            if (_buffer[GetIndexFromId(i)] == null) continue;
+                            if (_buffer[GetIndexFromId(i)] is null) continue;
                             if (_buffer[GetIndexFromId(i)].Cleared)
                             {
                                 // we have to clear count entries before an id, so if an entry is null,increment first id
@@ -375,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // if an entry is null after being cleared by clear-history cmdlet,
                             // continue with the next entry
-                            if (_buffer[GetIndexFromId(i)] == null || _buffer[GetIndexFromId(i)].Cleared)
+                            if (_buffer[GetIndexFromId(i)] is null || _buffer[GetIndexFromId(i)].Cleared)
                                 continue;
                             entriesList.Add(_buffer[GetIndexFromId(i)].Clone());
                         }
@@ -469,7 +469,7 @@ namespace Microsoft.PowerShell.Commands
                     throw PSTraceSource.NewArgumentOutOfRangeException(nameof(count), count);
                 }
 
-                if (newest.ToString() == null)
+                if (newest.ToString() is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(newest));
                 }
@@ -606,7 +606,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>Id starts from 1 and is incremented by 1 for each new entry</remarks>
         private long Add(HistoryInfo entry)
         {
-            if (entry == null)
+            if (entry is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(entry));
             }
@@ -658,7 +658,7 @@ namespace Microsoft.PowerShell.Commands
         private long SmallestIDinBuffer()
         {
             long minID = 0;
-            if (_buffer == null)
+            if (_buffer is null)
                 return minID;
             for (int i = 0; i < _buffer.Length; i++)
             {
@@ -1163,7 +1163,7 @@ namespace Microsoft.PowerShell.Commands
 
             // User didn't specify any input parameter. Invoke the last
             // entry
-            if (_id == null)
+            if (_id is null)
             {
                 HistoryInfo[] entries = history.GetEntries(0, 1, true);
 
@@ -1211,7 +1211,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (entry == null)
+                    if (entry is null)
                     {
                         Exception ex =
                             new ArgumentException
@@ -1257,7 +1257,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // Retrieve the command at the index we've specified
                         entry = history.GetEntry(_historyId);
-                        if (entry == null || entry.Id != _historyId)
+                        if (entry is null || entry.Id != _historyId)
                         {
                             Exception ex =
                                 new ArgumentException
@@ -1298,7 +1298,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void PopulateIdAndCommandLine()
         {
-            if (_id == null)
+            if (_id is null)
                 return;
 
             try
@@ -1432,20 +1432,20 @@ namespace Microsoft.PowerShell.Commands
         {
             do
             {
-                if (mshObject == null)
+                if (mshObject is null)
                 {
                     break;
                 }
                 // Read CommandLine property
                 string commandLine = GetPropertyValue(mshObject, "CommandLine") as string;
-                if (commandLine == null)
+                if (commandLine is null)
                 {
                     break;
                 }
 
                 // Read ExecutionStatus property
                 object pipelineState = GetPropertyValue(mshObject, "ExecutionStatus");
-                if (pipelineState == null)
+                if (pipelineState is null)
                 {
                     break;
                 }
@@ -1489,7 +1489,7 @@ namespace Microsoft.PowerShell.Commands
                 // Read StartExecutionTime property
                 DateTime startExecutionTime;
                 object temp = GetPropertyValue(mshObject, "StartExecutionTime");
-                if (temp == null)
+                if (temp is null)
                 {
                     break;
                 }
@@ -1516,7 +1516,7 @@ namespace Microsoft.PowerShell.Commands
                 // Read EndExecutionTime property
                 DateTime endExecutionTime;
                 temp = GetPropertyValue(mshObject, "EndExecutionTime");
-                if (temp == null)
+                if (temp is null)
                 {
                     break;
                 }
@@ -1577,7 +1577,7 @@ namespace Microsoft.PowerShell.Commands
         GetPropertyValue(PSObject mshObject, string propertyName)
         {
             PSMemberInfo propertyInfo = mshObject.Properties[propertyName];
-            if (propertyInfo == null)
+            if (propertyInfo is null)
                 return null;
             return propertyInfo.Value;
         }
@@ -1919,13 +1919,13 @@ namespace Microsoft.PowerShell.Commands
         private void ClearHistoryEntries(long id, int count, string cmdline, SwitchParameter newest)
         {
             // if cmdline is null,use default parameter set notion.
-            if (cmdline == null)
+            if (cmdline is null)
             {
                 // if id is present,clears count entries from id
                 if (id > 0)
                 {
                     HistoryInfo entry = _history.GetEntry(id);
-                    if (entry == null || entry.Id != id)
+                    if (entry is null || entry.Id != id)
                     {
                         Exception ex =
                                    new ArgumentException

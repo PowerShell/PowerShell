@@ -48,7 +48,7 @@ namespace System.Management.Automation.Tracing
         {
             get
             {
-                if (t_payloadBuilder == null)
+                if (t_payloadBuilder is null)
                 {
                     // NOTE: Thread static fields must be explicitly initialized for each thread.
                     t_payloadBuilder = new StringBuilder(200);
@@ -259,7 +259,7 @@ namespace System.Management.Automation.Tracing
                 StringBuilder payload = PayloadBuilder;
                 payload.Clear();
 
-                if (previousValue == null)
+                if (previousValue is null)
                 {
                     payload.AppendLine(StringUtil.Format(EtwLoggingStrings.SettingChangeNoPrevious, variableName, value));
                 }

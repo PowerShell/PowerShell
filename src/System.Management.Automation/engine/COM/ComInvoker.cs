@@ -138,7 +138,7 @@ namespace System.Management.Automation
         internal static object Invoke(IDispatch target, int dispId, object[] args, bool[] byRef, COM.INVOKEKIND invokeKind)
         {
             Diagnostics.Assert(target != null, "Caller makes sure an IDispatch object passed in.");
-            Diagnostics.Assert(args == null || byRef == null || args.Length == byRef.Length,
+            Diagnostics.Assert(args is null || byRef is null || args.Length == byRef.Length,
                 "If 'args' and 'byRef' are not null, then they should be one-on-one mapping.");
 
             int argCount = args != null ? args.Length : 0;
@@ -249,7 +249,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    var outerException = exceptionMsg == null
+                    var outerException = exceptionMsg is null
                                               ? new TargetInvocationException(innerException)
                                               : new TargetInvocationException(exceptionMsg, innerException);
                     throw outerException;

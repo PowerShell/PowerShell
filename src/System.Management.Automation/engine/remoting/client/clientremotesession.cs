@@ -147,7 +147,7 @@ namespace System.Management.Automation.Remoting
 
             set
             {
-                Dbg.Assert(_remoteRunspacePool == null, @"RunspacePool should be
+                Dbg.Assert(_remoteRunspacePool is null, @"RunspacePool should be
                         attached only once to the session");
                 _remoteRunspacePool = value;
             }
@@ -295,7 +295,7 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (arg == null)
+                if (arg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(arg));
                 }
@@ -450,12 +450,12 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (arg == null)
+                if (arg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(arg));
                 }
 
-                if (arg.RemoteSessionCapability == null)
+                if (arg.RemoteSessionCapability is null)
                 {
                     throw PSTraceSource.NewArgumentException(nameof(arg));
                 }

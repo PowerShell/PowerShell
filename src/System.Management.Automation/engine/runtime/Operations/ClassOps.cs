@@ -209,7 +209,7 @@ namespace System.Management.Automation.Internal
                 //              If the current thread doesn't have a default Runspace, then an InvalidOperationException will be thrown when invoking the
                 //              script block, which is expected.
                 sessionStateToUse = (SessionStateInternal)_sessionStateKeeper.GetSessionState();
-                if (sessionStateToUse == null)
+                if (sessionStateToUse is null)
                 {
                     lock (_defaultSessionStateToUse)
                     {
@@ -284,7 +284,7 @@ namespace System.Management.Automation.Internal
         {
             var validateAttributes = type.GetProperty(propertyName).GetCustomAttributes<ValidateArgumentsAttribute>();
             var executionContext = LocalPipeline.GetExecutionContextFromTLS();
-            var engineIntrinsics = executionContext == null ? null : executionContext.EngineIntrinsics;
+            var engineIntrinsics = executionContext is null ? null : executionContext.EngineIntrinsics;
             foreach (var validateAttribute in validateAttributes)
             {
                 validateAttribute.InternalValidate(value, engineIntrinsics);

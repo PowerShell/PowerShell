@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
 
             ResetTracing(_matchingSources);
 
-            if (result == null)
+            if (result is null)
             {
                 return;
             }
@@ -332,12 +332,12 @@ namespace Microsoft.PowerShell.Commands
             bool writeError,
             Collection<PSTraceSource> matchingSources)
         {
-            if (cmdlet == null)
+            if (cmdlet is null)
             {
                 throw new ArgumentNullException(nameof(cmdlet));
             }
 
-            if (matchingSources == null)
+            if (matchingSources is null)
             {
                 throw new ArgumentNullException(nameof(matchingSources));
             }

@@ -195,7 +195,7 @@ namespace System.Management.Automation
         internal static bool ModuleAnalysisViaGetModuleRequired(object modulePathObj, bool hadCmdlets, bool hadFunctions, bool hadAliases)
         {
             var modulePath = modulePathObj as string;
-            if (modulePath == null)
+            if (modulePath is null)
                 return true;
 
             if (modulePath.EndsWith(StringLiterals.PowerShellModuleFileExtension, StringComparison.OrdinalIgnoreCase))
@@ -258,7 +258,7 @@ namespace System.Management.Automation
                 }
 
                 var nestedModuleArray = nestedModules as object[];
-                if (nestedModuleArray == null)
+                if (nestedModuleArray is null)
                     return true;
 
                 foreach (var element in nestedModuleArray)
@@ -327,7 +327,7 @@ namespace System.Management.Automation
         private static ConcurrentDictionary<string, CommandTypes> AnalyzeScriptModule(string modulePath, ExecutionContext context, DateTime lastWriteTime)
         {
             var scriptAnalysis = ScriptAnalysis.Analyze(modulePath, context);
-            if (scriptAnalysis == null)
+            if (scriptAnalysis is null)
             {
                 return null;
             }
@@ -695,7 +695,7 @@ namespace System.Management.Automation
         // If anything is removed, save the cache.
         private void Cleanup()
         {
-            Diagnostics.Assert(Environment.GetEnvironmentVariable("PSDisableModuleAnalysisCacheCleanup") == null,
+            Diagnostics.Assert(Environment.GetEnvironmentVariable("PSDisableModuleAnalysisCacheCleanup") is null,
                 "Caller to check environment variable before calling");
 
             bool removedSomething = false;
@@ -1023,7 +1023,7 @@ namespace System.Management.Automation
                     entries -= 1;
                 }
 
-                if (Environment.GetEnvironmentVariable("PSDisableModuleAnalysisCacheCleanup") == null)
+                if (Environment.GetEnvironmentVariable("PSDisableModuleAnalysisCacheCleanup") is null)
                 {
                     Task.Delay(10000).ContinueWith(_ => result.Cleanup());
                 }

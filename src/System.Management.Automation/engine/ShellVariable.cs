@@ -714,7 +714,7 @@ namespace System.Management.Automation
         // make a copy if it is...
         private static object PreserveValueType(object value)
         {
-            if (value == null)
+            if (value is null)
                 return null;
 
             // Primitive types are immutable so just return them...

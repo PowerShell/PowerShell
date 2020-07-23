@@ -52,12 +52,12 @@ namespace System.Management.Automation
                 cmdlet.Context,
                 parameterBinder)
         {
-            if (cmdlet == null)
+            if (cmdlet is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(cmdlet));
             }
 
-            if (commandMetadata == null)
+            if (commandMetadata is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(commandMetadata));
             }
@@ -276,7 +276,7 @@ namespace System.Management.Automation
 
             // If this generated an exception (but we didn't have one from the non-dynamic
             // parameters, report on this one.
-            if (reportedBindingException == null)
+            if (reportedBindingException is null)
                 reportedBindingException = currentBindingException;
 
             // If the cmdlet implements a ValueFromRemainingArguments parameter (VarArgs)
@@ -417,7 +417,7 @@ namespace System.Management.Automation
                         // to a parameter depending on the current binding state.
                         PSObject arg = WrapBindingState();
                         Collection<PSObject> results = scriptBlockArg.Invoke(arg);
-                        if (results == null || results.Count == 0)
+                        if (results is null || results.Count == 0)
                         {
                             continue;
                         }
@@ -514,7 +514,7 @@ namespace System.Management.Automation
             uint currentParameterSetFlag,
             Dictionary<MergedCompiledCommandParameter, object> availableParameterValuePairs)
         {
-            if (availableParameterValuePairs == null)
+            if (availableParameterValuePairs is null)
             {
                 return null;
             }
@@ -574,7 +574,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private bool MatchAnyAlias(string aliasName)
         {
-            if (_aliasList == null)
+            if (_aliasList is null)
             {
                 return false;
             }
@@ -600,7 +600,7 @@ namespace System.Management.Automation
         /// <returns>Return the available parameter value pairs. Otherwise return null.</returns>
         private Dictionary<MergedCompiledCommandParameter, object> GetDefaultParameterValuePairs(bool needToGetAlias)
         {
-            if (DefaultParameterValues == null)
+            if (DefaultParameterValues is null)
             {
                 _useDefaultParameterBinding = false;
                 return null;
@@ -633,7 +633,7 @@ namespace System.Management.Automation
             foreach (DictionaryEntry entry in DefaultParameterValues)
             {
                 string key = entry.Key as string;
-                if (key == null)
+                if (key is null)
                 {
                     continue;
                 }
@@ -1548,7 +1548,7 @@ namespace System.Management.Automation
 
                     BoundObsoleteParameterNames.Add(parameter.Parameter.Name);
 
-                    if (ObsoleteParameterWarningList == null)
+                    if (ObsoleteParameterWarningList is null)
                         ObsoleteParameterWarningList = new List<WarningRecord>();
 
                     ObsoleteParameterWarningList.Add(warningRecord);
@@ -1577,7 +1577,7 @@ namespace System.Management.Automation
                 {
                     ParameterSetSpecificMetadata parameterSetData = parameter.Parameter.GetParameterSetData(_currentParameterSetFlag);
 
-                    if (parameterSetData == null)
+                    if (parameterSetData is null)
                     {
                         continue;
                     }
@@ -1711,7 +1711,7 @@ namespace System.Management.Automation
 
                     if (dynamicParameterCmdlet != null)
                     {
-                        if (_dynamicParameterBinder == null)
+                        if (_dynamicParameterBinder is null)
                         {
                             s_tracer.WriteLine("Getting the bindable object from the Cmdlet");
 
@@ -1799,7 +1799,7 @@ namespace System.Management.Automation
                             }
                         }
 
-                        if (_dynamicParameterBinder == null)
+                        if (_dynamicParameterBinder is null)
                         {
                             s_tracer.WriteLine("No dynamic parameter object was returned from the Cmdlet");
                             return;
@@ -2934,7 +2934,7 @@ namespace System.Management.Automation
                 {
                     // If the host interface wasn't specified or we were instructed not to prmopt, then throw
                     // an exception instead
-                    if ((Context.EngineHostInterface == null) || (!promptForMandatory))
+                    if ((Context.EngineHostInterface is null) || (!promptForMandatory))
                     {
                         Diagnostics.Assert(
                             Context.EngineHostInterface != null,
@@ -3057,7 +3057,7 @@ namespace System.Management.Automation
                 throw bindingException;
             }
 
-            if ((parameters == null) || (parameters.Count == 0))
+            if ((parameters is null) || (parameters.Count == 0))
             {
                 ParameterBinderBase.bindingTracer.WriteLine(
                     "ERROR: still missing mandatory parameters after PROMPTING");
@@ -3360,7 +3360,7 @@ namespace System.Management.Automation
                 ConsolidatedString dontuseInternalTypeNames;
                 ParameterBinderBase.bindingTracer.WriteLine(
                     "PIPELINE object TYPE = [{0}]",
-                    inputToOperateOn == null || inputToOperateOn == AutomationNull.Value
+                    inputToOperateOn is null || inputToOperateOn == AutomationNull.Value
                         ? "null"
                         : ((dontuseInternalTypeNames = inputToOperateOn.InternalTypeNames).Count > 0 && dontuseInternalTypeNames[0] != null)
                               ? dontuseInternalTypeNames[0]
@@ -3610,7 +3610,7 @@ namespace System.Management.Automation
                     invalidCast = e.InnerException as PSInvalidCastException;
                 }
 
-                if (invalidCast == null)
+                if (invalidCast is null)
                 {
                     parameterBindingException = e;
                 }
@@ -3661,7 +3661,7 @@ namespace System.Management.Automation
 
             PSMemberInfo member = inputToOperateOn.Properties[parameter.Parameter.Name];
 
-            if (member == null)
+            if (member is null)
             {
                 // Since a member matching the name of the parameter wasn't found,
                 // check the aliases.
@@ -3824,7 +3824,7 @@ namespace System.Management.Automation
                     throw bindingException;
                 }
 
-                if (output == null || output.Count == 0)
+                if (output is null || output.Count == 0)
                 {
                     ParameterBindingException bindingException =
                         new ParameterBindingException(
@@ -4043,7 +4043,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_shouldProcessParameterBinder == null)
+                if (_shouldProcessParameterBinder is null)
                 {
                     // Construct a new instance of the should process parameters object
                     ShouldProcessParameters shouldProcessParameters = new ShouldProcessParameters(_commandRuntime);
@@ -4070,7 +4070,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_pagingParameterBinder == null)
+                if (_pagingParameterBinder is null)
                 {
                     // Construct a new instance of the should process parameters object
                     PagingParameters pagingParameters = new PagingParameters(_commandRuntime);
@@ -4097,7 +4097,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_transactionParameterBinder == null)
+                if (_transactionParameterBinder is null)
                 {
                     // Construct a new instance of the transactions parameters object
                     TransactionParameters transactionParameters = new TransactionParameters(_commandRuntime);
@@ -4124,7 +4124,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_commonParametersBinder == null)
+                if (_commonParametersBinder is null)
                 {
                     // Construct a new instance of the user feedback parameters object
                     CommonParameters commonParameters = new CommonParameters(_commandRuntime);
@@ -4273,7 +4273,7 @@ namespace System.Management.Automation
         /// </exception>
         private void RestoreDefaultParameterValues(IEnumerable<MergedCompiledCommandParameter> parameters)
         {
-            if (parameters == null)
+            if (parameters is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(parameters));
             }
@@ -4283,7 +4283,7 @@ namespace System.Management.Automation
 
             foreach (MergedCompiledCommandParameter parameter in parameters)
             {
-                if (parameter == null)
+                if (parameter is null)
                 {
                     continue;
                 }
@@ -4319,7 +4319,7 @@ namespace System.Management.Automation
 
                     if (error != null)
                     {
-                        Type specifiedType = (argumentToBind.ArgumentValue == null) ? null : argumentToBind.ArgumentValue.GetType();
+                        Type specifiedType = (argumentToBind.ArgumentValue is null) ? null : argumentToBind.ArgumentValue.GetType();
                         ParameterBindingException bindingException =
                             new ParameterBindingException(
                                 error,
@@ -4407,7 +4407,7 @@ namespace System.Management.Automation
         public DefaultParameterDictionary(IDictionary dictionary)
             : this()
         {
-            if (dictionary == null)
+            if (dictionary is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(dictionary));
             }
@@ -4479,13 +4479,13 @@ namespace System.Management.Automation
         /// </summary>
         public override bool ContainsKey(object key)
         {
-            if (key == null)
+            if (key is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
             var strKey = key as string;
-            if (strKey == null) { return false; }
+            if (strKey is null) { return false; }
 
             string keyAfterTrim = strKey.Trim();
             return base.ContainsKey(keyAfterTrim);
@@ -4506,13 +4506,13 @@ namespace System.Management.Automation
         /// </summary>
         private void AddImpl(object key, object value, bool isSelfIndexing)
         {
-            if (key == null)
+            if (key is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
             var strKey = key as string;
-            if (strKey == null)
+            if (strKey is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(key), ParameterBinderStrings.StringValueKeyExpected, key, key.GetType().FullName);
             }
@@ -4555,10 +4555,10 @@ namespace System.Management.Automation
         {
             get
             {
-                if (key == null) { throw PSTraceSource.NewArgumentNullException(nameof(key)); }
+                if (key is null) { throw PSTraceSource.NewArgumentNullException(nameof(key)); }
 
                 var strKey = key as string;
-                if (strKey == null) { return null; }
+                if (strKey is null) { return null; }
 
                 string keyAfterTrim = strKey.Trim();
                 return base[keyAfterTrim];
@@ -4576,13 +4576,13 @@ namespace System.Management.Automation
         /// <param name="key">Key.</param>
         public override void Remove(object key)
         {
-            if (key == null)
+            if (key is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
             var strKey = key as string;
-            if (strKey == null) { return; }
+            if (strKey is null) { return; }
 
             string keyAfterTrim = strKey.Trim();
             if (base.ContainsKey(keyAfterTrim))

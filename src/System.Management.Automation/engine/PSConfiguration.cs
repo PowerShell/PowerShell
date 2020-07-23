@@ -388,7 +388,7 @@ namespace System.Management.Automation.Configuration
             string fileName = GetConfigFilePath(scope);
             JObject configData = configRoots[(int)scope];
 
-            if (configData == null)
+            if (configData is null)
             {
                 if (File.Exists(fileName))
                 {
@@ -487,7 +487,7 @@ namespace System.Management.Automation.Configuration
                         jsonObject = serializer.Deserialize<JObject>(jsonReader);
                         JProperty propertyToModify = jsonObject.Property(key);
 
-                        if (propertyToModify == null)
+                        if (propertyToModify is null)
                         {
                             // The property doesn't exist, so add it
                             if (addValue)

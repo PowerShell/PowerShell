@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     delegate
                     {
                         Dbg.Assert(item != null, "When OnNext is called from our IObservable, item parameter should always be != null");
-                        if (item == null)
+                        if (item is null)
                         {
                             return;
                         }

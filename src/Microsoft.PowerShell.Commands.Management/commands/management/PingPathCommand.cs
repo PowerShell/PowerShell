@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (_paths == null || _paths.Length == 0)
+            if (_paths is null || _paths.Length == 0)
             {
                 WriteError(new ErrorRecord(
                     new ArgumentNullException(TestPathResources.PathIsNullOrEmptyCollection),
@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool result = false;
 
-                if (path == null)
+                if (path is null)
                 {
                     WriteError(new ErrorRecord(
                         new ArgumentNullException(TestPathResources.PathIsNullOrEmptyCollection),

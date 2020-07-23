@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
         public static object ConvertFromJson(string input, bool returnHashtable, int? maxDepth, out ErrorRecord error)
         {
-            if (input == null)
+            if (input is null)
             {
                 throw new ArgumentNullException(nameof(input));
             }
@@ -622,7 +622,7 @@ namespace Microsoft.PowerShell.Commands
         {
             PSObject pso = psObj as PSObject;
 
-            if (pso == null)
+            if (pso is null)
             {
                 return obj;
             }
@@ -636,7 +636,7 @@ namespace Microsoft.PowerShell.Commands
             bool wasDictionary = true;
             IDictionary dict = obj as IDictionary;
 
-            if (dict == null)
+            if (dict is null)
             {
                 wasDictionary = false;
                 dict = new Dictionary<string, object>();
@@ -702,7 +702,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (DictionaryEntry entry in dict)
             {
                 string name = entry.Key as string;
-                if (name == null)
+                if (name is null)
                 {
                     // use the error string that matches the message from JavaScriptSerializer
                     string errorMsg = string.Format(

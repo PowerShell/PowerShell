@@ -144,7 +144,7 @@ namespace System.Management.Automation
         /// <summary>Public constructor for WideControl</summary>
         public WideControl(IEnumerable<WideControlEntryItem> wideEntries) : this()
         {
-            if (wideEntries == null)
+            if (wideEntries is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(wideEntries));
 
             foreach (WideControlEntryItem entryItem in wideEntries)
@@ -156,7 +156,7 @@ namespace System.Management.Automation
         /// <summary>Public constructor for WideControl</summary>
         public WideControl(IEnumerable<WideControlEntryItem> wideEntries, uint columns) : this()
         {
-            if (wideEntries == null)
+            if (wideEntries is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(wideEntries));
 
             foreach (WideControlEntryItem entryItem in wideEntries)
@@ -187,7 +187,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (EntrySelectedBy == null)
+                if (EntrySelectedBy is null)
                     EntrySelectedBy = new EntrySelectedBy { TypeNames = new List<string>() };
                 return EntrySelectedBy.TypeNames;
             }
@@ -223,7 +223,7 @@ namespace System.Management.Automation
         /// </summary>
         public WideControlEntryItem(DisplayEntry entry) : this()
         {
-            if (entry == null)
+            if (entry is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(entry));
             this.DisplayEntry = entry;
         }
@@ -233,9 +233,9 @@ namespace System.Management.Automation
         /// </summary>
         public WideControlEntryItem(DisplayEntry entry, IEnumerable<string> selectedBy) : this()
         {
-            if (entry == null)
+            if (entry is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(entry));
-            if (selectedBy == null)
+            if (selectedBy is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(selectedBy));
 
             this.DisplayEntry = entry;
@@ -244,14 +244,14 @@ namespace System.Management.Automation
 
         internal bool SafeForExport()
         {
-            return DisplayEntry.SafeForExport() && (EntrySelectedBy == null || EntrySelectedBy.SafeForExport());
+            return DisplayEntry.SafeForExport() && (EntrySelectedBy is null || EntrySelectedBy.SafeForExport());
         }
 
         internal bool CompatibleWithOldPowerShell()
         {
             // Old versions of PowerShell don't know anything about FormatString or conditions in EntrySelectedBy.
-            return FormatString == null &&
-                   (EntrySelectedBy == null || EntrySelectedBy.CompatibleWithOldPowerShell());
+            return FormatString is null &&
+                   (EntrySelectedBy is null || EntrySelectedBy.CompatibleWithOldPowerShell());
         }
     }
 

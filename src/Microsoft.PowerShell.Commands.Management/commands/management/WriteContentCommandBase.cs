@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Initialize the content
 
-            if (_content == null)
+            if (_content is null)
             {
                 _content = Array.Empty<object>();
             }

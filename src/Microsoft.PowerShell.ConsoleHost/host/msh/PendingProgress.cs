@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell
                     ProgressNode parentNode = FindNodeById(newNode.SourceId, newNode.ParentActivityId);
                     if (parentNode != null)
                     {
-                        if (parentNode.Children == null)
+                        if (parentNode.Children is null)
                         {
                             parentNode.Children = new ArrayList();
                         }
@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell
             int indexWhereFound = -1;
 
             ProgressNode oldestNode = FindOldestLeafmostNode(out listWhereFound, out indexWhereFound);
-            if (oldestNode == null)
+            if (oldestNode is null)
             {
                 // Well that's a surprise.  There's got to be at least one node there that's older than 0.
 
@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(nodes != null, "can't remove nodes from a null list");
             Dbg.Assert(indexToRemove < nodes.Count, "index is not in list");
             Dbg.Assert(nodes[indexToRemove] != null, "no node at specified index");
-            Dbg.Assert(nodeToRemove.Children == null || nodeToRemove.Children.Count == 0, "can't remove a node with children");
+            Dbg.Assert(nodeToRemove.Children is null || nodeToRemove.Children.Count == 0, "can't remove a node with children");
 #endif
 
             nodes.RemoveAt(indexToRemove);
@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(indexToRemove < nodes.Count, "index is not in list");
             Dbg.Assert(nodeToRemove != null, "no node at specified index");
 
-            if (nodeToRemove == null)
+            if (nodeToRemove is null)
             {
                 return;
             }
@@ -316,9 +316,9 @@ namespace Microsoft.PowerShell
             indexWhereFound = v.IndexWhereFound;
 
 #if DEBUG || ASSERTIONS_TRACE
-            if (v.FoundNode == null)
+            if (v.FoundNode is null)
             {
-                Dbg.Assert(listWhereFound == null, "list should be null when no node found");
+                Dbg.Assert(listWhereFound is null, "list should be null when no node found");
                 Dbg.Assert(indexWhereFound == -1, "index should indicate no node found");
                 Dbg.Assert(_topLevelNodes.Count == 0, "if there is no oldest node, then the tree must be empty");
                 Dbg.Assert(_nodeCount == 0, "if there is no oldest node, then the tree must be empty");
@@ -340,7 +340,7 @@ namespace Microsoft.PowerShell
             while (true)
             {
                 result = FindOldestLeafmostNodeHelper(treeToSearch, out listWhereFound, out indexWhereFound);
-                if (result == null || result.Children == null || result.Children.Count == 0)
+                if (result is null || result.Children is null || result.Children.Count == 0)
                 {
                     break;
                 }
@@ -442,9 +442,9 @@ namespace Microsoft.PowerShell
             indexWhereFound = v.IndexWhereFound;
 
 #if DEBUG || ASSERTIONS_TRACE
-            if (v.FoundNode == null)
+            if (v.FoundNode is null)
             {
-                Dbg.Assert(listWhereFound == null, "list should be null when no node found");
+                Dbg.Assert(listWhereFound is null, "list should be null when no node found");
                 Dbg.Assert(indexWhereFound == -1, "index should indicate no node found");
             }
 #endif
@@ -470,7 +470,7 @@ namespace Microsoft.PowerShell
         ProgressNode
         FindOldestNodeOfGivenStyle(ArrayList nodes, int oldestSoFar, ProgressNode.RenderStyle style)
         {
-            if (nodes == null)
+            if (nodes is null)
             {
                 return null;
             }
@@ -570,7 +570,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(maxWidth > 0, "maxWidth is too small");
             Dbg.Assert(maxHeight >= 3, "maxHeight is too small");
 
-            if (_topLevelNodes == null || _topLevelNodes.Count <= 0)
+            if (_topLevelNodes is null || _topLevelNodes.Count <= 0)
             {
                 // we have nothing to render.
 
@@ -639,7 +639,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(strings != null, "strings should not be null");
             Dbg.Assert(nodes != null, "nodes should not be null");
 
-            if (nodes == null)
+            if (nodes is null)
             {
                 return;
             }
@@ -729,7 +729,7 @@ namespace Microsoft.PowerShell
         bool
         AllNodesHaveGivenStyle(ArrayList nodes, ProgressNode.RenderStyle style)
         {
-            if (nodes == null)
+            if (nodes is null)
             {
                 return false;
             }
@@ -841,7 +841,7 @@ namespace Microsoft.PowerShell
             while (true)
             {
                 ProgressNode node = FindOldestNodeOfGivenStyle(_topLevelNodes, age, priorStyle);
-                if (node == null)
+                if (node is null)
                 {
                     // We've compressed every node of the prior style already.
 
@@ -992,7 +992,7 @@ namespace Microsoft.PowerShell
             void
             VisitNodes(ArrayList nodes, NodeVisitor v)
             {
-                if (nodes == null)
+                if (nodes is null)
                 {
                     return;
                 }

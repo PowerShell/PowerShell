@@ -96,11 +96,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _typeInfoDataBase = this.OuterCmdlet().Context.FormatDBManager.GetTypeInfoDataBase();
 
             PSObject so = this.ReadObject();
-            if (so == null || so == AutomationNull.Value)
+            if (so is null || so == AutomationNull.Value)
                 return;
 
             IEnumerable e = PSObjectHelper.GetEnumerable(so);
-            if (e == null)
+            if (e is null)
             {
                 ProcessObject(so);
                 return;
@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                if (_shape == FormatShape.Undefined || _parameters == null)
+                if (_shape == FormatShape.Undefined || _parameters is null)
                 {
                     return true;
                 }
@@ -390,7 +390,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private void WriteErrorRecords(List<ErrorRecord> errorRecordList)
         {
-            if (errorRecordList == null)
+            if (errorRecordList is null)
                 return;
 
             // NOTE: for the time being we directly process error records.

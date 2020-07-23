@@ -126,7 +126,7 @@ namespace System.Management.Automation.Runspaces
             : this(pipeline.Runspace, null, false, pipeline.IsNested)
         {
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
-            if (pipeline == null)
+            if (pipeline is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(pipeline));
             }
@@ -473,7 +473,7 @@ namespace System.Management.Automation.Runspaces
                     throw PSTraceSource.NewObjectDisposedException("pipeline");
                 }
 
-                if (Commands == null || Commands.Count == 0)
+                if (Commands is null || Commands.Count == 0)
                 {
                     throw PSTraceSource.NewInvalidOperationException(
                             RunspaceStrings.NoCommandInPipeline);
@@ -618,7 +618,7 @@ namespace System.Management.Automation.Runspaces
 
             if (IsNested == false)
             {
-                if (currentPipeline == null)
+                if (currentPipeline is null)
                 {
                     return;
                 }
@@ -669,7 +669,7 @@ namespace System.Management.Automation.Runspaces
                                 RunspaceStrings.NestedPipelineInvokeAsync);
                     }
 
-                    if (currentPipeline == null)
+                    if (currentPipeline is null)
                     {
                         if (this.IsChild)
                         {
@@ -995,7 +995,7 @@ namespace System.Management.Automation.Runspaces
 
             _isNested = isNested;
 
-            if (addToHistory && command == null)
+            if (addToHistory && command is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }

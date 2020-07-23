@@ -126,9 +126,9 @@ namespace System.Management.Automation
             if (string.IsNullOrEmpty(Target)
                 && HelpCategory == HelpCategory.None
                 && string.IsNullOrEmpty(Provider)
-                && Component == null
-                && Role == null
-                && Functionality == null
+                && Component is null
+                && Role is null
+                && Functionality is null
             )
             {
                 Target = "default";
@@ -152,7 +152,7 @@ namespace System.Management.Automation
 
             // if either of component/role/functionality is specified then look in the
             // following help categories
-            if ((!(Component == null && Role == null && Functionality == null)) &&
+            if ((!(Component is null && Role is null && Functionality is null)) &&
                 (HelpCategory == HelpCategory.None))
             {
                 HelpCategory = HelpCategory.Alias | HelpCategory.Cmdlet | HelpCategory.Function | HelpCategory.Filter | HelpCategory.ExternalScript | HelpCategory.ScriptCommand;

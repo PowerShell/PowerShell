@@ -670,7 +670,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 this.options = new CimOperationOptions(operOptions);
             }
-            else if (this.options == null)
+            else if (this.options is null)
             {
                 this.options = new CimOperationOptions();
             }
@@ -735,7 +735,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     this.operation = null;
                 }
 
-                if (this.session != null && this.ContextObject == null)
+                if (this.session != null && this.ContextObject is null)
                 {
                     DebugHelper.WriteLog("Dispose this proxy object @ RemoveOperation");
                     this.Dispose();
@@ -1049,7 +1049,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="o"></param>
         private static void AddShowComputerNameMarker(object o)
         {
-            if (o == null)
+            if (o is null)
             {
                 return;
             }
@@ -1547,7 +1547,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         private bool Completed
         {
-            get { return this.operation == null; }
+            get { return this.operation is null; }
         }
 
         /// <summary>
@@ -1918,7 +1918,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         private void AssertSession()
         {
-            if (this.IsDisposed || (this.session == null))
+            if (this.IsDisposed || (this.session is null))
             {
                 DebugHelper.WriteLogEx("Invalid CimSessionProxy object, disposed? {0}; session object {1}", 1, this.IsDisposed, this.session);
                 throw new ObjectDisposedException(this.ToString());
@@ -2094,7 +2094,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             CimWriteResultObject writeResultObject = args.Action as CimWriteResultObject;
             CimClass cimClass = writeResultObject.Result as CimClass;
-            if (cimClass == null)
+            if (cimClass is null)
             {
                 return true;
             }
@@ -2248,7 +2248,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             CimWriteResultObject writeResultObject = args.Action as CimWriteResultObject;
             CimInstance cimInstance = writeResultObject.Result as CimInstance;
-            if (cimInstance == null)
+            if (cimInstance is null)
             {
                 return true;
             }

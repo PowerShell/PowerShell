@@ -603,7 +603,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (_value1 == null)
+            if (_value1 is null)
             {
                 ThrowTerminatingError(NewError("ValueShouldBeSpecified", UpdateDataStrings.ShouldNotBeNull, null, "Value", _memberType));
             }
@@ -619,7 +619,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void EnsureValue1AndValue2AreNotBothNull()
         {
-            if (_value1 == null && _value2 == null)
+            if (_value1 is null && _value2 is null)
             {
                 ThrowTerminatingError(NewError("ValueAndSecondValueAreNotBothNull", UpdateDataStrings.Value1AndValue2AreNotBothNull, null, _memberType));
             }
@@ -633,10 +633,10 @@ namespace Microsoft.PowerShell.Commands
         private bool EnsureTypeDataIsNotEmpty(TypeData typeData)
         {
             if (typeData.Members.Count == 0 && typeData.StandardMembers.Count == 0
-                && typeData.TypeConverter == null && typeData.TypeAdapter == null
-                && typeData.DefaultDisplayPropertySet == null
-                && typeData.DefaultKeyPropertySet == null
-                && typeData.PropertySerializationSet == null)
+                && typeData.TypeConverter is null && typeData.TypeAdapter is null
+                && typeData.DefaultDisplayPropertySet is null
+                && typeData.DefaultKeyPropertySet is null
+                && typeData.PropertySerializationSet is null)
             {
                 this.WriteError(NewError("TypeDataEmpty", UpdateDataStrings.TypeDataEmpty, null, typeData.TypeName));
                 return false;
@@ -1127,7 +1127,7 @@ namespace Microsoft.PowerShell.Commands
                     for (int index = 0; index < Context.InitialSessionState.Types.Count; index++)
                     {
                         string fileName = Context.InitialSessionState.Types[index].FileName;
-                        if (fileName == null) { continue; }
+                        if (fileName is null) { continue; }
 
                         // Resolving the file path because the path to the types file in module manifest is now specified as
                         // ..\..\types.ps1xml which expands to C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Core\..\..\types.ps1xml
@@ -1286,7 +1286,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ValidateTypeName()
         {
-            if (TypeName == null)
+            if (TypeName is null)
             {
                 _filter = new WildcardPattern[] { WildcardPattern.Get("*", WildcardOptions.None) };
                 return;

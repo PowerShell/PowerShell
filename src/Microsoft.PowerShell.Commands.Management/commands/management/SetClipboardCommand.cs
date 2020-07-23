@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string setClipboardShouldProcessTarget;
 
-            if ((contentList == null || contentList.Count == 0) && !append)
+            if ((contentList is null || contentList.Count == 0) && !append)
             {
                 setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.ClipboardCleared);
                 if (ShouldProcess(setClipboardShouldProcessTarget, "Set-Clipboard"))

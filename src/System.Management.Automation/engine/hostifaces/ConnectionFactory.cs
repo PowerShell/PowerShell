@@ -60,7 +60,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         public static Runspace CreateRunspace(PSHost host)
         {
-            if (host == null)
+            if (host is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
@@ -83,7 +83,7 @@ namespace System.Management.Automation.Runspaces
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         public static Runspace CreateRunspace(InitialSessionState initialSessionState)
         {
-            if (initialSessionState == null)
+            if (initialSessionState is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
@@ -114,12 +114,12 @@ namespace System.Management.Automation.Runspaces
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         public static Runspace CreateRunspace(PSHost host, InitialSessionState initialSessionState)
         {
-            if (host == null)
+            if (host is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
-            if (initialSessionState == null)
+            if (initialSessionState is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
@@ -148,12 +148,12 @@ namespace System.Management.Automation.Runspaces
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         internal static Runspace CreateRunspaceFromSessionStateNoClone(PSHost host, InitialSessionState initialSessionState)
         {
-            if (host == null)
+            if (host is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
-            if (initialSessionState == null)
+            if (initialSessionState is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }

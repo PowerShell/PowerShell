@@ -598,10 +598,10 @@ namespace System.Management.Automation.Language
                             if (paramAst is TypeConstraintAst)
                             {
                                 countConverts += 1;
-                                if (type == null)
+                                if (type is null)
                                 {
                                     type = paramAst.TypeName.GetReflectionType();
-                                    if (type == null)
+                                    if (type is null)
                                     {
                                         anyUnresolvedTypes = true;
                                     }
@@ -610,7 +610,7 @@ namespace System.Management.Automation.Language
                             else
                             {
                                 var attrType = paramAst.TypeName.GetReflectionAttributeType();
-                                if (attrType == null)
+                                if (attrType is null)
                                 {
                                     anyUnresolvedTypes = true;
                                 }
@@ -852,7 +852,7 @@ namespace System.Management.Automation.Language
             if (varPath.IsAnyLocal())
             {
                 var varName = GetUnaliasedVariableName(varPath);
-                if (convertType == null &&
+                if (convertType is null &&
                     (varName.Equals(SpecialVariables.@foreach, StringComparison.OrdinalIgnoreCase) ||
                      varName.Equals(SpecialVariables.@switch, StringComparison.OrdinalIgnoreCase)))
                 {
@@ -891,13 +891,13 @@ namespace System.Management.Automation.Language
             }
 
             var type = analysisDetails.Type;
-            if (type == null)
+            if (type is null)
             {
                 analysisDetails.Type = convertType ?? typeof(object);
             }
             else
             {
-                if (!assignedBitArray[analysisDetails.BitIndex] && convertType == null)
+                if (!assignedBitArray[analysisDetails.BitIndex] && convertType is null)
                 {
                     // The variable has not been assigned in the current flow control path, but has been on some other
                     // path (because the type was already assigned.)  Make sure they are compatible by forcing a type comparison.
@@ -1027,7 +1027,7 @@ namespace System.Management.Automation.Language
         {
             Block afterStmt = new Block();
 
-            if (ifStmtAst.ElseClause == null)
+            if (ifStmtAst.ElseClause is null)
             {
                 // There is no else, flow can go straight to afterStmt.
                 _currentBlock.FlowsTo(afterStmt);
@@ -1037,7 +1037,7 @@ namespace System.Management.Automation.Language
             for (int i = 0; i < clauseCount; i++)
             {
                 var clause = ifStmtAst.Clauses[i];
-                bool isLastClause = (i == (clauseCount - 1) && ifStmtAst.ElseClause == null);
+                bool isLastClause = (i == (clauseCount - 1) && ifStmtAst.ElseClause is null);
                 Block clauseBlock = new Block();
                 Block nextBlock = isLastClause ? afterStmt : new Block();
 
@@ -1351,7 +1351,7 @@ namespace System.Management.Automation.Language
             tryStatementAst.Body.Accept(this);
 
             Block lastBlockInTry = _currentBlock;
-            var finallyFirstBlock = tryStatementAst.Finally == null ? null : new Block();
+            var finallyFirstBlock = tryStatementAst.Finally is null ? null : new Block();
             Block finallyLastBlock = null;
 
             // This is the first block after all the catches and finally (if present).
@@ -1432,7 +1432,7 @@ namespace System.Management.Automation.Language
                 targetBlock = fieldSelector(_loopTargets.Last());
             }
 
-            if (targetBlock == null)
+            if (targetBlock is null)
             {
                 // We need to report an error about bad break statement here
                 _currentBlock.FlowsTo(_exitBlock);
@@ -1535,7 +1535,7 @@ namespace System.Management.Automation.Language
                 {
                     convertCount += 1;
                     convertAst = leftAst as ConvertExpressionAst;
-                    if (convertAst == null)
+                    if (convertAst is null)
                     {
                         anyAttributes = true;
                     }
@@ -1552,7 +1552,7 @@ namespace System.Management.Automation.Language
                     // We don't handle them at all in the variable analysis.
 
                     if (anyAttributes || convertCount > 1 ||
-                        (convertAst != null && convertAst.Type.TypeName.GetReflectionType() == null))
+                        (convertAst != null && convertAst.Type.TypeName.GetReflectionType() is null))
                     {
                         var varPath = ((VariableExpressionAst)leftAst).VariablePath;
                         if (varPath.IsAnyLocal())

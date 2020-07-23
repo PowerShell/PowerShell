@@ -188,7 +188,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Context == null) return SessionStateEntryVisibility.Public;
+                if (Context is null) return SessionStateEntryVisibility.Public;
 
                 return Context.EngineSessionState.CheckScriptVisibility(_path);
             }
@@ -203,7 +203,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_scriptBlock == null)
+                if (_scriptBlock is null)
                 {
                     // Skip ShouldRun check for .psd1 files.
                     // Use ValidateScriptInfo() for explicitly validating the checkpolicy for psd1 file.
@@ -262,7 +262,7 @@ namespace System.Management.Automation
         internal ScriptBlockAst GetScriptBlockAst()
         {
             var scriptContents = ScriptContents;
-            if (_scriptBlock == null)
+            if (_scriptBlock is null)
             {
                 this.ScriptBlock = ScriptBlock.TryGetCachedScriptBlock(_path, scriptContents);
             }
@@ -272,7 +272,7 @@ namespace System.Management.Automation
                 return (ScriptBlockAst)_scriptBlock.Ast;
             }
 
-            if (_scriptBlockAst == null)
+            if (_scriptBlockAst is null)
             {
                 ParseError[] errors;
                 Parser parser = new Parser();
@@ -403,7 +403,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredApplicationId;
+                return data is null ? null : data.RequiredApplicationId;
             }
         }
 
@@ -417,7 +417,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredPSVersion;
+                return data is null ? null : data.RequiredPSVersion;
             }
         }
 
@@ -426,7 +426,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredPSEditions;
+                return data is null ? null : data.RequiredPSEditions;
             }
         }
 
@@ -435,7 +435,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredModules;
+                return data is null ? null : data.RequiredModules;
             }
         }
 
@@ -444,7 +444,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? false : data.IsElevationRequired;
+                return data is null ? false : data.IsElevationRequired;
             }
         }
 
@@ -458,7 +458,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiresPSSnapIns;
+                return data is null ? null : data.RequiresPSSnapIns;
             }
         }
 
@@ -469,7 +469,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_scriptContents == null)
+                if (_scriptContents is null)
                 {
                     ReadScriptContents();
                 }
@@ -487,7 +487,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_scriptContents == null)
+                if (_scriptContents is null)
                 {
                     ReadScriptContents();
                 }
@@ -500,7 +500,7 @@ namespace System.Management.Automation
 
         private void ReadScriptContents()
         {
-            if (_scriptContents == null)
+            if (_scriptContents is null)
             {
                 // make sure we can actually load the script and that it's non-empty
                 // before we call it.

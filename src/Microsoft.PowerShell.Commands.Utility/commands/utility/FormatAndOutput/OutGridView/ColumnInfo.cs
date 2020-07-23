@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         internal static object LimitString(object src)
         {
             string srcString = src as string;
-            if (srcString == null)
+            if (srcString is null)
             {
                 return src;
             }

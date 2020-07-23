@@ -113,7 +113,7 @@ namespace Microsoft.WSMan.Management
         {
             WSManHelper helper = new WSManHelper(this);
             IWSManSession m_SessionObj = CreateWSManSession();
-            if (m_SessionObj == null)
+            if (m_SessionObj is null)
             {
                 return;
             }
@@ -127,7 +127,7 @@ namespace Microsoft.WSMan.Management
                 XmlNamespaceManager nsmgr = new XmlNamespaceManager(resultopxml.NameTable);
                 nsmgr.AddNamespace("cfg", helper.CredSSP_XMLNmsp);
                 XmlNode xNode = resultopxml.SelectSingleNode(helper.CredSSP_SNode, nsmgr);
-                if (!(xNode == null))
+                if (!(xNode is null))
                 {
                     inputXml = @"<cfg:Auth xmlns:cfg=""http://schemas.microsoft.com/wbem/wsman/1/config/client/auth""><cfg:CredSSP>false</cfg:CredSSP></cfg:Auth>";
                 }
@@ -180,7 +180,7 @@ namespace Microsoft.WSMan.Management
         {
             WSManHelper helper = new WSManHelper(this);
             IWSManSession m_SessionObj = CreateWSManSession();
-            if (m_SessionObj == null)
+            if (m_SessionObj is null)
             {
                 return;
             }
@@ -195,7 +195,7 @@ namespace Microsoft.WSMan.Management
                 XmlNamespaceManager nsmgr = new XmlNamespaceManager(resultopxml.NameTable);
                 nsmgr.AddNamespace("cfg", helper.Service_CredSSP_XMLNmsp);
                 XmlNode xNode = resultopxml.SelectSingleNode(helper.CredSSP_SNode, nsmgr);
-                if (!(xNode == null))
+                if (!(xNode is null))
                 {
                     inputXml = string.Format(CultureInfo.InvariantCulture,
                         @"<cfg:Auth xmlns:cfg=""{0}""><cfg:CredSSP>false</cfg:CredSSP></cfg:Auth>",
@@ -459,7 +459,7 @@ namespace Microsoft.WSMan.Management
             }
 
             // DelegateComputer must be specified when Role is client
-            if (Role.Equals(Client, StringComparison.OrdinalIgnoreCase) && (delegatecomputer == null))
+            if (Role.Equals(Client, StringComparison.OrdinalIgnoreCase) && (delegatecomputer is null))
             {
                 string message = helper.FormatResourceMsgFromResourcetext("CredSSPClientAndDelegateMustBeSpecified",
                     "DelegateComputer",
@@ -496,7 +496,7 @@ namespace Microsoft.WSMan.Management
             }
 
             IWSManSession m_SessionObj = CreateWSManSession();
-            if (m_SessionObj == null)
+            if (m_SessionObj is null)
             {
                 return;
             }
@@ -507,7 +507,7 @@ namespace Microsoft.WSMan.Management
                 string result = m_SessionObj.Get(helper.CredSSP_RUri, 0);
                 XmlNode node = helper.GetXmlNode(result, helper.CredSSP_SNode, helper.CredSSP_XMLNmsp);
 
-                if (node == null)
+                if (node is null)
                 {
                     InvalidOperationException ex = new InvalidOperationException();
                     ErrorRecord er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
@@ -574,7 +574,7 @@ namespace Microsoft.WSMan.Management
             }
 
             IWSManSession m_SessionObj = CreateWSManSession();
-            if (m_SessionObj == null)
+            if (m_SessionObj is null)
             {
                 return;
             }
@@ -587,7 +587,7 @@ namespace Microsoft.WSMan.Management
                     helper.CredSSP_SNode,
                     helper.Service_CredSSP_XMLNmsp);
 
-                if (node == null)
+                if (node is null)
                 {
                     InvalidOperationException ex = new InvalidOperationException();
                     ErrorRecord er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
@@ -825,7 +825,7 @@ namespace Microsoft.WSMan.Management
                 m_SessionObj = (IWSManSession)wsmanObject.CreateSession(null, 0, null);
                 string result = m_SessionObj.Get(helper.CredSSP_RUri, 0);
                 XmlNode node = helper.GetXmlNode(result, helper.CredSSP_SNode, helper.CredSSP_XMLNmsp);
-                if (node == null)
+                if (node is null)
                 {
                     InvalidOperationException ex = new InvalidOperationException();
                     ErrorRecord er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
@@ -848,7 +848,7 @@ namespace Microsoft.WSMan.Management
                 // Get the server side settings
                 result = m_SessionObj.Get(helper.Service_CredSSP_Uri, 0);
                 node = helper.GetXmlNode(result, helper.CredSSP_SNode, helper.Service_CredSSP_XMLNmsp);
-                if (node == null)
+                if (node is null)
                 {
                     InvalidOperationException ex = new InvalidOperationException();
                     ErrorRecord er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);

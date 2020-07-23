@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Cim
                 _string = new string('\0', numberOfCharacters);
 
                 Debug.Assert(
-                    string.IsInterned(_string) == null,
+                    string.IsInterned(_string) is null,
                     "We will overwrite string contents - we can't / shouldn't do this for interned strings.");
 
                 /* The string is pinned (while still being filled with insignificant data)
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Cim
             /// </summary>
             private void Dispose(bool disposing)
             {
-                if (_string == null)
+                if (_string is null)
                 {
                     return;
                 }
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Cim
 
         internal object ConvertFromDotNetToCim(object dotNetObject)
         {
-            if (dotNetObject == null)
+            if (dotNetObject is null)
             {
                 return null;
             }
@@ -236,7 +236,7 @@ namespace Microsoft.PowerShell.Cim
         /// <exception cref="PSInvalidCastException">The only kind of exception this method can throw.</exception>
         internal static object ConvertFromDotNetToCim(object dotNetObject)
         {
-            if (dotNetObject == null)
+            if (dotNetObject is null)
             {
                 return null;
             }
@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Cim
             if (typeof(PSReference).IsAssignableFrom(dotNetType))
             {
                 PSReference psReference = (PSReference)psObject.BaseObject;
-                if (psReference.Value == null)
+                if (psReference.Value is null)
                 {
                     return null;
                 }
@@ -352,9 +352,9 @@ namespace Microsoft.PowerShell.Cim
         /// <exception cref="PSInvalidCastException">The only kind of exception this method can throw.</exception>
         internal static object ConvertFromCimToDotNet(object cimObject, Type expectedDotNetType)
         {
-            if (expectedDotNetType == null) { throw new ArgumentNullException(nameof(expectedDotNetType)); }
+            if (expectedDotNetType is null) { throw new ArgumentNullException(nameof(expectedDotNetType)); }
 
-            if (cimObject == null)
+            if (cimObject is null)
             {
                 return null;
             }

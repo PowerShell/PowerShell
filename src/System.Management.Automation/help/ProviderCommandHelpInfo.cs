@@ -29,7 +29,7 @@ namespace System.Management.Automation
             // Now pick which help we should show.
             MamlCommandHelpInfo providerSpecificHelpInfo =
                 providerContext.GetProviderSpecificHelpInfo(genericHelpInfo.Name);
-            if (providerSpecificHelpInfo == null)
+            if (providerSpecificHelpInfo is null)
             {
                 _helpInfo = genericHelpInfo;
             }

@@ -331,7 +331,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx("value = {0}.", 1, value);
             // do not allow null value
-            if (value == null)
+            if (value is null)
             {
                 return;
             }

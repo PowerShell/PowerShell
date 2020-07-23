@@ -30,7 +30,7 @@ namespace System.Management.Automation.Internal
                 var diagnosticsTracingAssembly = typeof(EventSource).Assembly;
 
                 Type eventSourceSettingsType = diagnosticsTracingAssembly.GetType("System.Diagnostics.Tracing.EventSourceSettings");
-                if (eventSourceSettingsType == null)
+                if (eventSourceSettingsType is null)
                 {
                     // Probably on CLR 4.5.
                     return;

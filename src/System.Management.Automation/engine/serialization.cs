@@ -216,12 +216,12 @@ namespace System.Management.Automation
         /// <param name="context">Serialization context.</param>
         internal Serializer(XmlWriter writer, SerializationContext context)
         {
-            if (writer == null)
+            if (writer is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(writer));
             }
 
-            if (context == null)
+            if (context is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(context));
             }
@@ -482,7 +482,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Deserializer(XmlReader reader, DeserializationContext context)
         {
-            if (reader == null)
+            if (reader is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(reader));
             }
@@ -664,12 +664,12 @@ namespace System.Management.Automation
         /// <returns><c>true</c> if <paramref name="o"/> is either a live or deserialized instance of class <paramref name="type"/> or one of its subclasses;  <c>false</c> otherwise.</returns>
         internal static bool IsInstanceOfType(object o, Type type)
         {
-            if (type == null)
+            if (type is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
-            if (o == null)
+            if (o is null)
             {
                 return false;
             }
@@ -685,12 +685,12 @@ namespace System.Management.Automation
         /// <returns><c>true</c> if <paramref name="o"/> is a deserialized instance of class <paramref name="type"/> or one of its subclasses;  <c>false</c> otherwise.</returns>
         internal static bool IsDeserializedInstanceOfType(object o, Type type)
         {
-            if (type == null)
+            if (type is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
-            if (o == null)
+            if (o is null)
             {
                 return false;
             }
@@ -719,7 +719,7 @@ namespace System.Management.Automation
 
         internal static string MaskDeserializationPrefix(string typeName)
         {
-            if (typeName == null)
+            if (typeName is null)
             {
                 return null;
             }
@@ -941,7 +941,7 @@ namespace System.Management.Automation
             Dbg.Assert(depth >= 0, "depth should always be greater or equal to zero");
             this.CheckIfStopping();
 
-            if (source == null)
+            if (source is null)
             {
                 WriteNull(streamName, property);
                 return;
@@ -1495,7 +1495,7 @@ namespace System.Management.Automation
             }
 
             bool writeToString = true;
-            if (mshSource.ToStringFromDeserialization == null) // continue to write ToString from deserialized objects, but...
+            if (mshSource.ToStringFromDeserialization is null) // continue to write ToString from deserialized objects, but...
             {
                 if (mshSource.ImmediateBaseObjectIsEmpty) // ... don't write ToString for property bags
                 {
@@ -1683,7 +1683,7 @@ namespace System.Management.Automation
                 if (typeNames.Count > 0)
                 {
                     string typeNameHierarchyReferenceId = _typeRefIdHandler.GetRefId(typeNames);
-                    if (typeNameHierarchyReferenceId == null)
+                    if (typeNameHierarchyReferenceId is null)
                     {
                         WriteStartElement(SerializationStrings.TypeNamesTag);
 
@@ -1920,7 +1920,7 @@ namespace System.Management.Automation
             Dbg.Assert(source != null, "caller should validate the information");
 
             IEnumerable<PSMemberInfo> extendedMembersEnumerable = null;
-            if (specificPropertiesToSerialize == null)
+            if (specificPropertiesToSerialize is null)
             {
                 // Get only extended members including hidden members from the psobect source.
                 PSMemberInfoIntegratingCollection<PSMemberInfo> membersToSearch =
@@ -1983,7 +1983,7 @@ namespace System.Management.Automation
             foreach (PSMemberInfo info in propertyCollection)
             {
                 PSProperty prop = info as PSProperty;
-                if (prop == null)
+                if (prop is null)
                 {
                     continue;
                 }
@@ -2163,7 +2163,7 @@ namespace System.Management.Automation
                     }
 
                     Dbg.Assert(key != null, "Dictionary keys should never be null");
-                    if (key == null) break;
+                    if (key is null) break;
 
                     WriteStartElement(SerializationStrings.DictionaryEntryTag);
                     WriteOneObject(key, null, SerializationStrings.DictionaryKey, depth);
@@ -2286,7 +2286,7 @@ namespace System.Management.Automation
             Dbg.Assert(source != null, "Caller should verify source != null");
 
             PSObject pso = PSObject.AsPSObject(source);
-            if (pso == null)
+            if (pso is null)
             {
                 return depth;
             }
@@ -2427,7 +2427,7 @@ namespace System.Management.Automation
             Dbg.Assert(source != null, "caller should have validated the information");
             Dbg.Assert(entry != null, "caller should have validated the information");
 
-            if (entry.Serializer == null)
+            if (entry.Serializer is null)
             {
                 // we are not using GetToString, because we assume that
                 // ToString() for primitive types never throws
@@ -3132,13 +3132,13 @@ namespace System.Management.Automation
             {
                 string refId = _reader.GetAttribute(SerializationStrings.ReferenceIdAttribute);
 
-                if (refId == null)
+                if (refId is null)
                 {
                     throw NewXmlException(Serialization.AttributeExpected, null, SerializationStrings.ReferenceIdAttribute);
                 }
 
                 object duplicate = _objectRefIdHandler.GetReferencedObject(refId);
-                if (duplicate == null)
+                if (duplicate is null)
                 {
                     throw NewXmlException(Serialization.InvalidReferenceId, null, refId);
                 }
@@ -3217,7 +3217,7 @@ namespace System.Management.Automation
             }
 
             CimProperty cimProperty = cimInstance.CimInstanceProperties[deserializedProperty.Name];
-            if (cimProperty == null)
+            if (cimProperty is null)
             {
                 return false;
             }
@@ -3229,13 +3229,13 @@ namespace System.Management.Automation
                 PSObject psoPropertyValue = PSObject.AsPSObject(propertyValue);
                 if (psoPropertyValue.BaseObject is ArrayList)
                 {
-                    if ((psoPropertyValue.InternalTypeNames == null) || (psoPropertyValue.InternalTypeNames.Count == 0))
+                    if ((psoPropertyValue.InternalTypeNames is null) || (psoPropertyValue.InternalTypeNames.Count == 0))
                     {
                         return false;
                     }
 
                     string originalArrayTypeName = Deserializer.MaskDeserializationPrefix(psoPropertyValue.InternalTypeNames[0]);
-                    if (originalArrayTypeName == null)
+                    if (originalArrayTypeName is null)
                     {
                         return false;
                     }
@@ -3302,13 +3302,13 @@ namespace System.Management.Automation
 
         private CimClass RehydrateCimClass(PSPropertyInfo classMetadataProperty)
         {
-            if ((classMetadataProperty == null) || (classMetadataProperty.Value == null))
+            if ((classMetadataProperty is null) || (classMetadataProperty.Value is null))
             {
                 return null;
             }
 
             IEnumerable deserializedClasses = LanguagePrimitives.GetEnumerable(classMetadataProperty.Value);
-            if (deserializedClasses == null)
+            if (deserializedClasses is null)
             {
                 return null;
             }
@@ -3324,7 +3324,7 @@ namespace System.Management.Automation
             {
                 parentClass = currentClass;
 
-                if (deserializedClass == null)
+                if (deserializedClass is null)
                 {
                     return null;
                 }
@@ -3332,7 +3332,7 @@ namespace System.Management.Automation
                 PSObject psoDeserializedClass = PSObject.AsPSObject(deserializedClass);
 
                 PSPropertyInfo namespaceProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimNamespaceProperty] as PSPropertyInfo;
-                if (namespaceProperty == null)
+                if (namespaceProperty is null)
                 {
                     return null;
                 }
@@ -3340,7 +3340,7 @@ namespace System.Management.Automation
                 string cimNamespace = namespaceProperty.Value as string;
 
                 PSPropertyInfo classNameProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimClassNameProperty] as PSPropertyInfo;
-                if (classNameProperty == null)
+                if (classNameProperty is null)
                 {
                     return null;
                 }
@@ -3348,7 +3348,7 @@ namespace System.Management.Automation
                 string cimClassName = classNameProperty.Value as string;
 
                 PSPropertyInfo computerNameProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimServerNameProperty] as PSPropertyInfo;
-                if (computerNameProperty == null)
+                if (computerNameProperty is null)
                 {
                     return null;
                 }
@@ -3356,13 +3356,13 @@ namespace System.Management.Automation
                 string computerName = computerNameProperty.Value as string;
 
                 PSPropertyInfo hashCodeProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimHashCodeProperty] as PSPropertyInfo;
-                if (hashCodeProperty == null)
+                if (hashCodeProperty is null)
                 {
                     return null;
                 }
 
                 var hashCodeObject = hashCodeProperty.Value;
-                if (hashCodeObject == null)
+                if (hashCodeObject is null)
                 {
                     return null;
                 }
@@ -3387,7 +3387,7 @@ namespace System.Management.Automation
                 }
 
                 PSPropertyInfo miXmlProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimMiXmlProperty] as PSPropertyInfo;
-                if ((miXmlProperty == null) || (miXmlProperty.Value == null))
+                if ((miXmlProperty is null) || (miXmlProperty.Value is null))
                 {
                     return null;
                 }
@@ -3433,7 +3433,7 @@ namespace System.Management.Automation
 
             PSPropertyInfo classMetadataProperty = deserializedObject.InstanceMembers[CimClassMetadataProperty] as PSPropertyInfo;
             CimClass cimClass = RehydrateCimClass(classMetadataProperty);
-            if (cimClass == null)
+            if (cimClass is null)
             {
                 return deserializedObject;
             }
@@ -3474,7 +3474,7 @@ namespace System.Management.Automation
                 foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.AdaptedMembers)
                 {
                     PSPropertyInfo deserializedProperty = deserializedMemberInfo as PSPropertyInfo;
-                    if (deserializedProperty == null)
+                    if (deserializedProperty is null)
                     {
                         continue;
                     }
@@ -3495,7 +3495,7 @@ namespace System.Management.Automation
             foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.InstanceMembers)
             {
                 PSPropertyInfo deserializedProperty = deserializedMemberInfo as PSPropertyInfo;
-                if (deserializedProperty == null)
+                if (deserializedProperty is null)
                 {
                     continue;
                 }
@@ -3548,7 +3548,7 @@ namespace System.Management.Automation
 
                 bool isKnownPrimitiveType;
                 object result = ReadOneDeserializedObject(out streamName, out isKnownPrimitiveType);
-                if (result == null)
+                if (result is null)
                 {
                     return null;
                 }
@@ -3595,7 +3595,7 @@ namespace System.Management.Automation
                                                   mshSource.InternalTypeNames.Key,
                                                   targetType.FullName,
                                                   rehydrationException.ToString(),
-                                                  rehydrationException.InnerException == null
+                                                  rehydrationException.InnerException is null
                                                       ? string.Empty
                                                       : rehydrationException.InnerException.ToString());
                     }
@@ -3787,13 +3787,13 @@ namespace System.Management.Automation
             {
                 string refId = _reader.GetAttribute(SerializationStrings.ReferenceIdAttribute);
                 s_trace.WriteLine("Processing TypeNamesReferenceTag with refId {0}", refId);
-                if (refId == null)
+                if (refId is null)
                 {
                     throw NewXmlException(Serialization.AttributeExpected, null, SerializationStrings.ReferenceIdAttribute);
                 }
 
                 ConsolidatedString typeNames = _typeRefIdHandler.GetReferencedObject(refId);
-                if (typeNames == null)
+                if (typeNames is null)
                 {
                     throw NewXmlException(Serialization.InvalidTypeHierarchyReferenceId, null, refId);
                 }
@@ -4026,7 +4026,7 @@ namespace System.Management.Automation
 
                     object key = ReadOneObject();
 
-                    if (key == null)
+                    if (key is null)
                     {
                         throw NewXmlException(Serialization.NullAsDictionaryKey, null);
                     }
@@ -4659,7 +4659,7 @@ namespace System.Management.Automation
                 activityId = int.Parse(deserializer.ReadDecodedElementString(SerializationStrings.ProgressRecordActivityId), CultureInfo.InvariantCulture);
 
                 object tmp = deserializer.ReadOneObject();
-                currentOperation = (tmp == null) ? null : tmp.ToString();
+                currentOperation = (tmp is null) ? null : tmp.ToString();
 
                 parentActivityId = int.Parse(deserializer.ReadDecodedElementString(SerializationStrings.ProgressRecordParentActivityId), CultureInfo.InvariantCulture);
                 percentComplete = int.Parse(deserializer.ReadDecodedElementString(SerializationStrings.ProgressRecordPercentComplete), CultureInfo.InvariantCulture);
@@ -4905,7 +4905,7 @@ namespace System.Management.Automation
         private string ReadNameAttribute()
         {
             string encodedName = _reader.GetAttribute(SerializationStrings.NameAttribute);
-            if (encodedName == null)
+            if (encodedName is null)
             {
                 throw NewXmlException(Serialization.AttributeExpected, null, SerializationStrings.NameAttribute);
             }
@@ -5317,7 +5317,7 @@ namespace System.Management.Automation
         {
             PSNoteProperty property = (PSNoteProperty)psObject.Properties[propertyName];
 
-            if (property == null)
+            if (property is null)
             {
                 return null;
             }
@@ -5332,7 +5332,7 @@ namespace System.Management.Automation
         {
             PSObject propertyPsObject = (PSObject)GetPropertyValue(psObject, propertyName);
 
-            if (propertyPsObject == null)
+            if (propertyPsObject is null)
             {
                 return null;
             }
@@ -5510,7 +5510,7 @@ namespace System.Management.Automation
         internal static string GetToStringForPrimitiveObject(PSObject pso)
         {
             // if object is not wrapped in a PSObject, then nothing modifies the ToString value of the primitive object
-            if (pso == null)
+            if (pso is null)
             {
                 return null;
             }
@@ -5526,7 +5526,7 @@ namespace System.Management.Automation
             if (token != null)
             {
                 string originalToString = GetToString(pso.BaseObject);
-                if (originalToString == null || !string.Equals(token, originalToString, StringComparison.Ordinal))
+                if (originalToString is null || !string.Equals(token, originalToString, StringComparison.Ordinal))
                 {
                     return token;
                 }
@@ -5538,7 +5538,7 @@ namespace System.Management.Automation
 
         internal static PSMemberInfoInternalCollection<PSPropertyInfo> GetSpecificPropertiesToSerialize(PSObject source, Collection<CollectionEntry<PSPropertyInfo>> allPropertiesCollection, TypeTable typeTable)
         {
-            if (source == null)
+            if (source is null)
             {
                 return null;
             }
@@ -5562,7 +5562,7 @@ namespace System.Management.Automation
                 foreach (string propertyName in namesOfPropertiesToSerialize)
                 {
                     PSPropertyInfo property = allProperties[propertyName];
-                    if (property == null)
+                    if (property is null)
                     {
                         PSEtwLog.LogAnalyticWarning(
                             PSEventId.Serializer_SpecificPropertyMissing, PSOpcode.Exception, PSTask.Serialization,
@@ -5599,14 +5599,14 @@ namespace System.Management.Automation
             }
 
             PSScriptProperty script = property as PSScriptProperty;
-            Dbg.Assert(script == null || script.GetterScript != null, "scriptProperty.IsGettable => (scriptProperty.GetterScript != null)");
+            Dbg.Assert(script is null || script.GetterScript != null, "scriptProperty.IsGettable => (scriptProperty.GetterScript != null)");
             if ((script != null) && (!canUseDefaultRunspaceInThreadSafeManner))
             {
                 PSEtwLog.LogAnalyticWarning(
                     PSEventId.Serializer_ScriptPropertyWithoutRunspace, PSOpcode.Exception, PSTask.Serialization,
                     PSKeyword.Serializer | PSKeyword.UseAlwaysAnalytic,
                     property.Name,
-                    property.instance == null ? string.Empty : PSObject.GetTypeNames(property.instance).Key,
+                    property.instance is null ? string.Empty : PSObject.GetTypeNames(property.instance).Key,
                     script.GetterScript.ToString());
 
                 success = false;
@@ -5625,9 +5625,9 @@ namespace System.Management.Automation
                     PSEventId.Serializer_PropertyGetterFailed, PSOpcode.Exception, PSTask.Serialization,
                     PSKeyword.Serializer | PSKeyword.UseAlwaysAnalytic,
                     property.Name,
-                    property.instance == null ? string.Empty : PSObject.GetTypeNames(property.instance).Key,
+                    property.instance is null ? string.Empty : PSObject.GetTypeNames(property.instance).Key,
                     e.ToString(),
-                    e.InnerException == null ? string.Empty : e.InnerException.ToString());
+                    e.InnerException is null ? string.Empty : e.InnerException.ToString());
 
                 success = false;
                 return null;
@@ -5649,13 +5649,13 @@ namespace System.Management.Automation
             public bool Equals(WeakReference x, WeakReference y)
             {
                 object tx = x.Target;
-                if (tx == null)
+                if (tx is null)
                 {
                     return false; // collected object is not equal to anything (object.ReferenceEquals(null, null) == true)
                 }
 
                 object ty = y.Target;
-                if (ty == null)
+                if (ty is null)
                 {
                     return false; // collected object is not equal to anything (object.ReferenceEquals(null, null) == true)
                 }
@@ -5666,7 +5666,7 @@ namespace System.Management.Automation
             public int GetHashCode(WeakReference obj)
             {
                 object t = obj.Target;
-                if (t == null)
+                if (t is null)
                 {
                     // collected object doesn't have a hash code
                     // return an arbitrary hashcode here and fall back on Equal method for comparison
@@ -5905,7 +5905,7 @@ namespace System.Management.Automation
         public PSPrimitiveDictionary(Hashtable other)
             : base(StringComparer.OrdinalIgnoreCase)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException(nameof(other));
             }
@@ -5941,7 +5941,7 @@ namespace System.Management.Automation
         {
             key = PSObject.Base(key);
             string keyAsString = key as string;
-            if (keyAsString == null)
+            if (keyAsString is null)
             {
                 string message = StringUtil.Format(Serialization.PrimitiveHashtableInvalidKey,
                     key.GetType().FullName);
@@ -5983,7 +5983,7 @@ namespace System.Management.Automation
         private void VerifyValue(object value)
         {
             // null is a primitive type
-            if (value == null)
+            if (value is null)
             {
                 return;
             }
@@ -6546,7 +6546,7 @@ namespace System.Management.Automation
             Dbg.Assert(keys.Length >= 1, "Caller should verify that keys.Length >= 1");
             Dbg.Assert(keys[0] != null, "Caller should verify that keys[i] != null");
 
-            if (data == null || !data.Contains(keys[0]))
+            if (data is null || !data.Contains(keys[0]))
             {
                 result = default(T);
                 return false;
@@ -6691,12 +6691,12 @@ namespace Microsoft.PowerShell
         /// <exception cref="InvalidCastException">If no conversion was possible.</exception>
         public override object ConvertFrom(PSObject sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {
-            if (destinationType == null)
+            if (destinationType is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationType));
             }
 
-            if (sourceValue == null)
+            if (sourceValue is null)
             {
                 throw new PSInvalidCastException(
                     "InvalidCastWhenRehydratingFromNull",
@@ -6740,7 +6740,7 @@ namespace Microsoft.PowerShell
             {
                 if (member.MemberType == (member.MemberType & (PSMemberTypes.Properties | PSMemberTypes.MemberSet | PSMemberTypes.PropertySet)))
                 {
-                    if (rehydratedPSObject.Members[member.Name] == null)
+                    if (rehydratedPSObject.Members[member.Name] is null)
                     {
                         rehydratedPSObject.InstanceMembers.Add(member);
                         returnPSObject = true;
@@ -6857,14 +6857,14 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!string.IsNullOrEmpty(propertyName), "Caller should verify propertyName != null");
 
             PSPropertyInfo property = pso.Properties[propertyName];
-            if ((property == null) && (RehydrationFlags.MissingPropertyOk == (flags & RehydrationFlags.MissingPropertyOk)))
+            if ((property is null) && (RehydrationFlags.MissingPropertyOk == (flags & RehydrationFlags.MissingPropertyOk)))
             {
                 return default(T);
             }
             else
             {
                 object propertyValue = property.Value;
-                if ((propertyValue == null) && (RehydrationFlags.NullValueOk == (flags & RehydrationFlags.NullValueOk)))
+                if ((propertyValue is null) && (RehydrationFlags.NullValueOk == (flags & RehydrationFlags.NullValueOk)))
                 {
                     return default(T);
                 }
@@ -6880,7 +6880,7 @@ namespace Microsoft.PowerShell
             where ListType : IList, new()
         {
             ArrayList deserializedList = GetPropertyValue<ArrayList>(pso, propertyName, flags);
-            if (deserializedList == null)
+            if (deserializedList is null)
             {
                 if (RehydrationFlags.NullValueMeansEmptyList == (flags & RehydrationFlags.NullValueMeansEmptyList))
                 {
@@ -7206,7 +7206,7 @@ namespace Microsoft.PowerShell
             PSObject userIdentity = GetPropertyValue<PSObject>(userInfo, "Identity");
             PSObject certDetails = GetPropertyValue<PSObject>(userIdentity, "CertificateDetails");
 
-            PSCertificateDetails psCertDetails = certDetails == null ? null : new PSCertificateDetails(
+            PSCertificateDetails psCertDetails = certDetails is null ? null : new PSCertificateDetails(
                 GetPropertyValue<string>(certDetails, "Subject"),
                 GetPropertyValue<string>(certDetails, "IssuerName"),
                 GetPropertyValue<string>(certDetails, "IssuerThumbprint"));
@@ -7274,13 +7274,13 @@ namespace Microsoft.PowerShell
         /// </returns>
         public static UInt32 GetParameterSetMetadataFlags(PSObject instance)
         {
-            if (instance == null)
+            if (instance is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ParameterSetMetadata parameterSetMetadata = instance.BaseObject as ParameterSetMetadata;
-            if (parameterSetMetadata == null)
+            if (parameterSetMetadata is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -7296,18 +7296,18 @@ namespace Microsoft.PowerShell
         /// <returns>PSObject containing serialized InvocationInfo.</returns>
         public static PSObject GetInvocationInfo(PSObject instance)
         {
-            if (instance == null)
+            if (instance is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             DebuggerStopEventArgs dbgStopEventArgs = instance.BaseObject as DebuggerStopEventArgs;
-            if (dbgStopEventArgs == null)
+            if (dbgStopEventArgs is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            if (dbgStopEventArgs.InvocationInfo == null)
+            if (dbgStopEventArgs.InvocationInfo is null)
             {
                 return null;
             }
@@ -7348,7 +7348,7 @@ namespace Microsoft.PowerShell
         private static WideControlEntryItem RehydrateWideControlEntryItem(PSObject deserializedEntryItem)
         {
             var entrySelectedBy = GetPropertyValue<EntrySelectedBy>(deserializedEntryItem, "EntrySelectedBy", RehydrationFlags.MissingPropertyOk);
-            if (entrySelectedBy == null)
+            if (entrySelectedBy is null)
             {
                 var selectedBy = RehydrateList<List<string>, string>(deserializedEntryItem, "SelectedBy", RehydrationFlags.MissingPropertyOk);
                 entrySelectedBy = EntrySelectedBy.Get(selectedBy, null);
@@ -7378,7 +7378,7 @@ namespace Microsoft.PowerShell
         private static ListControlEntry RehydrateListControlEntry(PSObject deserializedEntry)
         {
             var entrySelectedBy = GetPropertyValue<EntrySelectedBy>(deserializedEntry, "EntrySelectedBy", RehydrationFlags.MissingPropertyOk);
-            if (entrySelectedBy == null)
+            if (entrySelectedBy is null)
             {
                 var selectedBy = RehydrateList<List<string>, string>(deserializedEntry, "SelectedBy", RehydrationFlags.MissingPropertyOk);
                 entrySelectedBy = EntrySelectedBy.Get(selectedBy, null);
@@ -7556,13 +7556,13 @@ namespace Microsoft.PowerShell
         /// </returns>
         public static Guid GetFormatViewDefinitionInstanceId(PSObject instance)
         {
-            if (instance == null)
+            if (instance is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             FormatViewDefinition formatViewDefinition = instance.BaseObject as FormatViewDefinition;
-            if (formatViewDefinition == null)
+            if (formatViewDefinition is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -7585,7 +7585,7 @@ namespace Microsoft.PowerShell
             // But if a new PowerShell connects to an old endpoint, TypeNames will be missing, so fall back to TypeName in that case.
             string typeName;
             var typeNames = RehydrateList<List<string>, string>(deserializedTypeDefinition, "TypeNames", RehydrationFlags.MissingPropertyOk);
-            if (typeNames == null || typeNames.Count == 0)
+            if (typeNames is null || typeNames.Count == 0)
             {
                 typeName = GetPropertyValue<string>(deserializedTypeDefinition, "TypeName");
             }

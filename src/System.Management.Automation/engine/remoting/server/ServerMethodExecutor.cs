@@ -136,7 +136,7 @@ namespace System.Management.Automation.Remoting
             RemoteHostResponse remoteHostResponse = _serverDispatchTable.GetResponse(callId, null);
 
             // Null means that the response PSObject was not received and there was an error.
-            if (remoteHostResponse == null)
+            if (remoteHostResponse is null)
             {
                 throw RemoteHostExceptions.NewRemoteHostCallFailedException(methodId);
             }

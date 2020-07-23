@@ -187,7 +187,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value == null)
+                if (value is null)
                     throw new PSArgumentNullException("value");
                 _name = value;
             }
@@ -296,10 +296,10 @@ namespace System.Management.Automation
         public JobInvocationInfo(JobDefinition definition, IEnumerable<Dictionary<string, object>> parameterCollectionList)
         {
             _definition = definition;
-            if (parameterCollectionList == null) return;
+            if (parameterCollectionList is null) return;
             foreach (var parameterCollection in parameterCollectionList)
             {
-                if (parameterCollection == null) continue;
+                if (parameterCollection is null) continue;
                 CommandParameterCollection convertedCollection = ConvertDictionaryToParameterCollection(parameterCollection);
                 if (convertedCollection != null)
                 {
@@ -325,7 +325,7 @@ namespace System.Management.Automation
         public JobInvocationInfo(JobDefinition definition, IEnumerable<CommandParameterCollection> parameters)
         {
             _definition = definition;
-            if (parameters == null) return;
+            if (parameters is null) return;
             foreach (var parameter in parameters)
             {
                 Parameters.Add(parameter);
@@ -357,7 +357,7 @@ namespace System.Management.Automation
         /// <returns>The converted collection.</returns>
         private static CommandParameterCollection ConvertDictionaryToParameterCollection(IEnumerable<KeyValuePair<string, object>> parameters)
         {
-            if (parameters == null)
+            if (parameters is null)
                 return null;
             CommandParameterCollection paramCollection = new CommandParameterCollection();
             foreach (CommandParameter paramItem in
@@ -403,7 +403,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Only jobs that derive from Job2 should have reusable IDs.")]
         public void StoreJobIdForReuse(Job2 job, bool recurse)
         {
-            if (job == null)
+            if (job is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(job), RemotingErrorIdStrings.JobSourceAdapterCannotSaveNullJob);
             }
@@ -416,7 +416,7 @@ namespace System.Management.Automation
                 foreach (Job child in job.ChildJobs)
                 {
                     Job2 childJob = child as Job2;
-                    if (childJob == null) continue;
+                    if (childJob is null) continue;
                     StoreJobIdForReuseHelper(duplicateDetector, childJob, true);
                 }
             }
@@ -429,11 +429,11 @@ namespace System.Management.Automation
 
             JobManager.SaveJobId(job.InstanceId, job.Id, this.GetType().Name);
 
-            if (!recurse || job.ChildJobs == null) return;
+            if (!recurse || job.ChildJobs is null) return;
             foreach (Job child in job.ChildJobs)
             {
                 Job2 childJob = child as Job2;
-                if (childJob == null) continue;
+                if (childJob is null) continue;
                 StoreJobIdForReuseHelper(duplicateDetector, childJob, recurse);
             }
         }

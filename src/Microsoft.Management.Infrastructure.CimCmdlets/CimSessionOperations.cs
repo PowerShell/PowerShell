@@ -138,7 +138,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         internal PSObject GetPSObject()
         {
-            if (psObject == null)
+            if (psObject is null)
             {
                 psObject = new PSObject(this.cimSession);
                 psObject.Properties.Add(new PSNoteProperty(CimSessionState.idPropName, this.sessionId));
@@ -965,7 +965,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             foreach (string computerName in computerNames)
             {
                 CimSessionProxy proxy;
-                if (sessionOptions == null)
+                if (sessionOptions is null)
                 {
                     DebugHelper.WriteLog("Create CimSessionOption due to NewCimSessionCommand has null sessionoption", 1);
                     sessionOptions = CimSessionProxy.CreateCimSessionOption(computerName,
@@ -1150,7 +1150,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             switch (cmdlet.ParameterSetName)
             {
                 case CimBaseCommand.ComputerNameSet:
-                    if (cmdlet.ComputerName == null)
+                    if (cmdlet.ComputerName is null)
                     {
                         sessionToGet = this.sessionState.QuerySession(ConstValue.DefaultSessionName, out errorRecords);
                     }

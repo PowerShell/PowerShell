@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
                 new ParameterProcessor(new SortObjectExpressionParameterDefinition()) :
                 new ParameterProcessor(new GroupObjectExpressionParameterDefinition());
 
-            if (expr == null && inputObjects != null && inputObjects.Count > 0)
+            if (expr is null && inputObjects != null && inputObjects.Count > 0)
             {
                 expr = GetDefaultKeyPropertySet(inputObjects[0]);
             }
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (expr != null)
             {
-                if (_unexpandedParameterList == null)
+                if (_unexpandedParameterList is null)
                 {
                     _unexpandedParameterList = processor.ProcessParameters(expr, invocationContext);
 
@@ -256,7 +256,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            if (_unExpandedParametersWithWildCardPattern == null)
+                            if (_unExpandedParametersWithWildCardPattern is null)
                             {
                                 _unExpandedParametersWithWildCardPattern = new List<MshParameter>();
                             }
@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             foreach (object inputObject in inputObjects)
                             {
-                                if (inputObject == null)
+                                if (inputObject is null)
                                 {
                                     continue;
                                 }
@@ -328,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
                     PSPropertyExpression ex = (PSPropertyExpression)unexpandedParameter.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey);
 
                     SortedDictionary<string, PSPropertyExpression> expandedPropertyNames = new SortedDictionary<string, PSPropertyExpression>(StringComparer.OrdinalIgnoreCase);
-                    if (inputObject == null)
+                    if (inputObject is null)
                     {
                         continue;
                     }
@@ -353,14 +353,14 @@ namespace Microsoft.PowerShell.Commands
         internal static string[] GetDefaultKeyPropertySet(PSObject mshObj)
         {
             PSMemberSet standardNames = mshObj.PSStandardMembers;
-            if (standardNames == null)
+            if (standardNames is null)
             {
                 return null;
             }
 
             PSPropertySet defaultKeys = standardNames.Members["DefaultKeyPropertySet"] as PSPropertySet;
 
-            if (defaultKeys == null)
+            if (defaultKeys is null)
             {
                 return null;
             }
@@ -382,7 +382,7 @@ namespace Microsoft.PowerShell.Commands
             for (int index = 0; index < inputObjects.Count; index++)
             {
                 PSObject so = inputObjects[index];
-                if (so == null || so == AutomationNull.Value)
+                if (so is null || so == AutomationNull.Value)
                     continue;
                 List<ErrorRecord> evaluationErrors = new List<ErrorRecord>();
                 List<string> propertyNotFoundMsgs = new List<string>();
@@ -416,7 +416,7 @@ namespace Microsoft.PowerShell.Commands
             CultureInfo cultureInfo,
             bool caseSensitive)
         {
-            if (orderMatrix == null || orderMatrix.Count == 0)
+            if (orderMatrix is null || orderMatrix.Count == 0)
             {
                 return null;
             }
@@ -549,7 +549,7 @@ namespace Microsoft.PowerShell.Commands
             entry.inputObject = inputObject;
             entry.originalIndex = originalIndex;
 
-            if (mshParameterList == null || mshParameterList.Count == 0)
+            if (mshParameterList is null || mshParameterList.Count == 0)
             {
                 // we do not have a property to evaluate, we sort on $_
                 entry.orderValues.Add(new ObjectCommandPropertyValue(inputObject, isCaseSensitive, cultureInfo));
@@ -598,7 +598,7 @@ namespace Microsoft.PowerShell.Commands
             // we obtained some results, enter them into the list
             foreach (PSPropertyExpressionResult r in expressionResults)
             {
-                if (r.Exception == null)
+                if (r.Exception is null)
                 {
                     orderValues.Add(new ObjectCommandPropertyValue(r.Result));
                 }

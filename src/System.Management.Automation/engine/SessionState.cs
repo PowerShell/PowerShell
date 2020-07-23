@@ -54,7 +54,7 @@ namespace System.Management.Automation
 
         internal SessionStateInternal(SessionStateInternal parent, bool linkToGlobal, ExecutionContext context)
         {
-            if (context == null)
+            if (context is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
@@ -392,7 +392,7 @@ namespace System.Management.Automation
 
         private SessionStateEntryVisibility checkPathVisibility(List<string> list, string path)
         {
-            if (list == null || list.Count == 0) return SessionStateEntryVisibility.Private;
+            if (list is null || list.Count == 0) return SessionStateEntryVisibility.Private;
             if (string.IsNullOrEmpty(path)) return SessionStateEntryVisibility.Private;
 
             if (list.Contains("*")) return SessionStateEntryVisibility.Public;

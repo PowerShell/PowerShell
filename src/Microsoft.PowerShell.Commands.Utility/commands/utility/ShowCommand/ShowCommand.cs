@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="script">Script to execute.</param>
         public void RunScript(string script)
         {
-            if (_showCommandProxy == null || string.IsNullOrEmpty(script))
+            if (_showCommandProxy is null || string.IsNullOrEmpty(script))
             {
                 return;
             }
@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (Name == null)
+            if (Name is null)
             {
                 _hasOpenedWindow = this.CanProcessRecordForAllCommands();
             }
@@ -331,7 +331,7 @@ namespace Microsoft.PowerShell.Commands
 
             object[] commandObjects = (object[])commandResults[0].BaseObject;
             object[] moduleObjects = (object[])commandResults[1].BaseObject;
-            if (commandResults == null || moduleObjects == null || commandObjects.Length == 0)
+            if (commandResults is null || moduleObjects is null || commandObjects.Length == 0)
             {
                 this.IssueErrorForNoCommand();
                 return;
@@ -343,7 +343,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             command = ((PSObject)commandObjects[0]).BaseObject as CommandInfo;
-            if (command == null)
+            if (command is null)
             {
                 this.IssueErrorForNoCommand();
                 return;
@@ -353,7 +353,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 commandText = _showCommandProxy.GetShowCommandCommand(command.Definition, false);
                 commandResults = this.InvokeCommand.InvokeScript(commandText);
-                if (commandResults == null || commandResults.Count != 1)
+                if (commandResults is null || commandResults.Count != 1)
                 {
                     this.IssueErrorForNoCommand();
                     return;

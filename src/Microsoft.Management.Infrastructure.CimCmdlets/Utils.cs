@@ -90,7 +90,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         internal static IEnumerable<string> GetComputerNames(IEnumerable<string> computerNames)
         {
-            return (computerNames == null) ? NullComputerNames : computerNames;
+            return (computerNames is null) ? NullComputerNames : computerNames;
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         internal static string GetNamespace(string nameSpace)
         {
-            return (nameSpace == null) ? DefaultNameSpace : nameSpace;
+            return (nameSpace is null) ? DefaultNameSpace : nameSpace;
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         internal static string GetQueryDialectWithDefault(string queryDialect)
         {
-            return (queryDialect == null) ? DefaultQueryDialect : queryDialect;
+            return (queryDialect is null) ? DefaultQueryDialect : queryDialect;
         }
     }
 
@@ -390,7 +390,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="argumentName"></param>
         public static void ValidateNoNullArgument(object obj, string argumentName)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 throw new ArgumentNullException(argumentName);
             }

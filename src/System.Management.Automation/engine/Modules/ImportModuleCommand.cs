@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
         {
             set
             {
-                if (value == null)
+                if (value is null)
                     return;
                 _functionImportList = value;
                 // Create the list of patterns to match at parameter bind time
@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Commands
         {
             set
             {
-                if (value == null)
+                if (value is null)
                     return;
 
                 _cmdletImportList = value;
@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
         {
             set
             {
-                if (value == null)
+                if (value is null)
                     return;
                 _variableExportList = value;
                 // Create the list of patterns to match at parameter bind time
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands
         {
             set
             {
-                if (value == null)
+                if (value is null)
                     return;
 
                 _aliasExportList = value;
@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (BaseMaximumVersion == null)
+                if (BaseMaximumVersion is null)
                     return null;
                 else
                     return BaseMaximumVersion.ToString();
@@ -483,7 +483,7 @@ namespace Microsoft.PowerShell.Commands
                         // If we're passing in a dynamic module, then the session state will not be
                         // null and we want to just add the module to the module table. Otherwise, it's
                         // a module info from Get-Module -list so we need to read the actual module file.
-                        if (module.SessionState == null)
+                        if (module.SessionState is null)
                         {
                             if (File.Exists(module.Path))
                             {
@@ -624,7 +624,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // See if we can use the cached path for the file. If a version number has been specified, then
                 // we won't look in the cache
-                if (this.MinimumVersion == null && this.MaximumVersion == null && this.RequiredVersion == null && PSModuleInfo.UseAppDomainLevelModuleCache && !this.BaseForce)
+                if (this.MinimumVersion is null && this.MaximumVersion is null && this.RequiredVersion is null && PSModuleInfo.UseAppDomainLevelModuleCache && !this.BaseForce)
                 {
                     // See if the name is in the appdomain-level module path name cache...
                     cachedPath = PSModuleInfo.ResolveUsingAppDomainLevelModuleCache(name);
@@ -642,7 +642,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (rootedPath == null)
+                if (rootedPath is null)
                 {
                     // Check for full-qualified paths - either absolute or relative
                     rootedPath = ResolveRootedFilePath(name, this.Context);
@@ -780,7 +780,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         IEnumerable<string> modulePath = ModuleIntrinsics.GetModulePath(false, this.Context);
 
-                        if (this.MinimumVersion == null && this.RequiredVersion == null && this.MaximumVersion == null)
+                        if (this.MinimumVersion is null && this.RequiredVersion is null && this.MaximumVersion is null)
                         {
                             this.AddToAppDomainLevelCache = true;
                         }
@@ -1177,7 +1177,7 @@ namespace Microsoft.PowerShell.Commands
         private static bool IsNonEmptyManifestField(Hashtable manifestData, string key)
         {
             object value = manifestData[key];
-            if (value == null)
+            if (value is null)
             {
                 return false;
             }
@@ -1198,7 +1198,7 @@ namespace Microsoft.PowerShell.Commands
             string temporaryModuleManifestPath = RemoteDiscoveryHelper.GetModulePath(cimModule.ModuleName, null, string.Empty, this.Context.CurrentRunspace);
             bool containedErrors = false;
             RemoteDiscoveryHelper.CimModuleFile mainManifestFile = cimModule.MainManifest;
-            if (mainManifestFile == null)
+            if (mainManifestFile is null)
             {
                 return true;
             }
@@ -1209,7 +1209,7 @@ namespace Microsoft.PowerShell.Commands
                     this,
                     ref containedErrors);
 
-            if (containedErrors || manifestData == null)
+            if (containedErrors || manifestData is null)
             {
                 return false;
             }
@@ -1358,7 +1358,7 @@ namespace Microsoft.PowerShell.Commands
                 goodEntries = new List<string>();
             }
 
-            if (goodEntries == null)
+            if (goodEntries is null)
             {
                 goodEntries = new List<string>();
             }
@@ -1369,7 +1369,7 @@ namespace Microsoft.PowerShell.Commands
                 badEntries = new List<string>();
             }
 
-            if (badEntries == null)
+            if (badEntries is null)
             {
                 badEntries = new List<string>();
             }
@@ -1453,7 +1453,7 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
-                if (remoteCimModule.MainManifest == null)
+                if (remoteCimModule.MainManifest is null)
                 {
                     string errorMessage = string.Format(
                         CultureInfo.InvariantCulture,
@@ -1489,7 +1489,7 @@ namespace Microsoft.PowerShell.Commands
                         temporaryModuleManifestPath,
                         out throwAwayTokens,
                         out parseErrors);
-                    if ((scriptBlockAst == null) ||
+                    if ((scriptBlockAst is null) ||
                         (parseErrors != null && parseErrors.Length > 0))
                     {
                         throw new ParseException(parseErrors);
@@ -1503,7 +1503,7 @@ namespace Microsoft.PowerShell.Commands
                         ManifestProcessingFlags.NullOnFirstError | ManifestProcessingFlags.WriteErrors, /* - don't load elements */
                         ref containedErrors);
 
-                    if ((data == null) || containedErrors)
+                    if ((data is null) || containedErrors)
                     {
                         return null;
                     }
@@ -1581,7 +1581,7 @@ namespace Microsoft.PowerShell.Commands
                         BaseGuid,
                         ref importModuleOptions,
                         ref containedErrors);
-                    if (moduleInfo == null)
+                    if (moduleInfo is null)
                     {
                         return null;
                     }
@@ -1685,7 +1685,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 finally
                 {
-                    if (moduleInfo == null)
+                    if (moduleInfo is null)
                     {
                         if (Directory.Exists(temporaryModuleDirectory))
                         {
@@ -1901,10 +1901,10 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsModuleInDenyList(string[] moduleDenyList, string moduleName, ModuleSpecification moduleSpec)
         {
-            Debug.Assert(string.IsNullOrEmpty(moduleName) ^ (moduleSpec == null), "Either moduleName or moduleSpec must be specified");
+            Debug.Assert(string.IsNullOrEmpty(moduleName) ^ (moduleSpec is null), "Either moduleName or moduleSpec must be specified");
 
             // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
-            string exactModuleName = ModuleIntrinsics.GetModuleName(moduleSpec == null ? moduleName : moduleSpec.Name);
+            string exactModuleName = ModuleIntrinsics.GetModuleName(moduleSpec is null ? moduleName : moduleSpec.Name);
             bool match = false;
 
             foreach (var deniedModuleName in moduleDenyList)
@@ -1953,10 +1953,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void PrepareNoClobberWinCompatModuleImport(string moduleName, ModuleSpecification moduleSpec, ref ImportModuleOptions importModuleOptions)
         {
-            Debug.Assert(string.IsNullOrEmpty(moduleName) ^ (moduleSpec == null), "Either moduleName or moduleSpec must be specified");
+            Debug.Assert(string.IsNullOrEmpty(moduleName) ^ (moduleSpec is null), "Either moduleName or moduleSpec must be specified");
 
             // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
-            string coreModuleToLoad = ModuleIntrinsics.GetModuleName(moduleSpec == null ? moduleName : moduleSpec.Name);
+            string coreModuleToLoad = ModuleIntrinsics.GetModuleName(moduleSpec is null ? moduleName : moduleSpec.Name);
 
             var isModuleToLoadEngineModule = InitialSessionState.IsEngineModule(coreModuleToLoad);
             string[] noClobberModuleList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
@@ -1973,7 +1973,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (moduleSpec == null)
+                if (moduleSpec is null)
                 {
                     ImportModule_LocallyViaName_WithTelemetry(importModuleOptions, coreModuleToLoad);
                 }
@@ -2016,7 +2016,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             PSSession WindowsPowerShellCompatRemotingSession = CreateWindowsPowerShellCompatResources();
-            if (WindowsPowerShellCompatRemotingSession == null)
+            if (WindowsPowerShellCompatRemotingSession is null)
             {
                 return new List<PSModuleInfo>();
             }

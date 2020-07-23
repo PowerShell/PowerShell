@@ -71,7 +71,7 @@ namespace System.Management.Automation.Host
                 throw PSTraceSource.NewArgumentException(nameof(label), DescriptionsStrings.NullOrEmptyErrorTemplate, "label");
             }
 
-            if (helpMessage == null)
+            if (helpMessage is null)
             {
                 // "helpMessage" is not localizable
                 throw PSTraceSource.NewArgumentNullException(nameof(helpMessage));
@@ -129,7 +129,7 @@ namespace System.Management.Automation.Host
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     throw PSTraceSource.NewArgumentNullException("value");
                 }

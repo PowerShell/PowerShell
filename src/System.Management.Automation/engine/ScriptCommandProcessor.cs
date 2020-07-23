@@ -71,7 +71,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_scriptParameterBinderController == null)
+                if (_scriptParameterBinderController is null)
                 {
                     // Set up the hashtable that will be used to hold all of the bound parameters...
                     _scriptParameterBinderController =
@@ -145,7 +145,7 @@ namespace System.Management.Automation
                         string unused;
                         HelpInfo helpInfo = _scriptBlock.GetHelpInfo(context: Context, commandInfo: CommandInfo,
                             dontSearchOnRemoteComputer: false, scriptBlockTokenCache: scriptBlockTokenCache, helpFile: out unused, helpUriFromDotLink: out unused);
-                        if (helpInfo == null)
+                        if (helpInfo is null)
                         {
                             break;
                         }
@@ -279,7 +279,7 @@ namespace System.Management.Automation
 
             if (UseLocalScope)
             {
-                Diagnostics.Assert(CommandScope.LocalsTuple == null, "a newly created scope shouldn't have it's tuple set.");
+                Diagnostics.Assert(CommandScope.LocalsTuple is null, "a newly created scope shouldn't have it's tuple set.");
                 CommandScope.LocalsTuple = _localsTuple;
             }
         }
@@ -381,7 +381,7 @@ namespace System.Management.Automation
             {
                 // accumulate the input when working in "synchronous" mode
                 Debug.Assert(this.Command.MyInvocation.PipelineIterationInfo != null); // this should have been allocated when the pipe was started
-                if (this.CommandRuntime.InputPipe.ExternalReader == null)
+                if (this.CommandRuntime.InputPipe.ExternalReader is null)
                 {
                     while (Read())
                     {
@@ -410,7 +410,7 @@ namespace System.Management.Automation
                 if (_scriptBlock.HasEndBlock)
                 {
                     var endBlock = _runOptimizedCode ? _scriptBlock.EndBlock : _scriptBlock.UnoptimizedEndBlock;
-                    if (this.CommandRuntime.InputPipe.ExternalReader == null)
+                    if (this.CommandRuntime.InputPipe.ExternalReader is null)
                     {
                         if (IsPipelineInputExpected())
                         {
@@ -529,7 +529,7 @@ namespace System.Management.Automation
 
                     if (inputToProcess != AutomationNull.Value)
                     {
-                        if (inputToProcess == null)
+                        if (inputToProcess is null)
                         {
                             inputToProcess = MshCommandRuntime.StaticEmptyArray.GetEnumerator();
                         }

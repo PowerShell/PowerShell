@@ -181,14 +181,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx();
 
             CimNewCimInstanceContext newCimInstanceContext = context as CimNewCimInstanceContext;
-            if (newCimInstanceContext == null)
+            if (newCimInstanceContext is null)
             {
                 DebugHelper.WriteLog("Invalid (null) CimNewCimInstanceContext", 1);
                 return;
             }
 
             CimSessionProxy proxy = CreateCimSessionProxy(newCimInstanceContext.Proxy);
-            string nameSpace = (cimInstance.CimSystemProperties.Namespace == null) ? newCimInstanceContext.Namespace : cimInstance.CimSystemProperties.Namespace;
+            string nameSpace = (cimInstance.CimSystemProperties.Namespace is null) ? newCimInstanceContext.Namespace : cimInstance.CimSystemProperties.Namespace;
             proxy.GetInstanceAsync(nameSpace, cimInstance);
         }
 
@@ -268,7 +268,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             NewCimInstanceCommand cmdlet)
         {
             CimInstance cimInstance = new CimInstance(className, cimNamespace);
-            if (properties == null)
+            if (properties is null)
             {
                 return cimInstance;
             }
@@ -332,7 +332,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             NewCimInstanceCommand cmdlet)
         {
             CimInstance cimInstance = new CimInstance(cimClass);
-            if (properties == null)
+            if (properties is null)
             {
                 return cimInstance;
             }
@@ -340,7 +340,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             List<string> notfoundProperties = new List<string>();
             foreach (string property in properties.Keys)
             {
-                if (cimInstance.CimInstanceProperties[property] == null)
+                if (cimInstance.CimInstanceProperties[property] is null)
                 {
                     notfoundProperties.Add(property);
                     cmdlet.ThrowInvalidProperty(notfoundProperties, cmdlet.CimClass.CimSystemProperties.ClassName, @"Property", action, properties);

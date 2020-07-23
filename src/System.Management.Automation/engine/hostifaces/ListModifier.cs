@@ -52,7 +52,7 @@ namespace System.Management.Automation
         {
             _itemsToAdd = new Collection<object>();
             _itemsToRemove = new Collection<object>();
-            if (replacementItems == null)
+            if (replacementItems is null)
             {
                 _replacementItems = new Collection<object>();
             }
@@ -86,7 +86,7 @@ namespace System.Management.Automation
         /// and the value for Remove is the list to remove.</param>
         public PSListModifier(Hashtable hash)
         {
-            if (hash == null)
+            if (hash is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(hash));
             }
@@ -179,7 +179,7 @@ namespace System.Management.Automation
         /// <param name="collectionToUpdate">The collection to update.</param>
         public void ApplyTo(IList collectionToUpdate)
         {
-            if (collectionToUpdate == null)
+            if (collectionToUpdate is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(collectionToUpdate));
             }
@@ -212,7 +212,7 @@ namespace System.Management.Automation
         /// <param name="collectionToUpdate">The collection to update.</param>
         public void ApplyTo(object collectionToUpdate)
         {
-            if (collectionToUpdate == null)
+            if (collectionToUpdate is null)
             {
                 throw new ArgumentNullException(nameof(collectionToUpdate));
             }
@@ -220,7 +220,7 @@ namespace System.Management.Automation
             collectionToUpdate = PSObject.Base(collectionToUpdate);
 
             IList list = collectionToUpdate as IList;
-            if (list == null)
+            if (list is null)
             {
                 throw PSTraceSource.NewInvalidOperationException(PSListModifierStrings.UpdateFailed);
             }

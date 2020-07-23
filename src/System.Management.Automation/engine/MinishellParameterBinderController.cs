@@ -212,7 +212,7 @@ namespace System.Management.Automation
             }
 
             // Add InputFormat and OutputFormat parameter if not specified
-            if (inputFormat == null)
+            if (inputFormat is null)
             {
                 // For minishell default input format is xml
                 parameters.Add(CommandParameterInternal.CreateParameter(InputFormatParameter, "-" + InputFormatParameter));
@@ -220,7 +220,7 @@ namespace System.Management.Automation
                 inputFormat = XmlFormatValue;
             }
 
-            if (outputFormat == null)
+            if (outputFormat is null)
             {
                 // If output is redirected, output format should be xml
                 outputFormat = outputRedirected ? XmlFormatValue : TextFormatValue;
@@ -361,7 +361,7 @@ namespace System.Management.Automation
         {
             ArrayList results = new ArrayList();
             IEnumerator list = LanguagePrimitives.GetEnumerator(value);
-            if (list == null)
+            if (list is null)
             {
                 results.Add(value);
             }

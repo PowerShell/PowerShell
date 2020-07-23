@@ -81,7 +81,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return (result == null) ? null : result.Instance;
+                return (result is null) ? null : result.Instance;
             }
         }
 
@@ -92,7 +92,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return (result == null) ? null : result.MachineId;
+                return (result is null) ? null : result.MachineId;
             }
         }
 
@@ -103,7 +103,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return (result == null) ? null : result.Bookmark;
+                return (result is null) ? null : result.Bookmark;
             }
         }
 
@@ -292,7 +292,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 if (status == Status.Default)
                 {
-                    if (this.cimSession == null)
+                    if (this.cimSession is null)
                     {
                         cimRegisterCimIndication.RegisterCimIndication(
                             this.computerName,

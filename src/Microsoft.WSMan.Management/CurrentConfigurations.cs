@@ -61,7 +61,7 @@ namespace Microsoft.WSMan.Management
         /// <param name="serverSession">Current server session.</param>
         public CurrentConfigurations(IWSManSession serverSession)
         {
-            if (serverSession == null)
+            if (serverSession is null)
             {
                 throw new ArgumentNullException(nameof(serverSession));
             }
@@ -117,7 +117,7 @@ namespace Microsoft.WSMan.Management
         /// <param name="pathToNodeFromRoot">Path with namespace to the node from Root element. Must not end with '/'.</param>
         public void RemoveOneConfiguration(string pathToNodeFromRoot)
         {
-            if (pathToNodeFromRoot == null)
+            if (pathToNodeFromRoot is null)
             {
                 throw new ArgumentNullException(nameof(pathToNodeFromRoot));
             }
@@ -150,7 +150,7 @@ namespace Microsoft.WSMan.Management
         /// <param name="configurationValue">Value of the configurations.</param>
         public void UpdateOneConfiguration(string pathToNodeFromRoot, string configurationName, string configurationValue)
         {
-            if (pathToNodeFromRoot == null)
+            if (pathToNodeFromRoot is null)
             {
                 throw new ArgumentNullException(nameof(pathToNodeFromRoot));
             }
@@ -160,7 +160,7 @@ namespace Microsoft.WSMan.Management
                 throw new ArgumentNullException(nameof(configurationName));
             }
 
-            if (configurationValue == null)
+            if (configurationValue is null)
             {
                 throw new ArgumentNullException(nameof(configurationValue));
             }
@@ -195,7 +195,7 @@ namespace Microsoft.WSMan.Management
         /// <returns>Value of the Node, or Null if no node present.</returns>
         public string GetOneConfiguration(string pathFromRoot)
         {
-            if (pathFromRoot == null)
+            if (pathFromRoot is null)
             {
                 throw new ArgumentNullException(nameof(pathFromRoot));
             }

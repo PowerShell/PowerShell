@@ -53,7 +53,7 @@ namespace System.Management.Automation
         /// </exception>
         internal FunctionInfo(string name, ScriptBlock function, ExecutionContext context, string helpFile) : base(name, CommandTypes.Function, context)
         {
-            if (function == null)
+            if (function is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(function));
             }
@@ -220,7 +220,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void Update(ScriptBlock newFunction, bool force, ScopedItemOptions options, string helpFile)
         {
-            if (newFunction == null)
+            if (newFunction is null)
             {
                 throw PSTraceSource.NewArgumentNullException("function");
             }
@@ -304,12 +304,12 @@ namespace System.Management.Automation
         {
             get
             {
-                return CopiedCommand == null ? _options : ((FunctionInfo)CopiedCommand).Options;
+                return CopiedCommand is null ? _options : ((FunctionInfo)CopiedCommand).Options;
             }
 
             set
             {
-                if (CopiedCommand == null)
+                if (CopiedCommand is null)
                 {
                     // Check to see if the function is constant, if so
                     // throw an exception because the options cannot be changed.
@@ -378,12 +378,12 @@ namespace System.Management.Automation
         {
             get
             {
-                return CopiedCommand == null ? _description : ((FunctionInfo)CopiedCommand).Description;
+                return CopiedCommand is null ? _description : ((FunctionInfo)CopiedCommand).Description;
             }
 
             set
             {
-                if (CopiedCommand == null)
+                if (CopiedCommand is null)
                 {
                     _description = value;
                 }

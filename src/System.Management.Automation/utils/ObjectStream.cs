@@ -609,7 +609,7 @@ namespace System.Management.Automation.Internal
 
                 lock (_monitorObject)
                 {
-                    if (_readWaitHandle == null)
+                    if (_readWaitHandle is null)
                     {
                         // Create the handle signaled if there are objects in the stream
                         // or the stream has been closed.  The closed scenario addresses
@@ -642,7 +642,7 @@ namespace System.Management.Automation.Internal
 
                 lock (_monitorObject)
                 {
-                    if (_writeWaitHandle == null)
+                    if (_writeWaitHandle is null)
                     {
                         _writeWaitHandle = new ManualResetEvent(_objects.Count < _capacity || !_isOpen);
                     }
@@ -665,7 +665,7 @@ namespace System.Management.Automation.Internal
 
                 lock (_monitorObject)
                 {
-                    if (_reader == null)
+                    if (_reader is null)
                     {
                         // Always return an object reader, even if the stream
                         // is closed. This is to address requesting the object reader
@@ -695,7 +695,7 @@ namespace System.Management.Automation.Internal
 
                 lock (_monitorObject)
                 {
-                    if (_mshreader == null)
+                    if (_mshreader is null)
                     {
                         // Always return an object reader, even if the stream
                         // is closed. This is to address requesting the object reader
@@ -726,7 +726,7 @@ namespace System.Management.Automation.Internal
 
                 lock (_monitorObject)
                 {
-                    if (_writer == null)
+                    if (_writer is null)
                     {
                         _writer = new ObjectWriter(this) as PipelineWriter;
                     }
@@ -1351,7 +1351,7 @@ namespace System.Management.Automation.Internal
                 enumerable = LanguagePrimitives.GetEnumerable(obj);
             }
 
-            if (enumerable == null)
+            if (enumerable is null)
                 a.Add(obj);
             else
             {
@@ -1581,7 +1581,7 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal PSDataCollectionStream(Guid psInstanceId, PSDataCollection<T> storeToUse)
         {
-            if (storeToUse == null)
+            if (storeToUse is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(storeToUse));
             }
@@ -1682,11 +1682,11 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (_objectReader == null)
+                if (_objectReader is null)
                 {
                     lock (_syncObject)
                     {
-                        if (_objectReader == null)
+                        if (_objectReader is null)
                         {
                             _objectReader = new PSDataCollectionReader<T, object>(this);
                         }
@@ -1707,11 +1707,11 @@ namespace System.Management.Automation.Internal
         /// the object that this stream writes belongs to</remarks>
         internal PipelineReader<object> GetObjectReaderForPipeline(string computerName, Guid runspaceId)
         {
-            if (_objectReaderForPipeline == null)
+            if (_objectReaderForPipeline is null)
             {
                 lock (_syncObject)
                 {
-                    if (_objectReaderForPipeline == null)
+                    if (_objectReaderForPipeline is null)
                     {
                         _objectReaderForPipeline =
                             new PSDataCollectionPipelineReader<T, object>(this, computerName, runspaceId);
@@ -1729,11 +1729,11 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (_psobjectReader == null)
+                if (_psobjectReader is null)
                 {
                     lock (_syncObject)
                     {
-                        if (_psobjectReader == null)
+                        if (_psobjectReader is null)
                         {
                             _psobjectReader = new PSDataCollectionReader<T, PSObject>(this);
                         }
@@ -1754,11 +1754,11 @@ namespace System.Management.Automation.Internal
         /// the object that this stream writes belongs to</remarks>
         internal PipelineReader<PSObject> GetPSObjectReaderForPipeline(string computerName, Guid runspaceId)
         {
-            if (_psobjectReaderForPipeline == null)
+            if (_psobjectReaderForPipeline is null)
             {
                 lock (_syncObject)
                 {
-                    if (_psobjectReaderForPipeline == null)
+                    if (_psobjectReaderForPipeline is null)
                     {
                         _psobjectReaderForPipeline =
                             new PSDataCollectionPipelineReader<T, PSObject>(this, computerName, runspaceId);
@@ -1780,11 +1780,11 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (_writer == null)
+                if (_writer is null)
                 {
                     lock (_syncObject)
                     {
-                        if (_writer == null)
+                        if (_writer is null)
                         {
                             _writer = new PSDataCollectionWriter<T>(this) as PipelineWriter;
                         }
@@ -1845,7 +1845,7 @@ namespace System.Management.Automation.Internal
                 enumerable = LanguagePrimitives.GetEnumerable(obj);
             }
 
-            if (enumerable == null)
+            if (enumerable is null)
             {
                 objectsToAdd.Add((T)LanguagePrimitives.ConvertTo(obj,
                     typeof(T), Globalization.CultureInfo.InvariantCulture));

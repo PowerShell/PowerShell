@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
-            if (securityDescriptor == null)
+            if (securityDescriptor is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(securityDescriptor));
             }
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
 
             FileSystemSecurity sd = securityDescriptor as FileSystemSecurity;
 
-            if (sd == null)
+            if (sd is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(securityDescriptor));
             }

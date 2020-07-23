@@ -35,7 +35,7 @@ namespace System.Management.Automation
         /// </exception>
         internal EngineIntrinsics(ExecutionContext context)
         {
-            if (context == null)
+            if (context is null)
             {
                 throw new ArgumentNullException(nameof(context));
             }

@@ -56,7 +56,7 @@ namespace System.Management.Automation
             Collection<string> providerSpecificPickList,
             bool literalPath)
         {
-            if (paths == null)
+            if (paths is null)
             {
                 throw PSTraceSource.NewArgumentNullException("path");
             }
@@ -114,14 +114,14 @@ namespace System.Management.Automation
             Collection<string> providerSpecificPickList,
             CmdletProviderContext context)
         {
-            if (paths == null)
+            if (paths is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             foreach (string path in paths)
             {
-                if (path == null)
+                if (path is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -260,7 +260,7 @@ namespace System.Management.Automation
             Collection<string> providerSpecificPickList,
             CmdletProviderContext context)
         {
-            if (path == null)
+            if (path is null)
             {
                 return null;
             }
@@ -414,12 +414,12 @@ namespace System.Management.Automation
         /// </exception>
         internal Collection<PSObject> SetProperty(string[] paths, PSObject property, bool force, bool literalPath)
         {
-            if (paths == null)
+            if (paths is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            if (property == null)
+            if (property is null)
             {
                 throw PSTraceSource.NewArgumentNullException("properties");
             }
@@ -478,19 +478,19 @@ namespace System.Management.Automation
             PSObject property,
             CmdletProviderContext context)
         {
-            if (paths == null)
+            if (paths is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            if (property == null)
+            if (property is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(property));
             }
 
             foreach (string path in paths)
             {
-                if (path == null)
+                if (path is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -632,7 +632,7 @@ namespace System.Management.Automation
             PSObject propertyValue,
             CmdletProviderContext context)
         {
-            if (path == null)
+            if (path is null)
             {
                 return null;
             }
@@ -787,12 +787,12 @@ namespace System.Management.Automation
             bool force,
             bool literalPath)
         {
-            if (paths == null)
+            if (paths is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            if (propertyToClear == null)
+            if (propertyToClear is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(propertyToClear));
             }
@@ -843,19 +843,19 @@ namespace System.Management.Automation
             Collection<string> propertyToClear,
             CmdletProviderContext context)
         {
-            if (paths == null)
+            if (paths is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            if (propertyToClear == null)
+            if (propertyToClear is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(propertyToClear));
             }
 
             foreach (string path in paths)
             {
-                if (path == null)
+                if (path is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -994,7 +994,7 @@ namespace System.Management.Automation
             Collection<string> propertyToClear,
             CmdletProviderContext context)
         {
-            if (path == null)
+            if (path is null)
             {
                 return null;
             }

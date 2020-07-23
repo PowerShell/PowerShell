@@ -131,7 +131,7 @@ namespace System.Management.Automation
         /// </exception>
         internal CommandDiscovery(ExecutionContext context)
         {
-            if (context == null)
+            if (context is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
@@ -205,7 +205,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
-            if (newCmdletInfo == null)
+            if (newCmdletInfo is null)
             {
                 throw PSTraceSource.NewArgumentNullException("cmdlet");
             }
@@ -375,9 +375,9 @@ namespace System.Management.Automation
             {
                 IEnumerable<PSSnapInInfo> loadedPSSnapIns = null;
                 loadedPSSnapIns = context.InitialSessionState.GetPSSnapIn(requiresPSSnapIn.Name);
-                if (loadedPSSnapIns == null || !loadedPSSnapIns.Any())
+                if (loadedPSSnapIns is null || !loadedPSSnapIns.Any())
                 {
-                    if (requiresMissingPSSnapIns == null)
+                    if (requiresMissingPSSnapIns is null)
                     {
                         requiresMissingPSSnapIns = new Collection<string>();
                     }
@@ -397,7 +397,7 @@ namespace System.Management.Automation
                         if (!AreInstalledRequiresVersionsCompatible(
                             requiresPSSnapIn.Version, loadedPSSnapIn.Version))
                         {
-                            if (requiresMissingPSSnapIns == null)
+                            if (requiresMissingPSSnapIns is null)
                             {
                                 requiresMissingPSSnapIns = new Collection<string>();
                             }
@@ -508,7 +508,7 @@ namespace System.Management.Automation
 
         private static string BuildPSSnapInDisplayName(PSSnapInSpecification PSSnapin)
         {
-            return PSSnapin.Version == null ?
+            return PSSnapin.Version is null ?
                 PSSnapin.Name :
                 StringUtil.Format(DiscoveryExceptions.PSSnapInNameVersion,
                         PSSnapin.Name, PSSnapin.Version);
@@ -554,7 +554,7 @@ namespace System.Management.Automation
 
                 // If we didn't have the alias target already resolved, see if it can be loaded.
 
-                if (commandInfo == null)
+                if (commandInfo is null)
                 {
                     CommandNotFoundException e =
                         new CommandNotFoundException(
@@ -701,7 +701,7 @@ namespace System.Management.Automation
 
         private static CommandProcessorBase GetScriptAsCmdletProcessor(IScriptCommandInfo scriptCommandInfo, ExecutionContext context, bool useNewScope, bool fromScriptFile, SessionStateInternal sessionState)
         {
-            if (scriptCommandInfo.ScriptBlock == null || !scriptCommandInfo.ScriptBlock.UsesCmdletBinding)
+            if (scriptCommandInfo.ScriptBlock is null || !scriptCommandInfo.ScriptBlock.UsesCmdletBinding)
             {
                 return null;
             }
@@ -784,7 +784,7 @@ namespace System.Management.Automation
             // Check the module auto-loading preference
             PSModuleAutoLoadingPreference moduleAutoLoadingPreference = GetCommandDiscoveryPreference(context, SpecialVariables.PSModuleAutoLoadingPreferenceVarPath, "PSModuleAutoLoadingPreference");
 
-            if (eventArgs == null || eventArgs.StopSearch != true)
+            if (eventArgs is null || eventArgs.StopSearch != true)
             {
                 do
                 {
@@ -816,7 +816,7 @@ namespace System.Management.Automation
                     }
 
                     // Otherwise, invoke the CommandNotFound handler
-                    if (result == null)
+                    if (result is null)
                     {
                         result = InvokeCommandNotFoundHandler(commandName, context, originalCommandName, commandOrigin);
                     }
@@ -862,7 +862,7 @@ namespace System.Management.Automation
             }
 
             // After all command lookup is done, throw a CommandNotFound if we have no result.
-            if (result == null)
+            if (result is null)
             {
                 discoveryTracer.TraceError(
                     "'{0}' is not recognized as a cmdlet, function, operable program or script file.",
@@ -901,7 +901,7 @@ namespace System.Management.Automation
                         foreach (var module in System.Management.Automation.ExecutionContext.ModulesWithJobSourceAdapters)
                         {
                             List<PSModuleInfo> existingModule = context.Modules.GetModules(new string[] { module }, false);
-                            if (existingModule == null || existingModule.Count == 0)
+                            if (existingModule is null || existingModule.Count == 0)
                             {
                                 Exception unUsedException = null;
                                 AutoloadSpecifiedModule(module, context, cmdletInfo.Visibility, out unUsedException);
@@ -1089,7 +1089,7 @@ namespace System.Management.Automation
                             string moduleShortName = System.IO.Path.GetFileNameWithoutExtension(expandedModulePath);
                             var exportedCommands = AnalysisCache.GetExportedCommands(expandedModulePath, false, context);
 
-                            if (exportedCommands == null) { continue; }
+                            if (exportedCommands is null) { continue; }
 
                             CommandTypes exportedCommandTypes;
                             // Skip if module only has class or other types and no commands.
@@ -1101,7 +1101,7 @@ namespace System.Management.Automation
                                     cmdletInfo != null ? cmdletInfo.Visibility : SessionStateEntryVisibility.Private,
                                         out exception);
                                 lastError = exception;
-                                if ((matchingModule == null) || (matchingModule.Count == 0))
+                                if ((matchingModule is null) || (matchingModule.Count == 0))
                                 {
                                     string error = StringUtil.Format(DiscoveryExceptions.CouldNotAutoImportMatchingModule, commandName, moduleShortName);
                                     CommandNotFoundException commandNotFound = new CommandNotFoundException(
@@ -1206,14 +1206,14 @@ namespace System.Management.Automation
                     List<PSModuleInfo> existingModule = context.Modules.GetModules(new string[] { moduleName }, false);
                     PSModuleInfo discoveredModule = null;
 
-                    if (existingModule == null || existingModule.Count == 0)
+                    if (existingModule is null || existingModule.Count == 0)
                     {
                         discoveryTracer.WriteLine("Attempting to load module: {0}", moduleName);
                         Exception exception;
                         Collection<PSModuleInfo> importedModule = AutoloadSpecifiedModule(moduleName, context, cmdletInfo.Visibility, out exception);
                         lastError = exception;
 
-                        if ((importedModule == null) || (importedModule.Count == 0))
+                        if ((importedModule is null) || (importedModule.Count == 0))
                         {
                             string error = StringUtil.Format(DiscoveryExceptions.CouldNotAutoImportModule, moduleName);
                             CommandNotFoundException commandNotFound = new CommandNotFoundException(
@@ -1381,7 +1381,7 @@ namespace System.Management.Automation
                 var pathExt = Environment.GetEnvironmentVariable("PATHEXT");
 
                 if (!string.Equals(pathExt, s_pathExtCacheKey, StringComparison.OrdinalIgnoreCase) ||
-                    s_cachedPathExtCollection == null)
+                    s_cachedPathExtCollection is null)
                 {
                     InitPathExtCache(pathExt);
                 }
@@ -1400,7 +1400,7 @@ namespace System.Management.Automation
                 var pathExt = Environment.GetEnvironmentVariable("PATHEXT");
 
                 if (!string.Equals(pathExt, s_pathExtCacheKey, StringComparison.OrdinalIgnoreCase) ||
-                    s_cachedPathExtCollection == null)
+                    s_cachedPathExtCollection is null)
                 {
                     InitPathExtCache(pathExt);
                 }
@@ -1454,7 +1454,7 @@ namespace System.Management.Automation
 
             PSSnapinQualifiedName commandName = PSSnapinQualifiedName.GetInstance(cmdletName);
 
-            if (commandName == null)
+            if (commandName is null)
             {
                 yield break;
             }
@@ -1523,7 +1523,7 @@ namespace System.Management.Automation
             Dbg.Assert(variablePath != null, "variablePath must be non empty");
             Dbg.Assert(!string.IsNullOrEmpty(environmentVariable), "environmentVariable must be non empty");
 
-            if (context == null)
+            if (context is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }

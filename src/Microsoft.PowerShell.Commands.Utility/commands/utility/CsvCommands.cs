@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (InputObject == null || _sw == null)
+            if (InputObject is null || _sw is null)
             {
                 return;
             }
@@ -279,7 +279,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Process first object
-            if (_propertyNames == null)
+            if (_propertyNames is null)
             {
                 // figure out the column names (and lock-in their order)
                 _propertyNames = ExportCsvHelper.BuildPropertyNames(InputObject, _propertyNames);
@@ -334,7 +334,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void CreateFileStream()
         {
-            if (_path == null)
+            if (_path is null)
             {
                 throw new InvalidOperationException(CsvCommandStrings.FileNameIsAMandatoryParameter);
             }
@@ -430,7 +430,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new InvalidOperationException(CsvCommandStrings.ReconcilePreexistingPropertyNamesMethodShouldOnlyGetCalledWhenAppending);
             }
 
-            if (_preexistingPropertyNames == null)
+            if (_preexistingPropertyNames is null)
             {
                 throw new InvalidOperationException(CsvCommandStrings.ReconcilePreexistingPropertyNamesMethodShouldOnlyGetCalledWhenPreexistingPropertyNamesHaveBeenReadSuccessfully);
             }
@@ -695,13 +695,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (InputObject == null)
+            if (InputObject is null)
             {
                 return;
             }
 
             // Process first object
-            if (_propertyNames == null)
+            if (_propertyNames is null)
             {
                 _propertyNames = ExportCsvHelper.BuildPropertyNames(InputObject, _propertyNames);
                 if (NoTypeInformation == false)
@@ -823,12 +823,12 @@ namespace Microsoft.PowerShell.Commands
                         this.ThrowTerminatingError(errorRecord);
                     }
 
-                    if ((Header == null) && (helper.Header != null))
+                    if ((Header is null) && (helper.Header != null))
                     {
                         Header = helper.Header.ToArray();
                     }
 
-                    if ((_typeName == null) && (helper.TypeName != null))
+                    if ((_typeName is null) && (helper.TypeName != null))
                     {
                         _typeName = helper.TypeName;
                     }
@@ -867,7 +867,7 @@ namespace Microsoft.PowerShell.Commands
         {
             _delimiter = delimiter;
             _quoteKind = quoteKind;
-            _quoteFields = quoteFields == null ? null : new HashSet<string>(quoteFields, StringComparer.OrdinalIgnoreCase);
+            _quoteFields = quoteFields is null ? null : new HashSet<string>(quoteFields, StringComparer.OrdinalIgnoreCase);
             _outputString = new StringBuilder(128);
         }
 
@@ -904,7 +904,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Converted string.</returns>
         internal string ConvertPropertyNamesCSV(IList<string> propertyNames)
         {
-            if (propertyNames == null)
+            if (propertyNames is null)
             {
                 throw new ArgumentNullException(nameof(propertyNames));
             }
@@ -970,7 +970,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal string ConvertPSObjectToCSV(PSObject mshObject, IList<string> propertyNames)
         {
-            if (propertyNames == null)
+            if (propertyNames is null)
             {
                 throw new ArgumentNullException(nameof(propertyNames));
             }
@@ -1044,7 +1044,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>ToString() value.</returns>
         internal static string GetToStringValueForProperty(PSPropertyInfo property)
         {
-            if (property == null)
+            if (property is null)
             {
                 throw new ArgumentNullException(nameof(property));
             }
@@ -1077,13 +1077,13 @@ namespace Microsoft.PowerShell.Commands
 
             // get type of source
             Collection<string> tnh = source.TypeNames;
-            if (tnh == null || tnh.Count == 0)
+            if (tnh is null || tnh.Count == 0)
             {
                 type = "#TYPE";
             }
             else
             {
-                if (tnh[0] == null)
+                if (tnh[0] is null)
                 {
                     throw new InvalidOperationException(CsvCommandStrings.TypeHierarchyShouldNotHaveNullValues);
                 }
@@ -1109,7 +1109,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static void AppendStringWithEscapeAlways(StringBuilder dest, string source)
         {
-            if (source == null)
+            if (source is null)
             {
                 return;
             }
@@ -1209,12 +1209,12 @@ namespace Microsoft.PowerShell.Commands
 
         internal ImportCsvHelper(PSCmdlet cmdlet, char delimiter, IList<string> header, string typeName, StreamReader streamReader)
         {
-            if (cmdlet == null)
+            if (cmdlet is null)
             {
                 throw new ArgumentNullException(nameof(cmdlet));
             }
 
-            if (streamReader == null)
+            if (streamReader is null)
             {
                 throw new ArgumentNullException(nameof(streamReader));
             }
@@ -1274,14 +1274,14 @@ namespace Microsoft.PowerShell.Commands
         internal void ReadHeader()
         {
             // Read #Type record if available
-            if ((TypeName == null) && (!this.EOF))
+            if ((TypeName is null) && (!this.EOF))
             {
                 TypeName = ReadTypeInformation();
             }
 
             var values = new List<string>(ValueCountGuestimate);
             var builder = new StringBuilder(LineLengthGuestimate);
-            while ((Header == null) && (!this.EOF))
+            while ((Header is null) && (!this.EOF))
             {
                 ParseNextRecord(values, builder);
 

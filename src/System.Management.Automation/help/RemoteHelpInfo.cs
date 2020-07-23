@@ -42,7 +42,7 @@ namespace System.Management.Automation
                     helpResults = powerShell.Invoke();
                 }
 
-                if ((helpResults == null) || (helpResults.Count == 0))
+                if ((helpResults is null) || (helpResults.Count == 0))
                 {
                     throw new Microsoft.PowerShell.Commands.HelpNotFoundException(remoteHelpTopic);
                 }
@@ -87,7 +87,7 @@ namespace System.Management.Automation
         private string GetHelpProperty(string propertyName)
         {
             PSPropertyInfo property = _deserializedRemoteHelp.Properties[propertyName];
-            if (property == null)
+            if (property is null)
             {
                 return null;
             }

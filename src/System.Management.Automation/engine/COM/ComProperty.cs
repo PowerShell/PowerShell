@@ -51,7 +51,7 @@ namespace System.Management.Automation
             {
                 _cachedType = null;
 
-                if (_cachedType == null)
+                if (_cachedType is null)
                 {
                     IntPtr pFuncDesc = IntPtr.Zero;
 
@@ -153,7 +153,7 @@ namespace System.Management.Automation
             catch (TargetInvocationException te)
             {
                 var innerCom = te.InnerException as COMException;
-                if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
+                if (innerCom is null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
                 {
                     throw;
                 }
@@ -197,7 +197,7 @@ namespace System.Management.Automation
             catch (TargetInvocationException te)
             {
                 var innerCom = te.InnerException as COMException;
-                if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
+                if (innerCom is null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
                 {
                     throw;
                 }
@@ -231,7 +231,7 @@ namespace System.Management.Automation
             catch (TargetInvocationException te)
             {
                 var innerCom = te.InnerException as COMException;
-                if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
+                if (innerCom is null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
                 {
                     throw;
                 }
@@ -280,7 +280,7 @@ namespace System.Management.Automation
             catch (TargetInvocationException te)
             {
                 var innerCom = te.InnerException as COMException;
-                if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
+                if (innerCom is null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
                 {
                     throw;
                 }

@@ -243,7 +243,7 @@ namespace System.Management.Automation.Internal
             {
                 FileStream stream = new FileStream(filename, mode, access, share);
 
-                if (stream == null)
+                if (stream is null)
                 {
                     return new IntPtr(-1);
                 }
@@ -321,7 +321,7 @@ namespace System.Management.Automation.Internal
             GCHandle handle = GCHandle.FromIntPtr(fp);
             FileStream stream = (FileStream)handle.Target;
 
-            if (stream == null)
+            if (stream is null)
             {
                 return -1;
             }

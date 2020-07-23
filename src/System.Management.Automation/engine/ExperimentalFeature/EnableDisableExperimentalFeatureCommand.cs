@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>List of Completion Results.</returns>
         public IEnumerable<CompletionResult> CompleteArgument(string commandName, string parameterName, string wordToComplete, CommandAst commandAst, IDictionary fakeBoundParameters)
         {
-            if (fakeBoundParameters == null)
+            if (fakeBoundParameters is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(fakeBoundParameters));
             }

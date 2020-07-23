@@ -125,7 +125,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void SetRoot(string path)
         {
-            if (path == null)
+            if (path is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -269,7 +269,7 @@ namespace System.Management.Automation
         /// </exception>
         protected PSDriveInfo(PSDriveInfo driveInfo)
         {
-            if (driveInfo == null)
+            if (driveInfo is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(driveInfo));
             }
@@ -324,17 +324,17 @@ namespace System.Management.Automation
         {
             // Verify the parameters
 
-            if (name == null)
+            if (name is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
-            if (provider == null)
+            if (provider is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
-            if (root == null)
+            if (root is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(root));
             }
@@ -532,7 +532,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void SetProvider(ProviderInfo newProvider)
         {
-            if (newProvider == null)
+            if (newProvider is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(newProvider));
             }
@@ -600,7 +600,7 @@ namespace System.Management.Automation
         {
 #pragma warning disable 56506
 
-            if (drive == null)
+            if (drive is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
@@ -627,7 +627,7 @@ namespace System.Management.Automation
         {
             PSDriveInfo drive = obj as PSDriveInfo;
 
-            if (drive == null)
+            if (drive is null)
             {
                 ArgumentException e =
                     PSTraceSource.NewArgumentException(
@@ -693,7 +693,7 @@ namespace System.Management.Automation
             object drive1Object = drive1;
             object drive2Object = drive2;
 
-            if ((drive1Object == null) == (drive2Object == null))
+            if ((drive1Object is null) == (drive2Object is null))
             {
                 if (drive1Object != null)
                 {
@@ -745,13 +745,13 @@ namespace System.Management.Automation
             object drive1Object = drive1;
             object drive2Object = drive2;
 
-            if (drive1Object == null)
+            if (drive1Object is null)
             {
                 return (drive2Object != null);
             }
             else
             {
-                if (drive2Object == null)
+                if (drive2Object is null)
                 {
                     // Since drive1 is not null and drive2 is, drive1 is greater than drive2
                     return false;
@@ -783,7 +783,7 @@ namespace System.Management.Automation
             object drive1Object = drive1;
             object drive2Object = drive2;
 
-            if ((drive1Object == null))
+            if ((drive1Object is null))
             {
                 // Since both drives are null, they are equal
                 // Since drive1 is null it is less than drive2 which is not null
@@ -791,7 +791,7 @@ namespace System.Management.Automation
             }
             else
             {
-                if (drive2Object == null)
+                if (drive2Object is null)
                 {
                     // Since drive1 is not null and drive2 is, drive1 is greater than drive2
                     return true;
@@ -820,7 +820,7 @@ namespace System.Management.Automation
 
         internal PSNoteProperty GetNotePropertyForProviderCmdlets(string name)
         {
-            if (_noteProperty == null)
+            if (_noteProperty is null)
             {
                 Interlocked.CompareExchange(ref _noteProperty,
                                             new PSNoteProperty(name, this), null);

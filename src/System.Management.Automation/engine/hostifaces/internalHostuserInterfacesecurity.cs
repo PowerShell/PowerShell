@@ -61,7 +61,7 @@ namespace System.Management.Automation.Internal.Host
             PSCredentialTypes allowedCredentialTypes,
             PSCredentialUIOptions options)
         {
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 ThrowPromptNotInteractive(message);
             }
@@ -76,7 +76,7 @@ namespace System.Management.Automation.Internal.Host
                 // PipelineStoppedException is thrown by host when it wants
                 // to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
-                if (lpl == null)
+                if (lpl is null)
                 {
                     throw;
                 }

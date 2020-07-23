@@ -482,7 +482,7 @@ namespace System.Management.Automation
 
             if (requestedPublicKeyToken != null && requestedPublicKeyToken.Length > 0)
             {
-                if (loadedPublicKeyToken == null || requestedPublicKeyToken.Length != loadedPublicKeyToken.Length)
+                if (loadedPublicKeyToken is null || requestedPublicKeyToken.Length != loadedPublicKeyToken.Length)
                     return false;
 
                 for (int i = 0; i < requestedPublicKeyToken.Length; i++)

@@ -232,7 +232,7 @@ namespace System.Management.Automation
             Dbg.Assert(parameter != null, "Caller should verify parameter != null");
             Dbg.Assert(parameterMetadata != null, "Caller should verify parameterMetadata != null");
 
-            if (parameterValue == null)
+            if (parameterValue is null)
             {
                 return;
             }
@@ -335,12 +335,12 @@ namespace System.Management.Automation
             bool coerceTypeIfNeeded = (flags & ParameterBindingFlags.ShouldCoerceType) != 0;
             bool isDefaultValue = (flags & ParameterBindingFlags.IsDefaultValue) != 0;
 
-            if (parameter == null)
+            if (parameter is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(parameter));
             }
 
-            if (parameterMetadata == null)
+            if (parameterMetadata is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(parameterMetadata));
             }
@@ -439,7 +439,7 @@ namespace System.Management.Automation
                                             GetErrorExtent(parameter),
                                             parameterMetadata.Name,
                                             parameterMetadata.Type,
-                                            (parameterValue == null) ? null : parameterValue.GetType(),
+                                            (parameterValue is null) ? null : parameterValue.GetType(),
                                             ParameterBinderStrings.ParameterArgumentTransformationError,
                                             "ParameterArgumentTransformationError",
                                             e.Message);
@@ -522,7 +522,7 @@ namespace System.Management.Automation
                                             GetErrorExtent(parameter),
                                             parameterMetadata.Name,
                                             parameterMetadata.Type,
-                                            (parameterValue == null) ? null : parameterValue.GetType(),
+                                            (parameterValue is null) ? null : parameterValue.GetType(),
                                             ParameterBinderStrings.ParameterArgumentValidationError,
                                             "ParameterArgumentValidationError",
                                             e.Message);
@@ -586,7 +586,7 @@ namespace System.Management.Automation
 
                     if (bindError != null)
                     {
-                        Type specifiedType = (parameterValue == null) ? null : parameterValue.GetType();
+                        Type specifiedType = (parameterValue is null) ? null : parameterValue.GetType();
                         ParameterBindingException bindingException =
                             new ParameterBindingException(
                                 bindError,
@@ -694,7 +694,7 @@ namespace System.Management.Automation
             object parameterValue,
             bool recurseIntoCollections)
         {
-            if (parameterValue == null && argumentType != typeof(bool?))
+            if (parameterValue is null && argumentType != typeof(bool?))
             {
                 if (!parameterMetadata.AllowsNullArgument)
                 {
@@ -736,7 +736,7 @@ namespace System.Management.Automation
                             GetErrorExtent(parameter),
                             parameterMetadata.Name,
                             parameterMetadata.Type,
-                            (parameterValue == null) ? null : parameterValue.GetType(),
+                            (parameterValue is null) ? null : parameterValue.GetType(),
                             ParameterBinderStrings.ParameterArgumentValidationErrorEmptyStringNotAllowed,
                             "ParameterArgumentValidationErrorEmptyStringNotAllowed");
                     throw bindingException;
@@ -813,7 +813,7 @@ namespace System.Management.Automation
                         GetErrorExtent(parameter),
                         parameterMetadata.Name,
                         parameterMetadata.Type,
-                        (parameterValue == null) ? null : parameterValue.GetType(),
+                        (parameterValue is null) ? null : parameterValue.GetType(),
                         resourceString,
                         errorId);
                 throw bindingException;
@@ -829,9 +829,9 @@ namespace System.Management.Automation
             bool isDefaultValue = (flags & ParameterBindingFlags.IsDefaultValue) != 0;
             Type parameterType = parameterMetadata.Type;
 
-            if (parameterValue == null)
+            if (parameterValue is null)
             {
-                return parameterType == null ||
+                return parameterType is null ||
                        isDefaultValue ||
                        (!parameterType.IsValueType &&
                         parameterType != typeof(string));
@@ -883,7 +883,7 @@ namespace System.Management.Automation
                         false,
                         out coercionRequired);
 
-                if (encodedValue == null || coercionRequired)
+                if (encodedValue is null || coercionRequired)
                 {
                     // Don't attempt the bind because the
                     // PSObject BaseObject is not of the correct
@@ -987,19 +987,19 @@ namespace System.Management.Automation
             ParameterCollectionTypeInformation collectionTypeInfo,
             object currentValue)
         {
-            if (argument == null)
+            if (argument is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(argument));
             }
 
-            if (toType == null)
+            if (toType is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(toType));
             }
 
             // Construct the collection type information if it wasn't passed in.
 
-            if (collectionTypeInfo == null)
+            if (collectionTypeInfo is null)
             {
                 collectionTypeInfo = new ParameterCollectionTypeInformation(toType);
             }
@@ -1272,7 +1272,7 @@ namespace System.Management.Automation
 
                         bindingTracer.WriteLine(
                             "CONVERT SUCCESSFUL using LanguagePrimitives.ConvertTo: [{0}]",
-                            (result == null) ? "null" : result.ToString());
+                            (result is null) ? "null" : result.ToString());
                     } while (false);
                 }
                 catch (NotSupportedException notSupported)
@@ -1335,7 +1335,7 @@ namespace System.Management.Automation
         {
             bool result = false;
 
-            if (currentValue == null ||
+            if (currentValue is null ||
                 currentValue == AutomationNull.Value ||
                 currentValue == UnboundParameter.Value)
             {
@@ -1471,13 +1471,13 @@ namespace System.Management.Automation
                 bindingTracer.WriteLine(
                     "Binding collection parameter {0}: argument type [{1}], parameter type [{2}], collection type {3}, element type [{4}], {5}",
                     parameterName,
-                    (currentValue == null) ? "null" : currentValue.GetType().Name,
+                    (currentValue is null) ? "null" : currentValue.GetType().Name,
                     toType,
                     collectionTypeInformation.ParameterCollectionType,
                     collectionTypeInformation.ElementType,
                     coerceElementTypeIfNeeded ? "coerceElementType" : "no coerceElementType");
 
-                if (currentValue == null)
+                if (currentValue is null)
                 {
                     break;
                 }
@@ -1590,7 +1590,7 @@ namespace System.Management.Automation
                                 getMethodError = e;
                             }
 
-                            if (addMethod == null)
+                            if (addMethod is null)
                             {
                                 ParameterBindingException bindingException =
                                     new ParameterBindingException(
@@ -1603,7 +1603,7 @@ namespace System.Management.Automation
                                         currentValue.GetType(),
                                         ParameterBinderStrings.CannotExtractAddMethod,
                                         "CannotExtractAddMethod",
-                                        (getMethodError == null) ? string.Empty : getMethodError.Message);
+                                        (getMethodError is null) ? string.Empty : getMethodError.Message);
                                 throw bindingException;
                             }
                         }
@@ -1702,7 +1702,7 @@ namespace System.Management.Automation
                         {
                             bindingTracer.WriteLine(
                                 "COERCE collection element from type {0} to type {1}",
-                                (valueElement == null) ? "null" : valueElement.GetType().Name,
+                                (valueElement is null) ? "null" : valueElement.GetType().Name,
                                 collectionElementType);
 
                             // Coerce the element to the appropriate type.
@@ -1727,7 +1727,7 @@ namespace System.Management.Automation
                             {
                                 bindingTracer.WriteLine(
                                     "COERCION REQUIRED: Did not attempt to coerce collection element from type {0} to type {1}",
-                                    (valueElement == null) ? "null" : valueElement.GetType().Name,
+                                    (valueElement is null) ? "null" : valueElement.GetType().Name,
                                     collectionElementType);
 
                                 coercionRequired = true;
@@ -1744,7 +1744,7 @@ namespace System.Management.Automation
                             {
                                 bindingTracer.WriteLine(
                                     "Adding element of type {0} to array position {1}",
-                                    (currentValueElement == null) ? "null" : currentValueElement.GetType().Name,
+                                    (currentValueElement is null) ? "null" : currentValueElement.GetType().Name,
                                     arrayIndex);
                                 resultAsIList[arrayIndex++] = currentValueElement;
                             }
@@ -1752,14 +1752,14 @@ namespace System.Management.Automation
                             {
                                 bindingTracer.WriteLine(
                                     "Adding element of type {0} via IList.Add",
-                                    (currentValueElement == null) ? "null" : currentValueElement.GetType().Name);
+                                    (currentValueElement is null) ? "null" : currentValueElement.GetType().Name);
                                 resultAsIList.Add(currentValueElement);
                             }
                             else
                             {
                                 bindingTracer.WriteLine(
                                     "Adding element of type {0} via ICollection<T>::Add()",
-                                    (currentValueElement == null) ? "null" : currentValueElement.GetType().Name);
+                                    (currentValueElement is null) ? "null" : currentValueElement.GetType().Name);
                                 addMethod.Invoke(resultCollection, new object[1] { currentValueElement });
                             }
                         }
@@ -1781,7 +1781,7 @@ namespace System.Management.Automation
                                     GetErrorExtent(argument),
                                     parameterName,
                                     toType,
-                                    (currentValueElement == null) ? null : currentValueElement.GetType(),
+                                    (currentValueElement is null) ? null : currentValueElement.GetType(),
                                     ParameterBinderStrings.CannotConvertArgument,
                                     "CannotConvertArgument",
                                     currentValueElement ?? "null",
@@ -1790,7 +1790,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
-                else // (currentValueAsIList == null)
+                else // (currentValueAsIList is null)
                 {
                     bindingTracer.WriteLine(
                         "Argument type {0} is not IList, treating this as scalar",
@@ -1841,7 +1841,7 @@ namespace System.Management.Automation
                         {
                             bindingTracer.WriteLine(
                                 "Adding scalar element of type {0} to array position {1}",
-                                (currentValue == null) ? "null" : currentValue.GetType().Name,
+                                (currentValue is null) ? "null" : currentValue.GetType().Name,
                                 0);
                             resultAsIList[0] = currentValue;
                         }
@@ -1849,14 +1849,14 @@ namespace System.Management.Automation
                         {
                             bindingTracer.WriteLine(
                                 "Adding scalar element of type {0} via IList.Add",
-                                (currentValue == null) ? "null" : currentValue.GetType().Name);
+                                (currentValue is null) ? "null" : currentValue.GetType().Name);
                             resultAsIList.Add(currentValue);
                         }
                         else
                         {
                             bindingTracer.WriteLine(
                                 "Adding scalar element of type {0} via ICollection<T>::Add()",
-                                (currentValue == null) ? "null" : currentValue.GetType().Name);
+                                (currentValue is null) ? "null" : currentValue.GetType().Name);
                             addMethod.Invoke(resultCollection, new object[1] { currentValue });
                         }
                     }
@@ -1878,7 +1878,7 @@ namespace System.Management.Automation
                                 GetErrorExtent(argument),
                                 parameterName,
                                 toType,
-                                (currentValue == null) ? null : currentValue.GetType(),
+                                (currentValue is null) ? null : currentValue.GetType(),
                                 ParameterBinderStrings.CannotConvertArgument,
                                 "CannotConvertArgument",
                                 currentValue ?? "null",
@@ -2022,7 +2022,7 @@ namespace System.Management.Automation
         internal void SetImplicitUsingParameters(object obj)
         {
             _dictionary.ImplicitUsingParameters = PSObject.Base(obj) as IDictionary;
-            if (_dictionary.ImplicitUsingParameters == null)
+            if (_dictionary.ImplicitUsingParameters is null)
             {
                 // Handle downlevel V4 case where using parameters are passed as an array list.
                 IList implicitArrayUsingParameters = PSObject.Base(obj) as IList;

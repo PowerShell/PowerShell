@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell
         internal
         ProgressPane(ConsoleHostUserInterface ui)
         {
-            if (ui == null) throw new ArgumentNullException(nameof(ui));
+            if (ui is null) throw new ArgumentNullException(nameof(ui));
             _ui = ui;
             _rawui = ui.RawUI;
         }
@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell
                 // Get temporary reference to the progress region since it can be
                 // changed at any time by a call to WriteProgress.
                 BufferCell[,] tempProgressRegion = _progressRegion;
-                if (tempProgressRegion == null)
+                if (tempProgressRegion is null)
                 {
                     return;
                 }
@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell
             int maxHeight = Math.Max(5, _rawui.WindowSize.Height / 3);
 
             string[] contents = pendingProgress.Render(maxWidth, maxHeight, _rawui);
-            if (contents == null)
+            if (contents is null)
             {
                 // There's nothing to show.
 
@@ -194,7 +194,7 @@ namespace Microsoft.PowerShell
             BufferCell[,] newRegion = _rawui.NewBufferCellArray(contents, _ui.ProgressForegroundColor, _ui.ProgressBackgroundColor);
             Dbg.Assert(newRegion != null, "NewBufferCellArray has failed!");
 
-            if (_progressRegion == null)
+            if (_progressRegion is null)
             {
                 // we've never shown this pane before.
 

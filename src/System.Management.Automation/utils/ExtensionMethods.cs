@@ -39,7 +39,7 @@ namespace System.Management.Automation
         internal static int SequenceGetHashCode<T>(this IEnumerable<T> xs)
         {
             // algorithm based on https://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
-            if (xs == null)
+            if (xs is null)
             {
                 return 82460653; // random number
             }

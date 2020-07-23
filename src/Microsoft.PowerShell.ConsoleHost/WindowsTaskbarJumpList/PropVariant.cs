@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         internal PropVariant(string value)
         {
-            if (value == null)
+            if (value is null)
             {
                 throw new ArgumentException("PropVariantNullString", nameof(value));
             }

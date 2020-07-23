@@ -53,7 +53,7 @@ namespace System.Management.Automation.Language
         private bool AnalyzingStaticMember()
         {
             MemberAst currentMember;
-            if (_memberScopeStack.Count == 0 || (currentMember = _memberScopeStack.Peek()) == null)
+            if (_memberScopeStack.Count == 0 || (currentMember = _memberScopeStack.Peek()) is null)
             {
                 return false;
             }
@@ -175,7 +175,7 @@ namespace System.Management.Automation.Language
             if (checkingAttributeOnClass)
             {
                 var attributeType = attributeAst.TypeName.GetReflectionAttributeType();
-                if (attributeType == null)
+                if (attributeType is null)
                 {
                     Diagnostics.Assert(_parser.ErrorList.Count > 0, "Symbol resolve should have reported error already");
                 }
@@ -212,7 +212,7 @@ namespace System.Management.Automation.Language
                         var propertyInfo = members[0] as PropertyInfo;
                         if (propertyInfo != null)
                         {
-                            if (propertyInfo.GetSetMethod() == null)
+                            if (propertyInfo.GetSetMethod() is null)
                             {
                                 _parser.ReportError(namedArg.Extent,
                                     nameof(ExtendedTypeSystem.ReadOnlyProperty),
@@ -552,14 +552,14 @@ namespace System.Management.Automation.Language
                     {
                         Type type1 = typeLiteral1.TypeName.GetReflectionType();
                         // If the type can't be resolved yet, there isn't much we can do, so skip it.
-                        if (type1 == null)
+                        if (type1 is null)
                             continue;
 
                         foreach (TypeConstraintAst typeLiteral2 in block2.CatchTypes)
                         {
                             Type type2 = typeLiteral2.TypeName.GetReflectionType();
                             // If the type can't be resolved yet, there isn't much we can do, so skip it.
-                            if (type2 == null)
+                            if (type2 is null)
                                 continue;
 
                             if (type1 == type2 || type2.IsSubclassOf(type1))
@@ -663,7 +663,7 @@ namespace System.Management.Automation.Language
         {
             // We only return null from this method if the label is unknown.  If no label is specified,
             // we just use the empty string.
-            if (expr == null)
+            if (expr is null)
             {
                 return string.Empty;
             }
@@ -693,7 +693,7 @@ namespace System.Management.Automation.Language
         private void CheckForReturnStatement(ReturnStatementAst ast)
         {
             var functionMemberAst = _memberScopeStack.Peek() as FunctionMemberAst;
-            if (functionMemberAst == null)
+            if (functionMemberAst is null)
             {
                 return;
             }
@@ -752,7 +752,7 @@ namespace System.Management.Automation.Language
                 if (parenExpressionAst != null)
                 {
                     ExpressionAst expr = parenExpressionAst.Pipeline.GetPureExpression();
-                    if (expr == null)
+                    if (expr is null)
                     {
                         errorAst = parenExpressionAst.Pipeline;
                     }
@@ -1190,7 +1190,7 @@ namespace System.Management.Automation.Language
             TypeExpressionAst typeExpression = ast.Expression as TypeExpressionAst;
 
             // If this is static access on a variable, it may be suspicious
-            if (ast.Static && (typeExpression == null))
+            if (ast.Static && (typeExpression is null))
             {
                 MarkAstParentsAsSuspicious(ast);
             }
@@ -1214,7 +1214,7 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitScriptBlock(ScriptBlockAst scriptBlockAst)
         {
             _scopeStack.Push(scriptBlockAst);
-            if (scriptBlockAst.Parent == null || scriptBlockAst.Parent is ScriptBlockExpressionAst || !(scriptBlockAst.Parent.Parent is FunctionMemberAst))
+            if (scriptBlockAst.Parent is null || scriptBlockAst.Parent is ScriptBlockExpressionAst || !(scriptBlockAst.Parent.Parent is FunctionMemberAst))
             {
                 _memberScopeStack.Push(null);
             }
@@ -1267,7 +1267,7 @@ namespace System.Management.Automation.Language
                                 var commandAst = pipelineAst.PipelineElements[0] as CommandAst;
                                 if (commandAst != null &&
                                     commandAst.CommandElements.Count <= 2 &&
-                                    commandAst.DefiningKeyword == null)
+                                    commandAst.DefiningKeyword is null)
                                 {
                                     // Here indicates a CommandAst followed by a ScriptBlockExpression,
                                     // which is invalid if the DSC resource is not defined
@@ -1330,7 +1330,7 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                // ToRemove: No need to continue the parsing if there is no EndBlock, check if (configBody.EndBlock == null)
+                // ToRemove: No need to continue the parsing if there is no EndBlock, check if (configBody.EndBlock is null)
             }
 
             return AstVisitAction.Continue;
@@ -1369,7 +1369,7 @@ namespace System.Management.Automation.Language
                 foreach (var keyValueTuple in hashtable.KeyValuePairs)
                 {
                     var propName = keyValueTuple.Item1 as StringConstantExpressionAst;
-                    if (propName == null)
+                    if (propName is null)
                     {
                         _parser.ReportError(keyValueTuple.Item1.Extent,
                             nameof(ParserStrings.ConfigurationInvalidPropertyName),
@@ -1446,7 +1446,7 @@ namespace System.Management.Automation.Language
             var scriptBlockAst = ast as ScriptBlockAst;
             if (scriptBlockAst != null)
             {
-                if (scriptBlockAst.Parent == null || scriptBlockAst.Parent is ScriptBlockExpressionAst || !(scriptBlockAst.Parent.Parent is FunctionMemberAst))
+                if (scriptBlockAst.Parent is null || scriptBlockAst.Parent is ScriptBlockExpressionAst || !(scriptBlockAst.Parent.Parent is FunctionMemberAst))
                 {
                     _memberScopeStack.Pop();
                 }
@@ -1571,7 +1571,7 @@ namespace System.Management.Automation.Language
         /// <param name="hasKey">Flag to indicate if the class contains Key property.</param>
         private static void LookupRequiredMembers(Parser parser, TypeDefinitionAst typeDefinitionAst, ref bool hasSet, ref bool hasGet, ref bool hasTest, ref bool hasKey)
         {
-            if (typeDefinitionAst == null)
+            if (typeDefinitionAst is null)
             {
                 return;
             }
@@ -1584,13 +1584,13 @@ namespace System.Management.Automation.Language
             foreach (var baseType in typeDefinitionAst.BaseTypes)
             {
                 var baseTypeName = baseType.TypeName as TypeName;
-                if (baseTypeName == null)
+                if (baseTypeName is null)
                 {
                     continue;
                 }
 
                 TypeDefinitionAst baseTypeDefinitionAst = baseTypeName._typeDefinitionAst;
-                if (baseTypeDefinitionAst == null || !baseTypeDefinitionAst.IsClass)
+                if (baseTypeDefinitionAst is null || !baseTypeDefinitionAst.IsClass)
                 {
                     continue;
                 }
@@ -1641,7 +1641,7 @@ namespace System.Management.Automation.Language
                     var typeName =
                         (arrayTypeName != null ? arrayTypeName.ElementType : functionMemberAst.ReturnType.TypeName) as
                             TypeName;
-                    if (typeName == null || typeName._typeDefinitionAst != functionMemberAst.Parent)
+                    if (typeName is null || typeName._typeDefinitionAst != functionMemberAst.Parent)
                     {
                         parser.ReportError(functionMemberAst.Extent,
                             nameof(ParserStrings.DscResourceInvalidGetMethod),
@@ -1868,7 +1868,7 @@ namespace System.Management.Automation.Language
             // Int16, UInt16, Int32, UInt32, Int64, UInt64, Single, Double, Decimal, DateTime, String
             // We reject anything with a typecode or element typecode of object...
             // If we couldn't resolve the type, then it's definitely an error.
-            if (type == null || ((type.IsArray ? type.GetElementType() : type).GetTypeCode() == TypeCode.Object))
+            if (type is null || ((type.IsArray ? type.GetElementType() : type).GetTypeCode() == TypeCode.Object))
             {
                 ReportError(ast,
                     nameof(ParserStrings.TypeNotAllowedInDataSection),
@@ -2096,11 +2096,11 @@ namespace System.Management.Automation.Language
                 return AstVisitAction.Continue;
             }
 
-            if (_allowedCommands == null)
+            if (_allowedCommands is null)
                 return AstVisitAction.Continue;
 
             string commandName = commandAst.GetCommandName();
-            if (commandName == null)
+            if (commandName is null)
             {
                 if (commandAst.InvocationOperator == TokenKind.Ampersand)
                 {

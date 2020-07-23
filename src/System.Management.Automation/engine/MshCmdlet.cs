@@ -445,7 +445,7 @@ namespace System.Management.Automation
                 throw e;
             }
 
-            if (cmdletType == null)
+            if (cmdletType is null)
             {
                 return null;
             }
@@ -458,7 +458,7 @@ namespace System.Management.Automation
                     break;
             }
 
-            if (ca == null)
+            if (ca is null)
             {
                 throw PSTraceSource.NewNotSupportedException();
             }
@@ -485,7 +485,7 @@ namespace System.Management.Automation
         /// <returns>A list of CmdletInfo objects...</returns>
         public List<CmdletInfo> GetCmdlets(string pattern)
         {
-            if (pattern == null)
+            if (pattern is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(pattern));
 
             List<CmdletInfo> cmdlets = new List<CmdletInfo>();
@@ -546,7 +546,7 @@ namespace System.Management.Automation
         /// <returns>A list of command names...</returns>
         public List<string> GetCommandName(string name, bool nameIsPattern, bool returnFullName)
         {
-            if (name == null)
+            if (name is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -606,7 +606,7 @@ namespace System.Management.Automation
         /// <returns>Collection of command names...</returns>
         public IEnumerable<CommandInfo> GetCommands(string name, CommandTypes commandTypes, bool nameIsPattern)
         {
-            if (name == null)
+            if (name is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -705,12 +705,12 @@ namespace System.Management.Automation
         public Collection<PSObject> InvokeScript(
             SessionState sessionState, ScriptBlock scriptBlock, params object[] args)
         {
-            if (scriptBlock == null)
+            if (scriptBlock is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(scriptBlock));
             }
 
-            if (sessionState == null)
+            if (sessionState is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
@@ -743,7 +743,7 @@ namespace System.Management.Automation
         public Collection<PSObject> InvokeScript(
             bool useLocalScope, ScriptBlock scriptBlock, IList input, params object[] args)
         {
-            if (scriptBlock == null)
+            if (scriptBlock is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(scriptBlock));
             }
@@ -783,7 +783,7 @@ namespace System.Management.Automation
         public Collection<PSObject> InvokeScript(string script, bool useNewScope,
             PipelineResultTypes writeToPipeline, IList input, params object[] args)
         {
-            if (script == null)
+            if (script is null)
                 throw new ArgumentNullException(nameof(script));
 
             // Compile the script text into an executable script block.
@@ -969,7 +969,7 @@ namespace System.Management.Automation
                         return null;
                     }
 
-                    if (_pagingParameters == null)
+                    if (_pagingParameters is null)
                     {
                         MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
                         if (mshCommandRuntime != null)

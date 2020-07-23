@@ -172,7 +172,7 @@ namespace System.Management.Automation
         public ListControl(IEnumerable<ListControlEntry> entries)
             : this()
         {
-            if (entries == null)
+            if (entries is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(entries));
             foreach (ListControlEntry entry in entries)
             {
@@ -208,7 +208,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (EntrySelectedBy == null)
+                if (EntrySelectedBy is null)
                     EntrySelectedBy = new EntrySelectedBy { TypeNames = new List<string>() };
                 return EntrySelectedBy.TypeNames;
             }
@@ -241,7 +241,7 @@ namespace System.Management.Automation
         public ListControlEntry(IEnumerable<ListControlEntryItem> listItems)
             : this()
         {
-            if (listItems == null)
+            if (listItems is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(listItems));
             foreach (ListControlEntryItem item in listItems)
             {
@@ -252,9 +252,9 @@ namespace System.Management.Automation
         /// <summary>Public constructor for ListControlEntry</summary>
         public ListControlEntry(IEnumerable<ListControlEntryItem> listItems, IEnumerable<string> selectedBy)
         {
-            if (listItems == null)
+            if (listItems is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(listItems));
-            if (selectedBy == null)
+            if (selectedBy is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(selectedBy));
 
             EntrySelectedBy = new EntrySelectedBy { TypeNames = new List<string>(selectedBy) };
@@ -272,7 +272,7 @@ namespace System.Management.Automation
                     return false;
             }
 
-            return EntrySelectedBy == null || EntrySelectedBy.SafeForExport();
+            return EntrySelectedBy is null || EntrySelectedBy.SafeForExport();
         }
 
         internal bool CompatibleWithOldPowerShell()
@@ -283,7 +283,7 @@ namespace System.Management.Automation
                     return false;
             }
 
-            return EntrySelectedBy == null || EntrySelectedBy.CompatibleWithOldPowerShell();
+            return EntrySelectedBy is null || EntrySelectedBy.CompatibleWithOldPowerShell();
         }
     }
 
@@ -350,13 +350,13 @@ namespace System.Management.Automation
         internal bool SafeForExport()
         {
             return DisplayEntry.SafeForExport() &&
-                   (ItemSelectionCondition == null || ItemSelectionCondition.SafeForExport());
+                   (ItemSelectionCondition is null || ItemSelectionCondition.SafeForExport());
         }
 
         internal bool CompatibleWithOldPowerShell()
         {
             // Old versions of PowerShell know nothing about ItemSelectionCondition.
-            return ItemSelectionCondition == null;
+            return ItemSelectionCondition is null;
         }
     }
 

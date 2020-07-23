@@ -103,14 +103,14 @@ namespace System.Management.Automation
         /// </exception>
         public CommandMetadata(CommandInfo commandInfo, bool shouldGenerateCommonParameters)
         {
-            if (commandInfo == null)
+            if (commandInfo is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
             }
             while (commandInfo is AliasInfo)
             {
                 commandInfo = ((AliasInfo)commandInfo).ResolvedCommand;
-                if (commandInfo == null)
+                if (commandInfo is null)
                 {
                     throw PSTraceSource.NewNotSupportedException();
                 }
@@ -160,7 +160,7 @@ namespace System.Management.Automation
         /// <param name="other">Object to copy.</param>
         public CommandMetadata(CommandMetadata other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(other));
             }
@@ -187,7 +187,7 @@ namespace System.Management.Automation
             }
 
             // deep copy of the collection, collection items (Attributes) copied by reference
-            if (other._otherAttributes == null)
+            if (other._otherAttributes is null)
             {
                 _otherAttributes = null;
             }
@@ -326,7 +326,7 @@ namespace System.Management.Automation
                 s_commandMetadataCache.TryGetValue(cmdletTypeName, out result);
             }
 
-            if (result == null)
+            if (result is null)
             {
                 result = new CommandMetadata(commandName, cmdletType, context);
 
@@ -410,7 +410,7 @@ namespace System.Management.Automation
         /// </remarks>
         internal CommandMetadata(ScriptBlock scriptblock, string commandName, ExecutionContext context)
         {
-            if (scriptblock == null)
+            if (scriptblock is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(scriptblock));
             }
@@ -549,7 +549,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_parameters == null)
+                if (_parameters is null)
                 {
                     // Return parameters for a script block
                     if (_scriptBlock != null)
@@ -724,7 +724,7 @@ namespace System.Management.Automation
         /// </exception>
         private void ProcessCmdletAttribute(CmdletCommonMetadataAttribute attribute)
         {
-            if (attribute == null)
+            if (attribute is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(attribute));
             }

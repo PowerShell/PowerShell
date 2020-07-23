@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private void RetrieveMatchingProcessesByProcessName()
         {
-            if (processNames == null)
+            if (processNames is null)
             {
                 _matchingProcesses = new List<Process>(AllProcesses);
                 return;
@@ -220,7 +220,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private void RetrieveMatchingProcessesById()
         {
-            if (processIds == null)
+            if (processIds is null)
             {
                 Diagnostics.Assert(false, "null processIds");
                 throw PSTraceSource.NewInvalidOperationException();
@@ -256,7 +256,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private void RetrieveProcessesByInput()
         {
-            if (InputObject == null)
+            if (InputObject is null)
             {
                 Diagnostics.Assert(false, "null InputObject");
                 throw PSTraceSource.NewInvalidOperationException();
@@ -282,7 +282,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (_allProcesses == null)
+                if (_allProcesses is null)
                 {
                     List<Process> processes = new List<Process>();
                     processes.AddRange(Process.GetProcesses());
@@ -360,7 +360,7 @@ namespace Microsoft.PowerShell.Commands
             string message = StringUtil.Format(resourceId,
                 processName,
                 processId,
-                (innerException == null) ? string.Empty : innerException.Message);
+                (innerException is null) ? string.Empty : innerException.Message);
             ProcessCommandException exception =
                 new ProcessCommandException(message, innerException);
             exception.ProcessName = processName;
@@ -1169,7 +1169,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (myMode == MatchMode.All || (myMode == MatchMode.ByName && processNames == null))
+            if (myMode == MatchMode.All || (myMode == MatchMode.ByName && processNames is null))
             {
                 Diagnostics.Assert(false, "trying to kill all processes");
                 throw PSTraceSource.NewInvalidOperationException();
@@ -1317,7 +1317,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (Win32Native.OpenProcessToken(process.Handle, TOKEN_QUERY, out ph))
                 {
-                    if (_currentUserName == null)
+                    if (_currentUserName is null)
                     {
                         using (var currentUser = WindowsIdentity.GetCurrent())
                         {
@@ -1870,7 +1870,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Linux relies on `xdg-open` and macOS relies on `open` which behave differently than Windows ShellExecute when running console commands
                 // as a new console will be opened.  So to avoid that, we only use ShellExecute on non-Windows if the filename is not an actual command (like a URI)
-                startInfo.UseShellExecute = (ArgumentList == null);
+                startInfo.UseShellExecute = (ArgumentList is null);
 #endif
             }
 
@@ -2480,7 +2480,7 @@ namespace Microsoft.PowerShell.Commands
                     IntPtr password = IntPtr.Zero;
                     try
                     {
-                        password = (startinfo.Password == null) ? Marshal.StringToCoTaskMemUni(string.Empty) : Marshal.SecureStringToCoTaskMemUnicode(startinfo.Password);
+                        password = (startinfo.Password is null) ? Marshal.StringToCoTaskMemUni(string.Empty) : Marshal.SecureStringToCoTaskMemUnicode(startinfo.Password);
                         flag = ProcessNativeMethods.CreateProcessWithLogonW(startinfo.UserName, startinfo.Domain, password, logonFlags, null, cmdLine, creationFlags, AddressOfEnvironmentBlock, startinfo.WorkingDirectory, lpStartupInfo, lpProcessInformation);
                         if (!flag)
                         {
@@ -3007,7 +3007,7 @@ namespace Microsoft.PowerShell.Commands
         {
             base.GetObjectData(info, context);
 
-            if (info == null)
+            if (info is null)
                 throw new ArgumentNullException(nameof(info));
 
             info.AddValue("ProcessName", _processName);

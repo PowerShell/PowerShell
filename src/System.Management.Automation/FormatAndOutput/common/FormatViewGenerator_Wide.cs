@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private WideViewEntry GenerateWideViewEntryFromProperties(PSObject so, int enumerationLimit)
         {
             // compute active properties every time
-            if (this.activeAssociationList == null)
+            if (this.activeAssociationList is null)
             {
                 SetUpActiveProperty(so);
             }

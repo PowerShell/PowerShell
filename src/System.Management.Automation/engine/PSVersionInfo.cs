@@ -563,7 +563,7 @@ namespace System.Management.Automation
         /// </exception>
         public SemanticVersion(Version version)
         {
-            if (version == null) throw PSTraceSource.NewArgumentNullException(nameof(version));
+            if (version is null) throw PSTraceSource.NewArgumentNullException(nameof(version));
             if (version.Revision > 0) throw PSTraceSource.NewArgumentException(nameof(version));
 
             Major = version.Major;
@@ -651,7 +651,7 @@ namespace System.Management.Automation
         /// <exception cref="OverflowException"></exception>
         public static SemanticVersion Parse(string version)
         {
-            if (version == null) throw PSTraceSource.NewArgumentNullException(nameof(version));
+            if (version is null) throw PSTraceSource.NewArgumentNullException(nameof(version));
             if (version == string.Empty) throw new FormatException(nameof(version));
 
             var r = new VersionResult();
@@ -709,14 +709,14 @@ namespace System.Management.Automation
                 // 'PreReleaseLabel' can contains dashes.
                 if (plusIndex == -1)
                 {
-                    // No buildLabel: buildLabel == null
+                    // No buildLabel: buildLabel is null
                     // Format is 'major.minor.patch-PreReleaseLabel'
                     preLabel = version.Substring(dashIndex + 1);
                     versionSansLabel = version.Substring(0, dashIndex);
                 }
                 else
                 {
-                    // No PreReleaseLabel: preLabel == null
+                    // No PreReleaseLabel: preLabel is null
                     // Format is 'major.minor.patch+BuildLabel'
                     buildLabel = version.Substring(plusIndex + 1);
                     versionSansLabel = version.Substring(0, plusIndex);
@@ -728,8 +728,8 @@ namespace System.Management.Automation
                 if (dashIndex == -1)
                 {
                     // Here dashIndex == plusIndex == -1
-                    // No preLabel - preLabel == null;
-                    // No buildLabel - buildLabel == null;
+                    // No preLabel - preLabel is null;
+                    // No buildLabel - buildLabel is null;
                     // Format is 'major.minor.patch'
                     versionSansLabel = version;
                 }
@@ -794,7 +794,7 @@ namespace System.Management.Automation
         /// </summary>
         public override string ToString()
         {
-            if (versionString == null)
+            if (versionString is null)
             {
                 StringBuilder result = new StringBuilder();
 
@@ -839,13 +839,13 @@ namespace System.Management.Automation
         /// </summary>
         public int CompareTo(object version)
         {
-            if (version == null)
+            if (version is null)
             {
                 return 1;
             }
 
             var v = version as SemanticVersion;
-            if (v == null)
+            if (v is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(version));
             }
@@ -859,7 +859,7 @@ namespace System.Management.Automation
         /// </summary>
         public int CompareTo(SemanticVersion value)
         {
-            if ((object)value == null)
+            if ((object)value is null)
                 return 1;
 
             if (Major != value.Major)

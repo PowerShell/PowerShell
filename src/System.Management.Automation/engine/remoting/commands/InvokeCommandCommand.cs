@@ -822,7 +822,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Adjust RemoteDebug value based on current state
             var hostDebugger = GetHostDebugger();
-            if (hostDebugger == null)
+            if (hostDebugger is null)
             {
                 // Do not allow RemoteDebug if there is no host debugger available.  Otherwise script will not respond indefinitely.
                 RemoteDebug = false;
@@ -1008,7 +1008,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (IThrottleOperation operation in Operations)
                 {
                     ExecutionCmdletHelperRunspace ecHelper = operation as ExecutionCmdletHelperRunspace;
-                    if (ecHelper == null)
+                    if (ecHelper is null)
                     {
                         // either all the operations will be of type ExecutionCmdletHelperRunspace
                         // or not...there is no mix.
@@ -1132,7 +1132,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (InputObject != AutomationNull.Value && !_inputStreamClosed)
             {
-                if ((ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet) && (_steppablePipeline == null)) ||
+                if ((ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet) && (_steppablePipeline is null)) ||
                     _needToCollect)
                 {
                     _input.Add(InputObject);
@@ -1392,7 +1392,7 @@ namespace Microsoft.PowerShell.Commands
                     _throttleManager.ThrottleComplete += HandleThrottleComplete;
 
                     _operationsComplete.Reset();
-                    Dbg.Assert(_disconnectComplete == null, "disconnectComplete event should only be used once.");
+                    Dbg.Assert(_disconnectComplete is null, "disconnectComplete event should only be used once.");
                     _disconnectComplete = new ManualResetEvent(false);
                     _job = new PSInvokeExpressionSyncJob(Operations, _throttleManager);
                     _job.HideComputerName = _hideComputerName;
@@ -1451,7 +1451,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void AddConnectionRetryHandler(PSInvokeExpressionSyncJob job)
         {
-            if (job == null)
+            if (job is null)
             {
                 return;
             }
@@ -1471,7 +1471,7 @@ namespace Microsoft.PowerShell.Commands
             // Ensure progress bar is removed.
             StopProgressBar(0);
 
-            if (job == null)
+            if (job is null)
             {
                 return;
             }
@@ -1666,7 +1666,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="nonblocking">Write in a non-blocking manner.</param>
         private void WriteJobResults(bool nonblocking)
         {
-            if (_job == null)
+            if (_job is null)
             {
                 return;
             }
@@ -2124,7 +2124,7 @@ namespace System.Management.Automation.Internal
             int secondsTotal,
             System.Management.Automation.Host.PSHost psHost)
         {
-            if (psHost == null)
+            if (psHost is null)
             {
                 return;
             }

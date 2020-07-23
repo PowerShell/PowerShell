@@ -135,7 +135,7 @@ namespace System.Management.Automation.Remoting
         private bool IsRunspacePushed(PSHost host)
         {
             IHostSupportsInteractiveSession host2 = host as IHostSupportsInteractiveSession;
-            if (host2 == null) { return false; }
+            if (host2 is null) { return false; }
 
             // IsRunspacePushed can throw (not implemented exception)
             try
@@ -155,7 +155,7 @@ namespace System.Management.Automation.Remoting
             Action<ErrorRecord> writeErrorAction = null;
 
             // If error-stream is null or we are in pushed-runspace - then write error directly to console.
-            if (errorStream == null || IsRunspacePushed(_clientHost))
+            if (errorStream is null || IsRunspacePushed(_clientHost))
             {
                 writeErrorAction = delegate (ErrorRecord errorRecord)
                 {

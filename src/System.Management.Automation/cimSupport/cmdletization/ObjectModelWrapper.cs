@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Cmdletization
     {
         internal void Initialize(PSCmdlet cmdlet, string className, string classVersion, IDictionary<string, string> privateData)
         {
-            if (cmdlet == null)
+            if (cmdlet is null)
             {
                 throw new ArgumentNullException(nameof(cmdlet));
             }
@@ -27,12 +27,12 @@ namespace Microsoft.PowerShell.Cmdletization
                 throw new ArgumentNullException(nameof(className));
             }
 
-            if (classVersion == null) // possible and ok to have classVersion==string.Empty
+            if (classVersion is null) // possible and ok to have classVersion==string.Empty
             {
                 throw new ArgumentNullException(nameof(classVersion));
             }
 
-            if (privateData == null)
+            if (privateData is null)
             {
                 throw new ArgumentNullException(nameof(privateData));
             }

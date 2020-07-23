@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
                         FieldPropertyToken fpt = token as FieldPropertyToken;
                         if (fpt != null)
                         {
-                            if (displayName == null)
+                            if (displayName is null)
                             {
                                 // Database does not provide a label(DisplayName) for the current property, use the expression value instead.
                                 displayName = fpt.expression.expressionValue;
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
                         propertyName = (string)key;
                 }
 
-                if (propertyName == null)
+                if (propertyName is null)
                 {
                     propertyName = association.ResolvedExpression.ToString();
                 }
@@ -233,12 +233,12 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (matchingRowDefinition == null)
+            if (matchingRowDefinition is null)
             {
                 matchingRowDefinition = match.BestMatch as TableRowDefinition;
             }
 
-            if (matchingRowDefinition == null)
+            if (matchingRowDefinition is null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
                 if (typesWithoutPrefix != null)
@@ -254,14 +254,14 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (matchingRowDefinition == null)
+                    if (matchingRowDefinition is null)
                     {
                         matchingRowDefinition = match.BestMatch as TableRowDefinition;
                     }
                 }
             }
 
-            if (matchingRowDefinition == null)
+            if (matchingRowDefinition is null)
             {
                 // no matching override, use default
                 return tableBody.defaultDefinition.rowItemDefinitionList;

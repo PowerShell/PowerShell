@@ -878,7 +878,7 @@ namespace Microsoft.PowerShell
         void
         SetBufferContents(Coordinates origin, BufferCell[,] contents)
         {
-            if (contents == null)
+            if (contents is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(contents));
             }
@@ -1228,7 +1228,7 @@ namespace Microsoft.PowerShell
         public override
         int LengthInBufferCells(string s, int offset)
         {
-            if (s == null)
+            if (s is null)
             {
                 throw PSTraceSource.NewArgumentNullException("str");
             }
@@ -1620,7 +1620,7 @@ namespace Microsoft.PowerShell
                                                BufferCell[,] contents)
         {
             // if there are no contents, there is nothing to set the buffer to
-            if (contents == null)
+            if (contents is null)
             {
                 PSTraceSource.NewArgumentNullException("contents");
             }
@@ -1702,7 +1702,7 @@ namespace Microsoft.PowerShell
         public override
         int LengthInBufferCells(string s, int offset)
         {
-            if (s == null)
+            if (s is null)
             {
                 throw PSTraceSource.NewArgumentNullException("str");
             }

@@ -135,13 +135,13 @@ namespace Microsoft.PowerShell.Commands
                     string resolvedProviderPath =
                         SecurityUtils.GetFilePathOfExistingFile(this, resolvedPath);
 
-                    if (resolvedProviderPath == null)
+                    if (resolvedProviderPath is null)
                     {
                         _filesNotFound.Add(p);
                     }
                     else
                     {
-                        if (Password == null && !NoPromptForPassword.IsPresent)
+                        if (Password is null && !NoPromptForPassword.IsPresent)
                         {
                             try
                             {

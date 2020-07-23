@@ -108,32 +108,32 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(moduleName));
             }
 
-            if (psVersion == null)
+            if (psVersion is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(psVersion));
             }
 
-            if (version == null)
+            if (version is null)
             {
                 version = new Version("0.0");
             }
 
-            if (types == null)
+            if (types is null)
             {
                 types = new Collection<string>();
             }
 
-            if (formats == null)
+            if (formats is null)
             {
                 formats = new Collection<string>();
             }
 
-            if (descriptionFallback == null)
+            if (descriptionFallback is null)
             {
                 descriptionFallback = string.Empty;
             }
 
-            if (vendorFallback == null)
+            if (vendorFallback is null)
             {
                 vendorFallback = string.Empty;
             }
@@ -272,7 +272,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_description == null)
+                if (_description is null)
                 {
                     LoadIndirectResources();
                 }
@@ -291,7 +291,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_vendor == null)
+                if (_vendor is null)
                 {
                     LoadIndirectResources();
                 }
@@ -480,7 +480,7 @@ namespace System.Management.Automation
             RegistryKey monadRootKey = GetMonadRootKey();
 
             string[] versions = monadRootKey.GetSubKeyNames();
-            if (versions == null)
+            if (versions is null)
             {
                 return allMshSnapins;
             }
@@ -695,7 +695,7 @@ namespace System.Management.Automation
 
             RegistryKey mshsnapinKey;
             mshsnapinKey = mshSnapInRoot.OpenSubKey(mshsnapinId);
-            if (mshsnapinKey == null)
+            if (mshsnapinKey is null)
             {
                 s_mshsnapinTracer.TraceError("Error opening registry key {0}\\{1}.", mshSnapInRoot.Name, mshsnapinId);
                 throw PSTraceSource.NewArgumentException(nameof(mshsnapinId), MshSnapinInfo.MshSnapinDoesNotExist, mshsnapinId);
@@ -708,14 +708,14 @@ namespace System.Management.Automation
             Version version = ReadVersionValue(mshsnapinKey, RegistryStrings.MshSnapin_Version, false);
 
             string description = ReadStringValue(mshsnapinKey, RegistryStrings.MshSnapin_Description, false);
-            if (description == null)
+            if (description is null)
             {
                 s_mshsnapinTracer.WriteLine("No description is specified for mshsnapin {0}. Using empty string for description.", mshsnapinId);
                 description = string.Empty;
             }
 
             string vendor = ReadStringValue(mshsnapinKey, RegistryStrings.MshSnapin_Vendor, false);
-            if (vendor == null)
+            if (vendor is null)
             {
                 s_mshsnapinTracer.WriteLine("No vendor is specified for mshsnapin {0}. Using empty string for description.", mshsnapinId);
                 vendor = string.Empty;
@@ -752,7 +752,7 @@ namespace System.Management.Automation
         private static Collection<string> ReadMultiStringValue(RegistryKey mshsnapinKey, string name, bool mandatory)
         {
             object value = mshsnapinKey.GetValue(name);
-            if (value == null)
+            if (value is null)
             {
                 // If this key should be present..throw error
                 if (mandatory)
@@ -770,7 +770,7 @@ namespace System.Management.Automation
             // value cannot be null here...
             string[] msv = value as string[];
 
-            if (msv == null)
+            if (msv is null)
             {
                 // Check if the value is in string format
                 string singleValue = value as string;
@@ -781,7 +781,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (msv == null)
+            if (msv is null)
             {
                 if (mandatory)
                 {
@@ -816,7 +816,7 @@ namespace System.Management.Automation
             Dbg.Assert(mshsnapinKey != null, "Caller should validate the parameter");
 
             object value = mshsnapinKey.GetValue(name);
-            if (value == null && mandatory)
+            if (value is null && mandatory)
             {
                 s_mshsnapinTracer.TraceError("Mandatory property {0} not specified for registry key {1}",
                         name, mshsnapinKey.Name);
@@ -839,7 +839,7 @@ namespace System.Management.Automation
         internal static Version ReadVersionValue(RegistryKey mshsnapinKey, string name, bool mandatory)
         {
             string temp = ReadStringValue(mshsnapinKey, name, mandatory);
-            if (temp == null)
+            if (temp is null)
             {
                 s_mshsnapinTracer.TraceError("Cannot read value for property {0} in registry key {1}",
                     name, mshsnapinKey.ToString());
@@ -1124,7 +1124,7 @@ namespace System.Management.Automation
         internal static RegistryKey GetMonadRootKey()
         {
             RegistryKey rootKey = Registry.LocalMachine.OpenSubKey(RegistryStrings.MonadRootKeyPath);
-            if (rootKey == null)
+            if (rootKey is null)
             {
                 // This should never occur because this code is running
                 // because monad is installed. { well this can occur if someone
@@ -1155,13 +1155,13 @@ namespace System.Management.Automation
             Dbg.Assert(versionRootKey != null, "Version Rootkey of Monad installation is not present");
 
             RegistryKey psEngineParentKey = rootKey.OpenSubKey(psVersion);
-            if (psEngineParentKey == null)
+            if (psEngineParentKey is null)
             {
                 throw PSTraceSource.NewArgumentException("monad", MshSnapinInfo.MonadEngineRegistryAccessFailed);
             }
 
             RegistryKey psEngineKey = psEngineParentKey.OpenSubKey(RegistryStrings.MonadEngineKey);
-            if (psEngineKey == null)
+            if (psEngineKey is null)
             {
                 throw PSTraceSource.NewArgumentException("monad", MshSnapinInfo.MonadEngineRegistryAccessFailed);
             }
@@ -1190,7 +1190,7 @@ namespace System.Management.Automation
 
             string versionKey = PSVersionInfo.GetRegistryVersionKeyForSnapinDiscovery(psVersion);
             RegistryKey versionRoot = rootKey.OpenSubKey(versionKey);
-            if (versionRoot == null)
+            if (versionRoot is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(psVersion), MshSnapinInfo.SpecifiedVersionNotFound, versionKey);
             }
@@ -1217,7 +1217,7 @@ namespace System.Management.Automation
             Dbg.Assert(versionRootKey != null, "caller should validate the parameter");
 
             RegistryKey mshsnapinRoot = versionRootKey.OpenSubKey(RegistryStrings.MshSnapinKey);
-            if (mshsnapinRoot == null)
+            if (mshsnapinRoot is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(psVersion), MshSnapinInfo.NoMshSnapinPresentForVersion, psVersion);
             }
@@ -1244,7 +1244,7 @@ namespace System.Management.Automation
             RegistryKey monadRootKey = GetMonadRootKey();
             RegistryKey versionRootKey = GetVersionRootKey(monadRootKey, psVersion);
             RegistryKey mshsnapinRoot = versionRootKey.OpenSubKey(RegistryStrings.MshSnapinKey);
-            if (mshsnapinRoot == null)
+            if (mshsnapinRoot is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(psVersion), MshSnapinInfo.NoMshSnapinPresentForVersion, psVersion);
             }
@@ -1292,11 +1292,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (s_defaultMshSnapins == null)
+                if (s_defaultMshSnapins is null)
                 {
                     lock (s_syncObject)
                     {
-                        if (s_defaultMshSnapins == null)
+                        if (s_defaultMshSnapins is null)
                         {
                             s_defaultMshSnapins = new List<DefaultPSSnapInInformation>()
                             {

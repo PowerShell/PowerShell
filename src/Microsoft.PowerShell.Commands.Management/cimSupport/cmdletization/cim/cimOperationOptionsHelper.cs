@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal static void AssociateCimInstanceWithCustomOptions(CimInstance cimInstance, CimCustomOptionsDictionary newCustomOptions)
         {
-            if (newCustomOptions == null)
+            if (newCustomOptions is null)
             {
                 return;
             }
@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             Dbg.Assert(!string.IsNullOrWhiteSpace(optionName), "Caller should verify optionName != null");
 
-            if (optionValue == null)
+            if (optionValue is null)
             {
                 return;
             }

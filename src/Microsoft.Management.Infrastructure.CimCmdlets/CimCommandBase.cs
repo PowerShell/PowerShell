@@ -336,7 +336,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     DebugHelper.WriteLogEx("parameterset name = '{0}'; mandatory = '{1}'", 1, parameterDefinitionEntry.ParameterSetName, parameterDefinitionEntry.IsMandatory);
                     ParameterSetEntry psEntry = this.parameterSetEntries[parameterDefinitionEntry.ParameterSetName];
-                    if (psEntry == null)
+                    if (psEntry is null)
                         continue;
 
                     if (parameterDefinitionEntry.IsMandatory)
@@ -460,7 +460,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             // Looking for parameter set which has no mandatory parameters
-            if (boundParameterSetName == null)
+            if (boundParameterSetName is null)
             {
                 // throw if there are > 1 parameter set
                 if (noMandatoryParameterSet.Count > 1)
@@ -474,13 +474,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             // Looking for default parameter set
-            if (boundParameterSetName == null)
+            if (boundParameterSetName is null)
             {
                 boundParameterSetName = defaultParameterSetName;
             }
 
             // throw if still can not find the parameter set name
-            if (boundParameterSetName == null)
+            if (boundParameterSetName is null)
             {
                 throw new PSArgumentException(CimCmdletStrings.UnableToResolveParameterSetName);
             }
@@ -552,7 +552,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             // Null value could be set by caller unintentionally,
             // or by powershell to reset the parameter to default value
             // before the next parameter binding, and ProcessRecord call
-            if (value == null)
+            if (value is null)
             {
                 return;
             }
@@ -731,7 +731,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 lock (this.myLock)
                 {
-                    Debug.Assert(this.operation == null, "Caller should verify that operation is null");
+                    Debug.Assert(this.operation is null, "Caller should verify that operation is null");
                     this.operation = value;
                 }
             }

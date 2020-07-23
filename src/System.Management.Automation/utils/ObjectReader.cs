@@ -25,7 +25,7 @@ namespace System.Management.Automation.Internal
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
         public ObjectReaderBase([In, Out] ObjectStreamBase stream)
         {
-            if (stream == null)
+            if (stream is null)
             {
                 throw new ArgumentNullException(nameof(stream), "stream may not be null");
             }
@@ -44,7 +44,7 @@ namespace System.Management.Automation.Internal
             {
                 lock (_monitorObject)
                 {
-                    bool firstRegistrant = (InternalDataReady == null);
+                    bool firstRegistrant = (InternalDataReady is null);
                     InternalDataReady += value;
                     if (firstRegistrant)
                     {
@@ -58,7 +58,7 @@ namespace System.Management.Automation.Internal
                 lock (_monitorObject)
                 {
                     InternalDataReady -= value;
-                    if (InternalDataReady == null)
+                    if (InternalDataReady is null)
                     {
                         _stream.DataReady -= this.OnDataReady;
                     }
@@ -450,7 +450,7 @@ namespace System.Management.Automation.Internal
         #region Private
         private static PSObject MakePSObject(object o)
         {
-            if (o == null)
+            if (o is null)
                 return null;
 
             return PSObject.AsPSObject(o);
@@ -463,7 +463,7 @@ namespace System.Management.Automation.Internal
         private static Collection<PSObject> MakePSObjectCollection(
             Collection<object> coll)
         {
-            if (coll == null)
+            if (coll is null)
                 return null;
             Collection<PSObject> retval = new Collection<PSObject>();
             foreach (object o in coll)

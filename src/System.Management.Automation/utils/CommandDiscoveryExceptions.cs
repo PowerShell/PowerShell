@@ -85,7 +85,7 @@ namespace System.Management.Automation
                                         StreamingContext context)
             : base(info, context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -105,7 +105,7 @@ namespace System.Management.Automation
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -123,7 +123,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
+                if (_errorRecord is null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
@@ -392,7 +392,7 @@ namespace System.Management.Automation
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -468,7 +468,7 @@ namespace System.Management.Automation
             bool forSnapins)
         {
             StringBuilder sb = new StringBuilder();
-            if (missingItems == null)
+            if (missingItems is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(missingItems));
             }

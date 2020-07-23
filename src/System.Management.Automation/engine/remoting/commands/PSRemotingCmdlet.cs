@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="resolvedComputerNames">Resolved array of machine names.</param>
         protected void ResolveComputerNames(string[] computerNames, out string[] resolvedComputerNames)
         {
-            if (computerNames == null)
+            if (computerNames is null)
             {
                 resolvedComputerNames = new string[1];
 
@@ -657,10 +657,10 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (_sessionOption == null)
+                if (_sessionOption is null)
                 {
                     object tmp = this.SessionState.PSVariable.GetValue(DEFAULT_SESSION_OPTION);
-                    if (tmp == null || !LanguagePrimitives.TryConvertTo<PSSessionOption>(tmp, out _sessionOption))
+                    if (tmp is null || !LanguagePrimitives.TryConvertTo<PSSessionOption>(tmp, out _sessionOption))
                     {
                         _sessionOption = new PSSessionOption();
                     }
@@ -1091,7 +1091,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Parameter value as integer.</returns>
         private static int GetSSHConnectionIntParameter(object param)
         {
-            if (param == null)
+            if (param is null)
             {
                 throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
             }
@@ -1888,7 +1888,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             PSPrimitiveDictionary psApplicationPrivateData = remoteRunspace.GetApplicationPrivateData();
-            if (psApplicationPrivateData == null)
+            if (psApplicationPrivateData is null)
             {
                 // The remote runspace is not opened yet, or it's disconnected before the private data is retrieved.
                 // In this case we cannot validate if the remote server is running PSv5 or later, so for safety purpose,
@@ -2256,7 +2256,7 @@ namespace Microsoft.PowerShell.Commands
             if (serverPsVersion == PSv3Orv4)
             {
                 usingValuesInArray = ScriptBlockToPowerShellConverter.GetUsingValuesAsArray(_scriptBlock, allowUsingExpressions, Context, null);
-                if (usingValuesInArray == null)
+                if (usingValuesInArray is null)
                 {
                     // 'usingValuesInArray' will be null only if there are UsingExpressions used in different scopes.
                     // PSv3 and PSv4 remote server cannot handle this, so we revert back to the approach we use for PSv2 remote end.
@@ -2337,7 +2337,7 @@ namespace Microsoft.PowerShell.Commands
             // Scan for the using variables
             List<VariableExpressionAst> usingVariables = GetUsingVariables(_scriptBlock);
 
-            if (usingVariables == null || usingVariables.Count == 0)
+            if (usingVariables is null || usingVariables.Count == 0)
             {
                 // No using variable is used, then we don't change the script
                 textOfScriptBlock = this.MyInvocation.ExpectingInput
@@ -2429,7 +2429,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>A list of UsingExpressionAsts ordered by the StartOffset.</returns>
         private List<VariableExpressionAst> GetUsingVariables(ScriptBlock localScriptBlock)
         {
-            if (localScriptBlock == null)
+            if (localScriptBlock is null)
             {
                 throw new ArgumentNullException(nameof(localScriptBlock), "Caller needs to make sure the parameter value is not null");
             }
@@ -2725,7 +2725,7 @@ namespace Microsoft.PowerShell.Commands
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByComputerName(bool writeobject,
             bool writeErrorOnNoMatch)
         {
-            if (_computerNames == null || _computerNames.Length == 0)
+            if (_computerNames is null || _computerNames.Length == 0)
             {
                 return GetAllRunspaces(writeobject, writeErrorOnNoMatch);
             }
@@ -3003,9 +3003,9 @@ namespace Microsoft.PowerShell.Commands
                     var matchingRunspaceInfos = remoteRunspaceInfos
                         .Where<PSSession>(session => (supportWildChar ? inputNamePattern.IsMatch(session.VMName)
                                                                       : inputName.Equals(session.ContainerId)) &&
-                                                     ((sessionNamePattern == null) ? true : sessionNamePattern.IsMatch(session.Name)) &&
+                                                     ((sessionNamePattern is null) ? true : sessionNamePattern.IsMatch(session.Name)) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
-                                                     ((configurationNamePattern == null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
+                                                     ((configurationNamePattern is null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
                                                      (session.ComputerType == computerType))
                         .ToList<PSSession>();
 
@@ -3063,7 +3063,7 @@ namespace Microsoft.PowerShell.Commands
                                                                       : inputName.Equals(session.ContainerId)) &&
                                                      sessionInstanceId.Equals(session.InstanceId) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
-                                                     ((configurationNamePattern == null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
+                                                     ((configurationNamePattern is null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
                                                      (session.ComputerType == computerType))
                         .ToList<PSSession>();
 
@@ -3106,9 +3106,9 @@ namespace Microsoft.PowerShell.Commands
 
                     var matchingRunspaceInfos = remoteRunspaceInfos
                         .Where<PSSession>(session => vmId.Equals(session.VMId) &&
-                                                     ((sessionNamePattern == null) ? true : sessionNamePattern.IsMatch(session.Name)) &&
+                                                     ((sessionNamePattern is null) ? true : sessionNamePattern.IsMatch(session.Name)) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
-                                                     ((configurationNamePattern == null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
+                                                     ((configurationNamePattern is null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
                                                      (session.ComputerType == TargetMachineType.VirtualMachine))
                         .ToList<PSSession>();
 
@@ -3143,7 +3143,7 @@ namespace Microsoft.PowerShell.Commands
                         .Where<PSSession>(session => vmId.Equals(session.VMId) &&
                                                      sessionInstanceId.Equals(session.InstanceId) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
-                                                     ((configurationNamePattern == null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
+                                                     ((configurationNamePattern is null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
                                                      (session.ComputerType == TargetMachineType.VirtualMachine))
                         .ToList<PSSession>();
 
@@ -3265,7 +3265,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void ConfigureRunspaceDebugging(Runspace runspace)
         {
-            if (!RunspaceDebuggingEnabled || (runspace == null) || (runspace.Debugger == null)) { return; }
+            if (!RunspaceDebuggingEnabled || (runspace is null) || (runspace.Debugger is null)) { return; }
 
             runspace.Debugger.DebuggerStop += HandleDebuggerStop;
 
@@ -3285,7 +3285,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void CleanupRunspaceDebugging(Runspace runspace)
         {
-            if ((runspace == null) || (runspace.Debugger == null)) { return; }
+            if ((runspace is null) || (runspace.Debugger is null)) { return; }
 
             runspace.Debugger.DebuggerStop -= HandleDebuggerStop;
         }
@@ -4083,8 +4083,8 @@ namespace Microsoft.PowerShell.Commands
         {
             errorCode = 0;
 
-            if (e == null ||
-                e.Message == null)
+            if (e is null ||
+                e.Message is null)
             {
                 return string.Empty;
             }
@@ -4194,11 +4194,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (s_TypeTable == null)
+                if (s_TypeTable is null)
                 {
                     lock (s_SyncObject)
                     {
-                        if (s_TypeTable == null)
+                        if (s_TypeTable is null)
                         {
                             s_TypeTable = TypeTable.LoadDefaultTypeFiles();
                         }

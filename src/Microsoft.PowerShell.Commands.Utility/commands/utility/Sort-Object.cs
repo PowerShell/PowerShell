@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
 
             var dataToProcess = orderByProperty.OrderMatrix;
             var comparer = orderByProperty.Comparer;
-            if (comparer == null || dataToProcess == null || dataToProcess.Count == 0)
+            if (comparer is null || dataToProcess is null || dataToProcess.Count == 0)
             {
                 return;
             }

@@ -69,7 +69,7 @@ namespace System.Management.Automation.Runspaces.Internal
             int maxRunspaces, TypeTable typeTable, PSHost host, PSPrimitiveDictionary applicationArguments, RunspaceConnectionInfo connectionInfo, string name = null)
             : base(minRunspaces, maxRunspaces)
         {
-            if (connectionInfo == null)
+            if (connectionInfo is null)
             {
                 throw PSTraceSource.NewArgumentNullException("WSManConnectionInfo");
             }
@@ -111,17 +111,17 @@ namespace System.Management.Automation.Runspaces.Internal
             ConnectCommandInfo[] connectCommands, RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable)
             : base(1, 1)
         {
-            if (instanceId == null)
+            if (instanceId is null)
             {
                 throw PSTraceSource.NewArgumentNullException("RunspacePool Guid");
             }
 
-            if (connectCommands == null)
+            if (connectCommands is null)
             {
                 throw PSTraceSource.NewArgumentNullException("ConnectCommandInfo[]");
             }
 
-            if (connectionInfo == null)
+            if (connectionInfo is null)
             {
                 throw PSTraceSource.NewArgumentNullException("WSManConnectionInfo");
             }
@@ -290,7 +290,7 @@ namespace System.Management.Automation.Runspaces.Internal
             // Version check.  Reset Runspace is supported only on PSRP protocol
             // version 2.3 or greater.
             Version remoteProtocolVersionDeclaredByServer = PSRemotingProtocolVersion;
-            if ((remoteProtocolVersionDeclaredByServer == null) ||
+            if ((remoteProtocolVersionDeclaredByServer is null) ||
                 (remoteProtocolVersionDeclaredByServer < RemotingConstants.ProtocolVersionWin10RTM))
             {
                 throw PSTraceSource.NewInvalidOperationException(RunspacePoolStrings.ResetRunspaceStateNotSupportedOnServer);
@@ -577,7 +577,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     // if closeAsyncResult is null, BeginClose is not called. That means
                     // we are getting close event from server, in this case release the
                     // local resources
-                    if (_closeAsyncResult == null)
+                    if (_closeAsyncResult is null)
                     {
                         // Close the local resources.
                         DataStructureHandler.CloseRunspacePoolAsync();
@@ -1059,14 +1059,14 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="asyncResult">IAsyncResult object.</param>
         public override void EndDisconnect(IAsyncResult asyncResult)
         {
-            if (asyncResult == null)
+            if (asyncResult is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
-            if ((rsAsyncResult == null) ||
+            if ((rsAsyncResult is null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
@@ -1169,14 +1169,14 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="asyncResult">IAsyncResult object.</param>
         public override void EndConnect(IAsyncResult asyncResult)
         {
-            if (asyncResult == null)
+            if (asyncResult is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
-            if ((rsAsyncResult == null) ||
+            if ((rsAsyncResult is null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
@@ -1198,7 +1198,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             Collection<PowerShell> psCollection = new Collection<PowerShell>();
 
-            if (ConnectCommands == null)
+            if (ConnectCommands is null)
             {
                 // Throw error indicating that this runspacepool is not configured for
                 // reconstructing commands.
@@ -1240,7 +1240,7 @@ namespace System.Management.Automation.Runspaces.Internal
             WSManConnectionInfo wsmanConnectionInfoParam = connectionInfo as WSManConnectionInfo;
 
             // Disconnect-Connect currently only supported by WSMan.
-            if (wsmanConnectionInfoParam == null)
+            if (wsmanConnectionInfoParam is null)
             {
                 throw new NotSupportedException();
             }
@@ -1259,7 +1259,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 PSPropertyInfo pspName = rsObject.Properties["Name"];
                 PSPropertyInfo pspResourceUri = rsObject.Properties["ResourceUri"];
 
-                if (pspShellId == null || pspState == null || pspName == null || pspResourceUri == null)
+                if (pspShellId is null || pspState is null || pspName is null || pspResourceUri is null)
                 {
                     continue;
                 }
@@ -1315,7 +1315,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     PSPropertyInfo pspCommandId = cmdObject.Properties["CommandId"];
                     PSPropertyInfo pspCommandLine = cmdObject.Properties["CommandLine"];
 
-                    if (pspCommandId == null)
+                    if (pspCommandId is null)
                     {
                         Dbg.Assert(false, "Should not get an empty command Id from a remote runspace pool.");
                         continue;

@@ -107,7 +107,7 @@ namespace System.Management.Automation
         /// </summary>
         internal PSModuleInfo(ExecutionContext context, bool linkToGlobal)
         {
-            if (context == null)
+            if (context is null)
                 throw new InvalidOperationException("PSModuleInfo");
 
             SetDefaultDynamicNameAndPath(this);
@@ -128,7 +128,7 @@ namespace System.Management.Automation
         /// <param name="scriptBlock">The scriptblock to use to initialize the module.</param>
         public PSModuleInfo(ScriptBlock scriptBlock)
         {
-            if (scriptBlock == null)
+            if (scriptBlock is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(scriptBlock));
             }
@@ -136,7 +136,7 @@ namespace System.Management.Automation
             // Get the ExecutionContext from the thread.
             var context = LocalPipeline.GetExecutionContextFromTLS();
 
-            if (context == null)
+            if (context is null)
                 throw new InvalidOperationException("PSModuleInfo");
 
             SetDefaultDynamicNameAndPath(this);
@@ -249,7 +249,7 @@ namespace System.Management.Automation
         /// </summary>
         public string Definition
         {
-            get { return _definitionExtent == null ? string.Empty : _definitionExtent.Text; }
+            get { return _definitionExtent is null ? string.Empty : _definitionExtent.Text; }
         }
 
         internal IScriptExtent _definitionExtent;
@@ -598,10 +598,10 @@ namespace System.Management.Automation
             // because we may not have NestedModules list populated on the first call.
             // TODO(sevoroby): it may harm perf a little bit. Can we sort it out?
 
-            if (_exportedTypeDefinitionsNoNested == null)
+            if (_exportedTypeDefinitionsNoNested is null)
             {
                 string rootedPath = null;
-                if (RootModule == null)
+                if (RootModule is null)
                 {
                     if (this.Path != null)
                     {
@@ -652,7 +652,7 @@ namespace System.Management.Automation
         /// <param name="moduleContentScriptBlockAsts"></param>
         internal void CreateExportedTypeDefinitions(ScriptBlockAst moduleContentScriptBlockAsts)
         {
-            if (moduleContentScriptBlockAsts == null)
+            if (moduleContentScriptBlockAsts is null)
             {
                 this._exportedTypeDefinitionsNoNested = s_emptyTypeDefinitionDictionary;
             }
@@ -1117,7 +1117,7 @@ namespace System.Management.Automation
                     // If there is no session state object associated with this list,
                     // just return a null list of exports. This will be true if the
                     // module is a compiled module.
-                    if (SessionState == null || SessionState.Internal.ExportedVariables == null)
+                    if (SessionState is null || SessionState.Internal.ExportedVariables is null)
                     {
                         return exportedVariables;
                     }
@@ -1159,7 +1159,7 @@ namespace System.Management.Automation
                 else
                 {
                     // There is no session state object associated with this list.
-                    if (SessionState == null)
+                    if (SessionState is null)
                     {
                         // Check if we detected any
                         if (DetectedAliasExports.Count > 0)
@@ -1239,7 +1239,7 @@ namespace System.Management.Automation
 
         internal ScriptBlock NewBoundScriptBlock(ScriptBlock scriptBlockToBind, ExecutionContext context)
         {
-            if (SessionState == null || context == null)
+            if (SessionState is null || context is null)
             {
                 throw PSTraceSource.NewInvalidOperationException(Modules.InvalidOperationOnBinaryModule);
             }
@@ -1274,7 +1274,7 @@ namespace System.Management.Automation
         /// <returns>The result of the invocation.</returns>
         public object Invoke(ScriptBlock sb, params object[] args)
         {
-            if (sb == null)
+            if (sb is null)
                 return null;
 
             // Temporarily set the scriptblocks session state to be the
@@ -1313,7 +1313,7 @@ namespace System.Management.Automation
             foreach (var sf in context.Debugger.GetCallStack())
             {
                 var frameModule = sf.InvocationInfo.MyCommand.Module;
-                if (frameModule == null)
+                if (frameModule is null)
                 {
                     break;
                 }
@@ -1340,7 +1340,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void CaptureLocals()
         {
-            if (SessionState == null)
+            if (SessionState is null)
             {
                 throw PSTraceSource.NewInvalidOperationException(Modules.InvalidOperationOnBinaryModule);
             }
@@ -1381,7 +1381,7 @@ namespace System.Management.Automation
         /// <returns>A custom object.</returns>
         public PSObject AsCustomObject()
         {
-            if (SessionState == null)
+            if (SessionState is null)
             {
                 throw PSTraceSource.NewInvalidOperationException(Modules.InvalidOperationOnBinaryModule);
             }

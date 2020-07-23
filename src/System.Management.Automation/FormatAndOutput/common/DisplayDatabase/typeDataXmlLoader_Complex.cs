@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         // now read the columns section
                         LoadComplexControlEntries(n, complexBody);
-                        if (complexBody.defaultEntry == null)
+                        if (complexBody.defaultEntry is null)
                         {
                             return null; // fatal error
                         }
@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (MatchNodeName(n, XmlTags.ComplexEntryNode))
                     {
                         ComplexControlEntryDefinition cced = LoadComplexControlEntryDefinition(n, entryIndex++);
-                        if (cced == null)
+                        if (cced is null)
                         {
                             // Error at XPath {0} in file {1}: {2} failed to load.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.ComplexEntryNode));
@@ -76,9 +76,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             return; // fatal error
                         }
                         // determine if we have a default entry and if it's already set
-                        if (cced.appliesTo == null)
+                        if (cced.appliesTo is null)
                         {
-                            if (complexBody.defaultEntry == null)
+                            if (complexBody.defaultEntry is null)
                             {
                                 complexBody.defaultEntry = cced;
                             }
@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-                if (complexBody.defaultEntry == null)
+                if (complexBody.defaultEntry is null)
                 {
                     // Error at XPath {0} in file {1}: There must be at least one default {2}.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoDefaultShapeEntry, ComputeCurrentXPath(), FilePath, XmlTags.ComplexEntryNode));
@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-                if (cced.itemDefinition.formatTokenList == null)
+                if (cced.itemDefinition.formatTokenList is null)
                 {
                     // MissingNode=Error at XPath {0} in file {1}: Missing Node {2}.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.MissingNode, ComputeCurrentXPath(), FilePath, XmlTags.ComplexItemNode));
@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         CompoundPropertyToken cpt = LoadCompoundProperty(n, compoundPropertyIndex++);
 
-                        if (cpt == null)
+                        if (cpt is null)
                         {
                             // Error at XPath {0} in file {1}: {2} failed to load.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.ExpressionBindingNode));
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         NewLineToken nlt = LoadNewLine(n, newLineIndex++);
 
-                        if (nlt == null)
+                        if (nlt is null)
                         {
                             // Error at XPath {0} in file {1}: {2} failed to load.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.NewLineNode));
@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         TextToken tt = LoadText(n, textIndex++);
 
-                        if (tt == null)
+                        if (tt is null)
                         {
                             // Error at XPath {0} in file {1}: {2} failed to load.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.TextNode));
@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         FrameToken frame = LoadFrameDefinition(n, frameIndex++);
 
-                        if (frame == null)
+                        if (frame is null)
                         {
                             // Error at XPath {0} in file {1}: {2} failed to load.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.FrameNode));
@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     itemSelectionConditionNodeFound = true;
                     condition = LoadItemSelectionCondition(n);
-                    if (condition == null)
+                    if (condition is null)
                     {
                         return false;
                     }
@@ -305,7 +305,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // we add only if we encountered one, since it's not mandatory
                 ExpressionToken expression = expressionMatch.GenerateExpressionToken();
-                if (expression == null)
+                if (expression is null)
                 {
                     return false; // fatal error
                 }
@@ -388,7 +388,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         fieldControlFound = true;
                         fieldControlBody = new FieldControlBody();
                         fieldControlBody.fieldFormattingDirective.formatString = GetMandatoryInnerText(n);
-                        if (fieldControlBody.fieldFormattingDirective.formatString == null)
+                        if (fieldControlBody.fieldFormattingDirective.formatString is null)
                         {
                             return null; // fatal error
                         }
@@ -414,7 +414,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     cpt.control = controlMatch.Control;
                 }
                 /*
-                if (cpt.control == null)
+                if (cpt.control is null)
                 {
                     this.ReportMissingNodes (
                             new string[] { XmlTags.FieldControlNode, XmlTags.ComplexControlNode, XmlTags.ComplexControlNameNode });
@@ -469,7 +469,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 string val = this.GetMandatoryInnerText(node);
 
-                if (val == null)
+                if (val is null)
                 {
                     // Error at XPath {0} in file {1}: Missing inner text value.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.MissingInnerText, ComputeCurrentXPath(), FilePath));
@@ -606,7 +606,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return null; // fatal error
                 }
 
-                if (frame.itemDefinition.formatTokenList == null)
+                if (frame.itemDefinition.formatTokenList is null)
                 {
                     // MissingNode=Error at XPath {0} in file {1}: Missing Node {2}.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.MissingNode, ComputeCurrentXPath(), FilePath, XmlTags.ComplexItemNode));

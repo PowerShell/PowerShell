@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal void Initialize(string[] propertyNames, int screenColumnWidth, DisplayCells dc)
         {
             _columnWidth = screenColumnWidth;
-            if (propertyNames == null || propertyNames.Length == 0)
+            if (propertyNames is null || propertyNames.Length == 0)
             {
                 // there is nothing to show
                 _disabled = true;
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return;
 
             string[] valuesToPrint = null;
-            if (values == null)
+            if (values is null)
             {
                 // we have nothing, but we have to create an empty array
                 valuesToPrint = new string[_propertyLabels.Length];
@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="lo">LineOutput interface to write to.</param>
         private void WriteProperty(int k, string propertyValue, LineOutput lo)
         {
-            if (propertyValue == null)
+            if (propertyValue is null)
                 propertyValue = string.Empty;
 
             // make sure we honor embedded newlines
@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     prependString = _propertyLabels[k];
                 else
                 {
-                    if (padding == null)
+                    if (padding is null)
                         padding = StringUtil.Padding(_propertyLabelsDisplayLength);
 
                     prependString = padding;
@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="lo">LineOuput to write to.</param>
         private void WriteSingleLineHelper(string prependString, string line, LineOutput lo)
         {
-            if (line == null)
+            if (line is null)
                 line = string.Empty;
 
             // compute the width of the field for the value string (in screen cells)

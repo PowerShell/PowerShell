@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (_inputFields == null)
+                if (_inputFields is null)
                 {
                     EnsureHtmlParser();
 
@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (_links == null)
+                if (_links is null)
                 {
                     EnsureHtmlParser();
 
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (_images == null)
+                if (_images is null)
                 {
                     EnsureHtmlParser();
 
@@ -200,37 +200,37 @@ namespace Microsoft.PowerShell.Commands
 
         private void EnsureHtmlParser()
         {
-            if (s_tagRegex == null)
+            if (s_tagRegex is null)
             {
                 s_tagRegex = new Regex(@"<\w+((\s+[^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }
 
-            if (s_attribsRegex == null)
+            if (s_attribsRegex is null)
             {
                 s_attribsRegex = new Regex(@"(?<=\s+)([^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }
 
-            if (s_attribNameValueRegex == null)
+            if (s_attribNameValueRegex is null)
             {
                 s_attribNameValueRegex = new Regex(@"([^""'>/=\s\p{Cc}]+)(?:\s*=\s*(?:""(.*?)""|'(.*?)'|([^'"">\s]+)))?",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }
 
-            if (s_inputFieldRegex == null)
+            if (s_inputFieldRegex is null)
             {
                 s_inputFieldRegex = new Regex(@"<input\s+[^>]*(/>|>.*?</input>)",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }
 
-            if (s_linkRegex == null)
+            if (s_linkRegex is null)
             {
                 s_linkRegex = new Regex(@"<a\s+[^>]*(/>|>.*?</a>)",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }
 
-            if (s_imageRegex == null)
+            if (s_imageRegex is null)
             {
                 s_imageRegex = new Regex(@"<img\s[^>]*?>",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);

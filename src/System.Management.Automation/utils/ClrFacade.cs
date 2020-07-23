@@ -35,7 +35,7 @@ namespace System.Management.Automation
         /// </summary>
         static ClrFacade()
         {
-            if (PowerShellAssemblyLoadContext.Instance == null)
+            if (PowerShellAssemblyLoadContext.Instance is null)
             {
                 PowerShellAssemblyLoadContext.InitializeSingleton(string.Empty);
             }
@@ -113,7 +113,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static Encoding GetDefaultEncoding()
         {
-            if (s_defaultEncoding == null)
+            if (s_defaultEncoding is null)
             {
                 // load all available encodings
                 EncodingRegisterProvider();
@@ -131,7 +131,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static Encoding GetOEMEncoding()
         {
-            if (s_oemEncoding == null)
+            if (s_oemEncoding is null)
             {
                 // load all available encodings
                 EncodingRegisterProvider();
@@ -150,7 +150,7 @@ namespace System.Management.Automation
 
         private static void EncodingRegisterProvider()
         {
-            if (s_defaultEncoding == null && s_oemEncoding == null)
+            if (s_defaultEncoding is null && s_oemEncoding is null)
             {
                 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             }

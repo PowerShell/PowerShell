@@ -44,7 +44,7 @@ namespace System.Management.Automation.Internal
 
             set
             {
-                Diagnostics.Assert(_resultList == null, "Tried to set downstream cmdlet when _resultList not null");
+                Diagnostics.Assert(_resultList is null, "Tried to set downstream cmdlet when _resultList not null");
                 _downstreamCmdlet = value;
             }
         }
@@ -80,7 +80,7 @@ namespace System.Management.Automation.Internal
 
             set
             {
-                Diagnostics.Assert(_resultList == null, "Tried to set Pipe ExternalWriter when resultList not null");
+                Diagnostics.Assert(_resultList is null, "Tried to set Pipe ExternalWriter when resultList not null");
                 _externalWriter = value;
             }
         }
@@ -217,7 +217,7 @@ namespace System.Management.Automation.Internal
             switch (kind)
             {
                 case VariableStreamKind.Error:
-                    if (_errorVariableList == null)
+                    if (_errorVariableList is null)
                     {
                         _errorVariableList = new List<IList>();
                     }
@@ -225,7 +225,7 @@ namespace System.Management.Automation.Internal
                     _errorVariableList.Add(list);
                     break;
                 case VariableStreamKind.Warning:
-                    if (_warningVariableList == null)
+                    if (_warningVariableList is null)
                     {
                         _warningVariableList = new List<IList>();
                     }
@@ -233,7 +233,7 @@ namespace System.Management.Automation.Internal
                     _warningVariableList.Add(list);
                     break;
                 case VariableStreamKind.Output:
-                    if (_outVariableList == null)
+                    if (_outVariableList is null)
                     {
                         _outVariableList = new List<IList>();
                     }
@@ -241,7 +241,7 @@ namespace System.Management.Automation.Internal
                     _outVariableList.Add(list);
                     break;
                 case VariableStreamKind.Information:
-                    if (_informationVariableList == null)
+                    if (_informationVariableList is null)
                     {
                         _informationVariableList = new List<IList>();
                     }
@@ -485,7 +485,7 @@ namespace System.Management.Automation.Internal
             IEnumerator ie = LanguagePrimitives.GetEnumerator(objects);
             try
             {
-                if (ie == null)
+                if (ie is null)
                 {
                     Add(objects);
                 }
@@ -600,7 +600,7 @@ namespace System.Management.Automation.Internal
         /// <returns>Possibly empty array of objects, but not null.</returns>
         internal object[] ToArray()
         {
-            if (ObjectQueue == null || ObjectQueue.Count == 0)
+            if (ObjectQueue is null || ObjectQueue.Count == 0)
                 return MshCommandRuntime.StaticEmptyArray;
 
             return ObjectQueue.ToArray();

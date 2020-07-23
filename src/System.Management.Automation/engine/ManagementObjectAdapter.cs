@@ -174,7 +174,7 @@ namespace System.Management.Automation
 
             ManagementBaseObject mgmtObject = obj as ManagementBaseObject;
 
-            if (mgmtObject == null)
+            if (mgmtObject is null)
             {
                 return null;
             }
@@ -191,7 +191,7 @@ namespace System.Management.Automation
                 T returnValue = GetManagementObjectMethod<T>(mgmtObject, memberName);
                 // We only return a method if there is no property by the same name
                 // to match the behavior we have in GetMembers
-                if (returnValue != null && property == null)
+                if (returnValue != null && property is null)
                 {
                     return returnValue;
                 }
@@ -367,7 +367,7 @@ namespace System.Management.Automation
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
             ManagementBaseObject mObj = property.baseObject as ManagementBaseObject;
-            if (mObj == null)
+            if (mObj is null)
             {
                 throw new SetValueInvocationException("CannotSetNonManagementObjectMsg",
                     null,
@@ -540,7 +540,7 @@ namespace System.Management.Automation
             ManagementClass mgmtClass = mgmtBaseObject as ManagementClass;
 
             // try to use the actual object sent to this method..otherwise construct one
-            if (mgmtClass == null)
+            if (mgmtClass is null)
             {
                 mgmtClass = new ManagementClass(mgmtBaseObject.ClassPath);
 
@@ -572,7 +572,7 @@ namespace System.Management.Automation
         {
             string result = typeof(object).FullName;
 
-            if (pData == null)
+            if (pData is null)
             {
                 return result;
             }
@@ -684,7 +684,7 @@ namespace System.Management.Automation
             try
             {
                 QualifierData staticQualifier = mdata.Qualifiers["static"];
-                if (staticQualifier == null)
+                if (staticQualifier is null)
                     return false;
 
                 bool result = false;
@@ -743,7 +743,7 @@ namespace System.Management.Automation
                 // conversions. So dont convert input arguments if they are null.
                 // We could have done this in the base adapter but the change would be
                 // costly for other adapters which dont mind the conversion.
-                if ((i < arguments.Length) && (arguments[i] == null))
+                if ((i < arguments.Length) && (arguments[i] is null))
                 {
                     verifiedArguments[i] = null;
                 }
@@ -766,7 +766,7 @@ namespace System.Management.Automation
             SortedList<int, WMIParameterInformation> parametersList)
         {
             // ManagementObject class do not populate parameters when there are none.
-            if (parameters == null)
+            if (parameters is null)
                 return;
 
             foreach (PropertyData data in parameters.Properties)
@@ -1037,7 +1037,7 @@ namespace System.Management.Automation
 
             foreach (WMIMethodCacheEntry methodEntry in table.memberCollection)
             {
-                if (members[methodEntry.Name] == null)
+                if (members[methodEntry.Name] is null)
                 {
                     tracer.WriteLine("Adding method {0}", methodEntry.Name);
                     members.Add(new PSMethod(methodEntry.Name, this, wmiObject, methodEntry) as T);
@@ -1064,7 +1064,7 @@ namespace System.Management.Automation
             CacheTable typeTable = GetInstanceMethodTable(wmiObject, true);
             WMIMethodCacheEntry method = (WMIMethodCacheEntry)typeTable[methodName];
 
-            if (method == null)
+            if (method is null)
             {
                 return null;
             }
@@ -1225,7 +1225,7 @@ namespace System.Management.Automation
 
             foreach (WMIMethodCacheEntry methodEntry in table.memberCollection)
             {
-                if (members[methodEntry.Name] == null)
+                if (members[methodEntry.Name] is null)
                 {
                     tracer.WriteLine("Adding method {0}", methodEntry.Name);
                     members.Add(new PSMethod(methodEntry.Name, this, wmiObject, methodEntry) as T);
@@ -1255,7 +1255,7 @@ namespace System.Management.Automation
             typeTable = GetInstanceMethodTable(wmiObject, false);
             method = (WMIMethodCacheEntry)typeTable[methodName];
 
-            if (method == null)
+            if (method is null)
             {
                 return null;
             }

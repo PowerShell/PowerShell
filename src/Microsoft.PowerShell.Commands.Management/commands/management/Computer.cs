@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         private RestartComputerTimeoutException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -421,7 +421,7 @@ $result
             {
                 ErrorRecord error = null;
                 string targetComputerName = ComputerWMIHelper.ValidateComputerName(name, _shortLocalMachineName, _fullLocalMachineName, ref error);
-                if (targetComputerName == null)
+                if (targetComputerName is null)
                 {
                     if (error != null)
                     {
@@ -735,7 +735,7 @@ $result
             try
             {
                 Collection<PSObject> psObjectCollection = powershell.Invoke(new object[] { credential, computerNames.ToArray() });
-                if (psObjectCollection == null)
+                if (psObjectCollection is null)
                 {
                     Dbg.Diagnostics.Assert(false, "This should never happen. Invoke should never return null.");
                 }
@@ -1378,7 +1378,7 @@ $result
             // Validate target name.
             ErrorRecord targetError = null;
             string targetComputer = ComputerWMIHelper.ValidateComputerName(ComputerName, _shortLocalMachineName, _fullLocalMachineName, ref targetError);
-            if (targetComputer == null)
+            if (targetComputer is null)
             {
                 if (targetError != null)
                 {
@@ -1489,14 +1489,14 @@ $result
                             "UserName",
                             dUserName,
                             Microsoft.Management.Infrastructure.CimType.String,
-                            (dUserName == null) ? CimFlags.NullValue : CimFlags.None));
+                            (dUserName is null) ? CimFlags.NullValue : CimFlags.None));
 
                         methodParameters.Add(
                             CimMethodParameter.Create(
                             "Password",
                             dPassword,
                             Microsoft.Management.Infrastructure.CimType.String,
-                            (dPassword == null) ? CimFlags.NullValue : CimFlags.None));
+                            (dPassword is null) ? CimFlags.NullValue : CimFlags.None));
 
                         if (!InternalTestHooks.TestRenameComputer)
                         {
@@ -1582,7 +1582,7 @@ $result
         protected override void ProcessRecord()
         {
             string targetComputer = ValidateComputerName();
-            if (targetComputer == null) return;
+            if (targetComputer is null) return;
 
             bool isLocalhost = targetComputer.Equals("localhost", StringComparison.OrdinalIgnoreCase);
             if (isLocalhost)

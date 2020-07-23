@@ -235,7 +235,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            if (moduleName == null)
+            if (moduleName is null)
             {
                 return true;
             }
@@ -250,7 +250,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static ExperimentAction GetActionToTake(string experimentName, ExperimentAction experimentAction)
         {
-            if (experimentName == null || experimentAction == ExperimentAction.None)
+            if (experimentName is null || experimentAction == ExperimentAction.None)
             {
                 // If either the experiment name or action is not defined, then return 'Show' by default.
                 // This could happen to 'ParameterAttribute' when no experimental related field is declared.

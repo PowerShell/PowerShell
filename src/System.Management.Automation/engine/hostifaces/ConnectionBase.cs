@@ -38,7 +38,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         protected RunspaceBase(PSHost host)
         {
-            if (host == null)
+            if (host is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
@@ -64,12 +64,12 @@ namespace System.Management.Automation.Runspaces
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "OK to call ThreadOptions")]
         protected RunspaceBase(PSHost host, InitialSessionState initialSessionState)
         {
-            if (host == null)
+            if (host is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
-            if (initialSessionState == null)
+            if (initialSessionState is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
@@ -102,12 +102,12 @@ namespace System.Management.Automation.Runspaces
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "OK to call ThreadOptions")]
         protected RunspaceBase(PSHost host, InitialSessionState initialSessionState, bool suppressClone)
         {
-            if (host == null)
+            if (host is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
-            if (initialSessionState == null)
+            if (initialSessionState is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
@@ -533,7 +533,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         public override Pipeline CreatePipeline(string command)
         {
-            if (command == null)
+            if (command is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
@@ -554,7 +554,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         public override Pipeline CreatePipeline(string command, bool addToHistory)
         {
-            if (command == null)
+            if (command is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
@@ -588,7 +588,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         public override Pipeline CreateNestedPipeline(string command, bool addToHistory)
         {
-            if (command == null)
+            if (command is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
@@ -971,7 +971,7 @@ namespace System.Management.Automation.Runspaces
                 // If we have no running pipeline, or if the currently running pipeline is
                 // the same as the current thread, then execute the action.
                 var pipelineRunning = _currentlyRunningPipeline as PipelineBase;
-                return pipelineRunning == null ||
+                return pipelineRunning is null ||
                     Thread.CurrentThread == pipelineRunning.NestedPipelineExecutionThread;
             }
         }
@@ -1065,11 +1065,11 @@ namespace System.Management.Automation.Runspaces
         {
             // If we don't already have a pipeline running, pulse the engine.
             bool pipelineCreated = false;
-            if (GetCurrentlyRunningPipeline() == null)
+            if (GetCurrentlyRunningPipeline() is null)
             {
                 lock (SyncRoot)
                 {
-                    if (GetCurrentlyRunningPipeline() == null)
+                    if (GetCurrentlyRunningPipeline() is null)
                     {
                         // This is a pipeline that does the least amount possible.
                         // It evaluates a constant, and results in the execution of only two parse tree nodes.

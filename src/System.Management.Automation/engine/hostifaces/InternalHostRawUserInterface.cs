@@ -49,7 +49,7 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -61,7 +61,7 @@ namespace System.Management.Automation.Internal.Host
 
             set
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -85,7 +85,7 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -97,7 +97,7 @@ namespace System.Management.Automation.Internal.Host
 
             set
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -121,7 +121,7 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -133,7 +133,7 @@ namespace System.Management.Automation.Internal.Host
 
             set
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -157,7 +157,7 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -169,7 +169,7 @@ namespace System.Management.Automation.Internal.Host
 
             set
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -193,7 +193,7 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -205,7 +205,7 @@ namespace System.Management.Automation.Internal.Host
 
             set
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -229,7 +229,7 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -241,7 +241,7 @@ namespace System.Management.Automation.Internal.Host
 
             set
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -265,7 +265,7 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -277,7 +277,7 @@ namespace System.Management.Automation.Internal.Host
 
             set
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -301,7 +301,7 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -327,7 +327,7 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -353,7 +353,7 @@ namespace System.Management.Automation.Internal.Host
         KeyInfo
         ReadKey(ReadKeyOptions options)
         {
-            if (_externalRawUI == null)
+            if (_externalRawUI is null)
             {
                 ThrowNotInteractive();
             }
@@ -368,7 +368,7 @@ namespace System.Management.Automation.Internal.Host
                 // PipelineStoppedException is thrown by host when it wants
                 // to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parentHost.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
-                if (lpl == null)
+                if (lpl is null)
                 {
                     throw;
                 }
@@ -391,7 +391,7 @@ namespace System.Management.Automation.Internal.Host
         void
         FlushInputBuffer()
         {
-            if (_externalRawUI == null)
+            if (_externalRawUI is null)
             {
                 ThrowNotInteractive();
             }
@@ -414,7 +414,7 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -440,7 +440,7 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -452,7 +452,7 @@ namespace System.Management.Automation.Internal.Host
 
             set
             {
-                if (_externalRawUI == null)
+                if (_externalRawUI is null)
                 {
                     ThrowNotInteractive();
                 }
@@ -474,7 +474,7 @@ namespace System.Management.Automation.Internal.Host
         void
         SetBufferContents(Coordinates origin, BufferCell[,] contents)
         {
-            if (_externalRawUI == null)
+            if (_externalRawUI is null)
             {
                 ThrowNotInteractive();
             }
@@ -500,7 +500,7 @@ namespace System.Management.Automation.Internal.Host
         void
         SetBufferContents(Rectangle r, BufferCell fill)
         {
-            if (_externalRawUI == null)
+            if (_externalRawUI is null)
             {
                 ThrowNotInteractive();
             }
@@ -522,7 +522,7 @@ namespace System.Management.Automation.Internal.Host
         BufferCell[,]
         GetBufferContents(Rectangle r)
         {
-            if (_externalRawUI == null)
+            if (_externalRawUI is null)
             {
                 ThrowNotInteractive();
             }
@@ -556,7 +556,7 @@ namespace System.Management.Automation.Internal.Host
             BufferCell fill
         )
         {
-            if (_externalRawUI == null)
+            if (_externalRawUI is null)
             {
                 ThrowNotInteractive();
             }
@@ -574,7 +574,7 @@ namespace System.Management.Automation.Internal.Host
         /// </exception>
         public override int LengthInBufferCells(string str)
         {
-            if (_externalRawUI == null)
+            if (_externalRawUI is null)
             {
                 ThrowNotInteractive();
             }
@@ -596,7 +596,7 @@ namespace System.Management.Automation.Internal.Host
             Dbg.Assert(offset >= 0, "offset >= 0");
             Dbg.Assert(string.IsNullOrEmpty(str) || (offset < str.Length), "offset < str.Length");
 
-            if (_externalRawUI == null)
+            if (_externalRawUI is null)
             {
                 ThrowNotInteractive();
             }
@@ -616,7 +616,7 @@ namespace System.Management.Automation.Internal.Host
         int
         LengthInBufferCells(char character)
         {
-            if (_externalRawUI == null)
+            if (_externalRawUI is null)
             {
                 ThrowNotInteractive();
             }

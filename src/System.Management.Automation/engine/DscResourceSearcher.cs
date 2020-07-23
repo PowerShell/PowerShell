@@ -124,7 +124,7 @@ namespace System.Management.Automation
 
             WildcardPattern resourceMatcher = WildcardPattern.Get(_resourceName, WildcardOptions.IgnoreCase);
 
-            if (_matchingResourceList == null)
+            if (_matchingResourceList is null)
             {
                 Collection<PSObject> psObjs = ps.Invoke();
 

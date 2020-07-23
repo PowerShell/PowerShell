@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (TargetName == null)
+            if (TargetName is null)
             {
                 return;
             }
@@ -738,7 +738,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     targetAddress = GetHostAddress(hostEntry);
 
-                    if (targetAddress == null)
+                    if (targetAddress is null)
                     {
                         string message = StringUtil.Format(
                             TestConnectionResources.NoPingResult,
@@ -808,7 +808,7 @@ namespace Microsoft.PowerShell.Commands
                 sendBuffer[i] = (byte)((int)'a' + i % 23);
             }
 
-            if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer == null)
+            if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer is null)
             {
                 s_DefaultSendBuffer = sendBuffer;
             }

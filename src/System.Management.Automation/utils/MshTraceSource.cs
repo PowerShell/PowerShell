@@ -116,7 +116,7 @@ namespace System.Management.Automation
                 // If it's not already in the catalog, see if we can find it in the
                 // pre-configured trace source list
 
-                if (result == null)
+                if (result is null)
                 {
                     string keyName = name;
                     if (!PSTraceSource.PreConfiguredTraceSource.ContainsKey(keyName))
@@ -158,7 +158,7 @@ namespace System.Management.Automation
                 // a StructuredTraceSource should be able to do so even with the PSTraceSource
                 // instance.
 
-                if (result == null)
+                if (result is null)
                 {
                     result = PSTraceSource.GetNewTraceSource(name, description, traceHeaders);
                     PSTraceSource.TraceCatalog[result.FullName] = result;

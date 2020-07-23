@@ -62,7 +62,7 @@ namespace System.Management.Automation.Remoting
 
         public override EndPoint Create(SocketAddress SockAddr)
         {
-            if (SockAddr == null ||
+            if (SockAddr is null ||
                 SockAddr.Family != AF_HYPERV ||
                 SockAddr.Size != 34)
             {
@@ -83,7 +83,7 @@ namespace System.Management.Automation.Remoting
         {
             HyperVSocketEndPoint endpoint = (HyperVSocketEndPoint)obj;
 
-            if (endpoint == null)
+            if (endpoint is null)
             {
                 return false;
             }
@@ -223,7 +223,7 @@ namespace System.Management.Automation.Remoting
                 sockInfo.Options = SocketInformationOptions.Connected;
 
                 socket = new Socket(sockInfo);
-                if (socket == null)
+                if (socket is null)
                 {
                     Dbg.Assert(false, "Unexpected error in RemoteSessionHyperVSocketServer.");
 

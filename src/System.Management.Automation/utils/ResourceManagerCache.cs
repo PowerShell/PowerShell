@@ -41,7 +41,7 @@ namespace System.Management.Automation
             Assembly assembly,
             string baseName)
         {
-            if (assembly == null)
+            if (assembly is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(assembly));
             }
@@ -69,7 +69,7 @@ namespace System.Management.Automation
             }
 
             // If it's not in the cache, create it an add it.
-            if (manager == null)
+            if (manager is null)
             {
                 manager = InitRMWithAssembly(baseName, assembly);
 
@@ -152,7 +152,7 @@ namespace System.Management.Automation
             string baseName,
             string resourceId)
         {
-            if (assembly == null)
+            if (assembly is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(assembly));
             }

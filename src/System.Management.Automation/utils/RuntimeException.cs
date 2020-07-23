@@ -58,7 +58,7 @@ namespace System.Management.Automation
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -118,12 +118,12 @@ namespace System.Management.Automation
             SetErrorCategory(errorCategory);
             SetErrorId(errorIdAndResourceId);
 
-            if ((errorPosition == null) && (invocationInfo != null))
+            if ((errorPosition is null) && (invocationInfo != null))
             {
                 errorPosition = invocationInfo.ScriptPosition;
             }
 
-            if (invocationInfo == null) return;
+            if (invocationInfo is null) return;
             _errorRecord = new ErrorRecord(
               new ParentContainsErrorRecordException(this),
                 _errorId,
@@ -153,7 +153,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
+                if (_errorRecord is null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
@@ -224,7 +224,7 @@ namespace System.Management.Automation
         #region Internal
         internal static string RetrieveMessage(ErrorRecord errorRecord)
         {
-            if (errorRecord == null)
+            if (errorRecord is null)
                 return string.Empty;
             if (null != errorRecord.ErrorDetails &&
                 !string.IsNullOrEmpty(errorRecord.ErrorDetails.Message))
@@ -232,24 +232,24 @@ namespace System.Management.Automation
                 return errorRecord.ErrorDetails.Message;
             }
 
-            if (errorRecord.Exception == null)
+            if (errorRecord.Exception is null)
                 return string.Empty;
             return errorRecord.Exception.Message;
         }
 
         internal static string RetrieveMessage(Exception e)
         {
-            if (e == null)
+            if (e is null)
                 return string.Empty;
 
             IContainsErrorRecord icer = e as IContainsErrorRecord;
-            if (icer == null)
+            if (icer is null)
                 return e.Message;
             ErrorRecord er = icer.ErrorRecord;
-            if (er == null)
+            if (er is null)
                 return e.Message;
             ErrorDetails ed = er.ErrorDetails;
-            if (ed == null)
+            if (ed is null)
                 return e.Message;
             string detailsMessage = ed.Message;
             return (string.IsNullOrEmpty(detailsMessage)) ? e.Message : detailsMessage;
@@ -257,7 +257,7 @@ namespace System.Management.Automation
 
         internal static Exception RetrieveException(ErrorRecord errorRecord)
         {
-            if (errorRecord == null)
+            if (errorRecord is null)
                 return null;
             return errorRecord.Exception;
         }

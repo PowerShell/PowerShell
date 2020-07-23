@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public static string GetPath(PSObject instance)
         {
-            if (instance == null)
+            if (instance is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -203,13 +203,13 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public static string GetOwner(PSObject instance)
         {
-            if (instance == null)
+            if (instance is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if (sd == null)
+            if (sd is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -243,13 +243,13 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public static string GetGroup(PSObject instance)
         {
-            if (instance == null)
+            if (instance is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if (sd == null)
+            if (sd is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -282,13 +282,13 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public static AuthorizationRuleCollection GetAccess(PSObject instance)
         {
-            if (instance == null)
+            if (instance is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if (sd == null)
+            if (sd is null)
             {
                 PSTraceSource.NewArgumentException(nameof(instance));
             }
@@ -321,13 +321,13 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public static AuthorizationRuleCollection GetAudit(PSObject instance)
         {
-            if (instance == null)
+            if (instance is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if (sd == null)
+            if (sd is null)
             {
                 PSTraceSource.NewArgumentException(nameof(instance));
             }
@@ -443,7 +443,7 @@ namespace Microsoft.PowerShell.Commands
         public static string GetCentralAccessPolicyName(PSObject instance)
         {
             SecurityIdentifier capId = GetCentralAccessPolicyId(instance);
-            if (capId == null)
+            if (capId is null)
             {
                 return null; // file does not have the scope ace
             }
@@ -583,13 +583,13 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public static string GetSddl(PSObject instance)
         {
-            if (instance == null)
+            if (instance is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if (sd == null)
+            if (sd is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -1392,7 +1392,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                if (Path == null)
+                if (Path is null)
                 {
                     Exception e = new ArgumentException("Path");
                     WriteError(new ErrorRecord(
@@ -1403,7 +1403,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                if (aclObjectSecurity == null)
+                if (aclObjectSecurity is null)
                 {
                     Exception e = new ArgumentException("AclObject");
                     WriteError(new ErrorRecord(

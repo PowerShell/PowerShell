@@ -104,7 +104,7 @@ namespace System.Management.Automation.Remoting
 
             // return caller specified value in case there is no response
             // from remote end.
-            if (remoteHostResponse == null)
+            if (remoteHostResponse is null)
             {
                 return defaultValue;
             }

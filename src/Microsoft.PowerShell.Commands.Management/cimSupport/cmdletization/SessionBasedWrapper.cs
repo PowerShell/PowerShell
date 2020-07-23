@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Cmdletization
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     throw new ArgumentNullException("value");
                 }
@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Cmdletization
                     queryJob,
                     sessionForJob,
                     discardNonPipelineResults,
-                    actionAgainstResults == null
+                    actionAgainstResults is null
                         ? (Action<PSObject>)null
                         : delegate (PSObject pso)
                               {
@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Cmdletization
             Action<PSObject> processOutput =
                     delegate (PSObject pso)
                     {
-                        if (pso == null)
+                        if (pso is null)
                         {
                             return;
                         }
@@ -460,13 +460,13 @@ namespace Microsoft.PowerShell.Cmdletization
         private TSession GetSessionAssociatedWithPipelineObject()
         {
             object inputVariableValue = this.Cmdlet.Context.GetVariableValue(SpecialVariables.InputVarPath, null);
-            if (inputVariableValue == null)
+            if (inputVariableValue is null)
             {
                 return null;
             }
 
             IEnumerable inputEnumerable = LanguagePrimitives.GetEnumerable(inputVariableValue);
-            if (inputEnumerable == null)
+            if (inputEnumerable is null)
             {
                 return null;
             }
@@ -581,8 +581,8 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
         public override void ProcessRecord(TObjectInstance objectInstance, MethodInvocationInfo methodInvocationInfo, bool passThru)
         {
-            if (objectInstance == null) throw new ArgumentNullException(nameof(objectInstance));
-            if (methodInvocationInfo == null) throw new ArgumentNullException(nameof(methodInvocationInfo));
+            if (objectInstance is null) throw new ArgumentNullException(nameof(objectInstance));
+            if (methodInvocationInfo is null) throw new ArgumentNullException(nameof(methodInvocationInfo));
 
             foreach (TSession sessionForJob in this.GetSessionsToActAgainst(objectInstance))
             {
@@ -607,7 +607,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="methodInvocationInfo">Method invocation details.</param>
         public override void ProcessRecord(MethodInvocationInfo methodInvocationInfo)
         {
-            if (methodInvocationInfo == null) throw new ArgumentNullException(nameof(methodInvocationInfo));
+            if (methodInvocationInfo is null) throw new ArgumentNullException(nameof(methodInvocationInfo));
 
             foreach (TSession sessionForJob in this.GetSessionsToActAgainst(methodInvocationInfo))
             {

@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert(endProcessingAction != null, "Caller should verify endProcessingAction != null");
             lock (_endProcessingActionLock)
             {
-                if (_endProcessingAction == null)
+                if (_endProcessingAction is null)
                 {
                     Dbg.Assert(!_endProcessingActionIsReady.IsSet, "This line should execute only once");
                     _endProcessingAction = endProcessingAction;

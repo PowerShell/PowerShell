@@ -120,10 +120,10 @@ namespace System.Management.Automation
 
         private static string GetProviderAssemblyPath(ProviderInfo providerInfo)
         {
-            if (providerInfo == null)
+            if (providerInfo is null)
                 return null;
 
-            if (providerInfo.ImplementingType == null)
+            if (providerInfo.ImplementingType is null)
                 return null;
 
             return Path.GetDirectoryName(providerInfo.ImplementingType.Assembly.Location);
@@ -147,7 +147,7 @@ namespace System.Management.Automation
         /// <param name="providerInfo">ProviderInfo for which to locate help.</param>
         private void LoadHelpFile(ProviderInfo providerInfo)
         {
-            if (providerInfo == null)
+            if (providerInfo is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInfo));
             }
@@ -217,7 +217,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (helpItemsNode == null)
+            if (helpItemsNode is null)
                 return;
 
             using (this.HelpSystem.Trace(location))
@@ -298,7 +298,7 @@ namespace System.Management.Automation
             PSSnapinQualifiedName snapinQualifiedNameForPattern =
                 PSSnapinQualifiedName.GetInstance(pattern);
 
-            if (snapinQualifiedNameForPattern == null)
+            if (snapinQualifiedNameForPattern is null)
             {
                 yield break;
             }
@@ -377,7 +377,7 @@ namespace System.Management.Automation
         /// <returns>The help info object after processing.</returns>
         override internal HelpInfo ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
-            if (helpInfo == null)
+            if (helpInfo is null)
                 return null;
 
             if (helpInfo.HelpCategory != HelpCategory.Command)
@@ -396,7 +396,7 @@ namespace System.Management.Automation
 
             ProviderHelpInfo providerHelpInfo = (ProviderHelpInfo)this.ExactMatchHelp(providerHelpRequest);
 
-            if (providerHelpInfo == null)
+            if (providerHelpInfo is null)
                 return null;
 
             CommandHelpInfo commandHelpInfo = (CommandHelpInfo)helpInfo;

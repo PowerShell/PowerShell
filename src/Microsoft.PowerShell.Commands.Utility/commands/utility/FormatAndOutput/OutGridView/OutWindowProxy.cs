@@ -58,17 +58,17 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="types">An array of types to add.</param>
         internal void AddColumns(string[] propertyNames, string[] displayNames, Type[] types)
         {
-            if (propertyNames == null)
+            if (propertyNames is null)
             {
                 throw new ArgumentNullException(nameof(propertyNames));
             }
 
-            if (displayNames == null)
+            if (displayNames is null)
             {
                 throw new ArgumentNullException(nameof(displayNames));
             }
 
-            if (types == null)
+            if (types is null)
             {
                 throw new ArgumentNullException(nameof(types));
             }
@@ -177,12 +177,12 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         internal void AddItem(PSObject livePSObject)
         {
-            if (livePSObject == null)
+            if (livePSObject is null)
             {
                 throw new ArgumentNullException(nameof(livePSObject));
             }
 
-            if (_headerInfo == null)
+            if (_headerInfo is null)
             {
                 throw new InvalidOperationException();
             }
@@ -203,12 +203,12 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         internal void AddHeteroViewItem(PSObject livePSObject)
         {
-            if (livePSObject == null)
+            if (livePSObject is null)
             {
                 throw new ArgumentNullException(nameof(livePSObject));
             }
 
-            if (_headerInfo == null)
+            if (_headerInfo is null)
             {
                 throw new InvalidOperationException();
             }

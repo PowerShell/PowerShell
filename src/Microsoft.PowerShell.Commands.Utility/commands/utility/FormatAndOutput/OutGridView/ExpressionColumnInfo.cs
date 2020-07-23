@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             object objectResult = result.Result;
-            return objectResult == null ? string.Empty : ColumnInfo.LimitString(objectResult.ToString());
+            return objectResult is null ? string.Empty : ColumnInfo.LimitString(objectResult.ToString());
         }
     }
 }

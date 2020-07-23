@@ -178,7 +178,7 @@ namespace Microsoft.WSMan.Management
             string resourceName,
             object[] args)
         {
-            if (resourceManager == null)
+            if (resourceManager is null)
             {
                 throw new ArgumentNullException(nameof(resourceManager));
             }
@@ -391,7 +391,7 @@ namespace Microsoft.WSMan.Management
             string resultString = null;
 
             // if file path is given
-            if (!string.IsNullOrEmpty(filepath) && valueset == null)
+            if (!string.IsNullOrEmpty(filepath) && valueset is null)
             {
                 if (!File.Exists(filepath))
                 {
@@ -416,7 +416,7 @@ namespace Microsoft.WSMan.Management
                         foreach (DictionaryEntry entry in valueset)
                         {
                             parameters = parameters + "<p:" + entry.Key.ToString();
-                            if (entry.Value.ToString() == null)
+                            if (entry.Value.ToString() is null)
                             {
                                 parameters = parameters + " " + ATTR_NIL;
                                 nilns = " " + NS_XSI;
@@ -529,7 +529,7 @@ namespace Microsoft.WSMan.Management
             }
             else
             {
-                if (computername == null && (port != 0 || applicationname != null))
+                if (computername is null && (port != 0 || applicationname != null))
                 {
                     // the user didn't give us a computer name but he gave a port and/or application name;
                     // in this case we need to have a computer name, to form the connection string;
@@ -582,7 +582,7 @@ namespace Microsoft.WSMan.Management
                 {
                     foreach (DictionaryEntry entry in optionset)
                     {
-                        if (entry.Value.ToString() == null)
+                        if (entry.Value.ToString() is null)
                         {
                             m_resource.AddOption(entry.Key.ToString(), null, 1);
                         }
@@ -1022,7 +1022,7 @@ namespace Microsoft.WSMan.Management
                         Key_Allow_Fresh_Credentials,
                         RegistryKeyPermissionCheck.ReadWriteSubTree,
                         System.Security.AccessControl.RegistryRights.FullControl);
-                    if (rGPOLocalMachineKey == null)
+                    if (rGPOLocalMachineKey is null)
                     {
                         return !AllowFreshCredentialsValueShouldBePresent;
                     }

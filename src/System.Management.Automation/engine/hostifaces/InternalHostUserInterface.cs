@@ -25,7 +25,7 @@ namespace System.Management.Automation.Internal.Host
             // parent may not be null, however
 
             Dbg.Assert(parentHost != null, "parent may not be null");
-            if (parentHost == null)
+            if (parentHost is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(parentHost));
             }
@@ -94,7 +94,7 @@ namespace System.Management.Automation.Internal.Host
         string
         ReadLine()
         {
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 ThrowNotInteractive();
             }
@@ -109,7 +109,7 @@ namespace System.Management.Automation.Internal.Host
                 // PipelineStoppedException is thrown by host when it wants
                 // to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
-                if (lpl == null)
+                if (lpl is null)
                 {
                     throw;
                 }
@@ -134,7 +134,7 @@ namespace System.Management.Automation.Internal.Host
         string
         ReadLineMaskedAsString()
         {
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 ThrowNotInteractive();
             }
@@ -150,7 +150,7 @@ namespace System.Management.Automation.Internal.Host
                 // PipelineStoppedException is thrown by host when it wants
                 // to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
-                if (lpl == null)
+                if (lpl is null)
                 {
                     throw;
                 }
@@ -173,7 +173,7 @@ namespace System.Management.Automation.Internal.Host
         SecureString
         ReadLineAsSecureString()
         {
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 ThrowNotInteractive();
             }
@@ -189,7 +189,7 @@ namespace System.Management.Automation.Internal.Host
                 // PipelineStoppedException is thrown by host when it wants
                 // to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
-                if (lpl == null)
+                if (lpl is null)
                 {
                     throw;
                 }
@@ -214,12 +214,12 @@ namespace System.Management.Automation.Internal.Host
         void
         Write(string value)
         {
-            if (value == null)
+            if (value is null)
             {
                 return;
             }
 
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 return;
             }
@@ -245,12 +245,12 @@ namespace System.Management.Automation.Internal.Host
         void
         Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
         {
-            if (value == null)
+            if (value is null)
             {
                 return;
             }
 
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 return;
             }
@@ -272,7 +272,7 @@ namespace System.Management.Automation.Internal.Host
         void
         WriteLine()
         {
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 return;
             }
@@ -294,12 +294,12 @@ namespace System.Management.Automation.Internal.Host
         void
         WriteLine(string value)
         {
-            if (value == null)
+            if (value is null)
             {
                 return;
             }
 
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 return;
             }
@@ -311,12 +311,12 @@ namespace System.Management.Automation.Internal.Host
         void
         WriteErrorLine(string value)
         {
-            if (value == null)
+            if (value is null)
             {
                 return;
             }
 
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 return;
             }
@@ -342,12 +342,12 @@ namespace System.Management.Automation.Internal.Host
         void
         WriteLine(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
         {
-            if (value == null)
+            if (value is null)
             {
                 return;
             }
 
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 return;
             }
@@ -376,7 +376,7 @@ namespace System.Management.Automation.Internal.Host
         {
             WriteDebugInfoBuffers(record);
 
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 return;
             }
@@ -491,7 +491,7 @@ namespace System.Management.Automation.Internal.Host
         void
         WriteDebugLineHelper(string message)
         {
-            if (message == null)
+            if (message is null)
             {
                 return;
             }
@@ -585,7 +585,7 @@ namespace System.Management.Automation.Internal.Host
         void
         WriteProgress(Int64 sourceId, ProgressRecord record)
         {
-            if (record == null)
+            if (record is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(record));
             }
@@ -596,7 +596,7 @@ namespace System.Management.Automation.Internal.Host
                 _informationalBuffers.AddProgress(record);
             }
 
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 return;
             }
@@ -616,7 +616,7 @@ namespace System.Management.Automation.Internal.Host
         void
         WriteVerboseLine(string message)
         {
-            if (message == null)
+            if (message is null)
             {
                 return;
             }
@@ -630,7 +630,7 @@ namespace System.Management.Automation.Internal.Host
         {
             WriteVerboseInfoBuffers(record);
 
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 return;
             }
@@ -660,7 +660,7 @@ namespace System.Management.Automation.Internal.Host
 
         public override void WriteWarningLine(string message)
         {
-            if (message == null)
+            if (message is null)
             {
                 return;
             }
@@ -674,7 +674,7 @@ namespace System.Management.Automation.Internal.Host
         {
             WriteWarningInfoBuffers(record);
 
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 return;
             }
@@ -700,7 +700,7 @@ namespace System.Management.Automation.Internal.Host
         {
             WriteInformationInfoBuffers(record);
 
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 return;
             }
@@ -771,7 +771,7 @@ namespace System.Management.Automation.Internal.Host
         Dictionary<string, PSObject>
         Prompt(string caption, string message, Collection<FieldDescription> descriptions)
         {
-            if (descriptions == null)
+            if (descriptions is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(descriptions));
             }
@@ -781,7 +781,7 @@ namespace System.Management.Automation.Internal.Host
                 throw PSTraceSource.NewArgumentException(nameof(descriptions), InternalHostUserInterfaceStrings.PromptEmptyDescriptionsError, "descriptions");
             }
 
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 ThrowPromptNotInteractive(message);
             }
@@ -797,7 +797,7 @@ namespace System.Management.Automation.Internal.Host
                 // PipelineStoppedException is thrown by host when it wants
                 // to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
-                if (lpl == null)
+                if (lpl is null)
                 {
                     throw;
                 }
@@ -825,7 +825,7 @@ namespace System.Management.Automation.Internal.Host
         int
         PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices, int defaultChoice)
         {
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 ThrowPromptNotInteractive(message);
             }
@@ -840,7 +840,7 @@ namespace System.Management.Automation.Internal.Host
                 // PipelineStoppedException is thrown by host when it wants
                 // to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
-                if (lpl == null)
+                if (lpl is null)
                 {
                     throw;
                 }
@@ -876,7 +876,7 @@ namespace System.Management.Automation.Internal.Host
             Collection<ChoiceDescription> choices,
             IEnumerable<int> defaultChoices)
         {
-            if (_externalUI == null)
+            if (_externalUI is null)
             {
                 ThrowPromptNotInteractive(message);
             }
@@ -887,7 +887,7 @@ namespace System.Management.Automation.Internal.Host
             Collection<int> result = null;
             try
             {
-                if (hostForMultipleChoices == null)
+                if (hostForMultipleChoices is null)
                 {
                     // host did not implement this new interface..
                     // so work with V1 host API to get the behavior..
@@ -905,7 +905,7 @@ namespace System.Management.Automation.Internal.Host
                 // PipelineStoppedException is thrown by host when it wants
                 // to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
-                if (lpl == null)
+                if (lpl is null)
                 {
                     throw;
                 }
@@ -937,7 +937,7 @@ namespace System.Management.Automation.Internal.Host
         {
             Dbg.Assert(_externalUI != null, "externalUI cannot be null.");
 
-            if (choices == null)
+            if (choices is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(choices));
             }

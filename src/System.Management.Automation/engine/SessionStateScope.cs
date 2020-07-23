@@ -118,7 +118,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void NewDrive(PSDriveInfo newDrive)
         {
-            if (newDrive == null)
+            if (newDrive is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(newDrive));
             }
@@ -169,12 +169,12 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveDrive(PSDriveInfo drive)
         {
-            if (drive == null)
+            if (drive is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
-            if (_drives == null)
+            if (_drives is null)
                 return;
 
             var driveInfos = GetDrives();
@@ -220,7 +220,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PSDriveInfo GetDrive(string name)
         {
-            if (name == null)
+            if (name is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -418,7 +418,7 @@ namespace System.Management.Automation
             bool varExists = TryGetVariable(name, origin, true, out variable);
 
             // Initialize the private variable dictionary if it's not yet
-            if (_variables == null) { GetPrivateVariables(); }
+            if (_variables is null) { GetPrivateVariables(); }
 
             if (!asValue && variableToSet != null)
             {
@@ -427,7 +427,7 @@ namespace System.Management.Automation
                     // First check the variable to ensure that it
                     // is not constant or readonly
 
-                    if (variable == null || variable.IsConstant || (!force && variable.IsReadOnly))
+                    if (variable is null || variable.IsConstant || (!force && variable.IsReadOnly))
                     {
                         SessionStateUnauthorizedAccessException e =
                             new SessionStateUnauthorizedAccessException(
@@ -548,7 +548,7 @@ namespace System.Management.Automation
                 // First check the variable to ensure that it
                 // is not constant or readonly
 
-                if (variable == null || variable.IsConstant || (!force && variable.IsReadOnly))
+                if (variable is null || variable.IsConstant || (!force && variable.IsReadOnly))
                 {
                     SessionStateUnauthorizedAccessException e =
                         new SessionStateUnauthorizedAccessException(
@@ -1622,7 +1622,7 @@ namespace System.Management.Automation
 
         internal void AddType(string name, Type type)
         {
-            if (TypeTable == null)
+            if (TypeTable is null)
             {
                 TypeTable = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
             }
@@ -1632,7 +1632,7 @@ namespace System.Management.Automation
 
         internal Type LookupType(string name)
         {
-            if (TypeTable == null) return null;
+            if (TypeTable is null) return null;
             Type result;
             TypeTable.TryGetValue(name, out result);
             return result;
@@ -1714,7 +1714,7 @@ namespace System.Management.Automation
 
         private Dictionary<string, PSVariable> GetPrivateVariables()
         {
-            if (_variables == null)
+            if (_variables is null)
             {
                 // Create the variables collection with the default parameters
                 _variables = new Dictionary<string, PSVariable>(StringComparer.OrdinalIgnoreCase);
@@ -1734,7 +1734,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void AddSessionStateScopeDefaultVariables()
         {
-            if (Parent == null)
+            if (Parent is null)
             {
                 // Create the default variables that are in every scope
                 // These variables will automatically propagate to new
@@ -1762,7 +1762,7 @@ namespace System.Management.Automation
         // performance degradation, so we use lazy initialization for all of them.
         private Dictionary<string, AliasInfo> GetAliases()
         {
-            if (_alias == null)
+            if (_alias is null)
             {
                 // Create the alias table
                 _alias = new Dictionary<string, AliasInfo>(StringComparer.OrdinalIgnoreCase);
@@ -1792,7 +1792,7 @@ namespace System.Management.Automation
         // performance degradation, so we use lazy initialization for all of them.
         private Dictionary<string, FunctionInfo> GetFunctions()
         {
-            if (_functions == null)
+            if (_functions is null)
             {
                 // Create the functions table
                 _functions = new Dictionary<string, FunctionInfo>(StringComparer.OrdinalIgnoreCase);
@@ -1821,7 +1821,7 @@ namespace System.Management.Automation
         // performance degradation, so we use lazy initialization for all of them.
         private Dictionary<string, FunctionInfo> GetAllScopeFunctions()
         {
-            if (_allScopeFunctions == null)
+            if (_allScopeFunctions is null)
             {
                 if (Parent != null && Parent._allScopeFunctions != null)
                 {

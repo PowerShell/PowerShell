@@ -46,7 +46,7 @@ namespace System.Management.Automation
         /// </exception>
         internal string GetParentPath(string path, string root)
         {
-            if (path == null)
+            if (path is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -123,7 +123,7 @@ namespace System.Management.Automation
             CmdletProviderContext context,
             bool useDefaultProvider)
         {
-            if (path == null)
+            if (path is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -467,7 +467,7 @@ namespace System.Management.Automation
         /// </exception>
         internal string NormalizeRelativePath(string path, string basePath)
         {
-            if (path == null)
+            if (path is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -515,7 +515,7 @@ namespace System.Management.Automation
             string basePath,
             CmdletProviderContext context)
         {
-            if (path == null)
+            if (path is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -540,8 +540,8 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                if (workingPath == null ||
-                    provider == null)
+                if (workingPath is null ||
+                    provider is null)
                 {
                     // Since the provider didn't write an error, and we didn't get any
                     // results ourselves, we need to write out our own error.
@@ -814,13 +814,13 @@ namespace System.Management.Automation
         {
             string result = null;
 
-            if (context == null)
+            if (context is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
-            if (parent == null &&
-                child == null)
+            if (parent is null &&
+                child is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(parent));
             }
@@ -833,7 +833,7 @@ namespace System.Management.Automation
                 provider = CurrentDrive.Provider;
             }
 
-            if (context.Drive == null)
+            if (context.Drive is null)
             {
                 bool isProviderQualified = LocationGlobber.IsProviderQualifiedPath(parent);
                 bool isAbsolute = LocationGlobber.IsAbsolutePath(parent);
@@ -844,7 +844,7 @@ namespace System.Management.Automation
                     // Ignore the result. Just using this to get the providerId and drive
                     Globber.GetProviderPath(parent, context, out provider, out drive);
 
-                    if (drive == null && isProviderQualified)
+                    if (drive is null && isProviderQualified)
                     {
                         drive = provider.HiddenDrive;
                     }
@@ -1044,7 +1044,7 @@ namespace System.Management.Automation
         /// </exception>
         internal string GetChildName(string path)
         {
-            if (path == null)
+            if (path is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -1115,7 +1115,7 @@ namespace System.Management.Automation
             CmdletProviderContext context,
             bool useDefaultProvider)
         {
-            if (path == null)
+            if (path is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -1257,7 +1257,7 @@ namespace System.Management.Automation
             NavigationCmdletProvider navigationCmdletProvider =
                 GetNavigationProviderInstance(providerInstance, acceptNonContainerProviders);
 
-            if (navigationCmdletProvider == null)
+            if (navigationCmdletProvider is null)
                 return path;
 
             try
@@ -1338,7 +1338,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Collection<PSObject> MoveItem(string[] paths, string destination, bool force, bool literalPath)
         {
-            if (paths == null)
+            if (paths is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -1396,12 +1396,12 @@ namespace System.Management.Automation
             string destination,
             CmdletProviderContext context)
         {
-            if (paths == null)
+            if (paths is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            if (destination == null)
+            if (destination is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(destination));
             }
@@ -1429,7 +1429,7 @@ namespace System.Management.Automation
             {
                 foreach (string path in paths)
                 {
-                    if (path == null)
+                    if (path is null)
                     {
                         throw PSTraceSource.NewArgumentNullException(nameof(paths));
                     }
@@ -1624,7 +1624,7 @@ namespace System.Management.Automation
             string destination,
             CmdletProviderContext context)
         {
-            if (path == null)
+            if (path is null)
             {
                 return null;
             }

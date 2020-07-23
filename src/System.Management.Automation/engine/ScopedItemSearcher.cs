@@ -33,12 +33,12 @@ namespace System.Management.Automation
             SessionStateInternal sessionState,
             VariablePath lookupPath)
         {
-            if (sessionState == null)
+            if (sessionState is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
-            if (lookupPath == null)
+            if (lookupPath is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(lookupPath));
             }
@@ -286,7 +286,7 @@ namespace System.Management.Automation
             // isn't the current scope, claim that the variable
             // doesn't exist so that the lookup continues.
 
-            if (variable == null ||
+            if (variable is null ||
                 (variable.IsPrivate &&
                  scope != sessionState.CurrentScope))
             {
@@ -339,7 +339,7 @@ namespace System.Management.Automation
             // isn't the current scope, claim that the alias
             // doesn't exist so that the lookup continues.
 
-            if (alias == null ||
+            if (alias is null ||
                 ((alias.Options & ScopedItemOptions.Private) != 0 &&
                  scope != sessionState.CurrentScope))
             {
@@ -477,7 +477,7 @@ namespace System.Management.Automation
             bool result = true;
             drive = scope.GetDrive(name.DriveName);
 
-            if (drive == null)
+            if (drive is null)
             {
                 result = false;
             }

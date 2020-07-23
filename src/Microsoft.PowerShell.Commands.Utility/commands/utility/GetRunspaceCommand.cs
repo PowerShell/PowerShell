@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
         {
             IReadOnlyList<Runspace> results;
 
-            if ((ParameterSetName == GetRunspaceCommand.NameParameterSet) && ((Name == null) || Name.Length == 0))
+            if ((ParameterSetName == GetRunspaceCommand.NameParameterSet) && ((Name is null) || Name.Length == 0))
             {
                 results = GetRunspaceUtils.GetAllRunspaces();
             }

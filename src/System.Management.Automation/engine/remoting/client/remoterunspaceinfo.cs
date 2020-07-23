@@ -226,7 +226,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>Boolean indicating if runspace was inserted.</returns>
         internal bool InsertRunspace(RemoteRunspace remoteRunspace)
         {
-            if (remoteRunspace == null ||
+            if (remoteRunspace is null ||
                 remoteRunspace.InstanceId != _remoteRunspace.InstanceId)
             {
                 return false;

@@ -239,7 +239,7 @@ namespace System.Management.Automation.Runspaces.Internal
             this.outputstream = outputstream;
             this.settings = settings;
 
-            if (settings == null || settings.Host == null)
+            if (settings is null || settings.Host is null)
             {
                 hostToUse = runspacePool.Host;
             }
@@ -315,7 +315,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="connectCmdInfo">ConnectCommandInfo specifying remote command.</param>
         internal void ConnectAsync(ConnectCommandInfo connectCmdInfo)
         {
-            if (connectCmdInfo == null)
+            if (connectCmdInfo is null)
             {
                 // Attempt to do a reconnect with the current PSRP client state.
                 this.dataStructureHandler.ReconnectAsync();
@@ -851,7 +851,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     break;
             }
 
-            if (connectionRetryStatusArgs == null)
+            if (connectionRetryStatusArgs is null)
             {
                 return;
             }

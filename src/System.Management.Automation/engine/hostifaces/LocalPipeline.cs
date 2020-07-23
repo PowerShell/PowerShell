@@ -266,7 +266,7 @@ namespace System.Management.Automation.Runspaces
             invokeThread.CurrentUICulture = this.LocalRunspace.ExecutionContext.EngineHostInterface.CurrentUICulture;
 #endif
 
-            if ((invokeThread.Name == null) && changeName) // setup the invoke thread only once
+            if ((invokeThread.Name is null) && changeName) // setup the invoke thread only once
             {
                 invokeThread.Name = "Pipeline Execution Thread";
             }
@@ -825,7 +825,7 @@ namespace System.Management.Automation.Runspaces
         {
             CommandCollection commands = Commands;
 
-            if (commands == null || commands.Count == 0)
+            if (commands is null || commands.Count == 0)
             {
                 throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.NoCommandInPipeline);
             }
@@ -841,7 +841,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     CommandProcessorBase commandProcessorBase;
                     // If CommandInfo is null, proceed with CommandDiscovery to resolve the command name
-                    if (command.CommandInfo == null)
+                    if (command.CommandInfo is null)
                     {
                         try
                         {
@@ -1077,7 +1077,7 @@ namespace System.Management.Automation.Runspaces
         internal static System.Management.Automation.ExecutionContext GetExecutionContextFromTLS()
         {
             System.Management.Automation.Runspaces.Runspace runspace = Runspace.DefaultRunspace;
-            if (runspace == null)
+            if (runspace is null)
             {
                 return null;
             }
@@ -1315,7 +1315,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="item"></param>
         internal void Push(PipelineProcessor item)
         {
-            if (item == null)
+            if (item is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(item));
             }

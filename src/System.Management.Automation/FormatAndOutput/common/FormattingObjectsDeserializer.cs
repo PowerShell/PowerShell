@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             string classId = GetProperty(so, FormatInfoData.classidProperty) as string;
 
-            if (classId == null)
+            if (classId is null)
             {
                 // it's not one of the objects derived from FormatInfoData
                 return false;
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             string classId = GetProperty(so, FormatInfoData.classidProperty) as string;
 
-            if (classId == null)
+            if (classId is null)
             {
                 // it's not one of the objects derived from FormatInfoData,
                 // just return it as is
@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // throw if the property is not there
             IEnumerable e = (IEnumerable)ERSHelper.GetExtendedProperty (rawObject, propertyName, false);
 
-            if (e == null)
+            if (e is null)
                 return null;
 
             // copy to string collection, since, a priori, we do not know the length
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal static object GetProperty(PSObject so, string name)
         {
             PSMemberInfo member = so.Properties[name];
-            if (member == null)
+            if (member is null)
             {
                 return null;
             }
@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal FormatInfoData DeserializeMemberObject(PSObject so, string property)
         {
             object memberRaw = GetProperty(so, property);
-            if (memberRaw == null)
+            if (memberRaw is null)
                 return null;
             if (so == memberRaw)
             {
@@ -294,13 +294,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal bool DeserializeBoolMemberVariable(PSObject so, string property, bool cannotBeNull = true)
         {
             var val = DeserializeMemberVariable(so, property, typeof(bool), cannotBeNull);
-            return (val == null) ? false : (bool)val;
+            return (val is null) ? false : (bool)val;
         }
 
         internal WriteStreamType DeserializeWriteStreamTypeMemberVariable(PSObject so)
         {
             object wsTypeValue = GetProperty(so, "writeStream");
-            if (wsTypeValue == null)
+            if (wsTypeValue is null)
             {
                 return WriteStreamType.None;
             }
@@ -390,14 +390,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         // returns null on error
         internal static FormatInfoData CreateInstance(PSObject so, FormatObjectDeserializer deserializer)
         {
-            if (so == null)
+            if (so is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(so));
             }
 
             // look for the property that defines the type of object
             string classId = FormatObjectDeserializer.GetProperty(so, FormatInfoData.classidProperty) as string;
-            if (classId == null)
+            if (classId is null)
             {
                 string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_InvalidClassidProperty);
 
@@ -502,7 +502,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal static void ReadList(PSObject so, string property, List<T> lst, FormatObjectDeserializer deserializer)
         {
-            if (lst == null)
+            if (lst is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(lst));
             }

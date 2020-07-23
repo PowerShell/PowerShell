@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             // get the expression to evaluate
             PSPropertyExpression ex = GetDisplayNameExpression(target, expressionFactory);
-            if (ex == null)
+            if (ex is null)
                 return null;
 
             // evaluate the expression
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static string GetSmartToStringDisplayName(object x, PSPropertyExpressionFactory expressionFactory)
         {
             PSPropertyExpressionResult r = PSObjectHelper.GetDisplayName(PSObjectHelper.AsPSObject(x), expressionFactory);
-            if ((r != null) && (r.Exception == null))
+            if ((r != null) && (r.Exception is null))
             {
                 return PSObjectHelper.AsPSObject(r.Result).ToString();
             }
@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 objName = x.ToString();
             }
-            else if (x == null)
+            else if (x is null)
             {
                 // use PowerShell's $null variable to indicate that the value is null...
                 objName = "$null";
@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 else
                 {
                     PSPropertyExpressionResult r = PSObjectHelper.GetDisplayName(PSObjectHelper.AsPSObject(x), expressionFactory);
-                    if ((r != null) && (r.Exception == null))
+                    if ((r != null) && (r.Exception is null))
                     {
                         objName = PSObjectHelper.AsPSObject(r.Result).ToString();
                     }
@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns>String representation.</returns>
         internal static string SmartToString(PSObject so, PSPropertyExpressionFactory expressionFactory, int enumerationLimit, StringFormatError formatErrorObject)
         {
-            if (so == null)
+            if (so is null)
                 return string.Empty;
 
             try
@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal static PSObject AsPSObject(object obj)
         {
-            return (obj == null) ? s_emptyPSObject : PSObject.AsPSObject(obj);
+            return (obj is null) ? s_emptyPSObject : PSObject.AsPSObject(obj);
         }
 
         /// <summary>
@@ -368,13 +368,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             Diagnostics.Assert(so != null, "Shell object to process cannot be null");
             var typeNames = so.InternalTypeNames;
             Collection<string> typeNamesWithoutDeserializedPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-            if (typeNamesWithoutDeserializedPrefix == null)
+            if (typeNamesWithoutDeserializedPrefix is null)
             {
                 return null;
             }
 
             TypeTable typeTable = so.GetTypeTable();
-            if (typeTable == null)
+            if (typeTable is null)
             {
                 return null;
             }

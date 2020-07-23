@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Pop it off the local host.
             IHostSupportsInteractiveSession host = this.Host as IHostSupportsInteractiveSession;
-            if (host == null)
+            if (host is null)
             {
                 WriteError(
                     new ErrorRecord(

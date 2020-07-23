@@ -64,7 +64,7 @@ namespace System.Management.Automation.Interpreter
         {
             get
             {
-                if (ClosureVariables == null)
+                if (ClosureVariables is null)
                 {
                     return 0;
                 }

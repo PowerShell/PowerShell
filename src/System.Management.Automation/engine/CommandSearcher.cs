@@ -365,7 +365,7 @@ namespace System.Management.Automation
                 try
                 {
                     // the previous call to setupPathSearcher ensures _pathSearcher != null
-                    while (currentMatch == null && _pathSearcher!.MoveNext())
+                    while (currentMatch is null && _pathSearcher!.MoveNext())
                     {
                         currentMatch = GetInfoFromPath(((IEnumerator<string>)_pathSearcher).Current);
                     }
@@ -404,9 +404,9 @@ namespace System.Management.Automation
         {
             get
             {
-                if ((_currentState == SearchState.SearchingAliases && _currentMatch == null) ||
+                if ((_currentState == SearchState.SearchingAliases && _currentMatch is null) ||
                     _currentState == SearchState.NoMoreMatches ||
-                    _currentMatch == null)
+                    _currentMatch is null)
                 {
                     throw PSTraceSource.NewInvalidOperationException();
                 }
@@ -628,7 +628,7 @@ namespace System.Management.Automation
                     // which is not a legal file system character.
                 }
 
-                if (extension == null)
+                if (extension is null)
                 {
                     result = null;
                     break;
@@ -691,7 +691,7 @@ namespace System.Management.Automation
 
             if ((_commandResolutionOptions & SearchResolutionOptions.ResolveAliasPatterns) != 0)
             {
-                if (_matchingAlias == null)
+                if (_matchingAlias is null)
                 {
                     // Generate the enumerator of matching alias names
 
@@ -772,7 +772,7 @@ namespace System.Management.Automation
 
             if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveFunctionPatterns))
             {
-                if (_matchingFunctionEnumerator == null)
+                if (_matchingFunctionEnumerator is null)
                 {
                     Collection<CommandInfo?> matchingFunction = new Collection<CommandInfo?>();
 
@@ -844,7 +844,7 @@ namespace System.Management.Automation
         //     - Debug prompts calling internal functions that are likely to have code injection
         private bool ShouldSkipCommandResolutionForConstrainedLanguage(CommandInfo? result, ExecutionContext executionContext)
         {
-            if (result == null)
+            if (result is null)
             {
                 return false;
             }
@@ -928,7 +928,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (module == null)
+                if (module is null)
                 {
                     module = modules[0];
                 }
@@ -994,7 +994,7 @@ namespace System.Management.Automation
             CmdletInfo? result = null;
             bool useAbbreviationExpansion = _commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion);
 
-            if (_matchingCmdlet == null)
+            if (_matchingCmdlet is null)
             {
                 if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.CommandNameIsPattern) || useAbbreviationExpansion)
                 {
@@ -1003,7 +1003,7 @@ namespace System.Management.Automation
                     PSSnapinQualifiedName? PSSnapinQualifiedCommandName =
                         PSSnapinQualifiedName.GetInstance(_commandName);
 
-                    if (!useAbbreviationExpansion && PSSnapinQualifiedCommandName == null)
+                    if (!useAbbreviationExpansion && PSSnapinQualifiedCommandName is null)
                     {
                         return null;
                     }
@@ -1143,7 +1143,7 @@ namespace System.Management.Automation
                 }
 
                 if (WildcardPattern.ContainsWildcardCharacters(path) &&
-                    ((resolvedPath == null) || (provider == null)))
+                    ((resolvedPath is null) || (provider is null)))
                 {
                     // Let PowerShell resolve relative path with wildcards.
                     Collection<string> resolvedPaths = GetNextFromPathUsingWildcards(path, out provider);
@@ -1172,7 +1172,7 @@ namespace System.Management.Automation
 
                 // Try literal path resolution if wildcards are enabled first and wildcard search failed
                 if (!_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns) &&
-                    ((resolvedPath == null) || (provider == null)))
+                    ((resolvedPath is null) || (provider is null)))
                 {
                     resolvedPath = GetNextLiteralPathThatExists(path, out provider);
                 }
@@ -1594,7 +1594,7 @@ namespace System.Management.Automation
                         "The path is relative, so only doing the lookup in the specified directory: {0}",
                         directory);
 
-                    if (directory == null)
+                    if (directory is null)
                     {
                         _canDoPathLookup = false;
                     }

@@ -159,7 +159,7 @@ namespace System.Management.Automation
                         true,
                         new InvocationInfo(this.InvocationInfo.MyCommand, argument.ParameterExtent));
 
-                if (matchingParameter == null)
+                if (matchingParameter is null)
                 {
                     // Since we couldn't find a match, just add the argument as it was
                     // and continue
@@ -618,7 +618,7 @@ namespace System.Management.Automation
                             result,
                             ref unboundArgumentsIndex);
 
-                        if (argument == null)
+                        if (argument is null)
                         {
                             break;
                         }
@@ -870,7 +870,7 @@ namespace System.Management.Automation
         /// <param name="pbex"></param>
         protected void ThrowElaboratedBindingException(ParameterBindingException pbex)
         {
-            if (pbex == null)
+            if (pbex is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(pbex));
             }

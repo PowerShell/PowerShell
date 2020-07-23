@@ -50,7 +50,7 @@ namespace System.Management.Automation.Runspaces
         public Command(string command, bool isScript, bool useLocalScope)
         {
             IsEndOfStatement = false;
-            if (command == null)
+            if (command is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
@@ -63,7 +63,7 @@ namespace System.Management.Automation.Runspaces
         internal Command(string command, bool isScript, bool? useLocalScope)
         {
             IsEndOfStatement = false;
-            if (command == null)
+            if (command is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
@@ -590,7 +590,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         internal static Command FromPSObjectForRemoting(PSObject commandAsPSObject)
         {
-            if (commandAsPSObject == null)
+            if (commandAsPSObject is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(commandAsPSObject));
             }

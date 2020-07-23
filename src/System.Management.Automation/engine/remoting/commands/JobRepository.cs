@@ -19,7 +19,7 @@ namespace System.Management.Automation
         /// <param name="item">Object to add.</param>
         public void Add(T item)
         {
-            if (item == null)
+            if (item is null)
             {
                 throw new ArgumentNullException(_identifier);
             }
@@ -45,7 +45,7 @@ namespace System.Management.Automation
         /// <param name="item">Object to remove.</param>
         public void Remove(T item)
         {
-            if (item == null)
+            if (item is null)
             {
                 throw new ArgumentNullException(_identifier);
             }

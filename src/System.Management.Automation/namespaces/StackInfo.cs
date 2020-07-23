@@ -27,7 +27,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PathInfoStack(string stackName, Stack<PathInfo> locationStack) : base()
         {
-            if (locationStack == null)
+            if (locationStack is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(locationStack));
             }
