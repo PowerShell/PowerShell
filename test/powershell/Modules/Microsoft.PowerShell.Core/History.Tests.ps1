@@ -144,7 +144,9 @@ Describe "History cmdlet test cases" -Tags "CI" {
         $ps.Dispose()
 
         $errorResult | Should -BeExactly "InvokeHistoryNoLastHistoryEntryFound,Microsoft.PowerShell.Commands.InvokeHistoryCommand"
-    It "Simple recursive invocation of 'Invoke-History' can be detected" {
+    }
+
+It "Simple recursive invocation of 'Invoke-History' can be detected" {
         Set-Content -Path $TestDrive/history.csv -Value @'
 #TYPE Microsoft.PowerShell.Commands.HistoryInfo
 "Id","CommandLine","ExecutionStatus","StartExecutionTime","EndExecutionTime","Duration"
