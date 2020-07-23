@@ -13,6 +13,11 @@ namespace PSTests.Parallel
         public object DefaultVisit(Ast ast) => ast.GetType().Name;
     }
 
+    public class MyDefaultVisitor : DefaultCustomAstVisitor2
+    {
+        public override object DefaultVisit(Ast ast) => ast.GetType().Name;
+    }
+
     public class MyAstVisotor : AstVisitor2
     {
         public List<string> Commands { get; }
@@ -39,10 +44,15 @@ namespace PSTests.Parallel
         public static void TestCustomAstVisitor()
         {
             var ast = Parser.ParseInput("a | b", out _, out _);
-            var myVisitor = new MyCustomAstVisitor();
+            var expected = typeof(NamedBlockAst).Name;
 
-            var result = ast.EndBlock.Accept(myVisitor);
-            Assert.Equal(typeof(NamedBlockAst).Name, result);
+            var myVisitor1 = new MyCustomAstVisitor();
+            var result1 = ast.EndBlock.Accept(myVisitor1);
+            Assert.Equal(expected, result1);
+
+            var myVisitor2 = new MyDefaultVisitor();
+            var result2 = ast.EndBlock.Accept(myVisitor2);
+            Assert.Equal(expected, result2);
         }
 
         [Fact]
