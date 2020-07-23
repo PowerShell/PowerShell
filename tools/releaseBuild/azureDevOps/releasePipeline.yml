@@ -2,16 +2,15 @@ trigger: none
 
 resources:
   pipelines:
-  #- pipeline: releasePipeline
-  #  source: Co-ordinated Build Test
-  #  trigger:
-  #    branches:
-  #    - release/*
-  #    - releaseYml
-
   - pipeline: releasePipeline
-    source: 'Coordinated Packages'
-    branch: 'release/v7.1.0-preview.5'
+    source: Co-ordinated Build Test
+    trigger:
+      branches:
+      - release/*
+
+  #- pipeline: releasePipeline
+  #  source: 'Coordinated Packages'
+  #  branch: 'release/v7.1.0-preview.5'
 
 stages:
 - stage: ValidateSDK
