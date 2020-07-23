@@ -1,0 +1,60 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
+using System.Collections.Generic;
+using System.Management.Automation.Language;
+using Xunit;
+
+namespace PSTests.Parallel
+{
+    public class MyCustomAstVisitor : ICustomAstVisitor2
+    {
+        public object DefaultVisit(Ast ast) => ast.GetType().Name;
+    }
+
+    public class MyAstVisotor : AstVisitor2
+    {
+        public List<string> Commands { get; }
+
+        public MyAstVisotor()
+        {
+            Commands = new List<string>();
+        }
+
+        public override AstVisitAction DefaultVisit(Ast ast)
+        {
+            if (ast is CommandAst commandAst && commandAst.CommandElements[0] is StringConstantExpressionAst str)
+            {
+                Commands.Add(str.Value);
+            }
+
+            return AstVisitAction.Continue;
+        }
+    }
+
+    public static class AstDefaultVisitTests
+    {
+        [Fact]
+        public static void TestCustomAstVisitor()
+        {
+            var ast = Parser.ParseInput("a | b", out _, out _);
+            var myVisitor = new MyCustomAstVisitor();
+
+            var result = ast.EndBlock.Accept(myVisitor);
+            Assert.Equal(typeof(NamedBlockAst).Name, result);
+        }
+
+        [Fact]
+        public static void TestAstVisitor()
+        {
+            var ast = Parser.ParseInput("a | b", out _, out _);
+            var myVisitor = new MyAstVisotor();
+
+            ast.Visit(myVisitor);
+            Assert.Equal(2, myVisitor.Commands.Count);
+            Assert.Equal("a", myVisitor.Commands[0]);
+            Assert.Equal("b", myVisitor.Commands[1]);
+        }
+    }
+}
