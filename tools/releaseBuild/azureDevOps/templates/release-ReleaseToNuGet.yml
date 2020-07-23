@@ -15,10 +15,10 @@ steps:
     Get-ChildItem "$(Agent.ReleaseDirectory)"
   displayName: Download and capture nupkgs
 
-- task: NuGetCommand@2
-  displayName: 'NuGet push'
-  inputs:
-    command: push
-    packagesToPush: '$(Agent.ReleaseDirectory)/*.nupkg'
-    nuGetFeedType: external
-    publishFeedCredentials: PowerShellNuGetOrgPush
+#- task: NuGetCommand@2
+#  displayName: 'NuGet push'
+#  inputs:
+#    command: push
+#    packagesToPush: '$(Agent.ReleaseDirectory)/*.nupkg'
+#    nuGetFeedType: external
+#    publishFeedCredentials: PowerShellNuGetOrgPush
