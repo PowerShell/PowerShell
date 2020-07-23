@@ -412,12 +412,6 @@ namespace System.Management.Automation
         {
             string folderPath = null;
 #if UNIX
-            string s_envHome = System.Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
-            if (s_envHome == null)
-            {
-                s_envHome = Platform.GetTemporaryDirectory();
-            }
-
             switch (folder)
             {
                 case System.Environment.SpecialFolder.ProgramFiles:
