@@ -188,10 +188,17 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         }
     }
 
-    It 'User PSModulePath has trailing separator' -Skip:(!$IsWindows) {
+    It 'User PSModulePath has trailing separator' {
+        if ($IsWindows) {
+            $validation = "*\$env:SystemDrive\*"
+        }
+        else {
+            $validation = "*//*"
+        }
+
         $newUserPath = Join-Path $expectedUserPath ([System.IO.Path]::DirectorySeparatorChar)
         $env:PSModulePath = $env:PSModulePath.Replace($expectedUserPath, $newUserPath).Replace($expectedSharedPath,"")
         $out = & $powershell -noprofile -command '$env:PSModulePath'
-        $out.Split([System.IO.Path]::PathSeparator, [System.StringSplitOptions]::RemoveEmptyEntries) | Should -Not -BeLike "*\$env:SystemDrive\*"
+        $out.Split([System.IO.Path]::PathSeparator, [System.StringSplitOptions]::RemoveEmptyEntries) | Should -Not -BeLike $validation
     }
 }
