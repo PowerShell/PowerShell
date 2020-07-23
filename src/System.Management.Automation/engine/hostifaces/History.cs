@@ -1022,7 +1022,7 @@ namespace Microsoft.PowerShell.Commands
                             ex,
                             "InvokeHistoryNoLastHistoryEntryFound",
                             ErrorCategory.InvalidOperation,
-                            null
+                            targetObject: null
                         )
                     );
                 }
@@ -1038,7 +1038,7 @@ namespace Microsoft.PowerShell.Commands
                 // Check if there is a loop in invoke-history
                 LocalPipeline pipeline = (LocalPipeline)((LocalRunspace)Context.CurrentRunspace).GetCurrentlyRunningPipeline();
 
-                if (pipeline.PresentInInvokeHistoryEntryList(entry) == false)
+                if (!pipeline.PresentInInvokeHistoryEntryList(entry))
                 {
                     pipeline.AddToInvokeHistoryEntryList(entry);
                 }
@@ -1057,7 +1057,7 @@ namespace Microsoft.PowerShell.Commands
                             ex,
                             "InvokeHistoryLoopDetected",
                             ErrorCategory.InvalidOperation,
-                            null
+                            targetObject: null
                         )
                     );
                 }
