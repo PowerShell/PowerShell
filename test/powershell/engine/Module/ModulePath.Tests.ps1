@@ -187,4 +187,11 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
             Remove-Item -Path $userConfigPath -Force
         }
     }
+
+    It 'User PSModulePath has trailing separator' -Skip:(!$IsWindows) {
+        $newUserPath = Join-Path $expectedUserPath ([System.IO.Path]::DirectorySeparatorChar)
+        $env:PSModulePath = $env:PSModulePath.Replace($expectedUserPath, $newUserPath).Replace($expectedSharedPath,"")
+        $out = & $powershell -noprofile -command '$env:PSModulePath'
+        $out.Split([System.IO.Path]::PathSeparator, [System.StringSplitOptions]::RemoveEmptyEntries) | Should -Exist
+    }
 }
