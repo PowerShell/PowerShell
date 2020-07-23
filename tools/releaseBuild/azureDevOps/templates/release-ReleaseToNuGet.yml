@@ -1,0 +1,20 @@
+steps:
+- pwsh: |
+    #Exclude all global tool packages. Their names start with 'PowerShell.'
+    Copy-Item "_Packages/finalResults/*.nupkg" -Destination "$(Agent.ReleaseDirectory)" -Exclude "PowerShell.*.nupkg" -Force
+
+    $releaseVersion = Get-Content "_Packages/metadata/release.json" | ConvertFrom-Json | Select-Object -ExpandProperty 'ReleaseVersion'
+    $globalToolPath = "_Packages/finalResults/PowerShell.$releaseVersion.nupkg"
+    ### -WhatIf to make sure we do not release global tool. Remove -WhatIf when the PowerShell name reservation is done.
+    Copy-Item $globalToolPath -Destination "$(Agent.ReleaseDirectory)" -WhatIf
+
+    Get-ChildItem "$(Agent.ReleaseDirectory)"
+  displayName: Download and capture nupkgs
+
+- task: NuGetCommand@2
+  displayName: 'NuGet push'
+    inputs:
+    command: push
+    packagesToPush: '$(Agent.ReleaseDirectory)/*.nupkg'
+    nuGetFeedType: external
+    publishFeedCredentials: PowerShellNuGetOrgPush

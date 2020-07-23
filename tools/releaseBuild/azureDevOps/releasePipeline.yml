@@ -123,10 +123,7 @@ stages:
       runOnce:
         deploy:
           steps:
-          - download: none
-          - pwsh: |
-              Write-Host "Make azure blob public"
-            displayName: Make Azure Blob public"
+          - template: templates/release-MakeContainerPublic.yml
 
   - job: GitHubDraft
     displayName: Create GitHub Draft release
@@ -134,9 +131,7 @@ stages:
       vmImage: windows-latest
     dependsOn: AzureBlobPublic
     steps:
-    - pwsh: |
-        Write-Host "Upload artifacts and create GitHub Draft Release"
-      displayName: Create GitHub Draft Release
+    - template: templates/release-CreateGitHubDraft.yml
 
 - stage: GitHubManualTasks
   dependsOn: GitHubDraftRelease
@@ -163,17 +158,13 @@ stages:
     pool:
       vmImage: windows-latest
     steps:
-    - pwsh: |
-        Write-Host "Publish Nuget packages"
-      displayName: Publish Nuget packages
+    - template: templates/release-ReleaseToNuGet.yml
 
   - job: PublishPkgsMsftCom
     pool:
       vmImage: ubuntu-latest
     steps:
-    - pwsh: |
-        Write-Host "Publish packages.microsoft.com"
-      displayName: Publish to packages.microsoft.com
+    - template: templates/release-PublishPackageMsftCom.yml
 
 - stage: ChangesToMaster
   dependsOn: PublishPackages
