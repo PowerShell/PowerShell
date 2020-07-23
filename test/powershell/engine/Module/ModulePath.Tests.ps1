@@ -192,6 +192,6 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $newUserPath = Join-Path $expectedUserPath ([System.IO.Path]::DirectorySeparatorChar)
         $env:PSModulePath = $env:PSModulePath.Replace($expectedUserPath, $newUserPath).Replace($expectedSharedPath,"")
         $out = & $powershell -noprofile -command '$env:PSModulePath'
-        $out.Split([System.IO.Path]::PathSeparator, [System.StringSplitOptions]::RemoveEmptyEntries) | Should -Exist
+        $out.Split([System.IO.Path]::PathSeparator, [System.StringSplitOptions]::RemoveEmptyEntries) | Should -Not -BeLike "*\$env:SystemDrive\*"
     }
 }
