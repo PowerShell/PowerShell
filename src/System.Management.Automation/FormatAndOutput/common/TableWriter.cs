@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             int cols = _si.columnInfo.Length;
             Span<int> currentAlignment = cols <= OutCommandInner.StackAllocThreshold ? stackalloc int[cols] : new int[cols];
 
-            if (alignment is null)
+            if (alignment == null)
             {
                 for (int i = 0; i < currentAlignment.Length; i++)
                 {

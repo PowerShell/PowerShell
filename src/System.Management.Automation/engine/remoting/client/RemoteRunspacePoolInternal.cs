@@ -111,7 +111,7 @@ namespace System.Management.Automation.Runspaces.Internal
             ConnectCommandInfo[] connectCommands, RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable)
             : base(1, 1)
         {
-            if (instanceId is null)
+            if (instanceId == null)
             {
                 throw PSTraceSource.NewArgumentNullException("RunspacePool Guid");
             }
