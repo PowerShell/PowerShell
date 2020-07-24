@@ -541,24 +541,24 @@ namespace Microsoft.PowerShell
         /// </param>
         /// <returns>
         /// Returns a Tuple:
-        /// The first value is a String called SwitchKey with the word in a switch from the current argument or null.
-        /// The second value is a bool called ShouldBreak, indicating if the parsing look should break.
+        /// The first value is a String called switchKey with the word in a switch from the current argument or null.
+        /// The second value is a bool called shouldBreak, indicating if the parsing look should break.
         /// </returns>
-        private (string SwitchKey, bool ShouldBreak) GetSwitchKey(string[] args, ref int argIndex, ref bool noexitSeen)
+        private (string switchKey, bool shouldBreak) GetSwitchKey(string[] args, ref int argIndex, ref bool noexitSeen)
         {
             string switchKey = args[argIndex].Trim().ToLowerInvariant();
             if (string.IsNullOrEmpty(switchKey))
             {
-                return (SwitchKey: string.Empty, ShouldBreak: false);
+                return (switchKey: string.Empty, shouldBreak: false);
             }
 
             if (!CharExtensions.IsDash(switchKey[0]) && switchKey[0] != '/')
             {
-                // then its a file
+                // then it's a file
                 --argIndex;
                 ParseFile(args, ref argIndex, noexitSeen);
 
-                return (SwitchKey: string.Empty, ShouldBreak: true);
+                return (switchKey: string.Empty, shouldBreak: true);
             }
 
             // chop off the first character so that we're agnostic wrt specifying / or -
@@ -571,7 +571,7 @@ namespace Microsoft.PowerShell
                 switchKey = switchKey.Substring(1);
             }
 
-            return (SwitchKey: switchKey, ShouldBreak: false);
+            return (switchKey: switchKey, shouldBreak: false);
         }
 
         internal static string NormalizeFilePath(string path)
@@ -610,14 +610,14 @@ namespace Microsoft.PowerShell
 
             if (_showHelp)
             {
-                hostUI.WriteLine(string.Empty);
+                hostUI.WriteLine();
                 hostUI.Write(helpText);
                 if (_showExtendedHelp)
                 {
                     hostUI.Write(ManagedEntranceStrings.ExtendedHelp);
                 }
 
-                hostUI.WriteLine(string.Empty);
+                hostUI.WriteLine();
             }
         }
 
@@ -692,13 +692,13 @@ namespace Microsoft.PowerShell
 
             for (int i = 0; i < args.Length; ++i)
             {
-                (string SwitchKey, bool ShouldBreak) switchKeyResults = GetSwitchKey(args, ref i, ref noexitSeen);
-                if (switchKeyResults.ShouldBreak)
+                (string switchKey, bool shouldBreak) switchKeyResults = GetSwitchKey(args, ref i, ref noexitSeen);
+                if (switchKeyResults.shouldBreak)
                 {
                     break;
                 }
 
-                string switchKey = switchKeyResults.SwitchKey;
+                string switchKey = switchKeyResults.switchKey;
 
                 // If version is in the commandline, don't continue to look at any other parameters
                 if (MatchSwitch(switchKey, "version", "v"))
@@ -956,7 +956,7 @@ namespace Microsoft.PowerShell
         }
 
 #if DEBUG
-        private void WaitingRemoteDebugger(PSHostUserInterface hostUI, string[] args)
+        private void WaitingRemoteDebugger(PSHostUserInterface hostUI)
         {
             // this option is useful when debugging ConsoleHost remotely using VS remote debugging, as you can only
             // attach to an already running process with that debugger.
@@ -972,7 +972,7 @@ namespace Microsoft.PowerShell
         internal void ShowErrorHelpBanner(PSHostUserInterface hostUI, string? bannerText, string helpText, string[] args)
         {
 #if DEBUG
-            WaitingRemoteDebugger(hostUI, args);
+            WaitingRemoteDebugger(hostUI);
 #endif
             ShowError(hostUI);
             ShowHelp(hostUI, helpText);

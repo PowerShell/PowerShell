@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell
 
                 if (pwshPath == null)
                 {
-                    throw new ArgumentNullException(nameof(pwshPath));
+                    throw new NullReferenceException(nameof(pwshPath));
                 }
 
                 // exec pwsh
@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell
 
                 if (pwshPath == null)
                 {
-                    throw new ArgumentNullException(nameof(pwshPath));
+                    throw new NullReferenceException(nameof(pwshPath));
                 }
 
                 // exec pwsh
