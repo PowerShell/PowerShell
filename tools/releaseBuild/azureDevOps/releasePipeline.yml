@@ -205,7 +205,7 @@ stages:
     pool:
       vmImage: windows-latest
     steps:
-    - templates: template/release-BuildJson.yml
+    - template: template/release-BuildJson.yml
 
 - stage: ReleaseVPack
   dependsOn: GitHubManualTasks
