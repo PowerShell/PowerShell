@@ -193,15 +193,17 @@ Describe "Get-Date" -Tags "CI" {
         $timeDifference.Ticks        | Should -BeLessThan 10000
     }
 
-    It "-UnixTimeSeconds works" {
-        # Test conversion of arbitrary date in Unix time: 2020-01-01T00:00:00.000Z
-        Get-Date -UnixTimeSeconds 1577836800 | Should -Be ([System.DateTimeOffset]::FromUnixTimeSeconds(1577836800).LocalDateTime)
+    It "-UnixTimeSeconds works" -TestCases @(
+        @{ UnixTimeSeconds = 1577836800; Expected = [System.DateTimeOffset]::FromUnixTimeSeconds(1577836800).LocalDateTime },
+        @{ UnixTimeSeconds = 0;          Expected = [System.DateTimeOffset]::UnixEpoch.LocalDateTime },
+        @{ UnixTimeSeconds = -1;         Expected = [System.DateTimeOffset]::FromUnixTimeSeconds(-1).LocalDateTime }
+    ) {
+        param(
+            [long] $UnixTimeSeconds,
+            [DateTime] $Expected
+        )
 
-        # Test converstion of Unix time start date: 1970-01-01T00:00:00.000Z
-        Get-Date -UnixTimeSeconds 0 | Should -Be ([System.DateTimeOffset]::UnixEpoch.LocalDateTime)
-
-        # Test converstion of negative Unix time
-        Get-Date -UnixTimeSeconds -1 | Should -Be ([System.DateTimeOffset]::FromUnixTimeSeconds(-1).LocalDateTime)
+        Get-Date -UnixTimeSeconds $UnixTimeSeconds | Should -Be $Expected
     }
 }
 
