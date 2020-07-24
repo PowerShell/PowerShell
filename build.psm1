@@ -1478,7 +1478,7 @@ function Test-XUnitTestResults
         throw "Cannot convert $TestResultsFile to xml : $($_.message)"
     }
 
-    $failedTests = $results.assemblies.assembly.collection.test  | Where-Object result -eq "fail"
+    $failedTests = $results.assemblies.assembly.collection.test | Where-Object result -eq "fail"
 
     if(-not $failedTests)
     {
