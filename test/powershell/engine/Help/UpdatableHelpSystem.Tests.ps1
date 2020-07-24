@@ -20,7 +20,6 @@ $powershellCoreModules = @(
     "Microsoft.PowerShell.Security"
     "Microsoft.PowerShell.Utility"
     "Microsoft.WsMan.Management"
-    "PackageManagement"
 #    "PowershellGet"
 )
 
@@ -125,14 +124,7 @@ $testCases = @{
         HelpInstallationPathHome = "$userHelpRoot\en-US"
     }
 
-    "PackageManagement" = @{
-        HelpFiles            = "Microsoft.PowerShell.PackageManagement.dll-help.xml"
-        HelpInfoFiles        = "PackageManagement_4ae9fd46-338a-459c-8186-07f910774cb8_HelpInfo.xml"
-        CompressedFiles      = "PackageManagement_4ae9fd46-338a-459c-8186-07f910774cb8_en-US_helpcontent$extension"
-        HelpInstallationPath = "$PSHOME\Modules\PackageManagement\en-US"
-        HelpInstallationPathHome = "$userHelpRoot\PackageManagement\en-US"
-    }
-
+<# Need to update PowerShellGet information
     "PowershellGet" = @{
         HelpFiles            = "PSGet.psm1-help.xml"
         HelpInfoFiles        = "PowershellGet_1d73a601-4a6c-43c5-ba3f-619b18bbb404_HelpInfo.xml"
@@ -140,6 +132,7 @@ $testCases = @{
         HelpInstallationPath = "$PSHOME\Modules\PowershellGet\en-US"
         HelpInstallationPathHome = "$userHelpRoot\PackageManagement\en-US"
     }
+#>
 }
 
 # These are the inbox modules.
@@ -279,13 +272,6 @@ function RunSaveHelpTests
             {
                 $saveHelpFolder = Join-Path $TestDrive (Get-Random).ToString()
                 New-Item  $saveHelpFolder -Force -ItemType Directory > $null
-
-                ## Save help has intermittent connectivity issues for downloading PackageManagement help content.
-                ## Hence the test has been marked as Pending.
-                if($moduleName -eq 'PackageManagement')
-                {
-                    $pending = $true
-                }
 
                 It "Validate Save-Help for the '$moduleName' module" -Pending:$pending {
 
