@@ -8,17 +8,17 @@ using Xunit;
 
 namespace PSTests.Parallel
 {
-    public class MyCustomAstVisitor : ICustomAstVisitor2
+    internal class MyCustomAstVisitor : ICustomAstVisitor2
     {
         public object DefaultVisit(Ast ast) => ast.GetType().Name;
     }
 
-    public class MyDefaultVisitor : DefaultCustomAstVisitor2
+    internal class MyDefaultVisitor : DefaultCustomAstVisitor2
     {
         public override object DefaultVisit(Ast ast) => ast.GetType().Name;
     }
 
-    public class MyAstVisotor : AstVisitor2
+    internal class MyAstVisotor : AstVisitor2
     {
         public List<string> Commands { get; }
 
