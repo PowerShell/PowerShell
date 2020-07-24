@@ -12,7 +12,7 @@ steps:
     $buildInfo = Get-Content $jsonFile | ConvertFrom-Json
     $buildInfo.ReleaseDate = $dateTime
 
-    $targetFile = "$(Agent.ReleaseDirectory)/$fileName"
+    $targetFile = "$ENV:PIPELINE_WORKSPACE/$fileName"
     ConvertTo-Json -InputObject $buildInfo | Out-File $targetFile -Encoding ascii
 
     $vstsCommandString = "vso[task.setvariable variable=BuildInfoJsonFile]$targetFile"
@@ -32,7 +32,7 @@ steps:
 
         if ($semVersion.PreReleaseLabel -eq $null -and $semVersion.Minor % 2 -eq 0 -and $semVersion.Major -ge 7)
         {
-            $ltsFile = "$(Agent.ReleaseDirectory)/lts.json"
+            $ltsFile = "$ENV:PIPELINE_WORKSPACE/lts.json"
             Copy-Item -Path $targetFile -Destination $ltsFile -Force
             $vstsCommandLtsJsonFile = "vso[task.setvariable variable=LtsBuildInfoJsonFile]$ltsFile"
             $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]YES"

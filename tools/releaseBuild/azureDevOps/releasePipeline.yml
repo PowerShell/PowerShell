@@ -205,9 +205,7 @@ stages:
     pool:
       vmImage: windows-latest
     steps:
-    - pwsh: |
-        Write-Host "Upload build json"
-      displayName: Upload Build JSON for upgrade notification
+    - templates: template/release-BuildJson.yml
 
 - stage: ReleaseVPack
   dependsOn: GitHubManualTasks
