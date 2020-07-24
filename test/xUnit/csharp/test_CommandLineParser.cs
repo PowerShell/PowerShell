@@ -425,9 +425,11 @@ namespace PSTests.Parallel
         [Theory]
         [InlineData("-command", "-")]
         [InlineData("-c", "-")]
-        public static void TestParameter_Command_With_Dash(params string[] commandLine)
+        public static void TestParameter_Command_With_Dash_And_Not_ConsoleInputRedirected(params string[] commandLine)
         {
             var cpp = new CommandLineParameterParser();
+
+            cpp.TestHookConsoleInputRedirected = false;
 
             cpp.Parse(commandLine);
 
