@@ -968,7 +968,7 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-                else if (MatchSwitch(switchKey, "sta", "st"))
+                else if (MatchSwitch(switchKey, "sta", "sta"))
                 {
                     if (!Platform.IsWindowsDesktop)
                     {
