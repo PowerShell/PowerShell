@@ -1,6 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "DSC MOF Compilation" -tags "CI" {
+
+<# PowerShellGet does not yet support DSCResources #>
+<#
     BeforeAll {
         $module = Get-Module PowerShellGet -ListAvailable | Sort-Object -Property Version -Descending | Select-Object -First 1
 
@@ -35,4 +38,5 @@ Describe "DSC MOF Compilation" -tags "CI" {
 
         "TestDrive:\DscTestConfig2\localhost.mof" | Should -Exist
     }
+#>
 }
