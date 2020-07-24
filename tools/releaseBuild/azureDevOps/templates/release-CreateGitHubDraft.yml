@@ -13,11 +13,10 @@ steps:
   displayName: Capture downloaded artifacts
 
 - pwsh: |
-    git clone https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools ./tools
+    git clone https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
   displayName: Clone Internal-Tools repository
 
 - pwsh: |
-    Import-module ./tools/Scripts/GitHubRelease.psm1
+    Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
     Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description '<-- Update Me -->' -User PowerShell -Repository PowerShell  -PackageFolder $(System.ArtifactsDirectory) -Token $(GitHubReleasePat)
   displayName: Publish Release Draft
-

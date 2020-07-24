@@ -9,7 +9,7 @@ steps:
   displayName: Set Package version
 
 - pwsh: |
-   git clone https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools ./tools
+   git clone https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
   displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
 
 - download: releasePipeline
@@ -18,5 +18,5 @@ steps:
 - pwsh: |
     $metadata = Get-Content -Path "$ENV:PIPELINE_WORKSPACE/releasePipeline/metadata/release.json" -Raw | ConvertFrom-Json
     Write-Vebose -Verbose "$(releaseTag) $(PackagesRepoPassword) $(AzureVersion) $($metadata.LTSRelease)"
-    #./tools/packages.microsoft.com/upload.ps1 -ReleaseTag "$(releaseTag)" -Secret "$(PackagesRepoPassword)" -BlobFolderName "$(AzureVersion)" -LTS:($metadata.LTSRelease)
+    & '$(Pipeline.Workspace)/tools/packages.microsoft.com/upload.ps1' -ReleaseTag "$(releaseTag)" -Secret "$(PackagesRepoPassword)" -BlobFolderName "$(AzureVersion)" -LTS:($metadata.LTSRelease)
   displayName: Run release script
