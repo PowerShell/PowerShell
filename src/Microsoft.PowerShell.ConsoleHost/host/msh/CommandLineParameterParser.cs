@@ -200,6 +200,10 @@ namespace Microsoft.PowerShell
     {
         private const int MaxPipePathLengthLinux = 108;
         private const int MaxPipePathLengthMacOS = 104;
+        internal static int MaxNameLength = Platform.IsWindows ? ushort.MaxValue : (Platform.IsLinux ? MaxPipePathLengthLinux : MaxPipePathLengthMacOS) - Path.GetTempPath().Length;
+
+        internal bool TestHookConsoleInputRedirected;
+        internal bool TestHookNotIsWindowsDesktop;
 
         internal static readonly string[] validParameters = {
             "sta",
@@ -239,6 +243,8 @@ namespace Microsoft.PowerShell
                 return _abortStartup;
             }
         }
+
+        internal string? SettingsFile { get; private set; }
 
         internal string? InitialCommand
         {
@@ -359,6 +365,12 @@ namespace Microsoft.PowerShell
                 return _serverMode;
             }
         }
+
+        internal string? ErrorMessage => _error;
+
+        internal bool ShowShortHelp => _showHelp;
+
+        internal bool ShowExtendedHelp => _showExtendedHelp;
 
         internal bool ShowVersion
         {
@@ -499,6 +511,8 @@ namespace Microsoft.PowerShell
                 return false;
             }
 
+            SettingsFile = configFile;
+
             PowerShellConfig.Instance.SetSystemConfigFilePath(configFile);
             return true;
         }
@@ -560,7 +574,7 @@ namespace Microsoft.PowerShell
             return (SwitchKey: switchKey, ShouldBreak: false);
         }
 
-        private static string NormalizeFilePath(string path)
+        internal static string NormalizeFilePath(string path)
         {
             // Normalize slashes
             path = path.Replace(StringLiterals.AlternatePathSeparator,
@@ -767,19 +781,15 @@ namespace Microsoft.PowerShell
                         break;
                     }
 
-                    if (!Platform.IsWindows)
+                    if (!Platform.IsWindows && args[i].Length > MaxNameLength)
                     {
-                        int maxNameLength = (Platform.IsLinux ? MaxPipePathLengthLinux : MaxPipePathLengthMacOS) - Path.GetTempPath().Length;
-                        if (args[i].Length > maxNameLength)
-                        {
-                            SetCommandLineError(
-                                string.Format(
-                                    CommandLineParameterParserStrings.CustomPipeNameTooLong,
-                                    maxNameLength,
-                                    args[i],
-                                    args[i].Length));
-                            break;
-                        }
+                        SetCommandLineError(
+                            string.Format(
+                                CommandLineParameterParserStrings.CustomPipeNameTooLong,
+                                MaxNameLength,
+                                args[i],
+                                args[i].Length));
+                        break;
                     }
 
                     _customPipeName = args[i];
@@ -872,9 +882,9 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-                else if (MatchSwitch(switchKey, "sta", "s"))
+                else if (MatchSwitch(switchKey, "sta", "sta"))
                 {
-                    if (!Platform.IsWindowsDesktop)
+                    if (!Platform.IsWindowsDesktop || TestHookNotIsWindowsDesktop)
                     {
                         SetCommandLineError(
                             CommandLineParameterParserStrings.STANotImplemented);
@@ -893,7 +903,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "mta", "mta"))
                 {
-                    if (!Platform.IsWindowsDesktop)
+                    if (!Platform.IsWindowsDesktop || TestHookNotIsWindowsDesktop)
                     {
                         SetCommandLineError(
                             CommandLineParameterParserStrings.MTANotImplemented);
@@ -1231,7 +1241,7 @@ namespace Microsoft.PowerShell
                     return false;
                 }
 
-                if (!Console.IsInputRedirected)
+                if (!Console.IsInputRedirected && !TestHookConsoleInputRedirected)
                 {
                     SetCommandLineError(CommandLineParameterParserStrings.StdinNotRedirected, showHelp: true);
                     return false;
