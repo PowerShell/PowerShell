@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell
         private const int MaxPipePathLengthMacOS = 104;
         internal static int MaxNameLength = Platform.IsWindows ? ushort.MaxValue : (Platform.IsLinux ? MaxPipePathLengthLinux : MaxPipePathLengthMacOS) - Path.GetTempPath().Length;
 
-        internal bool TestHookConsoleInputRedirected;
+        internal bool? TestHookConsoleInputRedirected;
         internal bool TestHookNotIsWindowsDesktop;
 
         internal static readonly string[] validParameters = {
@@ -1241,7 +1241,7 @@ namespace Microsoft.PowerShell
                     return false;
                 }
 
-                if (!Console.IsInputRedirected && !TestHookConsoleInputRedirected)
+                if (TestHookConsoleInputRedirected.HasValue ? !TestHookConsoleInputRedirected.Value : !Console.IsInputRedirected)
                 {
                     SetCommandLineError(CommandLineParameterParserStrings.StdinNotRedirected, showHelp: true);
                     return false;

@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Microsoft.PowerShell;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
+
+using Microsoft.PowerShell;
 using Xunit;
 
 namespace PSTests.Parallel
@@ -26,7 +27,7 @@ namespace PSTests.Parallel
             Assert.Null(cpp.CustomPipeName);
             Assert.Null(cpp.ErrorMessage);
             Assert.Null(cpp.ExecutionPolicy);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeSuccess), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeSuccess, cpp.ExitCode);
             Assert.False(cpp.ExplicitReadCommandsFromStdin);
             Assert.Null(cpp.File);
             Assert.Null(cpp.InitialCommand);
@@ -304,7 +305,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.MissingConfigurationNameArgument, cpp.ErrorMessage);
         }
 
@@ -338,7 +339,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.MissingCustomPipeNameArgument, cpp.ErrorMessage);
         }
 
@@ -362,7 +363,7 @@ namespace PSTests.Parallel
         public static System.Collections.Generic.IEnumerable<object[]> Data =>
             new System.Collections.Generic.List<string[]>
             {
-                new string[] {"-custompipename", new string('q', CommandLineParameterParser.MaxNameLength + 1)}
+                new string[] { "-custompipename", new string('q', CommandLineParameterParser.MaxNameLength + 1) }
             };
 
         [SkippableTheory]
@@ -379,13 +380,14 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
-            Assert.Equal(string.Format(
-                                    CommandLineParameterParserStrings.CustomPipeNameTooLong,
-                                    CommandLineParameterParser.MaxNameLength,
-                                    commandLine[1],
-                                    CommandLineParameterParser.MaxNameLength),
-                         cpp.ErrorMessage);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
+            Assert.Equal(
+                string.Format(
+                    CommandLineParameterParserStrings.CustomPipeNameTooLong,
+                    CommandLineParameterParser.MaxNameLength,
+                    commandLine[1],
+                    CommandLineParameterParser.MaxNameLength),
+                cpp.ErrorMessage);
         }
 
         [Theory]
@@ -401,7 +403,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.True(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.MissingCommandParameter, cpp.ErrorMessage);
         }
 
@@ -455,7 +457,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.True(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.TooManyParametersToCommand, cpp.ErrorMessage);
         }
 
@@ -474,7 +476,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeSuccess), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeSuccess, cpp.ExitCode);
             Assert.True(cpp.ExplicitReadCommandsFromStdin);
             Assert.Null(cpp.ErrorMessage);
         }
@@ -494,7 +496,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.WindowStyleArgumentNotImplemented, cpp.ErrorMessage);
         }
 
@@ -513,7 +515,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.MissingWindowStyleArgument, cpp.ErrorMessage);
         }
 
@@ -543,7 +545,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(
                 string.Format(CommandLineParameterParserStrings.InvalidWindowStyleArgument, commandLine[1], errorMessage),
                 cpp.ErrorMessage);
@@ -564,7 +566,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.True(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeSuccess), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeSuccess, cpp.ExitCode);
             Assert.Null(cpp.ErrorMessage);
         }
 
@@ -585,7 +587,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.True(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(errorMessage, cpp.ErrorMessage.Substring(0, index));
         }
 
@@ -606,7 +608,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.True(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(errorMessage, cpp.ErrorMessage.Substring(0, index));
         }
 
@@ -625,7 +627,7 @@ namespace PSTests.Parallel
             Assert.False(cpp.ShowShortHelp);
             Assert.True(cpp.ShowBanner);
             Assert.Equal(Microsoft.PowerShell.Serialization.DataFormat.XML, cpp.OutputFormat);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeSuccess), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeSuccess, cpp.ExitCode);
             Assert.Null(cpp.ErrorMessage);
         }
 
@@ -646,7 +648,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.True(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(errorMessage, cpp.ErrorMessage.Substring(0, index));
         }
 
@@ -667,7 +669,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.True(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(errorMessage, cpp.ErrorMessage.Substring(0, index));
         }
 
@@ -687,7 +689,7 @@ namespace PSTests.Parallel
             Assert.False(cpp.ShowShortHelp);
             Assert.True(cpp.ShowBanner);
             Assert.Equal(Microsoft.PowerShell.Serialization.DataFormat.XML, cpp.InputFormat);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeSuccess), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeSuccess, cpp.ExitCode);
             Assert.Null(cpp.ErrorMessage);
         }
 
@@ -705,7 +707,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.True(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.MissingExecutionPolicyParameter, cpp.ErrorMessage);
         }
 
@@ -723,7 +725,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.True(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeSuccess), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeSuccess, cpp.ExitCode);
             Assert.Equal(commandLine[1], cpp.ExecutionPolicy);
             Assert.Null(cpp.ErrorMessage);
         }
@@ -742,7 +744,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.True(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.MissingCommandParameter, cpp.ErrorMessage);
         }
 
@@ -797,7 +799,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.True(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.BadCommandValue, cpp.ErrorMessage);
         }
 
@@ -817,7 +819,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.True(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.False(cpp.ExplicitReadCommandsFromStdin);
             Assert.Equal(CommandLineParameterParserStrings.BadCommandValue, cpp.ErrorMessage);
         }
@@ -836,7 +838,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.True(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.MissingArgsValue, cpp.ErrorMessage);
         }
 
@@ -854,14 +856,14 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.True(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.BadArgsValue, cpp.ErrorMessage);
         }
 
         [Theory]
         [InlineData("-encodedarguments", "PABPAGIAagBzACAAVgBlAHIAcwBpAG8AbgA9ACIAMQAuADEALgAwAC4AMQAiACAAeABtAGwAbgBzAD0AIgBoAHQAdABwADoALwAvAHMAYwBoAGUAbQBhAHMALgBtAGkAYwByAG8AcwBvAGYAdAAuAGMAbwBtAC8AcABvAHcAZQByAHMAaABlAGwAbAAvADIAMAAwADQALwAwADQAIgA+AA0ACgAgACAAPABPAGIAagAgAFIAZQBmAEkAZAA9ACIAMAAiAD4ADQAKACAAIAAgACAAPABUAE4AIABSAGUAZgBJAGQAPQAiADAAIgA+AA0ACgAgACAAIAAgACAAIAA8AFQAPgBTAHkAcwB0AGUAbQAuAEMAbwBsAGwAZQBjAHQAaQBvAG4AcwAuAEEAcgByAGEAeQBMAGkAcwB0ADwALwBUAD4ADQAKACAAIAAgACAAIAAgADwAVAA+AFMAeQBzAHQAZQBtAC4ATwBiAGoAZQBjAHQAPAAvAFQAPgANAAoAIAAgACAAIAA8AC8AVABOAD4ADQAKACAAIAAgACAAPABMAFMAVAA+AA0ACgAgACAAIAAgACAAIAA8AFMAPgAtAGEAYgBiAHIAYQA8AC8AUwA+AA0ACgAgACAAIAAgADwALwBMAFMAVAA+AA0ACgAgACAAPAAvAE8AYgBqAD4ADQAKADwALwBPAGIAagBzAD4A")] // '-abbra' in Base64 format
-        //[InlineData("-encodeda", "LQBhAGIAYgByAGEA")]
-        //[InlineData("-ea", "LQBhAGIAYgByAGEA")]
+        [InlineData("-encodeda", "PABPAGIAagBzACAAVgBlAHIAcwBpAG8AbgA9ACIAMQAuADEALgAwAC4AMQAiACAAeABtAGwAbgBzAD0AIgBoAHQAdABwADoALwAvAHMAYwBoAGUAbQBhAHMALgBtAGkAYwByAG8AcwBvAGYAdAAuAGMAbwBtAC8AcABvAHcAZQByAHMAaABlAGwAbAAvADIAMAAwADQALwAwADQAIgA+AA0ACgAgACAAPABPAGIAagAgAFIAZQBmAEkAZAA9ACIAMAAiAD4ADQAKACAAIAAgACAAPABUAE4AIABSAGUAZgBJAGQAPQAiADAAIgA+AA0ACgAgACAAIAAgACAAIAA8AFQAPgBTAHkAcwB0AGUAbQAuAEMAbwBsAGwAZQBjAHQAaQBvAG4AcwAuAEEAcgByAGEAeQBMAGkAcwB0ADwALwBUAD4ADQAKACAAIAAgACAAIAAgADwAVAA+AFMAeQBzAHQAZQBtAC4ATwBiAGoAZQBjAHQAPAAvAFQAPgANAAoAIAAgACAAIAA8AC8AVABOAD4ADQAKACAAIAAgACAAPABMAFMAVAA+AA0ACgAgACAAIAAgACAAIAA8AFMAPgAtAGEAYgBiAHIAYQA8AC8AUwA+AA0ACgAgACAAIAAgADwALwBMAFMAVAA+AA0ACgAgACAAPAAvAE8AYgBqAD4ADQAKADwALwBPAGIAagBzAD4A")]
+        [InlineData("-ea", "PABPAGIAagBzACAAVgBlAHIAcwBpAG8AbgA9ACIAMQAuADEALgAwAC4AMQAiACAAeABtAGwAbgBzAD0AIgBoAHQAdABwADoALwAvAHMAYwBoAGUAbQBhAHMALgBtAGkAYwByAG8AcwBvAGYAdAAuAGMAbwBtAC8AcABvAHcAZQByAHMAaABlAGwAbAAvADIAMAAwADQALwAwADQAIgA+AA0ACgAgACAAPABPAGIAagAgAFIAZQBmAEkAZAA9ACIAMAAiAD4ADQAKACAAIAAgACAAPABUAE4AIABSAGUAZgBJAGQAPQAiADAAIgA+AA0ACgAgACAAIAAgACAAIAA8AFQAPgBTAHkAcwB0AGUAbQAuAEMAbwBsAGwAZQBjAHQAaQBvAG4AcwAuAEEAcgByAGEAeQBMAGkAcwB0ADwALwBUAD4ADQAKACAAIAAgACAAIAAgADwAVAA+AFMAeQBzAHQAZQBtAC4ATwBiAGoAZQBjAHQAPAAvAFQAPgANAAoAIAAgACAAIAA8AC8AVABOAD4ADQAKACAAIAAgACAAPABMAFMAVAA+AA0ACgAgACAAIAAgACAAIAA8AFMAPgAtAGEAYgBiAHIAYQA8AC8AUwA+AA0ACgAgACAAIAAgADwALwBMAFMAVAA+AA0ACgAgACAAPAAvAE8AYgBqAD4ADQAKADwALwBPAGIAagBzAD4A")]
         public static void TestParameter_EncodedArguments_With_Value(params string[] commandLine)
         {
             var cpp = new CommandLineParameterParser();
@@ -889,7 +891,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.MissingSettingsFileArgument, cpp.ErrorMessage);
         }
 
@@ -906,7 +908,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(
                 string.Format(CommandLineParameterParserStrings.SettingsFileNotExists, Path.GetFullPath("noexistfilename")),
                 cpp.ErrorMessage);
@@ -914,12 +916,12 @@ namespace PSTests.Parallel
 
         public class TestDataSettingsFile : IEnumerable<object[]>
         {
-            internal string fileName = Path.GetTempFileName();
+            private string _fileName = Path.GetTempFileName();
 
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { "-settingsfile", fileName };
-                yield return new object[] { "-settings", fileName };
+                yield return new object[] { "-settingsfile", _fileName };
+                yield return new object[] { "-settings", _fileName };
             }
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
@@ -936,15 +938,17 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.True(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeSuccess), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeSuccess, cpp.ExitCode);
             Assert.Null(cpp.ErrorMessage);
             Assert.Equal(commandLine[1], cpp.SettingsFile);
         }
 
-        [Theory]
+        [SkippableTheory]
         [InlineData("-sta")]
         public static void TestParameter_STA_Not_IsWindowsDesktop(params string[] commandLine)
         {
+            Skip.IfNot(Platform.IsWindows);
+
             var cpp = new CommandLineParameterParser();
 
             cpp.TestHookNotIsWindowsDesktop = true;
@@ -955,14 +959,16 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.STANotImplemented, cpp.ErrorMessage);
         }
 
-        [Theory]
+        [SkippableTheory]
         [InlineData("-mta", "-sta")]
         public static void TestParameter_STA_And_MTA_Mutually_Exclusive(params string[] commandLine)
         {
+            Skip.IfNot(Platform.IsWindows);
+
             var cpp = new CommandLineParameterParser();
 
             cpp.Parse(commandLine);
@@ -971,14 +977,16 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.MtaStaMutuallyExclusive, cpp.ErrorMessage);
         }
 
-        [Theory]
+        [SkippableTheory]
         [InlineData("-sta")]
         public static void TestParameter_STA(params string[] commandLine)
         {
+            Skip.IfNot(Platform.IsWindows);
+
             var cpp = new CommandLineParameterParser();
 
             cpp.Parse(commandLine);
@@ -991,10 +999,12 @@ namespace PSTests.Parallel
             Assert.Null(cpp.ErrorMessage);
         }
 
-        [Theory]
+        [SkippableTheory]
         [InlineData("-mta")]
         public static void TestParameter_MTA_Not_IsWindowsDesktop(params string[] commandLine)
         {
+            Skip.IfNot(Platform.IsWindows);
+
             var cpp = new CommandLineParameterParser();
 
             cpp.TestHookNotIsWindowsDesktop = true;
@@ -1005,14 +1015,16 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.MTANotImplemented, cpp.ErrorMessage);
         }
 
-        [Theory]
+        [SkippableTheory]
         [InlineData("-sta", "-mta")]
         public static void TestParameter_MTA_And_STA_Mutually_Exclusive(params string[] commandLine)
         {
+            Skip.IfNot(Platform.IsWindows);
+
             var cpp = new CommandLineParameterParser();
 
             cpp.Parse(commandLine);
@@ -1021,14 +1033,16 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.MtaStaMutuallyExclusive, cpp.ErrorMessage);
         }
 
-        [Theory]
+        [SkippableTheory]
         [InlineData("-mta")]
         public static void TestParameter_MTA(params string[] commandLine)
         {
+            Skip.IfNot(Platform.IsWindows);
+
             var cpp = new CommandLineParameterParser();
 
             cpp.Parse(commandLine);
@@ -1055,7 +1069,7 @@ namespace PSTests.Parallel
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.Equal((uint)(ConsoleHost.ExitCodeBadCommandLineParameter), cpp.ExitCode);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(CommandLineParameterParserStrings.MissingWorkingDirectoryArgument, cpp.ErrorMessage);
         }
 
@@ -1077,12 +1091,14 @@ namespace PSTests.Parallel
             Assert.Null(cpp.ErrorMessage);
         }
 
-        [Theory]
+        [SkippableTheory]
         [InlineData("-workingdirectory", "dirname", "-removeworkingdirectorytrailingcharacter")]
         [InlineData("-wo", "dirname", "-removeworkingdirectorytrailingcharacter")]
         [InlineData("-wd", "dirname", "-removeworkingdirectorytrailingcharacter")]
         public static void TestParameter_WorkingDirectory_RemoveTrailingCharacter(params string[] commandLine)
         {
+            Skip.IfNot(Platform.IsWindows);
+
             var cpp = new CommandLineParameterParser();
 
             cpp.Parse(commandLine);
@@ -1097,12 +1113,13 @@ namespace PSTests.Parallel
 
         public class TestDataLastFile : IEnumerable<object[]>
         {
-            internal string fileName = Path.GetTempFileName();
+            private string _fileName = Path.GetTempFileName();
 
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { "-sta", fileName };
+                yield return new object[] { "-sta", _fileName };
             }
+
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
 
