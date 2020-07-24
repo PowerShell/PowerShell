@@ -1,15 +1,11 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
-#if !SILVERLIGHT // ComObject
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 namespace System.Management.Automation.ComInterop
 {
     internal static class ComHresults
     {
         internal const int S_OK = 0;
-
-        internal const int CONNECT_E_NOCONNECTION = unchecked((int)0x80040200);
 
         internal const int DISP_E_UNKNOWNINTERFACE = unchecked((int)0x80020001);
         internal const int DISP_E_MEMBERNOTFOUND = unchecked((int)0x80020003);
@@ -26,12 +22,15 @@ namespace System.Management.Automation.ComInterop
         internal const int DISP_E_BADPARAMCOUNT = unchecked((int)0x8002000E);
         internal const int DISP_E_PARAMNOTOPTIONAL = unchecked((int)0x8002000F);
 
-        internal const int E_NOTIMPL = unchecked((int)0x80004001);
         internal const int E_NOINTERFACE = unchecked((int)0x80004002);
         internal const int E_FAIL = unchecked((int)0x80004005);
+        internal const int E_NOTIMPL = unchecked((int)0x80000001);
 
         internal const int TYPE_E_LIBNOTREGISTERED = unchecked((int)0x8002801D);
+
+        internal static bool IsSuccess(int hresult)
+        {
+            return hresult >= 0;
+        }
     }
 }
-#endif
-

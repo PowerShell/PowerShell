@@ -1,18 +1,14 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT
-#if !CLR2
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
+#pragma warning disable 618 // CurrencyWrapper is obsolete
+
+using System;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Management.Automation.Language;
 
 namespace System.Management.Automation.ComInterop
 {
@@ -22,38 +18,34 @@ namespace System.Management.Automation.ComInterop
         {
             Debug.Assert(type != null);
 
-            if (type.IsValueType || type.IsArray) return true;
-
-            if (type == typeof(string) ||
-                type == typeof(DBNull) ||
-                holdsNull ||
-                type == typeof(System.Reflection.Missing) ||
-                type == typeof(CurrencyWrapper))
+            if (type.IsValueType
+                || type.IsArray
+                || type == typeof(string)
+                || type == typeof(DBNull)
+                || holdsNull
+                || type == typeof(System.Reflection.Missing)
+                || type == typeof(CurrencyWrapper))
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         internal static bool IsByRef(DynamicMetaObject mo)
         {
-            ParameterExpression pe = mo.Expression as ParameterExpression;
-            return pe != null && pe.IsByRef;
+            return mo.Expression is ParameterExpression pe && pe.IsByRef;
         }
 
-        internal static bool IsPSReferenceArg(DynamicMetaObject o)
+        internal static bool IsStrongBoxArg(DynamicMetaObject o)
         {
             Type t = o.LimitType;
-            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(PSReference<>);
+            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(StrongBox<>);
         }
 
-        // this helper prepares arguments for COM binding by transforming ByVal StongBox arguments
+        // This helper prepares arguments for COM binding by transforming ByVal StrongBox arguments
         // into ByRef expressions that represent the argument's Value fields.
-        internal static bool[] ProcessArgumentsForCom(ComMethodDesc method, ref DynamicMetaObject[] args,
-            List<ParameterExpression> temps, List<Expression> initTemps)
+        internal static bool[] ProcessArgumentsForCom(ref DynamicMetaObject[] args)
         {
             Debug.Assert(args != null);
 
@@ -67,7 +59,6 @@ namespace System.Management.Automation.ComInterop
                 // set new arg infos to their original values or set default ones
                 // we will do this fixup early so that we can assume we always have
                 // arginfos in COM binder.
-
                 if (IsByRef(curArgument))
                 {
                     newArgs[i] = curArgument;
@@ -75,23 +66,23 @@ namespace System.Management.Automation.ComInterop
                 }
                 else
                 {
-                    if (IsPSReferenceArg(curArgument))
+                    if (IsStrongBoxArg(curArgument))
                     {
-                        var restrictions = curArgument.Restrictions.Merge(
+                        BindingRestrictions restrictions = curArgument.Restrictions.Merge(
                             GetTypeRestrictionForDynamicMetaObject(curArgument)
                         );
 
                         // we have restricted this argument to LimitType so we can convert and conversion will be trivial cast.
-                        Expression boxedValueAccessor = Expression.Property(
+                        Expression boxedValueAccessor = Expression.Field(
                             Helpers.Convert(
                                 curArgument.Expression,
                                 curArgument.LimitType
                             ),
-                            curArgument.LimitType.GetProperty("Value")
+                            curArgument.LimitType.GetField("Value")
                         );
 
-                        PSReference value = curArgument.Value as PSReference;
-                        object boxedValue = value != null ? value.Value : null;
+                        IStrongBox value = curArgument.Value as IStrongBox;
+                        object boxedValue = value?.Value;
 
                         newArgs[i] = new DynamicMetaObject(
                             boxedValueAccessor,
@@ -103,20 +94,7 @@ namespace System.Management.Automation.ComInterop
                     }
                     else
                     {
-                        if ((method.ParameterInformation != null) && (i < method.ParameterInformation.Length))
-                        {
-                            newArgs[i] = new DynamicMetaObject(curArgument.CastOrConvertMethodArgument(
-                                method.ParameterInformation[i].parameterType,
-                                i.ToString(CultureInfo.InvariantCulture),
-                                method.Name,
-                                temps,
-                                initTemps), curArgument.Restrictions);
-                        }
-                        else
-                        {
-                            newArgs[i] = curArgument;
-                        }
-
+                        newArgs[i] = curArgument;
                         isByRefArg[i] = false;
                     }
                 }
@@ -130,14 +108,10 @@ namespace System.Management.Automation.ComInterop
         {
             if (obj.Value == null && obj.HasValue)
             {
-                // If the meta object holds a null value, create an instance restriction for checking null
+                //If the meta object holds a null value, create an instance restriction for checking null
                 return BindingRestrictions.GetInstanceRestriction(obj.Expression, null);
             }
-
             return BindingRestrictions.GetTypeRestriction(obj.Expression, obj.LimitType);
         }
     }
 }
-
-#endif
-

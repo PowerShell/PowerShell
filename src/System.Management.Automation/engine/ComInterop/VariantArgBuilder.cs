@@ -1,14 +1,10 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT // ComObject
-#if !CLR2
+using System;
 using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
-using System.Runtime.InteropServices;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System.Management.Automation.ComInterop
 {
@@ -24,14 +20,16 @@ namespace System.Management.Automation.ComInterop
 
         internal override Expression Marshal(Expression parameter)
         {
+            parameter = base.Marshal(parameter);
+
             // parameter.WrappedObject
             if (_isWrapper)
             {
                 parameter = Expression.Property(
                     Helpers.Convert(parameter, typeof(VariantWrapper)),
-                    typeof(VariantWrapper).GetProperty("WrappedObject")
+                    typeof(VariantWrapper).GetProperty(nameof(VariantWrapper.WrappedObject))
                 );
-            };
+            }
 
             return Helpers.Convert(parameter, typeof(object));
         }
@@ -42,7 +40,7 @@ namespace System.Management.Automation.ComInterop
 
             // parameter == UnsafeMethods.GetVariantForObject(parameter);
             return Expression.Call(
-                typeof(UnsafeMethods).GetMethod("GetVariantForObject", BindingFlags.Static | System.Reflection.BindingFlags.NonPublic),
+                typeof(UnsafeMethods).GetMethod(nameof(UnsafeMethods.GetVariantForObject), BindingFlags.Static | BindingFlags.NonPublic),
                 parameter
             );
         }
@@ -52,7 +50,7 @@ namespace System.Management.Automation.ComInterop
             // value == IntPtr.Zero ? null : Marshal.GetObjectForNativeVariant(value);
 
             Expression unmarshal = Expression.Call(
-                typeof(UnsafeMethods).GetMethod("GetObjectForVariant"),
+                typeof(UnsafeMethods).GetMethod(nameof(UnsafeMethods.GetObjectForVariant)),
                 value
             );
 
@@ -62,12 +60,9 @@ namespace System.Management.Automation.ComInterop
                     typeof(VariantWrapper).GetConstructor(new Type[] { typeof(object) }),
                     unmarshal
                 );
-            };
+            }
 
             return base.UnmarshalFromRef(unmarshal);
         }
     }
 }
-
-#endif
-

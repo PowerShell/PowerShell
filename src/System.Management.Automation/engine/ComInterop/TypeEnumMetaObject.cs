@@ -1,34 +1,23 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT
-#if !CLR2
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
-//using Microsoft.Scripting.Runtime;
-//using AstUtils = Microsoft.Scripting.Ast.Utils;
-using AstUtils = System.Management.Automation.Interpreter.Utils;
+using System.Linq.Expressions;
 
 namespace System.Management.Automation.ComInterop
 {
-    internal class TypeEnumMetaObject : DynamicMetaObject
-    {
+    internal class TypeEnumMetaObject : DynamicMetaObject {
         private readonly ComTypeEnumDesc _desc;
 
         internal TypeEnumMetaObject(ComTypeEnumDesc desc, Expression expression)
-            : base(expression, BindingRestrictions.Empty, desc)
-        {
+            : base(expression, BindingRestrictions.Empty, desc) {
             _desc = desc;
         }
 
-        public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
-        {
-            if (_desc.HasMember(binder.Name))
-            {
+        public override DynamicMetaObject BindGetMember(GetMemberBinder binder) {
+            if (_desc.HasMember(binder.Name)) {
                 return new DynamicMetaObject(
                     // return (.bound $arg0).GetValue("<name>")
                     Expression.Constant(((ComTypeEnumDesc)Value).GetValue(binder.Name), typeof(object)),
@@ -39,13 +28,11 @@ namespace System.Management.Automation.ComInterop
             throw new NotImplementedException();
         }
 
-        public override IEnumerable<string> GetDynamicMemberNames()
-        {
+        public override IEnumerable<string> GetDynamicMemberNames() {
             return _desc.GetMemberNames();
         }
 
-        private BindingRestrictions EnumRestrictions()
-        {
+        private BindingRestrictions EnumRestrictions() {
             return BindingRestrictions.GetTypeRestriction(
                 Expression, typeof(ComTypeEnumDesc)
             ).Merge(
@@ -54,26 +41,23 @@ namespace System.Management.Automation.ComInterop
                     Expression.Equal(
                         Expression.Property(
                             Expression.Property(
-                                AstUtils.Convert(Expression, typeof(ComTypeEnumDesc)),
-                                typeof(ComTypeDesc).GetProperty("TypeLib")),
-                            typeof(ComTypeLibDesc).GetProperty("Guid")),
-                        AstUtils.Constant(_desc.TypeLib.Guid)
+                                Helpers.Convert(Expression, typeof(ComTypeEnumDesc)),
+                                typeof(ComTypeDesc).GetProperty(nameof(ComTypeDesc.TypeLib))),
+                            typeof(ComTypeLibDesc).GetProperty(nameof(ComTypeLibDesc.Guid))),
+                        Expression.Constant(_desc.TypeLib.Guid)
                     )
                 )
             ).Merge(
                 BindingRestrictions.GetExpressionRestriction(
                     Expression.Equal(
                         Expression.Property(
-                            AstUtils.Convert(Expression, typeof(ComTypeEnumDesc)),
-                            typeof(ComTypeEnumDesc).GetProperty("TypeName")
+                            Helpers.Convert(Expression, typeof(ComTypeEnumDesc)),
+                            typeof(ComTypeEnumDesc).GetProperty(nameof(ComTypeEnumDesc.TypeName))
                         ),
-                        AstUtils.Constant(_desc.TypeName)
+                        Expression.Constant(_desc.TypeName)
                     )
                 )
             );
         }
     }
 }
-
-#endif
-

@@ -1,7 +1,5 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
-#if !SILVERLIGHT // ComObject
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics;
 using System.Runtime.InteropServices.ComTypes;
@@ -10,8 +8,7 @@ namespace System.Management.Automation.ComInterop
 {
     internal class ComMethodDesc
     {
-        private readonly string _name;
-        internal readonly INVOKEKIND InvokeKind;
+        private readonly INVOKEKIND _invokeKind;
 
         private ComMethodDesc(int dispId)
         {
@@ -22,49 +19,35 @@ namespace System.Management.Automation.ComInterop
             : this(dispId)
         {
             // no ITypeInfo constructor
-            _name = name;
+            Name = name;
         }
 
         internal ComMethodDesc(string name, int dispId, INVOKEKIND invkind)
             : this(name, dispId)
         {
-            InvokeKind = invkind;
+            _invokeKind = invkind;
         }
 
         internal ComMethodDesc(ITypeInfo typeInfo, FUNCDESC funcDesc)
             : this(funcDesc.memid)
         {
-            InvokeKind = funcDesc.invkind;
 
-            int cNames;
+            _invokeKind = funcDesc.invkind;
+
             string[] rgNames = new string[1 + funcDesc.cParams];
-            typeInfo.GetNames(DispId, rgNames, rgNames.Length, out cNames);
-
-            bool skipLast = false;
+            typeInfo.GetNames(DispId, rgNames, rgNames.Length, out int cNames);
             if (IsPropertyPut && rgNames[rgNames.Length - 1] == null)
             {
                 rgNames[rgNames.Length - 1] = "value";
                 cNames++;
-                skipLast = true;
             }
-
             Debug.Assert(cNames == rgNames.Length);
-            _name = rgNames[0];
+            Name = rgNames[0];
 
             ParamCount = funcDesc.cParams;
-
-            ReturnType = ComUtil.GetTypeFromTypeDesc(funcDesc.elemdescFunc.tdesc);
-            ParameterInformation = ComUtil.GetParameterInformation(funcDesc, skipLast);
         }
 
-        public string Name
-        {
-            get
-            {
-                Debug.Assert(_name != null);
-                return _name;
-            }
-        }
+        public string Name { get; }
 
         public int DispId { get; }
 
@@ -72,7 +55,7 @@ namespace System.Management.Automation.ComInterop
         {
             get
             {
-                return (InvokeKind & INVOKEKIND.INVOKE_PROPERTYGET) != 0;
+                return (_invokeKind & INVOKEKIND.INVOKE_PROPERTYGET) != 0;
             }
         }
 
@@ -80,13 +63,13 @@ namespace System.Management.Automation.ComInterop
         {
             get
             {
-                // must be regular get
+                //must be regular get
                 if (!IsPropertyGet || DispId == ComDispIds.DISPID_NEWENUM)
                 {
                     return false;
                 }
 
-                // must have no parameters
+                //must have no parameters
                 return ParamCount == 0;
             }
         }
@@ -95,7 +78,7 @@ namespace System.Management.Automation.ComInterop
         {
             get
             {
-                return (InvokeKind & (INVOKEKIND.INVOKE_PROPERTYPUT | INVOKEKIND.INVOKE_PROPERTYPUTREF)) != 0;
+                return (_invokeKind & (INVOKEKIND.INVOKE_PROPERTYPUT | INVOKEKIND.INVOKE_PROPERTYPUTREF)) != 0;
             }
         }
 
@@ -103,22 +86,10 @@ namespace System.Management.Automation.ComInterop
         {
             get
             {
-                return (InvokeKind & INVOKEKIND.INVOKE_PROPERTYPUTREF) != 0;
+                return (_invokeKind & INVOKEKIND.INVOKE_PROPERTYPUTREF) != 0;
             }
         }
 
         internal int ParamCount { get; }
-
-        public Type ReturnType { get; set; }
-        public Type InputType { get; set; }
-
-        public ParameterInformation[] ParameterInformation
-        {
-            get;
-            set;
-        }
     }
 }
-
-#endif
-
