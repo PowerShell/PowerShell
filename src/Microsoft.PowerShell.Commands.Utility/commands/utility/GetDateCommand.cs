@@ -14,9 +14,9 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the get-date command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = ParameterSetNames.Date, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096615")]
+    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = DateAndFormat, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096615")]
     [OutputType(typeof(string))]
-    [OutputType(typeof(DateTime), ParameterSetName = new[] { ParameterSetNames.Date, ParameterSetNames.UnixTimeSeconds })]
+    [OutputType(typeof(DateTime), ParameterSetName = new[] { DateAndFormat, UnixTimeSecondsAndFormat })]
     public sealed class GetDateCommand : Cmdlet
     {
         #region parameters
@@ -24,8 +24,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Allows user to override the date/time object that will be processed.
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSetNames.Date, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [Parameter(ParameterSetName = ParameterSetNames.DateUFormat, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = DateAndFormat, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = DateAndUFormat, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("LastWriteTime")]
         public DateTime Date
         {
@@ -53,8 +53,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets whether to treat a numeric input as ticks, or unix time.
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSetNames.UnixTimeSeconds, Mandatory = true)]
-        [Parameter(ParameterSetName = ParameterSetNames.UnixTimeSecondsUFormat, Mandatory = true)]
+        [Parameter(ParameterSetName = UnixTimeSecondsAndFormat, Mandatory = true)]
+        [Parameter(ParameterSetName = UnixTimeSecondsAndUFormat, Mandatory = true)]
         [ValidateRange(MinimumUnixTimeSecond, MaximumUnixTimeSecond)]
         [Alias("UnixTime")]
         public long UnixTimeSeconds
@@ -237,15 +237,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Unix format string.
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSetNames.DateUFormat, Mandatory = true)]
-        [Parameter(ParameterSetName = ParameterSetNames.UnixTimeSecondsUFormat, Mandatory = true)]
+        [Parameter(ParameterSetName = DateAndUFormat, Mandatory = true)]
+        [Parameter(ParameterSetName = UnixTimeSecondsAndUFormat, Mandatory = true)]
         public string UFormat { get; set; }
 
         /// <summary>
         /// DotNet format string.
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSetNames.Date)]
-        [Parameter(ParameterSetName = ParameterSetNames.UnixTimeSeconds)]
+        [Parameter(ParameterSetName = DateAndFormat)]
+        [Parameter(ParameterSetName = UnixTimeSecondsAndFormat)]
         [ArgumentCompletions("FileDate", "FileDateUniversal", "FileDateTime", "FileDateTimeUniversal")]
         public string Format { get; set; }
 
@@ -568,16 +568,10 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-        private static class ParameterSetNames
-        {
-            public const string Date = nameof(Date);
-
-            public const string DateUFormat = nameof(DateUFormat);
-
-            public const string UnixTimeSeconds = nameof(UnixTimeSeconds);
-
-            public const string UnixTimeSecondsUFormat = nameof(UnixTimeSecondsUFormat);
-        }
+        private const string DateAndFormat = "DateAndFormat";
+        private const string DateAndUFormat = "DateAndUFormat";
+        private const string UnixTimeSecondsAndFormat = "UnixTimeSecondsAndFormat";
+        private const string UnixTimeSecondsAndUFormat = "UnixTimeSecondsAndUFormat";
     }
 
     #endregion
