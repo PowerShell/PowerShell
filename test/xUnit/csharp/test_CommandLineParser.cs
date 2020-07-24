@@ -386,7 +386,7 @@ namespace PSTests.Parallel
                     CommandLineParameterParserStrings.CustomPipeNameTooLong,
                     CommandLineParameterParser.MaxNameLength,
                     commandLine[1],
-                    CommandLineParameterParser.MaxNameLength),
+                    commandLine[1].Length),
                 cpp.ErrorMessage);
         }
 
@@ -1117,7 +1117,7 @@ namespace PSTests.Parallel
 
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { "-sta", _fileName };
+                yield return new object[] { "-noprofile", _fileName };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
