@@ -1478,7 +1478,7 @@ function Test-XUnitTestResults
         throw "Cannot convert $TestResultsFile to xml : $($_.message)"
     }
 
-    $failedTests = $results.assemblies.assembly.collection | Where-Object failed -GT 0
+    $failedTests = $results.assemblies.assembly.collection.test  | Where-Object result -eq "fail"
 
     if(-not $failedTests)
     {
@@ -1487,10 +1487,10 @@ function Test-XUnitTestResults
 
     foreach($failure in $failedTests)
     {
-        $description = $failure.test.type
-        $name = $failure.test.method
-        $message = $failure.test.failure.message.'#cdata-section'
-        $StackTrace = $failure.test.failure.'stack-trace'.'#cdata-section'
+        $description = $failure.type
+        $name = $failure.method
+        $message = $failure.failure.message
+        $StackTrace = $failure.failure.'stack-trace'
 
         Write-Log -isError -message ("Description: " + $description)
         Write-Log -isError -message ("Name:        " + $name)
@@ -1498,9 +1498,10 @@ function Test-XUnitTestResults
         Write-Log -isError -message $message
         Write-Log -isError -message "stack-trace:"
         Write-Log -isError -message $StackTrace
+        Write-Log -isError -message " "
     }
 
-    throw "$($failedTests.failed) tests failed"
+    throw "$($results.assemblies.assembly.failed) tests failed"
 }
 
 #
