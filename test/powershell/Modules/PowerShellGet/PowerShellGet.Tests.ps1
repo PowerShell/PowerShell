@@ -88,18 +88,14 @@ function Initialize
     Import-Module PackageManagement
     Get-PackageProvider -ListAvailable | Out-Null
 
-    Register-PSRepository -Default
+    Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -InstallationPolicy Trusted
+    $script:RegisteredINTRepo = $true
 
     $repo = Get-PSRepository -ErrorAction SilentlyContinue |
-                Where-Object {$_.SourceLocation.StartsWith($SourceLocation, [System.StringComparison]::OrdinalIgnoreCase)}
+                Where-Object {$_.Url.StartsWith($SourceLocation, [System.StringComparison]::OrdinalIgnoreCase)}
     if($repo)
     {
         $script:RepositoryName = $repo.Name
-    }
-    else
-    {
-        Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -InstallationPolicy Trusted
-        $script:RegisteredINTRepo = $true
     }
 }
 
