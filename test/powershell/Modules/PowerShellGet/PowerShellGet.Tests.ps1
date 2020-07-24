@@ -88,6 +88,8 @@ function Initialize
     Import-Module PackageManagement
     Get-PackageProvider -ListAvailable | Out-Null
 
+    Register-PSRepository -Default
+
     $repo = Get-PSRepository -ErrorAction SilentlyContinue |
                 Where-Object {$_.SourceLocation.StartsWith($SourceLocation, [System.StringComparison]::OrdinalIgnoreCase)}
     if($repo)
