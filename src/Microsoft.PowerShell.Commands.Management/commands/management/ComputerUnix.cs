@@ -137,14 +137,12 @@ namespace Microsoft.PowerShell.Commands
         /// Run a command.
         /// </summary>
         protected void RunCommand(String command, String args) {
-            String cmd = "";
-
             _process = new Process()
             {
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "/sbin/shutdown",
-                    Arguments = cmd,
+                    Arguments = "",
                     RedirectStandardOutput = false,
                     UseShellExecute = false,
                     CreateNoWindow = true,
