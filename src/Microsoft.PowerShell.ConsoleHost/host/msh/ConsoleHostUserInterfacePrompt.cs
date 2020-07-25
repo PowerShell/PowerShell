@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell
                                 string.Format(CultureInfo.InvariantCulture, "{0}]: ", inputList.Count));
                             bool endListInput = false;
                             object convertedObj = null;
-                            string inputString = PromptForSingleItem(
+                            _ = PromptForSingleItem(
                                 elementType,
                                 fieldPromptList.ToString(),
                                 fieldPrompt,
@@ -253,7 +253,7 @@ namespace Microsoft.PowerShell
                         // field is not a list
                         object convertedObj = null;
 
-                        PromptForSingleItem(
+                        _ = PromptForSingleItem(
                             fieldType,
                             printFieldPrompt,
                             fieldPrompt,
