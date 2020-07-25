@@ -4,10 +4,11 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 using System.Management.Automation.ComInterop;
 
-namespace System.Runtime.InteropServices
+namespace System.Management.Automation.InteropServices
 {
     internal partial struct Variant
     {

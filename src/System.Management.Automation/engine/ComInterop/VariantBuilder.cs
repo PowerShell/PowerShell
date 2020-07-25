@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using System.Linq.Expressions;
+using System.Management.Automation.InteropServices;
 using System.Runtime.InteropServices;
 
 namespace System.Management.Automation.ComInterop

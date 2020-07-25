@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Management.Automation.InteropServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using ComTypes = System.Runtime.InteropServices.ComTypes;

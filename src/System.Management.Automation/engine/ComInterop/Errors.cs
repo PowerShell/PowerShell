@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.ComInterop
 {
@@ -15,7 +16,7 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         internal static Exception SetComObjectDataFailed()
         {
-            return new InvalidOperationException(SR.COMSetComObjectDataFailed);
+            return new InvalidOperationException(ParserStrings.SetComObjectDataFailed);
         }
 
         /// <summary>
@@ -23,15 +24,16 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         internal static Exception UnexpectedVarEnum(object p0)
         {
-            return new InvalidOperationException(SR.Format(SR.COMUnexpectedVarEnum, p0));
+            return new InvalidOperationException(StringUtil.Format(ParserStrings.UnexpectedVarEnum, p0));
         }
 
         /// <summary>
         /// System.Reflection.TargetParameterCountException with message like "Error while invoking {0}."
+        /// TODO-TODO
         /// </summary>
         internal static Exception DispBadParamCount(object p0)
         {
-            return new System.Reflection.TargetParameterCountException(SR.Format(SR.COMDispatchInvokeError, p0));
+            return new System.Reflection.TargetParameterCountException(StringUtil.Format(ParserStrings.DispBadParamCount, p0));
         }
 
         /// <summary>
@@ -39,7 +41,7 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         internal static Exception DispMemberNotFound(object p0)
         {
-            return new MissingMemberException(SR.Format(SR.COMDispatchInvokeError, p0));
+            return new MissingMemberException(StringUtil.Format(ParserStrings.DispMemberNotFound, p0));
         }
 
         /// <summary>
@@ -47,7 +49,7 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         internal static Exception DispNoNamedArgs(object p0)
         {
-            return new ArgumentException(SR.Format(SR.COMDispatchInvokeErrorNoNamedArgs, p0));
+            return new ArgumentException(StringUtil.Format(ParserStrings.DispNoNamedArgs, p0));
         }
 
         /// <summary>
@@ -55,15 +57,16 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         internal static Exception DispOverflow(object p0)
         {
-            return new OverflowException(SR.Format(SR.COMDispatchInvokeError, p0));
+            return new OverflowException(StringUtil.Format(ParserStrings.DispOverflow, p0));
         }
 
         /// <summary>
         /// ArgumentException with message like "Could not convert argument {0} for call to {1}."
+        /// TODO-TODO
         /// </summary>
         internal static Exception DispTypeMismatch(object p0, object p1)
         {
-            return new ArgumentException(SR.Format(SR.COMDispatchInvokeErrorTypeMismatch, p0, p1));
+            return new ArgumentException(StringUtil.Format(ParserStrings.DispTypeMismatch, p0, p1));
         }
 
         /// <summary>
@@ -71,7 +74,7 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         internal static Exception DispParamNotOptional(object p0)
         {
-            return new ArgumentException(SR.Format(SR.COMDispatchInvokeErrorParamNotOptional, p0));
+            return new ArgumentException(StringUtil.Format(ParserStrings.DispParamNotOptional, p0));
         }
 
         /// <summary>
@@ -79,7 +82,7 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         internal static Exception CannotRetrieveTypeInformation()
         {
-            return new InvalidOperationException(SR.COMCannotRetrieveTypeInfo);
+            return new InvalidOperationException(ParserStrings.CannotRetrieveTypeInformation);
         }
 
         /// <summary>
@@ -87,7 +90,7 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         internal static Exception GetIDsOfNamesInvalid(object p0)
         {
-            return new ArgumentException(SR.Format(SR.COMGetIDsOfNamesInvalid, p0));
+            return new ArgumentException(StringUtil.Format(ParserStrings.GetIDsOfNamesInvalid, p0));
         }
 
         /// <summary>
@@ -95,7 +98,7 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         internal static Exception UnsupportedHandlerType()
         {
-            return new InvalidOperationException(SR.COMUnsupportedEventHandlerType);
+            return new InvalidOperationException(ParserStrings.UnsupportedHandlerType);
         }
 
         /// <summary>
@@ -103,7 +106,7 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         internal static Exception CouldNotGetDispId(object p0, object p1)
         {
-            return new MissingMemberException(SR.Format(SR.COMGetDispatchIdFailed, p0, p1));
+            return new MissingMemberException(StringUtil.Format(ParserStrings.CouldNotGetDispId, p0, p1));
         }
 
         /// <summary>
@@ -111,7 +114,7 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         internal static Exception AmbiguousConversion(object p0, object p1)
         {
-            return new System.Reflection.AmbiguousMatchException(SR.Format(SR.COMAmbiguousConversion, p0, p1));
+            return new System.Reflection.AmbiguousMatchException(StringUtil.Format(ParserStrings.AmbiguousConversion, p0, p1));
         }
     }
 }

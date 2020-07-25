@@ -5163,7 +5163,7 @@ namespace System.Management.Automation.Language
 
             // Check if this is a COM Object
             DynamicMetaObject result;
-            if (ComInterop.ComBinder.TryBindGetMember(this, target, out result))
+            if (ComInterop.ComBinder.TryBindGetMember(this, target, out result, delayInvocation: false))
             {
                 result = new DynamicMetaObject(WrapGetMemberInTry(result.Expression), result.Restrictions);
                 return result.WriteToDebugLog(this);
@@ -6624,7 +6624,7 @@ namespace System.Management.Automation.Language
 
             // Check if this is a COM Object
             DynamicMetaObject result;
-            if (ComInterop.ComBinder.TryBindInvokeMember(this, _propertySetter, target, args, out result))
+            if (ComInterop.ComBinder.TryBindInvokeMember(this, target, args, out result))
             {
                 return result.UpdateComRestrictionsForPsObject(args).WriteToDebugLog(this);
             }

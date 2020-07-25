@@ -31,7 +31,7 @@ namespace System.Management.Automation.ComInterop
                 Expression.Throw(
                     Expression.New(
                         typeof(NotSupportedException).GetConstructor(new[] { typeof(string) }),
-                        Expression.Constant(SR.COMCannotPerformCall)
+                        Expression.Constant(ParserStrings.CannotCall)
                     ),
                     typeof(object)
                 ),

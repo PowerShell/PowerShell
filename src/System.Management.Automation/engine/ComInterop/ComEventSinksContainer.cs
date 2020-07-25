@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Management.Automation.InteropServices;
 
 namespace System.Management.Automation.ComInterop
 {

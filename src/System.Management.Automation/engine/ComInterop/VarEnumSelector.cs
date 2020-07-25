@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using System.Management.Automation.InteropServices;
 using System.Runtime.InteropServices;
 
 namespace System.Management.Automation.ComInterop
@@ -41,6 +42,60 @@ namespace System.Management.Automation.ComInterop
         }
 
         internal VariantBuilder[] VariantBuilders { get; }
+
+        internal static Type GetTypeForVarEnum(VarEnum vt)
+        {
+            Type type;
+
+            switch (vt)
+            {
+                // VarEnums which can be used in VARIANTs, but which cannot occur in a TYPEDESC
+                case VarEnum.VT_EMPTY:
+                case VarEnum.VT_NULL:
+                case VarEnum.VT_RECORD:
+                    type = typeof(void);
+                    break;
+
+                // VarEnums which are not used in VARIANTs, but which can occur in a TYPEDESC
+                case VarEnum.VT_VOID:
+                    type = typeof(void);
+                    break;
+
+                case VarEnum.VT_HRESULT:
+                    type = typeof(int);
+                    break;
+
+                case ((VarEnum)37): // VT_INT_PTR:
+                    type = typeof(IntPtr);
+                    break;
+
+                case ((VarEnum)38): // VT_UINT_PTR:
+                    type = typeof(UIntPtr);
+                    break;
+
+                case VarEnum.VT_SAFEARRAY:
+                case VarEnum.VT_CARRAY:
+                    type = typeof(Array);
+                    break;
+
+                case VarEnum.VT_LPSTR:
+                case VarEnum.VT_LPWSTR:
+                    type = typeof(string);
+                    break;
+
+                case VarEnum.VT_PTR:
+                case VarEnum.VT_USERDEFINED:
+                    type = typeof(object);
+                    break;
+
+                // For VarEnums that can be used in VARIANTs and well as TYPEDESCs, just use VarEnumSelector
+                default:
+                    type = VarEnumSelector.GetManagedMarshalType(vt);
+                    break;
+            }
+
+            return type;
+        }
 
         /// <summary>
         /// Gets the managed type that an object needs to be coverted to in order for it to be able

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 using System.Management.Automation.ComInterop;
 
-namespace System.Runtime.InteropServices
+namespace System.Management.Automation.InteropServices
 {
     internal partial class ComEventsSink
     {
