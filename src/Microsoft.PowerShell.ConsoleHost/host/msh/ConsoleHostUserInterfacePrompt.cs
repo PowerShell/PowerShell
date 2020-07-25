@@ -206,12 +206,22 @@ namespace Microsoft.PowerShell
                         {
                             fieldPromptList.Append(
                                 string.Format(CultureInfo.InvariantCulture, "{0}]: ", inputList.Count));
-                            bool inputListEnd = false;
+                            bool endListInput = false;
                             object convertedObj = null;
-                            string inputString = PromptForSingleItem(elementType, fieldPromptList.ToString(), fieldPrompt, caption, message,
-                                desc, fieldEchoOnPrompt: true, true, out inputListEnd, out cancelInput, out convertedObj);
+                            string inputString = PromptForSingleItem(
+                                elementType,
+                                fieldPromptList.ToString(),
+                                fieldPrompt,
+                                caption,
+                                message,
+                                desc,
+                                fieldEchoOnPrompt: true,
+                                listInput: true,
+                                out endListInput,
+                                out cancelInput,
+                                out convertedObj);
 
-                            if (cancelInput || inputListEnd)
+                            if (cancelInput || endListInput)
                             {
                                 break;
                             }
@@ -242,10 +252,20 @@ namespace Microsoft.PowerShell
                             fieldPrompt);
                         // field is not a list
                         object convertedObj = null;
-                        bool dummy = false;
 
-                        PromptForSingleItem(fieldType, printFieldPrompt, fieldPrompt, caption, message, desc,
-                                            fieldEchoOnPrompt: true, false, out dummy, out cancelInput, out convertedObj);
+                        PromptForSingleItem(
+                            fieldType,
+                            printFieldPrompt,
+                            fieldPrompt,
+                            caption,
+                            message,
+                            desc,
+                            fieldEchoOnPrompt: true,
+                            listInput: false,
+                            endListInput: out _,
+                            out cancelInput,
+                            out convertedObj);
+
                         if (!cancelInput)
                         {
                             inputPSObject = PSObject.AsPSObject(convertedObj);
