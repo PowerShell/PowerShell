@@ -730,11 +730,11 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class SymbolResolvePostActionVisitor : ICustomAstVisitor2
+    internal class SymbolResolvePostActionVisitor : DefaultCustomAstVisitor2
     {
         internal SymbolResolver _symbolResolver;
 
-        public object VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst)
+        public override object VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst)
         {
             if (!(functionDefinitionAst.Parent is FunctionMemberAst))
             {
@@ -744,19 +744,19 @@ namespace System.Management.Automation.Language
             return null;
         }
 
-        public object VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst)
+        public override object VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst)
         {
             _symbolResolver._symbolTable.LeaveScope();
             return null;
         }
 
-        public object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst)
+        public override object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst)
         {
             _symbolResolver._symbolTable.LeaveScope();
             return null;
         }
 
-        public object VisitFunctionMember(FunctionMemberAst functionMemberAst)
+        public override object VisitFunctionMember(FunctionMemberAst functionMemberAst)
         {
             _symbolResolver._symbolTable.LeaveScope();
             return null;

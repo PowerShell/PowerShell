@@ -8,21 +8,21 @@ using Xunit;
 
 namespace PSTests.Parallel
 {
-    internal class MyCustomAstVisitor : ICustomAstVisitor2
+    internal class MyICustomAstVisitor2 : ICustomAstVisitor2
     {
         public object DefaultVisit(Ast ast) => ast.GetType().Name;
     }
 
-    internal class MyDefaultVisitor : DefaultCustomAstVisitor2
+    internal class MyDefaultCustomAstVisitor2 : DefaultCustomAstVisitor2
     {
         public override object DefaultVisit(Ast ast) => ast.GetType().Name;
     }
 
-    internal class MyAstVisotor : AstVisitor2
+    internal class MyAstVisitor2 : AstVisitor2
     {
         public List<string> Commands { get; }
 
-        public MyAstVisotor()
+        public MyAstVisitor2()
         {
             Commands = new List<string>();
         }
@@ -46,11 +46,11 @@ namespace PSTests.Parallel
             var ast = Parser.ParseInput("a | b", out _, out _);
             var expected = typeof(NamedBlockAst).Name;
 
-            var myVisitor1 = new MyCustomAstVisitor();
+            var myVisitor1 = new MyICustomAstVisitor2();
             var result1 = ast.EndBlock.Accept(myVisitor1);
             Assert.Equal(expected, result1);
 
-            var myVisitor2 = new MyDefaultVisitor();
+            var myVisitor2 = new MyDefaultCustomAstVisitor2();
             var result2 = ast.EndBlock.Accept(myVisitor2);
             Assert.Equal(expected, result2);
         }
@@ -59,7 +59,7 @@ namespace PSTests.Parallel
         public static void TestAstVisitor()
         {
             var ast = Parser.ParseInput("a | b", out _, out _);
-            var myVisitor = new MyAstVisotor();
+            var myVisitor = new MyAstVisitor2();
 
             ast.Visit(myVisitor);
             Assert.Equal(2, myVisitor.Commands.Count);
