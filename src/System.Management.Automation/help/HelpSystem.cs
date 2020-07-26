@@ -76,7 +76,7 @@ namespace System.Management.Automation
     ///     The result of a help provider invocation can be three things:
     ///         a. Full help info (in case of an exact-match and a single search result)
     ///         b. Short help info (in case of multiple search results)
-    ///         c. Partial help info (in case of some commandlet help info, which
+    ///         c. Partial help info (in case of some cmdlet help info, which
     ///                                 should be supplemented by provider help info)
     ///         d. Help forwarding info (in the case of an alias, which will return the target
     ///                                   for the alias)
