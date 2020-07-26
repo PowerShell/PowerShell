@@ -323,7 +323,7 @@ namespace System.Management.Automation
 
                     if (!isMatchFound)
                     {
-                        // Throwing ab exception here may not be the
+                        // Throwing an exception here may not be the
                         // best thing to do. Instead we can choose to
                         //    a. give a hint
                         //    b. just silently return an empty search result.
