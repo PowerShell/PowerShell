@@ -46,7 +46,7 @@ namespace System.Management.Automation
     ///         4. default help info (or hint) returned in case no match is found.
     ///
     /// Help API:
-    ///     Help API is the function to be called by get-help commandlet.
+    ///     The Help API is the function to be called by the Get-Help cmdlet.
     ///
     ///     The following information shall be provided in Help API parameters:
     ///         1. search target: (which can be one or multiple strings)
