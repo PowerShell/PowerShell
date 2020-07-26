@@ -39,7 +39,7 @@ namespace System.Management.Automation
     ///     Search phase: all relevant help providers will be called to retrieve HelpInfo. (Order doesn't
     ///         matter in this case) Help engine will not stop until all help providers are called.
     ///
-    ///     Behaviour of the help engine can be modified based on Help API parameters in the following ways:
+    ///     Behavior of the help engine can be modified based on Help API parameters in the following ways:
     ///         1. limit the number of HelpInfo to be returned.
     ///         2. specify which providers will be used.
     ///         3. general help info returned in case the search target is empty.
