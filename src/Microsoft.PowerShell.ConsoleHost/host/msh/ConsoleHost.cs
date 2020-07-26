@@ -1206,7 +1206,7 @@ namespace Microsoft.PowerShell
             if (!_isDisposed)
             {
 #if !UNIX
-                Dbg.Assert(breakHandlerGcHandle != null, "break handler should be set");
+                Dbg.Assert(breakHandlerGcHandle != default, "break handler should be set");
                 ConsoleControl.RemoveBreakHandler();
                 if (breakHandlerGcHandle.IsAllocated)
                 {

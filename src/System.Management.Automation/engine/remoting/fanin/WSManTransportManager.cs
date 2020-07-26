@@ -2280,7 +2280,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // process returned Xml
-            Dbg.Assert(data != null, "WSManConnectShell callback returned null data");
+            Dbg.Assert(data != default, "WSManConnectShell callback returned null data");
             WSManNativeApi.WSManConnectDataResult connectData = WSManNativeApi.WSManConnectDataResult.UnMarshal(data);
             if (connectData.data != null)
             {
