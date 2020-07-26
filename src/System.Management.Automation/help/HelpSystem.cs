@@ -350,7 +350,7 @@ namespace System.Management.Automation
         /// (this is implemented by ForwardHelp)
         /// </summary>
         /// <param name="helpRequest">Help request object</param>
-        /// <returns>HelpInfo object retrieved (can be Null)</returns>
+        /// <returns>HelpInfo object retrieved (can be null)</returns>
         internal IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             bool isHelpInfoFound = false;
