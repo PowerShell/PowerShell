@@ -208,6 +208,9 @@ function Start-PSPackage {
         # Copy the ThirdPartyNotices.txt so it's part of the package
         Copy-Item "$RepoRoot/ThirdPartyNotices.txt" -Destination $Source -Force
 
+        # Copy the default.help.txt so it's part of the package
+        Copy-Item "$RepoRoot/assets/default.help.txt" -Destination "$Source/en-US" -Force
+
         # If building a symbols package, we add a zip of the parent to publish
         if ($IncludeSymbols.IsPresent)
         {
