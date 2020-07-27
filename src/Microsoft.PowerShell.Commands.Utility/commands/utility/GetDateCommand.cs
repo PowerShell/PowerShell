@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         private DateTime _date;
         private bool _dateSpecified;
 
-        // DateTimeOffset.MinValue.ToUnixTimeSeconds()
+        // The const comes from DateTimeOffset.MinValue.ToUnixTimeSeconds()
         private const long MinimumUnixTimeSecond = -62135596800;
 
         // DateTimeOffset.MaxValue.ToUnixTimeSeconds()
