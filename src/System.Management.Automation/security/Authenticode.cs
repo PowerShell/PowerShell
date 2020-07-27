@@ -192,7 +192,7 @@ namespace System.Management.Automation
                     IntPtr.Zero);
 #pragma warning restore 56523
 
-                if (si.pSignExtInfo is not null)
+                if (si.pSignExtInfo != null)
                 {
                     Marshal.DestroyStructure<NativeMethods.CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO>(si.pSignExtInfo);
                     Marshal.FreeCoTaskMem(si.pSignExtInfo);

@@ -1915,7 +1915,7 @@ namespace Microsoft.PowerShell.Commands
             InvocationInfo invocationInfo)
         {
             Dbg.Assert(remoteRunspaceInfo is not null, "Caller should validate remoteRunspaceInfo is not null");
-            Dbg.Assert(moduleGuid is not null, "Caller should validate moduleGuid is not null");
+            Dbg.Assert(moduleGuid != null, "Caller should validate moduleGuid is not null");
             Dbg.Assert(invocationInfo is not null, "Caller should validate invocationInfo is not null");
 
             _remoteRunspaceInfo = remoteRunspaceInfo;

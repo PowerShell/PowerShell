@@ -2280,9 +2280,9 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // process returned Xml
-            Dbg.Assert(data is not null, "WSManConnectShell callback returned null data");
+            Dbg.Assert(data != null, "WSManConnectShell callback returned null data");
             WSManNativeApi.WSManConnectDataResult connectData = WSManNativeApi.WSManConnectDataResult.UnMarshal(data);
-            if (connectData.data is not null)
+            if (connectData.data != null)
             {
                 byte[] connectResponse = ServerOperationHelpers.ExtractEncodedXmlElement(connectData.data, WSManNativeApi.PS_CONNECTRESPONSE_XML_TAG);
                 sessionTM.ProcessRawData(connectResponse, WSManNativeApi.WSMAN_STREAM_ID_STDOUT);
