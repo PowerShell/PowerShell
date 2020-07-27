@@ -1209,7 +1209,7 @@ namespace System.Management.Automation.Remoting
                     return false;
                 }
 
-                if ((hashtable[FunctionValueToken] as ScriptBlock) == null)
+                if (!(hashtable[FunctionValueToken] is ScriptBlock))
                 {
                     cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock, FunctionValueToken, key, path));
                     return false;
@@ -2221,7 +2221,7 @@ namespace System.Management.Automation.Remoting
                     foreach (Hashtable variable in variables)
                     {
                         if (variable.ContainsKey(ConfigFileConstants.VariableValueToken) &&
-                            ((variable[ConfigFileConstants.VariableValueToken] as ScriptBlock) != null))
+                            (variable[ConfigFileConstants.VariableValueToken] is ScriptBlock))
                         {
                             iss.DynamicVariablesToDefine.Add(variable);
                             continue;

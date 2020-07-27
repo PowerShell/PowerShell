@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
                 var parameterSets = (other.Members["ParameterSets"].Value as PSObject).BaseObject as System.Collections.ArrayList;
                 this.ParameterSets = GetObjectEnumerable(parameterSets).Cast<PSObject>().Select(x => new ShowCommandParameterSetInfo(x)).ToList().AsReadOnly();
 
-                if (other.Members["Module"] != null && other.Members["Module"].Value as PSObject != null)
+                if (other.Members["Module"] != null && other.Members["Module"].Value is PSObject)
                 {
                     this.Module = new ShowCommandModuleInfo(other.Members["Module"].Value as PSObject);
                 }
