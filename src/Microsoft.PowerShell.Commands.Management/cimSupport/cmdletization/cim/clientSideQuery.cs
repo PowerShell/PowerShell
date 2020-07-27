@@ -572,8 +572,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 try
                 {
-                    var expectedComparable = expectedPropertyValue as IComparable;
-                    if (expectedComparable == null)
+                    if (!(expectedPropertyValue is IComparable expectedComparable))
                     {
                         return false;
                     }
@@ -608,8 +607,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 try
                 {
-                    var actualComparable = actualPropertyValue as IComparable;
-                    if (actualComparable == null)
+                    if (!(actualPropertyValue is IComparable actualComparable))
                     {
                         return false;
                     }

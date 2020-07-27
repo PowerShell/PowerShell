@@ -710,8 +710,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                PSPropertyInfo property = info as PSPropertyInfo;
-                if (property == null)
+                if (!(info is PSPropertyInfo property))
                 {
                     continue;
                 }

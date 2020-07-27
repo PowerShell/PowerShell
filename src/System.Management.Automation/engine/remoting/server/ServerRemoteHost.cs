@@ -327,8 +327,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.ServerDriverRemoteHostAlreadyPushed);
             }
 
-            RemoteRunspace remoteRunspace = runspace as RemoteRunspace;
-            if (remoteRunspace == null)
+            if (!(runspace is RemoteRunspace remoteRunspace))
             {
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.ServerDriverRemoteHostNotRemoteRunspace);
             }

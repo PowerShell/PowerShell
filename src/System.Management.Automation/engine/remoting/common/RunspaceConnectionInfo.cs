@@ -1124,8 +1124,7 @@ namespace System.Management.Automation.Runspaces
         internal static T ExtractPropertyAsWsManConnectionInfo<T>(RunspaceConnectionInfo rsCI,
             string property, T defaultValue)
         {
-            WSManConnectionInfo wsCI = rsCI as WSManConnectionInfo;
-            if (wsCI == null)
+            if (!(rsCI is WSManConnectionInfo wsCI))
             {
                 return defaultValue;
             }

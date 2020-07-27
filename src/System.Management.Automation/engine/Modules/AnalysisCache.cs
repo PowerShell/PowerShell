@@ -194,8 +194,7 @@ namespace System.Management.Automation
 
         internal static bool ModuleAnalysisViaGetModuleRequired(object modulePathObj, bool hadCmdlets, bool hadFunctions, bool hadAliases)
         {
-            var modulePath = modulePathObj as string;
-            if (modulePath == null)
+            if (!(modulePathObj is string modulePath))
                 return true;
 
             if (modulePath.EndsWith(StringLiterals.PowerShellModuleFileExtension, StringComparison.OrdinalIgnoreCase))
@@ -257,8 +256,7 @@ namespace System.Management.Automation
                     return ModuleAnalysisViaGetModuleRequired(nestedModule, hadCmdlets, hadFunctions, hadAliases);
                 }
 
-                var nestedModuleArray = nestedModules as object[];
-                if (nestedModuleArray == null)
+                if (!(nestedModules is object[] nestedModuleArray))
                     return true;
 
                 foreach (var element in nestedModuleArray)

@@ -637,8 +637,7 @@ namespace System.Management.Automation
                 formatProvider = CultureInfo.InvariantCulture;
             }
 
-            var culture = formatProvider as CultureInfo;
-            if (culture == null)
+            if (!(formatProvider is CultureInfo culture))
             {
                 throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
@@ -785,8 +784,7 @@ namespace System.Management.Automation
                 formatProvider = CultureInfo.InvariantCulture;
             }
 
-            var culture = formatProvider as CultureInfo;
-            if (culture == null)
+            if (!(formatProvider is CultureInfo culture))
             {
                 throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
@@ -1045,9 +1043,7 @@ namespace System.Management.Automation
                     // but since we don't want this to recurse indefinitely
                     // we explicitly check the case where it would recurse
                     // and deal with it.
-                    IList firstElement = PSObject.Base(objectArray[0]) as IList;
-
-                    if (firstElement == null)
+                    if (!(PSObject.Base(objectArray[0]) is IList firstElement))
                     {
                         return IsTrue(objectArray[0]);
                     }
@@ -2095,8 +2091,7 @@ namespace System.Management.Automation
             protected static object BaseConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase, bool multipleValues)
             {
                 Diagnostics.Assert(sourceValue != null, "the type converter has a special case for null source values");
-                string sourceValueString = sourceValue as string;
-                if (sourceValueString == null)
+                if (!(sourceValue is string sourceValueString))
                 {
                     throw new PSInvalidCastException("InvalidCastEnumFromTypeNotAString", null,
                         ExtendedTypeSystem.InvalidCastException,

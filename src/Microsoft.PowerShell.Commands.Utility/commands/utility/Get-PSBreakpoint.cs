@@ -120,9 +120,7 @@ namespace Microsoft.PowerShell.Commands
                     Command,
                     delegate (Breakpoint breakpoint, string command)
                     {
-                        CommandBreakpoint commandBreakpoint = breakpoint as CommandBreakpoint;
-
-                        if (commandBreakpoint == null)
+                        if (!(breakpoint is CommandBreakpoint commandBreakpoint))
                         {
                             return false;
                         }
@@ -137,9 +135,7 @@ namespace Microsoft.PowerShell.Commands
                     Variable,
                     delegate (Breakpoint breakpoint, string variable)
                     {
-                        VariableBreakpoint variableBreakpoint = breakpoint as VariableBreakpoint;
-
-                        if (variableBreakpoint == null)
+                        if (!(breakpoint is VariableBreakpoint variableBreakpoint))
                         {
                             return false;
                         }

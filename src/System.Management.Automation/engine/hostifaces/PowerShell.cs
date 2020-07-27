@@ -1370,9 +1370,7 @@ namespace System.Management.Automation
 
                 foreach (DictionaryEntry entry in parameters)
                 {
-                    string parameterName = entry.Key as string;
-
-                    if (parameterName == null)
+                    if (!(entry.Key is string parameterName))
                     {
                         throw PSTraceSource.NewArgumentException(nameof(parameters), PowerShellStrings.KeyMustBeString);
                     }
@@ -3325,9 +3323,7 @@ namespace System.Management.Automation
         /// </exception>
         private IAsyncResult BeginBatchInvoke<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, AsyncCallback callback, object state)
         {
-            PSDataCollection<PSObject> asyncOutput = (object)output as PSDataCollection<PSObject>;
-
-            if (asyncOutput == null)
+            if (!((object)output is PSDataCollection<PSObject> asyncOutput))
             {
                 throw PSTraceSource.NewInvalidOperationException();
             }

@@ -633,9 +633,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static object AddPsProperties(object psObj, object obj, int depth, bool isPurePSObj, bool isCustomObj, in ConvertToJsonContext context)
         {
-            PSObject pso = psObj as PSObject;
-
-            if (pso == null)
+            if (!(psObj is PSObject pso))
             {
                 return obj;
             }

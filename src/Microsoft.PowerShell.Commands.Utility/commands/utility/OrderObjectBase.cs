@@ -358,9 +358,7 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
 
-            PSPropertySet defaultKeys = standardNames.Members["DefaultKeyPropertySet"] as PSPropertySet;
-
-            if (defaultKeys == null)
+            if (!(standardNames.Members["DefaultKeyPropertySet"] is PSPropertySet defaultKeys))
             {
                 return null;
             }

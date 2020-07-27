@@ -1674,8 +1674,7 @@ namespace System.Management.Automation
                 try
                 {
                     var scriptBlock = ScriptBlock.Create(command);
-                    var scriptBlockAst = scriptBlock.Ast as ScriptBlockAst;
-                    if (scriptBlockAst == null)
+                    if (!(scriptBlock.Ast is ScriptBlockAst scriptBlockAst))
                     {
                         return false;
                     }

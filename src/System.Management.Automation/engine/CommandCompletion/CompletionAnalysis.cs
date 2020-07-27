@@ -239,8 +239,7 @@ namespace System.Management.Automation
             if (lastAst.Parent is CommandExpressionAst)
             {
                 // Handle "switch -file m<tab>" or "switch -file *.ps1<tab>"
-                var pipeline = lastAst.Parent.Parent as PipelineAst;
-                if (pipeline == null)
+                if (!(lastAst.Parent.Parent is PipelineAst pipeline))
                 {
                     return false;
                 }

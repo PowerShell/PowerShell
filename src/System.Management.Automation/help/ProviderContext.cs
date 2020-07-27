@@ -108,10 +108,7 @@ namespace System.Management.Automation
 
             // Does the provider know how to generate MAML.
             CmdletProvider cmdletProvider = providerInfo.CreateInstance();
-            ICmdletProviderSupportsHelp provider = cmdletProvider as ICmdletProviderSupportsHelp;
-
-            // Under JEA sessions the resolvedProviderPath will be null, we should allow get-help to continue.
-            if (provider == null)
+            if (!(cmdletProvider is ICmdletProviderSupportsHelp provider))
             {
                 return null;
             }

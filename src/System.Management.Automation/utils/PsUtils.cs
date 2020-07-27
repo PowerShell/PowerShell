@@ -386,8 +386,7 @@ namespace System.Management.Automation
                          ex.Message);
             }
 
-            var retResult = evaluationResult as Hashtable;
-            if (retResult == null)
+            if (!(evaluationResult is Hashtable retResult))
             {
                 throw PSTraceSource.NewInvalidOperationException(
                          ParserStrings.InvalidPowerShellDataFile,
@@ -539,16 +538,14 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
-            PSObject mo = dso as PSObject;
-            if (mo == null)
+            if (!(dso is PSObject mo))
             {
                 // This helper function should move the host. Provide appropriate error message.
                 // Format of args parameter is not correct.
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
-            var argsList = mo.BaseObject as ArrayList;
-            if (argsList == null)
+            if (!(mo.BaseObject is ArrayList argsList))
             {
                 // This helper function should move the host. Provide appropriate error message.
                 // Format of args parameter is not correct.

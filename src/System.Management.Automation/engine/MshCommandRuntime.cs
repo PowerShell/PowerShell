@@ -2321,8 +2321,7 @@ namespace System.Management.Automation
             {
                 if (permittedToWrite == null)
                     throw PSTraceSource.NewArgumentNullException(nameof(permittedToWrite));
-                MshCommandRuntime mcr = permittedToWrite.commandRuntime as MshCommandRuntime;
-                if (mcr == null)
+                if (!(permittedToWrite.commandRuntime is MshCommandRuntime mcr))
                     throw PSTraceSource.NewArgumentNullException("permittedToWrite.CommandRuntime");
                 _pp = mcr.PipelineProcessor;
                 if (_pp == null)

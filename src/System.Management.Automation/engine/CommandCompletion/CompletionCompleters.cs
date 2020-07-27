@@ -542,8 +542,7 @@ namespace System.Management.Automation
             else
             {
                 // No CommandParameterAst is found. It could be a StringConstantExpressionAst "-"
-                var dashAst = (context.RelatedAsts[context.RelatedAsts.Count - 1] as StringConstantExpressionAst);
-                if (dashAst == null)
+                if (!(context.RelatedAsts[context.RelatedAsts.Count - 1] is StringConstantExpressionAst dashAst))
                     return result;
                 if (!dashAst.Value.Trim().Equals("-", StringComparison.OrdinalIgnoreCase))
                     return result;
@@ -2803,8 +2802,7 @@ namespace System.Management.Automation
                             continue;
                         }
 
-                        string childNamespace = namespaceNameProperty.Value as string;
-                        if (childNamespace == null)
+                        if (!(namespaceNameProperty.Value is string childNamespace))
                         {
                             continue;
                         }
@@ -3793,8 +3791,7 @@ namespace System.Management.Automation
         {
             // Command is something like where-object/foreach-object/format-list/etc. where there is a parameter that is a property name
             // and we want member names based on the input object, which is either the parameter InputObject, or comes from the pipeline.
-            var pipelineAst = commandAst.Parent as PipelineAst;
-            if (pipelineAst == null)
+            if (!(commandAst.Parent is PipelineAst pipelineAst))
                 return;
 
             int i;
@@ -4973,8 +4970,7 @@ namespace System.Management.Automation
                 for (int index = psobjs.Count - 1; index >= 0; index--)
                 {
                     var psobj = psobjs[index];
-                    var historyInfo = PSObject.Base(psobj) as HistoryInfo;
-                    if (historyInfo == null) continue;
+                    if (!(PSObject.Base(psobj) is HistoryInfo historyInfo)) continue;
 
                     var commandLine = historyInfo.CommandLine;
                     if (!string.IsNullOrEmpty(commandLine) && pattern.IsMatch(commandLine))
@@ -6460,8 +6456,7 @@ namespace System.Management.Automation
             var varValues = new List<string>();
             foreach (ExpressionAst nestedAst in expandableStringAst.NestedExpressions)
             {
-                var variableAst = nestedAst as VariableExpressionAst;
-                if (variableAst == null) { return false; }
+                if (!(nestedAst is VariableExpressionAst variableAst)) { return false; }
 
                 string strValue = CombineVariableWithPartialPath(variableAst, null, executionContext);
                 if (strValue != null)
@@ -6586,8 +6581,7 @@ namespace System.Management.Automation
                 IEnumerable members;
                 if (@static)
                 {
-                    var type = PSObject.Base(value) as Type;
-                    if (type == null)
+                    if (!(PSObject.Base(value) is Type type))
                     {
                         return;
                     }
@@ -6653,8 +6647,7 @@ namespace System.Management.Automation
                     var pattern = WildcardPattern.Get(memberName, WildcardOptions.IgnoreCase);
                     foreach (DictionaryEntry entry in dictionary)
                     {
-                        var key = entry.Key as string;
-                        if (key == null)
+                        if (!(entry.Key is string key))
                             continue;
 
                         if (pattern.IsMatch(key))

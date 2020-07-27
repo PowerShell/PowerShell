@@ -1658,8 +1658,7 @@ namespace System.Management.Automation
                     // It still might be an PSObject wrapping an PSReference
                     if (originalArgumentReference == null)
                     {
-                        PSObject originalArgumentObj = originalArgument as PSObject;
-                        if (originalArgumentObj == null)
+                        if (!(originalArgument is PSObject originalArgumentObj))
                         {
                             continue;
                         }
@@ -3878,8 +3877,7 @@ namespace System.Management.Automation
 
         private static bool PropertyIsStatic(PSProperty property)
         {
-            PropertyCacheEntry entry = property.adapterData as PropertyCacheEntry;
-            if (entry == null)
+            if (!(property.adapterData is PropertyCacheEntry entry))
             {
                 return false;
             }

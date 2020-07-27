@@ -1007,8 +1007,7 @@ namespace Microsoft.PowerShell.Commands
                 // create collection of input writers here
                 foreach (IThrottleOperation operation in Operations)
                 {
-                    ExecutionCmdletHelperRunspace ecHelper = operation as ExecutionCmdletHelperRunspace;
-                    if (ecHelper == null)
+                    if (!(operation is ExecutionCmdletHelperRunspace ecHelper))
                     {
                         // either all the operations will be of type ExecutionCmdletHelperRunspace
                         // or not...there is no mix.

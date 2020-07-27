@@ -388,8 +388,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             if (cimReference != null)
             {
                 object baseObject = GetBaseObject(cimReference.Value);
-                CimInstance cimInstance = baseObject as CimInstance;
-                if (cimInstance == null)
+                if (!(baseObject is CimInstance cimInstance))
                 {
                     return null;
                 }
@@ -412,8 +411,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 CimInstance[] cimInstanceArray = new CimInstance[cimReferenceArray.Length];
                 for (int i = 0; i < cimReferenceArray.Length; i++)
                 {
-                    PSReference tempCimReference = cimReferenceArray[i] as PSReference;
-                    if (tempCimReference == null)
+                    if (!(cimReferenceArray[i] is PSReference tempCimReference))
                     {
                         return null;
                     }
