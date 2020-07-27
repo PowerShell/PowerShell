@@ -462,7 +462,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             defaultScale = 0;
             timeBase = 0;
 
-            Debug.Assert(hCounter != default);
+            Debug.Assert(hCounter != IntPtr.Zero);
 
             IntPtr pBufferSize = new IntPtr(0);
             res = PdhGetCounterInfo(hCounter, false, ref pBufferSize, IntPtr.Zero);
@@ -1190,7 +1190,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 UInt64 timeBase = 0;
 
                 IntPtr hCounter = _consumerPathToHandleAndInstanceMap[path].hCounter;
-                Debug.Assert(hCounter != default);
+                Debug.Assert(hCounter != IntPtr.Zero);
 
                 res = GetCounterInfoPlus(hCounter, out counterType, out defaultScale, out timeBase);
                 if (res != 0)
