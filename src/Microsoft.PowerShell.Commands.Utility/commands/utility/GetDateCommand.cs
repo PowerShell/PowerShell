@@ -14,9 +14,9 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the get-date command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = DateAndFormat, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096615")]
+    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = DateAndFormatParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096615")]
     [OutputType(typeof(string))]
-    [OutputType(typeof(DateTime), ParameterSetName = new[] { DateAndFormat, UnixTimeSecondsAndFormat })]
+    [OutputType(typeof(DateTime), ParameterSetName = new[] { DateAndFormatParameterSet, UnixTimeSecondsAndFormatParameterSet })]
     public sealed class GetDateCommand : Cmdlet
     {
         #region parameters
@@ -24,8 +24,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Allows user to override the date/time object that will be processed.
         /// </summary>
-        [Parameter(ParameterSetName = DateAndFormat, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [Parameter(ParameterSetName = DateAndUFormat, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = DateAndFormatParameterSet, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = DateAndUFormatParameterSet, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("LastWriteTime")]
         public DateTime Date
         {
@@ -53,8 +53,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets whether to treat a numeric input as ticks, or unix time.
         /// </summary>
-        [Parameter(ParameterSetName = UnixTimeSecondsAndFormat, Mandatory = true)]
-        [Parameter(ParameterSetName = UnixTimeSecondsAndUFormat, Mandatory = true)]
+        [Parameter(ParameterSetName = UnixTimeSecondsAndFormatParameterSet, Mandatory = true)]
+        [Parameter(ParameterSetName = UnixTimeSecondsAndUFormatParameterSet, Mandatory = true)]
         [ValidateRange(MinimumUnixTimeSecond, MaximumUnixTimeSecond)]
         [Alias("UnixTime")]
         public long UnixTimeSeconds
@@ -237,15 +237,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Unix format string.
         /// </summary>
-        [Parameter(ParameterSetName = DateAndUFormat, Mandatory = true)]
-        [Parameter(ParameterSetName = UnixTimeSecondsAndUFormat, Mandatory = true)]
+        [Parameter(ParameterSetName = DateAndUFormatParameterSet, Mandatory = true)]
+        [Parameter(ParameterSetName = UnixTimeSecondsAndUFormatParameterSet, Mandatory = true)]
         public string UFormat { get; set; }
 
         /// <summary>
         /// DotNet format string.
         /// </summary>
-        [Parameter(ParameterSetName = DateAndFormat)]
-        [Parameter(ParameterSetName = UnixTimeSecondsAndFormat)]
+        [Parameter(ParameterSetName = DateAndFormatParameterSet)]
+        [Parameter(ParameterSetName = UnixTimeSecondsAndFormatParameterSet)]
         [ArgumentCompletions("FileDate", "FileDateUniversal", "FileDateTime", "FileDateTimeUniversal")]
         public string Format { get; set; }
 
@@ -568,10 +568,10 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-        private const string DateAndFormat = "DateAndFormat";
-        private const string DateAndUFormat = "DateAndUFormat";
-        private const string UnixTimeSecondsAndFormat = "UnixTimeSecondsAndFormat";
-        private const string UnixTimeSecondsAndUFormat = "UnixTimeSecondsAndUFormat";
+        private const string DateAndFormatParameterSet = "DateAndFormat";
+        private const string DateAndUFormatParameterSet = "DateAndUFormat";
+        private const string UnixTimeSecondsAndFormatParameterSet = "UnixTimeSecondsAndFormat";
+        private const string UnixTimeSecondsAndUFormatParameterSet = "UnixTimeSecondsAndUFormat";
     }
 
     #endregion
