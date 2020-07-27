@@ -5,7 +5,7 @@
     <Copyright>(c) Microsoft Corporation.</Copyright>
 
     <TargetFramework>netcoreapp5.0</TargetFramework>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>preview</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
