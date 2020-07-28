@@ -51,6 +51,12 @@ namespace Microsoft.PowerShell.Commands
                                                      ISecurityDescriptorCmdletProvider,
                                                      ICmdletProviderSupportsHelp
     {
+#if UNIX
+        // This is the errno returned by the rename() syscall
+        // when an item is attempted to be renamed across filesystem mount boundaries.
+        private const int UNIX_ERRNO_EXDEV = 18;
+#endif
+
         // 4MB gives the best results without spiking the resources on the remote connection for file transfers between pssessions.
         // NOTE: The script used to copy file data from session (PSCopyFromSessionHelper) has a
         // maximum fragment size value for security.  If FILETRANSFERSIZE changes make sure the
@@ -6001,15 +6007,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                if (!IsSameVolume(directory.FullName, destination))
-                {
-                    CopyAndDelete(directory, destination, force);
-                }
-                else
-                {
-                    // Move the file
-                    directory.MoveTo(destination);
-                }
+                MoveDirectoryInfoUnchecked(directory, destination, force);
 
                 WriteItemObject(
                     directory,
@@ -6027,14 +6025,7 @@ namespace Microsoft.PowerShell.Commands
                         directory.Attributes =
                             directory.Attributes & ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
 
-                        if (!IsSameVolume(directory.FullName, destination))
-                        {
-                            CopyAndDelete(directory, destination, force);
-                        }
-                        else
-                        {
-                            directory.MoveTo(destination);
-                        }
+                        MoveDirectoryInfoUnchecked(directory, destination, force);
 
                         WriteItemObject(directory, directory.FullName, true);
                     }
@@ -6072,6 +6063,47 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// Implements the file move operation for directories without handling any error scenarios.
+        /// In particular, this attempts to rename or copy+delete the file,
+        /// but passes any exceptional behavior through to the caller.
+        /// </summary>
+        /// <param name="directory">The directory to move.</param>
+        /// <param name="destinationPath">The destination path to move the directory to.</param>
+        /// <param name="force">If true, force move the directory, overwriting anything at the destination.</param>
+        private void MoveDirectoryInfoUnchecked(DirectoryInfo directory, string destinationPath, bool force)
+        {
+#if UNIX
+            try
+            {
+                if (InternalTestHooks.ThrowExdevErrorOnMoveDirectory)
+                {
+                    throw new IOException("Invalid cross-device link", hresult: UNIX_ERRNO_EXDEV);
+                }
+
+                directory.MoveTo(destinationPath);
+            }
+            catch (IOException e) when (e.HResult == UNIX_ERRNO_EXDEV)
+            {
+                // Rather than try to ascertain whether we can rename a directory ahead of time,
+                // it's both faster and more correct to try to rename it and fall back to copy/deleting it
+                // See also: https://github.com/coreutils/coreutils/blob/439741053256618eb651e6d43919df29625b8714/src/mv.c#L212-L216
+                CopyAndDelete(directory, destinationPath, force);
+            }
+#else
+            // On Windows, being able to rename vs copy/delete a file
+            // is just a question of the drive
+            if (IsSameWindowsVolume(directory.FullName, destinationPath))
+            {
+                directory.MoveTo(destinationPath);
+            }
+            else
+            {
+                CopyAndDelete(directory, destinationPath, force);
+            }
+#endif
+        }
+
         private void CopyAndDelete(DirectoryInfo directory, string destination, bool force)
         {
             if (!ItemExists(destination))
@@ -6107,13 +6139,15 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool IsSameVolume(string source, string destination)
+#if !UNIX
+        private bool IsSameWindowsVolume(string source, string destination)
         {
             FileInfo src = new FileInfo(source);
             FileInfo dest = new FileInfo(destination);
 
             return (src.Directory.Root.Name == dest.Directory.Root.Name);
         }
+#endif
 
         #endregion MoveItem
 

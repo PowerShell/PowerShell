@@ -2618,7 +2618,7 @@ namespace System.Management.Automation.Language
                     nameof(ParserStrings.UnexpectedCharactersAfterHereStringHeader),
                     ParserStrings.UnexpectedCharactersAfterHereStringHeader);
 
-                do
+                while (true)
                 {
                     c = GetChar();
                     if (c == header[1] && (PeekChar() == '@'))
@@ -2632,7 +2632,7 @@ namespace System.Management.Automation.Language
                         UngetChar();
                         break;
                     }
-                } while (true);
+                }
 
                 return false;
             }

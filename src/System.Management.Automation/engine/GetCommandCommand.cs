@@ -950,7 +950,7 @@ namespace Microsoft.PowerShell.Commands
             bool resultFound = false;
             isDuplicate = false;
 
-            do
+            while (true)
             {
                 try
                 {
@@ -1057,7 +1057,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
                 }
-            } while (true);
+            }
 
             if (All)
             {

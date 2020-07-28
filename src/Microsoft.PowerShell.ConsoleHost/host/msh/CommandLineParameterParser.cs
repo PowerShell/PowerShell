@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// PromptForChoice.
+        /// Prompt for choice.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// PromptForCredential.
+        /// Prompt for credential.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// PromptForCredential.
+        /// Prompt for credential.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -88,7 +88,23 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// ReadLine.
+        /// Prompt for credential.
+        /// </summary>
+        /// <param name="caption"></param>
+        /// <param name="message"></param>
+        /// <param name="userName"></param>
+        /// <param name="confirmPassword"></param>
+        /// <param name="targetName"></param>
+        /// <param name="allowedCredentialTypes"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public override PSCredential PromptForCredential(string caption, string message, string userName, bool confirmPassword, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
+        /// Read line.
         /// </summary>
         /// <returns></returns>
         public override string ReadLine()
@@ -921,7 +937,7 @@ namespace Microsoft.PowerShell
                     ParseFormat(args, ref i, ref _outFormat, CommandLineParameterParserStrings.MissingOutputFormatParameter);
                     _outputFormatSpecified = true;
                 }
-                else if (MatchSwitch(switchKey, "inputformat", "in") || MatchSwitch(switchKey, "if", "if"))
+                else if (MatchSwitch(switchKey, "inputformat", "inp") || MatchSwitch(switchKey, "if", "if"))
                 {
                     ParseFormat(args, ref i, ref _inFormat, CommandLineParameterParserStrings.MissingInputFormatParameter);
                 }

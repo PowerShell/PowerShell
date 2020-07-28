@@ -5444,7 +5444,7 @@ namespace System.Management.Automation.Language
 
             List<TypeConstraintAst> exceptionTypes = null;
             Token commaToken = null;
-            do
+            while (true)
             {
                 var restorePoint = _tokenizer.GetRestorePoint();
                 SkipNewlines();
@@ -5493,7 +5493,7 @@ namespace System.Management.Automation.Language
                 }
 
                 SkipToken();
-            } while (true);
+            }
 
             StatementBlockAst handler = StatementBlockRule();
             if (handler == null)

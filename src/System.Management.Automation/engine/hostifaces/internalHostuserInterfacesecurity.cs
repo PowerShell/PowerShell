@@ -14,38 +14,52 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// See base class.
         /// </summary>
-
-        public override
-        PSCredential
-        PromptForCredential
-        (
-            string caption,
-            string message,
-            string userName,
-            string targetName
-        )
+        public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName)
         {
-            return PromptForCredential(caption, message, userName,
-                                         targetName,
-                                         PSCredentialTypes.Default,
-                                         PSCredentialUIOptions.Default);
+            return PromptForCredential(
+                caption,
+                message,
+                userName,
+                confirmPassword: false,
+                targetName,
+                PSCredentialTypes.Default,
+                PSCredentialUIOptions.Default);
         }
 
         /// <summary>
         /// See base class.
         /// </summary>
-
-        public override
-        PSCredential
-        PromptForCredential
-        (
+        public override PSCredential PromptForCredential(
             string caption,
             string message,
             string userName,
             string targetName,
             PSCredentialTypes allowedCredentialTypes,
-            PSCredentialUIOptions options
-        )
+            PSCredentialUIOptions options)
+        {
+            return PromptForCredential(
+                caption,
+                message,
+                userName,
+                confirmPassword: false,
+                targetName,
+                allowedCredentialTypes,
+                options);
+        }
+
+        /// <summary>
+        /// See base class.
+        /// </summary>
+        public override
+        PSCredential
+        PromptForCredential(
+            string caption,
+            string message,
+            string userName,
+            bool confirmPassword,
+            string targetName,
+            PSCredentialTypes allowedCredentialTypes,
+            PSCredentialUIOptions options)
         {
             if (_externalUI == null)
             {
@@ -55,7 +69,7 @@ namespace System.Management.Automation.Internal.Host
             PSCredential result = null;
             try
             {
-                result = _externalUI.PromptForCredential(caption, message, userName, targetName, allowedCredentialTypes, options);
+                result = _externalUI.PromptForCredential(caption, message, userName, confirmPassword, targetName, allowedCredentialTypes, options);
             }
             catch (PipelineStoppedException)
             {

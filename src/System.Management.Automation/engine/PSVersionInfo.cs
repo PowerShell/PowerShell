@@ -907,9 +907,9 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator ==(SemanticVersion v1, SemanticVersion v2)
         {
-            if (object.ReferenceEquals(v1, null))
+            if (v1 is null)
             {
-                return object.ReferenceEquals(v2, null);
+                return v2 is null;
             }
 
             return v1.Equals(v2);

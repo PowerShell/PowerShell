@@ -805,7 +805,7 @@ namespace System.Management.Automation.Remoting.Client
 
             try
             {
-                do
+                while (true)
                 {
                     // if the transport manager is closed return.
                     if (isClosed)
@@ -843,7 +843,7 @@ namespace System.Management.Automation.Remoting.Client
                             base.OnDataAvailableCallback(rcvdDataInfo.remoteObject);
                         }
                     }
-                } while (true);
+                }
             }
             catch (Exception exception)
             {
