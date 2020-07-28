@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            // set up the Scree Host interface
+            // set up the Screen Host interface
             OutputManagerInner outInner = (OutputManagerInner)this.implementation;
 
             // NOTICE: if any exception is thrown from here to the end of the method, the
