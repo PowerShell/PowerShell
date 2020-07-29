@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (PSObject o in result.Values)
                     {
-                        if (MaskInput && o.BaseObject is SecureString secureString)
+                        if (MaskInput && o?.BaseObject is SecureString secureString)
                         {
                             WriteObject(Utils.GetStringFromSecureString(secureString));
                         }
