@@ -22,9 +22,9 @@ namespace System.Management.Automation.ComInterop
         internal const int DISP_E_BADPARAMCOUNT = unchecked((int)0x8002000E);
         internal const int DISP_E_PARAMNOTOPTIONAL = unchecked((int)0x8002000F);
 
+        internal const int E_NOTIMPL = unchecked((int)0x80004001);
         internal const int E_NOINTERFACE = unchecked((int)0x80004002);
         internal const int E_FAIL = unchecked((int)0x80004005);
-        internal const int E_NOTIMPL = unchecked((int)0x80000001);
 
         internal const int TYPE_E_LIBNOTREGISTERED = unchecked((int)0x8002801D);
 

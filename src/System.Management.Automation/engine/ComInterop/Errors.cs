@@ -29,11 +29,10 @@ namespace System.Management.Automation.ComInterop
 
         /// <summary>
         /// System.Reflection.TargetParameterCountException with message like "Error while invoking {0}."
-        /// TODO-TODO
         /// </summary>
-        internal static Exception DispBadParamCount(object p0)
+        internal static Exception DispBadParamCount(object p0, int parameterCount)
         {
-            return new System.Reflection.TargetParameterCountException(StringUtil.Format(ParserStrings.DispBadParamCount, p0));
+            return new System.Reflection.TargetParameterCountException(StringUtil.Format(ParserStrings.DispBadParamCount, p0, parameterCount));
         }
 
         /// <summary>
@@ -62,11 +61,10 @@ namespace System.Management.Automation.ComInterop
 
         /// <summary>
         /// ArgumentException with message like "Could not convert argument {0} for call to {1}."
-        /// TODO-TODO
         /// </summary>
-        internal static Exception DispTypeMismatch(object p0, object p1)
+        internal static Exception DispTypeMismatch(object method, string value, string originalTypeName, string destinationTypeName)
         {
-            return new ArgumentException(StringUtil.Format(ParserStrings.DispTypeMismatch, p0, p1));
+            return new ArgumentException(StringUtil.Format(ParserStrings.DispTypeMismatch, method, value, originalTypeName, destinationTypeName));
         }
 
         /// <summary>

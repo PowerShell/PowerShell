@@ -3,6 +3,7 @@
 
 using System.Dynamic;
 using System.Linq.Expressions;
+using AstUtils = System.Management.Automation.Interpreter.Utils;
 
 namespace System.Management.Automation.ComInterop
 {
@@ -17,7 +18,7 @@ namespace System.Management.Automation.ComInterop
         {
             return new DynamicMetaObject(
                 Expression.Call(
-                    Helpers.Convert(Expression, typeof(ComTypeClassDesc)),
+                    AstUtils.Convert(Expression, typeof(ComTypeClassDesc)),
                     typeof(ComTypeClassDesc).GetMethod(nameof(ComTypeClassDesc.CreateInstance))
                 ),
                 BindingRestrictions.Combine(args).Merge(

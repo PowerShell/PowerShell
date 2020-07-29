@@ -24,7 +24,7 @@ namespace System.Management.Automation.ComInterop
     ///    accessible as .NET methods.
     /// 4. We could use the type library to check what the expected type is. However, the type library may not be available.
     ///
-    /// VarEnumSelector implements option # 3
+    /// VarEnumSelector implements option # 3.
     /// </summary>
     internal class VarEnumSelector
     {
@@ -145,24 +145,27 @@ namespace System.Management.Automation.ComInterop
             Dictionary<VarEnum, Type> dict = new Dictionary<VarEnum, Type>()
             {
                 { VarEnum.VT_I1,        typeof(sbyte) },
-                { VarEnum.VT_I2,        typeof(short) },
-                { VarEnum.VT_I4,        typeof(int) },
-                { VarEnum.VT_I8,        typeof(long) },
+                { VarEnum.VT_I2,        typeof(Int16) },
+                { VarEnum.VT_I4,        typeof(Int32) },
+                { VarEnum.VT_I8,        typeof(Int64) },
                 { VarEnum.VT_UI1,       typeof(byte) },
-                { VarEnum.VT_UI2,       typeof(ushort) },
-                { VarEnum.VT_UI4,       typeof(uint) },
-                { VarEnum.VT_UI8,       typeof(ulong) },
-                { VarEnum.VT_INT,       typeof(IntPtr) },
-                { VarEnum.VT_UINT,      typeof(UIntPtr) },
+                { VarEnum.VT_UI2,       typeof(UInt16) },
+                { VarEnum.VT_UI4,       typeof(UInt32) },
+                { VarEnum.VT_UI8,       typeof(UInt64) },
+                { VarEnum.VT_INT,       typeof(Int32) },
+                { VarEnum.VT_UINT,      typeof(UInt32) },
+                { VarEnum.VT_PTR,       typeof(IntPtr) },
                 { VarEnum.VT_BOOL,      typeof(bool) },
                 { VarEnum.VT_R4,        typeof(float) },
                 { VarEnum.VT_R8,        typeof(double) },
                 { VarEnum.VT_DECIMAL,   typeof(decimal) },
                 { VarEnum.VT_DATE,      typeof(DateTime) },
                 { VarEnum.VT_BSTR,      typeof(string) },
+                { VarEnum.VT_CLSID,     typeof(Guid) },
                 { VarEnum.VT_CY,        typeof(CurrencyWrapper) },
                 { VarEnum.VT_ERROR,     typeof(ErrorWrapper) },
             };
+
             return dict;
         }
 
@@ -194,7 +197,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Get the (one representative type for each) primitive type families that the argument can be converted to
+        /// Get the (one representative type for each) primitive type families that the argument can be converted to.
         /// </summary>
         private static List<VarEnum> GetConversionsToComPrimitiveTypeFamilies(Type argumentType)
         {
@@ -227,7 +230,7 @@ namespace System.Management.Automation.ComInterop
                 return;
             }
 
-            string typeNames = "";
+            string typeNames = string.Empty;
             for (int i = 0; i < compatibleComTypes.Count; i++)
             {
                 string typeName = s_comToManagedPrimitiveTypes[compatibleComTypes[i]].Name;
@@ -311,13 +314,13 @@ namespace System.Management.Automation.ComInterop
 
             if (argumentType == typeof(IntPtr))
             {
-                primitiveVarEnum = VarEnum.VT_INT;
+                primitiveVarEnum = VarEnum.VT_PTR;
                 return true;
             }
 
             if (argumentType == typeof(UIntPtr))
             {
-                primitiveVarEnum = VarEnum.VT_UINT;
+                primitiveVarEnum = VarEnum.VT_PTR;
                 return true;
             }
 
@@ -326,7 +329,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Is there a unique primitive type that has the best conversion for the argument
+        /// Is there a unique primitive type that has the best conversion for the argument.
         /// </summary>
         private static bool TryGetPrimitiveComTypeViaConversion(Type argumentType, out VarEnum primitiveVarEnum)
         {
@@ -427,7 +430,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Get the COM Variant type that argument should be marshaled as for a call to COM
+        /// Get the COM Variant type that argument should be marshaled as for a call to COM.
         /// </summary>
         private VariantBuilder GetVariantBuilder(Type argumentType)
         {

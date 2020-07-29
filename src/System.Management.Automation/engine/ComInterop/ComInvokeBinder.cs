@@ -27,7 +27,7 @@ namespace System.Management.Automation.ComInterop
 
         private VarEnumSelector _varEnumSelector;
         private string[] _keywordArgNames;
-        private int _totalExplicitArgs; // Includes the individial elements of ArgumentKind.Dictionary (if any)
+        private int _totalExplicitArgs; // Includes the individual elements of ArgumentKind.Dictionary (if any)
 
         private ParameterExpression _dispatchObject;
         private ParameterExpression _dispatchPointer;
@@ -48,14 +48,14 @@ namespace System.Management.Automation.ComInterop
             Expression dispatch,
             ComMethodDesc methodDesc)
         {
-            Debug.Assert(callInfo != null);
-            Debug.Assert(args != null);
-            Debug.Assert(isByRef != null);
-            Debug.Assert(method != null);
-            Debug.Assert(dispatch != null);
+            Debug.Assert(callInfo != null, nameof(callInfo));
+            Debug.Assert(args != null, nameof(args));
+            Debug.Assert(isByRef != null, nameof(isByRef));
+            Debug.Assert(method != null, nameof(method));
+            Debug.Assert(dispatch != null, nameof(dispatch));
 
-            Debug.Assert(TypeUtils.AreReferenceAssignable(typeof(ComMethodDesc), method.Type));
-            Debug.Assert(TypeUtils.AreReferenceAssignable(typeof(IDispatch), dispatch.Type));
+            Debug.Assert(TypeUtils.AreReferenceAssignable(typeof(ComMethodDesc), method.Type), "method type");
+            Debug.Assert(TypeUtils.AreReferenceAssignable(typeof(IDispatch), dispatch.Type), "dispatch type");
 
             _method = method;
             _dispatch = dispatch;
@@ -160,7 +160,6 @@ namespace System.Management.Automation.ComInterop
             for (int i = 0; i < _args.Length; i++)
             {
                 DynamicMetaObject curMo = _args[i];
-                _restrictions = _restrictions.Merge(ComBinderHelpers.GetTypeRestrictionForDynamicMetaObject(curMo));
                 marshalArgTypes[i] = MarshalType(curMo, _isByRef[i]);
             }
 
@@ -248,7 +247,7 @@ namespace System.Management.Automation.ComInterop
                 }
                 else
                 {
-                    // Positial arguments are in reverse order at the tail of rgArgs
+                    // Positional arguments are in reverse order at the tail of rgArgs
                     variantIndex = reverseIndex;
                 }
                 VariantBuilder variantBuilder = _varEnumSelector.VariantBuilders[i];
@@ -301,14 +300,20 @@ namespace System.Management.Automation.ComInterop
             tryStatements.Add(expr);
 
             //
-            // ComRuntimeHelpers.CheckThrowException(hresult, excepInfo, argErr, ThisParameter);
-            //
+            // ComRuntimeHelpers.CheckThrowException(int hresult, ref ExcepInfo excepInfo, ComMethodDesc method, object[] args, uint argErr)
+            List<Expression> args = new List<Expression>();
+            foreach (Expression parameter in parameters)
+            {
+                args.Add(Expression.TypeAs(parameter, typeof(object)));
+            }
+
             expr = Expression.Call(
                 typeof(ComRuntimeHelpers).GetMethod(nameof(ComRuntimeHelpers.CheckThrowException)),
                 hresult,
                 excepInfo,
-                argErr,
-                Expression.Constant(_methodDesc.Name, typeof(string))
+                Expression.Constant(_methodDesc, typeof(ComMethodDesc)),
+                Expression.NewArrayInit(typeof(object), args),
+                argErr
             );
             tryStatements.Add(expr);
 
@@ -526,6 +531,13 @@ namespace System.Management.Automation.ComInterop
                     vars.Add(variant.TempVariable);
                 }
             }
+
+            // If the method returns void, return AutomationNull
+            if (_methodDesc.ReturnType == typeof(void))
+            {
+                exprs.Add(System.Management.Automation.Language.ExpressionCache.AutomationNullConstant);
+            }
+
             return Expression.Block(vars, exprs);
         }
 

@@ -276,9 +276,6 @@ namespace System.Management.Automation.InteropServices
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         [DllImport("oleaut32.dll")]
         internal static extern void VariantClear(IntPtr variant);
 

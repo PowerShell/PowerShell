@@ -4,19 +4,24 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq.Expressions;
+using AstUtils = System.Management.Automation.Interpreter.Utils;
 
 namespace System.Management.Automation.ComInterop
 {
-    internal class TypeLibMetaObject : DynamicMetaObject {
+    internal class TypeLibMetaObject : DynamicMetaObject
+    {
         private readonly ComTypeLibDesc _lib;
 
         internal TypeLibMetaObject(Expression expression, ComTypeLibDesc lib)
-            : base(expression, BindingRestrictions.Empty, lib) {
+            : base(expression, BindingRestrictions.Empty, lib)
+        {
             _lib = lib;
         }
 
-        private DynamicMetaObject TryBindGetMember(string name) {
-            if (_lib.HasMember(name)) {
+        private DynamicMetaObject TryBindGetMember(string name)
+        {
+            if (_lib.HasMember(name))
+            {
                 BindingRestrictions restrictions =
                     BindingRestrictions.GetTypeRestriction(
                         Expression, typeof(ComTypeLibDesc)
@@ -24,7 +29,7 @@ namespace System.Management.Automation.ComInterop
                         BindingRestrictions.GetExpressionRestriction(
                             Expression.Equal(
                                 Expression.Property(
-                                    Helpers.Convert(
+                                    AstUtils.Convert(
                                         Expression, typeof(ComTypeLibDesc)
                                     ),
                                     typeof(ComTypeLibDesc).GetProperty(nameof(ComTypeLibDesc.Guid))
@@ -45,20 +50,24 @@ namespace System.Management.Automation.ComInterop
             return null;
         }
 
-        public override DynamicMetaObject BindGetMember(GetMemberBinder binder) {
+        public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
+        {
             return TryBindGetMember(binder.Name) ?? base.BindGetMember(binder);
         }
 
-        public override DynamicMetaObject BindInvokeMember(InvokeMemberBinder binder, DynamicMetaObject[] args) {
+        public override DynamicMetaObject BindInvokeMember(InvokeMemberBinder binder, DynamicMetaObject[] args)
+        {
             DynamicMetaObject result = TryBindGetMember(binder.Name);
-            if (result != null) {
+            if (result != null)
+            {
                 return binder.FallbackInvoke(result, args, null);
             }
 
             return base.BindInvokeMember(binder, args);
         }
 
-        public override IEnumerable<string> GetDynamicMemberNames() {
+        public override IEnumerable<string> GetDynamicMemberNames()
+        {
             return _lib.GetMemberNames();
         }
     }

@@ -8,7 +8,7 @@ namespace System.Management.Automation.ComInterop
 {
     internal class ComMethodDesc
     {
-        private readonly INVOKEKIND _invokeKind;
+        internal readonly INVOKEKIND InvokeKind;
 
         private ComMethodDesc(int dispId)
         {
@@ -25,26 +25,31 @@ namespace System.Management.Automation.ComInterop
         internal ComMethodDesc(string name, int dispId, INVOKEKIND invkind)
             : this(name, dispId)
         {
-            _invokeKind = invkind;
+            InvokeKind = invkind;
         }
 
         internal ComMethodDesc(ITypeInfo typeInfo, FUNCDESC funcDesc)
             : this(funcDesc.memid)
         {
 
-            _invokeKind = funcDesc.invkind;
+            InvokeKind = funcDesc.invkind;
 
             string[] rgNames = new string[1 + funcDesc.cParams];
             typeInfo.GetNames(DispId, rgNames, rgNames.Length, out int cNames);
+
+            bool skipLast = false;
             if (IsPropertyPut && rgNames[rgNames.Length - 1] == null)
             {
                 rgNames[rgNames.Length - 1] = "value";
                 cNames++;
+                skipLast = true;
             }
             Debug.Assert(cNames == rgNames.Length);
             Name = rgNames[0];
 
             ParamCount = funcDesc.cParams;
+            ReturnType = ComUtil.GetTypeFromTypeDesc(funcDesc.elemdescFunc.tdesc);
+            ParameterInformation = ComUtil.GetParameterInformation(funcDesc, skipLast);
         }
 
         public string Name { get; }
@@ -55,7 +60,7 @@ namespace System.Management.Automation.ComInterop
         {
             get
             {
-                return (_invokeKind & INVOKEKIND.INVOKE_PROPERTYGET) != 0;
+                return (InvokeKind & INVOKEKIND.INVOKE_PROPERTYGET) != 0;
             }
         }
 
@@ -78,7 +83,7 @@ namespace System.Management.Automation.ComInterop
         {
             get
             {
-                return (_invokeKind & (INVOKEKIND.INVOKE_PROPERTYPUT | INVOKEKIND.INVOKE_PROPERTYPUTREF)) != 0;
+                return (InvokeKind & (INVOKEKIND.INVOKE_PROPERTYPUT | INVOKEKIND.INVOKE_PROPERTYPUTREF)) != 0;
             }
         }
 
@@ -86,10 +91,18 @@ namespace System.Management.Automation.ComInterop
         {
             get
             {
-                return (_invokeKind & INVOKEKIND.INVOKE_PROPERTYPUTREF) != 0;
+                return (InvokeKind & INVOKEKIND.INVOKE_PROPERTYPUTREF) != 0;
             }
         }
 
         internal int ParamCount { get; }
+        public Type ReturnType { get; set; }
+        public Type InputType { get; set; }
+
+        public ParameterInformation[] ParameterInformation
+        {
+            get;
+            set;
+        }
     }
 }

@@ -10,20 +10,20 @@ using ComTypes = System.Runtime.InteropServices.ComTypes;
 namespace System.Management.Automation.ComInterop
 {
     /// <summary>
-    /// This is similar to ComTypes.EXCEPINFO, but lets us do our own custom marshaling
+    /// This is similar to ComTypes.EXCEPINFO, but lets us do our own custom marshaling.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     internal struct ExcepInfo
     {
-        private short wCode;
-        private short wReserved;
-        private IntPtr bstrSource;
-        private IntPtr bstrDescription;
-        private IntPtr bstrHelpFile;
-        private int dwHelpContext;
-        private IntPtr pvReserved;
-        private IntPtr pfnDeferredFillIn;
-        private int scode;
+        private short _wCode;
+        private short _wReserved;
+        private IntPtr _bstrSource;
+        private IntPtr _bstrDescription;
+        private IntPtr _bstrHelpFile;
+        private int _dwHelpContext;
+        private IntPtr _pvReserved;
+        private IntPtr _pfnDeferredFillIn;
+        private int _scode;
 
 #if DEBUG
         static ExcepInfo()
@@ -47,16 +47,16 @@ namespace System.Management.Automation.ComInterop
 
         internal Exception GetException()
         {
-            Debug.Assert(pfnDeferredFillIn == IntPtr.Zero);
+            Debug.Assert(_pfnDeferredFillIn == IntPtr.Zero);
 #if DEBUG
-            System.Diagnostics.Debug.Assert(wReserved != -1);
-            wReserved = -1; // to ensure that the method gets called only once
+            System.Diagnostics.Debug.Assert(_wReserved != -1);
+            _wReserved = -1; // to ensure that the method gets called only once
 #endif
 
-            int errorCode = (scode != 0) ? scode : wCode;
+            int errorCode = (_scode != 0) ? _scode : _wCode;
             Exception exception = Marshal.GetExceptionForHR(errorCode);
 
-            string message = ConvertAndFreeBstr(ref bstrDescription);
+            string message = ConvertAndFreeBstr(ref _bstrDescription);
             if (message != null)
             {
                 // If we have a custom message, create a new Exception object with the message set correctly.
@@ -76,12 +76,12 @@ namespace System.Management.Automation.ComInterop
                 }
             }
 
-            exception.Source = ConvertAndFreeBstr(ref bstrSource);
+            exception.Source = ConvertAndFreeBstr(ref _bstrSource);
 
-            string helpLink = ConvertAndFreeBstr(ref bstrHelpFile);
-            if (helpLink != null && dwHelpContext != 0)
+            string helpLink = ConvertAndFreeBstr(ref _bstrHelpFile);
+            if (helpLink != null && _dwHelpContext != 0)
             {
-                helpLink += "#" + dwHelpContext;
+                helpLink += "#" + _dwHelpContext;
             }
             exception.HelpLink = helpLink;
 

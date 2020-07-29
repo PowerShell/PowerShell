@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 namespace System.Management.Automation.ComInterop
 {
     /// <summary>
-    /// VariantBuilder handles packaging of arguments into a Variant for a call to IDispatch.Invoke
+    /// VariantBuilder handles packaging of arguments into a Variant for a call to IDispatch.Invoke.
     /// </summary>
     internal class VariantBuilder
     {

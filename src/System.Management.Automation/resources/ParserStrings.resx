@@ -1227,7 +1227,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Could not get dispatch ID for {0} (error: {1}).</value>
   </data>
   <data name="DispBadParamCount" xml:space="preserve">
-    <value>Error while invoking {0}. Bad parameter count.</value>
+    <value>Cannot find an overload for "{0}" and the argument count: "{1}"</value>
   </data>
   <data name="DispMemberNotFound" xml:space="preserve">
     <value>Error while invoking {0}. Could not find member.</value>
@@ -1242,7 +1242,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Error while invoking {0}. A required parameter was omitted.</value>
   </data>
   <data name="DispTypeMismatch" xml:space="preserve">
-    <value>Could not convert argument {0} for call to {1}.</value>
+    <value>Exception setting "{0}": Cannot convert the "{1}" value of type "{2}" to type "{3}".</value>
   </data>
   <data name="GetIDsOfNamesInvalid" xml:space="preserve">
     <value>IDispatch::GetIDsOfNames behaved unexpectedly for {0}.</value>

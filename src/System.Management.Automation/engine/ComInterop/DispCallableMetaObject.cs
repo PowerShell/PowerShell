@@ -1,8 +1,11 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Management.Automation.Language;
 
 namespace System.Management.Automation.ComInterop
 {
@@ -36,9 +39,11 @@ namespace System.Management.Automation.ComInterop
             if (target.TryGetMemberMethod(name, out ComMethodDesc method) ||
                 target.TryGetMemberMethodExplicit(name, out method))
             {
+                List<ParameterExpression> temps = new List<ParameterExpression>();
+                List<Expression> initTemps = new List<Expression>();
 
-                bool[] isByRef = ComBinderHelpers.ProcessArgumentsForCom(ref args);
-                return BindComInvoke(method, args, callInfo, isByRef);
+                bool[] isByRef = ComBinderHelpers.ProcessArgumentsForCom(method, ref args, temps, initTemps);
+                return BindComInvoke(method, args, callInfo, isByRef, temps, initTemps);
             }
             return null;
         }
@@ -52,10 +57,23 @@ namespace System.Management.Automation.ComInterop
             if (target.TryGetPropertySetter(name, out ComMethodDesc method, value.LimitType, holdsNull) ||
                 target.TryGetPropertySetterExplicit(name, out method, value.LimitType, holdsNull))
             {
+                List<ParameterExpression> temps = new List<ParameterExpression>();
+                List<Expression> initTemps = new List<Expression>();
 
-                bool[] isByRef = ComBinderHelpers.ProcessArgumentsForCom(ref indexes);
+                bool[] isByRef = ComBinderHelpers.ProcessArgumentsForCom(method, ref indexes, temps, initTemps);
                 isByRef = isByRef.AddLast(false);
-                DynamicMetaObject result = BindComInvoke(method, indexes.AddLast(value), binder.CallInfo, isByRef);
+                // Convert the value to the target type
+                DynamicMetaObject updatedValue = new DynamicMetaObject(
+                    value.CastOrConvertMethodArgument(
+                        value.LimitType,
+                        name,
+                        "SetIndex",
+                        allowCastingToByRefLikeType: false,
+                        temps,
+                        initTemps),
+                    value.Restrictions);
+
+                var result = BindComInvoke(method, indexes.AddLast(updatedValue), binder.CallInfo, isByRef, temps, initTemps);
 
                 // Make sure to return the value; some languages need it.
                 return new DynamicMetaObject(
@@ -67,12 +85,13 @@ namespace System.Management.Automation.ComInterop
             return base.BindSetIndex(binder, indexes, value);
         }
 
-        private DynamicMetaObject BindComInvoke(ComMethodDesc method, DynamicMetaObject[] indexes, CallInfo callInfo, bool[] isByRef)
+        private DynamicMetaObject BindComInvoke(ComMethodDesc method, DynamicMetaObject[] indexes, CallInfo callInfo, bool[] isByRef,
+            List<ParameterExpression> temps, List<Expression> initTemps)
         {
             Expression callable = Expression;
             Expression dispCall = Helpers.Convert(callable, typeof(DispCallable));
 
-            return new ComInvokeBinder(
+            DynamicMetaObject invoke = new ComInvokeBinder(
                 callInfo,
                 indexes,
                 isByRef,
@@ -84,6 +103,15 @@ namespace System.Management.Automation.ComInterop
                 ),
                 method
             ).Invoke();
+
+            if (temps != null && temps.Count > 0)
+            {
+                Expression invokeExpression = invoke.Expression;
+                Expression call = Expression.Block(invokeExpression.Type, temps, initTemps.Append(invokeExpression));
+                invoke = new DynamicMetaObject(call, invoke.Restrictions);
+            }
+
+            return invoke;
         }
 
         private BindingRestrictions DispCallableRestrictions()

@@ -54,7 +54,7 @@ namespace System.Management.Automation.ComInterop
     /// an instance of BoundDispEvent class. This class has InPlaceAdd and
     /// InPlaceSubtract operators defined. Calling InPlaceAdd operator will:
     /// 1. An instance of ComEventSinksContainer class is created (unless
-    /// RCW already had one). This instance is hanged off the RCW in attempt
+    /// RCW already had one). This instance is associated to the RCW in attempt
     /// to bind the lifetime of event sinks to the lifetime of the RCW itself,
     /// meaning event sink will be collected once the RCW is collected (this
     /// is the same way event sinks lifetime is controlled by PIAs).
@@ -117,9 +117,9 @@ namespace System.Management.Automation.ComInterop
         private static int GetIDsOfNames(IDispatch dispatch, string name, out int dispId)
         {
             int[] dispIds = new int[1];
-            Guid emtpyRiid = Guid.Empty;
+            Guid emptyRiid = Guid.Empty;
             int hresult = dispatch.TryGetIDsOfNames(
-                ref emtpyRiid,
+                ref emptyRiid,
                 new string[] { name },
                 1,
                 0,
@@ -448,7 +448,7 @@ namespace System.Management.Automation.ComInterop
 
                     // Sometimes coclass has multiple source interfaces. Usually this is caused by
                     // adding new events and putting them on new interfaces while keeping the
-                    // old interfaces around. This may cause name collisioning which we are
+                    // old interfaces around. This may cause name collisions which we are
                     // resolving by keeping only the first event with the same name.
                     if (events.ContainsKey(name) == false)
                     {
@@ -540,6 +540,20 @@ namespace System.Management.Automation.ComInterop
                 }
             }
 
+            if (typeAttr.typekind == ComTypes.TYPEKIND.TKIND_INTERFACE)
+            {
+                // We have typeinfo for custom interface. Get typeinfo for Dispatch interface.
+                typeInfo = ComTypeInfo.GetDispatchTypeInfoFromCustomInterfaceTypeInfo(typeInfo);
+                typeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(typeInfo);
+            }
+
+            if (typeAttr.typekind == ComTypes.TYPEKIND.TKIND_COCLASS)
+            {
+                // We have typeinfo for the COClass.  Find the default interface and get typeinfo for default interface.
+                typeInfo = ComTypeInfo.GetDispatchTypeInfoFromCoClassTypeInfo(typeInfo);
+                typeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(typeInfo);
+            }
+
             ComTypeDesc typeDesc = ComTypeDesc.FromITypeInfo(typeInfo, typeAttr);
 
             ComMethodDesc getItem = null;
@@ -567,6 +581,13 @@ namespace System.Management.Automation.ComInterop
 
                     if ((funcDesc.invkind & ComTypes.INVOKEKIND.INVOKE_PROPERTYPUT) != 0)
                     {
+                        // If there is a getter for this put, use that ReturnType as the
+                        // PropertyType.
+                        if (funcs.ContainsKey(name))
+                        {
+                            method.InputType = ((ComMethodDesc)funcs[name]).ReturnType;
+                        }
+
                         puts.Add(name, method);
 
                         // for the special dispId == 0, we need to store
@@ -579,6 +600,13 @@ namespace System.Management.Automation.ComInterop
                     }
                     if ((funcDesc.invkind & ComTypes.INVOKEKIND.INVOKE_PROPERTYPUTREF) != 0)
                     {
+                        // If there is a getter for this put, use that ReturnType as the
+                        // PropertyType.
+                        if (funcs.ContainsKey(name))
+                        {
+                            method.InputType = ((ComMethodDesc)funcs[name]).ReturnType;
+                        }
+
                         putrefs.Add(name, method);
                         // for the special dispId == 0, we need to store
                         // the method descriptor for the Do(SetItem) binder.
@@ -593,6 +621,18 @@ namespace System.Management.Automation.ComInterop
                     {
                         funcs.Add("GETENUMERATOR", method);
                         continue;
+                    }
+
+                    // If there is a setter for this put, update the InputType from our
+                    // ReturnType.
+                    if (puts.ContainsKey(name))
+                    {
+                        ((ComMethodDesc)puts[name]).InputType = method.ReturnType;
+                    }
+
+                    if (putrefs.ContainsKey(name))
+                    {
+                        ((ComMethodDesc)putrefs[name]).InputType = method.ReturnType;
                     }
 
                     funcs.Add(name, method);

@@ -31,7 +31,7 @@ namespace System.Management.Automation.ComInterop
             // Create a CallSite and invoke it.
             if (_site == null)
             {
-                _site = CallSite<Func<CallSite, object, object[], object>>.Create(SplatInvokeBinder.s_instance);
+                _site = CallSite<Func<CallSite, object, object[], object>>.Create(SplatInvokeBinder.Instance);
             }
 
             return _site.Target(_site, _callable, args);

@@ -15,19 +15,22 @@ namespace System.Management.Automation.ComInterop
 {
     internal static class ComRuntimeHelpers
     {
-        public static void CheckThrowException(int hresult, ref ExcepInfo excepInfo, uint argErr, string message)
+        public static void CheckThrowException(int hresult, ref ExcepInfo excepInfo, ComMethodDesc method, object[] args, uint argErr)
         {
             if (ComHresults.IsSuccess(hresult))
             {
                 return;
             }
+            Exception parameterException = null;
 
             switch (hresult)
             {
                 case ComHresults.DISP_E_BADPARAMCOUNT:
                     // The number of elements provided to DISPPARAMS is different from the number of arguments
                     // accepted by the method or property.
-                    throw Error.DispBadParamCount(message);
+                    parameterException = Error.DispBadParamCount(method.Name, args.Length - 1);
+                    ThrowWrappedInvocationException(method, parameterException);
+                    break;
 
                 case ComHresults.DISP_E_BADVARTYPE:
                     //One of the arguments in rgvarg is not a valid variant type.
@@ -41,15 +44,15 @@ namespace System.Management.Automation.ComInterop
                 case ComHresults.DISP_E_MEMBERNOTFOUND:
                     // The requested member does not exist, or the call to Invoke tried to set the value of a
                     // read-only property.
-                    throw Error.DispMemberNotFound(message);
+                    throw Error.DispMemberNotFound(method.Name);
 
                 case ComHresults.DISP_E_NONAMEDARGS:
                     // This implementation of IDispatch does not support named arguments.
-                    throw Error.DispNoNamedArgs(message);
+                    throw Error.DispNoNamedArgs(method.Name);
 
                 case ComHresults.DISP_E_OVERFLOW:
                     // One of the arguments in rgvarg could not be coerced to the specified type.
-                    throw Error.DispOverflow(message);
+                    throw Error.DispOverflow(method.Name);
 
                 case ComHresults.DISP_E_PARAMNOTFOUND:
                     // One of the parameter DISPIDs does not correspond to a parameter on the method. In this case,
@@ -57,9 +60,49 @@ namespace System.Management.Automation.ComInterop
                     break;
 
                 case ComHresults.DISP_E_TYPEMISMATCH:
-                    // One or more of the arguments could not be coerced. The index within rgvarg of the first
-                    // parameter with the incorrect type is returned in the puArgErr parameter.
-                    throw Error.DispTypeMismatch(argErr, message);
+                    // The index within rgvarg of the first parameter with the incorrect
+                    // type is returned in the puArgErr parameter.
+                    //
+                    // But: Arguments are stored in pDispParams->rgvarg in reverse order, so the first
+                    // parameter is the one with the highest index in the array
+                    // https://msdn.microsoft.com/library/aa912367.aspx
+                    argErr = ((uint)args.Length) - argErr - 2;
+
+                    // One or more of the arguments could not be coerced.
+
+                    Type destinationType = null;
+                    if (argErr >= method.ParameterInformation.Length)
+                    {
+                        destinationType = method.InputType;
+                    }
+                    else
+                    {
+                        destinationType = method.ParameterInformation[argErr].parameterType;
+                    }
+
+                    object originalValue = args[argErr + 1];
+
+                    // If this is a put, use the InputType and the last argument
+                    if (method.IsPropertyPut || method.IsPropertyPutRef)
+                    {
+                        destinationType = method.InputType;
+                        originalValue = args[args.Length - 1];
+                    }
+
+                    string originalValueString = originalValue.ToString();
+                    string originalTypeName = Microsoft.PowerShell.ToStringCodeMethods.Type(originalValue.GetType(), true);
+
+                    // ByRef arguments should be displayed in the error message as a PSReference
+                    if (destinationType == typeof(object) && method.ParameterInformation[argErr].isByRef)
+                    {
+                        destinationType = typeof(PSReference);
+                    }
+
+                    string destinationTypeName = Microsoft.PowerShell.ToStringCodeMethods.Type(destinationType, true);
+
+                    parameterException = Error.DispTypeMismatch(method.Name, originalValueString, originalTypeName, destinationTypeName);
+                    ThrowWrappedInvocationException(method, parameterException);
+                    break;
 
                 case ComHresults.DISP_E_UNKNOWNINTERFACE:
                     // The interface identifier passed in riid is not IID_NULL.
@@ -72,10 +115,31 @@ namespace System.Management.Automation.ComInterop
 
                 case ComHresults.DISP_E_PARAMNOTOPTIONAL:
                     // A required parameter was omitted.
-                    throw Error.DispParamNotOptional(message);
+                    throw Error.DispParamNotOptional(method.Name);
             }
 
             Marshal.ThrowExceptionForHR(hresult);
+        }
+
+        private static void ThrowWrappedInvocationException(ComMethodDesc method, Exception parameterException)
+        {
+            if ((method.InvokeKind & ComTypes.INVOKEKIND.INVOKE_FUNC) ==
+                ComTypes.INVOKEKIND.INVOKE_FUNC)
+            {
+                throw new MethodException(parameterException.Message, parameterException);
+            }
+
+            if (method.IsPropertyGet)
+            {
+                throw new GetValueInvocationException(parameterException.Message, parameterException);
+            }
+
+            if (method.IsPropertyPut || method.IsPropertyPutRef)
+            {
+                throw new SetValueInvocationException(parameterException.Message, parameterException);
+            }
+
+            throw parameterException;
         }
 
         internal static void GetInfoFromType(ComTypes.ITypeInfo typeInfo, out string name, out string documentation)
@@ -104,7 +168,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Look for typeinfo using IDispatch.GetTypeInfo
+        /// Look for typeinfo using IDispatch.GetTypeInfo.
         /// </summary>
         /// <param name="dispatch">IDispatch object</param>
         /// <remarks>
@@ -116,7 +180,16 @@ namespace System.Management.Automation.ComInterop
         internal static ComTypes.ITypeInfo GetITypeInfoFromIDispatch(IDispatch dispatch)
         {
             int hresult = dispatch.TryGetTypeInfoCount(out uint typeCount);
-            Marshal.ThrowExceptionForHR(hresult);
+            if (hresult == ComHresults.E_NOTIMPL || hresult == ComHresults.E_NOINTERFACE)
+            {
+                // Allow the dynamic binding to continue using the original binder.
+                return null;
+            }
+            else
+            {
+                Marshal.ThrowExceptionForHR(hresult);
+            }
+
             Debug.Assert(typeCount <= 1);
             if (typeCount == 0)
             {

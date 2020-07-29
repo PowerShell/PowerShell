@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq.Expressions;
+using System.Management.Automation.Interpreter;
 
 namespace System.Management.Automation.ComInterop
 {
@@ -25,7 +26,7 @@ namespace System.Management.Automation.ComInterop
         internal override Expression MarshalToRef(Expression parameter)
         {
             //we are not supporting conversion InOut
-            throw new NotSupportedException();
+            throw Assert.Unreachable;
         }
     }
 }

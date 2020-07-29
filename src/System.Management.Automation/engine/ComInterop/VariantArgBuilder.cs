@@ -20,8 +20,6 @@ namespace System.Management.Automation.ComInterop
 
         internal override Expression Marshal(Expression parameter)
         {
-            parameter = base.Marshal(parameter);
-
             // parameter.WrappedObject
             if (_isWrapper)
             {
