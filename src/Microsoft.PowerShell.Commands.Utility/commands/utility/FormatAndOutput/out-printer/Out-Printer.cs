@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            // set up the Scree Host interface
+            // set up the Screen Host interface
             OutputManagerInner outInner = (OutputManagerInner)this.implementation;
 
             outInner.LineOutput = InstantiateLineOutputInterface();
