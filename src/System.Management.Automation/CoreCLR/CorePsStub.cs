@@ -343,6 +343,89 @@ namespace System.Management.Automation
 
 #if UNIX
 
+namespace System.Management.Automation.ComInterop
+{
+    using System.Dynamic;
+    using System.Runtime.InteropServices;
+
+    /// <summary>
+    /// Provides helper methods to bind COM objects dynamically.
+    /// </summary>
+    /// <remarks>
+    /// COM is not supported in core powershell. So this is a stub type.
+    /// </remarks>
+    internal static class ComBinder
+    {
+        /// <summary>
+        /// Tries to perform binding of the dynamic get index operation.
+        /// </summary>
+        /// <remarks>
+        /// Always return false in CoreCLR.
+        /// </remarks>
+        public static bool TryBindGetIndex(GetIndexBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
+        {
+            result = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to perform binding of the dynamic set index operation.
+        /// </summary>
+        /// <remarks>
+        /// Always return false in CoreCLR.
+        /// </remarks>
+        public static bool TryBindSetIndex(SetIndexBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, DynamicMetaObject value, out DynamicMetaObject result)
+        {
+            result = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to perform binding of the dynamic get member operation.
+        /// </summary>
+        /// <remarks>
+        /// Always return false in CoreCLR.
+        /// </remarks>
+        public static bool TryBindGetMember(GetMemberBinder binder, DynamicMetaObject instance, out DynamicMetaObject result, bool delayInvocation)
+        {
+            result = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to perform binding of the dynamic set member operation.
+        /// </summary>
+        /// <remarks>
+        /// Always return false in CoreCLR.
+        /// </remarks>
+        public static bool TryBindSetMember(SetMemberBinder binder, DynamicMetaObject instance, DynamicMetaObject value, out DynamicMetaObject result)
+        {
+            result = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to perform binding of the dynamic invoke member operation.
+        /// </summary>
+        /// <remarks>
+        /// Always return false in CoreCLR.
+        /// </remarks>
+        public static bool TryBindInvokeMember(InvokeMemberBinder binder, bool isSetProperty, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
+        {
+            result = null;
+            return false;
+        }
+    }
+
+    internal class VarEnumSelector
+    {
+        internal static Type GetTypeForVarEnum(VarEnum vt)
+        {
+            throw new PlatformNotSupportedException();
+        }
+    }
+}
+
 namespace System.Management.Automation.Security
 {
     /// <summary>

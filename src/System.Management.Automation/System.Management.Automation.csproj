@@ -65,6 +65,7 @@
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
     <Compile Remove="engine\ExtraAdapter.cs" />
     <Compile Remove="engine\ManagementObjectAdapter.cs" />
+    <Compile Remove="engine\ComInterop\**\*.cs" />
     <Compile Remove="engine\remoting\commands\ConnectPSSession.cs" />
     <Compile Remove="engine\remoting\commands\CustomShellCommands.cs" />
     <Compile Remove="engine\remoting\commands\DisconnectPSSession.cs" />
