@@ -3571,56 +3571,6 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
                 Hashtable quotas = transportOption.ConstructQuotasAsHashtable();
 
-                int idleTimeOut = 0;
-
-                if (idleTimeOut != 0 && quotas.ContainsKey(WSManConfigurationOption.AttribMaxIdleTimeout))
-                {
-                    bool setMaxIdleTimeoutFirst = true;
-                    int maxIdleTimeOut;
-
-                    if (LanguagePrimitives.TryConvertTo<int>(quotas[WSManConfigurationOption.AttribMaxIdleTimeout], out maxIdleTimeOut))
-                    {
-                        int? currentIdleTimeoutms = WSManConfigurationOption.DefaultIdleTimeout;
-
-                        // Get the current IdleTimeOut quota value
-                        //
-                        using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
-                        {
-                            ps.AddScript(string.Format(CultureInfo.InvariantCulture, getCurrentIdleTimeoutmsFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
-                            Collection<PSObject> psObjectCollection = ps.Invoke(new object[] { Name }) as Collection<PSObject>;
-                            if (psObjectCollection == null || psObjectCollection.Count != 1)
-                            {
-                                Dbg.Assert(false, "This should never happen. ps.Invoke always return a Collection<PSObject>");
-                            }
-
-                            currentIdleTimeoutms = Convert.ToInt32(psObjectCollection[0].ToString(), CultureInfo.InvariantCulture);
-                        }
-
-                        if (currentIdleTimeoutms >= maxIdleTimeOut && currentIdleTimeoutms >= idleTimeOut)
-                        {
-                            setMaxIdleTimeoutFirst = false;
-                        }
-                    }
-
-                    ScriptBlock setTimeoutQuotasSb = ScriptBlock.Create(
-                           string.Format(CultureInfo.InvariantCulture, setSessionConfigurationTimeoutQuotasSbFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
-                    setTimeoutQuotasSb.LanguageMode = PSLanguageMode.FullLanguage;
-
-                    setTimeoutQuotasSb.InvokeUsingCmdlet(
-                        contextCmdlet: this,
-                        useLocalScope: true,
-                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                        dollarUnder: AutomationNull.Value,
-                        input: Array.Empty<object>(),
-                        scriptThis: AutomationNull.Value,
-                        args: new object[] { maxIdleTimeOut, idleTimeOut, setMaxIdleTimeoutFirst });
-
-                    // Remove Idle timeout values as we have set them above
-                    //
-                    quotas.Remove(WSManConfigurationOption.AttribMaxIdleTimeout);
-                    quotas.Remove(WSManConfigurationOption.AttribIdleTimeout);
-                }
-
                 setQuotasSb.InvokeUsingCmdlet(
                     contextCmdlet: this,
                     useLocalScope: true,
