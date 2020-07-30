@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // The drive was not found.
-            if (actualDrive is null)
+            if (actualDrive == null)
             {
                 WriteError(new ErrorRecord(
                             new System.IO.DriveNotFoundException(
@@ -193,7 +193,7 @@ namespace Microsoft.PowerShell.Commands
         private void EmptyRecycleBin(string drivePath)
         {
             string clearRecycleBinShouldProcessTarget;
-            if (drivePath is null)
+            if (drivePath == null)
             {
                 clearRecycleBinShouldProcessTarget = string.Format(CultureInfo.InvariantCulture,
                                                                    ClearRecycleBinResources.ClearRecycleBinContent);
@@ -212,7 +212,7 @@ namespace Microsoft.PowerShell.Commands
                 string activity = string.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.ClearRecycleBinProgressActivity);
                 string statusDescription;
 
-                if (drivePath is null)
+                if (drivePath == null)
                 {
                     statusDescription = string.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.ClearRecycleBinStatusDescriptionForAllDrives);
                 }

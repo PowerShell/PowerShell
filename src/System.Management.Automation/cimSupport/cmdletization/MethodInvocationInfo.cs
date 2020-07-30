@@ -21,8 +21,8 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="returnValue">Return value of the method (ok to pass <c>null</c> if the method doesn't return anything).</param>
         public MethodInvocationInfo(string name, IEnumerable<MethodParameter> parameters, MethodParameter returnValue)
         {
-            if (name is null) throw new ArgumentNullException(nameof(name));
-            if (parameters is null) throw new ArgumentNullException(nameof(parameters));
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
             // returnValue can be null
 
             MethodName = name;

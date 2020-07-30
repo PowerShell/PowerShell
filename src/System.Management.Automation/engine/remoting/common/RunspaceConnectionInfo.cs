@@ -166,7 +166,7 @@ namespace System.Management.Automation.Runspaces
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw new ArgumentNullException("value");
                 }
@@ -189,7 +189,7 @@ namespace System.Management.Automation.Runspaces
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw new ArgumentNullException("value");
                 }
@@ -279,7 +279,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="options"></param>
         public virtual void SetSessionOptions(PSSessionOption options)
         {
-            if (options is null)
+            if (options == null)
             {
                 throw new ArgumentNullException(nameof(options));
             }
@@ -398,7 +398,7 @@ namespace System.Management.Automation.Runspaces
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("value");
                 }
@@ -602,7 +602,7 @@ namespace System.Management.Automation.Runspaces
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("value");
                 }
@@ -893,7 +893,7 @@ namespace System.Management.Automation.Runspaces
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", Scope = "member", Target = "System.Management.Automation.Runspaces.WSManConnectionInfo.#.ctor(System.Uri,System.String,System.Management.Automation.PSCredential)", MessageId = "1#")]
         public WSManConnectionInfo(Uri uri, string shellUri, PSCredential credential)
         {
-            if (uri is null)
+            if (uri == null)
             {
                 // if the uri is null..apply wsman default logic for port
                 // resolution..BUG 542726
@@ -973,7 +973,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         public override void SetSessionOptions(PSSessionOption options)
         {
-            if (options is null)
+            if (options == null)
             {
                 throw new ArgumentNullException(nameof(options));
             }
@@ -1125,7 +1125,7 @@ namespace System.Management.Automation.Runspaces
             string property, T defaultValue)
         {
             WSManConnectionInfo wsCI = rsCI as WSManConnectionInfo;
-            if (wsCI is null)
+            if (wsCI == null)
             {
                 return defaultValue;
             }
@@ -1438,7 +1438,7 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 return (EnableNetworkAccess &&                                                              // Interactive token requested
-                        (Credential is null &&                                                              // No credential provided
+                        (Credential == null &&                                                              // No credential provided
                          (ComputerName.Equals(DefaultComputerName, StringComparison.OrdinalIgnoreCase) ||   // Localhost computer name
                           !ComputerName.Contains('.'))));                                                    // Not FQDN computer name
             }
@@ -1751,7 +1751,7 @@ namespace System.Management.Automation.Runspaces
             string customPipeName,
             int openTimeout)
         {
-            if (customPipeName is null)
+            if (customPipeName == null)
             {
                 throw new PSArgumentNullException(nameof(customPipeName));
             }
@@ -1914,7 +1914,7 @@ namespace System.Management.Automation.Runspaces
             string computerName,
             string keyFilePath)
         {
-            if (computerName is null) { throw new PSArgumentNullException(nameof(computerName)); }
+            if (computerName == null) { throw new PSArgumentNullException(nameof(computerName)); }
 
             this.UserName = userName;
             this.ComputerName = computerName;
@@ -2453,7 +2453,7 @@ namespace System.Management.Automation.Runspaces
             catch (System.ComponentModel.Win32Exception e) { ex = e; }
 
             if ((ex != null) ||
-                (sshProcess is null) ||
+                (sshProcess == null) ||
                 (sshProcess.HasExited))
             {
                 throw new InvalidOperationException(
@@ -3241,10 +3241,10 @@ namespace System.Management.Automation.Runspaces
             // The type name was changed in newer version of Windows so we check for new one first,
             // then fallback to previous type name to support older versions of Windows
             computeSystemPropertiesType = schemaAssembly.GetType("HCS.Compute.System.Properties");
-            if (computeSystemPropertiesType is null)
+            if (computeSystemPropertiesType == null)
             {
                 computeSystemPropertiesType = schemaAssembly.GetType("Microsoft.HyperV.Schema.Compute.System.Properties");
-                if (computeSystemPropertiesType is null)
+                if (computeSystemPropertiesType == null)
                 {
                     throw new PSInvalidOperationException(RemotingErrorIdStrings.CannotGetHostInteropTypes);
                 }
@@ -3252,7 +3252,7 @@ namespace System.Management.Automation.Runspaces
 
             Assembly hostComputeInteropAssembly = Assembly.Load(new AssemblyName("Microsoft.HostCompute.Interop, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"));
             hostComputeInteropType = hostComputeInteropAssembly.GetType("Microsoft.HostCompute.Interop.HostComputeInterop");
-            if (hostComputeInteropType is null)
+            if (hostComputeInteropType == null)
             {
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.CannotGetHostInteropTypes);
             }
@@ -3430,7 +3430,7 @@ namespace System.Management.Automation.Runspaces
                     else
                     {
                         var propertyInfo = computeSystemPropertiesType.GetProperty("RuntimeId");
-                        if (propertyInfo is null)
+                        if (propertyInfo == null)
                         {
                             throw new PSInvalidOperationException(RemotingErrorIdStrings.CannotGetHostInteropTypes);
                         }

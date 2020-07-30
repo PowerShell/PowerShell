@@ -96,7 +96,7 @@ namespace System.Management.Automation.Provider
         /// </exception>
         internal void SetProviderInformation(ProviderInfo providerInfoToSet)
         {
-            if (providerInfoToSet is null)
+            if (providerInfoToSet == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInfoToSet));
             }
@@ -136,7 +136,7 @@ namespace System.Management.Automation.Provider
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("value");
                 }
@@ -261,7 +261,7 @@ namespace System.Management.Automation.Provider
 
             IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
 
-            if (propertyProvider is null)
+            if (propertyProvider == null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -301,7 +301,7 @@ namespace System.Management.Automation.Provider
 
             IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
 
-            if (propertyProvider is null)
+            if (propertyProvider == null)
             {
                 return null;
             }
@@ -332,7 +332,7 @@ namespace System.Management.Automation.Provider
 
             IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
 
-            if (propertyProvider is null)
+            if (propertyProvider == null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -372,7 +372,7 @@ namespace System.Management.Automation.Provider
 
             IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
 
-            if (propertyProvider is null)
+            if (propertyProvider == null)
             {
                 return null;
             }
@@ -406,7 +406,7 @@ namespace System.Management.Automation.Provider
 
             IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
 
-            if (propertyProvider is null)
+            if (propertyProvider == null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -446,7 +446,7 @@ namespace System.Management.Automation.Provider
 
             IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
 
-            if (propertyProvider is null)
+            if (propertyProvider == null)
             {
                 return null;
             }
@@ -492,7 +492,7 @@ namespace System.Management.Automation.Provider
 
             IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider is null)
+            if (propertyProvider == null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -539,7 +539,7 @@ namespace System.Management.Automation.Provider
 
             IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider is null)
+            if (propertyProvider == null)
             {
                 return null;
             }
@@ -573,7 +573,7 @@ namespace System.Management.Automation.Provider
 
             IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider is null)
+            if (propertyProvider == null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -612,7 +612,7 @@ namespace System.Management.Automation.Provider
 
             IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider is null)
+            if (propertyProvider == null)
             {
                 return null;
             }
@@ -650,7 +650,7 @@ namespace System.Management.Automation.Provider
 
             IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider is null)
+            if (propertyProvider == null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -693,7 +693,7 @@ namespace System.Management.Automation.Provider
 
             IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider is null)
+            if (propertyProvider == null)
             {
                 return null;
             }
@@ -735,7 +735,7 @@ namespace System.Management.Automation.Provider
 
             IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider is null)
+            if (propertyProvider == null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -782,7 +782,7 @@ namespace System.Management.Automation.Provider
 
             IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider is null)
+            if (propertyProvider == null)
             {
                 return null;
             }
@@ -824,7 +824,7 @@ namespace System.Management.Automation.Provider
 
             IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider is null)
+            if (propertyProvider == null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -871,7 +871,7 @@ namespace System.Management.Automation.Provider
 
             IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
-            if (propertyProvider is null)
+            if (propertyProvider == null)
             {
                 return null;
             }
@@ -904,7 +904,7 @@ namespace System.Management.Automation.Provider
 
             IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
 
-            if (contentProvider is null)
+            if (contentProvider == null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -939,7 +939,7 @@ namespace System.Management.Automation.Provider
 
             IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
 
-            if (contentProvider is null)
+            if (contentProvider == null)
             {
                 return null;
             }
@@ -968,7 +968,7 @@ namespace System.Management.Automation.Provider
 
             IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
 
-            if (contentProvider is null)
+            if (contentProvider == null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -1003,7 +1003,7 @@ namespace System.Management.Automation.Provider
 
             IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
 
-            if (contentProvider is null)
+            if (contentProvider == null)
             {
                 return null;
             }
@@ -1029,7 +1029,7 @@ namespace System.Management.Automation.Provider
 
             IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
 
-            if (contentProvider is null)
+            if (contentProvider == null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -1064,7 +1064,7 @@ namespace System.Management.Automation.Provider
 
             IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
 
-            if (contentProvider is null)
+            if (contentProvider == null)
             {
                 return null;
             }
@@ -1450,7 +1450,7 @@ namespace System.Management.Automation.Provider
                     throw PSTraceSource.NewArgumentException(nameof(baseName), GetErrorText.ResourceBaseNameFailure, baseName);
                 }
 
-                if (retValue is null)
+                if (retValue == null)
                 {
                     throw PSTraceSource.NewArgumentException(nameof(resourceId), GetErrorText.ResourceIdFailure, resourceId);
                 }
@@ -1466,7 +1466,7 @@ namespace System.Management.Automation.Provider
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (errorRecord is null)
+                if (errorRecord == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(errorRecord));
                 }
@@ -1617,7 +1617,7 @@ namespace System.Management.Automation.Provider
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (Context is null)
+                if (Context == null)
                     return false;
                 else
                     return Context.TransactionAvailable();
@@ -1632,7 +1632,7 @@ namespace System.Management.Automation.Provider
         {
             get
             {
-                if (Context is null)
+                if (Context == null)
                     return null;
                 else
                     return Context.CurrentPSTransaction;
@@ -1675,7 +1675,7 @@ namespace System.Management.Automation.Provider
                     Context != null,
                     "The context should always be set");
 
-                if (progressRecord is null)
+                if (progressRecord == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(progressRecord));
                 }
@@ -1799,7 +1799,7 @@ namespace System.Management.Automation.Provider
             object item,
             string path)
         {
-            if (item is null)
+            if (item == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(item));
             }
@@ -1998,7 +1998,7 @@ namespace System.Management.Automation.Provider
                     Context != null,
                     "The context should always be set");
 
-                if (errorRecord is null)
+                if (errorRecord == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(errorRecord));
                 }

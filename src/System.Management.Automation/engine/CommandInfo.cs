@@ -110,7 +110,7 @@ namespace System.Management.Automation
             // The name can be empty for functions and filters but it
             // can't be null
 
-            if (name is null)
+            if (name == null)
             {
                 throw new ArgumentNullException(nameof(name));
             }
@@ -196,7 +196,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_version is null)
+                if (_version == null)
                 {
                     if (Module != null)
                     {
@@ -310,12 +310,12 @@ namespace System.Management.Automation
         {
             get
             {
-                return CopiedCommand is null ? _visibility : CopiedCommand.Visibility;
+                return CopiedCommand == null ? _visibility : CopiedCommand.Visibility;
             }
 
             set
             {
-                if (CopiedCommand is null)
+                if (CopiedCommand == null)
                 {
                     _visibility = value;
                 }
@@ -375,7 +375,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (moduleName is null)
+                if (moduleName == null)
                     return string.Empty;
 
                 return moduleName;
@@ -424,7 +424,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private MergedCommandParameterMetadata GetMergedCommandParameterMetadataSafely()
         {
-            if (_context is null)
+            if (_context == null)
                 return null;
 
             MergedCommandParameterMetadata result;
@@ -612,7 +612,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_parameterSets is null)
+                if (_parameterSets == null)
                 {
                     Collection<CommandParameterSetInfo> parameterSetInfo =
                         GenerateCommandParameterSetInfo();
@@ -798,7 +798,7 @@ namespace System.Management.Automation
         /// <param name="typeDefinitionAst">The type definition from the ast.</param>
         public PSTypeName(TypeDefinitionAst typeDefinitionAst)
         {
-            if (typeDefinitionAst is null)
+            if (typeDefinitionAst == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(typeDefinitionAst));
             }
@@ -812,7 +812,7 @@ namespace System.Management.Automation
         /// </summary>
         public PSTypeName(ITypeName typeName)
         {
-            if (typeName is null)
+            if (typeName == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(typeName));
             }
@@ -853,7 +853,7 @@ namespace System.Management.Automation
             {
                 if (!_typeWasCalculated)
                 {
-                    if (_type is null)
+                    if (_type == null)
                     {
                         if (TypeDefinitionAst != null)
                         {
@@ -865,7 +865,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (_type is null)
+                    if (_type == null)
                     {
                         // We ignore the exception.
                         if (Name != null &&

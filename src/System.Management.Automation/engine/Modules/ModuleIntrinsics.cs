@@ -150,7 +150,7 @@ namespace System.Management.Automation
             // script scope for the ss.
 
             // Allocate the session state instance for this module.
-            if (ss is null)
+            if (ss == null)
             {
                 ss = new SessionState(_context, true, true);
             }
@@ -196,7 +196,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (sb is null)
+                if (sb == null)
                     throw PSTraceSource.NewInvalidOperationException();
 
                 sb.SessionStateInternal = ss.Internal;
@@ -213,7 +213,7 @@ namespace System.Management.Automation
                 }
 
                 // The variables set in the interpreted case get set by InvokeWithPipe in the compiled case.
-                Diagnostics.Assert(_context.SessionState.Internal.CurrentScope.LocalsTuple is null,
+                Diagnostics.Assert(_context.SessionState.Internal.CurrentScope.LocalsTuple == null,
                                     "No locals tuple should have been created yet.");
 
                 List<object> resultList = new List<object>();
@@ -279,7 +279,7 @@ namespace System.Management.Automation
 
         internal List<PSModuleInfo> GetExactMatchModules(string moduleName, bool all, bool exactMatch)
         {
-            if (moduleName is null) { moduleName = string.Empty; }
+            if (moduleName == null) { moduleName = string.Empty; }
 
             return GetModuleCore(new string[] { moduleName }, all, exactMatch);
         }
@@ -296,7 +296,7 @@ namespace System.Management.Automation
             }
             else
             {
-                if (patterns is null)
+                if (patterns == null)
                 {
                     patterns = new string[] { "*" };
                 }
@@ -449,7 +449,7 @@ namespace System.Management.Automation
             ModuleSpecification moduleSpec,
             bool skipNameCheck = false)
         {
-            if (moduleSpec is null)
+            if (moduleSpec == null)
             {
                 matchFailureReason = ModuleMatchFailure.NullModuleSpecification;
                 return false;
@@ -462,7 +462,7 @@ namespace System.Management.Automation
                 moduleSpec.Guid,
                 moduleSpec.RequiredVersion,
                 moduleSpec.Version,
-                moduleSpec.MaximumVersion is null ? null : ModuleCmdletBase.GetMaximumVersion(moduleSpec.MaximumVersion));
+                moduleSpec.MaximumVersion == null ? null : ModuleCmdletBase.GetMaximumVersion(moduleSpec.MaximumVersion));
         }
 
         /// <summary>
@@ -516,7 +516,7 @@ namespace System.Management.Automation
             Version maximumVersion)
         {
             // Define that a null module does not meet any constraints
-            if (moduleInfo is null)
+            if (moduleInfo == null)
             {
                 matchFailureReason = ModuleMatchFailure.NullModule;
                 return false;
@@ -697,7 +697,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(requiredPath != null, $"Caller to verify that {nameof(requiredPath)} is not null");
 
-            if (modulePath is null)
+            if (modulePath == null)
             {
                 return false;
             }
@@ -762,7 +762,7 @@ namespace System.Management.Automation
             string basePath,
             ExecutionContext executionContext)
         {
-            if (moduleName is null)
+            if (moduleName == null)
             {
                 return null;
             }
@@ -937,7 +937,7 @@ namespace System.Management.Automation
         /// <returns>The module name.</returns>
         internal static string GetModuleName(string path)
         {
-            string fileName = path is null ? string.Empty : Path.GetFileName(path);
+            string fileName = path == null ? string.Empty : Path.GetFileName(path);
             string ext;
             if (fileName.EndsWith(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase))
             {
@@ -1177,7 +1177,7 @@ namespace System.Management.Automation
             string psHomeModulePath = GetPSHomeModulePath(); // $PSHome\Modules location
 
             // If the variable isn't set, then set it to the default value
-            if (currentProcessModulePath is null)  // EVT.Process does Not exist - really corner case
+            if (currentProcessModulePath == null)  // EVT.Process does Not exist - really corner case
             {
                 // Handle the default case...
                 if (string.IsNullOrEmpty(hkcuUserModulePath)) // EVT.User does Not exist -> set to <SpecialFolder.MyDocuments> location
@@ -1243,7 +1243,7 @@ namespace System.Management.Automation
         {
             string currentModulePath = GetModulePath();
 
-            if (currentModulePath is null)
+            if (currentModulePath == null)
             {
                 return null;
             }
@@ -1429,7 +1429,7 @@ namespace System.Management.Automation
         internal static void RemoveNestedModuleFunctions(PSModuleInfo module)
         {
             var input = module.SessionState?.Internal?.ExportedFunctions;
-            if ((input is null) || (input.Count == 0))
+            if ((input == null) || (input.Count == 0))
             { return; }
 
             List<FunctionInfo> output = new List<FunctionInfo>(input.Count);
@@ -1543,7 +1543,7 @@ namespace System.Management.Automation
 
                     foreach (CmdletInfo element in copy)
                     {
-                        if (doNotExportCmdlets is null
+                        if (doNotExportCmdlets == null
                             || !doNotExportCmdlets.Exists(cmdletName => string.Equals(element.FullName, cmdletName, StringComparison.OrdinalIgnoreCase)))
                         {
                             if (SessionStateUtilities.MatchesAnyWildcardPattern(element.Name, cmdletPatterns, false))
@@ -1565,7 +1565,7 @@ namespace System.Management.Automation
                 foreach (KeyValuePair<string, List<CmdletInfo>> entry in ft)
                 {
                     CmdletInfo cmdletToImport = entry.Value[0];
-                    if (doNotExportCmdlets is null
+                    if (doNotExportCmdlets == null
                         || !doNotExportCmdlets.Exists(cmdletName => string.Equals(cmdletToImport.FullName, cmdletName, StringComparison.OrdinalIgnoreCase)))
                     {
                         if (SessionStateUtilities.MatchesAnyWildcardPattern(entry.Key, cmdletPatterns, false))

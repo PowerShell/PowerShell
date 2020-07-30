@@ -52,7 +52,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PSVariable GetVariable(string name, CommandOrigin origin)
         {
-            if (name is null)
+            if (name == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -112,7 +112,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object GetVariableValue(string name)
         {
-            if (name is null)
+            if (name == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -285,7 +285,7 @@ namespace System.Management.Automation
         {
             scope = null;
 
-            if (variablePath is null)
+            if (variablePath == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(variablePath));
             }
@@ -312,7 +312,7 @@ namespace System.Management.Automation
 
                 PSDriveInfo drive = ((IEnumerator<PSDriveInfo>)searcher).Current;
 
-                if (drive is null)
+                if (drive == null)
                 {
                     break;
                 }
@@ -380,7 +380,7 @@ namespace System.Management.Automation
                         false);
                 }
 
-                if (readers is null || readers.Count == 0)
+                if (readers == null || readers.Count == 0)
                 {
                     // The drive was found but the path was wrong or something so return null.
                     // We don't want to continue searching if the provider didn't support content
@@ -540,7 +540,7 @@ namespace System.Management.Automation
         {
             scope = null;
 
-            if (variablePath is null)
+            if (variablePath == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(variablePath));
             }
@@ -619,7 +619,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PSVariable GetVariableAtScope(string name, string scopeID)
         {
-            if (name is null)
+            if (name == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -683,7 +683,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object GetVariableValueAtScope(string name, string scopeID)
         {
-            if (name is null)
+            if (name == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -769,7 +769,7 @@ namespace System.Management.Automation
                             false);
                     }
 
-                    if (readers is null || readers.Count == 0)
+                    if (readers == null || readers.Count == 0)
                     {
                         // The drive was found but the path was wrong or something so return null.
                         // We don't want to continue searching if the provider didn't support content
@@ -954,7 +954,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void SetVariableValue(string name, object newValue, CommandOrigin origin)
         {
-            if (name is null)
+            if (name == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -1028,7 +1028,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object SetVariable(PSVariable variable, bool force, CommandOrigin origin)
         {
-            if (variable is null || string.IsNullOrEmpty(variable.Name))
+            if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
                 throw PSTraceSource.NewArgumentException(nameof(variable));
             }
@@ -1136,7 +1136,7 @@ namespace System.Management.Automation
             CommandOrigin origin)
         {
             object result = null;
-            if (variablePath is null)
+            if (variablePath == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(variablePath));
             }
@@ -1273,7 +1273,7 @@ namespace System.Management.Automation
                         false);
                 }
 
-                if (writers is null || writers.Count == 0)
+                if (writers == null || writers.Count == 0)
                 {
                     ItemNotFoundException itemNotFound =
                         new ItemNotFoundException(
@@ -1403,7 +1403,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object SetVariableAtScope(PSVariable variable, string scopeID, bool force, CommandOrigin origin)
         {
-            if (variable is null || string.IsNullOrEmpty(variable.Name))
+            if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
                 throw PSTraceSource.NewArgumentException(nameof(variable));
             }
@@ -1439,7 +1439,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object NewVariable(PSVariable variable, bool force)
         {
-            if (variable is null || string.IsNullOrEmpty(variable.Name))
+            if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
                 throw PSTraceSource.NewArgumentException(nameof(variable));
             }
@@ -1483,7 +1483,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object NewVariableAtScope(PSVariable variable, string scopeID, bool force)
         {
-            if (variable is null || string.IsNullOrEmpty(variable.Name))
+            if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
                 throw PSTraceSource.NewArgumentException(nameof(variable));
             }
@@ -1562,7 +1562,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveVariable(string name, bool force)
         {
-            if (name is null)
+            if (name == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -1621,7 +1621,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveVariable(PSVariable variable, bool force)
         {
-            if (variable is null)
+            if (variable == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(variable));
             }
@@ -1778,7 +1778,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveVariableAtScope(PSVariable variable, string scopeID, bool force)
         {
-            if (variable is null)
+            if (variable == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(variable));
             }

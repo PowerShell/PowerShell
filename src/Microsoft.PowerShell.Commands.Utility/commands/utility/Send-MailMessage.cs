@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell.Commands
             // globalEmailServer might be null if it is deleted by: PS> del variable:PSEmailServer
             PSVariable globalEmailServer = SessionState.Internal.GetVariable(SpecialVariables.PSEmailServer);
 
-            if (SmtpServer is null && globalEmailServer != null)
+            if (SmtpServer == null && globalEmailServer != null)
             {
                 SmtpServer = Convert.ToString(globalEmailServer.Value, CultureInfo.InvariantCulture);
             }

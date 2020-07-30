@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal override IObservable<CimInstance> GetCimOperation()
         {
-            if (_resultFromCreateInstance is null)
+            if (_resultFromCreateInstance == null)
             {
                 if (!this.ShouldProcess())
                 {
@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 #if DEBUG
                 Dbg.Assert(_createInstanceOperationGotStarted, "GetInstance should be started *after* CreateInstance");
                 Dbg.Assert(_getInstanceOperationGotStarted == false, "Should not start GetInstance operation twice");
-                Dbg.Assert(_resultFromGetInstance is null, "GetInstance operation shouldn't happen twice");
+                Dbg.Assert(_resultFromGetInstance == null, "GetInstance operation shouldn't happen twice");
                 _getInstanceOperationGotStarted = true;
 #endif
                 return GetGetInstanceOperation();
@@ -88,13 +88,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         public override void OnNext(CimInstance item)
         {
             Dbg.Assert(item != null, "CreateInstance and GetInstance should never return null");
-            if (_resultFromCreateInstance is null)
+            if (_resultFromCreateInstance == null)
             {
                 _resultFromCreateInstance = item;
             }
             else
             {
-                Dbg.Assert(_resultFromGetInstance is null, "GetInstance operation shouldn't happen twice");
+                Dbg.Assert(_resultFromGetInstance == null, "GetInstance operation shouldn't happen twice");
                 _resultFromGetInstance = item;
             }
         }
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 // <=> (this._getInstanceOperationGotStarted => (this._resultFromGetInstance != null))
                 "GetInstance should cause OnNext to be called which should set this._resultFromGetInstance to non-null");
 #endif
-            if (this.IsPassThruObjectNeeded() && (_resultFromGetInstance is null))
+            if (this.IsPassThruObjectNeeded() && (_resultFromGetInstance == null))
             {
                 IObservable<CimInstance> observable = this.GetGetInstanceOperation();
                 observable.Subscribe(this);

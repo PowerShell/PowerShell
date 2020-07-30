@@ -17,7 +17,7 @@ namespace System.Management.Automation.Tracing
         [EtwEvent(0xc000)]
         public void DebugMessage(Exception exception)
         {
-            if (exception is null)
+            if (exception == null)
                 return;
 
             DebugMessage(GetExceptionString(exception));
@@ -30,7 +30,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public static string GetExceptionString(Exception exception)
         {
-            if (exception is null)
+            if (exception == null)
                 return string.Empty;
 
             StringBuilder sb = new StringBuilder();
@@ -44,7 +44,7 @@ namespace System.Management.Automation.Tracing
 
         private static bool WriteExceptionText(StringBuilder sb, Exception e)
         {
-            if (e is null)
+            if (e == null)
                 return false;
 
             sb.Append(e.GetType().Name);

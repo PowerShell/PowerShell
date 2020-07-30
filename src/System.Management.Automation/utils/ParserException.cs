@@ -46,7 +46,7 @@ namespace System.Management.Automation
         /// </summary>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
+            if (info == null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -131,7 +131,7 @@ namespace System.Management.Automation
             Justification = "ErrorRecord is not overridden in classes deriving from ParseException")]
         public ParseException(Language.ParseError[] errors)
         {
-            if ((errors is null) || (errors.Length == 0))
+            if ((errors == null) || (errors.Length == 0))
             {
                 throw new ArgumentNullException(nameof(errors));
             }
@@ -154,7 +154,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errors is null)
+                if (_errors == null)
                 {
                     return base.Message;
                 }

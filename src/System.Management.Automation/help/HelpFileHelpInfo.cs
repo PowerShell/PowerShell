@@ -120,7 +120,7 @@ namespace System.Management.Automation
             {
                 result = reader.ReadLine();
 
-                if (result is null)
+                if (result == null)
                     return null;
             }
 

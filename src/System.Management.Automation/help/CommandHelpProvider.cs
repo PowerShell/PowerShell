@@ -221,7 +221,7 @@ namespace System.Management.Automation
             {
                 result = GetFromCommandCache(cmdletInfo.ModuleName, cmdletInfo.Name, cmdletInfo.HelpCategory);
 
-                if (result is null)
+                if (result == null)
                 {
                     // Try load the help file specified by CmdletInfo.HelpFile property
                     helpFile = FindHelpFile(cmdletInfo);
@@ -249,7 +249,7 @@ namespace System.Management.Automation
             }
 
             // For scripts, try to retrieve the help from the file specified by .ExternalHelp directive
-            if (result is null && isScriptCommand)
+            if (result == null && isScriptCommand)
             {
                 ScriptBlock sb = null;
                 try
@@ -311,7 +311,7 @@ namespace System.Management.Automation
             // in the appropriate UI culture subfolder of ModuleBase, and retrieve help
             // If still not able to get help, try search for a file called <NestedModuleName>-Help.xml
             // under the ModuleBase and the NestedModule's directory, and retrieve help
-            if (result is null && !InternalTestHooks.BypassOnlineHelpRetrieval)
+            if (result == null && !InternalTestHooks.BypassOnlineHelpRetrieval)
             {
                 // Get the name and ModuleBase directory of the command's module
                 // and the nested module that implements the command
@@ -338,7 +338,7 @@ namespace System.Management.Automation
                     result = GetHelpInfoFromHelpFile(commandInfo, helpFileToFind, searchPaths, reportErrors, out helpFile);
                 }
 
-                if (result is null && !string.IsNullOrEmpty(nestedModulePath))
+                if (result == null && !string.IsNullOrEmpty(nestedModulePath))
                 {
                     // Search for <NestedModuleName>-Help.xml under both ModuleBase and NestedModule's directory
                     searchPaths.Add(Path.GetDirectoryName(nestedModulePath));
@@ -361,7 +361,7 @@ namespace System.Management.Automation
             }
 
             // If the above fails to get help, construct an HelpInfo object using the syntax and definition of the command
-            if (result is null)
+            if (result == null)
             {
                 if (commandInfo.CommandType == CommandTypes.ExternalScript ||
                     commandInfo.CommandType == CommandTypes.Script)
@@ -383,7 +383,7 @@ namespace System.Management.Automation
 
             if (result != null)
             {
-                if (isScriptCommand && result.GetUriForOnlineHelp() is null)
+                if (isScriptCommand && result.GetUriForOnlineHelp() == null)
                 {
                     if (!string.IsNullOrEmpty(commandInfo.CommandMetadata.HelpUri))
                     {
@@ -395,12 +395,12 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (isCmdlet && result.FullHelp.Properties["PSSnapIn"] is null)
+                if (isCmdlet && result.FullHelp.Properties["PSSnapIn"] == null)
                 {
                     result.FullHelp.Properties.Add(new PSNoteProperty("PSSnapIn", cmdletInfo.PSSnapIn));
                 }
 
-                if (result.FullHelp.Properties["ModuleName"] is null)
+                if (result.FullHelp.Properties["ModuleName"] == null)
                 {
                     result.FullHelp.Properties.Add(new PSNoteProperty("ModuleName", commandInfo.ModuleName));
                 }
@@ -473,10 +473,10 @@ namespace System.Management.Automation
 
         private static string GetCmdletAssemblyPath(CmdletInfo cmdletInfo)
         {
-            if (cmdletInfo is null)
+            if (cmdletInfo == null)
                 return null;
 
-            if (cmdletInfo.ImplementingType is null)
+            if (cmdletInfo.ImplementingType == null)
                 return null;
 
             return Path.GetDirectoryName(cmdletInfo.ImplementingType.Assembly.Location);
@@ -564,7 +564,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            if (cmdletInfo is null)
+            if (cmdletInfo == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(cmdletInfo));
             }
@@ -704,7 +704,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (helpItemsNode is null)
+            if (helpItemsNode == null)
             {
                 s_tracer.WriteLine("Unable to find 'helpItems' element in file {0}", helpFile);
                 return;
@@ -754,7 +754,7 @@ namespace System.Management.Automation
         /// <param name="userDefinedHelpData"></param>
         private void ProcessUserDefinedHelpData(string mshSnapInId, UserDefinedHelpData userDefinedHelpData)
         {
-            if (userDefinedHelpData is null)
+            if (userDefinedHelpData == null)
                 return;
 
             if (string.IsNullOrEmpty(userDefinedHelpData.Name))
@@ -762,12 +762,12 @@ namespace System.Management.Automation
 
             HelpInfo helpInfo = GetFromCommandCache(mshSnapInId, userDefinedHelpData.Name, HelpCategory.Cmdlet);
 
-            if (helpInfo is null)
+            if (helpInfo == null)
                 return;
 
             MamlCommandHelpInfo commandHelpInfo = helpInfo as MamlCommandHelpInfo;
 
-            if (commandHelpInfo is null)
+            if (commandHelpInfo == null)
                 return;
 
             commandHelpInfo.AddUserDefinedData(userDefinedHelpData);
@@ -814,7 +814,7 @@ namespace System.Management.Automation
         {
             Debug.Assert(commandInfo != null, "commandInfo cannot be null");
             HelpInfo result = GetFromCommandCache(helpFileIdentifier, commandInfo.Name, commandInfo.HelpCategory);
-            if (result is null)
+            if (result == null)
             {
                 // check if the command is prefixed and try retrieving help by removing the prefix
                 if ((commandInfo.Module != null) && (!string.IsNullOrEmpty(commandInfo.Prefix)))
@@ -844,7 +844,7 @@ namespace System.Management.Automation
         {
             Debug.Assert(cmdletInfo != null, "cmdletInfo cannot be null");
             HelpInfo result = GetFromCommandCache(cmdletInfo.ModuleName, cmdletInfo.Name, cmdletInfo.HelpCategory);
-            if (result is null)
+            if (result == null)
             {
                 // check if the command is prefixed and try retrieving help by removing the prefix
                 if ((cmdletInfo.Module != null) && (!string.IsNullOrEmpty(cmdletInfo.Prefix)))
@@ -984,7 +984,7 @@ namespace System.Management.Automation
             if (helpFile.EndsWith(".maml", StringComparison.OrdinalIgnoreCase))
                 return true;
 
-            if (helpItemsNode.Attributes is null)
+            if (helpItemsNode.Attributes == null)
                 return false;
 
             foreach (XmlNode attribute in helpItemsNode.Attributes)
@@ -1170,7 +1170,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static bool Match(HelpInfo helpInfo, HelpRequest helpRequest, CommandInfo commandInfo)
         {
-            if (helpRequest is null)
+            if (helpRequest == null)
                 return true;
 
             if (0 == (helpRequest.HelpCategory & commandInfo.HelpCategory))
@@ -1227,7 +1227,7 @@ namespace System.Management.Automation
         {
             // patterns should never be null as shell never accepts
             // empty inputs. Keeping this check as a safe measure.
-            if (patterns is null || patterns.Count == 0)
+            if (patterns == null || patterns.Count == 0)
                 return true;
 
             foreach (string pattern in patterns)
@@ -1381,7 +1381,7 @@ namespace System.Management.Automation
 
         internal static UserDefinedHelpData Load(XmlNode dataNode)
         {
-            if (dataNode is null)
+            if (dataNode == null)
                 return null;
 
             UserDefinedHelpData userDefinedHelpData = new UserDefinedHelpData();

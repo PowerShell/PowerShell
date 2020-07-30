@@ -53,7 +53,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Collection<IContentReader> GetContentReader(string[] paths, bool force, bool literalPath)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -105,7 +105,7 @@ namespace System.Management.Automation
              string[] paths,
              CmdletProviderContext context)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -117,7 +117,7 @@ namespace System.Management.Automation
 
             foreach (string path in paths)
             {
-                if (path is null)
+                if (path == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -254,7 +254,7 @@ namespace System.Management.Automation
              string path,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }
@@ -394,7 +394,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Collection<IContentWriter> GetContentWriter(string[] paths, bool force, bool literalPath)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -446,7 +446,7 @@ namespace System.Management.Automation
             string[] paths,
             CmdletProviderContext context)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -457,7 +457,7 @@ namespace System.Management.Automation
 
             foreach (string path in paths)
             {
-                if (path is null)
+                if (path == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -592,7 +592,7 @@ namespace System.Management.Automation
              string path,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }
@@ -736,7 +736,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void ClearContent(string[] paths, bool force, bool literalPath)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -783,7 +783,7 @@ namespace System.Management.Automation
               string[] paths,
               CmdletProviderContext context)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -793,7 +793,7 @@ namespace System.Management.Automation
 
             foreach (string path in paths)
             {
-                if (path is null)
+                if (path == null)
                 {
                     PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -917,7 +917,7 @@ namespace System.Management.Automation
              string path,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }

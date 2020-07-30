@@ -726,7 +726,7 @@ namespace System.Management.Automation.Remoting
         {
             add
             {
-                bool firstEntry = (InternalEvent is null);
+                bool firstEntry = (InternalEvent == null);
 
                 InternalEvent += value;
 

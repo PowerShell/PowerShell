@@ -89,11 +89,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_parameters is null)
+                if (_parameters == null)
                 {
                     lock (_syncobject)
                     {
-                        if (_parameters is null)
+                        if (_parameters == null)
                             _parameters = new List<CommandParameterCollection>();
                     }
                 }
@@ -103,7 +103,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("value");
                 }
@@ -551,11 +551,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_jobRunning is null)
+                if (_jobRunning == null)
                 {
                     lock (_syncObject)
                     {
-                        if (_jobRunning is null)
+                        if (_jobRunning == null)
                         {
                             // this assert is required so that a wait handle
                             // is not created after the object is disposed
@@ -576,11 +576,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_jobSuspendedOrAborted is null)
+                if (_jobSuspendedOrAborted == null)
                 {
                     lock (_syncObject)
                     {
-                        if (_jobSuspendedOrAborted is null)
+                        if (_jobSuspendedOrAborted == null)
                         {
                             // this assert is required so that a wait handle
                             // is not created after the object is disposed
@@ -707,7 +707,7 @@ namespace System.Management.Automation
         public void AddChildJob(Job2 childJob)
         {
             AssertNotDisposed();
-            if (childJob is null)
+            if (childJob == null)
             {
                 throw new ArgumentNullException(nameof(childJob));
             }
@@ -789,7 +789,7 @@ namespace System.Management.Automation
 
             foreach (Job2 job in this.ChildJobs)
             {
-                if (job is null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
+                if (job == null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
             }
 
             // If there is only one child job, call the synchronous method on the child to avoid use of another thread.
@@ -906,7 +906,7 @@ namespace System.Management.Automation
             s_structuredTracer.BeginContainerParentJobExecution(InstanceId);
             foreach (Job2 job in this.ChildJobs)
             {
-                if (job is null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
+                if (job == null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
             }
 
             // Count of StartJobCompleted events from children.
@@ -974,7 +974,7 @@ namespace System.Management.Automation
 
             foreach (Job2 job in this.ChildJobs)
             {
-                if (job is null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
+                if (job == null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
             }
 
             // If there is only one child job, call the synchronous method on the child to avoid use of another thread.
@@ -1072,7 +1072,7 @@ namespace System.Management.Automation
             _tracer.WriteMessage(TraceClassName, "ResumeJobAsync", Guid.Empty, this, "Entering method", null);
             foreach (Job2 job in this.ChildJobs)
             {
-                if (job is null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
+                if (job == null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
             }
 
             // Count of ResumeJobCompleted events from children.
@@ -1214,7 +1214,7 @@ namespace System.Management.Automation
 
             foreach (Job2 job in this.ChildJobs)
             {
-                if (job is null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
+                if (job == null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
             }
 
             // If there is only one child job, call the synchronous method on the child to avoid use of another thread.
@@ -1311,7 +1311,7 @@ namespace System.Management.Automation
             _tracer.WriteMessage(TraceClassName, "UnblockJobAsync", Guid.Empty, this, "Entering method", null);
             foreach (Job2 job in this.ChildJobs)
             {
-                if (job is null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
+                if (job == null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
             }
 
             // count of UnblockJobCompleted events from children.
@@ -1382,7 +1382,7 @@ namespace System.Management.Automation
 
             foreach (Job2 job in this.ChildJobs)
             {
-                if (job is null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
+                if (job == null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
             }
 
             // If there is only one child job, call the synchronous method on the child to avoid use of another thread.
@@ -1488,7 +1488,7 @@ namespace System.Management.Automation
             _tracer.WriteMessage(TraceClassName, "SuspendJobAsync", Guid.Empty, this, "Entering method", null);
             foreach (Job2 job in this.ChildJobs)
             {
-                if (job is null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
+                if (job == null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
             }
 
             // Count of SuspendJobCompleted events from children.
@@ -1558,7 +1558,7 @@ namespace System.Management.Automation
 
             foreach (Job2 job in this.ChildJobs)
             {
-                if (job is null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
+                if (job == null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
             }
 
             // If there is only one child job, call the synchronous method on the child to avoid use of another thread.
@@ -1666,7 +1666,7 @@ namespace System.Management.Automation
 
             foreach (Job2 job in this.ChildJobs)
             {
-                if (job is null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
+                if (job == null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
             }
 
             // count of StopJobCompleted events from children.
@@ -2036,7 +2036,7 @@ namespace System.Management.Automation
 
         private string ConstructLocation()
         {
-            if (ChildJobs is null || ChildJobs.Count == 0)
+            if (ChildJobs == null || ChildJobs.Count == 0)
                 return string.Empty;
             string location = ChildJobs.Select((job) => job.Location).Aggregate((s1, s2) => s1 + ',' + s2);
             return location;
@@ -2044,7 +2044,7 @@ namespace System.Management.Automation
 
         private string ConstructStatusMessage()
         {
-            if (ChildJobs is null || ChildJobs.Count == 0)
+            if (ChildJobs == null || ChildJobs.Count == 0)
                 return string.Empty;
 
             StringBuilder sb = new StringBuilder();
@@ -2091,7 +2091,7 @@ namespace System.Management.Automation
 
         private void UnregisterAllJobEvents()
         {
-            if (EventManager is null)
+            if (EventManager == null)
             {
                 _tracer.WriteMessage("No events subscribed, skipping event unregistrations");
                 return;
@@ -2185,7 +2185,7 @@ namespace System.Management.Automation
         /// <param name="context">The standard StreaminContext.</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
+            if (info == null)
                 throw new ArgumentNullException(nameof(info));
 
             base.GetObjectData(info, context);

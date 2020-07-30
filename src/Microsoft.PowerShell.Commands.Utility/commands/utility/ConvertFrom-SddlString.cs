@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
 
         private string[] ConvertAccessControlListToStrings(CommonAcl acl, AccessRightTypeNames? typeName)
         {
-            if (acl is null || acl.Count == 0)
+            if (acl == null || acl.Count == 0)
             {
                 return Array.Empty<string>();
             }

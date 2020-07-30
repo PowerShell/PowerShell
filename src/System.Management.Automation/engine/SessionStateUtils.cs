@@ -151,7 +151,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static bool CollectionContainsValue(IEnumerable collection, object value, IComparer comparer)
         {
-            if (collection is null)
+            if (collection == null)
             {
                 throw new ArgumentNullException(nameof(collection));
             }

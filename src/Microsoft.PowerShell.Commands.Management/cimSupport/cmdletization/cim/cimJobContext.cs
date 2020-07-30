@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal string PrependComputerNameToMessage(string message)
         {
             string computerName = this.Session.ComputerName;
-            if (computerName is null)
+            if (computerName == null)
             {
                 return message;
             }

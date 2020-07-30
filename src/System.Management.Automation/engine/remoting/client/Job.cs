@@ -331,7 +331,7 @@ namespace System.Management.Automation
         /// <param name="previousJobStateInfo">The previous state of the job.</param>
         public JobStateEventArgs(JobStateInfo jobStateInfo, JobStateInfo previousJobStateInfo)
         {
-            if (jobStateInfo is null)
+            if (jobStateInfo == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(jobStateInfo));
             }
@@ -462,7 +462,7 @@ namespace System.Management.Automation
         /// reuse of the Id. This is the only way to set either Id or instance Id.</remarks>
         protected Job(string command, string name, JobIdentifier token)
         {
-            if (token is null)
+            if (token == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(token), RemotingErrorIdStrings.JobIdentifierNull);
             if (token.Id > s_jobIdSeed)
             {
@@ -500,7 +500,7 @@ namespace System.Management.Automation
 
         internal static string GetCommandTextFromInvocationInfo(InvocationInfo invocationInfo)
         {
-            if (invocationInfo is null)
+            if (invocationInfo == null)
             {
                 return null;
             }
@@ -627,11 +627,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_childJobs is null)
+                if (_childJobs == null)
                 {
                     lock (syncObject)
                     {
-                        if (_childJobs is null)
+                        if (_childJobs == null)
                         {
                             _childJobs = new List<Job>();
                         }
@@ -692,7 +692,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Results");
                 }
@@ -720,7 +720,7 @@ namespace System.Management.Automation
 
         internal virtual void WriteObject(object outputObject)
         {
-            PSObject pso = (outputObject is null) ? null : PSObject.AsPSObject(outputObject);
+            PSObject pso = (outputObject == null) ? null : PSObject.AsPSObject(outputObject);
             this.Output.Add(pso);
 
             if (!SuppressOutputForwarding)
@@ -751,16 +751,16 @@ namespace System.Management.Automation
         private static Exception GetExceptionFromErrorRecord(ErrorRecord errorRecord)
         {
             RuntimeException runtimeException = errorRecord.Exception as RuntimeException;
-            if (runtimeException is null)
+            if (runtimeException == null)
                 return null;
 
             RemoteException remoteException = runtimeException as RemoteException;
-            if (remoteException is null)
+            if (remoteException == null)
                 return null;
 
             PSPropertyInfo wasThrownFromThrow =
                 remoteException.SerializedRemoteException.Properties["WasThrownFromThrowStatement"];
-            if (wasThrownFromThrow is null || !((bool)wasThrownFromThrow.Value))
+            if (wasThrownFromThrow == null || !((bool)wasThrownFromThrow.Value))
                 return null;
 
             runtimeException.WasThrownFromThrowStatement = true;
@@ -953,7 +953,7 @@ namespace System.Management.Automation
 
                         lock (resultsLock)
                         {
-                            if (closureSafeExceptionThrownOnCmdletThread is null) // stateChangedEventHandler didn't set the results?  = ok to clobber results?
+                            if (closureSafeExceptionThrownOnCmdletThread == null) // stateChangedEventHandler didn't set the results?  = ok to clobber results?
                             {
                                 closureSafeExceptionThrownOnCmdletThread = methodInvoker.ExceptionThrownOnCmdletThread;
                                 methodResult = methodInvoker.MethodResult;
@@ -1088,7 +1088,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Output");
                 }
@@ -1124,7 +1124,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Error");
                 }
@@ -1160,7 +1160,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Progress");
                 }
@@ -1193,7 +1193,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Verbose");
                 }
@@ -1229,7 +1229,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Debug");
                 }
@@ -1264,7 +1264,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Warning");
                 }
@@ -1300,7 +1300,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Information");
                 }
@@ -1393,7 +1393,7 @@ namespace System.Management.Automation
                     if (state == JobState.Running)
                     {
                         // BeginTime is set only once.
-                        if (PSBeginTime is null)
+                        if (PSBeginTime == null)
                         {
                             PSBeginTime = DateTime.Now;
                         }
@@ -1403,7 +1403,7 @@ namespace System.Management.Automation
                         alldone = true;
 
                         // EndTime is set only once.
-                        if (PSEndTime is null)
+                        if (PSEndTime == null)
                         {
                             PSEndTime = DateTime.Now;
                         }
@@ -1911,7 +1911,7 @@ namespace System.Management.Automation
             foreach (Job j in ChildJobs)
             {
                 PSRemotingChildJob child = j as PSRemotingChildJob;
-                if (child is null) continue;
+                if (child == null) continue;
                 if (string.Equals(child.Runspace.ConnectionInfo.ComputerName, computerName,
                                 StringComparison.OrdinalIgnoreCase))
                 {
@@ -1935,7 +1935,7 @@ namespace System.Management.Automation
             foreach (Job j in ChildJobs)
             {
                 PSRemotingChildJob child = j as PSRemotingChildJob;
-                if (child is null) continue;
+                if (child == null) continue;
                 if (child.Runspace.InstanceId.Equals(runspace.InstanceId))
                 {
                     returnJobList.Add(child);
@@ -1959,7 +1959,7 @@ namespace System.Management.Automation
             foreach (Job j in ChildJobs)
             {
                 PSRemotingChildJob child = j as PSRemotingChildJob;
-                if (child is null) continue;
+                if (child == null) continue;
                 if (child.Helper.Equals(helper))
                 {
                     returnJobList.Add(child);
@@ -2341,7 +2341,7 @@ namespace System.Management.Automation
             //                for (int i = 0; i < ChildJobs.Count; i++)
             //                {
             //                    PSRemotingChildJob childJob = ChildJobs[i] as PSRemotingChildJob;
-            //                    if (childJob is null) continue;
+            //                    if (childJob == null) continue;
             //                    if (childJob.ContainsErrors)
             //                    {
             //                        if (localErrors)
@@ -2992,11 +2992,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_jobDebugger is null)
+                if (_jobDebugger == null)
                 {
                     lock (this.SyncObject)
                     {
-                        if ((_jobDebugger is null) &&
+                        if ((_jobDebugger == null) &&
                             (Runspace.Debugger != null))
                         {
                             _jobDebugger = new RemotingJobDebugger(Runspace.Debugger, Runspace, this.Name);
@@ -3062,7 +3062,7 @@ namespace System.Management.Automation
                     dataObject.Properties.Add(new PSNoteProperty(RemotingConstants.RunspaceIdNoteProperty, reader.RunspaceId));
                     // PSShowComputerName is present for all the objects (from remoting)..this is to allow PSComputerName to be selected.
                     // Ex: Invoke-Command localhost,blah { gps } | select PSComputerName should work.
-                    if (dataObject.Properties[RemotingConstants.ShowComputerNameNoteProperty] is null)
+                    if (dataObject.Properties[RemotingConstants.ShowComputerNameNoteProperty] == null)
                     {
                         PSNoteProperty showComputerNameNP = new PSNoteProperty(RemotingConstants.ShowComputerNameNoteProperty, !_hideComputerName);
                         dataObject.Properties.Add(showComputerNameNP);
@@ -3371,7 +3371,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (failureException is null)
+                if (failureException == null)
                 {
                     failureException = new RuntimeException(
                         PSRemotingErrorInvariants.FormatResourceString(
@@ -3871,12 +3871,12 @@ namespace System.Management.Automation
             Runspace runspace,
             string jobName)
         {
-            if (debugger is null)
+            if (debugger == null)
             {
                 throw new PSArgumentNullException(nameof(debugger));
             }
 
-            if (runspace is null)
+            if (runspace == null)
             {
                 throw new PSArgumentNullException(nameof(runspace));
             }

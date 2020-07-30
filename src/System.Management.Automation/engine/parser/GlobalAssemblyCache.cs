@@ -162,14 +162,14 @@ namespace Microsoft.CodeAnalysis
             ProcessorArchitecture[] architectureFilter = null,
             CultureInfo preferredCulture = null)
         {
-            if (displayName is null)
+            if (displayName == null)
             {
                 throw new ArgumentNullException("displayName");
             }
 
             location = null;
             FusionAssemblyIdentity.IAssemblyName nameObject = FusionAssemblyIdentity.ToAssemblyNameObject(displayName);
-            if (nameObject is null)
+            if (nameObject == null)
             {
                 return null;
             }
@@ -178,7 +178,7 @@ namespace Microsoft.CodeAnalysis
             string cultureName = (preferredCulture != null && !preferredCulture.IsNeutralCulture) ? preferredCulture.Name : null;
 
             var bestMatch = FusionAssemblyIdentity.GetBestMatch(candidates, cultureName);
-            if (bestMatch is null)
+            if (bestMatch == null)
             {
                 return null;
             }

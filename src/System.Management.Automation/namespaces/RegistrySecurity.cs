@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            if (securityDescriptor is null)
+            if (securityDescriptor == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(securityDescriptor));
             }
@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 sd = securityDescriptor as TransactedRegistrySecurity;
 
-                if (sd is null)
+                if (sd == null)
                 {
                     throw PSTraceSource.NewArgumentException(nameof(securityDescriptor));
                 }
@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 sd = securityDescriptor as RegistrySecurity;
 
-                if (sd is null)
+                if (sd == null)
                 {
                     throw PSTraceSource.NewArgumentException(nameof(securityDescriptor));
                 }

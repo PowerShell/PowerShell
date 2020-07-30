@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
                 if (Platform.IsWindows)
                 {
                     // only generate the windows user agent once
-                    if (s_windowsUserAgent is null)
+                    if (s_windowsUserAgent == null)
                     {
                         // find the version in the windows operating system description
                         Regex pattern = new Regex(@"\d+(\.\d+)+");

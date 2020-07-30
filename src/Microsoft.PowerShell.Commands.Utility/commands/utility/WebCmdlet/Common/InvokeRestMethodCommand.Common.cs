@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord error;
                 obj = JsonObject.ConvertFromJson(json, out error);
 
-                if (obj is null)
+                if (obj == null)
                 {
                     // This ensures that a null returned by ConvertFromJson() is the actual JSON null literal.
                     // if not, the ArgumentException will be caught.
@@ -380,7 +380,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="response"></param>
         internal override void ProcessResponse(HttpResponseMessage response)
         {
-            if (response is null) { throw new ArgumentNullException(nameof(response)); }
+            if (response == null) { throw new ArgumentNullException(nameof(response)); }
 
             var baseResponseStream = StreamHelper.GetResponseStream(response);
 
@@ -480,7 +480,7 @@ namespace Microsoft.PowerShell.Commands
 
         private RestReturnType CheckReturnType(HttpResponseMessage response)
         {
-            if (response is null) { throw new ArgumentNullException(nameof(response)); }
+            if (response == null) { throw new ArgumentNullException(nameof(response)); }
 
             RestReturnType rt = RestReturnType.Detect;
             string contentType = ContentHelper.GetContentType(response);

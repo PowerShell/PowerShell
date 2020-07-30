@@ -77,13 +77,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (Property != null)
             {
-                if (InputObject is null)
+                if (InputObject == null)
                 {
                     WriteError(NewError("MissingInputObjectParameter", "MissingInputObjectParameter", null));
                 }
                 else
                 {
-                    if (_listModifier is null)
+                    if (_listModifier == null)
                     {
                         _listModifier = CreatePSListModifier();
                     }
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (Property is null)
+            if (Property == null)
             {
                 if (InputObject != null)
                 {

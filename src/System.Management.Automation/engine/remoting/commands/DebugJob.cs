@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             Runspace runspace = LocalRunspace.DefaultRunspace;
-            if (runspace is null || runspace.Debugger is null)
+            if (runspace == null || runspace.Debugger == null)
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
                     );
             }
 
-            if (this.Host is null || this.Host.UI is null)
+            if (this.Host == null || this.Host.UI == null)
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
@@ -417,7 +417,7 @@ namespace Microsoft.PowerShell.Commands
             // Search jobs in job manager.
             Job job2 = JobManager.GetJobById(id, this, false, false, false);
 
-            if ((jobs1.Count == 0) && (job2 is null))
+            if ((jobs1.Count == 0) && (job2 == null))
             {
                 ThrowTerminatingError(
                     new ErrorRecord(

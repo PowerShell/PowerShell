@@ -19,7 +19,7 @@ namespace System.Management.Automation
         /// </exception>
         internal ParameterSetSpecificMetadata(ParameterAttribute attribute)
         {
-            if (attribute is null)
+            if (attribute == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(attribute));
             }

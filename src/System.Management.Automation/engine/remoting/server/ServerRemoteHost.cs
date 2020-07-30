@@ -317,7 +317,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="runspace">RemoteRunspace.</param>
         public override void PushRunspace(Runspace runspace)
         {
-            if (_debugger is null)
+            if (_debugger == null)
             {
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.ServerDriverRemoteHostNoDebuggerToPush);
             }
@@ -328,7 +328,7 @@ namespace System.Management.Automation.Remoting
             }
 
             RemoteRunspace remoteRunspace = runspace as RemoteRunspace;
-            if (remoteRunspace is null)
+            if (remoteRunspace == null)
             {
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.ServerDriverRemoteHostNotRemoteRunspace);
             }
@@ -411,7 +411,7 @@ namespace System.Management.Automation.Remoting
 
         private void AddPSEditForRunspace(RemoteRunspace remoteRunspace)
         {
-            if (remoteRunspace.Events is null) { return; }
+            if (remoteRunspace.Events == null) { return; }
 
             // Add event handler.
             remoteRunspace.Events.ReceivedEvents.PSEventReceived += HandleRemoteSessionForwardedEvent;
@@ -431,7 +431,7 @@ namespace System.Management.Automation.Remoting
 
         private void RemovePSEditFromRunspace(RemoteRunspace remoteRunspace)
         {
-            if (remoteRunspace.Events is null) { return; }
+            if (remoteRunspace.Events == null) { return; }
 
             // It is possible for the popped runspace to be in a bad state after an error.
             if ((remoteRunspace.RunspaceStateInfo.State != RunspaceState.Opened) || (remoteRunspace.RunspaceAvailability != RunspaceAvailability.Available))
@@ -457,7 +457,7 @@ namespace System.Management.Automation.Remoting
 
         private void HandleRemoteSessionForwardedEvent(object sender, PSEventArgs args)
         {
-            if ((Runspace is null) || (Runspace.Events is null)) { return; }
+            if ((Runspace == null) || (Runspace.Events == null)) { return; }
 
             // Forward events from nested pushed session to parent session.
             try

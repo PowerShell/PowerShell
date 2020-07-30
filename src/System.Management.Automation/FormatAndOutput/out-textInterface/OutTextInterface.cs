@@ -43,13 +43,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (_lineOutput is null)
+            if (_lineOutput == null)
             {
                 ProcessNullLineOutput();
             }
 
             LineOutput lo = _lineOutput as LineOutput;
-            if (lo is null)
+            if (lo == null)
             {
                 ProcessWrongTypeLineOutput(_lineOutput);
             }

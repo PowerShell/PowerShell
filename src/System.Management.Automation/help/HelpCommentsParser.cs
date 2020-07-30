@@ -154,7 +154,7 @@ namespace System.Management.Automation
                 command_parameter.AppendChild(maml_description).AppendChild(maml_para).AppendChild(maml_para_text);
             }
 
-            if (type is null)
+            if (type == null)
                 type = typeof(object);
 
             var elementType = type.IsArray ? type.GetElementType() : type;
@@ -274,7 +274,7 @@ namespace System.Management.Automation
 
                 CompiledCommandParameter parameter = mergedParameter.Parameter;
                 parameter.ParameterSetData.TryGetValue(ParameterAttribute.AllParameterSets, out parameterSetData);
-                while (parameterSetData is null && i < 32)
+                while (parameterSetData == null && i < 32)
                 {
                     parameterSetData = parameter.GetParameterSetData(1u << i++);
                 }
@@ -304,7 +304,7 @@ namespace System.Management.Automation
 
                 if (string.IsNullOrEmpty(defaultValueStr))
                 {
-                    if (defaultValue is null)
+                    if (defaultValue == null)
                     {
                         RuntimeDefinedParameter rdp;
                         if (_scriptBlock.RuntimeDefinedParameters.TryGetValue(parameterName, out rdp))
@@ -637,7 +637,7 @@ namespace System.Management.Automation
 
         internal string GetHelpFile(CommandInfo commandInfo)
         {
-            if (_sections.MamlHelpFile is null)
+            if (_sections.MamlHelpFile == null)
             {
                 return null;
             }
@@ -671,7 +671,7 @@ namespace System.Management.Automation
             SessionState sessionState = scriptCommandInfo.ScriptBlock.SessionState;
             object runspaceInfoAsObject = sessionState.PSVariable.GetValue(_sections.RemoteHelpRunspace);
             PSSession runspaceInfo;
-            if (runspaceInfoAsObject is null ||
+            if (runspaceInfoAsObject == null ||
                 !LanguagePrimitives.TryConvertTo(runspaceInfoAsObject, out runspaceInfo))
             {
                 string errorMessage = HelpErrors.RemoteRunspaceNotAvailable;
@@ -695,7 +695,7 @@ namespace System.Management.Automation
         /// <returns>True if any special comments are found, false otherwise.</returns>
         internal bool AnalyzeCommentBlock(List<Token> comments)
         {
-            if (comments is null || comments.Count == 0)
+            if (comments == null || comments.Count == 0)
             {
                 return false;
             }
@@ -852,7 +852,7 @@ namespace System.Management.Automation
 
             // If only .ExternalHelp is defined and the help file is not found, then we
             // use the metadata driven help
-            if (comments.Count == 1 && helpCommentsParser.isExternalHelpSet && helpFile is null)
+            if (comments.Count == 1 && helpCommentsParser.isExternalHelpSet && helpFile == null)
             {
                 return null;
             }
@@ -869,7 +869,7 @@ namespace System.Management.Automation
                 if (remoteHelpInfo != null)
                 {
                     // Add HelpUri if necessary
-                    if (remoteHelpInfo.GetUriForOnlineHelp() is null)
+                    if (remoteHelpInfo.GetUriForOnlineHelp() == null)
                     {
                         DefaultCommandHelpObjectBuilder.AddRelatedLinksProperties(remoteHelpInfo.FullHelp,
                                                                                   commandInfo.CommandMetadata.HelpUri);
@@ -921,7 +921,7 @@ namespace System.Management.Automation
                 }
 
                 // Add HelpUri if necessary
-                if (localHelpInfo.GetUriForOnlineHelp() is null)
+                if (localHelpInfo.GetUriForOnlineHelp() == null)
                 {
                     DefaultCommandHelpObjectBuilder.AddRelatedLinksProperties(localHelpInfo.FullHelp, commandInfo.CommandMetadata.HelpUri);
                 }
@@ -937,7 +937,7 @@ namespace System.Management.Automation
         /// <returns>True if the block is our special comment block for help, false otherwise.</returns>
         internal static bool IsCommentHelpText(List<Token> commentBlock)
         {
-            if ((commentBlock is null) || (commentBlock.Count == 0))
+            if ((commentBlock == null) || (commentBlock.Count == 0))
                 return false;
 
             HelpCommentsParser generator = new HelpCommentsParser();
@@ -1045,7 +1045,7 @@ namespace System.Management.Automation
         {
             var result = new List<string>();
             var parameters = ipmp.Parameters;
-            if (parameters is null || parameters.Count == 0)
+            if (parameters == null || parameters.Count == 0)
             {
                 return result;
             }
@@ -1111,7 +1111,7 @@ namespace System.Management.Automation
             Language.Token[] tokens = null;
             scriptBlockTokenCache.TryGetValue(rootAst, out tokens);
 
-            if (tokens is null)
+            if (tokens == null)
             {
                 ParseError[] errors;
                 // storing all comment tokens
@@ -1129,7 +1129,7 @@ namespace System.Management.Automation
             {
                 // The first comment block preceding the function or configuration keyword is a candidate help comment block.
                 var funcOrConfigTokenIndex =
-                    savedStartIndex = FirstTokenInExtent(tokens, configAst is null ? ast.Extent : configAst.Extent);
+                    savedStartIndex = FirstTokenInExtent(tokens, configAst == null ? ast.Extent : configAst.Extent);
 
                 commentBlock = GetPrecedingCommentBlock(tokens, funcOrConfigTokenIndex, CommentBlockProximity);
 
@@ -1190,7 +1190,7 @@ namespace System.Management.Automation
                 {
                     // One more check - make sure the comment doesn't belong to the first function in the script.
                     var endBlock = ((ScriptBlockAst)ast).EndBlock;
-                    if (endBlock is null || !endBlock.Unnamed)
+                    if (endBlock == null || !endBlock.Unnamed)
                     {
                         return Tuple.Create(commentBlock, GetParameterComments(tokens, ipmp, savedStartIndex));
                     }

@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell.Commands
 
                 newHelpInfo = _helpSystem.GetHelpInfo(_commandType, uri, module.ModuleName, module.ModuleGuid, culture);
 
-                if (newHelpInfo is null)
+                if (newHelpInfo == null)
                 {
                     throw new UpdatableHelpSystemException("UnableToRetrieveHelpInfoXml",
                         StringUtil.Format(HelpDisplayStrings.UnableToRetrieveHelpInfoXml, culture), ErrorCategory.ResourceUnavailable,

@@ -222,7 +222,7 @@ namespace System.Management.Automation
 
             var matchedFilesToRemove = FilterToLatestModuleVersion(files);
 
-            if (files is null)
+            if (files == null)
                 yield break;
 
             foreach (string file in files)

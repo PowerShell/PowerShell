@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="response"></param>
         internal override void ProcessResponse(HttpResponseMessage response)
         {
-            if (response is null) { throw new ArgumentNullException(nameof(response)); }
+            if (response == null) { throw new ArgumentNullException(nameof(response)); }
 
             Stream responseStream = StreamHelper.GetResponseStream(response);
             if (ShouldWriteToPipeline)

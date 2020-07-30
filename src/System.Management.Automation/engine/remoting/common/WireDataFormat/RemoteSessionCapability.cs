@@ -99,7 +99,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal static byte[] GetCurrentTimeZoneInByteFormat()
         {
-            if (_timeZoneInByteFormat is null)
+            if (_timeZoneInByteFormat == null)
             {
                 Exception e = null;
                 try
@@ -231,7 +231,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal static HostDefaultData Create(PSHostRawUserInterface hostRawUI)
         {
-            if (hostRawUI is null)
+            if (hostRawUI == null)
             {
                 return null;
             }
@@ -432,7 +432,7 @@ namespace System.Management.Automation.Remoting
             isHostRawUINull = true;
 
             // Unwrap the host: remove outer InternalHost object.
-            if (host is null)
+            if (host == null)
             {
                 // If host is null then the bools are correct. Nothing further to do here.
                 return;
@@ -447,12 +447,12 @@ namespace System.Management.Automation.Remoting
             isHostNull = false;
 
             // Verify that the UI is not null.
-            if (host.UI is null) { return; }
+            if (host.UI == null) { return; }
 
             isHostUINull = false;
 
             // Verify that the raw UI is not null.
-            if (host.UI.RawUI is null) { return; }
+            if (host.UI.RawUI == null) { return; }
 
             isHostRawUINull = false;
         }

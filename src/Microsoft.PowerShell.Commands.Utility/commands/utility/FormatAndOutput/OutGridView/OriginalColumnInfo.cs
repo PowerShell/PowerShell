@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 PSPropertyInfo propertyInfo = liveObject.Properties[_liveObjectPropertyName];
-                if (propertyInfo is null)
+                if (propertyInfo == null)
                 {
                     return null;
                 }

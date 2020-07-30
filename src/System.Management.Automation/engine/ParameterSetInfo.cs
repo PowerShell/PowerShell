@@ -55,7 +55,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
-            if (parameterMetadata is null)
+            if (parameterMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(parameterMetadata));
             }
@@ -168,7 +168,7 @@ namespace System.Management.Automation
 
             foreach (CommandParameterInfo parameter in sortedPositionalParameters)
             {
-                if (parameter is null)
+                if (parameter == null)
                 {
                     continue;
                 }
@@ -179,7 +179,7 @@ namespace System.Management.Automation
             // Now convert the named mandatory parameters into a string
             foreach (CommandParameterInfo parameter in namedMandatoryParameters)
             {
-                if (parameter is null)
+                if (parameter == null)
                 {
                     continue;
                 }
@@ -192,7 +192,7 @@ namespace System.Management.Automation
             // Now convert the named parameters into a string
             foreach (CommandParameterInfo parameter in namedParameters)
             {
-                if (parameter is null)
+                if (parameter == null)
                 {
                     continue;
                 }

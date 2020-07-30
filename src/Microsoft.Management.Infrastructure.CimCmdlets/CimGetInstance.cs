@@ -304,7 +304,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             if (cmd != null)
             {
                 StringBuilder propertyList = new StringBuilder();
-                if (cmd.SelectProperties is null)
+                if (cmd.SelectProperties == null)
                 {
                     propertyList.Append("*");
                 }
@@ -321,7 +321,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     }
                 }
 
-                return (cmd.Filter is null) ?
+                return (cmd.Filter == null) ?
                     string.Format(CultureInfo.CurrentUICulture, queryWithoutWhere, propertyList, cmd.ClassName) :
                     string.Format(CultureInfo.CurrentUICulture, queryWithWhere, propertyList, cmd.ClassName, cmd.Filter);
             }

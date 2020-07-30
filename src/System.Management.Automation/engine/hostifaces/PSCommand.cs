@@ -87,7 +87,7 @@ namespace System.Management.Automation
         /// </exception>
         public PSCommand AddCommand(string command)
         {
-            if (command is null)
+            if (command == null)
             {
                 throw PSTraceSource.NewArgumentNullException("cmdlet");
             }
@@ -131,7 +131,7 @@ namespace System.Management.Automation
         /// </exception>
         public PSCommand AddCommand(string cmdlet, bool useLocalScope)
         {
-            if (cmdlet is null)
+            if (cmdlet == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(cmdlet));
             }
@@ -173,7 +173,7 @@ namespace System.Management.Automation
         /// </exception>
         public PSCommand AddScript(string script)
         {
-            if (script is null)
+            if (script == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(script));
             }
@@ -218,7 +218,7 @@ namespace System.Management.Automation
         /// </exception>
         public PSCommand AddScript(string script, bool useLocalScope)
         {
-            if (script is null)
+            if (script == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(script));
             }
@@ -256,7 +256,7 @@ namespace System.Management.Automation
         /// </exception>
         public PSCommand AddCommand(Command command)
         {
-            if (command is null)
+            if (command == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
@@ -302,7 +302,7 @@ namespace System.Management.Automation
         /// </exception>
         public PSCommand AddParameter(string parameterName, object value)
         {
-            if (_currentCommand is null)
+            if (_currentCommand == null)
             {
                 throw PSTraceSource.NewInvalidOperationException(PSCommandStrings.ParameterRequiresCommand,
                                                                  new object[] { "PSCommand" });
@@ -344,7 +344,7 @@ namespace System.Management.Automation
         /// </exception>
         public PSCommand AddParameter(string parameterName)
         {
-            if (_currentCommand is null)
+            if (_currentCommand == null)
             {
                 throw PSTraceSource.NewInvalidOperationException(PSCommandStrings.ParameterRequiresCommand,
                                                                  new object[] { "PSCommand" });
@@ -386,7 +386,7 @@ namespace System.Management.Automation
         /// </remarks>
         public PSCommand AddArgument(object value)
         {
-            if (_currentCommand is null)
+            if (_currentCommand == null)
             {
                 throw PSTraceSource.NewInvalidOperationException(PSCommandStrings.ParameterRequiresCommand,
                                                                  new object[] { "PSCommand" });

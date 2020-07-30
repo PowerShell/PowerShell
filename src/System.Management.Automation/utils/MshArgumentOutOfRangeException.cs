@@ -84,7 +84,7 @@ namespace System.Management.Automation
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
+            if (info == null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -119,7 +119,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord is null)
+                if (_errorRecord == null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),

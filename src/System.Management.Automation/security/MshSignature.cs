@@ -376,9 +376,9 @@ namespace System.Management.Automation
                     break;
             }
 
-            if (message is null)
+            if (message == null)
             {
-                if (arg is null)
+                if (arg == null)
                 {
                     message = resourceString;
                 }

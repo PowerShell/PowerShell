@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
                 // Get all remote runspaces to disconnect.
                 if (ParameterSetName == DisconnectPSSessionCommand.SessionParameterSet)
                 {
-                    if (Session is null || Session.Length == 0)
+                    if (Session == null || Session.Length == 0)
                     {
                         return;
                     }

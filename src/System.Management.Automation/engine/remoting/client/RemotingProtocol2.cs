@@ -239,7 +239,7 @@ namespace System.Management.Automation.Internal
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.EndpointDoesNotSupportDisconnect);
             }
 
-            if (RemoteSession is null)
+            if (RemoteSession == null)
             {
                 throw new ObjectDisposedException("ClientRunspacePoolDataStructureHandler");
             }
@@ -518,7 +518,7 @@ namespace System.Management.Automation.Internal
             {
                 // use the first reason which caused the error
                 Exception reason = _closingReason;
-                if (reason is null)
+                if (reason == null)
                 {
                     reason = e.SessionStateInfo.Reason;
                     _closingReason = reason;
@@ -542,7 +542,7 @@ namespace System.Management.Automation.Internal
             {
                 // use the first reason which caused the error
                 Exception reason = _closingReason;
-                if (reason is null)
+                if (reason == null)
                 {
                     reason = e.SessionStateInfo.Reason;
                     _closingReason = reason;
@@ -726,7 +726,7 @@ namespace System.Management.Automation.Internal
 
                     // Create and fill list of active transportmanager objects to be disconnected.
                     // Add ready-for-disconnect callback handler to DSHandler transportmanager objects.
-                    Dbg.Assert(_preparingForDisconnectList is null, "Cannot prepare for disconnect while disconnect is pending.");
+                    Dbg.Assert(_preparingForDisconnectList == null, "Cannot prepare for disconnect while disconnect is pending.");
                     _preparingForDisconnectList = new List<BaseClientCommandTransportManager>();
                     foreach (ClientPowerShellDataStructureHandler dsHandler in _associatedPowerShellDSHandlers.Values)
                     {
@@ -785,7 +785,7 @@ namespace System.Management.Automation.Internal
         /// <param name="args"></param>
         private void HandleReadyForDisconnect(object sender, EventArgs args)
         {
-            if (sender is null)
+            if (sender == null)
             {
                 return;
             }
@@ -795,7 +795,7 @@ namespace System.Management.Automation.Internal
             lock (_associationSyncObject)
             {
                 // Ignore extra event calls after disconnect is started.
-                if (_preparingForDisconnectList is null)
+                if (_preparingForDisconnectList == null)
                 {
                     return;
                 }

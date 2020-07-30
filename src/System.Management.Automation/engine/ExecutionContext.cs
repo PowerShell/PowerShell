@@ -108,7 +108,7 @@ namespace System.Management.Automation
         // Helper for generated code to handle running w/ no execution context
         internal static bool IsStrictVersion(ExecutionContext context, int majorVersion)
         {
-            if (context is null)
+            if (context == null)
             {
                 context = LocalPipeline.GetExecutionContextFromTLS();
             }
@@ -210,7 +210,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            Diagnostics.Assert(AppDomainForModuleAnalysis is null, "Invalid module analysis app domain state");
+            Diagnostics.Assert(AppDomainForModuleAnalysis == null, "Invalid module analysis app domain state");
             _responsibilityForModuleAnalysisAppDomainOwned = true;
             return true;
         }
@@ -249,7 +249,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_providerNames is null)
+                if (_providerNames == null)
                 {
                     _providerNames = new SingleShellProviderNames();
                 }
@@ -272,7 +272,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_shellId is null)
+                if (_shellId == null)
                 {
                     // Use the ShellID from PSAuthorizationManager before everything else because that's what's used
                     // to check execution policy...
@@ -454,9 +454,9 @@ namespace System.Management.Automation
         /// </remarks>
         internal static void MarkObjectAsUntrustedForVariableAssignment(PSVariable variable, SessionStateScope scope, SessionStateInternal sessionState)
         {
-            if (scope.Parent is null ||  // If it's the global scope, OR
+            if (scope.Parent == null ||  // If it's the global scope, OR
                 (sessionState.Module != null &&  // it's running in a module AND
-                 scope.ScriptScope == scope && scope.Parent.Parent is null)) // it's the module's script scope (scope.Parent is global scope and scope.ScriptScope points to itself)
+                 scope.ScriptScope == scope && scope.Parent.Parent == null)) // it's the module's script scope (scope.Parent is global scope and scope.ScriptScope points to itself)
             {
                 // We are setting value for either a 'Global:' variable, or a 'Script:' variable within a module in 'ConstrainedLanguage' mode.
                 // Global variable may be referenced within trusted script block (scriptBlock.LanguageMode == 'FullLanguage'), and users could
@@ -645,7 +645,7 @@ namespace System.Management.Automation
             CmdletProviderContext context = null;
             SessionStateScope scope = null;
             object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out context, out scope);
-            if (val is null)
+            if (val == null)
             {
                 defaultUsed = true;
                 return defaultPref;
@@ -875,7 +875,7 @@ namespace System.Management.Automation
         internal void AppendDollarError(object obj)
         {
             ErrorRecord objAsErrorRecord = obj as ErrorRecord;
-            if (objAsErrorRecord is null && !(obj is Exception))
+            if (objAsErrorRecord == null && !(obj is Exception))
             {
                 Diagnostics.Assert(false, "Object to append was neither an ErrorRecord nor an Exception in ExecutionContext.AppendDollarError");
                 return;
@@ -883,7 +883,7 @@ namespace System.Management.Automation
 
             object old = this.DollarErrorVariable;
             ArrayList arraylist = old as ArrayList;
-            if (arraylist is null)
+            if (arraylist == null)
             {
                 Diagnostics.Assert(false, "$error should be a global constant ArrayList");
                 return;
@@ -961,10 +961,10 @@ namespace System.Management.Automation
         /// <param name="pp"></param>
         internal void PushPipelineProcessor(PipelineProcessor pp)
         {
-            if (_currentRunspace is null)
+            if (_currentRunspace == null)
                 return;
             LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_currentRunspace).GetCurrentlyRunningPipeline();
-            if (lpl is null)
+            if (lpl == null)
                 return;
             lpl.Stopper.Push(pp);
         }
@@ -975,10 +975,10 @@ namespace System.Management.Automation
         /// </summary>
         internal void PopPipelineProcessor(bool fromSteppablePipeline)
         {
-            if (_currentRunspace is null)
+            if (_currentRunspace == null)
                 return;
             LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_currentRunspace).GetCurrentlyRunningPipeline();
-            if (lpl is null)
+            if (lpl == null)
                 return;
             lpl.Stopper.Pop(fromSteppablePipeline);
         }
@@ -991,10 +991,10 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_currentRunspace is null)
+                if (_currentRunspace == null)
                     return false;
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_currentRunspace).GetCurrentlyRunningPipeline();
-                if (lpl is null)
+                if (lpl == null)
                     return false;
                 return lpl.IsStopping;
             }
@@ -1230,7 +1230,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_typeTable is null)
+                if (_typeTable == null)
                 {
                     _typeTable = new TypeTable();
                     _typeTableWeakReference = new WeakReference<TypeTable>(_typeTable);
@@ -1253,7 +1253,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_typeTable is null)
+                if (_typeTable == null)
                 {
                     var unused = TypeTable;
                 }
@@ -1272,7 +1272,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_formatDBManager is null)
+                if (_formatDBManager == null)
                 {
                     // If no Formatter database has been created, then
                     // create and initialize an empty one.
@@ -1315,7 +1315,7 @@ namespace System.Management.Automation
         {
             Assembly loadedAssembly = LoadAssembly(name, filename, out error);
 
-            if (loadedAssembly is null)
+            if (loadedAssembly == null)
                 return null;
 
             if (AssemblyCache.ContainsKey(loadedAssembly.FullName))
@@ -1446,9 +1446,9 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (host is null) return;
+                    if (host == null) return;
                     PSHostUserInterface ui = host.UI;
-                    if (ui is null) return;
+                    if (ui == null) return;
                     ui.WriteErrorLine(
                         StringUtil.Format(resourceString, arguments));
                 }
@@ -1476,9 +1476,9 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (host is null) return;
+                    if (host == null) return;
                     PSHostUserInterface ui = host.UI;
-                    if (ui is null) return;
+                    if (ui == null) return;
                     ui.WriteErrorLine(error);
                 }
             }
@@ -1511,9 +1511,9 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (host is null) return;
+                    if (host == null) return;
                     PSHostUserInterface ui = host.UI;
-                    if (ui is null) return;
+                    if (ui == null) return;
                     ui.WriteErrorLine(e.Message);
                 }
             }
@@ -1539,9 +1539,9 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (host is null) return;
+                    if (host == null) return;
                     PSHostUserInterface ui = host.UI;
-                    if (ui is null) return;
+                    if (ui == null) return;
                     ui.WriteErrorLine(errorRecord.ToString());
                 }
             }
@@ -1626,7 +1626,7 @@ namespace System.Management.Automation
             // Initialize the fixed toplevel session state and the current session state
             TopLevelSessionState = EngineSessionState = new SessionStateInternal(this);
 
-            if (AuthorizationManager is null)
+            if (AuthorizationManager == null)
             {
                 // if authorizationmanager==null, this means the configuration
                 // explicitly asked for dummy authorization manager.

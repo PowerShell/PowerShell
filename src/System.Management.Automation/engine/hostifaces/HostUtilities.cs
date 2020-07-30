@@ -310,7 +310,7 @@ namespace System.Management.Automation
         internal static List<string> GetSuggestion(Runspace runspace)
         {
             LocalRunspace localRunspace = runspace as LocalRunspace;
-            if (localRunspace is null) { return new List<string>(); }
+            if (localRunspace == null) { return new List<string>(); }
 
             // Get the last value of $?
             bool questionMarkVariableValue = localRunspace.ExecutionContext.QuestionMarkVariableValue;
@@ -334,7 +334,7 @@ namespace System.Management.Automation
                 ErrorRecord lastErrorRecord = null;
 
                 // The error was an actual ErrorRecord
-                if (lastError is null)
+                if (lastError == null)
                 {
                     lastErrorRecord = errorList[0] as ErrorRecord;
                 }
@@ -413,7 +413,7 @@ namespace System.Management.Automation
                     object result = null;
 
                     ScriptBlock evaluator = suggestion["Rule"] as ScriptBlock;
-                    if (evaluator is null)
+                    if (evaluator == null)
                     {
                         suggestion["Enabled"] = false;
 
@@ -798,12 +798,12 @@ namespace System.Management.Automation
         /// <returns>Collection of command output result objects.</returns>
         public static Collection<PSObject> InvokeOnRunspace(PSCommand command, Runspace runspace)
         {
-            if (command is null)
+            if (command == null)
             {
                 throw new PSArgumentNullException(nameof(command));
             }
 
-            if (runspace is null)
+            if (runspace == null)
             {
                 throw new PSArgumentNullException(nameof(runspace));
             }
@@ -823,7 +823,7 @@ namespace System.Management.Automation
             PowerShell ps = PowerShell.Create();
             ps.Runspace = runspace;
             ps.IsRunspaceOwner = false;
-            if (runspace.ConnectionInfo is null)
+            if (runspace.ConnectionInfo == null)
             {
                 // Local runspace.  Make a nested PowerShell object as needed.
                 ps.SetIsNested(runspace.GetCurrentlyRunningPipeline() != null);

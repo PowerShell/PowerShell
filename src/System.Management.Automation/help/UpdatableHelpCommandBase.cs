@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value is null) return;
+                if (value == null) return;
                 _language = new string[value.Length];
                 for (int index = 0; index < value.Length; index++)
                 {
@@ -443,7 +443,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="modules">Module objects given by the user.</param>
         internal void Process(IEnumerable<PSModuleInfo> modules)
         {
-            if (modules is null || !modules.Any()) { return; }
+            if (modules == null || !modules.Any()) { return; }
 
             var helpModules = new Dictionary<Tuple<string, Version>, UpdatableHelpModuleInfo>();
 
@@ -583,7 +583,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // If -Language is not specified, we only install
                 // one culture from the fallback chain
-                if (_language is null && installed)
+                if (_language == null && installed)
                 {
                     break;
                 }
@@ -644,7 +644,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Debug.Assert(module != null);
 
-            if (newHelpInfo is null)
+            if (newHelpInfo == null)
             {
                 throw new UpdatableHelpSystemException("UnableToRetrieveHelpInfoXml",
                     StringUtil.Format(HelpDisplayStrings.UnableToRetrieveHelpInfoXml, culture.Name), ErrorCategory.ResourceUnavailable,
@@ -806,7 +806,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path">Path to validate.</param>
         internal void ValidatePathProvider(PathInfo path)
         {
-            if (path.Provider is null || path.Provider.Name != FileSystemProvider.ProviderName)
+            if (path.Provider == null || path.Provider.Name != FileSystemProvider.ProviderName)
             {
                 throw new PSArgumentException(StringUtil.Format(HelpDisplayStrings.ProviderIsNotFileSystem,
                     path.Path));

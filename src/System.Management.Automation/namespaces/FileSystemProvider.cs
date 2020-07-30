@@ -512,7 +512,7 @@ namespace Microsoft.PowerShell.Commands
         protected override PSDriveInfo NewDrive(PSDriveInfo drive)
         {
             // verify parameters
-            if (drive is null)
+            if (drive == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
@@ -1909,7 +1909,7 @@ namespace Microsoft.PowerShell.Commands
                                 //  b) the directory pointed to by the symlink has not already been visited,
                                 //     preventing symlink loops.
                                 //  c) it is not a reparse point with a target (not OneDrive or an AppX link).
-                                if (tracker is null)
+                                if (tracker == null)
                                 {
                                     if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(recursiveDirectory))
                                     {
@@ -2971,7 +2971,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
 
                 FileSystemInfo fsinfo = GetFileSystemInfo(path, out bool iscontainer);
-                if (fsinfo is null)
+                if (fsinfo == null)
                 {
                     string error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
                     Exception e = new IOException(error);
@@ -3638,7 +3638,7 @@ namespace Microsoft.PowerShell.Commands
             _excludeMatcher = SessionStateUtilities.CreateWildcardsFromStrings(Exclude, WildcardOptions.IgnoreCase);
 
             // if the source and destination path are same (for a local copy) then flag it as error.
-            if ((toSession is null) && (fromSession is null) && InternalSymbolicLinkLinkCodeMethods.IsSameFileSystemItem(path, destinationPath))
+            if ((toSession == null) && (fromSession == null) && InternalSymbolicLinkLinkCodeMethods.IsSameFileSystemItem(path, destinationPath))
             {
                 string error = StringUtil.Format(FileSystemProviderStrings.CopyError, path);
                 Exception e = new IOException(error);
@@ -3687,7 +3687,7 @@ namespace Microsoft.PowerShell.Commands
                     ps.AddParameter("getPathItems", path);
 
                     Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
-                    if (op is null)
+                    if (op == null)
                     {
                         Exception e = new IOException(string.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemRemotelyFailedToReadFile, path));
                         WriteError(new ErrorRecord(e, "CopyItemRemotelyFailedToReadFile", ErrorCategory.WriteError, path));
@@ -3799,7 +3799,7 @@ namespace Microsoft.PowerShell.Commands
             // If the destination doesn't exist we will just try to copy to that new
             // path.
 
-            if (ps is null)
+            if (ps == null)
             {
                 if (IsItemContainer(destination))
                 {
@@ -3825,7 +3825,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Create the new directory
                 // CreateDirectory does the WriteItemObject for the new DirectoryInfo
-                if (ps is null)
+                if (ps == null)
                 {
                     CreateDirectory(destination, true);
                 }
@@ -3842,7 +3842,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     destination = CreateDirectoryOnRemoteSession(destination, force, ps);
-                    if (destination is null)
+                    if (destination == null)
                     {
                         return;
                     }
@@ -3935,7 +3935,7 @@ namespace Microsoft.PowerShell.Commands
 
             // If the destination is a container, add the file name
             // to the destination path.
-            if (ps is null)
+            if (ps == null)
             {
                 if (IsItemContainer(destinationPath))
                 {
@@ -3971,7 +3971,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        if (ps is null)
+                        if (ps == null)
                         {
                             // Now copy the file
                             // We assume that if we get called we want to make
@@ -3992,7 +3992,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             try
                             {
-                                if (ps is null)
+                                if (ps == null)
                                 {
                                     // If the destination exists and force is specified,
                                     // mask of the readonly and hidden attributes and
@@ -4082,7 +4082,7 @@ namespace Microsoft.PowerShell.Commands
                     ps.AddParameter("getPathDir", sourceDirectoryFullName);
 
                     Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
-                    if (op is null)
+                    if (op == null)
                     {
                         Exception e = new IOException(string.Format(
                                                       CultureInfo.InvariantCulture,
@@ -4180,7 +4180,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void InitializeFunctionPSCopyFileFromRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps is null) || !ValidRemoteSessionForScripting(ps.Runspace))
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace))
             {
                 return;
             }
@@ -4191,7 +4191,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void RemoveFunctionsPSCopyFileFromRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps is null) || !ValidRemoteSessionForScripting(ps.Runspace))
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace))
             {
                 return;
             }
@@ -4400,7 +4400,7 @@ namespace Microsoft.PowerShell.Commands
                     Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
 
                     // Check if there was an exception when reading the remote file.
-                    if (op is null)
+                    if (op == null)
                     {
                         errorWhileCopyRemoteFile = true;
                         Exception e = new IOException(string.Format(CultureInfo.InvariantCulture,
@@ -4497,7 +4497,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void InitializeFunctionsPSCopyFileToRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps is null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
 
             ps.AddScript(CopyFileRemoteUtils.AllCopyToRemoteScripts);
             SafeInvokeCommand.Invoke(ps, this, null, false);
@@ -4505,7 +4505,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void RemoveFunctionPSCopyFileToRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps is null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
 
             string remoteScript = @"
                 Microsoft.PowerShell.Management\Remove-Item function:PSCopyToSessionHelper -ea SilentlyContinue -Force
@@ -4659,7 +4659,7 @@ namespace Microsoft.PowerShell.Commands
                         toRead = (int)remainingFileSize;
                     }
 
-                    if (fragment is null)
+                    if (fragment == null)
                     {
                         fragment = new byte[toRead];
                     }
@@ -4712,7 +4712,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
-                    if (op is null || op["BytesWritten"] is null)
+                    if (op == null || op["BytesWritten"] == null)
                     {
                         // write error to stream
                         Exception e = new IOException(string.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemRemotelyFailed, file));
@@ -4843,7 +4843,7 @@ namespace Microsoft.PowerShell.Commands
 
             Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
 
-            if (op is null || op["IsFileInfo"] is null)
+            if (op == null || op["IsFileInfo"] == null)
             {
                 Exception e = new IOException(string.Format(
                                                     CultureInfo.InvariantCulture,
@@ -4867,7 +4867,7 @@ namespace Microsoft.PowerShell.Commands
 
             Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
 
-            // If op is null,  SafeInvokeCommand.Invoke throwns an error.
+            // If op == null,  SafeInvokeCommand.Invoke throwns an error.
             if (op["ExceptionThrown"] != null)
             {
                 // If an error is thrown on the remote session, it is written via SafeInvokeCommand.Invoke.
@@ -4875,7 +4875,7 @@ namespace Microsoft.PowerShell.Commands
                     return null;
             }
 
-            if (force && (op["DirectoryPath"] is null))
+            if (force && (op["DirectoryPath"] == null))
             {
                 Exception e = new IOException(string.Format(CultureInfo.InvariantCulture,
                                                             FileSystemProviderStrings.CopyItemRemotelyFailedToCreateDirectory,
@@ -5072,7 +5072,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            if (basePath is null)
+            if (basePath == null)
             {
                 basePath = string.Empty;
             }
@@ -5162,12 +5162,12 @@ namespace Microsoft.PowerShell.Commands
                             // ensure the proper casing
                             IEnumerable<string> files = Directory.EnumerateFiles(directoryPath, leafName);
 
-                            if (files is null || !files.Any())
+                            if (files == null || !files.Any())
                             {
                                 files = Directory.EnumerateDirectories(directoryPath, leafName);
                             }
 
-                            if (files is null || !files.Any())
+                            if (files == null || !files.Any())
                             {
                                 string error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
                                 Exception e = new IOException(error);
@@ -5254,7 +5254,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         private string NormalizeRelativePathHelper(string path, string basePath)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -5264,7 +5264,7 @@ namespace Microsoft.PowerShell.Commands
                 return string.Empty;
             }
 
-            if (basePath is null)
+            if (basePath == null)
             {
                 basePath = string.Empty;
             }
@@ -6180,7 +6180,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 var fileSystemObject = GetFileSystemInfo(path, out bool isDirectory);
 
-                if (fileSystemObject is null)
+                if (fileSystemObject == null)
                 {
                     string error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
                     Exception e = new IOException(error);
@@ -6193,7 +6193,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     // Finally get the properties
-                    if (providerSpecificPickList is null || providerSpecificPickList.Count == 0)
+                    if (providerSpecificPickList == null || providerSpecificPickList.Count == 0)
                     {
                         result = PSObject.AsPSObject(fileSystemObject);
                     }
@@ -6211,7 +6211,7 @@ namespace Microsoft.PowerShell.Commands
                                     if (member != null)
                                     {
                                         value = member.Value;
-                                        if (result is null)
+                                        if (result == null)
                                         {
                                             result = new PSObject();
                                         }
@@ -6305,7 +6305,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            if (propertyToSet is null)
+            if (propertyToSet == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(propertyToSet));
             }
@@ -6478,7 +6478,7 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
-            if (propertiesToClear is null ||
+            if (propertiesToClear == null ||
                 propertiesToClear.Count == 0)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(propertiesToClear));
@@ -7424,7 +7424,7 @@ namespace Microsoft.PowerShell.Commands
 
         public static Hashtable Invoke(System.Management.Automation.PowerShell ps, FileSystemProvider fileSystemContext, CmdletProviderContext cmdletContext, bool shouldHaveOutput)
         {
-            bool useFileSystemProviderContext = (cmdletContext is null);
+            bool useFileSystemProviderContext = (cmdletContext == null);
 
             if (useFileSystemProviderContext)
             {
@@ -8591,7 +8591,7 @@ namespace System.Management.Automation.Internal
         /// <returns>The list of streams (and their size) in the file.</returns>
         internal static List<AlternateStreamData> GetStreams(string path)
         {
-            if (path is null) throw new ArgumentNullException(nameof(path));
+            if (path == null) throw new ArgumentNullException(nameof(path));
 
             List<AlternateStreamData> alternateStreams = new List<AlternateStreamData>();
 
@@ -8669,12 +8669,12 @@ namespace System.Management.Automation.Internal
         /// <returns>True if the stream was successfully created, otherwise false.</returns>
         internal static bool TryCreateFileStream(string path, string streamName, FileMode mode, FileAccess access, FileShare share, out FileStream stream)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw new ArgumentNullException(nameof(path));
             }
 
-            if (streamName is null)
+            if (streamName == null)
             {
                 throw new ArgumentNullException(nameof(streamName));
             }
@@ -8704,8 +8704,8 @@ namespace System.Management.Automation.Internal
         /// <param name="streamName">The name of the alternate data stream to delete.</param>
         internal static void DeleteFileStream(string path, string streamName)
         {
-            if (path is null) throw new ArgumentNullException(nameof(path));
-            if (streamName is null) throw new ArgumentNullException(nameof(streamName));
+            if (path == null) throw new ArgumentNullException(nameof(path));
+            if (streamName == null) throw new ArgumentNullException(nameof(streamName));
 
             string adjustedStreamName = streamName.Trim();
             if (adjustedStreamName.IndexOf(':') != 0)

@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
         public override bool Equals(object inputObject)
         {
             ObjectCommandPropertyValue objectCommandPropertyValueObject = inputObject as ObjectCommandPropertyValue;
-            if (objectCommandPropertyValueObject is null)
+            if (objectCommandPropertyValueObject == null)
             {
                 return false;
             }
@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands
                 return success && result == 0;
             }
 
-            if (baseObject is null && inComingbaseObjectPropertyValue is null)
+            if (baseObject == null && inComingbaseObjectPropertyValue == null)
             {
                 return true;
             }
@@ -112,13 +112,13 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Hashcode in the form of an integer.</returns>
         public override int GetHashCode()
         {
-            if (PropertyValue is null)
+            if (PropertyValue == null)
             {
                 return 0;
             }
 
             object baseObject = PSObject.Base(PropertyValue);
-            if (baseObject is null)
+            if (baseObject == null)
             {
                 return 0;
             }
@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
         private static bool IsValueNull(object value)
         {
             object val = PSObject.Base(value);
-            return (val is null);
+            return (val == null);
         }
 
         internal int Compare(ObjectCommandPropertyValue first, ObjectCommandPropertyValue second)

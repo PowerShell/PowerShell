@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell
             // randomized by default.
             //
             Aes aes = Aes.Create();
-            if (iv is null)
+            if (iv == null)
                 iv = aes.IV;
 
             encryptor = aes.CreateEncryptor(key, iv);
@@ -430,7 +430,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static byte[] Protect(byte[] userData, byte[] optionalEntropy, DataProtectionScope scope)
         {
-            if (userData is null)
+            if (userData == null)
             {
                 throw new ArgumentNullException(nameof(userData));
             }
@@ -518,7 +518,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static byte[] Unprotect(byte[] encryptedData, byte[] optionalEntropy, DataProtectionScope scope)
         {
-            if (encryptedData is null)
+            if (encryptedData == null)
             {
                 throw new ArgumentNullException(nameof(encryptedData));
             }

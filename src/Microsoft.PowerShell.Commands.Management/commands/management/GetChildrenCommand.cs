@@ -288,7 +288,7 @@ namespace Microsoft.PowerShell.Commands
         {
             CmdletProviderContext currentContext = CmdletProviderContext;
 
-            if (_paths is null || _paths.Length == 0)
+            if (_paths == null || _paths.Length == 0)
             {
                 _paths = new string[] { string.Empty };
             }

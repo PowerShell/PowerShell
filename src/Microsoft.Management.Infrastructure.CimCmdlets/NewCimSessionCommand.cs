@@ -295,7 +295,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             if (portSet || (this.CertificateThumbprint != null))
             {
-                WSManSessionOptions wsmanOptions = (options is null) ? new WSManSessionOptions() : options as WSManSessionOptions;
+                WSManSessionOptions wsmanOptions = (options == null) ? new WSManSessionOptions() : options as WSManSessionOptions;
                 if (portSet)
                 {
                     wsmanOptions.DestinationPort = this.Port;
@@ -328,7 +328,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
 
                 CimCredential credentials = CreateCimCredentials(this.Credential, authentication, @"New-CimSession", @"Authentication");
-                if (credentials is null)
+                if (credentials == null)
                 {
                     return;
                 }

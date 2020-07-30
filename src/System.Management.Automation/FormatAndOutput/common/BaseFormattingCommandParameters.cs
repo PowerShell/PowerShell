@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                         TerminatingErrorContext invocationContext,
                                         bool originalParameterWasHashTable)
         {
-            if (val is null)
+            if (val == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(val));
             }

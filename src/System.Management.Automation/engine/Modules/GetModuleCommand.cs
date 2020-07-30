@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool containedErrors = false;
 
-                if (cimModule.MainManifest is null)
+                if (cimModule.MainManifest == null)
                 {
                     return GetModuleInfoForRemoteModuleWithoutManifest(cimModule);
                 }
@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands
                         temporaryModuleManifestPath,
                         this,
                         ref containedErrors);
-                    if (mainData is null)
+                    if (mainData == null)
                     {
                         return GetModuleInfoForRemoteModuleWithoutManifest(cimModule);
                     }
@@ -235,7 +235,7 @@ namespace Microsoft.PowerShell.Commands
                         ref containedErrors);
                 }
 
-                if ((moduleInfo is null) || containedErrors)
+                if ((moduleInfo == null) || containedErrors)
                 {
                     moduleInfo = GetModuleInfoForRemoteModuleWithoutManifest(cimModule);
                 }

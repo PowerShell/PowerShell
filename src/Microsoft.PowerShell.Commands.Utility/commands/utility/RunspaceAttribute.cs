@@ -31,12 +31,12 @@ namespace System.Management.Automation.Runspaces
         /// <returns>A runspace object representing the inputData.</returns>
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
         {
-            if (engineIntrinsics?.Host?.UI is null)
+            if (engineIntrinsics?.Host?.UI == null)
             {
                 throw PSTraceSource.NewArgumentNullException("engineIntrinsics");
             }
 
-            if (inputData is null)
+            if (inputData == null)
             {
                 return null;
             }

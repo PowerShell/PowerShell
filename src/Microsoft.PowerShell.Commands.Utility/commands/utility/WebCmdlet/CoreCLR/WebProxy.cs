@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal WebProxy(Uri address)
         {
-            if (address is null)
+            if (address == null)
             {
                 throw new ArgumentNullException(nameof(address));
             }
@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
 
         public Uri GetProxy(Uri destination)
         {
-            if (destination is null)
+            if (destination == null)
             {
                 throw new ArgumentNullException(nameof(destination));
             }

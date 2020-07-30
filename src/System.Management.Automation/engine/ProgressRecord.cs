@@ -472,7 +472,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static ProgressRecord FromPSObjectForRemoting(PSObject progressAsPSObject)
         {
-            if (progressAsPSObject is null)
+            if (progressAsPSObject == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(progressAsPSObject));
             }

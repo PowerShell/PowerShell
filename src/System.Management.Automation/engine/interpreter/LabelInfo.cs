@@ -176,7 +176,7 @@ namespace System.Management.Automation.Interpreter
 
         private void EnsureLabel(LightCompiler compiler)
         {
-            if (_label is null)
+            if (_label == null)
             {
                 _label = compiler.Instructions.MakeLabel();
             }
@@ -219,14 +219,14 @@ namespace System.Management.Automation.Interpreter
 
         private void AddDefinition(LabelScopeInfo scope)
         {
-            if (_definitions is null)
+            if (_definitions == null)
             {
                 _definitions = scope;
             }
             else
             {
                 HashSet<LabelScopeInfo> set = _definitions as HashSet<LabelScopeInfo>;
-                if (set is null)
+                if (set == null)
                 {
                     _definitions = set = new HashSet<LabelScopeInfo>() { (LabelScopeInfo)_definitions };
                 }
@@ -336,7 +336,7 @@ namespace System.Management.Automation.Interpreter
 
         internal bool ContainsTarget(LabelTarget target)
         {
-            if (_labels is null)
+            if (_labels == null)
             {
                 return false;
             }
@@ -346,7 +346,7 @@ namespace System.Management.Automation.Interpreter
 
         internal bool TryGetLabelInfo(LabelTarget target, out LabelInfo info)
         {
-            if (_labels is null)
+            if (_labels == null)
             {
                 info = null;
                 return false;
@@ -359,7 +359,7 @@ namespace System.Management.Automation.Interpreter
         {
             Debug.Assert(CanJumpInto);
 
-            if (_labels is null)
+            if (_labels == null)
             {
                 _labels = new HybridReferenceDictionary<LabelTarget, LabelInfo>();
             }

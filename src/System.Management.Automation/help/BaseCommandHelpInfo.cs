@@ -29,11 +29,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (this.FullHelp is null)
+                if (this.FullHelp == null)
                     return null;
 
-                if (this.FullHelp.Properties["Details"] is null ||
-                    this.FullHelp.Properties["Details"].Value is null)
+                if (this.FullHelp.Properties["Details"] == null ||
+                    this.FullHelp.Properties["Details"].Value == null)
                 {
                     return null;
                 }
@@ -51,19 +51,19 @@ namespace System.Management.Automation
             get
             {
                 PSObject commandDetails = this.Details;
-                if (commandDetails is null)
+                if (commandDetails == null)
                 {
                     return string.Empty;
                 }
 
-                if (commandDetails.Properties["Name"] is null ||
-                    commandDetails.Properties["Name"].Value is null)
+                if (commandDetails.Properties["Name"] == null ||
+                    commandDetails.Properties["Name"].Value == null)
                 {
                     return string.Empty;
                 }
 
                 string name = commandDetails.Properties["Name"].Value.ToString();
-                if (name is null)
+                if (name == null)
                     return string.Empty;
 
                 return name.Trim();
@@ -79,13 +79,13 @@ namespace System.Management.Automation
             get
             {
                 PSObject commandDetails = this.Details;
-                if (commandDetails is null)
+                if (commandDetails == null)
                 {
                     return string.Empty;
                 }
 
-                if (commandDetails.Properties["Description"] is null ||
-                    commandDetails.Properties["Description"].Value is null)
+                if (commandDetails.Properties["Description"] == null ||
+                    commandDetails.Properties["Description"].Value == null)
                 {
                     return string.Empty;
                 }
@@ -94,21 +94,21 @@ namespace System.Management.Automation
                     commandDetails.Properties["Description"].Value,
                     typeof(object[]),
                     CultureInfo.InvariantCulture);
-                if (synopsisItems is null || synopsisItems.Length == 0)
+                if (synopsisItems == null || synopsisItems.Length == 0)
                 {
                     return string.Empty;
                 }
 
-                PSObject firstSynopsisItem = synopsisItems[0] is null ? null : PSObject.AsPSObject(synopsisItems[0]);
-                if (firstSynopsisItem is null ||
-                    firstSynopsisItem.Properties["Text"] is null ||
-                    firstSynopsisItem.Properties["Text"].Value is null)
+                PSObject firstSynopsisItem = synopsisItems[0] == null ? null : PSObject.AsPSObject(synopsisItems[0]);
+                if (firstSynopsisItem == null ||
+                    firstSynopsisItem.Properties["Text"] == null ||
+                    firstSynopsisItem.Properties["Text"].Value == null)
                 {
                     return string.Empty;
                 }
 
                 string synopsis = firstSynopsisItem.Properties["Text"].Value.ToString();
-                if (synopsis is null)
+                if (synopsis == null)
                 {
                     return string.Empty;
                 }
@@ -219,7 +219,7 @@ namespace System.Management.Automation
             }
 
             ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
-            if (context is null)
+            if (context == null)
             {
                 return null;
             }
@@ -237,7 +237,7 @@ namespace System.Management.Automation
                     cmdInfo = context.SessionState.InvokeCommand.GetCommands(commandToSearch, cmdTypesToLookFor, false).FirstOrDefault();
                 }
 
-                if ((cmdInfo is null) || (cmdInfo.CommandMetadata is null))
+                if ((cmdInfo == null) || (cmdInfo.CommandMetadata == null))
                 {
                     return null;
                 }
@@ -279,16 +279,16 @@ namespace System.Management.Automation
         {
             // this object knows Maml format...
             // So retrieve Uri information as per the format..
-            if ((commandFullHelp is null) ||
-                (commandFullHelp.Properties["relatedLinks"] is null) ||
-                (commandFullHelp.Properties["relatedLinks"].Value is null))
+            if ((commandFullHelp == null) ||
+                (commandFullHelp.Properties["relatedLinks"] == null) ||
+                (commandFullHelp.Properties["relatedLinks"].Value == null))
             {
                 // return the default..
                 return null;
             }
 
             PSObject relatedLinks = PSObject.AsPSObject(commandFullHelp.Properties["relatedLinks"].Value);
-            if (relatedLinks.Properties["navigationLink"] is null)
+            if (relatedLinks.Properties["navigationLink"] == null)
             {
                 return null;
             }
@@ -299,7 +299,7 @@ namespace System.Management.Automation
                 CultureInfo.InvariantCulture);
             foreach (object navigationLinkAsObject in navigationLinks)
             {
-                if (navigationLinkAsObject is null)
+                if (navigationLinkAsObject == null)
                 {
                     continue;
                 }
@@ -356,12 +356,12 @@ namespace System.Management.Automation
             string synopsis = Synopsis;
             string detailedDescription = DetailedDescription;
 
-            if (synopsis is null)
+            if (synopsis == null)
             {
                 synopsis = string.Empty;
             }
 
-            if (detailedDescription is null)
+            if (detailedDescription == null)
             {
                 detailedDescription = string.Empty;
             }
@@ -378,9 +378,9 @@ namespace System.Management.Automation
         {
             // this object knows Maml format...
             // So retrieve parameter information as per the format..
-            if ((this.FullHelp is null) ||
-                (this.FullHelp.Properties["parameters"] is null) ||
-                (this.FullHelp.Properties["parameters"].Value is null))
+            if ((this.FullHelp == null) ||
+                (this.FullHelp.Properties["parameters"] == null) ||
+                (this.FullHelp.Properties["parameters"].Value == null))
             {
                 // return the default..
                 return base.GetParameter(pattern);
@@ -388,7 +388,7 @@ namespace System.Management.Automation
 
             PSObject prmts = PSObject.AsPSObject(this.FullHelp.Properties["parameters"].Value);
 
-            if (prmts.Properties["parameter"] is null)
+            if (prmts.Properties["parameter"] == null)
             {
                 return base.GetParameter(pattern);
             }
@@ -418,7 +418,7 @@ namespace System.Management.Automation
             WildcardPattern matcher = WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase);
             foreach (PSObject prmtr in prmtArray)
             {
-                if ((prmtr.Properties["name"] is null) || (prmtr.Properties["name"].Value is null))
+                if ((prmtr.Properties["name"] == null) || (prmtr.Properties["name"].Value == null))
                 {
                     continue;
                 }
@@ -444,11 +444,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (this.FullHelp is null)
+                if (this.FullHelp == null)
                     return string.Empty;
 
-                if (this.FullHelp.Properties["Description"] is null ||
-                    this.FullHelp.Properties["Description"].Value is null)
+                if (this.FullHelp.Properties["Description"] == null ||
+                    this.FullHelp.Properties["Description"].Value == null)
                 {
                     return string.Empty;
                 }
@@ -457,7 +457,7 @@ namespace System.Management.Automation
                     this.FullHelp.Properties["Description"].Value,
                     typeof(object[]),
                     CultureInfo.InvariantCulture);
-                if (descriptionItems is null || descriptionItems.Length == 0)
+                if (descriptionItems == null || descriptionItems.Length == 0)
                 {
                     return string.Empty;
                 }
@@ -469,15 +469,15 @@ namespace System.Management.Automation
                 StringBuilder result = new StringBuilder(400);
                 foreach (object descriptionItem in descriptionItems)
                 {
-                    if (descriptionItem is null)
+                    if (descriptionItem == null)
                     {
                         continue;
                     }
 
                     PSObject descriptionObject = PSObject.AsPSObject(descriptionItem);
-                    if ((descriptionObject is null) ||
-                        (descriptionObject.Properties["Text"] is null) ||
-                        (descriptionObject.Properties["Text"].Value is null))
+                    if ((descriptionObject == null) ||
+                        (descriptionObject.Properties["Text"] == null) ||
+                        (descriptionObject.Properties["Text"].Value == null))
                     {
                         continue;
                     }

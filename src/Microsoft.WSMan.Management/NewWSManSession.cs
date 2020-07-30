@@ -235,7 +235,7 @@ namespace Microsoft.WSMan.Management
 
             if (proxyauthentication.Equals(ProxyAuthentication.Basic) || proxyauthentication.Equals(ProxyAuthentication.Digest))
             {
-                if (_proxycredential is null)
+                if (_proxycredential == null)
                 {
                     InvalidOperationException ex = new InvalidOperationException(helper.GetResourceMsgFromResourcetext("NewWSManSessionOptionCred"));
                     ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, null);

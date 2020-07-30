@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal void GenerateFormatEntries(int maxTreeDepth, ControlBase control,
                 PSObject so, List<FormatValue> formatValueList)
         {
-            if (control is null)
+            if (control == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(control));
             }
@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void ExecuteFormatTokenList(TraversalInfo level,
                 PSObject so, List<FormatToken> formatTokenList, List<FormatValue> formatValueList)
         {
-            if (so is null)
+            if (so == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(so));
             }
@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     // if no expression was specified, just use the
                     // object itself
-                    if (cpt.expression is null || string.IsNullOrEmpty(cpt.expression.expressionValue))
+                    if (cpt.expression == null || string.IsNullOrEmpty(cpt.expression.expressionValue))
                     {
                         val = so;
                     }
@@ -279,11 +279,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     // if the token is has a formatting string, it's a leaf node,
                     // do the formatting and we will be done
-                    if (cpt.control is null || cpt.control is FieldControlBody)
+                    if (cpt.control == null || cpt.control is FieldControlBody)
                     {
                         // Since it is a leaf node we just consider it an empty string and go
                         // on with formatting
-                        if (val is null)
+                        if (val == null)
                         {
                             val = string.Empty;
                         }
@@ -305,7 +305,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             foreach (object x in e)
                             {
-                                if (x is null)
+                                if (x == null)
                                 {
                                     // nothing to process
                                     continue;
@@ -334,7 +334,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     else
                     {
                         // An empty result that is not a leaf node should not be expanded
-                        if (val is null)
+                        if (val == null)
                         {
                             continue;
                         }
@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             foreach (object x in e)
                             {
-                                if (x is null)
+                                if (x == null)
                                 {
                                     // nothing to process
                                     continue;
@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private bool EvaluateDisplayCondition(PSObject so, ExpressionToken conditionToken)
         {
-            if (conditionToken is null)
+            if (conditionToken == null)
                 return true;
 
             PSPropertyExpression ex = _expressionFactory.CreateFromExpressionToken(conditionToken, _loadingInfo);
@@ -592,7 +592,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     formatValueList.Add(new FormatNewLine());
                     DisplayEnumeration(e, level.NextLevel, AddIndentationLevel(formatValueList));
                 }
-                else if (val is null || TreatAsLeafNode(val, level))
+                else if (val == null || TreatAsLeafNode(val, level))
                 {
                     DisplayLeaf(val, formatValueList);
                 }
@@ -687,7 +687,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         private static bool TreatAsLeafNode(object val, TraversalInfo level)
         {
-            if (level.Level >= level.MaxDepth || val is null)
+            if (level.Level >= level.MaxDepth || val == null)
                 return true;
 
             return TreatAsScalarType(PSObject.GetTypeNames(val));

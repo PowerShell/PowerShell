@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell
                     else
                     {
                         o = textReader.ReadLine();
-                        if (o is null)
+                        if (o == null)
                         {
                             _atEnd = true;
                         }

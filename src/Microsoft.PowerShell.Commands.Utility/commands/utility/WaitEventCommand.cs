@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
         private void ReceivedEvents_PSEventReceived(object sender, PSEventArgs e)
         {
             // If they want to wait on just any event
-            if (_sourceIdentifier is null)
+            if (_sourceIdentifier == null)
             {
                 NotifyEvent(e);
             }
@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (PSEventArgs eventArg in Events.ReceivedEvents)
                 {
                     // If they specified a subscription identifier and we don't match, continue
-                    if ((_matchPattern is null) || (_matchPattern.IsMatch(eventArg.SourceIdentifier)))
+                    if ((_matchPattern == null) || (_matchPattern.IsMatch(eventArg.SourceIdentifier)))
                     {
                         NotifyEvent(eventArg);
                         return;
@@ -147,11 +147,11 @@ namespace Microsoft.PowerShell.Commands
         // Notify that an event has arrived
         private void NotifyEvent(PSEventArgs e)
         {
-            if (_receivedEvent is null)
+            if (_receivedEvent == null)
             {
                 lock (_receivedEventLock)
                 {
-                    if (_receivedEvent is null)
+                    if (_receivedEvent == null)
                     {
                         _receivedEvent = e;
                         _eventArrived.Set();

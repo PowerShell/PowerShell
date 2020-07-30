@@ -159,7 +159,7 @@ namespace System.Management.Automation
         internal NativeCommandProcessor(ApplicationInfo applicationInfo, ExecutionContext context)
             : base(applicationInfo)
         {
-            if (applicationInfo is null)
+            if (applicationInfo == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(applicationInfo));
             }
@@ -270,7 +270,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_nativeParameterBinderController is null)
+                if (_nativeParameterBinderController == null)
                 {
                     NewParameterBinderController(this.Command);
                 }
@@ -1283,7 +1283,7 @@ namespace System.Management.Automation
 
             if (_runStandAlone)
             {
-                if (s_supportScreenScrape is null)
+                if (s_supportScreenScrape == null)
                 {
                     try
                     {
@@ -1609,7 +1609,7 @@ namespace System.Management.Automation
                         }
 
                         // Null is allowed only in output stream
-                        if (stream != MinishellStream.Output && obj is null)
+                        if (stream != MinishellStream.Output && obj == null)
                         {
                             continue;
                         }
@@ -1729,7 +1729,7 @@ namespace System.Management.Automation
         /// <param name="input"></param>
         internal void Add(object input)
         {
-            if (_stopping || _streamWriter is null)
+            if (_stopping || _streamWriter == null)
             {
                 // if _streamWriter is already null, then we already called Dispose()
                 // so we should just discard the input.
@@ -1890,7 +1890,7 @@ namespace System.Management.Automation
             }
             else // Text
             {
-                // if _pipeline is null, we already called Dispose(),
+                // if _pipeline == null, we already called Dispose(),
                 // for example, because downstream process finished
                 if (_pipeline != null)
                 {

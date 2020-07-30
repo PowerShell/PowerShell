@@ -902,7 +902,7 @@ namespace System.Management.Automation.Help
                 return true;
             }
 
-            if (module is null)
+            if (module == null)
             {
                 return false;
             }

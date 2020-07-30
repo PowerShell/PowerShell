@@ -63,7 +63,7 @@ namespace System.Management.Automation
             {
                 // No objects in the input pipe
                 // The pipe is closed. So there can't be any more object
-                if (IsClosed && (_inputPipe is null || _inputPipe.Empty))
+                if (IsClosed && (_inputPipe == null || _inputPipe.Empty))
                 {
                     return false;
                 }
@@ -174,7 +174,7 @@ namespace System.Management.Automation
 #else
             if (UseSecurityContextRun)
             {
-                if (PipelineProcessor is null || PipelineProcessor.SecurityContext is null)
+                if (PipelineProcessor == null || PipelineProcessor.SecurityContext == null)
                     throw PSTraceSource.NewInvalidOperationException(PipelineStrings.WriteNotPermitted);
                 ContextCallback delegateCallback =
                     new ContextCallback(DoWriteObject);
@@ -252,7 +252,7 @@ namespace System.Management.Automation
 #else
             if (UseSecurityContextRun)
             {
-                if (PipelineProcessor is null || PipelineProcessor.SecurityContext is null)
+                if (PipelineProcessor == null || PipelineProcessor.SecurityContext == null)
                     throw PSTraceSource.NewInvalidOperationException(PipelineStrings.WriteNotPermitted);
                 ContextCallback delegateCallback =
                     new ContextCallback(DoWriteObjects);
@@ -394,12 +394,12 @@ namespace System.Management.Automation
                 ProgressRecord progressRecord,
                 bool overrideInquire)
         {
-            if (progressRecord is null)
+            if (progressRecord == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(progressRecord));
             }
 
-            if (Host is null || Host.UI is null)
+            if (Host == null || Host.UI == null)
             {
                 Diagnostics.Assert(false, "No host in CommandBase.WriteProgress()");
                 throw PSTraceSource.NewInvalidOperationException();
@@ -482,7 +482,7 @@ namespace System.Management.Automation
 
             if (WriteHelper_ShouldWrite(preference, lastDebugContinueStatus))
             {
-                if (record.InvocationInfo is null)
+                if (record.InvocationInfo == null)
                 {
                     record.SetInvocationInfo(MyInvocation);
                 }
@@ -514,7 +514,7 @@ namespace System.Management.Automation
                     //
                     // If no pipe, write directly to host.
                     //
-                    if (Host is null || Host.UI is null)
+                    if (Host == null || Host.UI == null)
                     {
                         Diagnostics.Assert(false, "No host in CommandBase.WriteDebug()");
                         throw PSTraceSource.NewInvalidOperationException();
@@ -576,7 +576,7 @@ namespace System.Management.Automation
 
             if (WriteHelper_ShouldWrite(preference, lastVerboseContinueStatus))
             {
-                if (record.InvocationInfo is null)
+                if (record.InvocationInfo == null)
                 {
                     record.SetInvocationInfo(MyInvocation);
                 }
@@ -608,7 +608,7 @@ namespace System.Management.Automation
                     //
                     // If no pipe, write directly to host.
                     //
-                    if (Host is null || Host.UI is null)
+                    if (Host == null || Host.UI == null)
                     {
                         Diagnostics.Assert(false, "No host in CommandBase.WriteVerbose()");
                         throw PSTraceSource.NewInvalidOperationException();
@@ -670,7 +670,7 @@ namespace System.Management.Automation
 
             if (WriteHelper_ShouldWrite(preference, lastWarningContinueStatus))
             {
-                if (record.InvocationInfo is null)
+                if (record.InvocationInfo == null)
                 {
                     record.SetInvocationInfo(MyInvocation);
                 }
@@ -702,7 +702,7 @@ namespace System.Management.Automation
                     //
                     // If no pipe, write directly to host.
                     //
-                    if (Host is null || Host.UI is null)
+                    if (Host == null || Host.UI == null)
                     {
                         Diagnostics.Assert(false, "No host in CommandBase.WriteWarning()");
                         throw PSTraceSource.NewInvalidOperationException();
@@ -770,7 +770,7 @@ namespace System.Management.Automation
                     //
                     // If no pipe, write directly to host.
                     //
-                    if (Host is null || Host.UI is null)
+                    if (Host == null || Host.UI == null)
                     {
                         throw PSTraceSource.NewInvalidOperationException("No host in CommandBase.WriteInformation()");
                     }
@@ -898,12 +898,12 @@ namespace System.Management.Automation
                     return true;
                 }
 
-                if (cmdletInfo.Module is null && cmdletInfo.PSSnapIn != null)
+                if (cmdletInfo.Module == null && cmdletInfo.PSSnapIn != null)
                 {
                     return cmdletInfo.PSSnapIn.LogPipelineExecutionDetails;
                 }
 
-                if (cmdletInfo.PSSnapIn is null && cmdletInfo.Module != null)
+                if (cmdletInfo.PSSnapIn == null && cmdletInfo.Module != null)
                 {
                     return cmdletInfo.Module.LogPipelineExecutionDetails;
                 }
@@ -945,7 +945,7 @@ namespace System.Management.Automation
                 (!(this.OutVariable.StartsWith('+'))) &&
                 string.Equals("Out-Default", _thisCommand.CommandInfo.Name, StringComparison.OrdinalIgnoreCase))
             {
-                if (_state is null)
+                if (_state == null)
                     _state = new SessionState(Context.EngineSessionState);
 
                 IList oldValue = null;
@@ -978,7 +978,7 @@ namespace System.Management.Automation
 
             EnsureVariableParameterAllowed();
 
-            if (_state is null)
+            if (_state == null)
                 _state = new SessionState(Context.EngineSessionState);
 
             // Create the pipeline variable
@@ -1426,7 +1426,7 @@ namespace System.Management.Automation
         {
             // retrieve ConfirmImpact from commandInfo
             CommandMetadata commandMetadata = _commandInfo.CommandMetadata;
-            if (commandMetadata is null)
+            if (commandMetadata == null)
             {
                 Dbg.Assert(false, "Expected CommandMetadata");
                 return true;
@@ -2052,7 +2052,7 @@ namespace System.Management.Automation
         public void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             ThrowIfStopping();
-            if (errorRecord is null)
+            if (errorRecord == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(errorRecord));
             }
@@ -2222,7 +2222,7 @@ namespace System.Management.Automation
 
         internal object[] GetResultsAsArray()
         {
-            if (_outputPipe is null)
+            if (_outputPipe == null)
                 return StaticEmptyArray;
             return _outputPipe.ToArray();
         }
@@ -2284,7 +2284,7 @@ namespace System.Management.Automation
         /// <exception cref="System.InvalidOperationException"></exception>
         internal void ThrowIfWriteNotPermitted(bool needsToWriteToPipeline)
         {
-            if (this.PipelineProcessor is null
+            if (this.PipelineProcessor == null
                 || _thisCommand != this.PipelineProcessor._permittedToWrite
                 || needsToWriteToPipeline && !this.PipelineProcessor._permittedToWriteToPipeline
                 || Thread.CurrentThread != this.PipelineProcessor._permittedToWriteThread
@@ -2318,13 +2318,13 @@ namespace System.Management.Automation
             /// </summary>
             internal AllowWrite(InternalCommand permittedToWrite, bool permittedToWriteToPipeline)
             {
-                if (permittedToWrite is null)
+                if (permittedToWrite == null)
                     throw PSTraceSource.NewArgumentNullException(nameof(permittedToWrite));
                 MshCommandRuntime mcr = permittedToWrite.commandRuntime as MshCommandRuntime;
-                if (mcr is null)
+                if (mcr == null)
                     throw PSTraceSource.NewArgumentNullException("permittedToWrite.CommandRuntime");
                 _pp = mcr.PipelineProcessor;
-                if (_pp is null)
+                if (_pp == null)
                     throw PSTraceSource.NewArgumentNullException("permittedToWrite.CommandRuntime.PipelineProcessor");
                 _wasPermittedToWrite = _pp._permittedToWrite;
                 _wasPermittedToWriteToPipeline = _pp._permittedToWriteToPipeline;
@@ -2368,7 +2368,7 @@ namespace System.Management.Automation
         /// <returns>PipelineStoppedException.</returns>
         public Exception ManageException(Exception e)
         {
-            if (e is null)
+            if (e == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(e));
 
             if (PipelineProcessor != null)
@@ -2446,7 +2446,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void AppendErrorToVariables(object obj)
         {
-            if (obj is null)
+            if (obj == null)
                 return;
 
             AppendDollarError(obj);
@@ -2471,7 +2471,7 @@ namespace System.Management.Automation
         {
             if (obj is Exception)
             {
-                if (this.PipelineProcessor is null || !this.PipelineProcessor.TopLevel)
+                if (this.PipelineProcessor == null || !this.PipelineProcessor.TopLevel)
                     return; // not outermost scope
             }
 
@@ -2534,7 +2534,7 @@ namespace System.Management.Automation
 
             EnsureVariableParameterAllowed();
 
-            if (_state is null)
+            if (_state == null)
                 _state = new SessionState(Context.EngineSessionState);
 
             if (variableName.StartsWith('+'))
@@ -2542,7 +2542,7 @@ namespace System.Management.Automation
                 variableName = variableName.Substring(1);
                 object oldValue = PSObject.Base(_state.PSVariable.GetValue(variableName));
                 varList = oldValue as IList;
-                if (varList is null)
+                if (varList == null)
                 {
                     varList = new ArrayList();
 
@@ -2635,7 +2635,7 @@ namespace System.Management.Automation
         internal void _EnumerateAndWriteObjectSkipAllowCheck(object sendToPipeline)
         {
             IEnumerable enumerable = LanguagePrimitives.GetEnumerable(sendToPipeline);
-            if (enumerable is null)
+            if (enumerable == null)
             {
                 _WriteObjectSkipAllowCheck(sendToPipeline);
                 return;
@@ -2727,7 +2727,7 @@ namespace System.Management.Automation
 #else
             if (UseSecurityContextRun)
             {
-                if (PipelineProcessor is null || PipelineProcessor.SecurityContext is null)
+                if (PipelineProcessor == null || PipelineProcessor.SecurityContext == null)
                     throw PSTraceSource.NewInvalidOperationException(PipelineStrings.WriteNotPermitted);
                 ContextCallback delegateCallback =
                     new ContextCallback(DoWriteError);
@@ -2765,7 +2765,7 @@ namespace System.Management.Automation
             KeyValuePair<ErrorRecord, ActionPreference> pair = (KeyValuePair<ErrorRecord, ActionPreference>)obj;
             ErrorRecord errorRecord = pair.Key;
             ActionPreference preference = pair.Value;
-            if (errorRecord is null)
+            if (errorRecord == null)
             {
                 throw PSTraceSource.NewArgumentNullException("errorRecord");
             }
@@ -2998,7 +2998,7 @@ namespace System.Management.Automation
 
                     // If the host couldn't prompt for the debug action anyways, change it to 'Continue'.
                     // This lets hosts still see debug output without having to implement the prompting logic.
-                    if ((CBhost.ExternalHost.UI is null) && (_debugPreference == ActionPreference.Inquire))
+                    if ((CBhost.ExternalHost.UI == null) && (_debugPreference == ActionPreference.Inquire))
                     {
                         _debugPreference = ActionPreference.Continue;
                     }
@@ -3045,7 +3045,7 @@ namespace System.Management.Automation
                 {
                     // If the host couldn't prompt for the debug action anyways, use 'Continue'.
                     // This lets hosts still see debug output without having to implement the prompting logic.
-                    if (CBhost.ExternalHost.UI is null)
+                    if (CBhost.ExternalHost.UI == null)
                     {
                         return ActionPreference.Continue;
                     }

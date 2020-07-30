@@ -15,7 +15,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(remoteSessionCapability != null, "caller should validate the parameter");
 
-            if (remoteSessionCapability is null)
+            if (remoteSessionCapability == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(remoteSessionCapability));
             }
@@ -48,7 +48,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(receivedData != null, "caller should validate the parameter");
 
-            if (receivedData is null)
+            if (receivedData == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(receivedData));
             }
@@ -312,7 +312,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(remoteSessionStateInfo != null, "caller should validate the parameter");
 
-            if (remoteSessionStateInfo is null)
+            if (remoteSessionStateInfo == null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(remoteSessionStateInfo));
             }

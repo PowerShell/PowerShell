@@ -39,7 +39,7 @@ namespace System.Management.Automation.Interpreter
 
         public override string ToDebugString(int instructionIndex, object cookie, Func<int, int> labelIndexer, IList<object> objects)
         {
-            return cookie is null ?
+            return cookie == null ?
                 InstructionName + "(" + _index + ")" :
                 InstructionName + "(" + cookie + ": " + _index + ")";
         }

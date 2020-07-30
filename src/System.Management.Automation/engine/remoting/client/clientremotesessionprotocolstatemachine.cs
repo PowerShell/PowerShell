@@ -188,7 +188,7 @@ namespace System.Management.Automation.Remoting
                     {
                         Dbg.Assert(eventArgs.RemoteSessionCapability != null,
                             "State can be set to NegotiationReceived only when RemoteSessionCapability is not null");
-                        if (eventArgs.RemoteSessionCapability is null)
+                        if (eventArgs.RemoteSessionCapability == null)
                         {
                             throw PSTraceSource.NewArgumentException(nameof(eventArgs));
                         }
@@ -460,7 +460,7 @@ namespace System.Management.Automation.Remoting
             {
                 for (int j = 0; j < _stateMachineHandle.GetLength(1); j++)
                 {
-                    if (_stateMachineHandle[i, j] is null)
+                    if (_stateMachineHandle[i, j] == null)
                     {
                         _stateMachineHandle[i, j] += DoClose;
                     }
@@ -552,7 +552,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void RaiseEventPrivate(RemoteSessionStateMachineEventArgs arg)
         {
-            if (arg is null)
+            if (arg == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(arg));
             }

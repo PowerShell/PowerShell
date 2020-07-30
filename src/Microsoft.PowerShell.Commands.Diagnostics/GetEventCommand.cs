@@ -890,7 +890,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    if (evtObj is null)
+                    if (evtObj == null)
                     {
                         break;
                     }
@@ -1454,7 +1454,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteDebug(string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("InvalidSIDFormat"), value));
             }
 
-            if (sidCandidate is null)
+            if (sidCandidate == null)
             {
                 try
                 {
@@ -1839,7 +1839,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string key in hash.Keys)
                 {
                     object value = hash[key];
-                    if (value is null)
+                    if (value == null)
                     {
                         string msg = _resourceMgr.GetString("NullNotAllowedInHashtable");
                         Exception exc = new Exception(string.Format(CultureInfo.InvariantCulture, msg, key));
@@ -1852,7 +1852,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             foreach (object elt in eltArray)
                             {
-                                if (elt is null)
+                                if (elt == null)
                                 {
                                     string msg = _resourceMgr.GetString("NullNotAllowedInHashtable");
                                     Exception exc = new Exception(string.Format(CultureInfo.InvariantCulture, msg, key));
@@ -2052,7 +2052,7 @@ namespace Microsoft.PowerShell.Commands
         //
         private void FindLogNamesMatchingWildcards(EventLogSession eventLogSession, IEnumerable<string> logPatterns)
         {
-            if (_logNamesMatchingWildcard is null)
+            if (_logNamesMatchingWildcard == null)
             {
                 _logNamesMatchingWildcard = new StringCollection();
             }

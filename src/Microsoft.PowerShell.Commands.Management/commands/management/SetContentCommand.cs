@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         internal override void BeforeOpenStreams(string[] paths)
         {
-            if (paths is null || paths.Length == 0)
+            if (paths == null || paths.Length == 0)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }

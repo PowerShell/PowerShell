@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
             if (value != null)
             {
                 variable = value as PSVariable;
-                if (variable is null)
+                if (variable == null)
                 {
                     variable = new PSVariable(name, value);
                 }

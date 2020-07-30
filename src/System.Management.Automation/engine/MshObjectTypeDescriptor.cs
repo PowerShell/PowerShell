@@ -169,7 +169,7 @@ namespace System.Management.Automation
         /// an <see cref="PSObject"/> or an <see cref="PSObjectTypeDescriptor"/>.</exception>
         public override object GetValue(object component)
         {
-            if (component is null)
+            if (component == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(component));
             }
@@ -179,7 +179,7 @@ namespace System.Management.Automation
             try
             {
                 property = mshObj.Properties[this.Name] as PSPropertyInfo;
-                if (property is null)
+                if (property == null)
                 {
                     PSObjectTypeDescriptor.typeDescriptor.WriteLine("Could not find property \"{0}\" to get its value.", this.Name);
                     ExtendedTypeSystemException e = new ExtendedTypeSystemException("PropertyNotFoundInPropertyDescriptorGetValue",
@@ -216,10 +216,10 @@ namespace System.Management.Automation
             // If you use the PSObjectTypeDescriptor directly as your object, it will be the component
             // if you use a provider, the PSObject will be the component.
             PSObject mshObj = component as PSObject;
-            if (mshObj is null)
+            if (mshObj == null)
             {
                 PSObjectTypeDescriptor descriptor = component as PSObjectTypeDescriptor;
-                if (descriptor is null)
+                if (descriptor == null)
                 {
                     throw PSTraceSource.NewArgumentException(nameof(component), ExtendedTypeSystem.InvalidComponent,
                                                              "component",
@@ -268,7 +268,7 @@ namespace System.Management.Automation
         /// </exception>
         public override void SetValue(object component, object value)
         {
-            if (component is null)
+            if (component == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(component));
             }
@@ -277,7 +277,7 @@ namespace System.Management.Automation
             try
             {
                 PSPropertyInfo property = mshObj.Properties[this.Name] as PSPropertyInfo;
-                if (property is null)
+                if (property == null)
                 {
                     PSObjectTypeDescriptor.typeDescriptor.WriteLine("Could not find property \"{0}\" to set its value.", this.Name);
                     ExtendedTypeSystemException e = new ExtendedTypeSystemException("PropertyNotFoundInPropertyDescriptorSetValue",
@@ -384,7 +384,7 @@ namespace System.Management.Automation
                     if (property != null)
                     {
                         DotNetAdapter.PropertyCacheEntry propertyEntry = property.adapterData as DotNetAdapter.PropertyCacheEntry;
-                        if (propertyEntry is null)
+                        if (propertyEntry == null)
                         {
                             typeDescriptor.WriteLine("Skipping attribute check for property \"{0}\" because it is an adapted property (not a .NET property).", property.Name);
                         }
@@ -410,7 +410,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (propertyAttributes is null)
+                if (propertyAttributes == null)
                 {
                     propertyAttributes = new AttributeCollection();
                 }
@@ -446,7 +446,7 @@ namespace System.Management.Automation
             using (typeDescriptor.TraceScope("Getting properties."))
             {
                 PropertyDescriptorCollection returnValue = new PropertyDescriptorCollection(null);
-                if (Instance is null)
+                if (Instance == null)
                 {
                     return returnValue;
                 }
@@ -468,12 +468,12 @@ namespace System.Management.Automation
         public override bool Equals(object obj)
         {
             PSObjectTypeDescriptor other = obj as PSObjectTypeDescriptor;
-            if (other is null)
+            if (other == null)
             {
                 return false;
             }
 
-            if (this.Instance is null || other.Instance is null)
+            if (this.Instance == null || other.Instance == null)
             {
                 return ReferenceEquals(this, other);
             }
@@ -487,7 +487,7 @@ namespace System.Management.Automation
         /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            if (this.Instance is null)
+            if (this.Instance == null)
             {
                 return base.GetHashCode();
             }
@@ -501,7 +501,7 @@ namespace System.Management.Automation
         /// <returns>An <see cref="PSObjectPropertyDescriptor"/> that represents the default property for this object, or a null reference (Nothing in Visual Basic) if this object does not have properties.</returns>
         public override PropertyDescriptor GetDefaultProperty()
         {
-            if (this.Instance is null)
+            if (this.Instance == null)
             {
                 return null;
             }
@@ -517,7 +517,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (defaultProperty is null)
+            if (defaultProperty == null)
             {
                 object[] defaultPropertyAttributes = this.Instance.BaseObject.GetType().GetCustomAttributes(typeof(DefaultPropertyAttribute), true);
                 if (defaultPropertyAttributes.Length == 1)
@@ -554,7 +554,7 @@ namespace System.Management.Automation
         /// <returns>A <see cref="TypeConverter"/> that is the converter for this object, or a null reference (Nothing in Visual Basic) if there is no <see cref="TypeConverter"/> for this object.</returns>
         public override TypeConverter GetConverter()
         {
-            if (this.Instance is null)
+            if (this.Instance == null)
             {
                 // If we return null, some controls will have an exception saying that this
                 // GetConverter returned an illegal value
@@ -598,7 +598,7 @@ namespace System.Management.Automation
         /// <returns>An <see cref="EventDescriptor"/> that represents the default event for this object, or a null reference (Nothing in Visual Basic) if this object does not have events.</returns>
         public override EventDescriptor GetDefaultEvent()
         {
-            if (this.Instance is null)
+            if (this.Instance == null)
             {
                 return null;
             }
@@ -612,7 +612,7 @@ namespace System.Management.Automation
         /// <returns>An <see cref="EventDescriptorCollection"/> that represents the events for this component instance.</returns>
         public override EventDescriptorCollection GetEvents()
         {
-            if (this.Instance is null)
+            if (this.Instance == null)
             {
                 return new EventDescriptorCollection(null);
             }
@@ -627,7 +627,7 @@ namespace System.Management.Automation
         /// <returns>An <see cref="EventDescriptorCollection"/> that represents the events for this component instance that match the given set of attributes.</returns>
         public override EventDescriptorCollection GetEvents(Attribute[] attributes)
         {
-            if (this.Instance is null)
+            if (this.Instance == null)
             {
                 return null;
             }
@@ -641,7 +641,7 @@ namespace System.Management.Automation
         /// <returns>An <see cref="AttributeCollection"/> with the attributes for this object.</returns>
         public override AttributeCollection GetAttributes()
         {
-            if (this.Instance is null)
+            if (this.Instance == null)
             {
                 return new AttributeCollection();
             }
@@ -655,7 +655,7 @@ namespace System.Management.Automation
         /// <returns>The class name of the object, or a null reference (Nothing in Visual Basic) if the class does not have a name.</returns>
         public override string GetClassName()
         {
-            if (this.Instance is null)
+            if (this.Instance == null)
             {
                 return null;
             }
@@ -669,7 +669,7 @@ namespace System.Management.Automation
         /// <returns>The name of the object, or a null reference (Nothing in Visual Basic) if object does not have a name.</returns>
         public override string GetComponentName()
         {
-            if (this.Instance is null)
+            if (this.Instance == null)
             {
                 return null;
             }
@@ -684,7 +684,7 @@ namespace System.Management.Automation
         /// <returns>An object of the specified type that is the editor for this object, or a null reference (Nothing in Visual Basic) if the editor cannot be found.</returns>
         public override object GetEditor(Type editorBaseType)
         {
-            if (this.Instance is null)
+            if (this.Instance == null)
             {
                 return null;
             }

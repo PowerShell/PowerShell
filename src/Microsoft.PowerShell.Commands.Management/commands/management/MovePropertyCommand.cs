@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     value = Array.Empty<string>();
                 }

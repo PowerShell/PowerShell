@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public long RawContentLength
         {
-            get { return (RawContentStream is null ? -1 : RawContentStream.Length); }
+            get { return (RawContentStream == null ? -1 : RawContentStream.Length); }
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (_headers is null)
+                if (_headers == null)
                 {
                     _headers = WebResponseHelper.GetHeadersDictionary(BaseResponse);
                 }
@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void SetResponse(HttpResponseMessage response, Stream contentStream)
         {
-            if (response is null) { throw new ArgumentNullException(nameof(response)); }
+            if (response == null) { throw new ArgumentNullException(nameof(response)); }
 
             BaseResponse = response;
 
@@ -194,7 +194,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 Stream st = contentStream;
-                if (contentStream is null)
+                if (contentStream == null)
                 {
                     st = StreamHelper.GetResponseStream(response);
                 }

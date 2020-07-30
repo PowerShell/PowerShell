@@ -1083,7 +1083,7 @@ namespace Microsoft.PowerShell
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
-            if (contents is null)
+            if (contents == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(contents));
             }
@@ -1746,7 +1746,7 @@ namespace Microsoft.PowerShell
                 if (origin.X + (contentsRegion.Right - contentsRegion.Left) + 1 < bufferInfo.BufferSize.X &&
                     ShouldCheck(contentsRegion.Right, contents, contentsRegion))
                 {
-                    if (cellArray is null)
+                    if (cellArray == null)
                     {
                         cellArray = new BufferCell[cellArrayRegion.Bottom + 1, 2];
                     }

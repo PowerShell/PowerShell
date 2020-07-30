@@ -31,7 +31,7 @@ namespace System.Management.Automation.Runspaces
         public CommandParameter(string name)
             : this(name, null)
         {
-            if (name is null)
+            if (name == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -88,7 +88,7 @@ namespace System.Management.Automation.Runspaces
 
         internal static CommandParameter FromCommandParameterInternal(CommandParameterInternal internalParameter)
         {
-            if (internalParameter is null)
+            if (internalParameter == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(internalParameter));
             }
@@ -123,7 +123,7 @@ namespace System.Management.Automation.Runspaces
 
         internal static CommandParameterInternal ToCommandParameterInternal(CommandParameter publicParameter, bool forNativeCommand)
         {
-            if (publicParameter is null)
+            if (publicParameter == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(publicParameter));
             }
@@ -131,9 +131,9 @@ namespace System.Management.Automation.Runspaces
             string name = publicParameter.Name;
             object value = publicParameter.Value;
 
-            Debug.Assert((name is null) || (name.Trim().Length != 0), "Parameter name has to null or have some non-whitespace characters in it");
+            Debug.Assert((name == null) || (name.Trim().Length != 0), "Parameter name has to null or have some non-whitespace characters in it");
 
-            if (name is null)
+            if (name == null)
             {
                 return CommandParameterInternal.CreateArgument(value);
             }
@@ -176,7 +176,7 @@ namespace System.Management.Automation.Runspaces
             // Now we just need to use the token to build appropriate CommandParameterInternal object
 
             // is this a name+value pair, or is it just a name (of a parameter)?
-            if (!hasColon && value is null)
+            if (!hasColon && value == null)
             {
                 // just a name
                 return CommandParameterInternal.CreateParameter(parameterName, parameterText);
@@ -209,7 +209,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         internal static CommandParameter FromPSObjectForRemoting(PSObject parameterAsPSObject)
         {
-            if (parameterAsPSObject is null)
+            if (parameterAsPSObject == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(parameterAsPSObject));
             }

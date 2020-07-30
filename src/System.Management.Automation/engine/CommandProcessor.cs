@@ -102,7 +102,7 @@ namespace System.Management.Automation
         internal ParameterBinderController NewParameterBinderController(InternalCommand command)
         {
             Cmdlet cmdlet = command as Cmdlet;
-            if (cmdlet is null)
+            if (cmdlet == null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(command));
             }
@@ -127,7 +127,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_cmdletParameterBinderController is null)
+                if (_cmdletParameterBinderController == null)
                 {
                     NewParameterBinderController(this.Command);
                 }
@@ -608,7 +608,7 @@ namespace System.Management.Automation
             string errorId,
             params object[] args)
         {
-            Type inputObjectType = (inputObject is null) ? null : inputObject.GetType();
+            Type inputObjectType = (inputObject == null) ? null : inputObject.GetType();
 
             ParameterBindingException bindingException = new ParameterBindingException(
                 ErrorCategory.InvalidArgument,
@@ -710,7 +710,7 @@ namespace System.Management.Automation
             {
                 // Create the request object
                 newCmdlet = ConstructInstance(cmdletInformation.ImplementingType);
-                if (newCmdlet is null)
+                if (newCmdlet == null)
                 {
                     // We could test the inheritance before constructing, but that's
                     // expensive.  Much cheaper to just check for null.

@@ -38,7 +38,7 @@ namespace System.Management.Automation
         /// </exception>
         internal CmdletProviderManagementIntrinsics(SessionStateInternal sessionState)
         {
-            if (sessionState is null)
+            if (sessionState == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }

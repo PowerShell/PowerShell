@@ -103,7 +103,7 @@ namespace System.Management.Automation.Interpreter {
         /// </summary>
         private static CallInstruction FastCreate(MethodInfo target, ParameterInfo[] pi) {
             Type t = TryGetParameterOrReturnType(target, pi, 0);
-            if (t is null) {
+            if (t == null) {
                 return new ActionCallInstruction(target);
             }
 
@@ -138,7 +138,7 @@ namespace System.Management.Automation.Interpreter {
 
         private static CallInstruction FastCreate<T0>(MethodInfo target, ParameterInfo[] pi) {
             Type t = TryGetParameterOrReturnType(target, pi, 1);
-            if (t is null) {
+            if (t == null) {
                 if (target.ReturnType == typeof(void)) {
                     return new ActionCallInstruction<T0>(target);
                 }
@@ -177,7 +177,7 @@ namespace System.Management.Automation.Interpreter {
 
         private static CallInstruction FastCreate<T0, T1>(MethodInfo target, ParameterInfo[] pi) {
             Type t = TryGetParameterOrReturnType(target, pi, 2);
-            if (t is null) {
+            if (t == null) {
                 if (target.ReturnType == typeof(void)) {
                     return new ActionCallInstruction<T0, T1>(target);
                 }

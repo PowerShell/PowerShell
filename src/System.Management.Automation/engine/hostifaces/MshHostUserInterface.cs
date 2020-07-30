@@ -182,7 +182,7 @@ namespace System.Management.Automation.Host
         {
             // #pragma warning disable 56506
 
-            // expressly not checking for value is null so that attempts to write a null cause an exception
+            // expressly not checking for value == null so that attempts to write a null cause an exception
 
             if ((value != null) && (value.Length != 0))
             {
@@ -400,7 +400,7 @@ namespace System.Management.Automation.Host
         {
             TranscribeCommandComplete(null);
 
-            if (TranscriptionData.CommandBeingIgnored is null)
+            if (TranscriptionData.CommandBeingIgnored == null)
             {
                 TranscriptionData.CommandBeingIgnored = commandText;
                 TranscriptionData.IsHelperCommand = false;
@@ -463,7 +463,7 @@ namespace System.Management.Automation.Host
         {
             lock (TranscriptionData)
             {
-                if (TranscriptionData.SystemTranscript is null)
+                if (TranscriptionData.SystemTranscript == null)
                 {
                     TranscriptionData.SystemTranscript = PSHostUserInterface.GetSystemTranscriptOption(TranscriptionData.SystemTranscript);
                     if (TranscriptionData.SystemTranscript != null)
@@ -1021,7 +1021,7 @@ namespace System.Management.Automation.Host
                 // This way, multiple runspaces opened by the same process will share the same transcript.
                 lock (s_systemTranscriptLock)
                 {
-                    if (systemTranscript is null)
+                    if (systemTranscript == null)
                     {
                         systemTranscript = PSHostUserInterface.GetTranscriptOptionFromSettings(transcription, currentTranscript);
                     }
@@ -1201,7 +1201,7 @@ namespace System.Management.Automation.Host
             {
                 if (!_disposed)
                 {
-                    if (_contentWriter is null)
+                    if (_contentWriter == null)
                     {
                         try
                         {

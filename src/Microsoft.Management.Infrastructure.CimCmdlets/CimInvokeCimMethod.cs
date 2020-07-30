@@ -359,7 +359,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx();
 
             CimMethodParametersCollection collection = null;
-            if (parameters is null)
+            if (parameters == null)
             {
                 return collection;
             }
@@ -389,7 +389,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     className = cimClass.CimSystemProperties.ClassName;
                     declaration = cimClass.CimClassMethods[methodName];
-                    if (declaration is null)
+                    if (declaration == null)
                     {
                         throw new ArgumentException(string.Format(
                                 CultureInfo.CurrentUICulture, CimCmdletStrings.InvalidMethod, methodName, className));
@@ -404,7 +404,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 if (declaration != null)
                 {
                     CimMethodParameterDeclaration paramDeclaration = declaration.Parameters[parameterName];
-                    if (paramDeclaration is null)
+                    if (paramDeclaration == null)
                     {
                         throw new ArgumentException(string.Format(
                             CultureInfo.CurrentUICulture, CimCmdletStrings.InvalidMethodParameter, parameterName, methodName, className));
@@ -420,7 +420,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
                 else
                 {
-                    if (parameterValue is null)
+                    if (parameterValue == null)
                     {
                         // try the best to get the type while value is null
                         parameter = CimMethodParameter.Create(

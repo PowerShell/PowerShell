@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private ListViewEntry GenerateListViewEntryFromProperties(PSObject so, int enumerationLimit)
         {
             // compute active properties every time
-            if (this.activeAssociationList is null)
+            if (this.activeAssociationList == null)
             {
                 SetUpActiveProperties(so);
             }

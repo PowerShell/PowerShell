@@ -118,7 +118,7 @@ namespace System.Management.Automation.Interpreter
 
         public override int GetHashCode()
         {
-            if (_parameter is null)
+            if (_parameter == null)
             {
                 return 0;
             }
@@ -160,7 +160,7 @@ namespace System.Management.Automation.Interpreter
             if (_variables.TryGetValue(variable, out existing))
             {
                 newScope = new VariableScope(result, start, existing);
-                if (existing.ChildScopes is null)
+                if (existing.ChildScopes == null)
                 {
                     existing.ChildScopes = new List<VariableScope>();
                 }
@@ -293,7 +293,7 @@ namespace System.Management.Automation.Interpreter
 
         internal LocalVariable AddClosureVariable(ParameterExpression variable)
         {
-            if (_closureVariables is null)
+            if (_closureVariables == null)
             {
                 _closureVariables = new Dictionary<ParameterExpression, LocalVariable>();
             }

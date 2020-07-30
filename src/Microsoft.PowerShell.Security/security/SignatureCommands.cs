@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (Content is null)
+            if (Content == null)
             {
                 //
                 // this cannot happen as we have specified the Path
@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
 
                             string resolvedFilePath = SecurityUtils.GetFilePathOfExistingFile(this, path);
 
-                            if (resolvedFilePath is null)
+                            if (resolvedFilePath == null)
                             {
                                 WriteError(SecurityUtils.CreateFileNotFoundErrorRecord(
                                     SignatureCommands.FileNotFound,
@@ -378,7 +378,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     value = string.Empty;
                 }
@@ -442,7 +442,7 @@ namespace Microsoft.PowerShell.Commands
         {
             SigningOption option = GetSigningOption(IncludeChain);
 
-            if (Certificate is null)
+            if (Certificate == null)
             {
                 throw PSTraceSource.NewArgumentNullException("certificate");
             }

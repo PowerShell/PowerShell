@@ -80,11 +80,11 @@ namespace System.Management.Automation.Runspaces
             // if we didn't get applicationPrivateData from a runspace pool,
             // then we create a new one
 
-            if (_applicationPrivateData is null)
+            if (_applicationPrivateData == null)
             {
                 lock (this.SyncRoot)
                 {
-                    if (_applicationPrivateData is null)
+                    if (_applicationPrivateData == null)
                     {
                         _applicationPrivateData = new PSPrimitiveDictionary();
                     }
@@ -114,7 +114,7 @@ namespace System.Management.Automation.Runspaces
             {
                 System.Management.Automation.ExecutionContext context = this.GetExecutionContext;
 
-                if (context is null)
+                if (context == null)
                 {
                     return null;
                 }
@@ -183,7 +183,7 @@ namespace System.Management.Automation.Runspaces
         {
             PSInvalidOperationException invalidOperation = null;
 
-            if (this.InitialSessionState is null)
+            if (this.InitialSessionState == null)
             {
                 invalidOperation = PSTraceSource.NewInvalidOperationException();
             }
@@ -244,7 +244,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (_engine is null)
+                if (_engine == null)
                     return null;
                 else
                     return _engine.Context;
@@ -260,7 +260,7 @@ namespace System.Management.Automation.Runspaces
             {
                 System.Management.Automation.ExecutionContext context = this.GetExecutionContext;
 
-                if (context is null)
+                if (context == null)
                 {
                     return false;
                 }
@@ -470,7 +470,7 @@ namespace System.Management.Automation.Runspaces
                             // Debug preference is set to disable.
                             if (debugPreferenceCache.ContainsKey(processName))
                             {
-                                if (appDomainName is null)
+                                if (appDomainName == null)
                                 {
                                     debugPreferenceCache.Remove(processName);
                                     iscacheUpdated = true;
@@ -768,7 +768,7 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         internal PipelineThread GetPipelineThread()
         {
-            if (_pipelineThread is null)
+            if (_pipelineThread == null)
             {
                 _pipelineThread = new PipelineThread(this.ApartmentState);
             }
@@ -1590,7 +1590,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="context">The destination for this serialization.</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
+            if (info == null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }

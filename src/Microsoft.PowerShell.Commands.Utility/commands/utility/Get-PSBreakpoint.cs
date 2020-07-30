@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         CommandBreakpoint commandBreakpoint = breakpoint as CommandBreakpoint;
 
-                        if (commandBreakpoint is null)
+                        if (commandBreakpoint == null)
                         {
                             return false;
                         }
@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         VariableBreakpoint variableBreakpoint = breakpoint as VariableBreakpoint;
 
-                        if (variableBreakpoint is null)
+                        if (variableBreakpoint == null)
                         {
                             return false;
                         }
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
                     Script,
                     delegate (Breakpoint breakpoint, string script)
                     {
-                        if (breakpoint.Script is null)
+                        if (breakpoint.Script == null)
                         {
                             return false;
                         }

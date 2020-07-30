@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we do not have an assembly, we try to load it
                 bool foundInGac;
                 loadResult.a = LoadAssemblyFromResourceReference(resourceReference, out foundInGac);
-                if (loadResult.a is null)
+                if (loadResult.a == null)
                 {
                     loadResult.status = AssemblyBindingStatus.NotFound;
                 }
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             bindingStatus = loadResult.status;
 
-            if (loadResult.a is null)
+            if (loadResult.a == null)
             {
                 // we failed the assembly loading
                 result = LoadingResult.AssemblyNotFound;
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             try
             {
                 string val = ResourceManagerCache.GetResourceString(loadResult.a, resourceReference.baseName, resourceReference.resourceId);
-                if (val is null)
+                if (val == null)
                 {
                     result = LoadingResult.StringNotFound;
                     return null;

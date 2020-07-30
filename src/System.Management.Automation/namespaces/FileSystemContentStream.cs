@@ -564,7 +564,7 @@ namespace Microsoft.PowerShell.Commands
             // Reading lines as strings
             string line = readBackward ? _backReader.ReadLine() : _reader.ReadLine();
 
-            if (line is null)
+            if (line == null)
             {
                 if (waitChanges)
                 {
@@ -574,7 +574,7 @@ namespace Microsoft.PowerShell.Commands
                         WaitForChanges(_path, _mode, _access, _share, _reader.CurrentEncoding);
                         line = _reader.ReadLine();
                     }
-                    while ((line is null) && (!_provider.Stopping));
+                    while ((line == null) && (!_provider.Stopping));
                 }
             }
 
@@ -1075,7 +1075,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteObject(object content)
         {
-            if (content is null)
+            if (content == null)
             {
                 return;
             }

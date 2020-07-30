@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell.Commands
         {
             base.EndProcessing();
 
-            if (_windowProxy is null)
+            if (_windowProxy == null)
             {
                 return;
             }
@@ -154,13 +154,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (PSObject selectedItem in selectedItems)
                 {
-                    if (selectedItem is null)
+                    if (selectedItem == null)
                     {
                         continue;
                     }
 
                     PSPropertyInfo originalObjectProperty = selectedItem.Properties[OutWindowProxy.OriginalObjectPropertyName];
-                    if (originalObjectProperty is null)
+                    if (originalObjectProperty == null)
                     {
                         return;
                     }
@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (InputObject is null || InputObject == AutomationNull.Value)
+            if (InputObject == null || InputObject == AutomationNull.Value)
             {
                 return;
             }
@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.Commands
                 this.ThrowTerminatingError(error);
             }
 
-            if (_gridHeader is null)
+            if (_gridHeader == null)
             {
                 // Columns have not been added yet; Start the main window and add columns.
                 _windowProxy.ShowWindow();

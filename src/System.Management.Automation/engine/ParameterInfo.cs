@@ -30,7 +30,7 @@ namespace System.Management.Automation
             CompiledCommandParameter parameter,
             uint parameterSetFlag)
         {
-            if (parameter is null)
+            if (parameter == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(parameter));
             }

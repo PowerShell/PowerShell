@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
                 this.WriteObject(alias);
             }
 
-            if (!matchfound && !ContainsWildcard && (excludePatterns is null || excludePatterns.Count == 0))
+            if (!matchfound && !ContainsWildcard && (excludePatterns == null || excludePatterns.Count == 0))
             {
                 // Need to write an error if the user tries to get an alias
                 // tat doesn't exist and they are not globbing.

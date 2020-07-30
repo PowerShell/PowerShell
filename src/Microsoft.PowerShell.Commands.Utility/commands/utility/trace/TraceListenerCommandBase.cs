@@ -194,7 +194,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (DebuggerListener)
             {
-                if (_defaultListener is null)
+                if (_defaultListener == null)
                 {
                     _defaultListener =
                         new DefaultTraceListener();
@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (PSHostListener)
             {
-                if (_hostListener is null)
+                if (_hostListener == null)
                 {
                     ((MshCommandRuntime)this.CommandRuntime).DebugPreference = ActionPreference.Continue;
                     _hostListener = new PSHostTraceListener(this);
@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (FileListener != null)
             {
-                if (_fileListeners is null)
+                if (_fileListeners == null)
                 {
                     _fileListeners = new Collection<TextWriterTraceListener>();
                     FileStreams = new Collection<FileStream>();

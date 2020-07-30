@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
     {
         internal static bool HasRepeatingRunspaces(PSSession[] runspaceInfos)
         {
-            if (runspaceInfos is null)
+            if (runspaceInfos == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(runspaceInfos));
             }
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool ExceedMaximumAllowableRunspaces(PSSession[] runspaceInfos)
         {
-            if (runspaceInfos is null)
+            if (runspaceInfos == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(runspaceInfos));
             }

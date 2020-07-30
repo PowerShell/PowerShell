@@ -192,16 +192,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             PSHost host,
             bool preValidated)
         {
-            if (info is null)
+            if (info == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
 
-            if (info.filePath is null)
+            if (info.filePath == null)
                 throw PSTraceSource.NewArgumentNullException("info.filePath");
 
-            if (db is null)
+            if (db == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(db));
 
-            if (expressionFactory is null)
+            if (expressionFactory == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(expressionFactory));
 
             if (SecuritySupport.IsProductBinary(info.filePath))
@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 SetLoadingInfoIsFullyTrusted(isFullyTrusted);
             }
 
-            if (newDocument is null)
+            if (newDocument == null)
             {
                 return false;
             }
@@ -287,13 +287,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             bool isBuiltInFormatData,
             bool isForHelp)
         {
-            if (typeDefinition is null)
+            if (typeDefinition == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(typeDefinition));
-            if (typeDefinition.TypeName is null)
+            if (typeDefinition.TypeName == null)
                 throw PSTraceSource.NewArgumentNullException("typeDefinition.TypeName");
-            if (db is null)
+            if (db == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(db));
-            if (expressionFactory is null)
+            if (expressionFactory == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(expressionFactory));
 
             this.expressionFactory = expressionFactory;
@@ -336,10 +336,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="db">Instance of the databaseto load into.</param>
         private void LoadData(XmlDocument doc, TypeInfoDataBase db)
         {
-            if (doc is null)
+            if (doc == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(doc));
 
-            if (db is null)
+            if (db == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(db));
 
             // create a new instance of the database to be loaded
@@ -424,10 +424,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="isForHelpOutput">True if the formatter is used for formatting help objects.</param>
         private void LoadData(ExtendedTypeDefinition typeDefinition, TypeInfoDataBase db, bool isForHelpOutput)
         {
-            if (typeDefinition is null)
+            if (typeDefinition == null)
                 throw PSTraceSource.NewArgumentNullException("viewDefinition");
 
-            if (db is null)
+            if (db == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(db));
 
             int viewIndex = 0;
@@ -495,7 +495,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // Check if the PSControl is successfully loaded
-            if (view.mainControl is null)
+            if (view.mainControl == null)
             {
                 return null;
             }
@@ -552,7 +552,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             LoadRowEntriesSectionFromObjectModel(tableBody, table.Rows, viewIndex, typeName);
             // When error occurs while loading rowEntry, the tableBody.defaultDefinition would be null
-            if (tableBody.defaultDefinition is null)
+            if (tableBody.defaultDefinition == null)
             {
                 return null;
             }
@@ -629,7 +629,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     LoadColumnEntriesFromObjectModel(trd, row.Columns, viewIndex, typeName);
                     // trd.rowItemDefinitionList is null, it means there was a failure
-                    if (trd.rowItemDefinitionList is null)
+                    if (trd.rowItemDefinitionList == null)
                     {
                         tableBody.defaultDefinition = null;
                         return;
@@ -648,7 +648,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // rowEntries must not be empty
-            if (tableBody.defaultDefinition is null)
+            if (tableBody.defaultDefinition == null)
             {
                 this.ReportErrorForLoadingFromObjectModel(
                     StringUtil.Format(FormatAndOutXmlLoadingStrings.NoDefaultShapeEntryInFormattingData, typeName, viewIndex, XmlTags.TableRowEntryNode), typeName);
@@ -675,7 +675,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (column.DisplayEntry != null)
                 {
                     ExpressionToken expression = LoadExpressionFromObjectModel(column.DisplayEntry, viewIndex, typeName);
-                    if (expression is null)
+                    if (expression == null)
                     {
                         trd.rowItemDefinitionList = null;
                         return;
@@ -787,7 +787,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // load the list entries section
             LoadListControlEntriesFromObjectModel(listBody, list.Entries, viewIndex, typeName);
-            if (listBody.defaultEntryDefinition is null)
+            if (listBody.defaultEntryDefinition == null)
             {
                 return null; // fatal error
             }
@@ -802,7 +802,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             foreach (ListControlEntry listEntry in entries)
             {
                 ListControlEntryDefinition lved = LoadListControlEntryDefinitionFromObjectModel(listEntry, viewIndex, typeName);
-                if (lved is null)
+                if (lved == null)
                 {
                     this.ReportErrorForLoadingFromObjectModel(
                         StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailedInFormattingData, typeName, viewIndex, XmlTags.ListEntryNode), typeName);
@@ -810,9 +810,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return;
                 }
                 // determine if we have a default entry and if it's already set
-                if (lved.appliesTo is null)
+                if (lved.appliesTo == null)
                 {
-                    if (listBody.defaultEntryDefinition is null)
+                    if (listBody.defaultEntryDefinition == null)
                     {
                         listBody.defaultEntryDefinition = lved;
                     }
@@ -831,7 +831,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
             // list entries is empty
-            if (listBody.defaultEntryDefinition is null)
+            if (listBody.defaultEntryDefinition == null)
             {
                 // Error: there must be at least one default
                 this.ReportErrorForLoadingFromObjectModel(
@@ -859,7 +859,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             LoadListControlItemDefinitionsFromObjectModel(lved, listEntry.Items, viewIndex, typeName);
-            if (lved.itemDefinitionList is null)
+            if (lved.itemDefinitionList == null)
             {
                 return null;
             }
@@ -886,7 +886,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (listItem.DisplayEntry != null)
                 {
                     ExpressionToken expression = LoadExpressionFromObjectModel(listItem.DisplayEntry, viewIndex, typeName);
-                    if (expression is null)
+                    if (expression == null)
                     {
                         lved.itemDefinitionList = null;
                         return; // fatal
@@ -943,7 +943,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 wideBody.autosize = true;
 
             LoadWideControlEntriesFromObjectModel(wideBody, wide.Entries, viewIndex, typeName);
-            if (wideBody.defaultEntryDefinition is null)
+            if (wideBody.defaultEntryDefinition == null)
             {
                 // if we have no default entry definition, it means there was a failure
                 return null;
@@ -964,7 +964,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             foreach (WideControlEntryItem wideItem in wideEntries)
             {
                 WideControlEntryDefinition wved = LoadWideControlEntryFromObjectModel(wideItem, viewIndex, typeName);
-                if (wved is null)
+                if (wved == null)
                 {
                     this.ReportErrorForLoadingFromObjectModel(
                         StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidFormattingData, typeName, viewIndex, XmlTags.WideEntryNode), typeName);
@@ -973,9 +973,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // determine if we have a default entry and if it's already set
-                if (wved.appliesTo is null)
+                if (wved.appliesTo == null)
                 {
-                    if (wideBody.defaultEntryDefinition is null)
+                    if (wideBody.defaultEntryDefinition == null)
                     {
                         wideBody.defaultEntryDefinition = wved;
                     }
@@ -994,7 +994,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            if (wideBody.defaultEntryDefinition is null)
+            if (wideBody.defaultEntryDefinition == null)
             {
                 this.ReportErrorForLoadingFromObjectModel(
                     StringUtil.Format(FormatAndOutXmlLoadingStrings.NoDefaultShapeEntryInFormattingData, typeName, viewIndex, XmlTags.WideEntryNode), typeName);
@@ -1023,7 +1023,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // process displayEntry property
             ExpressionToken expression = LoadExpressionFromObjectModel(wideItem.DisplayEntry, viewIndex, typeName);
-            if (expression is null)
+            if (expression == null)
             {
                 return null; // fatal
             }
@@ -1050,7 +1050,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             foreach (var entry in custom.Entries)
             {
                 var cced = LoadComplexControlEntryDefinitionFromObjectModel(entry, viewIndex, typeName);
-                if (cced.appliesTo is null)
+                if (cced.appliesTo == null)
                 {
                     ccb.defaultEntry = cced;
                 }
@@ -1247,7 +1247,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (MatchNodeName(n, XmlTags.EnumerableExpansionNode))
                     {
                         EnumerableExpansionDirective eed = LoadEnumerableExpansionDirective(n, k++);
-                        if (eed is null)
+                        if (eed == null)
                         {
                             // Error at XPath {0} in file {1}: {2} failed to load.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.EnumerableExpansionNode));
@@ -1298,7 +1298,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         expandNodeFound = true;
                         string s = GetMandatoryInnerText(n);
-                        if (s is null)
+                        if (s == null)
                         {
                             return null; // fatal
                         }
@@ -1589,7 +1589,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return null; // fatal error
                 }
 
-                if (retVal is null)
+                if (retVal == null)
                 {
                     // missing mandatory node
                     this.ReportMissingNodes(new string[] { XmlTags.SelectionSetNameNode, XmlTags.TypeNameNode });
@@ -1600,7 +1600,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     // mandatory node
                     retVal.conditionToken = expressionMatch.GenerateExpressionToken();
-                    if (retVal.conditionToken is null)
+                    if (retVal.conditionToken == null)
                     {
                         return null; // fatal error
                     }
@@ -1670,7 +1670,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         labelFound = true;
 
                         labelTextToken = LoadLabel(n);
-                        if (labelTextToken is null)
+                        if (labelTextToken == null)
                         {
                             return null; // fatal error
                         }
@@ -1711,7 +1711,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     // we add only if we encountered one, since it's not mandatory
                     ExpressionToken expression = expressionMatch.GenerateExpressionToken();
-                    if (expression is null)
+                    if (expression == null)
                     {
                         return null; // fatal error
                     }
@@ -1754,7 +1754,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // inner text is mandatory
             tt.text = this.GetMandatoryInnerText(n);
 
-            if (tt.text is null)
+            if (tt.text == null)
                 return null;
 
             return tt;
@@ -1765,7 +1765,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             resource = null;
             XmlElement e = n as XmlElement;
 
-            if (e is null)
+            if (e == null)
             {
                 // Error at XPath {0} in file {1}: Node should be an XmlElement.
                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NonXmlElementNode, ComputeCurrentXPath(), FilePath));
@@ -1793,19 +1793,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (MatchAttributeName(a, XmlTags.AssemblyNameAttribute))
                 {
                     resource.assemblyName = GetMandatoryAttributeValue(a);
-                    if (resource.assemblyName is null)
+                    if (resource.assemblyName == null)
                         return null;
                 }
                 else if (MatchAttributeName(a, XmlTags.BaseNameAttribute))
                 {
                     resource.baseName = GetMandatoryAttributeValue(a);
-                    if (resource.baseName is null)
+                    if (resource.baseName == null)
                         return null;
                 }
                 else if (MatchAttributeName(a, XmlTags.ResourceIdAttribute))
                 {
                     resource.resourceId = GetMandatoryAttributeValue(a);
-                    if (resource.resourceId is null)
+                    if (resource.resourceId == null)
                         return null;
                 }
                 else
@@ -1816,19 +1816,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // make sure we got all the attributes, since allof them are mandatory
-            if (resource.assemblyName is null)
+            if (resource.assemblyName == null)
             {
                 ReportMissingAttribute(XmlTags.AssemblyNameAttribute);
                 return null;
             }
 
-            if (resource.baseName is null)
+            if (resource.baseName == null)
             {
                 ReportMissingAttribute(XmlTags.BaseNameAttribute);
                 return null;
             }
 
-            if (resource.resourceId is null)
+            if (resource.resourceId == null)
             {
                 ReportMissingAttribute(XmlTags.ResourceIdAttribute);
                 return null;
@@ -1971,7 +1971,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     _token = new ExpressionToken();
                     _token.expressionValue = _loader.GetMandatoryInnerText(n);
-                    if (_token.expressionValue is null)
+                    if (_token.expressionValue == null)
                     {
                         // Error at XPath {0} in file {1}: Missing property.
                         _loader.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoProperty, _loader.ComputeCurrentXPath(), _loader.FilePath));
@@ -1995,7 +1995,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     _token = new ExpressionToken();
                     _token.isScriptBlock = true;
                     _token.expressionValue = _loader.GetMandatoryInnerText(n);
-                    if (_token.expressionValue is null)
+                    if (_token.expressionValue == null)
                     {
                         // Error at XPath {0} in file {1}: Missing script block text.
                         _loader.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoScriptBlockText, _loader.ComputeCurrentXPath(), _loader.FilePath));
@@ -2024,7 +2024,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return null;
                 }
 
-                if (_token is null)
+                if (_token == null)
                 {
                     // we do not have a token: we never got one
                     // the user should have specified either a property or a script block
@@ -2053,7 +2053,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             internal bool ProcessExpressionDirectives(XmlNode containerNode, List<XmlNode> unprocessedNodes)
             {
-                if (containerNode is null)
+                if (containerNode == null)
                     throw PSTraceSource.NewArgumentNullException(nameof(containerNode));
 
                 string formatString = null;
@@ -2088,7 +2088,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         formatStringNodeFound = true;
                         formatString = _loader.GetMandatoryInnerText(n);
-                        if (formatString is null)
+                        if (formatString == null)
                         {
                             // Error at XPath {0} in file {1}: Missing a format string.
                             _loader.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoFormatString, _loader.ComputeCurrentXPath(), _loader.FilePath));
@@ -2105,7 +2105,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         textNodeFound = true;
                         textToken = _loader.LoadText(n);
-                        if (textToken is null)
+                        if (textToken == null)
                         {
                             // Error at XPath {0} in file {1}: Invalid {2}.
                             _loader.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidNode, _loader.ComputeCurrentXPath(), _loader.FilePath, XmlTags.TextNode));
@@ -2131,7 +2131,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
 
                     ExpressionToken expression = expressionMatch.GenerateExpressionToken();
-                    if (expression is null)
+                    if (expression == null)
                     {
                         return false; // fatal error
                     }
@@ -2206,7 +2206,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 else if (_loader.MatchNodeName(n, XmlTags.ComplexControlNameNode))
                 {
                     string name = _loader.GetMandatoryInnerText(n);
-                    if (name is null)
+                    if (name == null)
                     {
                         return false;
                     }

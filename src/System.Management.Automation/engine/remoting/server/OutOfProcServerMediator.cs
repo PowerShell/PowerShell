@@ -348,7 +348,7 @@ namespace System.Management.Automation.Remoting.Server
                     string data = originalStdIn.ReadLine();
                     lock (_syncObject)
                     {
-                        if (sessionTM is null)
+                        if (sessionTM == null)
                         {
                             sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, workingDirectory);
                         }
@@ -600,7 +600,7 @@ namespace System.Management.Automation.Remoting.Server
         private NamedPipeProcessMediator(
             RemoteSessionNamedPipeServer namedPipeServer) : base(false)
         {
-            if (namedPipeServer is null)
+            if (namedPipeServer == null)
             {
                 throw new PSArgumentNullException(nameof(namedPipeServer));
             }

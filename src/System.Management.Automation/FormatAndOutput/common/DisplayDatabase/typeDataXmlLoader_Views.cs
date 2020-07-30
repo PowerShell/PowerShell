@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-                if (view.mainControl is null)
+                if (view.mainControl == null)
                 {
                     this.ReportMissingNodes(controlNodeTags);
                     return null; // fatal
@@ -199,10 +199,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private bool LoadCommonViewData(XmlNode viewNode, ViewDefinition view, List<XmlNode> unprocessedNodes)
         {
-            if (viewNode is null)
+            if (viewNode == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(viewNode));
 
-            if (view is null)
+            if (view == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(view));
 
             // set loading information
@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     nameNodeFound = true;
                     view.name = GetMandatoryInnerText(n);
-                    if (view.name is null)
+                    if (view.name == null)
                     {
                         return false;
                     }
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     // if null, we invalidate the view
                     view.appliesTo = LoadAppliesToSection(n, false);
-                    if (view.appliesTo is null)
+                    if (view.appliesTo == null)
                     {
                         return false;
                     }
@@ -258,7 +258,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     groupByFound = true;
                     view.groupBy = LoadGroupBySection(n);
-                    if (view.groupBy is null)
+                    if (view.groupBy == null)
                     {
                         return false;
                     }
@@ -329,7 +329,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         nameNodeFound = true;
                         def.name = GetMandatoryInnerText(n);
-                        if (def.name is null)
+                        if (def.name == null)
                         {
                             // Error at XPath {0} in file {1}: Control cannot have a null Name.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NullControlName, ComputeCurrentXPath(), FilePath));
@@ -347,7 +347,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         controlNodeFound = true;
                         def.controlBody = LoadComplexControl(n);
-                        if (def.controlBody is null)
+                        if (def.controlBody == null)
                         {
                             return null; // fatal error
                         }
@@ -358,13 +358,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-                if (def.name is null)
+                if (def.name == null)
                 {
                     this.ReportMissingNode(XmlTags.NameNode);
                     return null; // fatal
                 }
 
-                if (def.controlBody is null)
+                if (def.controlBody == null)
                 {
                     this.ReportMissingNode(XmlTags.ComplexControlNode);
                     return null; // fatal

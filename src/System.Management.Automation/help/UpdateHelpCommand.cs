@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (_path is null)
+            if (_path == null)
             {
                 // Pull default source path from GP
                 string defaultSourcePath = _helpSystem.GetDefaultSourcePath();
@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!_isInitialized)
                 {
-                    if (_path is null && Recurse.IsPresent)
+                    if (_path == null && Recurse.IsPresent)
                     {
                         PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.CannotSpecifyRecurseWithoutPath));
                         ThrowTerminatingError(e.ErrorRecord);
@@ -337,7 +337,7 @@ namespace Microsoft.PowerShell.Commands
                 newHelpInfo = _helpSystem.GetHelpInfo(UpdatableHelpCommandType.UpdateHelpCommand, uri, module.ModuleName, module.ModuleGuid, culture);
             }
 
-            if (newHelpInfo is null)
+            if (newHelpInfo == null)
             {
                 throw new UpdatableHelpSystemException("UnableToRetrieveHelpInfoXml",
                     StringUtil.Format(HelpDisplayStrings.UnableToRetrieveHelpInfoXml, culture), ErrorCategory.ResourceUnavailable,

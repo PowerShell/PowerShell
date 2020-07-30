@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     _paths = null;
                     return;
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     _paths = null;
                     return;
@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                 }
 
-                if (activeExtension is null)
+                if (activeExtension == null)
                 {
                     activeExtension = currentExtension;
                 }
@@ -1259,7 +1259,7 @@ namespace Microsoft.PowerShell.Commands
         {
             var location = diagnisticRecord.Location;
 
-            if (location.SourceTree is null)
+            if (location.SourceTree == null)
             {
                 // For some error types (linker?) we don't have related source code.
                 return diagnisticRecord.ToString();

@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             SerializationInfo info,
             StreamingContext context) : base(info, context)
         {
-            if (info is null)
+            if (info == null)
             {
                 throw new ArgumentNullException(nameof(info));
             }
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
+            if (info == null)
             {
                 throw new ArgumentNullException(nameof(info));
             }
@@ -328,13 +328,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private static ErrorCategory ConvertCimErrorToErrorCategory(CimInstance cimError)
         {
-            if (cimError is null)
+            if (cimError == null)
             {
                 return ErrorCategory.NotSpecified;
             }
 
             CimProperty errorCategoryProperty = cimError.CimInstanceProperties["Error_Category"];
-            if (errorCategoryProperty is null)
+            if (errorCategoryProperty == null)
             {
                 return ErrorCategory.NotSpecified;
             }
@@ -363,13 +363,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             get
             {
                 var cimException = this.InnerException as CimException;
-                if ((cimException is null) || (cimException.ErrorData is null))
+                if ((cimException == null) || (cimException.ErrorData == null))
                 {
                     return false;
                 }
 
                 CimProperty perceivedSeverityProperty = cimException.ErrorData.CimInstanceProperties["PerceivedSeverity"];
-                if ((perceivedSeverityProperty is null) || (perceivedSeverityProperty.CimType != CimType.UInt16) || (perceivedSeverityProperty.Value is null))
+                if ((perceivedSeverityProperty == null) || (perceivedSeverityProperty.CimType != CimType.UInt16) || (perceivedSeverityProperty.Value == null))
                 {
                     return false;
                 }

@@ -18,7 +18,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static string GetUserHomeHelpSearchPath()
         {
-            if (userHomeHelpPath is null)
+            if (userHomeHelpPath == null)
             {
 #if UNIX
                 var userModuleFolder = Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);

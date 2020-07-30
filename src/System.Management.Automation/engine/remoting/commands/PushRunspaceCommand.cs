@@ -235,7 +235,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Push the remote runspace on the local host.
             IHostSupportsInteractiveSession host = this.Host as IHostSupportsInteractiveSession;
-            if (host is null)
+            if (host == null)
             {
                 WriteError(
                     new ErrorRecord(
@@ -314,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // If runspace is null then the error record has already been written and we can exit.
-            if (remoteRunspace is null) { return; }
+            if (remoteRunspace == null) { return; }
 
             // If the runspace is in a disconnected state try to connect.
             bool runspaceConnected = false;
@@ -532,7 +532,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             IHostSupportsInteractiveSession host = this.Host as IHostSupportsInteractiveSession;
-            if (host is null)
+            if (host == null)
             {
                 WriteError(
                     new ErrorRecord(

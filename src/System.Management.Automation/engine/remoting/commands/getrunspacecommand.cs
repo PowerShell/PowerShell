@@ -331,7 +331,7 @@ namespace Microsoft.PowerShell.Commands
         {
             base.BeginProcessing();
 
-            if (ConfigurationName is null)
+            if (ConfigurationName == null)
             {
                 ConfigurationName = string.Empty;
             }
@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if ((ParameterSetName == GetPSSessionCommand.NameParameterSet) && ((Name is null) || (Name.Length == 0)))
+            if ((ParameterSetName == GetPSSessionCommand.NameParameterSet) && ((Name == null) || (Name.Length == 0)))
             {
                 // that means Get-PSSession (with no parameters)..so retrieve all the runspaces.
                 GetAllRunspaces(true, true);

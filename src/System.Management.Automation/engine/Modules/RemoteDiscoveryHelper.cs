@@ -34,7 +34,7 @@ namespace System.Management.Automation
             var rehydrationFlags = DeserializingTypeConverter.RehydrationFlags.NullValueOk |
                                    DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk;
             Hashtable hashtable = DeserializingTypeConverter.GetPropertyValue<Hashtable>(pso, propertyName, rehydrationFlags);
-            if (hashtable is null)
+            if (hashtable == null)
             {
                 return new Collection<string>();
             }
@@ -505,7 +505,7 @@ namespace System.Management.Automation
         private static T GetPropertyValue<T>(CimInstance cimInstance, string propertyName, T defaultValue)
         {
             CimProperty cimProperty = cimInstance.CimInstanceProperties[propertyName];
-            if (cimProperty is null)
+            if (cimProperty == null)
             {
                 return defaultValue;
             }
@@ -602,7 +602,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    if (_fileData is null)
+                    if (_fileData == null)
                     {
                         using (var ms = new MemoryStream(this.RawFileData))
                         using (var sr = new StreamReader(ms, detectEncodingFromByteOrderMarks: true))
@@ -783,7 +783,7 @@ namespace System.Management.Automation
                 options.ResourceUri = resourceUri;
             }
 
-            if (string.IsNullOrEmpty(cimNamespace) && (resourceUri is null))
+            if (string.IsNullOrEmpty(cimNamespace) && (resourceUri == null))
             {
                 cimNamespace = DiscoveryProviderNamespace;
             }
@@ -899,9 +899,9 @@ namespace System.Management.Automation
 
         private static CimCredential GetCimCredentials(string authentication, PSCredential credential)
         {
-            if (authentication is null || (authentication.Equals("Default", StringComparison.OrdinalIgnoreCase)))
+            if (authentication == null || (authentication.Equals("Default", StringComparison.OrdinalIgnoreCase)))
             {
-                if (credential is null)
+                if (credential == null)
                 {
                     return null;
                 }
@@ -913,7 +913,7 @@ namespace System.Management.Automation
 
             if (authentication.Equals("Basic", StringComparison.OrdinalIgnoreCase))
             {
-                if (credential is null)
+                if (credential == null)
                 {
                     throw GetExceptionWhenAuthenticationRequiresCredential(authentication);
                 }
@@ -925,7 +925,7 @@ namespace System.Management.Automation
 
             if (authentication.Equals("Negotiate", StringComparison.OrdinalIgnoreCase))
             {
-                if (credential is null)
+                if (credential == null)
                 {
                     return new CimCredential(ImpersonatedAuthenticationMechanism.Negotiate);
                 }
@@ -937,7 +937,7 @@ namespace System.Management.Automation
 
             if (authentication.Equals("CredSSP", StringComparison.OrdinalIgnoreCase))
             {
-                if (credential is null)
+                if (credential == null)
                 {
                     throw GetExceptionWhenAuthenticationRequiresCredential(authentication);
                 }
@@ -949,7 +949,7 @@ namespace System.Management.Automation
 
             if (authentication.Equals("Digest", StringComparison.OrdinalIgnoreCase))
             {
-                if (credential is null)
+                if (credential == null)
                 {
                     throw GetExceptionWhenAuthenticationRequiresCredential(authentication);
                 }
@@ -961,7 +961,7 @@ namespace System.Management.Automation
 
             if (authentication.Equals("Kerberos", StringComparison.OrdinalIgnoreCase))
             {
-                if (credential is null)
+                if (credential == null)
                 {
                     return new CimCredential(ImpersonatedAuthenticationMechanism.Kerberos);
                 }
@@ -1010,7 +1010,7 @@ namespace System.Management.Automation
                 System.Management.Automation.Language.Token[] throwAwayTokens;
                 ParseError[] parseErrors;
                 scriptBlockAst = System.Management.Automation.Language.Parser.ParseInput(cimModuleFile.FileData, temporaryModuleManifestPath, out throwAwayTokens, out parseErrors);
-                if ((scriptBlockAst is null) || (parseErrors != null && parseErrors.Length > 0))
+                if ((scriptBlockAst == null) || (parseErrors != null && parseErrors.Length > 0))
                 {
                     containedErrors = true;
                 }

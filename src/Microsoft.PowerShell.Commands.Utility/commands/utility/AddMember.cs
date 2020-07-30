@@ -194,8 +194,8 @@ namespace Microsoft.PowerShell.Commands
 
         private void EnsureValue1AndValue2AreNotBothNull()
         {
-            if (_value1 is null &&
-               (_value2 is null || !HasBeenSpecified(_value2)))
+            if (_value1 == null &&
+               (_value2 == null || !HasBeenSpecified(_value2)))
             {
                 ThrowTerminatingError(NewError("Value1AndValue2AreNotBothNull", "Value1AndValue2AreNotBothNull", null, _memberType));
             }
@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void EnsureValue1IsNotNull()
         {
-            if (_value1 is null)
+            if (_value1 == null)
             {
                 ThrowTerminatingError(NewError("Value1ShouldNotBeNull", "Value1ShouldNotBeNull", null, _memberType));
             }
@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void EnsureValue2IsNotNull()
         {
-            if (_value2 is null)
+            if (_value2 == null)
             {
                 ThrowTerminatingError(NewError("Value2ShouldNotBeNull", "Value2ShouldNotBeNull", null, _memberType));
             }
@@ -288,7 +288,7 @@ namespace Microsoft.PowerShell.Commands
         private PSMemberInfo GetMemberSet()
         {
             EnsureValue2HasNotBeenSpecified();
-            if (_value1 is null || !HasBeenSpecified(_value1))
+            if (_value1 == null || !HasBeenSpecified(_value1))
             {
                 return new PSMemberSet(_memberName);
             }
@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (member is null)
+            if (member == null)
             {
                 return;
             }

@@ -61,7 +61,7 @@ namespace System.Management.Automation.Runspaces
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
+            if (info == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
@@ -143,7 +143,7 @@ namespace System.Management.Automation.Runspaces
 
         private static ProgressRecord Validate(ProgressRecord progressRecord)
         {
-            if (progressRecord is null) throw new ArgumentNullException(nameof(progressRecord));
+            if (progressRecord == null) throw new ArgumentNullException(nameof(progressRecord));
             return progressRecord;
         }
     }

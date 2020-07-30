@@ -26,7 +26,7 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal CommonParameters(MshCommandRuntime commandRuntime)
         {
-            if (commandRuntime is null)
+            if (commandRuntime == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(commandRuntime));
             }

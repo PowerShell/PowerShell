@@ -68,12 +68,12 @@ namespace System.Management.Automation
             bool force,
             bool literalPath)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            if (property is null)
+            if (property == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(property));
             }
@@ -139,12 +139,12 @@ namespace System.Management.Automation
             object value,
             CmdletProviderContext context)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            if (property is null)
+            if (property == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(property));
             }
@@ -154,7 +154,7 @@ namespace System.Management.Automation
 
             foreach (string path in paths)
             {
-                if (path is null)
+                if (path == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -306,7 +306,7 @@ namespace System.Management.Automation
             object value,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }
@@ -465,12 +465,12 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveProperty(string[] paths, string property, bool force, bool literalPath)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            if (property is null)
+            if (property == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(property));
             }
@@ -521,19 +521,19 @@ namespace System.Management.Automation
             string property,
             CmdletProviderContext context)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            if (property is null)
+            if (property == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(property));
             }
 
             foreach (string path in paths)
             {
-                if (path is null)
+                if (path == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -672,7 +672,7 @@ namespace System.Management.Automation
             string propertyName,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }
@@ -838,22 +838,22 @@ namespace System.Management.Automation
             bool force,
             bool literalPath)
         {
-            if (sourcePaths is null)
+            if (sourcePaths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sourcePaths));
             }
 
-            if (sourceProperty is null)
+            if (sourceProperty == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sourceProperty));
             }
 
-            if (destinationPath is null)
+            if (destinationPath == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationPath));
             }
 
-            if (destinationProperty is null)
+            if (destinationProperty == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationProperty));
             }
@@ -919,29 +919,29 @@ namespace System.Management.Automation
             string destinationProperty,
             CmdletProviderContext context)
         {
-            if (sourcePaths is null)
+            if (sourcePaths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sourcePaths));
             }
 
-            if (sourceProperty is null)
+            if (sourceProperty == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sourceProperty));
             }
 
-            if (destinationPath is null)
+            if (destinationPath == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationPath));
             }
 
-            if (destinationProperty is null)
+            if (destinationProperty == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationProperty));
             }
 
             foreach (string sourcePath in sourcePaths)
             {
-                if (sourcePath is null)
+                if (sourcePath == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(sourcePaths));
                 }
@@ -1137,7 +1137,7 @@ namespace System.Management.Automation
             string destinationProperty,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }
@@ -1325,22 +1325,22 @@ namespace System.Management.Automation
             bool force,
             bool literalPath)
         {
-            if (sourcePaths is null)
+            if (sourcePaths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sourcePaths));
             }
 
-            if (sourceProperty is null)
+            if (sourceProperty == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sourceProperty));
             }
 
-            if (destinationPath is null)
+            if (destinationPath == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationPath));
             }
 
-            if (destinationProperty is null)
+            if (destinationProperty == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationProperty));
             }
@@ -1409,22 +1409,22 @@ namespace System.Management.Automation
             string destinationProperty,
             CmdletProviderContext context)
         {
-            if (sourcePaths is null)
+            if (sourcePaths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sourcePaths));
             }
 
-            if (sourceProperty is null)
+            if (sourceProperty == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sourceProperty));
             }
 
-            if (destinationPath is null)
+            if (destinationPath == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationPath));
             }
 
-            if (destinationProperty is null)
+            if (destinationProperty == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationProperty));
             }
@@ -1462,7 +1462,7 @@ namespace System.Management.Automation
             {
                 foreach (string sourcePath in sourcePaths)
                 {
-                    if (sourcePath is null)
+                    if (sourcePath == null)
                     {
                         throw PSTraceSource.NewArgumentNullException(nameof(sourcePaths));
                     }
@@ -1623,7 +1623,7 @@ namespace System.Management.Automation
             string destinationProperty,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }
@@ -1803,17 +1803,17 @@ namespace System.Management.Automation
             bool force,
             bool literalPath)
         {
-            if (sourcePaths is null)
+            if (sourcePaths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sourcePaths));
             }
 
-            if (sourceProperty is null)
+            if (sourceProperty == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sourceProperty));
             }
 
-            if (destinationProperty is null)
+            if (destinationProperty == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationProperty));
             }
@@ -1872,24 +1872,24 @@ namespace System.Management.Automation
             string destinationProperty,
             CmdletProviderContext context)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            if (sourceProperty is null)
+            if (sourceProperty == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sourceProperty));
             }
 
-            if (destinationProperty is null)
+            if (destinationProperty == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationProperty));
             }
 
             foreach (string path in paths)
             {
-                if (path is null)
+                if (path == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -2040,7 +2040,7 @@ namespace System.Management.Automation
             string destinationProperty,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }

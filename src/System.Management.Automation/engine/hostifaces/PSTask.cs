@@ -1189,7 +1189,7 @@ namespace System.Management.Automation.PSTasks
             Debugger debugger,
             string jobName)
         {
-            if (debugger is null)
+            if (debugger == null)
             {
                 throw new PSArgumentNullException(nameof(debugger));
             }
@@ -1526,7 +1526,7 @@ namespace System.Management.Automation.PSTasks
         {
             get
             {
-                if (_jobDebuggerWrapper is null)
+                if (_jobDebuggerWrapper == null)
                 {
                     _jobDebuggerWrapper = new PSTaskChildDebugger(
                         _task.Debugger,

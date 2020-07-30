@@ -175,7 +175,7 @@ namespace Microsoft.CodeAnalysis
         internal static unsafe string GetPropertyString(IAssemblyName nameObject, PropertyId propertyId)
         {
             byte[] data = GetPropertyBytes(nameObject, propertyId);
-            if (data is null)
+            if (data == null)
             {
                 return null;
             }
@@ -263,7 +263,7 @@ namespace Microsoft.CodeAnalysis
                     Version candidateVersion = GetVersion(candidate);
                     Debug.Assert(candidateVersion != null);
 
-                    if (bestVersion is null)
+                    if (bestVersion == null)
                     {
                         bestVersion = GetVersion(bestCandidate);
                         Debug.Assert(bestVersion != null);
@@ -277,7 +277,7 @@ namespace Microsoft.CodeAnalysis
                             string candidateCulture = GetCulture(candidate);
                             Debug.Assert(candidateCulture != null);
 
-                            if (bestCulture is null)
+                            if (bestCulture == null)
                             {
                                 bestCulture = GetCulture(candidate);
                                 Debug.Assert(bestCulture != null);

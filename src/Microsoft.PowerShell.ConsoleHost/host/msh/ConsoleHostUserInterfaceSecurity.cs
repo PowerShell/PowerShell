@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell
                 {
                     WriteToConsole(userPrompt, true);
                     userName = ReadLine();
-                    if (userName is null)
+                    if (userName == null)
                     {
                         return null;
                     }
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell
             {
                 WriteToConsole(passwordPrompt, true);
                 password = ReadLineAsSecureString();
-                if (password is null)
+                if (password == null)
                 {
                     return null;
                 }
@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell
                 // now, prompt to re-enter the password.
                 WriteToConsole(confirmPasswordPrompt, true);
                 reenterPassword = ReadLineAsSecureString();
-                if (reenterPassword is null)
+                if (reenterPassword == null)
                 {
                     return null;
                 }

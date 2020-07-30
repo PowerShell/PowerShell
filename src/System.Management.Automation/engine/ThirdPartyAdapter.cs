@@ -53,7 +53,7 @@ namespace System.Management.Automation
                     ExtendedTypeSystem.GetTypeNameHierarchyError, obj.ToString());
             }
 
-            if (typeNameHierarchy is null)
+            if (typeNameHierarchy == null)
             {
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.NullReturnValueError",
@@ -83,7 +83,7 @@ namespace System.Management.Automation
                     ExtendedTypeSystem.GetProperties, obj.ToString());
             }
 
-            if (properties is null)
+            if (properties == null)
             {
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.NullReturnValueError",
@@ -157,7 +157,7 @@ namespace System.Management.Automation
         /// </summary>
         private void InitializeProperty(PSAdaptedProperty property, object baseObject)
         {
-            if (property.adapter is null)
+            if (property.adapter == null)
             {
                 property.adapter = this;
                 property.baseObject = baseObject;
@@ -296,7 +296,7 @@ namespace System.Management.Automation
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "object")]
         public virtual Collection<string> GetTypeNameHierarchy(object baseObject)
         {
-            if (baseObject is null)
+            if (baseObject == null)
             {
                 throw new ArgumentNullException(nameof(baseObject));
             }

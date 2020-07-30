@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell
                 er = new ErrorRecord(er, ex);
             }
 
-            if (er is null)
+            if (er == null)
             {
                 er = new ErrorRecord(ex, "ConsoleHostAsyncPipelineFailure", ErrorCategory.NotSpecified, null);
             }
@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell
 
             lock (_instanceStateLock)
             {
-                Dbg.Assert(_pipeline is null, "no other pipeline should exist");
+                Dbg.Assert(_pipeline == null, "no other pipeline should exist");
                 _pipeline = tempPipeline;
             }
 
@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell
                     while (!des.AtEnd)
                     {
                         object o = des.Deserialize();
-                        if (o is null)
+                        if (o == null)
                         {
                             break;
                         }
@@ -415,7 +415,7 @@ namespace Microsoft.PowerShell
 
             lock (_instanceStateLock)
             {
-                Dbg.Assert(_pipeline is null, "no other pipeline should exist");
+                Dbg.Assert(_pipeline == null, "no other pipeline should exist");
                 _pipeline = tempPipeline;
             }
 
@@ -454,7 +454,7 @@ namespace Microsoft.PowerShell
                     break;
                 }
 
-                if (result is null)
+                if (result == null)
                 {
                     break;
                 }
@@ -493,13 +493,13 @@ namespace Microsoft.PowerShell
                     break;
                 }
 
-                if (streamResults is null || streamResults.Count == 0)
+                if (streamResults == null || streamResults.Count == 0)
                 {
                     break;
                 }
 
                 // we got back one or more objects. Pick off the first result.
-                if (streamResults[0] is null)
+                if (streamResults[0] == null)
                     return string.Empty;
 
                 // And convert the base object into a string. We can't use the proxied
@@ -569,7 +569,7 @@ namespace Microsoft.PowerShell
                     break;
                 }
 
-                if (streamResults is null || streamResults.Count == 0)
+                if (streamResults == null || streamResults.Count == 0)
                 {
                     break;
                 }

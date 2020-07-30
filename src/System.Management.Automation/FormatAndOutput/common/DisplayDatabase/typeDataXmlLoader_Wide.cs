@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         // now read the entries section
                         LoadWideControlEntries(n, wideBody);
-                        if (wideBody.defaultEntryDefinition is null)
+                        if (wideBody.defaultEntryDefinition == null)
                         {
                             // if we have an default entry, it means there was a failure
                             return null; // fatal error
@@ -110,16 +110,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (MatchNodeName(n, XmlTags.WideEntryNode))
                     {
                         WideControlEntryDefinition wved = LoadWideControlEntry(n, entryIndex++);
-                        if (wved is null)
+                        if (wved == null)
                         {
                             // Error at XPath {0} in file {1}: Invalid {2}.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidNode, ComputeCurrentXPath(), FilePath, XmlTags.WideEntryNode));
                             return;
                         }
                         // determine if we have a default entry and if it's already set
-                        if (wved.appliesTo is null)
+                        if (wved.appliesTo == null)
                         {
-                            if (wideBody.defaultEntryDefinition is null)
+                            if (wideBody.defaultEntryDefinition == null)
                             {
                                 wideBody.defaultEntryDefinition = wved;
                             }
@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-                if (wideBody.defaultEntryDefinition is null)
+                if (wideBody.defaultEntryDefinition == null)
                 {
                     // Error at XPath {0} in file {1}: There must be at least one default {2}.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoDefaultShapeEntry, ComputeCurrentXPath(), FilePath, XmlTags.WideEntryNode));
@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         propertyEntryNodeFound = true;
                         wved.formatTokenList = LoadPropertyEntry(n);
-                        if (wved.formatTokenList is null)
+                        if (wved.formatTokenList == null)
                         {
                             // Error at XPath {0} in file {1}: Invalid {2}.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidNode, ComputeCurrentXPath(), FilePath, XmlTags.WideItemNode));

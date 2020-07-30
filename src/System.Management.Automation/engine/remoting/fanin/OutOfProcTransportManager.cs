@@ -553,7 +553,7 @@ namespace System.Management.Automation.Remoting.Client
                 // will know that we are closing.
                 isClosed = true;
 
-                if (stdInWriter is null)
+                if (stdInWriter == null)
                 {
                     // this will happen if CloseAsync() is called
                     // before ConnectAsync()..in which case we
@@ -965,7 +965,7 @@ namespace System.Management.Automation.Remoting.Client
         private void OnCommandCreationAckReceived(Guid psGuid)
         {
             OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-            if (cmdTM is null)
+            if (cmdTM == null)
             {
                 throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownCommandGuid,
                     RemotingErrorIdStrings.IPCUnknownCommandGuid,
@@ -1263,7 +1263,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private void KillServerProcess()
         {
-            if (_serverProcess is null)
+            if (_serverProcess == null)
             {
                 // this can happen if Dispose is called before ConnectAsync()
                 return;
@@ -1371,7 +1371,7 @@ namespace System.Management.Automation.Remoting.Client
                 while (true)
                 {
                     string data = reader.ReadLine();
-                    if (data is null)
+                    if (data == null)
                     {
                         // End of stream indicates the target process was lost.
                         // Raise transport exception to invalidate the client remote runspace.
@@ -1443,7 +1443,7 @@ namespace System.Management.Automation.Remoting.Client
             string configurationName)
             : base(runspaceId, cryptoHelper)
         {
-            if (connectionInfo is null)
+            if (connectionInfo == null)
             {
                 throw new PSArgumentNullException(nameof(connectionInfo));
             }
@@ -1452,7 +1452,7 @@ namespace System.Management.Automation.Remoting.Client
             _vmGuid = vmGuid;
             _configurationName = configurationName;
 
-            if (connectionInfo.Credential is null)
+            if (connectionInfo.Credential == null)
             {
                 _networkCredential = CredentialCache.DefaultNetworkCredentials;
             }
@@ -1526,7 +1526,7 @@ namespace System.Management.Automation.Remoting.Client
             Guid targetGuid)
             : base(runspaceId, cryptoHelper)
         {
-            if (connectionInfo is null)
+            if (connectionInfo == null)
             {
                 throw new PSArgumentNullException(nameof(connectionInfo));
             }
@@ -1590,7 +1590,7 @@ namespace System.Management.Automation.Remoting.Client
             PSRemotingCryptoHelper cryptoHelper)
             : base(runspaceId, cryptoHelper)
         {
-            if (connectionInfo is null) { throw new PSArgumentException("connectionInfo"); }
+            if (connectionInfo == null) { throw new PSArgumentException("connectionInfo"); }
 
             _connectionInfo = connectionInfo;
         }
@@ -1745,7 +1745,7 @@ namespace System.Management.Automation.Remoting.Client
             // Blocking read from StdError stream
             string error = reader.ReadLine();
 
-            if (error is null)
+            if (error == null)
             {
                 // Stream is closed unexpectedly.
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
@@ -1812,7 +1812,7 @@ namespace System.Management.Automation.Remoting.Client
                 while (true)
                 {
                     string data = reader.ReadLine();
-                    if (data is null)
+                    if (data == null)
                     {
                         // End of stream indicates that the SSH transport is broken.
                         // SSH will return the appropriate error in StdErr stream so
@@ -1875,7 +1875,7 @@ namespace System.Management.Automation.Remoting.Client
             string threadName)
             : base(runspaceId, cryptoHelper)
         {
-            if (connectionInfo is null)
+            if (connectionInfo == null)
             {
                 throw new PSArgumentNullException(nameof(connectionInfo));
             }
@@ -1938,7 +1938,7 @@ namespace System.Management.Automation.Remoting.Client
                 while (true)
                 {
                     string data = reader.ReadLine();
-                    if (data is null)
+                    if (data == null)
                     {
                         // End of stream indicates the target process was lost.
                         // Raise transport exception to invalidate the client remote runspace.
@@ -2001,7 +2001,7 @@ namespace System.Management.Automation.Remoting.Client
             PSRemotingCryptoHelper cryptoHelper)
             : base(connectionInfo, runspaceId, cryptoHelper, _threadName)
         {
-            if (connectionInfo is null)
+            if (connectionInfo == null)
             {
                 throw new PSArgumentNullException(nameof(connectionInfo));
             }
@@ -2069,7 +2069,7 @@ namespace System.Management.Automation.Remoting.Client
             PSRemotingCryptoHelper cryptoHelper)
             : base(connectionInfo, runspaceId, cryptoHelper, _threadName)
         {
-            if (connectionInfo is null)
+            if (connectionInfo == null)
             {
                 throw new PSArgumentNullException(nameof(connectionInfo));
             }

@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (Runspace is null)
+            if (Runspace == null)
             {
                 Runspace = Context.CurrentRunspace;
             }

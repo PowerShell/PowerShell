@@ -248,7 +248,7 @@ namespace System.Management.Automation
         /// </summary>
         public StartRunspaceDebugProcessingEventArgs(Runspace runspace)
         {
-            if (runspace is null) { throw new PSArgumentNullException(nameof(runspace)); }
+            if (runspace == null) { throw new PSArgumentNullException(nameof(runspace)); }
 
             Runspace = runspace;
         }
@@ -274,7 +274,7 @@ namespace System.Management.Automation
         /// <param name="runspace"></param>
         public ProcessRunspaceDebugEndEventArgs(Runspace runspace)
         {
-            if (runspace is null) { throw new PSArgumentNullException(nameof(runspace)); }
+            if (runspace == null) { throw new PSArgumentNullException(nameof(runspace)); }
 
             Runspace = runspace;
         }
@@ -525,7 +525,7 @@ namespace System.Management.Automation
         /// <summary/>
         protected void RaiseStartRunspaceDebugProcessingEvent(StartRunspaceDebugProcessingEventArgs args)
         {
-            if (args is null) { throw new PSArgumentNullException(nameof(args)); }
+            if (args == null) { throw new PSArgumentNullException(nameof(args)); }
 
             StartRunspaceDebugProcessing.SafeInvoke<StartRunspaceDebugProcessingEventArgs>(this, args);
         }
@@ -533,7 +533,7 @@ namespace System.Management.Automation
         /// <summary/>
         protected void RaiseRunspaceProcessingCompletedEvent(ProcessRunspaceDebugEndEventArgs args)
         {
-            if (args is null) { throw new PSArgumentNullException(nameof(args)); }
+            if (args == null) { throw new PSArgumentNullException(nameof(args)); }
 
             RunspaceDebugProcessingCompleted.SafeInvoke<ProcessRunspaceDebugEndEventArgs>(this, args);
         }
@@ -1077,7 +1077,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_isLocalSession is null)
+                if (_isLocalSession == null)
                 {
                     // Remote debug sessions always have a ServerRemoteHost.  Otherwise it is a local session.
                     _isLocalSession = !(((_context.InternalHost.ExternalHost != null) &&
@@ -1176,7 +1176,7 @@ namespace System.Management.Automation
                 bool checkLineBp = CheckCommand(invocationInfo);
                 SetupBreakpoints(functionContext);
 
-                if (functionContext._debuggerStepThrough && _overOrOutFrame is null && _steppingMode == SteppingMode.StepIn)
+                if (functionContext._debuggerStepThrough && _overOrOutFrame == null && _steppingMode == SteppingMode.StepIn)
                 {
                     // Treat like step out, but only if we're not already stepping out
                     ResumeExecution(DebuggerResumeAction.StepOut);
@@ -1244,7 +1244,7 @@ namespace System.Management.Automation
                 // If script contents have changed, or if the file got collected, we must rebind the breakpoints.
                 string oldScriptContents;
                 boundBreakpoints.Item1.TryGetTarget(out oldScriptContents);
-                if (oldScriptContents is null || !oldScriptContents.Equals(scriptContents, StringComparison.Ordinal))
+                if (oldScriptContents == null || !oldScriptContents.Equals(scriptContents, StringComparison.Ordinal))
                 {
                     UnbindBoundBreakpoints(boundBreakpoints.Item2.Values.ToList());
                     _boundBreakpoints[path] = Tuple.Create(new WeakReference(scriptContents), new ConcurrentDictionary<int, LineBreakpoint>());
@@ -1320,7 +1320,7 @@ namespace System.Management.Automation
 
         private void UpdateBreakpoints(FunctionContext functionContext)
         {
-            if (functionContext._breakPoints is null)
+            if (functionContext._breakPoints == null)
             {
                 // This should be rare - setting a breakpoint inside a script, but debugger hadn't started.
                 SetupBreakpoints(functionContext);
@@ -1463,7 +1463,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (breakpoints is null)
+                if (breakpoints == null)
                     return null;
 
                 var callStackInfo = _callStack.Last();
@@ -1556,14 +1556,14 @@ namespace System.Management.Automation
             UpdateBreakpoints(functionContext);
 
             if (_steppingMode == SteppingMode.StepIn &&
-                (_overOrOutFrame is null || _callStack.Last() == _overOrOutFrame))
+                (_overOrOutFrame == null || _callStack.Last() == _overOrOutFrame))
             {
                 if (!_callStack.Last().IsFrameHidden)
                 {
                     _overOrOutFrame = null;
                     StopOnSequencePoint(functionContext, s_emptyBreakpointList);
                 }
-                else if (_overOrOutFrame is null)
+                else if (_overOrOutFrame == null)
                 {
                     // Treat like step out, but only if we're not already stepping out
                     ResumeExecution(DebuggerResumeAction.StepOut);
@@ -1965,7 +1965,7 @@ namespace System.Management.Automation
                 if (_preserveUnhandledDebugStopEvent)
                 {
                     // Lazily create the event object.
-                    if (_preserveDebugStopEvent is null)
+                    if (_preserveDebugStopEvent == null)
                     {
                         _preserveDebugStopEvent = new ManualResetEventSlim(true);
                     }
@@ -2027,7 +2027,7 @@ namespace System.Management.Automation
             var currentScriptFile = functionContext._file;
 
             // If we're not in a file, we can't have any line breakpoints.
-            if (currentScriptFile is null)
+            if (currentScriptFile == null)
                 return;
 
             // Normally we register a script file when the script is run or the module is imported,
@@ -2164,11 +2164,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_isSystemLockedDown is null)
+                if (_isSystemLockedDown == null)
                 {
                     lock (_syncObject)
                     {
-                        if (_isSystemLockedDown is null)
+                        if (_isSystemLockedDown == null)
                         {
                             _isSystemLockedDown = (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
                                 System.Management.Automation.Security.SystemEnforcementMode.Enforce);
@@ -2307,12 +2307,12 @@ namespace System.Management.Automation
         /// <returns>DebuggerCommandResults.</returns>
         public override DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output)
         {
-            if (command is null)
+            if (command == null)
             {
                 throw new PSArgumentNullException(nameof(command));
             }
 
-            if (output is null)
+            if (output == null)
             {
                 throw new PSArgumentNullException(nameof(output));
             }
@@ -2340,7 +2340,7 @@ namespace System.Management.Automation
             // Otherwise let root script debugger handle it.
             //
             LocalRunspace localRunspace = _context.CurrentRunspace as LocalRunspace;
-            if (localRunspace is null)
+            if (localRunspace == null)
             {
                 throw new PSInvalidOperationException(
                     DebuggerStrings.CannotProcessDebuggerCommandNotStopped,
@@ -2371,7 +2371,7 @@ namespace System.Management.Automation
                         {
                             foreach (var item in internalOutput.ReadAll())
                             {
-                                if (item is null) { continue; }
+                                if (item == null) { continue; }
 
                                 DebuggerCommand dbgCmd = item.BaseObject as DebuggerCommand;
                                 if (dbgCmd != null)
@@ -2581,7 +2581,7 @@ namespace System.Management.Automation
         /// <returns>True if source listed successfully.</returns>
         internal override bool InternalProcessListCommand(int lineNum, IList<PSObject> output)
         {
-            if (!DebuggerStopped || (_currentInvocationInfo is null)) { return false; }
+            if (!DebuggerStopped || (_currentInvocationInfo == null)) { return false; }
 
             // Create an Invocation object that has full source script from script debugger plus
             // line information provided from caller.
@@ -2918,7 +2918,7 @@ namespace System.Management.Automation
         /// </param>
         internal override void DebugJob(Job job, bool breakAll)
         {
-            if (job is null) { throw new PSArgumentNullException(nameof(job)); }
+            if (job == null) { throw new PSArgumentNullException(nameof(job)); }
 
             lock (_syncObject)
             {
@@ -2992,7 +2992,7 @@ namespace System.Management.Automation
         internal override void StopDebugJob(Job job)
         {
             // Parameter validation.
-            if (job is null) { throw new PSArgumentNullException(nameof(job)); }
+            if (job == null) { throw new PSArgumentNullException(nameof(job)); }
 
             SetInternalDebugMode(InternalDebugMode.Disabled);
 
@@ -3037,7 +3037,7 @@ namespace System.Management.Automation
         /// </param>
         internal override void DebugRunspace(Runspace runspace, bool breakAll)
         {
-            if (runspace is null)
+            if (runspace == null)
             {
                 throw new PSArgumentNullException(nameof(runspace));
             }
@@ -3057,7 +3057,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (runspace.Debugger is null)
+            if (runspace.Debugger == null)
             {
                 throw new PSInvalidOperationException(
                     string.Format(CultureInfo.InvariantCulture, DebuggerStrings.RunspaceDebuggingNoRunspaceDebugger, runspace.Name));
@@ -3082,7 +3082,7 @@ namespace System.Management.Automation
         /// <param name="runspace">Runspace.</param>
         internal override void StopDebugRunspace(Runspace runspace)
         {
-            if (runspace is null) { throw new PSArgumentNullException(nameof(runspace)); }
+            if (runspace == null) { throw new PSArgumentNullException(nameof(runspace)); }
 
             SetInternalDebugMode(InternalDebugMode.Disabled);
 
@@ -3623,7 +3623,7 @@ namespace System.Management.Automation
 
         internal override void StartMonitoringRunspace(PSMonitorRunspaceInfo runspaceInfo)
         {
-            if (runspaceInfo is null || runspaceInfo.Runspace is null) { return; }
+            if (runspaceInfo == null || runspaceInfo.Runspace == null) { return; }
 
             if ((runspaceInfo.Runspace.Debugger != null) &&
                 runspaceInfo.Runspace.Debugger.Equals(this))
@@ -3640,7 +3640,7 @@ namespace System.Management.Automation
 
         internal override void EndMonitoringRunspace(PSMonitorRunspaceInfo runspaceInfo)
         {
-            if (runspaceInfo is null || runspaceInfo.Runspace is null) { return; }
+            if (runspaceInfo == null || runspaceInfo.Runspace == null) { return; }
 
             RemoveFromRunningRunspaceList(runspaceInfo.Runspace);
         }
@@ -3768,7 +3768,7 @@ namespace System.Management.Automation
 
         private void HandleMonitorRunningRSDebuggerStop(object sender, DebuggerStopEventArgs args)
         {
-            if (sender is null || args is null) { return; }
+            if (sender == null || args == null) { return; }
 
             Debugger senderDebugger = sender as Debugger;
             bool pushSucceeded = false;
@@ -3786,7 +3786,7 @@ namespace System.Management.Automation
 
                 // Get nested debugger runspace info.
                 NestedRunspaceDebugger nestedDebugger = senderDebugger as NestedRunspaceDebugger;
-                if (nestedDebugger is null) { return; }
+                if (nestedDebugger == null) { return; }
 
                 PSMonitorRunspaceType runspaceType = nestedDebugger.RunspaceType;
 
@@ -3862,7 +3862,7 @@ namespace System.Management.Automation
             // the runspace debugger is available.
             if ((runspace.Debugger != null) &&
                 (runspaceInfo != null) &&
-                (runspaceInfo.NestedDebugger is null))
+                (runspaceInfo.NestedDebugger == null))
             {
                 try
                 {
@@ -4000,7 +4000,7 @@ namespace System.Management.Automation
 
         private void WaitForDebugComplete()
         {
-            if (_runspaceDebugCompleteEvent is null)
+            if (_runspaceDebugCompleteEvent == null)
             {
                 _runspaceDebugCompleteEvent = new ManualResetEventSlim(false);
             }
@@ -4061,7 +4061,7 @@ namespace System.Management.Automation
         internal void EnableTracing(int traceLevel, bool? step)
         {
             // Enable might actually be disabling depending on the arguments.
-            if (traceLevel < 1 && (step is null || !(bool)step))
+            if (traceLevel < 1 && (step == null || !(bool)step))
             {
                 DisableTracing();
                 return;
@@ -4097,7 +4097,7 @@ namespace System.Management.Automation
             ActionPreference pref = ActionPreference.Continue;
 
             string message;
-            if (args is null || args.Length == 0)
+            if (args == null || args.Length == 0)
             {
                 // Don't format in case the string contains literal curly braces
                 message = resourceString;
@@ -4226,7 +4226,7 @@ namespace System.Management.Automation
             PSMonitorRunspaceType runspaceType,
             Guid parentDebuggerId)
         {
-            if (runspace is null || runspace.Debugger is null)
+            if (runspace == null || runspace.Debugger == null)
             {
                 throw new PSArgumentNullException(nameof(runspace));
             }
@@ -4651,7 +4651,7 @@ namespace System.Management.Automation
         {
             // We do this only for remote runspaces.
             RemoteRunspace remoteRunspace = _runspace as RemoteRunspace;
-            if (remoteRunspace is null) { return null; }
+            if (remoteRunspace == null) { return null; }
 
             var runningPowerShell = remoteRunspace.GetCurrentBasePowerShell();
             if (runningPowerShell != null)
@@ -4676,7 +4676,7 @@ namespace System.Management.Automation
 
         private void RestoreRemoteOutput(object runningCmd)
         {
-            if (runningCmd is null) { return; }
+            if (runningCmd == null) { return; }
 
             var runningPowerShell = runningCmd as PowerShell;
             if (runningPowerShell != null)
@@ -4726,7 +4726,7 @@ namespace System.Management.Automation
             Guid parentDebuggerId)
             : base(runspace, runspaceType, parentDebuggerId)
         {
-            if (rootDebugger is null)
+            if (rootDebugger == null)
             {
                 throw new PSArgumentNullException(nameof(rootDebugger));
             }
@@ -4810,7 +4810,7 @@ namespace System.Management.Automation
         /// <returns>InvocationInfo.</returns>
         internal override InvocationInfo FixupInvocationInfo(InvocationInfo debugStopInvocationInfo)
         {
-            if (debugStopInvocationInfo is null) { return null; }
+            if (debugStopInvocationInfo == null) { return null; }
 
             // Check to see if this nested debug stop is called from within
             // a known parent source.
@@ -4867,11 +4867,11 @@ namespace System.Management.Automation
             int debugStartColNumber,
             int debugEndColNumber)
         {
-            if (parentStackFrame is null) { return null; }
+            if (parentStackFrame == null) { return null; }
 
             // Attempt to find parent script file create script block with Ast to
             // find correct line and offset adjustments.
-            if ((_parentScriptBlockAst is null) &&
+            if ((_parentScriptBlockAst == null) &&
                 !string.IsNullOrEmpty(parentStackFrame.ScriptName) &&
                 System.IO.File.Exists(parentStackFrame.ScriptName))
             {
@@ -4974,7 +4974,7 @@ namespace System.Management.Automation
 
         private void RestoreRemoteOutput(object runningCmd)
         {
-            if (runningCmd is null) { return; }
+            if (runningCmd == null) { return; }
 
             PowerShell command = runningCmd as PowerShell;
             if (command != null)
@@ -5267,12 +5267,12 @@ namespace System.Management.Automation
         /// </summary>
         private void DisplayScript(PSHost host, IList<PSObject> output, InvocationInfo invocationInfo, Match match)
         {
-            if (invocationInfo is null) { return; }
+            if (invocationInfo == null) { return; }
 
             //
             // Get the source code for the script
             //
-            if (_lines is null)
+            if (_lines == null)
             {
                 string scriptText = invocationInfo.GetFullScript();
                 if (string.IsNullOrEmpty(scriptText))
@@ -5475,7 +5475,7 @@ namespace System.Management.Automation
         /// <param name="triggerObject">The object that caused the script to break in the debugger.</param>
         public PSDebugContext(InvocationInfo invocationInfo, List<Breakpoint> breakpoints, object triggerObject)
         {
-            if (breakpoints is null)
+            if (breakpoints == null)
             {
                 throw new PSArgumentNullException(nameof(breakpoints));
             }
@@ -5527,7 +5527,7 @@ namespace System.Management.Automation
         /// <param name="invocationInfo">Invocation Info.</param>
         internal CallStackFrame(FunctionContext functionContext, InvocationInfo invocationInfo)
         {
-            if (invocationInfo is null)
+            if (invocationInfo == null)
             {
                 throw new PSArgumentNullException(nameof(invocationInfo));
             }
@@ -5604,7 +5604,7 @@ namespace System.Management.Automation
         {
             var result = new Dictionary<string, PSVariable>(StringComparer.OrdinalIgnoreCase);
 
-            if (FunctionContext._executionContext is null) { return result; }
+            if (FunctionContext._executionContext == null) { return result; }
 
             var scope = FunctionContext._executionContext.EngineSessionState.CurrentScope;
             while (scope != null)
@@ -5683,7 +5683,7 @@ namespace System.Management.Automation.Internal
         /// <returns>True if command can be added to history.</returns>
         public static bool ShouldAddCommandToHistory(string command)
         {
-            if (command is null)
+            if (command == null)
             {
                 throw new PSArgumentNullException(nameof(command));
             }
@@ -5701,12 +5701,12 @@ namespace System.Management.Automation.Internal
         /// <param name="runspaceInfo">PSMonitorRunspaceInfo.</param>
         public static void StartMonitoringRunspace(Debugger debugger, PSMonitorRunspaceInfo runspaceInfo)
         {
-            if (debugger is null)
+            if (debugger == null)
             {
                 throw new PSArgumentNullException(nameof(debugger));
             }
 
-            if (runspaceInfo is null)
+            if (runspaceInfo == null)
             {
                 throw new PSArgumentNullException(nameof(runspaceInfo));
             }
@@ -5721,12 +5721,12 @@ namespace System.Management.Automation.Internal
         /// <param name="runspaceInfo">PSMonitorRunspaceInfo.</param>
         public static void EndMonitoringRunspace(Debugger debugger, PSMonitorRunspaceInfo runspaceInfo)
         {
-            if (debugger is null)
+            if (debugger == null)
             {
                 throw new PSArgumentNullException(nameof(debugger));
             }
 
-            if (runspaceInfo is null)
+            if (runspaceInfo == null)
             {
                 throw new PSArgumentNullException(nameof(runspaceInfo));
             }
@@ -5792,7 +5792,7 @@ namespace System.Management.Automation.Internal
             Runspace runspace,
             PSMonitorRunspaceType runspaceType)
         {
-            if (runspace is null)
+            if (runspace == null)
             {
                 throw new PSArgumentNullException(nameof(runspace));
             }

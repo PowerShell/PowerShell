@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell
 
                         string newUpdateFilePath = Path.Combine(s_cacheDirectory, newUpdateFileName);
 
-                        if (updateFilePath is null)
+                        if (updateFilePath == null)
                         {
                             new FileStream(newUpdateFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None).Close();
                         }

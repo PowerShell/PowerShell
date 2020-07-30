@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                if (_bestMatchItem is null)
+                if (_bestMatchItem == null)
                     return null;
                 return _bestMatchItem.Item;
             }
@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private bool MatchCondition(PSObject currentObject, PSPropertyExpression ex)
         {
-            if (ex is null)
+            if (ex == null)
                 return true;
 
             PSPropertyExpressionResult expressionResult;
@@ -392,7 +392,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we were unable to find a best match so far..try
             // to get rid of Deserialization prefix and see if a
             // match can be found.
-            if (result is null)
+            if (result == null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
                 if (typesWithoutPrefix != null)
@@ -409,7 +409,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             TypeMatch match = new TypeMatch(expressionFactory, db, typeNames);
             foreach (ViewDefinition vd in db.viewDefinitionsSection.viewDefinitionList)
             {
-                if (vd is null || mainControlType != vd.mainControl.GetType())
+                if (vd == null || mainControlType != vd.mainControl.GetType())
                 {
                     ActiveTracer.WriteLine(
                         "NOT MATCH {0}  NAME: {1}",
@@ -425,7 +425,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
 
-                if (vd.appliesTo is null)
+                if (vd.appliesTo == null)
                 {
                     ActiveTracer.WriteLine(
                         "NOT MATCH {0}  NAME: {1}  No applicable types",
@@ -467,7 +467,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we were unable to find a best match so far..try
             // to get rid of Deserialization prefix and see if a
             // match can be found.
-            if (result is null)
+            if (result == null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
                 if (typesWithoutPrefix != null)
@@ -522,7 +522,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             foreach (ViewDefinition vd in db.viewDefinitionsSection.viewDefinitionList)
             {
-                if (vd is null)
+                if (vd == null)
                     continue;
 
                 if (IsOutOfBandView(vd))
@@ -533,7 +533,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
 
-                if (vd.appliesTo is null)
+                if (vd.appliesTo == null)
                 {
                     ActiveTracer.WriteLine(
                         "NOT MATCH {0}  NAME: {1}  No applicable types",
@@ -562,7 +562,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we were unable to find a best match so far..try
             // to get rid of Deserialization prefix and see if a
             // match can be found.
-            if (result is null)
+            if (result == null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
                 if (typesWithoutPrefix != null)
@@ -604,13 +604,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // check if we have a type group reference
                     TypeGroupReference tgr = r as TypeGroupReference;
 
-                    if (tgr is null)
+                    if (tgr == null)
                         continue;
 
                     // find the type group definition the reference points to
                     TypeGroupDefinition tgd = FindGroupDefinition(db, tgr.name);
 
-                    if (tgd is null)
+                    if (tgd == null)
                         continue;
 
                     // we found the group, go over it

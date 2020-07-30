@@ -409,7 +409,7 @@ namespace Microsoft.PowerShell
                 // after it is created and before started and call join on it. This will result
                 // in ThreadStateException.
                 // NTRAID#Windows OutofBand Bugs-938289-2006/07/27-hiteshr
-                if (bht is null)
+                if (bht == null)
                 {
                     // we're not already running HandleBreak on a separate thread, so run it now.
 
@@ -498,7 +498,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         internal static ConsoleHost CreateSingletonInstance()
         {
-            Dbg.Assert(s_theConsoleHost is null, "CreateSingletonInstance should not be called multiple times");
+            Dbg.Assert(s_theConsoleHost == null, "CreateSingletonInstance should not be called multiple times");
             s_theConsoleHost = new ConsoleHost();
             return s_theConsoleHost;
         }
@@ -575,7 +575,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         public void PushRunspace(Runspace newRunspace)
         {
-            if (_runspaceRef is null) { return; }
+            if (_runspaceRef == null) { return; }
 
             RemoteRunspace remoteRunspace = newRunspace as RemoteRunspace;
             Dbg.Assert(remoteRunspace != null, "Expected remoteRunspace != null");
@@ -648,7 +648,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         public void PopRunspace()
         {
-            if (_runspaceRef is null ||
+            if (_runspaceRef == null ||
                 !_runspaceRef.IsRunspaceOverridden)
             {
                 return;
@@ -708,7 +708,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (this.RunspaceRef is null) { return null; }
+                if (this.RunspaceRef == null) { return null; }
 
                 return this.RunspaceRef.Runspace;
             }
@@ -723,7 +723,7 @@ namespace Microsoft.PowerShell
                     return RunspaceRef.OldRunspace as LocalRunspace;
                 }
 
-                if (RunspaceRef is null) { return null; }
+                if (RunspaceRef == null) { return null; }
 
                 return RunspaceRef.Runspace as LocalRunspace;
             }
@@ -735,7 +735,7 @@ namespace Microsoft.PowerShell
 
             public ConsoleColorProxy(ConsoleHostUserInterface ui)
             {
-                if (ui is null) throw new ArgumentNullException(nameof(ui));
+                if (ui == null) throw new ArgumentNullException(nameof(ui));
                 _ui = ui;
             }
 
@@ -928,7 +928,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (ui is null) return null;
+                if (ui == null) return null;
                 return _consoleColorProxy ?? (_consoleColorProxy = PSObject.AsPSObject(new ConsoleColorProxy(ui)));
             }
         }
@@ -1094,7 +1094,7 @@ namespace Microsoft.PowerShell
             get
             {
                 return !s_cpp.NonInteractive && !s_cpp.AbortStartup &&
-                       ((s_cpp.InitialCommand is null && s_cpp.File is null) || s_cpp.NoExit);
+                       ((s_cpp.InitialCommand == null && s_cpp.File == null) || s_cpp.NoExit);
             }
         }
 
@@ -1337,7 +1337,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (_outputSerializer is null)
+                if (_outputSerializer == null)
                 {
                     _outputSerializer =
                         new WrappedSerializer(
@@ -1354,7 +1354,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (_errorSerializer is null)
+                if (_errorSerializer == null)
                 {
                     _errorSerializer =
                         new WrappedSerializer(
@@ -1499,7 +1499,7 @@ namespace Microsoft.PowerShell
 
                     bool dollarHook = exec.ExecuteCommandAndGetResultAsBool("$global:?") ?? false;
 
-                    if (dollarHook && (_lastRunspaceInitializationException is null))
+                    if (dollarHook && (_lastRunspaceInitializationException == null))
                     {
                         ExitCode = ExitCodeSuccess;
                     }
@@ -1603,7 +1603,7 @@ namespace Microsoft.PowerShell
             // Note that PSReadline doesn't support redirected stdin/stdout, but we don't check that here because
             // a future version might, and we should automatically load it at that unknown point in the future.
             // PSReadline will ideally fall back to Console.ReadLine or whatever when stdin/stdout is redirected.
-            return ((s_cpp.InitialCommand is null && s_cpp.File is null) || s_cpp.NoExit) && !s_cpp.NonInteractive;
+            return ((s_cpp.InitialCommand == null && s_cpp.File == null) || s_cpp.NoExit) && !s_cpp.NonInteractive;
         }
 
         /// <summary>
@@ -1613,7 +1613,7 @@ namespace Microsoft.PowerShell
 
         private void DoCreateRunspace(string initialCommand, bool skipProfiles, bool staMode, string configurationName, Collection<CommandParameter> initialCommandArgs)
         {
-            Dbg.Assert(_runspaceRef is null, "runspace should be null");
+            Dbg.Assert(_runspaceRef == null, "runspace should be null");
             Dbg.Assert(DefaultInitialSessionState != null, "DefaultInitialSessionState should not be null");
             s_runspaceInitTracer.WriteLine("Calling RunspaceFactory.CreateRunspace");
 
@@ -1657,7 +1657,7 @@ namespace Microsoft.PowerShell
                     }
                 }
 
-                if (consoleRunspace is null)
+                if (consoleRunspace == null)
                 {
                     if (psReadlineFailed)
                     {
@@ -2098,7 +2098,7 @@ namespace Microsoft.PowerShell
                 Console.Error.WriteLine(header);
             }
 
-            if (e is null)
+            if (e == null)
             {
                 return;
             }
@@ -2458,7 +2458,7 @@ namespace Microsoft.PowerShell
                                     prompt = EvaluateDebugPrompt();
                                 }
 
-                                if (prompt is null)
+                                if (prompt == null)
                                 {
                                     prompt = EvaluatePrompt();
                                 }
@@ -2473,7 +2473,7 @@ namespace Microsoft.PowerShell
 
                         // line will be null in the case that Ctrl-C terminated the input
 
-                        if (line is null)
+                        if (line == null)
                         {
                             previousResponseWasEmpty = true;
 
@@ -2734,7 +2734,7 @@ namespace Microsoft.PowerShell
 
                 // If it is remote exception ferret out the real exception.
                 RemoteException remoteException = e as RemoteException;
-                if (remoteException is null || remoteException.ErrorRecord is null)
+                if (remoteException == null || remoteException.ErrorRecord == null)
                 {
                     return false;
                 }

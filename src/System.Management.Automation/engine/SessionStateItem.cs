@@ -54,7 +54,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Collection<PSObject> GetItem(string[] paths, bool force, bool literalPath)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -112,7 +112,7 @@ namespace System.Management.Automation
             string[] paths,
             CmdletProviderContext context)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -122,7 +122,7 @@ namespace System.Management.Automation
 
             foreach (string path in paths)
             {
-                if (path is null)
+                if (path == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -243,7 +243,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object GetItemDynamicParameters(string path, CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }
@@ -393,7 +393,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Collection<PSObject> SetItem(string[] paths, object value, bool force, bool literalPath)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -449,14 +449,14 @@ namespace System.Management.Automation
             object value,
             CmdletProviderContext context)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             foreach (string path in paths)
             {
-                if (path is null)
+                if (path == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -590,7 +590,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object SetItemDynamicParameters(string path, object value, CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }
@@ -746,7 +746,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Collection<PSObject> ClearItem(string[] paths, bool force, bool literalPath)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -798,7 +798,7 @@ namespace System.Management.Automation
             string[] paths,
             CmdletProviderContext context)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -808,7 +808,7 @@ namespace System.Management.Automation
 
             foreach (string path in paths)
             {
-                if (path is null)
+                if (path == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -932,7 +932,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object ClearItemDynamicParameters(string path, CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }
@@ -1077,7 +1077,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void InvokeDefaultAction(string[] paths, bool literalPath)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -1125,7 +1125,7 @@ namespace System.Management.Automation
             string[] paths,
             CmdletProviderContext context)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -1135,7 +1135,7 @@ namespace System.Management.Automation
 
             foreach (string path in paths)
             {
-                if (path is null)
+                if (path == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -1259,7 +1259,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object InvokeDefaultActionDynamicParameters(string path, CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }

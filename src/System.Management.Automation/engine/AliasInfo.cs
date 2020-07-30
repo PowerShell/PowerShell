@@ -168,7 +168,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (result is null)
+                    if (result == null)
                     {
                         // Since we couldn't resolve the command that the alias
                         // points to, remember the definition so that we can

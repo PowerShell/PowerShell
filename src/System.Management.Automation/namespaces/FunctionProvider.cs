@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
 
             bool dynamicParametersSpecified = dynamicParameters != null && dynamicParameters.OptionsSet;
 
-            if (value is null)
+            if (value == null)
             {
                 // If the value wasn't specified but the options were, just set the
                 // options on the existing function.

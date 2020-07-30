@@ -287,7 +287,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// <param name="optionInfo">PSMarkdownOptionInfo object to initialize with.</param>
         public VT100EscapeSequences(PSMarkdownOptionInfo optionInfo)
         {
-            if (optionInfo is null)
+            if (optionInfo == null)
             {
                 throw new ArgumentNullException(nameof(optionInfo));
             }

@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void StopProcessing()
         {
-            if (_process is null) {
+            if (_process == null) {
                 return;
             }
 

@@ -16,7 +16,7 @@ namespace System.Management.Automation
 
         internal PagingParameters(MshCommandRuntime commandRuntime)
         {
-            if (commandRuntime is null)
+            if (commandRuntime == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(commandRuntime));
             }
@@ -114,7 +114,7 @@ namespace System.Management.Automation.Internal
         /// </param>
         internal ShouldProcessParameters(MshCommandRuntime commandRuntime)
         {
-            if (commandRuntime is null)
+            if (commandRuntime == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(commandRuntime));
             }
