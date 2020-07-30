@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
 
         private IEnumerable<PSModuleInfo> GetAvailableViaPsrpSessionCore(string[] moduleNames, Runspace remoteRunspace)
         {
-            Dbg.Assert(remoteRunspace != null, "Caller should verify remoteRunspace != null");
+            Dbg.Assert(remoteRunspace is not null, "Caller should verify remoteRunspace is not null");
 
             using (var powerShell = System.Management.Automation.PowerShell.Create())
             {
@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
                     powerShell.AddParameter("Refresh", true);
                 }
 
-                if (moduleNames != null)
+                if (moduleNames is not null)
                 {
                     powerShell.AddParameter("Name", moduleNames);
                 }
@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
 
             IEnumerable<PSModuleInfo> remoteModuleInfos = remoteModules
                 .Select(cimModule => this.ConvertCimModuleInfoToPSModuleInfo(cimModule, cimSession.ComputerName))
-                .Where(moduleInfo => moduleInfo != null);
+                .Where(moduleInfo => moduleInfo is not null);
 
             return remoteModuleInfos;
         }
@@ -349,7 +349,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Name and FullyQualifiedName should not be specified at the same time.
             // Throw out terminating error if this is the case.
-            if ((Name != null) && (FullyQualifiedName != null))
+            if ((Name is not null) && (FullyQualifiedName is not null))
             {
                 string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "Name", "FullyQualifiedName");
                 ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "NameAndFullyQualifiedNameCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
@@ -369,13 +369,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             var strNames = new List<string>();
-            if (Name != null)
+            if (Name is not null)
             {
                 strNames.AddRange(Name);
             }
 
             var moduleSpecTable = new Dictionary<string, ModuleSpecification>(StringComparer.OrdinalIgnoreCase);
-            if (FullyQualifiedName != null)
+            if (FullyQualifiedName is not null)
             {
                 for (int modSpecIndex = 0; modSpecIndex < FullyQualifiedName.Length; modSpecIndex++)
                 {
@@ -436,7 +436,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void AssertNameDoesNotResolveToAPath(string[] names, string stringFormat, string resourceId)
         {
-            if (names != null)
+            if (names is not null)
             {
                 foreach (var n in names)
                 {
@@ -524,7 +524,7 @@ namespace Microsoft.PowerShell.Commands
                 modules = modules.Where(module => module.CompatiblePSEditions.Contains(PSEdition, StringComparer.OrdinalIgnoreCase));
             }
 
-            if (moduleSpecificationTable != null && moduleSpecificationTable.Count > 0)
+            if (moduleSpecificationTable is not null && moduleSpecificationTable.Count > 0)
             {
                 modules = FilterModulesForSpecificationMatch(modules, moduleSpecificationTable);
             }
@@ -543,7 +543,7 @@ namespace Microsoft.PowerShell.Commands
             IEnumerable<PSModuleInfo> modules,
             IDictionary<string, ModuleSpecification> moduleSpecificationTable)
         {
-            Dbg.Assert(moduleSpecificationTable != null, $"Caller to verify that {nameof(moduleSpecificationTable)} is not null");
+            Dbg.Assert(moduleSpecificationTable is not null, $"Caller to verify that {nameof(moduleSpecificationTable)} is not null");
             Dbg.Assert(moduleSpecificationTable.Count != 0, $"Caller to verify that {nameof(moduleSpecificationTable)} is not empty");
 
             foreach (PSModuleInfo module in modules)

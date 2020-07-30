@@ -292,7 +292,7 @@ namespace System.Diagnostics.Eventing
             dataDescriptor->Reserved = 0;
 
             string sRet = data as string;
-            if (sRet != null)
+            if (sRet is not null)
             {
                 dataDescriptor->Size = (uint)((sRet.Length + 1) * 2);
                 return sRet;
@@ -615,7 +615,7 @@ namespace System.Diagnostics.Eventing
                     int argCount = 0;
                     EventData* userDataPtr = null;
 
-                    if ((eventPayload != null) && (eventPayload.Length != 0))
+                    if ((eventPayload is not null) && (eventPayload.Length != 0))
                     {
                         argCount = eventPayload.Length;
                         if (argCount > s_etwMaxNumberArguments)
@@ -650,7 +650,7 @@ namespace System.Diagnostics.Eventing
                             currentBuffer += s_basicTypeAllocationBufferSize;
                             totalEventSize += userDataPtr->Size;
                             userDataPtr++;
-                            if (isString != null)
+                            if (isString is not null)
                             {
                                 if (stringIndex < s_etwAPIMaxStringCount)
                                 {
@@ -676,42 +676,42 @@ namespace System.Diagnostics.Eventing
                                 v4 = dataString[4], v5 = dataString[5], v6 = dataString[6], v7 = dataString[7])
                         {
                             userDataPtr = (EventData*)userData;
-                            if (dataString[0] != null)
+                            if (dataString[0] is not null)
                             {
                                 userDataPtr[stringPosition[0]].DataPointer = (ulong)v0;
                             }
 
-                            if (dataString[1] != null)
+                            if (dataString[1] is not null)
                             {
                                 userDataPtr[stringPosition[1]].DataPointer = (ulong)v1;
                             }
 
-                            if (dataString[2] != null)
+                            if (dataString[2] is not null)
                             {
                                 userDataPtr[stringPosition[2]].DataPointer = (ulong)v2;
                             }
 
-                            if (dataString[3] != null)
+                            if (dataString[3] is not null)
                             {
                                 userDataPtr[stringPosition[3]].DataPointer = (ulong)v3;
                             }
 
-                            if (dataString[4] != null)
+                            if (dataString[4] is not null)
                             {
                                 userDataPtr[stringPosition[4]].DataPointer = (ulong)v4;
                             }
 
-                            if (dataString[5] != null)
+                            if (dataString[5] is not null)
                             {
                                 userDataPtr[stringPosition[5]].DataPointer = (ulong)v5;
                             }
 
-                            if (dataString[6] != null)
+                            if (dataString[6] is not null)
                             {
                                 userDataPtr[stringPosition[6]].DataPointer = (ulong)v6;
                             }
 
-                            if (dataString[7] != null)
+                            if (dataString[7] is not null)
                             {
                                 userDataPtr[stringPosition[7]].DataPointer = (ulong)v7;
                             }

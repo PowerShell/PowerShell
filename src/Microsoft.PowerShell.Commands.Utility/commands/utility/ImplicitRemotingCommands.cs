@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ScriptBlock script = this.Context.Engine.ParseScriptBlock(importModuleScript, false);
             Collection<PSObject> results = script.Invoke(manifestFile, this.Session, this.Prefix, _disableNameChecking);
-            Dbg.Assert(results != null, "Import-Module should always succeed");
+            Dbg.Assert(results is not null, "Import-Module should always succeed");
             Dbg.Assert(results.Count == 1, "Import-Module should always succeed");
             Dbg.Assert(results[0].BaseObject is PSModuleInfo, "Import-Module should always succeed");
             return (PSModuleInfo)(results[0].BaseObject);
@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            Dbg.Assert(manifestFile != null, "A psd1 file should always be generated");
+            Dbg.Assert(manifestFile is not null, "A psd1 file should always be generated");
 
             PSModuleInfo moduleInfo = this.CreateModule(manifestFile);
             this.RegisterModuleCleanUp(moduleInfo);
@@ -456,7 +456,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value != null)
+                if (value is not null)
                 {
                     _moduleSpecifications = value;
                 }
@@ -716,7 +716,7 @@ namespace Microsoft.PowerShell.Commands
             // handle recognized types of exceptions first
             //
             RemoteException remoteException = runtimeException as RemoteException;
-            if ((remoteException != null) && (remoteException.SerializedRemoteException != null))
+            if ((remoteException is not null) && (remoteException.SerializedRemoteException is not null))
             {
                 if (Deserializer.IsInstanceOfType(remoteException.SerializedRemoteException, typeof(CommandNotFoundException)))
                 {
@@ -911,7 +911,7 @@ namespace Microsoft.PowerShell.Commands
                             ImplicitRemotingCommandsToSkipKey))
                     {
                         _commandSkipListFromServer = new List<string>();
-                        if (serverDeclaredListOfCommandsToSkip != null)
+                        if (serverDeclaredListOfCommandsToSkip is not null)
                         {
                             _commandSkipListFromServer.AddRange(serverDeclaredListOfCommandsToSkip);
                         }
@@ -948,7 +948,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (commandToSkip.Equals(commandName, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (this.CommandName != null)
+                    if (this.CommandName is not null)
                     {
                         foreach (string commandNameParameter in this.CommandName)
                         {
@@ -1016,11 +1016,11 @@ namespace Microsoft.PowerShell.Commands
 
         private List<T> RehydrateList<T>(string commandName, PSObject deserializedObject, string propertyName, Func<PSObject, T> itemRehydrator)
         {
-            Dbg.Assert(deserializedObject != null, "deserializedObject parameter != null");
+            Dbg.Assert(deserializedObject is not null, "deserializedObject parameter is not null");
 
             List<T> result = null;
             PSPropertyInfo deserializedListProperty = deserializedObject.Properties[propertyName];
-            if (deserializedListProperty != null)
+            if (deserializedListProperty is not null)
             {
                 result = RehydrateList<T>(commandName, deserializedListProperty.Value, itemRehydrator);
             }
@@ -1038,7 +1038,7 @@ namespace Microsoft.PowerShell.Commands
             List<T> result = null;
 
             ArrayList list = ConvertTo<ArrayList>(commandName, deserializedList, true);
-            if (list != null)
+            if (list is not null)
             {
                 result = new List<T>();
                 foreach (object o in list)
@@ -1054,8 +1054,8 @@ namespace Microsoft.PowerShell.Commands
 
         private Dictionary<K, V> RehydrateDictionary<K, V>(string commandName, PSObject deserializedObject, string propertyName, Func<PSObject, V> valueRehydrator)
         {
-            Dbg.Assert(deserializedObject != null, "deserializedObject parameter != null");
-            Dbg.Assert(!string.IsNullOrEmpty(propertyName), "propertyName parameter != null");
+            Dbg.Assert(deserializedObject is not null, "deserializedObject parameter is not null");
+            Dbg.Assert(!string.IsNullOrEmpty(propertyName), "propertyName parameter is not null");
 
             if (valueRehydrator is null)
             {
@@ -1064,10 +1064,10 @@ namespace Microsoft.PowerShell.Commands
 
             Dictionary<K, V> result = new Dictionary<K, V>();
             PSPropertyInfo deserializedDictionaryProperty = deserializedObject.Properties[propertyName];
-            if (deserializedDictionaryProperty != null)
+            if (deserializedDictionaryProperty is not null)
             {
                 Hashtable deserializedDictionary = ConvertTo<Hashtable>(commandName, deserializedDictionaryProperty.Value, true);
-                if (deserializedDictionary != null)
+                if (deserializedDictionary is not null)
                 {
                     foreach (DictionaryEntry deserializedItem in deserializedDictionary)
                     {
@@ -1150,7 +1150,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return true;
             }
-            else if (KnownTypes.GetTypeSerializationInfo(type) != null)
+            else if (KnownTypes.GetTypeSerializationInfo(type) is not null)
             {
                 return true;
             }
@@ -1180,7 +1180,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            if ((commandMetadata.DefaultParameterSetName != null) &&
+            if ((commandMetadata.DefaultParameterSetName is not null) &&
                 !IsSafeNameOrIdentifier(commandMetadata.DefaultParameterSetName))
             {
                 this.WriteError(this.GetErrorSkippedUnsafeNameInMetadata(
@@ -1193,7 +1193,7 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert(commandMetadata.CommandType is null, "CommandType shouldn't get rehydrated");
             Dbg.Assert(commandMetadata.ImplementsDynamicParameters == false, "Proxies shouldn't do dynamic parameters");
 
-            if (commandMetadata.Parameters != null)
+            if (commandMetadata.Parameters is not null)
             {
                 foreach (ParameterMetadata parameter in commandMetadata.Parameters.Values)
                 {
@@ -1215,7 +1215,7 @@ namespace Microsoft.PowerShell.Commands
                         return false;
                     }
 
-                    if (parameter.Aliases != null)
+                    if (parameter.Aliases is not null)
                     {
                         foreach (string alias in parameter.Aliases)
                         {
@@ -1230,7 +1230,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (parameter.ParameterSets != null)
+                    if (parameter.ParameterSets is not null)
                     {
                         foreach (KeyValuePair<string, ParameterSetMetadata> setPair in parameter.ParameterSets)
                         {
@@ -1390,9 +1390,9 @@ namespace Microsoft.PowerShell.Commands
             Dictionary<string, string> alias2resolvedCommandName,
             PSObject remoteCommandInfo)
         {
-            Dbg.Assert(name2commandMetadata != null, "name2commandMetadata parameter != null");
-            Dbg.Assert(alias2resolvedCommandName != null, "alias2resolvedCommandName parameter != null");
-            Dbg.Assert(remoteCommandInfo != null, "remoteCommandInfo parameter != null");
+            Dbg.Assert(name2commandMetadata is not null, "name2commandMetadata parameter is not null");
+            Dbg.Assert(alias2resolvedCommandName is not null, "alias2resolvedCommandName parameter is not null");
+            Dbg.Assert(remoteCommandInfo is not null, "remoteCommandInfo parameter is not null");
 
             string resolvedCommandName;
             CommandMetadata commandMetadata = RehydrateCommandMetadata(remoteCommandInfo, out resolvedCommandName);
@@ -1401,7 +1401,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (resolvedCommandName != null && !IsSafeNameOrIdentifier(commandMetadata.Name))
+            if (resolvedCommandName is not null && !IsSafeNameOrIdentifier(commandMetadata.Name))
             {
                 this.WriteError(this.GetErrorSkippedUnsafeCommandName(resolvedCommandName));
                 return;
@@ -1428,7 +1428,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (resolvedCommandName != null)
+            if (resolvedCommandName is not null)
             {
                 alias2resolvedCommandName[commandMetadata.Name] = resolvedCommandName;
                 commandMetadata.Name = resolvedCommandName;
@@ -1459,8 +1459,8 @@ namespace Microsoft.PowerShell.Commands
 
         private void AddRemoteTypeDefinition(IList<ExtendedTypeDefinition> listOfTypeDefinitions, PSObject remoteTypeDefinition)
         {
-            Dbg.Assert(listOfTypeDefinitions != null, "listOfTypeDefinitions parameter != null");
-            Dbg.Assert(remoteTypeDefinition != null, "remoteTypeDefinition parameter != null");
+            Dbg.Assert(listOfTypeDefinitions is not null, "listOfTypeDefinitions parameter is not null");
+            Dbg.Assert(remoteTypeDefinition is not null, "remoteTypeDefinition parameter is not null");
 
             ExtendedTypeDefinition typeDefinition = ConvertTo<ExtendedTypeDefinition>("Get-FormatData", remoteTypeDefinition);
             if (!IsSafeTypeDefinition(typeDefinition))
@@ -1567,7 +1567,7 @@ namespace Microsoft.PowerShell.Commands
 
             // For remote PS version 5.1 and greater, we need to include the new -PowerShellVersion parameter
             RemoteRunspace remoteRunspace = Session.Runspace as RemoteRunspace;
-            if ((remoteRunspace != null) && (remoteRunspace.ServerVersion != null) &&
+            if ((remoteRunspace is not null) && (remoteRunspace.ServerVersion is not null) &&
                 (remoteRunspace.ServerVersion >= new Version(5, 1)))
             {
                 powerShell.AddParameter("PowerShellVersion", PSVersionInfo.PSVersion);
@@ -1654,7 +1654,7 @@ namespace Microsoft.PowerShell.Commands
 
             powerShell.AddCommand("Get-Command");
             powerShell.AddParameter("CommandType", this.CommandType);
-            if (this.CommandName != null)
+            if (this.CommandName is not null)
             {
                 powerShell.AddParameter("Name", this.CommandName);
             }
@@ -1914,9 +1914,9 @@ namespace Microsoft.PowerShell.Commands
             Guid moduleGuid,
             InvocationInfo invocationInfo)
         {
-            Dbg.Assert(remoteRunspaceInfo != null, "Caller should validate remoteRunspaceInfo != null");
-            Dbg.Assert(moduleGuid != null, "Caller should validate moduleGuid != null");
-            Dbg.Assert(invocationInfo != null, "Caller should validate invocationInfo != null");
+            Dbg.Assert(remoteRunspaceInfo is not null, "Caller should validate remoteRunspaceInfo is not null");
+            Dbg.Assert(moduleGuid is not null, "Caller should validate moduleGuid is not null");
+            Dbg.Assert(invocationInfo is not null, "Caller should validate invocationInfo is not null");
 
             _remoteRunspaceInfo = remoteRunspaceInfo;
             _moduleGuid = moduleGuid;
@@ -1934,19 +1934,19 @@ namespace Microsoft.PowerShell.Commands
         private string GetConnectionString()
         {
             WSManConnectionInfo connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
-            if (connectionInfo != null)
+            if (connectionInfo is not null)
             {
                 return connectionInfo.ConnectionUri.ToString();
             }
 
             VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
-            if (vmConnectionInfo != null)
+            if (vmConnectionInfo is not null)
             {
                 return vmConnectionInfo.ComputerName;
             }
 
             ContainerConnectionInfo containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
-            if (containerConnectionInfo != null)
+            if (containerConnectionInfo is not null)
             {
                 return containerConnectionInfo.ComputerName;
             }
@@ -2224,9 +2224,9 @@ function Get-PSImplicitRemotingSessionOption
         {
             RemoteRunspace remoteRunspace = _remoteRunspaceInfo.Runspace as RemoteRunspace;
 
-            Dbg.Assert(remoteRunspace != null, "PSSessionInfo should refer to a *remote* runspace");
-            Dbg.Assert(remoteRunspace.RunspacePool != null, "All remote runspaces are implemented using a runspace pool");
-            Dbg.Assert(remoteRunspace.RunspacePool != null, "All remote runspace pools have an internal implementation helper");
+            Dbg.Assert(remoteRunspace is not null, "PSSessionInfo should refer to a *remote* runspace");
+            Dbg.Assert(remoteRunspace.RunspacePool is not null, "All remote runspaces are implemented using a runspace pool");
+            Dbg.Assert(remoteRunspace.RunspacePool is not null, "All remote runspace pools have an internal implementation helper");
 
             return remoteRunspace.RunspacePool.RemoteRunspacePoolInternal.ApplicationArguments;
         }
@@ -2236,7 +2236,7 @@ function Get-PSImplicitRemotingSessionOption
             StringBuilder result = new StringBuilder("& $script:NewPSSessionOption ");
 
             RunspaceConnectionInfo runspaceConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as RunspaceConnectionInfo;
-            if (runspaceConnectionInfo != null)
+            if (runspaceConnectionInfo is not null)
             {
                 result.AppendFormat(null, "-Culture '{0}' ", CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.Culture.ToString()));
                 result.AppendFormat(null, "-UICulture '{0}' ", CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.UICulture.ToString()));
@@ -2248,7 +2248,7 @@ function Get-PSImplicitRemotingSessionOption
             }
 
             WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
-            if (wsmanConnectionInfo != null)
+            if (wsmanConnectionInfo is not null)
             {
                 if (!wsmanConnectionInfo.UseCompression) { result.Append("-NoCompression "); }
 
@@ -2297,7 +2297,7 @@ function Get-PSImplicitRemotingSessionOption
             }
 
             PSPrimitiveDictionary applicationArguments = GetApplicationArguments();
-            if (applicationArguments != null)
+            if (applicationArguments is not null)
             {
                 result.Append("-ApplicationArguments $(");
                 result.Append("& $script:ImportCliXml -Path $(");
@@ -2508,7 +2508,7 @@ function Get-PSImplicitRemotingSession
         private string GenerateNewRunspaceExpression()
         {
             VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
-            if (vmConnectionInfo != null)
+            if (vmConnectionInfo is not null)
             {
                 string vmConfigurationName = vmConnectionInfo.ConfigurationName;
                 return string.Format(
@@ -2521,7 +2521,7 @@ function Get-PSImplicitRemotingSession
             else
             {
                 ContainerConnectionInfo containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
-                if (containerConnectionInfo != null)
+                if (containerConnectionInfo is not null)
                 {
                     string containerConfigurationName = containerConnectionInfo.ContainerProc.ConfigurationName;
                     return string.Format(
@@ -2567,7 +2567,7 @@ function Get-PSImplicitRemotingSession
             if (connectionInfo is null)
             {
                 VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
-                if (vmConnectionInfo != null)
+                if (vmConnectionInfo is not null)
                 {
                     return string.Format(CultureInfo.InvariantCulture,
                         VMIdParameterTemplate,
@@ -2575,7 +2575,7 @@ function Get-PSImplicitRemotingSession
                 }
 
                 ContainerConnectionInfo containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
-                if (containerConnectionInfo != null)
+                if (containerConnectionInfo is not null)
                 {
                     return string.Format(CultureInfo.InvariantCulture,
                         ContainerIdParameterTemplate,
@@ -2631,7 +2631,7 @@ function Get-PSImplicitRemotingSession
         {
             // comment in newrunspacecommand.cs says that -CertificateThumbprint
             // and AuthenticationMechanism are mutually exclusive
-            if (_remoteRunspaceInfo.Runspace.ConnectionInfo.CertificateThumbprint != null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo.CertificateThumbprint is not null)
             {
                 return string.Empty;
             }
@@ -3028,9 +3028,9 @@ function Get-PSImplicitRemotingClientSideParameters
         {
             List<string> result = new List<string>();
 
-            Dbg.Assert(moduleRootDirectory != null, "Caller should validate moduleRootDirectory != null");
+            Dbg.Assert(moduleRootDirectory is not null, "Caller should validate moduleRootDirectory is not null");
             Dbg.Assert(Directory.Exists(moduleRootDirectory.FullName), "Caller should validate moduleRootDirectory exists");
-            Dbg.Assert(encoding != null, "Caller should validate encoding != null");
+            Dbg.Assert(encoding is not null, "Caller should validate encoding is not null");
 
             string baseName = Path.Combine(moduleRootDirectory.FullName, fileNamePrefix);
             FileMode fileMode = force ? FileMode.OpenOrCreate : FileMode.CreateNew;
@@ -3115,7 +3115,7 @@ function Get-PSImplicitRemotingClientSideParameters
             }
 
             PSPrimitiveDictionary applicationArguments = GetApplicationArguments();
-            if (applicationArguments != null)
+            if (applicationArguments is not null)
             {
                 string applicationArgumentsFile = Path.Combine(moduleRootDirectory.FullName, "ApplicationArguments.xml");
                 result.Add(applicationArgumentsFile);

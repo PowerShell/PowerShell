@@ -83,7 +83,7 @@ namespace System.Management.Automation
         public Collection<PSObject> Get(string path, AccessControlSections includeSections)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -112,7 +112,7 @@ namespace System.Management.Automation
                         CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -139,7 +139,7 @@ namespace System.Management.Automation
         public Collection<PSObject> Set(string path, ObjectSecurity sd)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -167,7 +167,7 @@ namespace System.Management.Automation
         internal void Set(string path, ObjectSecurity sd, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -196,7 +196,7 @@ namespace System.Management.Automation
         public ObjectSecurity NewFromPath(string path, AccessControlSections includeSections)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -223,7 +223,7 @@ namespace System.Management.Automation
         public ObjectSecurity NewOfType(string providerId, string type, AccessControlSections includeSections)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object

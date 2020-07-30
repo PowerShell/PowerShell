@@ -212,7 +212,7 @@ namespace System.Management.Automation
                 // the ouput is readable. This is done only for complex nodes.
                 mshObject.TypeNames.Clear();
 
-                if (xmlNode.Attributes["type"] != null)
+                if (xmlNode.Attributes["type"] is not null)
                 {
                     if (string.Equals(xmlNode.Attributes["type"].Value, "field", StringComparison.OrdinalIgnoreCase))
                         mshObject.TypeNames.Add("MamlPSClassHelpInfo#field");
@@ -223,7 +223,7 @@ namespace System.Management.Automation
                 mshObject.TypeNames.Add("MamlCommandHelpInfo#" + xmlNode.LocalName);
             }
 
-            if (xmlNode.Attributes != null)
+            if (xmlNode.Attributes is not null)
             {
                 foreach (XmlNode attribute in xmlNode.Attributes)
                 {
@@ -303,7 +303,7 @@ namespace System.Management.Automation
             if (xmlNode is null)
                 return properties;
 
-            if (xmlNode.ChildNodes != null)
+            if (xmlNode.ChildNodes is not null)
             {
                 foreach (XmlNode childNode in xmlNode.ChildNodes)
                 {
@@ -327,7 +327,7 @@ namespace System.Management.Automation
             // We want to modify only children..
             // The current node is taken care by the callee..
             XmlNode childNode = xmlNode.FirstChild;
-            while (childNode != null)
+            while (childNode is not null)
             {
                 // We dont want Comments..so remove..
                 if (childNode.NodeType == XmlNodeType.Comment)
@@ -605,7 +605,7 @@ namespace System.Management.Automation
                 {
                     ++count;
                     PSObject paraPSObject = GetParaPSObject(childNode, count != paraNodes, trim: trim);
-                    if (paraPSObject != null)
+                    if (paraPSObject is not null)
                         mshObjects.Add(paraPSObject);
                     continue;
                 }
@@ -828,7 +828,7 @@ namespace System.Management.Automation
                 {
                     PSObject listItemPSObject = GetListItemPSObject(childNode, ordered, ref index);
 
-                    if (listItemPSObject != null)
+                    if (listItemPSObject is not null)
                         mshObjects.Add(listItemPSObject);
 
                     continue;
@@ -956,7 +956,7 @@ namespace System.Management.Automation
                 {
                     PSObject definitionListItemPSObject = GetDefinitionListItemPSObject(childNode);
 
-                    if (definitionListItemPSObject != null)
+                    if (definitionListItemPSObject is not null)
                         mshObjects.Add(definitionListItemPSObject);
 
                     continue;

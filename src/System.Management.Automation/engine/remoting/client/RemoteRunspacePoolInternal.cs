@@ -236,7 +236,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             get
             {
-                return (DataStructureHandler != null) ? DataStructureHandler.MaxRetryConnectionTime : 0;
+                return (DataStructureHandler is not null) ? DataStructureHandler.MaxRetryConnectionTime : 0;
             }
         }
 
@@ -530,7 +530,7 @@ namespace System.Management.Automation.Runspaces.Internal
             RunspacePoolStateInfo newStateInfo = eventArgs.Data;
             bool raiseEvents = false;
 
-            Dbg.Assert(newStateInfo != null, "state information should not be null");
+            Dbg.Assert(newStateInfo is not null, "state information should not be null");
 
             if (newStateInfo.State == RunspacePoolState.Opened)
             {
@@ -598,7 +598,7 @@ namespace System.Management.Automation.Runspaces.Internal
         internal void HandleRemoteHostCalls(object sender,
             RemoteDataEventArgs<RemoteHostCall> eventArgs)
         {
-            if (HostCallReceived != null)
+            if (HostCallReceived is not null)
             {
                 HostCallReceived.SafeInvoke(sender, eventArgs);
             }
@@ -729,7 +729,7 @@ namespace System.Management.Automation.Runspaces.Internal
             get
             {
                 Version remoteProtocolVersionDeclaredByServer = PSRemotingProtocolVersion;
-                if (remoteProtocolVersionDeclaredByServer != null && DataStructureHandler != null)
+                if (remoteProtocolVersionDeclaredByServer is not null && DataStructureHandler is not null)
                 {
                     // Disconnect/Connect support is currently only provided by the WSMan transport
                     // that is running PSRP protocol version 2.2 and greater.
@@ -752,7 +752,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 Version winRMProtocolVersion = null;
 
                 PSPrimitiveDictionary psPrimitiveDictionary = GetApplicationPrivateData();
-                if (psPrimitiveDictionary != null)
+                if (psPrimitiveDictionary is not null)
                 {
                     PSPrimitiveDictionary.TryPathGet(
                         psPrimitiveDictionary,
@@ -771,7 +771,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="ps">PowerShell.</param>
         internal void PushRunningPowerShell(PowerShell ps)
         {
-            Dbg.Assert(ps != null, "Caller should not pass in null reference.");
+            Dbg.Assert(ps is not null, "Caller should not pass in null reference.");
             _runningPowerShells.Push(ps);
         }
 
@@ -1300,7 +1300,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 }
                 catch (CmdletInvocationException e)
                 {
-                    if (e.InnerException != null && e.InnerException is InvalidOperationException)
+                    if (e.InnerException is not null && e.InnerException is InvalidOperationException)
                     {
                         // If we cannot successfully retrieve command information then this runspace
                         // object we are building is invalid and must be skipped.
@@ -1321,7 +1321,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         continue;
                     }
 
-                    string cmdLine = (pspCommandLine != null) ? pspCommandLine.Value.ToString() : string.Empty;
+                    string cmdLine = (pspCommandLine is not null) ? pspCommandLine.Value.ToString() : string.Empty;
                     Guid cmdId = Guid.Parse(pspCommandId.Value.ToString());
 
                     connectCmdInfos.Add(new ConnectCommandInfo(cmdId, cmdLine));
@@ -1341,7 +1341,7 @@ namespace System.Management.Automation.Runspaces.Internal
         internal static RunspacePool GetRemoteRunspacePool(RunspaceConnectionInfo connectionInfo, Guid sessionId, Guid? commandId, PSHost host, TypeTable typeTable)
         {
             List<ConnectCommandInfo> connectCmdInfos = new List<ConnectCommandInfo>();
-            if (commandId != null)
+            if (commandId is not null)
             {
                 connectCmdInfos.Add(new ConnectCommandInfo(commandId.Value, string.Empty));
             }
@@ -1363,7 +1363,7 @@ namespace System.Management.Automation.Runspaces.Internal
             PSPropertyInfo pspProfile = rsInfoObject.Properties["ProfileLoaded"];
             PSPropertyInfo pspMaxIdleTimeout = rsInfoObject.Properties["MaxIdleTimeout"];
 
-            if (pspIdleTimeOut != null)
+            if (pspIdleTimeOut is not null)
             {
                 int idleTimeout;
                 if (GetTimeIntValue(pspIdleTimeOut.Value as string, out idleTimeout))
@@ -1372,10 +1372,10 @@ namespace System.Management.Automation.Runspaces.Internal
                 }
             }
 
-            if (pspBufferMode != null)
+            if (pspBufferMode is not null)
             {
                 string bufferingMode = pspBufferMode.Value as string;
-                if (bufferingMode != null)
+                if (bufferingMode is not null)
                 {
                     OutputBufferingMode outputBufferingMode;
                     if (Enum.TryParse<OutputBufferingMode>(bufferingMode, out outputBufferingMode))
@@ -1386,19 +1386,19 @@ namespace System.Management.Automation.Runspaces.Internal
                 }
             }
 
-            if (pspResourceUri != null)
+            if (pspResourceUri is not null)
             {
                 string strShellUri = pspResourceUri.Value as string;
-                if (strShellUri != null)
+                if (strShellUri is not null)
                 {
                     wsmanConnectionInfo.ShellUri = strShellUri;
                 }
             }
 
-            if (pspLocale != null)
+            if (pspLocale is not null)
             {
                 string localString = pspLocale.Value as string;
-                if (localString != null)
+                if (localString is not null)
                 {
                     try
                     {
@@ -1409,10 +1409,10 @@ namespace System.Management.Automation.Runspaces.Internal
                 }
             }
 
-            if (pspDataLocale != null)
+            if (pspDataLocale is not null)
             {
                 string dataLocalString = pspDataLocale.Value as string;
-                if (dataLocalString != null)
+                if (dataLocalString is not null)
                 {
                     try
                     {
@@ -1423,37 +1423,37 @@ namespace System.Management.Automation.Runspaces.Internal
                 }
             }
 
-            if (pspCompressionMode != null)
+            if (pspCompressionMode is not null)
             {
                 string compressionModeString = pspCompressionMode.Value as string;
-                if (compressionModeString != null)
+                if (compressionModeString is not null)
                 {
                     wsmanConnectionInfo.UseCompression = compressionModeString.Equals("NoCompression", StringComparison.OrdinalIgnoreCase)
                         ? false : true;
                 }
             }
 
-            if (pspEncoding != null)
+            if (pspEncoding is not null)
             {
                 string encodingString = pspEncoding.Value as string;
-                if (encodingString != null)
+                if (encodingString is not null)
                 {
                     wsmanConnectionInfo.UseUTF16 = encodingString.Equals("UTF16", StringComparison.OrdinalIgnoreCase)
                         ? true : false;
                 }
             }
 
-            if (pspProfile != null)
+            if (pspProfile is not null)
             {
                 string machineProfileLoadedString = pspProfile.Value as string;
-                if (machineProfileLoadedString != null)
+                if (machineProfileLoadedString is not null)
                 {
                     wsmanConnectionInfo.NoMachineProfile = machineProfileLoadedString.Equals("Yes", StringComparison.OrdinalIgnoreCase)
                         ? false : true;
                 }
             }
 
-            if (pspMaxIdleTimeout != null)
+            if (pspMaxIdleTimeout is not null)
             {
                 int maxIdleTimeout;
                 if (GetTimeIntValue(pspMaxIdleTimeout.Value as string, out maxIdleTimeout))
@@ -1471,11 +1471,11 @@ namespace System.Management.Automation.Runspaces.Internal
             PSPropertyInfo pspIdleTimeOut = rsInfoObject.Properties["IdleTimeOut"];
             PSPropertyInfo pspShellInactivity = rsInfoObject.Properties["ShellInactivity"];
 
-            if (pspIdleTimeOut != null && pspShellInactivity != null)
+            if (pspIdleTimeOut is not null && pspShellInactivity is not null)
             {
                 string shellInactivityString = pspShellInactivity.Value as string;
                 int idleTimeout;
-                if ((shellInactivityString != null) &&
+                if ((shellInactivityString is not null) &&
                     GetTimeIntValue(pspIdleTimeOut.Value as string, out idleTimeout))
                 {
                     try
@@ -1507,7 +1507,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         private static bool GetTimeIntValue(string timeString, out int value)
         {
-            if (timeString != null)
+            if (timeString is not null)
             {
                 string timeoutString = timeString.Replace("PT", string.Empty).Replace("S", string.Empty);
                 try
@@ -1595,7 +1595,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         private void SetDisconnectAsCompleted()
         {
-            if (_disconnectAsyncResult != null && !_disconnectAsyncResult.IsCompleted)
+            if (_disconnectAsyncResult is not null && !_disconnectAsyncResult.IsCompleted)
             {
                 _disconnectAsyncResult.SetAsCompleted(stateInfo.Reason);
                 _disconnectAsyncResult = null;
@@ -1626,7 +1626,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         private void SetReconnectAsCompleted()
         {
-            if (_reconnectAsyncResult != null && !_reconnectAsyncResult.IsCompleted)
+            if (_reconnectAsyncResult is not null && !_reconnectAsyncResult.IsCompleted)
             {
                 _reconnectAsyncResult.SetAsCompleted(stateInfo.Reason);
                 _reconnectAsyncResult = null;
@@ -1652,7 +1652,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="eventArgs">Arguments describing this event.</param>
         private void HandleSessionClosed(object sender, RemoteDataEventArgs<Exception> eventArgs)
         {
-            if (eventArgs.Data != null)
+            if (eventArgs.Data is not null)
             {
                 _closingReason = eventArgs.Data;
             }
@@ -1711,7 +1711,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             RunspacePoolAsyncResult tempOpenAsyncResult = _openAsyncResult;
             _openAsyncResult = null;
-            if (tempOpenAsyncResult != null && !tempOpenAsyncResult.IsCompleted)
+            if (tempOpenAsyncResult is not null && !tempOpenAsyncResult.IsCompleted)
             {
                 tempOpenAsyncResult.SetAsCompleted(stateInfo.Reason);
             }
@@ -1725,7 +1725,7 @@ namespace System.Management.Automation.Runspaces.Internal
             // abort all pending calls.
             DispatchTable.AbortAllCalls();
 
-            if (_closeAsyncResult != null)
+            if (_closeAsyncResult is not null)
             {
                 _closeAsyncResult.SetAsCompleted(stateInfo.Reason);
                 _closeAsyncResult = null;
@@ -1769,7 +1769,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
             WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (wsmanConnectionInfo != null)
+            if (wsmanConnectionInfo is not null)
             {
                 wsmanConnectionInfo.ConnectionUri = eventArgs.Data;
                 URIRedirectionReported.SafeInvoke(this, eventArgs);
@@ -1811,12 +1811,12 @@ namespace System.Management.Automation.Runspaces.Internal
         private void HandleSessionCreateCompleted(object sender, CreateCompleteEventArgs eventArgs)
         {
             // Update connectionInfo with updated information from the transport.
-            if (eventArgs != null)
+            if (eventArgs is not null)
             {
                 _connectionInfo.IdleTimeout = eventArgs.ConnectionInfo.IdleTimeout;
                 _connectionInfo.MaxIdleTimeout = eventArgs.ConnectionInfo.MaxIdleTimeout;
                 WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
-                if (wsmanConnectionInfo != null)
+                if (wsmanConnectionInfo is not null)
                 {
                     wsmanConnectionInfo.OutputBufferingMode =
                         ((WSManConnectionInfo)eventArgs.ConnectionInfo).OutputBufferingMode;
@@ -1831,7 +1831,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             // Reset DisconnectedOn/ExpiresOn
             WSManConnectionInfo wsManConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (wsManConnectionInfo != null)
+            if (wsManConnectionInfo is not null)
             {
                 wsManConnectionInfo.NullDisconnectedExpiresOn();
             }
@@ -1841,7 +1841,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             // Set DisconnectedOn/ExpiresOn for disconnected session.
             WSManConnectionInfo wsManConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (wsManConnectionInfo != null)
+            if (wsManConnectionInfo is not null)
             {
                 wsManConnectionInfo.SetDisconnectedExpiresOnToNow();
             }
@@ -1855,7 +1855,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private void WaitAndRaiseConnectEventsProc(object state)
         {
             RunspacePoolStateInfo info = state as RunspacePoolStateInfo;
-            Dbg.Assert(info != null, "State -> Event arguments cannot be null.");
+            Dbg.Assert(info is not null, "State -> Event arguments cannot be null.");
 
             // Wait for private application data to arrive from server.
             try
@@ -1993,12 +1993,12 @@ namespace System.Management.Automation.Runspaces.Internal
                 // Add parameters for server connection.
                 powerShell.AddParameter("ComputerName", wsmanConnectionInfo.ComputerName);
                 powerShell.AddParameter("Authentication", ConvertPSAuthToWSManAuth(wsmanConnectionInfo.AuthenticationMechanism));
-                if (wsmanConnectionInfo.Credential != null)
+                if (wsmanConnectionInfo.Credential is not null)
                 {
                     powerShell.AddParameter("Credential", wsmanConnectionInfo.Credential);
                 }
 
-                if (wsmanConnectionInfo.CertificateThumbprint != null)
+                if (wsmanConnectionInfo.CertificateThumbprint is not null)
                 {
                     powerShell.AddParameter("CertificateThumbprint", wsmanConnectionInfo.CertificateThumbprint);
                 }
@@ -2053,12 +2053,12 @@ namespace System.Management.Automation.Runspaces.Internal
                 // Add parameters for server connection.
                 powerShell.AddParameter("ComputerName", wsmanConnectionInfo.ComputerName);
                 powerShell.AddParameter("Authentication", ConvertPSAuthToWSManAuth(wsmanConnectionInfo.AuthenticationMechanism));
-                if (wsmanConnectionInfo.Credential != null)
+                if (wsmanConnectionInfo.Credential is not null)
                 {
                     powerShell.AddParameter("Credential", wsmanConnectionInfo.Credential);
                 }
 
-                if (wsmanConnectionInfo.CertificateThumbprint != null)
+                if (wsmanConnectionInfo.CertificateThumbprint is not null)
                 {
                     powerShell.AddParameter("CertificateThumbprint", wsmanConnectionInfo.CertificateThumbprint);
                 }
@@ -2106,7 +2106,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     powerShell.AddParameter("ProxyAccessType", "Proxy" + wsmanConnectionInfo.ProxyAccessType.ToString());
                     powerShell.AddParameter("ProxyAuthentication", wsmanConnectionInfo.ProxyAuthentication.ToString());
 
-                    if (wsmanConnectionInfo.ProxyCredential != null)
+                    if (wsmanConnectionInfo.ProxyCredential is not null)
                     {
                         powerShell.AddParameter("ProxyCredential", wsmanConnectionInfo.ProxyCredential);
                     }

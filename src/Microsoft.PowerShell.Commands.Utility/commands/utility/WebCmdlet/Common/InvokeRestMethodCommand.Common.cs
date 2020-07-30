@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
                 doc = null;
             }
 
-            return (doc != null);
+            return (doc is not null);
         }
 
         private bool TryConvertToJson(string json, out object obj, ref Exception exRef)
@@ -196,7 +196,7 @@ namespace Microsoft.PowerShell.Commands
                     JToken.Parse(json);
                 }
 
-                if (error != null)
+                if (error is not null)
                 {
                     exRef = error.Exception;
                     obj = null;

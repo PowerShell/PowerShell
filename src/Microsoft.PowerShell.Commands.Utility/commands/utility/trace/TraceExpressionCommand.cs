@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (_pipeline != null)
+            if (_pipeline is not null)
             {
                 TurnOnTracing(_matchingSources, false);
 
@@ -247,7 +247,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void StopProcessing()
         {
-            if (_pipeline != null)
+            if (_pipeline is not null)
             {
                 _pipeline.Stop();
             }
@@ -295,7 +295,7 @@ namespace Microsoft.PowerShell.Commands
                 ClearStoredState();
                 _matchingSources = null;
 
-                if (_pipeline != null)
+                if (_pipeline is not null)
                 {
                     _pipeline.Dispose();
                     _pipeline = null;
@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // If there are any file streams, close those as well.
 
-                if (this.FileStreams != null)
+                if (this.FileStreams is not null)
                 {
                     foreach (FileStream fileStream in this.FileStreams)
                     {
@@ -446,7 +446,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord errorRecord = ConvertToErrorRecord(obj);
 
-                if (errorRecord != null)
+                if (errorRecord is not null)
                 {
                     _cmdlet.WriteError(errorRecord);
                 }
@@ -490,7 +490,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (object o in LanguagePrimitives.GetEnumerable(obj))
                     {
                         ErrorRecord errorRecord = ConvertToErrorRecord(o);
-                        if (errorRecord != null)
+                        if (errorRecord is not null)
                         {
                             numWritten++;
                             _cmdlet.WriteError(errorRecord);
@@ -500,7 +500,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     ErrorRecord errorRecord = ConvertToErrorRecord(obj);
-                    if (errorRecord != null)
+                    if (errorRecord is not null)
                     {
                         numWritten++;
                         _cmdlet.WriteError(errorRecord);
@@ -522,7 +522,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ErrorRecord result = null;
             PSObject mshobj = obj as PSObject;
-            if (mshobj != null)
+            if (mshobj is not null)
             {
                 object baseObject = mshobj.BaseObject;
                 if (!(baseObject is PSCustomObject))
@@ -532,7 +532,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             ErrorRecord errorRecordResult = obj as ErrorRecord;
-            if (errorRecordResult != null)
+            if (errorRecordResult is not null)
             {
                 result = errorRecordResult;
             }

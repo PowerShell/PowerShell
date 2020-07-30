@@ -137,7 +137,7 @@ namespace System.Management.Automation
                     break;
             }
 
-            if (candidateScope != null)
+            if (candidateScope is not null)
             {
                 currentCharIndex += 1; // First character already matched.
                 int j;

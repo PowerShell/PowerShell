@@ -182,7 +182,7 @@ namespace System.Management.Automation
         /// <returns>Returns jobs guid.</returns>
         protected override Guid GetKey(Job item)
         {
-            if (item != null)
+            if (item is not null)
             {
                 return item.InstanceId;
             }

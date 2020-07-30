@@ -157,7 +157,7 @@ namespace Microsoft.PowerShell.Commands
                 // this cannot happen as we have specified the Path
                 // property to be mandatory parameter
                 //
-                Dbg.Assert((FilePath != null) && (FilePath.Length > 0),
+                Dbg.Assert((FilePath is not null) && (FilePath.Length > 0),
                     "GetSignatureCommand: Param binder did not bind path");
 
                 foreach (string p in FilePath)
@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             else
                             {
-                                if ((Signature = PerformAction(resolvedFilePath)) != null)
+                                if ((Signature = PerformAction(resolvedFilePath)) is not null)
                                 {
                                     WriteObject(Signature);
                                 }
@@ -229,7 +229,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string sourcePathOrExtension in SourcePathOrExtension)
                 {
-                    if ((Signature = PerformAction(sourcePathOrExtension, Content)) != null)
+                    if ((Signature = PerformAction(sourcePathOrExtension, Content)) is not null)
                     {
                         WriteObject(Signature);
                     }
@@ -472,7 +472,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // remove readonly attributes on the file
                         FileInfo fInfo = new FileInfo(filePath);
-                        if (fInfo != null)
+                        if (fInfo is not null)
                         {
                             // Save some disk write time by checking whether file is readonly..
                             if ((fInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
@@ -575,7 +575,7 @@ namespace Microsoft.PowerShell.Commands
             finally
             {
                 // reset the read-only attribute
-                if (readOnlyFileInfo != null)
+                if (readOnlyFileInfo is not null)
                 {
                     readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
                 }

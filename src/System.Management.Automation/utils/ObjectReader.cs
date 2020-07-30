@@ -503,7 +503,7 @@ namespace System.Management.Automation.Internal
         public PSDataCollectionReader(PSDataCollectionStream<DataStoreType> stream)
             : base(stream)
         {
-            System.Management.Automation.Diagnostics.Assert(stream.ObjectStore != null,
+            System.Management.Automation.Diagnostics.Assert(stream.ObjectStore is not null,
                 "Stream should have a valid data store");
             _enumerator = (PSDataCollectionEnumerator<DataStoreType>)stream.ObjectStore.GetEnumerator();
         }
@@ -664,7 +664,7 @@ namespace System.Management.Automation.Internal
             string computerName, Guid runspaceId)
             : base(stream)
         {
-            System.Management.Automation.Diagnostics.Assert(stream.ObjectStore != null,
+            System.Management.Automation.Diagnostics.Assert(stream.ObjectStore is not null,
                 "Stream should have a valid data store");
             _datastore = stream.ObjectStore;
             ComputerName = computerName;

@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
 
             string value = Environment.GetEnvironmentVariable(name);
 
-            if (value != null)
+            if (value is not null)
             {
                 result = new DictionaryEntry(name, value);
             }
@@ -229,7 +229,7 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetValueOfItem(object item)
         {
             Dbg.Diagnostics.Assert(
-                item != null,
+                item is not null,
                 "Caller should verify the item parameter");
 
             object value = item;

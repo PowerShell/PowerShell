@@ -354,7 +354,7 @@ namespace System.Management.Automation
             StringBuilder returnValue = new StringBuilder();
             returnValue.Append(this.Name);
             returnValue.Append(" = ");
-            if (ConversionType != null)
+            if (ConversionType is not null)
             {
                 returnValue.Append("(");
                 returnValue.Append(ConversionType);
@@ -462,7 +462,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (ConversionType != null)
+                if (ConversionType is not null)
                 {
                     return ConversionType.FullName;
                 }
@@ -585,7 +585,7 @@ namespace System.Management.Automation
             get
             {
                 object returnValue = this.ReferencedMember.Value;
-                if (ConversionType != null)
+                if (ConversionType is not null)
                 {
                     returnValue = LanguagePrimitives.ConvertTo(returnValue, ConversionType, CultureInfo.InvariantCulture);
                 }
@@ -863,12 +863,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets true if this property can be set.
         /// </summary>
-        public override bool IsSettable => this.SetterCodeReference != null;
+        public override bool IsSettable => this.SetterCodeReference is not null;
 
         /// <summary>
         /// Gets true if this property can be read.
         /// </summary>
-        public override bool IsGettable => GetterCodeReference != null;
+        public override bool IsGettable => GetterCodeReference is not null;
 
         /// <summary>
         /// Gets and Sets the value of this member.
@@ -1031,7 +1031,7 @@ namespace System.Management.Automation
                 return returnValue.ToString();
             }
 
-            Diagnostics.Assert((this.baseObject != null) && (this.adapter != null), "if it is deserialized, it should have all these properties set");
+            Diagnostics.Assert((this.baseObject is not null) && (this.adapter is not null), "if it is deserialized, it should have all these properties set");
             return adapter.BasePropertyToString(this);
         }
 
@@ -1113,7 +1113,7 @@ namespace System.Management.Automation
                 return serializedValue;
             }
 
-            Diagnostics.Assert((this.baseObject != null) && (this.adapter != null), "if it is deserialized, it should have all these properties set");
+            Diagnostics.Assert((this.baseObject is not null) && (this.adapter is not null), "if it is deserialized, it should have all these properties set");
 
             object o = adapter.BasePropertyGet(this);
             return o;
@@ -1127,7 +1127,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            Diagnostics.Assert((this.baseObject != null) && (this.adapter != null), "if it is deserialized, it should have all these properties set");
+            Diagnostics.Assert((this.baseObject is not null) && (this.adapter is not null), "if it is deserialized, it should have all these properties set");
             adapter.BasePropertySet(this, setValue, shouldConvert);
         }
 
@@ -1154,7 +1154,7 @@ namespace System.Management.Automation
                     return true;
                 }
 
-                Diagnostics.Assert((this.baseObject != null) && (this.adapter != null), "if it is deserialized, it should have all these properties set");
+                Diagnostics.Assert((this.baseObject is not null) && (this.adapter is not null), "if it is deserialized, it should have all these properties set");
                 return adapter.BasePropertyIsSettable(this);
             }
         }
@@ -1171,7 +1171,7 @@ namespace System.Management.Automation
                     return true;
                 }
 
-                Diagnostics.Assert((this.baseObject != null) && (this.adapter != null), "if it is deserialized, it should have all these properties set");
+                Diagnostics.Assert((this.baseObject is not null) && (this.adapter is not null), "if it is deserialized, it should have all these properties set");
                 return adapter.BasePropertyIsGettable(this);
             }
         }
@@ -1193,7 +1193,7 @@ namespace System.Management.Automation
                     if (serializedValue is PSObject serializedValueAsPSObject)
                     {
                         var typeNames = serializedValueAsPSObject.InternalTypeNames;
-                        if ((typeNames != null) && (typeNames.Count >= 1))
+                        if ((typeNames is not null) && (typeNames.Count >= 1))
                         {
                             // type name at 0-th index is the most specific type (i.e. deserialized.system.io.directoryinfo)
                             // type names at other indices are less specific (i.e. deserialized.system.object)
@@ -1204,7 +1204,7 @@ namespace System.Management.Automation
                     return serializedValue.GetType().FullName;
                 }
 
-                Diagnostics.Assert((this.baseObject != null) && (this.adapter != null), "if it is deserialized, it should have all these properties set");
+                Diagnostics.Assert((this.baseObject is not null) && (this.adapter is not null), "if it is deserialized, it should have all these properties set");
                 return adapter.BasePropertyType(this);
             }
         }
@@ -1366,7 +1366,7 @@ namespace System.Management.Automation
                 if (val is PSObject valAsPSObject)
                 {
                     var typeNames = valAsPSObject.InternalTypeNames;
-                    if ((typeNames != null) && (typeNames.Count >= 1))
+                    if ((typeNames is not null) && (typeNames.Count >= 1))
                     {
                         // type name at 0-th index is the most specific type (i.e. system.string)
                         // type names at other indices are less specific (i.e. system.object)
@@ -1387,7 +1387,7 @@ namespace System.Management.Automation
             if (val is PSObject valAsPSObject)
             {
                 var typeNames = valAsPSObject.InternalTypeNames;
-                if ((typeNames != null) && (typeNames.Count >= 1))
+                if ((typeNames is not null) && (typeNames.Count >= 1))
                 {
                     displayTypeName = typeNames[0];
                 }
@@ -1509,7 +1509,7 @@ namespace System.Management.Automation
                 if (val is PSObject valAsPSObject)
                 {
                     var typeNames = valAsPSObject.InternalTypeNames;
-                    if ((typeNames != null) && (typeNames.Count >= 1))
+                    if ((typeNames is not null) && (typeNames.Count >= 1))
                     {
                         // type name at 0-th index is the most specific type (i.e. system.string)
                         // type names at other indices are less specific (i.e. system.object)
@@ -1579,7 +1579,7 @@ namespace System.Management.Automation
             {
                 // If we don't have a script block for the getter, see if we
                 // have the text for it (to support delayed script compilation).
-                if ((_getterScript is null) && (_getterScriptText != null))
+                if ((_getterScript is null) && (_getterScriptText is not null))
                 {
                     _getterScript = ScriptBlock.Create(_getterScriptText);
 
@@ -1622,7 +1622,7 @@ namespace System.Management.Automation
             {
                 // If we don't have a script block for the setter, see if we
                 // have the text for it (to support delayed script compilation).
-                if ((_setterScript is null) && (_setterScriptText != null))
+                if ((_setterScript is null) && (_setterScriptText is not null))
                 {
                     _setterScript = ScriptBlock.Create(_setterScriptText);
 
@@ -1696,12 +1696,12 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("getterScript setterScript");
             }
 
-            if (getterScript != null)
+            if (getterScript is not null)
             {
                 getterScript.DebuggerStepThrough = true;
             }
 
-            if (setterScript != null)
+            if (setterScript is not null)
             {
                 setterScript.DebuggerStepThrough = true;
             }
@@ -1771,12 +1771,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets true if this property can be set.
         /// </summary>
-        public override bool IsSettable => this._setterScript != null || this._setterScriptText != null;
+        public override bool IsSettable => this._setterScript is not null || this._setterScriptText is not null;
 
         /// <summary>
         /// Gets true if this property can be read.
         /// </summary>
-        public override bool IsGettable => this._getterScript != null || this._getterScriptText != null;
+        public override bool IsGettable => this._getterScript is not null || this._getterScriptText is not null;
 
         /// <summary>
         /// Gets and Sets the value of this property.
@@ -1885,7 +1885,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if ((this.GetterScript != null) &&
+                if ((this.GetterScript is not null) &&
                     (this.GetterScript.OutputType.Count > 0))
                 {
                     return this.GetterScript.OutputType[0].Name;
@@ -1996,7 +1996,7 @@ namespace System.Management.Automation
             {
                 int result = 61;
 
-                result = result * 397 + (MethodTargetType != null ? MethodTargetType.GetHashCode() : 0);
+                result = result * 397 + (MethodTargetType is not null ? MethodTargetType.GetHashCode() : 0);
                 result = result * 397 + ParameterTypes.SequenceGetHashCode();
 
                 return result;
@@ -2007,14 +2007,14 @@ namespace System.Management.Automation
         {
             StringBuilder sb = new StringBuilder();
             string separator = string.Empty;
-            if (MethodTargetType != null)
+            if (MethodTargetType is not null)
             {
                 sb.Append("this: ");
                 sb.Append(ToStringCodeMethods.Type(MethodTargetType, dropNamespaces: true));
                 separator = " ";
             }
 
-            if (_parameterTypes != null)
+            if (_parameterTypes is not null)
             {
                 sb.Append(separator);
                 sb.Append("args: ");
@@ -2889,7 +2889,7 @@ namespace System.Management.Automation
         /// <returns>This property as a string.</returns>
         public override string ToString()
         {
-            Diagnostics.Assert((this.baseObject != null) && (this.adapter != null) && (this.adapterData != null), "it should have all these properties set");
+            Diagnostics.Assert((this.baseObject is not null) && (this.adapter is not null) && (this.adapterData is not null), "it should have all these properties set");
             return this.adapter.BaseParameterizedPropertyToString(this);
         }
 
@@ -3116,7 +3116,7 @@ namespace System.Management.Automation
         internal PSMemberSet(string name, PSMemberInfoInternalCollection<PSMemberInfo> members)
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(name), "Caller needs to guarantee not null or empty.");
-            Diagnostics.Assert(members != null, "Caller needs to guarantee not null.");
+            Diagnostics.Assert(members is not null, "Caller needs to guarantee not null.");
 
             this.name = name;
             this.internalMembers = members;
@@ -3355,7 +3355,7 @@ namespace System.Management.Automation
         {
             if (_psObject.IsDeserialized)
             {
-                if (_psObject.ClrMembers != null)
+                if (_psObject.ClrMembers is not null)
                 {
                     foreach (PSMemberInfo member in _psObject.ClrMembers)
                     {
@@ -3379,7 +3379,7 @@ namespace System.Management.Automation
 
             if (_psObject.IsDeserialized)
             {
-                if (_psObject.AdaptedMembers != null)
+                if (_psObject.AdaptedMembers is not null)
                 {
                     foreach (PSMemberInfo member in _psObject.AdaptedMembers)
                     {
@@ -3486,7 +3486,7 @@ namespace System.Management.Automation
         internal PSPropertySet(string name, List<string> referencedPropertyNameList)
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(name), "Caller needs to guarantee not null or empty.");
-            Diagnostics.Assert(referencedPropertyNameList != null, "Caller needs to guarantee not null.");
+            Diagnostics.Assert(referencedPropertyNameList is not null, "Caller needs to guarantee not null.");
 
             // We use the constructor 'public Collection(IList<T> list)' to create the collection,
             // so that the passed-in list is directly used as the backing store of the collection.
@@ -3670,7 +3670,7 @@ namespace System.Management.Automation
     {
         internal static WildcardPattern GetNamePattern(string name)
         {
-            if (name != null && WildcardPattern.ContainsWildcardCharacters(name))
+            if (name is not null && WildcardPattern.ContainsWildcardCharacters(name))
             {
                 return WildcardPattern.Get(name, WildcardOptions.IgnoreCase);
             }
@@ -3704,7 +3704,7 @@ namespace System.Management.Automation
             if (nameMatch is null)
             {
                 T member = memberList[name];
-                if (member != null && (member.MemberType & memberTypes) != 0)
+                if (member is not null && (member.MemberType & memberTypes) != 0)
                 {
                     returnValue.Add(member);
                 }
@@ -4034,14 +4034,14 @@ namespace System.Management.Automation
         /// <param name="newMember"></param>
         internal void Replace(T newMember)
         {
-            Diagnostics.Assert(newMember != null, "called from internal code that checks for new member not null");
+            Diagnostics.Assert(newMember is not null, "called from internal code that checks for new member not null");
 
             // Save to a local variable to reduce property access.
             var members = Members;
             lock (members)
             {
                 var oldMember = members[newMember.Name] as T;
-                Diagnostics.Assert(oldMember != null, "internal code checks member already exists");
+                Diagnostics.Assert(oldMember is not null, "internal code checks member already exists");
                 Replace(oldMember, newMember);
             }
         }
@@ -4454,7 +4454,7 @@ namespace System.Management.Automation
         internal static void GeneratePSTypeNames(object obj)
         {
             PSObject mshOwner = PSObject.AsPSObject(obj);
-            if (mshOwner.InstanceMembers[PSObject.PSTypeNames] != null)
+            if (mshOwner.InstanceMembers[PSObject.PSTypeNames] is not null)
             {
                 // PSTypeNames member set is already generated..just return.
                 return;
@@ -4576,7 +4576,7 @@ namespace System.Management.Automation
                         ExtendedTypeSystem.CannotAddPropertyOrMethod);
                 }
 
-                if (_memberSetOwner != null && _memberSetOwner.IsReservedMember)
+                if (_memberSetOwner is not null && _memberSetOwner.IsReservedMember)
                 {
                     throw new ExtendedTypeSystemException("CannotAddToReservedNameMemberset",
                         null,
@@ -4597,7 +4597,7 @@ namespace System.Management.Automation
         {
             if (!preValidated)
             {
-                if (_memberSetOwner != null && !_memberSetOwner.IsInstance)
+                if (_memberSetOwner is not null && !_memberSetOwner.IsInstance)
                 {
                     throw new ExtendedTypeSystemException("RemoveMemberFromStaticMemberSet",
                         null,
@@ -4644,12 +4644,12 @@ namespace System.Management.Automation
 
             PSMemberInfo memberToBeAdded = member.Copy();
 
-            if (_mshOwner != null)
+            if (_mshOwner is not null)
             {
                 if (!preValidated)
                 {
                     TypeTable typeTable = _mshOwner.GetTypeTable();
-                    if (typeTable != null)
+                    if (typeTable is not null)
                     {
                         var typesXmlMembers = typeTable.GetMembers(_mshOwner.InternalTypeNames);
                         var typesXmlMember = typesXmlMembers[member.Name];
@@ -4696,7 +4696,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
-            if (_mshOwner != null)
+            if (_mshOwner is not null)
             {
                 _mshOwner.InstanceMembers.Remove(name);
                 return;
@@ -4780,7 +4780,7 @@ namespace System.Management.Automation
 
                     PSMemberInfo member;
                     object delegateOwner;
-                    if (_mshOwner != null)
+                    if (_mshOwner is not null)
                     {
                         // this will check if name is a reserved name like PSBase, PSTypeNames
                         // if it is a reserved name, ensures the value is loaded.
@@ -4818,9 +4818,9 @@ namespace System.Management.Automation
                     delegateOwner = PSObject.AsPSObject(delegateOwner);
                     foreach (CollectionEntry<T> collection in Collections)
                     {
-                        Diagnostics.Assert(delegateOwner != null, "all integrating collections with non empty collections have an associated PSObject");
+                        Diagnostics.Assert(delegateOwner is not null, "all integrating collections with non empty collections have an associated PSObject");
                         T memberAsT = collection.GetMember((PSObject)delegateOwner, name);
-                        if (memberAsT != null)
+                        if (memberAsT is not null)
                         {
                             return collection.CloneOrReplicateObject(delegateOwner, memberAsT);
                         }
@@ -4837,7 +4837,7 @@ namespace System.Management.Automation
             {
                 PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
                 object delegateOwner;
-                if (_mshOwner != null)
+                if (_mshOwner is not null)
                 {
                     delegateOwner = _mshOwner;
                     foreach (PSMemberInfo member in _mshOwner.InstanceMembers)
@@ -4877,7 +4877,7 @@ namespace System.Management.Automation
                     foreach (T member in members)
                     {
                         PSMemberInfo previousMember = returnValue[member.Name];
-                        if (previousMember != null)
+                        if (previousMember is not null)
                         {
                             PSObject.MemberResolution.WriteLine("Member \"{0}\" of type \"{1}\" has been ignored because a member with the same name and type \"{2}\" is already present.",
                                 member.Name, member.MemberType, previousMember.MemberType);
@@ -4949,7 +4949,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentException(nameof(name));
                 }
 
-                if (_mshOwner != null)
+                if (_mshOwner is not null)
                 {
                     GenerateAllReservedMembers();
                 }
@@ -4976,7 +4976,7 @@ namespace System.Management.Automation
         internal override T FirstOrDefault(MemberNamePredicate predicate)
         {
             object delegateOwner;
-            if (_mshOwner != null)
+            if (_mshOwner is not null)
             {
                 delegateOwner = _mshOwner;
                 foreach (PSMemberInfo member in _mshOwner.InstanceMembers)
@@ -5010,7 +5010,7 @@ namespace System.Management.Automation
             {
                 var collectionEntry = Collections[i];
                 var member = collectionEntry.GetFirstOrDefault(ownerAsPSObj, predicate);
-                if (member != null)
+                if (member is not null)
                 {
                     return collectionEntry.CloneOrReplicateObject(ownerAsPSObj, member);
                 }
@@ -5041,7 +5041,7 @@ namespace System.Management.Automation
                     _currentIndex = -1;
                     _current = null;
                     _allMembers = integratingCollection.GetIntegratedMembers(MshMemberMatchOptions.None);
-                    if (integratingCollection._mshOwner != null)
+                    if (integratingCollection._mshOwner is not null)
                     {
                         integratingCollection.GenerateAllReservedMembers();
                         PSObject.MemberResolution.WriteLine("Enumerating PSObject with type \"{0}\".", integratingCollection._mshOwner.ImmediateBaseObject.GetType().FullName);

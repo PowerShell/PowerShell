@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
                         try
                         {
                             Collection<string> newPaths = Context.SessionState.Path.GetResolvedProviderPathFromPSPath(path, out provider);
-                            if (newPaths != null)
+                            if (newPaths is not null)
                             {
                                 pathsToProcess.AddRange(newPaths);
                             }
@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.Commands
                 openfilestream?.Dispose();
             }
 
-            return hash != null;
+            return hash is not null;
         }
 
         /// <summary>

@@ -117,7 +117,7 @@ namespace Microsoft.Management.UI.Internal
             // If the values are strings, compare them considering stringComparison
             string firstString = firstValue as string;
 
-            if (firstString != null)
+            if (firstString is not null)
             {
                 string secondString = secondValue as string;
                 return string.Compare(firstString, secondString, stringComparison);
@@ -127,7 +127,7 @@ namespace Microsoft.Management.UI.Internal
                 IComparable firstComparable = firstValue as IComparable;
 
                 // If the values are comparable use CompareTo(), otherwise compare as string considering stringComparison
-                if (firstComparable != null)
+                if (firstComparable is not null)
                 {
                     return firstComparable.CompareTo(secondValue);
                 }

@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Cmdletization
             {
                 if (disposing)
                 {
-                    if (_parentJob != null)
+                    if (_parentJob is not null)
                     {
                         _parentJob.Dispose();
                         _parentJob = null;
@@ -137,14 +137,14 @@ namespace Microsoft.PowerShell.Cmdletization
         {
             StartableJob queryJob = this.CreateQueryJob(sessionForJob, query);
 
-            if (queryJob != null)
+            if (queryJob is not null)
             {
-                if (actionAgainstResults != null)
+                if (actionAgainstResults is not null)
                 {
                     queryJob.SuppressOutputForwarding = true;
                 }
 
-                bool discardNonPipelineResults = (actionAgainstResults != null) || !this.AsJob.IsPresent;
+                bool discardNonPipelineResults = (actionAgainstResults is not null) || !this.AsJob.IsPresent;
                 HandleJobOutput(
                     queryJob,
                     sessionForJob,
@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Cmdletization
         {
             StartableJob methodInvocationJob = this.CreateInstanceMethodInvocationJob(sessionForJob, objectInstance, methodInvocationInfo, passThru);
 
-            if (methodInvocationJob != null)
+            if (methodInvocationJob is not null)
             {
                 bool discardNonPipelineResults = !asJob;
                 HandleJobOutput(
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Cmdletization
         {
             StartableJob methodInvocationJob = this.CreateStaticMethodInvocationJob(sessionForJob, methodInvocationInfo);
 
-            if (methodInvocationJob != null)
+            if (methodInvocationJob is not null)
             {
                 bool discardNonPipelineResults = !this.AsJob.IsPresent;
                 HandleJobOutput(
@@ -246,7 +246,7 @@ namespace Microsoft.PowerShell.Cmdletization
                             return;
                         }
 
-                        if (outputAction != null)
+                        if (outputAction is not null)
                         {
                             outputAction(pso);
                         }
@@ -380,7 +380,7 @@ namespace Microsoft.PowerShell.Cmdletization
             foreach (TSession sessionForJob in this.GetSessionsToActAgainst(query))
             {
                 StartableJob childJob = this.DoCreateQueryJob(sessionForJob, query, actionAgainstResults: null);
-                if (childJob != null)
+                if (childJob is not null)
                 {
                     if (!this.AsJob.IsPresent)
                     {
@@ -421,13 +421,13 @@ namespace Microsoft.PowerShell.Cmdletization
                             passThru,
                             closureOverAsJob.IsPresent);
 
-                        if (methodInvocationJob != null)
+                        if (methodInvocationJob is not null)
                         {
                             closureOverParentJob.AddChildJobAndPotentiallyBlock(methodInvocationJob, ThrottlingJob.ChildJobFlags.None);
                         }
                     });
 
-                if (queryJob != null)
+                if (queryJob is not null)
                 {
                     if (!this.AsJob.IsPresent)
                     {
@@ -449,7 +449,7 @@ namespace Microsoft.PowerShell.Cmdletization
             }
 
             TSession associatedSession = this.GetSessionOfOriginFromInstance(objectInstance);
-            if (associatedSession != null)
+            if (associatedSession is not null)
             {
                 return new[] { associatedSession };
             }
@@ -495,17 +495,17 @@ namespace Microsoft.PowerShell.Cmdletization
             }
 
             var sessionBoundQueryBuilder = queryBuilder as ISessionBoundQueryBuilder<TSession>;
-            if (sessionBoundQueryBuilder != null)
+            if (sessionBoundQueryBuilder is not null)
             {
                 TSession sessionOfTheQueryBuilder = sessionBoundQueryBuilder.GetTargetSession();
-                if (sessionOfTheQueryBuilder != null)
+                if (sessionOfTheQueryBuilder is not null)
                 {
                     return new[] { sessionOfTheQueryBuilder };
                 }
             }
 
             TSession sessionAssociatedWithPipelineObject = this.GetSessionAssociatedWithPipelineObject();
-            if (sessionAssociatedWithPipelineObject != null)
+            if (sessionAssociatedWithPipelineObject is not null)
             {
                 return new[] { sessionAssociatedWithPipelineObject };
             }
@@ -524,7 +524,7 @@ namespace Microsoft.PowerShell.Cmdletization
             foreach (TObjectInstance objectInstance in methodInvocationInfo.GetArgumentsOfType<TObjectInstance>())
             {
                 TSession associatedSession = this.GetSessionOfOriginFromInstance(objectInstance);
-                if (associatedSession != null)
+                if (associatedSession is not null)
                 {
                     associatedSessions.Add(associatedSession);
                 }
@@ -536,7 +536,7 @@ namespace Microsoft.PowerShell.Cmdletization
             }
 
             TSession sessionAssociatedWithPipelineObject = this.GetSessionAssociatedWithPipelineObject();
-            if (sessionAssociatedWithPipelineObject != null)
+            if (sessionAssociatedWithPipelineObject is not null)
             {
                 return new[] { sessionAssociatedWithPipelineObject };
             }
@@ -558,7 +558,7 @@ namespace Microsoft.PowerShell.Cmdletization
             TSession sessionFromImportModule;
             // When being called from a CIM activity, this will be invoked as
             // a function so there will be no module info
-            if (this.PSModuleInfo != null)
+            if (this.PSModuleInfo is not null)
             {
                 if (PSPrimitiveDictionary.TryPathGet(
                         this.PSModuleInfo.PrivateData as IDictionary,
@@ -587,7 +587,7 @@ namespace Microsoft.PowerShell.Cmdletization
             foreach (TSession sessionForJob in this.GetSessionsToActAgainst(objectInstance))
             {
                 StartableJob childJob = this.DoCreateInstanceMethodInvocationJob(sessionForJob, objectInstance, methodInvocationInfo, passThru, this.AsJob.IsPresent);
-                if (childJob != null)
+                if (childJob is not null)
                 {
                     if (!this.AsJob.IsPresent)
                     {
@@ -612,7 +612,7 @@ namespace Microsoft.PowerShell.Cmdletization
             foreach (TSession sessionForJob in this.GetSessionsToActAgainst(methodInvocationInfo))
             {
                 StartableJob childJob = this.DoCreateStaticMethodInvocationJob(sessionForJob, methodInvocationInfo);
-                if (childJob != null)
+                if (childJob is not null)
                 {
                     if (!this.AsJob.IsPresent)
                     {
@@ -644,7 +644,7 @@ namespace Microsoft.PowerShell.Cmdletization
                     conflictingParameter = "Confirm";
                 }
 
-                if (conflictingParameter != null)
+                if (conflictingParameter is not null)
                 {
                     string errorMessage = string.Format(
                         CultureInfo.InvariantCulture,
@@ -687,7 +687,7 @@ namespace Microsoft.PowerShell.Cmdletization
         public override void StopProcessing()
         {
             Job jobToStop = _parentJob;
-            if (jobToStop != null)
+            if (jobToStop is not null)
             {
                 jobToStop.StopJob();
             }

@@ -87,12 +87,12 @@ namespace Microsoft.PowerShell.Commands
             // this cannot happen as we have specified the Path
             // property to be mandatory parameter
             //
-            Dbg.Assert((CatalogFilePath != null) && (CatalogFilePath.Length > 0),
+            Dbg.Assert((CatalogFilePath is not null) && (CatalogFilePath.Length > 0),
                        "CatalogCommands: Param binder did not bind catalogFilePath");
 
             Collection<string> paths = new Collection<string>();
 
-            if (Path != null)
+            if (Path is not null)
             {
                 foreach (string p in Path)
                 {
@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.Commands
 
             FileInfo catalogFile = CatalogHelper.GenerateCatalog(this, path, catalogFilePath, catalogVersion);
 
-            if (catalogFile != null)
+            if (catalogFile is not null)
             {
                 WriteObject(catalogFile);
             }

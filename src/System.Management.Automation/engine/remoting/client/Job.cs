@@ -506,7 +506,7 @@ namespace System.Management.Automation
             }
 
             IScriptExtent scriptExtent = invocationInfo.ScriptPosition;
-            if ((scriptExtent != null) && (scriptExtent.StartScriptPosition != null) && !string.IsNullOrWhiteSpace(scriptExtent.StartScriptPosition.Line))
+            if ((scriptExtent is not null) && (scriptExtent.StartScriptPosition is not null) && !string.IsNullOrWhiteSpace(scriptExtent.StartScriptPosition.Line))
             {
                 Dbg.Assert(scriptExtent.StartScriptPosition.ColumnNumber > 0, "Column numbers start at 1");
                 Dbg.Assert(scriptExtent.StartScriptPosition.ColumnNumber <= scriptExtent.StartScriptPosition.Line.Length, "Column numbers are not greater than the length of a line");
@@ -575,7 +575,7 @@ namespace System.Management.Automation
             {
                 lock (this.syncObject)
                 {
-                    if (_finished != null)
+                    if (_finished is not null)
                     {
                         return _finished;
                     }
@@ -740,7 +740,7 @@ namespace System.Management.Automation
             if (this.PropagateThrows)
             {
                 Exception e = GetExceptionFromErrorRecord(errorRecord);
-                if (e != null)
+                if (e is not null)
                     throw e;
             }
 
@@ -773,7 +773,7 @@ namespace System.Management.Automation
             if (PropagateThrows)
             {
                 Exception exception = GetExceptionFromErrorRecord(errorRecord);
-                if (exception != null)
+                if (exception is not null)
                 {
                     Results.Add(new PSStreamObject(PSStreamObjectType.Exception, exception));
                     return;
@@ -815,7 +815,7 @@ namespace System.Management.Automation
 
         internal virtual void WriteProgress(ProgressRecord progressRecord)
         {
-            if ((progressRecord.ParentActivityId == (-1)) && (_parentActivityId != null))
+            if ((progressRecord.ParentActivityId == (-1)) && (_parentActivityId is not null))
             {
                 progressRecord = new ProgressRecord(progressRecord) { ParentActivityId = _parentActivityId.Value };
             }
@@ -834,7 +834,7 @@ namespace System.Management.Automation
 
         internal void SetParentActivityIdGetter(Func<int> parentActivityIdGetter)
         {
-            Dbg.Assert(parentActivityIdGetter != null, "Caller should verify parentActivityIdGetter != null");
+            Dbg.Assert(parentActivityIdGetter is not null, "Caller should verify parentActivityIdGetter is not null");
             _parentActivityId = new Lazy<int>(parentActivityIdGetter);
         }
 
@@ -904,7 +904,7 @@ namespace System.Management.Automation
 
         private T InvokeCmdletMethodAndWaitForResults<T>(Func<Cmdlet, T> invokeCmdletMethodAndReturnResult, out Exception exceptionThrownOnCmdletThread)
         {
-            Dbg.Assert(invokeCmdletMethodAndReturnResult != null, "Caller should verify invokeCmdletMethodAndReturnResult != null");
+            Dbg.Assert(invokeCmdletMethodAndReturnResult is not null, "Caller should verify invokeCmdletMethodAndReturnResult is not null");
 
             T methodResult = default(T);
             Exception closureSafeExceptionThrownOnCmdletThread = null;
@@ -1448,7 +1448,7 @@ namespace System.Management.Automation
                 {
                     lock (syncObject)
                     {
-                        if (_finished != null)
+                        if (_finished is not null)
                         {
                             _finished.Set();
                         }
@@ -1649,7 +1649,7 @@ namespace System.Management.Automation
                     // release the WaitHandle
                     lock (syncObject)
                     {
-                        if (_finished != null)
+                        if (_finished is not null)
                         {
                             _finished.Dispose();
                             _finished = null;
@@ -1692,7 +1692,7 @@ namespace System.Management.Automation
 
         internal void SetMonitorOutputProcessing(IOutputProcessingState outputProcessingState)
         {
-            if (outputProcessingState != null)
+            if (outputProcessingState is not null)
             {
                 outputProcessingState.OutputProcessingStateChanged += HandleOutputProcessingStateChanged;
             }
@@ -1700,7 +1700,7 @@ namespace System.Management.Automation
 
         internal void RemoveMonitorOutputProcessing(IOutputProcessingState outputProcessingState)
         {
-            if (outputProcessingState != null)
+            if (outputProcessingState is not null)
             {
                 outputProcessingState.OutputProcessingStateChanged -= HandleOutputProcessingStateChanged;
             }
@@ -2006,7 +2006,7 @@ namespace System.Management.Automation
         {
             List<IThrottleOperation> connectJobOperations = new List<IThrottleOperation>();
             PSRemotingChildJob childJob = FindDisconnectedChildJob(runspaceInstanceId);
-            if (childJob != null)
+            if (childJob is not null)
             {
                 connectJobOperations.Add(new ConnectJobOperation(childJob));
             }
@@ -2134,7 +2134,7 @@ namespace System.Management.Automation
         {
             PowerShell ps = null;
             PSRemotingChildJob childJob = FindDisconnectedChildJob(runspaceInstanceId);
-            if (childJob != null)
+            if (childJob is not null)
             {
                 ps = childJob.GetPowerShell();
             }
@@ -2302,7 +2302,7 @@ namespace System.Management.Automation
                 foreach (Job job in this.ChildJobs)
                 {
                     PSRemotingChildJob rJob = job as PSRemotingChildJob;
-                    if (rJob != null)
+                    if (rJob is not null)
                     {
                         rJob.HideComputerName = value;
                     }
@@ -2775,7 +2775,7 @@ namespace System.Management.Automation
             _throttleManager = throttleManager;
 
             RemoteRunspace remoteRS = Runspace as RemoteRunspace;
-            if ((remoteRS != null) && (remoteRS.RunspaceStateInfo.State == RunspaceState.BeforeOpen))
+            if ((remoteRS is not null) && (remoteRS.RunspaceStateInfo.State == RunspaceState.BeforeOpen))
             {
                 remoteRS.URIRedirectionReported += HandleURIDirectionReported;
             }
@@ -2922,7 +2922,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (Runspace != null) ? Runspace.ConnectionInfo.ComputerName : string.Empty;
+                return (Runspace is not null) ? Runspace.ConnectionInfo.ComputerName : string.Empty;
             }
         }
 
@@ -2951,7 +2951,7 @@ namespace System.Management.Automation
                 foreach (Job job in this.ChildJobs)
                 {
                     PSRemotingChildJob rJob = job as PSRemotingChildJob;
-                    if (rJob != null)
+                    if (rJob is not null)
                     {
                         rJob.HideComputerName = value;
                     }
@@ -2977,7 +2977,7 @@ namespace System.Management.Automation
             get
             {
                 RemoteRunspace remoteRS = Runspace as RemoteRunspace;
-                return (remoteRS != null) ? remoteRS.CanDisconnect : false;
+                return (remoteRS is not null) ? remoteRS.CanDisconnect : false;
             }
         }
 
@@ -2997,7 +2997,7 @@ namespace System.Management.Automation
                     lock (this.SyncObject)
                     {
                         if ((_jobDebugger is null) &&
-                            (Runspace.Debugger != null))
+                            (Runspace.Debugger is not null))
                         {
                             _jobDebugger = new RemotingJobDebugger(Runspace.Debugger, Runspace, this.Name);
                         }
@@ -3042,18 +3042,18 @@ namespace System.Management.Automation
                 // attach origin information only if it doesn't exist
                 // in case of a second-hop scenario, the origin information
                 // will already be added at the second hop machine
-                if (dataObject != null)
+                if (dataObject is not null)
                 {
                     // if the server has already added some properties, which we do not
                     // want to trust, we simply replace them with the server's
                     // identity we know of
 
-                    if (dataObject.Properties[RemotingConstants.ComputerNameNoteProperty] != null)
+                    if (dataObject.Properties[RemotingConstants.ComputerNameNoteProperty] is not null)
                     {
                         dataObject.Properties.Remove(RemotingConstants.ComputerNameNoteProperty);
                     }
 
-                    if (dataObject.Properties[RemotingConstants.RunspaceIdNoteProperty] != null)
+                    if (dataObject.Properties[RemotingConstants.RunspaceIdNoteProperty] is not null)
                     {
                         dataObject.Properties.Remove(RemotingConstants.RunspaceIdNoteProperty);
                     }
@@ -3091,7 +3091,7 @@ namespace System.Management.Automation
             foreach (object errorData in error)
             {
                 ErrorRecord er = errorData as ErrorRecord;
-                if (er != null)
+                if (er is not null)
                 {
                     OriginInfo originInfo = new OriginInfo(reader.ComputerName, reader.RunspaceId);
 
@@ -3127,7 +3127,7 @@ namespace System.Management.Automation
         {
             ObjectStream hostCallsStream = sender as ObjectStream;
 
-            if (hostCallsStream != null)
+            if (hostCallsStream is not null)
             {
                 Collection<object> hostCallMethodExecutors =
                     hostCallsStream.NonBlockingRead(hostCallsStream.Count);
@@ -3156,7 +3156,7 @@ namespace System.Management.Automation
         /// <param name="e"></param>
         protected virtual void HandlePipelineStateChanged(object sender, PipelineStateEventArgs e)
         {
-            if ((Runspace != null) && (e.PipelineStateInfo.State != PipelineState.Running))
+            if ((Runspace is not null) && (e.PipelineStateInfo.State != PipelineState.Running))
             {
                 // since we got state changed event..we dont need to listen on
                 // URI redirections anymore
@@ -3228,7 +3228,7 @@ namespace System.Management.Automation
             // operations are completed and this means that status of job is not updated
             // untill Operation Complete.
             ExecutionCmdletHelper helper = sender as ExecutionCmdletHelper;
-            Dbg.Assert(helper != null, "Sender of OperationComplete has to be ExecutionCmdletHelper");
+            Dbg.Assert(helper is not null, "Sender of OperationComplete has to be ExecutionCmdletHelper");
 
             DeterminedAndSetJobState(helper);
         }
@@ -3293,18 +3293,18 @@ namespace System.Management.Automation
             //      3. Runspace.OpenAsync or Pipeline.InvokeAsync threw exception
             //         They are in Helper.InternalException
 
-            Dbg.Assert(helper != null, "helper is null");
+            Dbg.Assert(helper is not null, "helper is null");
 
             RemotePipeline pipeline = helper.Pipeline as RemotePipeline;
-            Dbg.Assert(pipeline != null, "pipeline is null");
+            Dbg.Assert(pipeline is not null, "pipeline is null");
 
             RemoteRunspace runspace = pipeline.GetRunspace() as RemoteRunspace;
-            Dbg.Assert(runspace != null, "runspace is null");
+            Dbg.Assert(runspace is not null, "runspace is null");
 
             failureException = null;
             failureErrorRecord = null;
 
-            if (helper.InternalException != null)
+            if (helper.InternalException is not null)
             {
                 string errorId = "RemotePipelineExecutionFailed";
                 failureException = helper.InternalException;
@@ -3324,7 +3324,7 @@ namespace System.Management.Automation
             }
             // there is a failure reason available in the runspace
             else if ((runspace.RunspaceStateInfo.State == RunspaceState.Broken) ||
-                     (runspace.RunspaceStateInfo.Reason != null))
+                     (runspace.RunspaceStateInfo.Reason is not null))
             {
                 failureException = runspace.RunspaceStateInfo.Reason;
                 object targetObject = runspace.ConnectionInfo.ComputerName;
@@ -3339,10 +3339,10 @@ namespace System.Management.Automation
 
                 string fullyQualifiedErrorId =
                     System.Management.Automation.Remoting.Client.WSManTransportManagerUtils.GetFQEIDFromTransportError(
-                        (transException != null) ? transException.ErrorCode : 0,
+                        (transException is not null) ? transException.ErrorCode : 0,
                         "PSSessionStateBroken");
 
-                if (transException != null)
+                if (transException is not null)
                 {
                     errorDetails = "[" + runspace.ConnectionInfo.ComputerName + "] ";
 
@@ -3385,22 +3385,22 @@ namespace System.Management.Automation
             }
             else if ((pipeline.PipelineStateInfo.State == PipelineState.Failed) ||
                      ((pipeline.PipelineStateInfo.State == PipelineState.Stopped) &&
-                      (pipeline.PipelineStateInfo.Reason != null && !(pipeline.PipelineStateInfo.Reason is PipelineStoppedException))))
+                      (pipeline.PipelineStateInfo.Reason is not null && !(pipeline.PipelineStateInfo.Reason is PipelineStoppedException))))
             {
                 // Pipeline stopped state is also an error condition if the associated exception is not 'PipelineStoppedException'.
                 object targetObject = runspace.ConnectionInfo.ComputerName;
                 failureException = pipeline.PipelineStateInfo.Reason;
-                if (failureException != null)
+                if (failureException is not null)
                 {
                     RemoteException rException = failureException as RemoteException;
 
                     ErrorRecord errorRecord = null;
-                    if (rException != null)
+                    if (rException is not null)
                     {
                         errorRecord = rException.ErrorRecord;
 
                         // A RemoteException will hide a PipelineStoppedException, which should be ignored.
-                        if (errorRecord != null &&
+                        if (errorRecord is not null &&
                             errorRecord.FullyQualifiedErrorId.Equals("PipelineStopped", StringComparison.OrdinalIgnoreCase))
                         {
                             // PipelineStoppedException should not be reported as error.
@@ -3541,7 +3541,7 @@ namespace System.Management.Automation
         /// <returns>PowerShell instance.</returns>
         private PowerShell GetPipelinePowerShell(RemotePipeline pipeline, Guid instanceId)
         {
-            if (pipeline != null)
+            if (pipeline is not null)
             {
                 return pipeline.PowerShell;
             }
@@ -3560,7 +3560,7 @@ namespace System.Management.Automation
             int index = eventArgs.Index;
             PowerShell powershell = GetPipelinePowerShell(_remotePipeline, eventArgs.PowerShellInstanceId);
 
-            if (powershell != null)
+            if (powershell is not null)
             {
                 this.Debug.Add(powershell.Streams.Debug[index]);
             }
@@ -3577,7 +3577,7 @@ namespace System.Management.Automation
             int index = eventArgs.Index;
             PowerShell powershell = GetPipelinePowerShell(_remotePipeline, eventArgs.PowerShellInstanceId);
 
-            if (powershell != null)
+            if (powershell is not null)
             {
                 this.Verbose.Add(powershell.Streams.Verbose[index]);
             }
@@ -3594,7 +3594,7 @@ namespace System.Management.Automation
             int index = eventArgs.Index;
             PowerShell powershell = GetPipelinePowerShell(_remotePipeline, eventArgs.PowerShellInstanceId);
 
-            if (powershell != null)
+            if (powershell is not null)
             {
                 WarningRecord warningRecord = powershell.Streams.Warning[index];
                 this.Warning.Add(warningRecord);
@@ -3613,7 +3613,7 @@ namespace System.Management.Automation
             int index = eventArgs.Index;
             PowerShell powershell = GetPipelinePowerShell(_remotePipeline, eventArgs.PowerShellInstanceId);
 
-            if (powershell != null)
+            if (powershell is not null)
             {
                 this.Progress.Add(powershell.Streams.Progress[index]);
             }
@@ -3630,7 +3630,7 @@ namespace System.Management.Automation
             int index = eventArgs.Index;
             PowerShell powershell = GetPipelinePowerShell(_remotePipeline, eventArgs.PowerShellInstanceId);
 
-            if (powershell != null)
+            if (powershell is not null)
             {
                 InformationRecord informationRecord = powershell.Streams.Information[index];
                 this.Information.Add(informationRecord);
@@ -3682,7 +3682,7 @@ namespace System.Management.Automation
             Dbg.Assert(pipeline is RemotePipeline, "pipeline is RemotePipeline");
             RemotePipeline remotePipeline = pipeline as RemotePipeline;
             remotePipeline.MethodExecutorStream.DataReady -= HandleHostCalls;
-            if (remotePipeline.PowerShell != null)
+            if (remotePipeline.PowerShell is not null)
             {
                 remotePipeline.PowerShell.Streams.Progress.DataAdded -= HandleProgressAdded;
                 remotePipeline.PowerShell.Streams.Warning.DataAdded -= HandleWarningAdded;
@@ -3724,7 +3724,7 @@ namespace System.Management.Automation
             // Process the reason in case of failure.
             ProcessJobFailure(helper, out failureException, out _failureErrorRecord);
 
-            if (failureException != null)
+            if (failureException is not null)
             {
                 SetJobState(JobState.Failed, failureException);
             }
@@ -3761,7 +3761,7 @@ namespace System.Management.Automation
 
             SetJobState(JobState.Running, null);
 
-            Dbg.Assert(JobUnblocked != null, "Parent job must register for JobUnblocked event from all child jobs");
+            Dbg.Assert(JobUnblocked is not null, "Parent job must register for JobUnblocked event from all child jobs");
             JobUnblocked.SafeInvoke(this, EventArgs.Empty);
         }
 
@@ -3783,7 +3783,7 @@ namespace System.Management.Automation
         internal PowerShell GetPowerShell()
         {
             PowerShell ps = null;
-            if (_remotePipeline != null)
+            if (_remotePipeline is not null)
             {
                 ps = _remotePipeline.PowerShell;
             }
@@ -4079,7 +4079,7 @@ namespace System.Management.Automation
         internal void CheckStateAndRaiseStopEvent()
         {
             RemoteDebugger remoteDebugger = _wrappedDebugger as RemoteDebugger;
-            if (remoteDebugger != null)
+            if (remoteDebugger is not null)
             {
                 remoteDebugger.CheckStateAndRaiseStopEvent();
             }
@@ -4119,7 +4119,7 @@ namespace System.Management.Automation
             if (!(_runspace is RemoteRunspace)) { return null; }
 
             Pipeline runningCmd = _runspace.GetCurrentlyRunningPipeline();
-            if (runningCmd != null)
+            if (runningCmd is not null)
             {
                 runningCmd.DrainIncomingData();
                 runningCmd.SuspendIncomingData();
@@ -4132,7 +4132,7 @@ namespace System.Management.Automation
 
         private void RestoreRemoteOutput(Pipeline runningCmd)
         {
-            if (runningCmd != null)
+            if (runningCmd is not null)
             {
                 runningCmd.ResumeIncomingData();
             }
@@ -4202,7 +4202,7 @@ namespace System.Management.Automation
                 ExecutionCmdletHelper helper = operation as ExecutionCmdletHelper;
 
                 RemoteRunspace remoteRS = helper.Pipeline.Runspace as RemoteRunspace;
-                if (remoteRS != null)
+                if (remoteRS is not null)
                 {
                     remoteRS.StateChanged += HandleRunspaceStateChanged;
 
@@ -4251,7 +4251,7 @@ namespace System.Management.Automation
             {
                 // cleanup remote runspace related handlers
                 RemoteRunspace remoteRS = helper.PipelineRunspace as RemoteRunspace;
-                if (remoteRS != null)
+                if (remoteRS is not null)
                 {
                     remoteRS.StateChanged -= HandleRunspaceStateChanged;
                     remoteRS.URIRedirectionReported -= HandleURIDirectionReported;
@@ -4284,7 +4284,7 @@ namespace System.Management.Automation
         protected override void HandleOperationComplete(object sender, OperationStateEventArgs stateEventArgs)
         {
             ExecutionCmdletHelper helper = sender as ExecutionCmdletHelper;
-            Dbg.Assert(helper != null, "Sender of OperationComplete has to be ExecutionCmdletHelper");
+            Dbg.Assert(helper is not null, "Sender of OperationComplete has to be ExecutionCmdletHelper");
 
             Exception failureException;
             // Process the reason in case of failure.
@@ -4292,7 +4292,7 @@ namespace System.Management.Automation
 
             ProcessJobFailure(helper, out failureException, out failureErrorRecord);
 
-            if (failureErrorRecord != null)
+            if (failureErrorRecord is not null)
             {
                 this.WriteError(failureErrorRecord);
             }
@@ -4429,7 +4429,7 @@ namespace System.Management.Automation
             RemoteRunspace remoteRS = sender as RemoteRunspace;
             // remote runspace must be connected (or connection failed)
             // we dont need URI redirection any more..so clear it
-            if (remoteRS != null)
+            if (remoteRS is not null)
             {
                 if (e.RunspaceStateInfo.State != RunspaceState.Opening)
                 {

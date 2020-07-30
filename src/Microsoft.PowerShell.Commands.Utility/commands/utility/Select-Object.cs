@@ -340,7 +340,7 @@ namespace Microsoft.PowerShell.Commands
             TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
             ParameterProcessor processor =
                 new ParameterProcessor(new SelectObjectExpressionParameterDefinition());
-            if ((Property != null) && (Property.Length != 0))
+            if ((Property is not null) && (Property.Length != 0))
             {
                 // Build property list taking into account the wildcards and @{name=;expression=}
 
@@ -357,7 +357,7 @@ namespace Microsoft.PowerShell.Commands
                 _expandMshParameterList = processor.ProcessParameters(new string[] { ExpandProperty }, invocationContext);
             }
 
-            if (ExcludeProperty != null)
+            if (ExcludeProperty is not null)
             {
                 _exclusionFilter = new PSPropertyExpressionFilter(ExcludeProperty);
                 // ExcludeProperty implies -Property * for better UX
@@ -464,7 +464,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (PSPropertyExpressionResult r in expressionResults)
             {
                 // filter the exclusions, if any
-                if (_exclusionFilter != null && _exclusionFilter.IsMatch(r.ResolvedExpression))
+                if (_exclusionFilter is not null && _exclusionFilter.IsMatch(r.ResolvedExpression))
                     continue;
 
                 PSNoteProperty mshProp;
@@ -574,7 +574,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    if (expandedObject.Properties[noteProperty.Name] != null)
+                    if (expandedObject.Properties[noteProperty.Name] is not null)
                     {
                         WriteAlreadyExistingPropertyError(noteProperty.Name, inputObject, "AlreadyExistingUserSpecifiedPropertyExpand");
                     }
@@ -602,7 +602,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void FilteredWriteObject(PSObject obj, List<PSNoteProperty> addedNoteProperties)
         {
-            Diagnostics.Assert(obj != null, "This command should never write null");
+            Diagnostics.Assert(obj is not null, "This command should never write null");
 
             if (!_unique)
             {
@@ -669,7 +669,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessObjectAndHandleErrors(PSObject pso)
         {
-            Diagnostics.Assert(pso != null, "Caller should verify pso != null");
+            Diagnostics.Assert(pso is not null, "Caller should verify pso is not null");
 
             try
             {
@@ -700,7 +700,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (InputObject != AutomationNull.Value && InputObject != null)
+            if (InputObject != AutomationNull.Value && InputObject is not null)
             {
                 if (_indexSpecified)
                 {
@@ -710,7 +710,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _selectObjectQueue.Enqueue(InputObject);
                     PSObject streamingInputObject = _selectObjectQueue.StreamingDequeue();
-                    if (streamingInputObject != null)
+                    if (streamingInputObject is not null)
                     {
                         ProcessObjectAndHandleErrors(streamingInputObject);
                     }
@@ -822,7 +822,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (_uniques != null)
+            if (_uniques is not null)
             {
                 foreach (UniquePSObjectHelper obj in _uniques)
                 {

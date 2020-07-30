@@ -250,7 +250,7 @@ namespace System.Management.Automation
         private static T GetProperty<T>(PSObject obj, string property) where T : class
         {
             T result = null;
-            if (obj != null && obj.Properties[property] != null)
+            if (obj is not null && obj.Properties[property] is not null)
             {
                 result = obj.Properties[property].Value as T;
             }
@@ -263,7 +263,7 @@ namespace System.Management.Automation
             string text = null;
 
             PSObject psobj = obj as PSObject;
-            if (psobj != null)
+            if (psobj is not null)
             {
                 text = GetProperty<string>(psobj, "Text");
             }
@@ -273,7 +273,7 @@ namespace System.Management.Automation
 
         private static void AppendContent(StringBuilder sb, string section, object obj)
         {
-            if (obj != null)
+            if (obj is not null)
             {
                 string text = GetObjText(obj);
                 if (!string.IsNullOrEmpty(text))
@@ -289,7 +289,7 @@ namespace System.Management.Automation
 
         private static void AppendContent(StringBuilder sb, string section, PSObject[] array)
         {
-            if (array != null)
+            if (array is not null)
             {
                 bool first = true;
                 foreach (PSObject obj in array)
@@ -321,7 +321,7 @@ namespace System.Management.Automation
         {
             PSObject type = GetProperty<PSObject>(parent, "type");
             PSObject name = GetProperty<PSObject>(type, "name");
-            if (name != null)
+            if (name is not null)
             {
                 sb.Append("\n\n");
                 sb.Append(section);
@@ -332,7 +332,7 @@ namespace System.Management.Automation
             else
             {
                 PSObject uri = GetProperty<PSObject>(type, "uri");
-                if (uri != null)
+                if (uri is not null)
                 {
                     sb.Append("\n\n");
                     sb.Append(section);
@@ -380,7 +380,7 @@ namespace System.Management.Automation
 
             PSObject parameters = GetProperty<PSObject>(help, "Parameters");
             PSObject[] parameter = GetProperty<PSObject[]>(parameters, "Parameter");
-            if (parameter != null)
+            if (parameter is not null)
             {
                 foreach (PSObject param in parameter)
                 {
@@ -403,18 +403,18 @@ namespace System.Management.Automation
 
             PSObject examples = GetProperty<PSObject>(help, "examples");
             PSObject[] example = GetProperty<PSObject[]>(examples, "example");
-            if (example != null)
+            if (example is not null)
             {
                 foreach (PSObject ex in example)
                 {
                     StringBuilder exsb = new StringBuilder();
 
                     PSObject[] introduction = GetProperty<PSObject[]>(ex, "introduction");
-                    if (introduction != null)
+                    if (introduction is not null)
                     {
                         foreach (PSObject intro in introduction)
                         {
-                            if (intro != null)
+                            if (intro is not null)
                             {
                                 exsb.Append(GetObjText(intro));
                             }
@@ -422,13 +422,13 @@ namespace System.Management.Automation
                     }
 
                     PSObject code = GetProperty<PSObject>(ex, "code");
-                    if (code != null)
+                    if (code is not null)
                     {
                         exsb.Append(code.ToString());
                     }
 
                     PSObject[] remarks = GetProperty<PSObject[]>(ex, "remarks");
-                    if (remarks != null)
+                    if (remarks is not null)
                     {
                         exsb.Append("\n");
                         foreach (PSObject remark in remarks)
@@ -459,7 +459,7 @@ namespace System.Management.Automation
 
             PSObject relatedLinks = GetProperty<PSObject>(help, "relatedLinks");
             PSObject[] navigationLink = GetProperty<PSObject[]>(relatedLinks, "navigationLink");
-            if (navigationLink != null)
+            if (navigationLink is not null)
             {
                 foreach (PSObject link in navigationLink)
                 {

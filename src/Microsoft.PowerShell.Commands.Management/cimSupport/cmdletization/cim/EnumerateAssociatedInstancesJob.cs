@@ -25,16 +25,16 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 : base(jobContext, cimQuery)
         {
             _associatedObject = associatedObject;
-            Dbg.Assert(_associatedObject != null, "Caller should verify that associatedObject is not null");
+            Dbg.Assert(_associatedObject is not null, "Caller should verify that associatedObject is not null");
 
             _associationName = associationName;
-            Dbg.Assert(_associationName != null, "Caller should verify that associationName is not null");
+            Dbg.Assert(_associationName is not null, "Caller should verify that associationName is not null");
 
             _resultRole = resultRole;
-            Dbg.Assert(_resultRole != null, "Caller should verify that resultRole is not null");
+            Dbg.Assert(_resultRole is not null, "Caller should verify that resultRole is not null");
 
             _sourceRole = sourceRole;
-            Dbg.Assert(_sourceRole != null, "Caller should verify that sourceRole is not null");
+            Dbg.Assert(_sourceRole is not null, "Caller should verify that sourceRole is not null");
         }
 
         internal override IObservable<CimInstance> GetCimOperation()

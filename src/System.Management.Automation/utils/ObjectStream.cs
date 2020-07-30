@@ -903,7 +903,7 @@ namespace System.Management.Automation.Internal
                     // immediately be re-blocked.  However, I am not
                     // confident that multiple sets/resets might not get
                     // out of order and leave the handle in the wrong state.
-                    if (_readWaitHandle != null)
+                    if (_readWaitHandle is not null)
                     {
                         try
                         {
@@ -921,7 +921,7 @@ namespace System.Management.Automation.Internal
                         }
                     }
 
-                    if (_writeWaitHandle != null)
+                    if (_writeWaitHandle is not null)
                     {
                         try
                         {
@@ -992,7 +992,7 @@ namespace System.Management.Automation.Internal
             // AutoResetEvents are set to ensure that an exception in an
             // event delegate does not leave the reset events in a bad
             // state.
-            if (unblockWriters && WriteReady != null)
+            if (unblockWriters && WriteReady is not null)
             {
                 WriteReady (this, new EventArgs ());
             }
@@ -1512,23 +1512,23 @@ namespace System.Management.Automation.Internal
                 _writeClosedHandle.Dispose();
                 _readClosedHandle.Dispose();
 
-                if (_readWaitHandle != null)
+                if (_readWaitHandle is not null)
                 {
                     _readWaitHandle.Dispose();
                 }
 
-                if (_writeWaitHandle != null)
+                if (_writeWaitHandle is not null)
                 {
                     _writeWaitHandle.Dispose();
                 }
 
-                if (_reader != null)
+                if (_reader is not null)
                 {
                     _reader.Close();
                     _reader.WaitHandle.Dispose();
                 }
 
-                if (_writer != null)
+                if (_writer is not null)
                 {
                     _writer.Close();
                     _writer.WaitHandle.Dispose();
@@ -1965,12 +1965,12 @@ namespace System.Management.Automation.Internal
 
                 Close();
 
-                if (_objectReaderForPipeline != null)
+                if (_objectReaderForPipeline is not null)
                 {
                     ((PSDataCollectionPipelineReader<T, object>)_objectReaderForPipeline).Dispose();
                 }
 
-                if (_psobjectReaderForPipeline != null)
+                if (_psobjectReaderForPipeline is not null)
                 {
                     ((PSDataCollectionPipelineReader<T, PSObject>)_psobjectReaderForPipeline).Dispose();
                 }

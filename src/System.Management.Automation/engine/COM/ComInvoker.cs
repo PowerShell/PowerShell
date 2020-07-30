@@ -137,12 +137,12 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static object Invoke(IDispatch target, int dispId, object[] args, bool[] byRef, COM.INVOKEKIND invokeKind)
         {
-            Diagnostics.Assert(target != null, "Caller makes sure an IDispatch object passed in.");
+            Diagnostics.Assert(target is not null, "Caller makes sure an IDispatch object passed in.");
             Diagnostics.Assert(args is null || byRef is null || args.Length == byRef.Length,
                 "If 'args' and 'byRef' are not null, then they should be one-on-one mapping.");
 
-            int argCount = args != null ? args.Length : 0;
-            int refCount = byRef != null ? byRef.Count(c => c) : 0;
+            int argCount = args is not null ? args.Length : 0;
+            int refCount = byRef is not null ? byRef.Count(c => c) : 0;
             IntPtr variantArgArray = IntPtr.Zero, dispIdArray = IntPtr.Zero, tmpVariants = IntPtr.Zero;
 
             try
@@ -160,7 +160,7 @@ namespace System.Management.Automation
                         IntPtr varArgPtr = variantArgArray + s_variantSize * actualIndex;
 
                         // If need to pass by ref, create a by-ref variant
-                        if (byRef != null && byRef[i])
+                        if (byRef is not null && byRef[i])
                         {
                             // Allocate memory for temporary VARIANTs used in by-ref marshalling
                             if (tmpVariants == IntPtr.Zero)
@@ -264,7 +264,7 @@ namespace System.Management.Automation
                         int actualIndex = argCount - i - 1;
 
                         // If need to pass by ref, back propagate
-                        if (byRef != null && byRef[i])
+                        if (byRef is not null && byRef[i])
                         {
                             args[i] = Marshal.GetObjectForNativeVariant(variantArgArray + s_variantSize * actualIndex);
                         }

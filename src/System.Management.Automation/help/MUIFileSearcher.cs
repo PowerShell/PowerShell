@@ -133,7 +133,7 @@ namespace System.Management.Automation
                     break;
                 }
 
-                if (wildcardPattern != null)
+                if (wildcardPattern is not null)
                 {
                     string fileName = Path.GetFileName(filePath);
                     if (wildcardPattern.IsMatch(fileName))
@@ -208,7 +208,7 @@ namespace System.Management.Automation
             List<string> cultureNameList = new List<string>();
             CultureInfo culture = CultureInfo.CurrentUICulture;
 
-            while (culture != null && !string.IsNullOrEmpty(culture.Name))
+            while (culture is not null && !string.IsNullOrEmpty(culture.Name))
             {
                 cultureNameList.Add(culture.Name);
                 culture = culture.Parent;
@@ -275,7 +275,7 @@ namespace System.Management.Automation
             }
 
             // step 2: add directories specified in to search path.
-            if (searchPaths != null)
+            if (searchPaths is not null)
             {
                 foreach (string directory in searchPaths)
                 {
@@ -288,7 +288,7 @@ namespace System.Management.Automation
 
             // step 3: locate the file in the default PowerShell installation directory.
             string defaultPSPath = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
-            if (defaultPSPath != null &&
+            if (defaultPSPath is not null &&
                 !result.Contains(defaultPSPath) &&
                 Directory.Exists(defaultPSPath))
             {

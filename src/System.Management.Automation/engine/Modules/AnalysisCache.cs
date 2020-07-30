@@ -81,7 +81,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (result != null)
+            if (result is not null)
             {
                 s_cacheData.QueueSerialization();
                 ModuleIntrinsics.Tracer.WriteLine("Returning {0} exported commands.", result.Count);
@@ -101,7 +101,7 @@ namespace System.Management.Automation
             try
             {
                 var moduleManifestProperties = PsUtils.GetModuleManifestProperties(modulePath, PsUtils.FastModuleManifestAnalysisPropertyNames);
-                if (moduleManifestProperties != null)
+                if (moduleManifestProperties is not null)
                 {
                     if (!Configuration.PowerShellConfig.Instance.IsImplicitWinCompatEnabled() && ModuleIsEditionIncompatible(modulePath, moduleManifestProperties))
                     {
@@ -162,7 +162,7 @@ namespace System.Management.Automation
                 ModuleIntrinsics.Tracer.WriteLine("Exception on fast-path analysis of module {0}", modulePath);
             }
 
-            if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleManifestAnalysisResult(modulePath, result != null);
+            if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleManifestAnalysisResult(modulePath, result is not null);
 
             return result ?? AnalyzeTheOldWay(modulePath, context, lastWriteTime);
         }
@@ -241,18 +241,18 @@ namespace System.Management.Automation
         private static bool CheckModulesTypesInManifestAgainstExportedCommands(Hashtable moduleManifestProperties, bool hadCmdlets, bool hadFunctions, bool hadAliases)
         {
             var rootModule = moduleManifestProperties["RootModule"];
-            if (rootModule != null && ModuleAnalysisViaGetModuleRequired(rootModule, hadCmdlets, hadFunctions, hadAliases))
+            if (rootModule is not null && ModuleAnalysisViaGetModuleRequired(rootModule, hadCmdlets, hadFunctions, hadAliases))
                 return true;
 
             var moduleToProcess = moduleManifestProperties["ModuleToProcess"];
-            if (moduleToProcess != null && ModuleAnalysisViaGetModuleRequired(moduleToProcess, hadCmdlets, hadFunctions, hadAliases))
+            if (moduleToProcess is not null && ModuleAnalysisViaGetModuleRequired(moduleToProcess, hadCmdlets, hadFunctions, hadAliases))
                 return true;
 
             var nestedModules = moduleManifestProperties["NestedModules"];
-            if (nestedModules != null)
+            if (nestedModules is not null)
             {
                 var nestedModule = nestedModules as string;
-                if (nestedModule != null)
+                if (nestedModule is not null)
                 {
                     return ModuleAnalysisViaGetModuleRequired(nestedModule, hadCmdlets, hadFunctions, hadAliases);
                 }
@@ -301,13 +301,13 @@ namespace System.Management.Automation
         private static bool AddPsd1EntryToResult(ConcurrentDictionary<string, CommandTypes> result, object value, CommandTypes commandTypeToAdd, ref bool sawWildcard)
         {
             string command = value as string;
-            if (command != null)
+            if (command is not null)
             {
                 return AddPsd1EntryToResult(result, command, commandTypeToAdd, ref sawWildcard);
             }
 
             object[] commands = value as object[];
-            if (commands != null)
+            if (commands is not null)
             {
                 foreach (var o in commands)
                 {
@@ -510,7 +510,7 @@ namespace System.Management.Automation
 
             // First see if the existing module info is sufficient. GetModuleEntryFromCache does LastWriteTime
             // verification, so this will also return nothing if the cache is out of date or corrupt.
-            if (moduleCacheEntry != null)
+            if (moduleCacheEntry is not null)
             {
                 bool needToUpdate = false;
 
@@ -774,7 +774,7 @@ namespace System.Management.Automation
                 ModuleIntrinsics.Tracer.WriteLine("Exception checking module analysis cache {0}: {1} ", filename, e.Message);
             }
 
-            if (fromOtherProcess != null)
+            if (fromOtherProcess is not null)
             {
                 // We should merge with what another process wrote so we don't clobber useful analysis
                 foreach (var otherEntryPair in fromOtherProcess.Entries)

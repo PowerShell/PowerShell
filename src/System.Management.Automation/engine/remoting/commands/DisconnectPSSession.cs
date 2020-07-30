@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Commands
                         if (psSession.Runspace.RunspaceStateInfo.State == RunspaceState.Opened)
                         {
                             // Update the connectionInfo object with passed in session options.
-                            if (_sessionOption != null)
+                            if (_sessionOption is not null)
                             {
                                 psSession.Runspace.ConnectionInfo.SetSessionOptions(_sessionOption);
                             }
@@ -371,7 +371,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WSManConnectionInfo wsManConnectionInfo = psSession.Runspace.ConnectionInfo as WSManConnectionInfo;
 
-                if ((wsManConnectionInfo != null) && (wsManConnectionInfo.IsLocalhostAndNetworkAccess))
+                if ((wsManConnectionInfo is not null) && (wsManConnectionInfo.IsLocalhostAndNetworkAccess))
                 {
                     sb.Append(psSession.Name + ", ");
                 }
@@ -495,7 +495,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string msg;
 
-                    if (e != null && !string.IsNullOrWhiteSpace(e.Message))
+                    if (e is not null && !string.IsNullOrWhiteSpace(e.Message))
                     {
                         msg = StringUtil.Format(RemotingErrorIdStrings.RunspaceDisconnectFailedWithReason, _remoteSession.InstanceId, e.Message);
                     }

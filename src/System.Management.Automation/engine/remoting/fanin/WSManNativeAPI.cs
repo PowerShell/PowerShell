@@ -344,7 +344,7 @@ namespace System.Management.Automation.Remoting.Client
                 _cred = new WSManUserNameCredentialStruct();
                 _cred.authenticationMechanism = authMechanism;
                 _cred.userName = name;
-                if (pwd != null)
+                if (pwd is not null)
                 {
                     _cred.password = Marshal.SecureStringToCoTaskMemUnicode(pwd);
                 }
@@ -650,7 +650,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="data"></param>
             internal WSManData_ManToUn(byte[] data)
             {
-                Dbg.Assert(data != null, "Data cannot be null");
+                Dbg.Assert(data is not null, "Data cannot be null");
 
                 _internalData = new WSManDataStruct();
                 _internalData.binaryOrTextData = new WSManBinaryOrTextDataStruct();
@@ -673,7 +673,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="data"></param>
             internal WSManData_ManToUn(string data)
             {
-                Dbg.Assert(data != null, "Data cannot be null");
+                Dbg.Assert(data is not null, "Data cannot be null");
 
                 _internalData = new WSManDataStruct();
                 _internalData.binaryOrTextData = new WSManBinaryOrTextDataStruct();
@@ -754,7 +754,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <returns></returns>
             public static implicit operator IntPtr(WSManData_ManToUn data)
             {
-                if (data != null)
+                if (data is not null)
                 {
                     return data._marshalledObject;
                 }
@@ -952,7 +952,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="streamIds"></param>
             internal WSManStreamIDSet_ManToUn(string[] streamIds)
             {
-                Dbg.Assert(streamIds != null, "stream ids cannot be null or empty");
+                Dbg.Assert(streamIds is not null, "stream ids cannot be null or empty");
 
                 int sizeOfIntPtr = Marshal.SizeOf<IntPtr>();
                 _streamSetInfo = new WSManStreamIDSetStruct();
@@ -1112,7 +1112,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="options"></param>
             internal WSManOptionSet(WSManOption[] options)
             {
-                Dbg.Assert(options != null, "options cannot be null");
+                Dbg.Assert(options is not null, "options cannot be null");
 
                 int sizeOfOption = Marshal.SizeOf<WSManOption>();
                 _optionSet = new WSManOptionSetStruct();
@@ -1592,7 +1592,7 @@ namespace System.Management.Automation.Remoting.Client
                 internalInfo.proxyAuthCredentialsStruct = new WSManUserNameAuthenticationCredentials.WSManUserNameCredentialStruct();
                 internalInfo.proxyAuthCredentialsStruct.authenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION;
 
-                if (authCredentials != null)
+                if (authCredentials is not null)
                 {
                     internalInfo.proxyAuthCredentialsStruct = authCredentials.CredentialStruct;
                 }

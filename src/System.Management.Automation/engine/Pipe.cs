@@ -93,7 +93,7 @@ namespace System.Management.Automation.Internal
         /// <returns></returns>
         public override string ToString()
         {
-            if (_downstreamCmdlet != null)
+            if (_downstreamCmdlet is not null)
                 return _downstreamCmdlet.ToString();
             return base.ToString();
         }
@@ -136,10 +136,10 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (_enumeratorToProcess != null)
+                if (_enumeratorToProcess is not null)
                     return _enumeratorToProcessIsEmpty;
 
-                if (ObjectQueue != null)
+                if (ObjectQueue is not null)
                     return ObjectQueue.Count == 0;
                 return true;
             }
@@ -151,7 +151,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal bool IsRedirected
         {
-            get { return _downstreamCmdlet != null || _isRedirected; }
+            get { return _downstreamCmdlet is not null || _isRedirected; }
         }
 
         private bool _isRedirected;
@@ -184,7 +184,7 @@ namespace System.Management.Automation.Internal
 
         private static void AddToVarList(List<IList> varList, object obj)
         {
-            if (varList != null && varList.Count > 0)
+            if (varList is not null && varList.Count > 0)
             {
                 for (int i = 0; i < varList.Count; i++)
                 {
@@ -277,7 +277,7 @@ namespace System.Management.Automation.Internal
 
         internal void RemovePipelineVariable()
         {
-            if (_pipelineVariableObject != null)
+            if (_pipelineVariableObject is not null)
             {
                 _pipelineVariableObject.Value = null;
                 _pipelineVariableObject = null;
@@ -301,7 +301,7 @@ namespace System.Management.Automation.Internal
 
         private void CopyVariableToTempPipe(VariableStreamKind streamKind, List<IList> variableList, Pipe tempPipe)
         {
-            if (variableList != null && variableList.Count > 0)
+            if (variableList is not null && variableList.Count > 0)
             {
                 for (int i = 0; i < variableList.Count; i++)
                 {
@@ -329,7 +329,7 @@ namespace System.Management.Automation.Internal
         /// <param name="resultList"></param>
         internal Pipe(List<object> resultList)
         {
-            Diagnostics.Assert(resultList != null, "resultList cannot be null");
+            Diagnostics.Assert(resultList is not null, "resultList cannot be null");
             _isRedirected = true;
             _resultList = resultList;
         }
@@ -344,7 +344,7 @@ namespace System.Management.Automation.Internal
         /// <param name="resultCollection">The collection to write into.</param>
         internal Pipe(System.Collections.ObjectModel.Collection<PSObject> resultCollection)
         {
-            Diagnostics.Assert(resultCollection != null, "resultCollection cannot be null");
+            Diagnostics.Assert(resultCollection is not null, "resultCollection cannot be null");
             _isRedirected = true;
             _resultCollection = resultCollection;
         }
@@ -359,8 +359,8 @@ namespace System.Management.Automation.Internal
         /// <param name="outputPipeline">The pipeline to write into...</param>
         internal Pipe(ExecutionContext context, PipelineProcessor outputPipeline)
         {
-            Diagnostics.Assert(outputPipeline != null, "outputPipeline cannot be null");
-            Diagnostics.Assert(outputPipeline != null, "context cannot be null");
+            Diagnostics.Assert(outputPipeline is not null, "outputPipeline cannot be null");
+            Diagnostics.Assert(outputPipeline is not null, "context cannot be null");
             _isRedirected = true;
             _context = context;
             PipelineProcessor = outputPipeline;
@@ -372,7 +372,7 @@ namespace System.Management.Automation.Internal
         /// <param name="enumeratorToProcess">The enumerator to process...</param>
         internal Pipe(IEnumerator enumeratorToProcess)
         {
-            Diagnostics.Assert(enumeratorToProcess != null, "enumeratorToProcess cannot be null");
+            Diagnostics.Assert(enumeratorToProcess is not null, "enumeratorToProcess cannot be null");
             _enumeratorToProcess = enumeratorToProcess;
 
             // since there is an enumerator specified, we
@@ -412,7 +412,7 @@ namespace System.Management.Automation.Internal
                 return;
 
             // Store the current pipeline variable
-            if (_pipelineVariableObject != null)
+            if (_pipelineVariableObject is not null)
             {
                 _pipelineVariableObject.Value = obj;
             }
@@ -430,31 +430,31 @@ namespace System.Management.Automation.Internal
 
         private void AddToPipe(object obj)
         {
-            if (PipelineProcessor != null)
+            if (PipelineProcessor is not null)
             {
                 // Put the pipeline on the notification stack for stop.
                 _context.PushPipelineProcessor(PipelineProcessor);
                 PipelineProcessor.Step(obj);
                 _context.PopPipelineProcessor(false);
             }
-            else if (_resultCollection != null)
+            else if (_resultCollection is not null)
             {
-                _resultCollection.Add(obj != null ? PSObject.AsPSObject(obj) : null);
+                _resultCollection.Add(obj is not null ? PSObject.AsPSObject(obj) : null);
             }
-            else if (_resultList != null)
+            else if (_resultList is not null)
             {
                 _resultList.Add(obj);
             }
-            else if (_externalWriter != null)
+            else if (_externalWriter is not null)
             {
                 _externalWriter.Write(obj);
             }
-            else if (ObjectQueue != null)
+            else if (ObjectQueue is not null)
             {
                 ObjectQueue.Enqueue(obj);
 
                 // This is the "streamlet" recursive call
-                if (_downstreamCmdlet != null && ObjectQueue.Count > OutBufferCount)
+                if (_downstreamCmdlet is not null && ObjectQueue.Count > OutBufferCount)
                 {
                     _downstreamCmdlet.DoExecute();
                 }
@@ -510,18 +510,18 @@ namespace System.Management.Automation.Internal
                 // If our object came from GetEnumerator (and hence is not IEnumerator), then we need to dispose
                 // Otherwise, we don't own the object, so don't dispose.
                 var disposable = ie as IDisposable;
-                if (disposable != null && !(objects is IEnumerator))
+                if (disposable is not null && !(objects is IEnumerator))
                 {
                     disposable.Dispose();
                 }
             }
 
-            if (_externalWriter != null)
+            if (_externalWriter is not null)
                 return;
 
             // If there are objects waiting for the downstream command
             // call it now
-            if (_downstreamCmdlet != null && ObjectQueue != null && ObjectQueue.Count > OutBufferCount)
+            if (_downstreamCmdlet is not null && ObjectQueue is not null && ObjectQueue.Count > OutBufferCount)
             {
                 _downstreamCmdlet.DoExecute();
             }
@@ -536,11 +536,11 @@ namespace System.Management.Automation.Internal
         /// </returns>
         internal object Retrieve()
         {
-            if (ObjectQueue != null && ObjectQueue.Count != 0)
+            if (ObjectQueue is not null && ObjectQueue.Count != 0)
             {
                 return ObjectQueue.Dequeue();
             }
-            else if (_enumeratorToProcess != null)
+            else if (_enumeratorToProcess is not null)
             {
                 if (_enumeratorToProcessIsEmpty)
                     return AutomationNull.Value;
@@ -553,7 +553,7 @@ namespace System.Management.Automation.Internal
 
                 return ParserOps.Current(null, _enumeratorToProcess);
             }
-            else if (ExternalReader != null)
+            else if (ExternalReader is not null)
             {
                 try
                 {
@@ -588,7 +588,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal void Clear()
         {
-            if (ObjectQueue != null)
+            if (ObjectQueue is not null)
                 ObjectQueue.Clear();
         }
 

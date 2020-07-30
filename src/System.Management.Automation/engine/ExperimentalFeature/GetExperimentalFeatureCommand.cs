@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
                     // We only care about module manifest files because that's where experimental features are declared.
                     if (!moduleFile.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase)) { continue; }
 
-                    if (moduleNamesToFind != null)
+                    if (moduleNamesToFind is not null)
                     {
                         string currentModuleName = ModuleIntrinsics.GetModuleName(moduleFile);
                         if (!moduleNamesToFind.Contains(currentModuleName)) { continue; }

@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             Collection<ScheduledJobTrigger> jobTriggers = new Collection<ScheduledJobTrigger>();
             ITriggerCollection iTriggerCollection = iTaskDefinition.Triggers;
-            if (iTriggerCollection != null)
+            if (iTriggerCollection is not null)
             {
                 foreach (ITrigger iTrigger in iTriggerCollection)
                 {
@@ -373,7 +373,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     {
                         iTrigger = iTaskDefinition.Triggers.Create(_TASK_TRIGGER_TYPE2.TASK_TRIGGER_BOOT);
                         IBootTrigger iBootTrigger = iTrigger as IBootTrigger;
-                        Debug.Assert(iBootTrigger != null);
+                        Debug.Assert(iBootTrigger is not null);
 
                         iBootTrigger.Delay = ConvertTimeSpanToWTSString(jobTrigger.RandomDelay);
 
@@ -387,7 +387,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     {
                         iTrigger = iTaskDefinition.Triggers.Create(_TASK_TRIGGER_TYPE2.TASK_TRIGGER_LOGON);
                         ILogonTrigger iLogonTrigger = iTrigger as ILogonTrigger;
-                        Debug.Assert(iLogonTrigger != null);
+                        Debug.Assert(iLogonTrigger is not null);
 
                         iLogonTrigger.UserId = ScheduledJobTrigger.IsAllUsers(jobTrigger.User) ? null : jobTrigger.User;
                         iLogonTrigger.Delay = ConvertTimeSpanToWTSString(jobTrigger.RandomDelay);
@@ -402,13 +402,13 @@ namespace Microsoft.PowerShell.ScheduledJob
                     {
                         iTrigger = iTaskDefinition.Triggers.Create(_TASK_TRIGGER_TYPE2.TASK_TRIGGER_TIME);
                         ITimeTrigger iTimeTrigger = iTrigger as ITimeTrigger;
-                        Debug.Assert(iTimeTrigger != null);
+                        Debug.Assert(iTimeTrigger is not null);
 
                         iTimeTrigger.RandomDelay = ConvertTimeSpanToWTSString(jobTrigger.RandomDelay);
 
                         // Time trigger repetition.
-                        if (jobTrigger.RepetitionInterval != null &&
-                            jobTrigger.RepetitionDuration != null)
+                        if (jobTrigger.RepetitionInterval is not null &&
+                            jobTrigger.RepetitionDuration is not null)
                         {
                             iTimeTrigger.Repetition.Interval = ConvertTimeSpanToWTSString(jobTrigger.RepetitionInterval.Value);
                             if (jobTrigger.RepetitionDuration.Value == TimeSpan.MaxValue)
@@ -433,7 +433,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     {
                         iTrigger = iTaskDefinition.Triggers.Create(_TASK_TRIGGER_TYPE2.TASK_TRIGGER_DAILY);
                         IDailyTrigger iDailyTrigger = iTrigger as IDailyTrigger;
-                        Debug.Assert(iDailyTrigger != null);
+                        Debug.Assert(iDailyTrigger is not null);
 
                         iDailyTrigger.RandomDelay = ConvertTimeSpanToWTSString(jobTrigger.RandomDelay);
                         iDailyTrigger.DaysInterval = (short)jobTrigger.Interval;
@@ -449,7 +449,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     {
                         iTrigger = iTaskDefinition.Triggers.Create(_TASK_TRIGGER_TYPE2.TASK_TRIGGER_WEEKLY);
                         IWeeklyTrigger iWeeklyTrigger = iTrigger as IWeeklyTrigger;
-                        Debug.Assert(iWeeklyTrigger != null);
+                        Debug.Assert(iWeeklyTrigger is not null);
 
                         iWeeklyTrigger.RandomDelay = ConvertTimeSpanToWTSString(jobTrigger.RandomDelay);
                         iWeeklyTrigger.WeeksInterval = (short)jobTrigger.Interval;
@@ -577,7 +577,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             ScheduledJobDefinition definition)
         {
             IExecAction iExecAction = iTaskDefinition.Actions.Create(_TASK_ACTION_TYPE.TASK_ACTION_EXEC) as IExecAction;
-            Debug.Assert(iExecAction != null);
+            Debug.Assert(iExecAction is not null);
 
             iExecAction.Id = ScheduledJobTaskActionId;
             iExecAction.Path = definition.PSExecutionPath;

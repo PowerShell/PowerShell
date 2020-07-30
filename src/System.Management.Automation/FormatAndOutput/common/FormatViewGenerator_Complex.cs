@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             FormatEntryData fed = new FormatEntryData();
 
-            if (this.dataBaseInfo.view != null)
+            if (this.dataBaseInfo.view is not null)
                 fed.formatEntryInfo = GenerateComplexViewEntryFromDataBaseInfo(so, enumerationLimit);
             else
                 fed.formatEntryInfo = GenerateComplexViewEntryFromProperties(so, enumerationLimit);
@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // we might have a reference
             ControlReference controlReference = control as ControlReference;
-            if (controlReference != null && controlReference.controlType == typeof(ComplexControlBody))
+            if (controlReference is not null && controlReference.controlType == typeof(ComplexControlBody))
             {
                 // retrieve the reference
                 complexBody = DisplayDataQuery.ResolveControlReference(
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // finally, execute the control body
-            if (complexBody != null)
+            if (complexBody is not null)
             {
                 // we have an inline control, just execute it
                 ExecuteFormatControlBody(level, so, complexBody, formatValueList);
@@ -156,14 +156,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            if (match.BestMatch != null)
+            if (match.BestMatch is not null)
             {
                 return match.BestMatch as ComplexControlEntryDefinition;
             }
             else
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (typesWithoutPrefix != null)
+                if (typesWithoutPrefix is not null)
                 {
                     match = new TypeMatch(_expressionFactory, _db, typesWithoutPrefix);
                     foreach (ComplexControlEntryDefinition x in complexBody.optionalEntryList)
@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                     }
 
-                    if (match.BestMatch != null)
+                    if (match.BestMatch is not null)
                     {
                         return match.BestMatch as ComplexControlEntryDefinition;
                     }
@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             foreach (FormatToken t in formatTokenList)
             {
                 TextToken tt = t as TextToken;
-                if (tt != null)
+                if (tt is not null)
                 {
                     FormatTextField ftf = new FormatTextField();
                     ftf.text = _db.displayResourceManagerCache.GetTextTokenString(tt);
@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 var newline = t as NewLineToken;
-                if (newline != null)
+                if (newline is not null)
                 {
                     for (int i = 0; i < newline.count; i++)
                     {
@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 FrameToken ft = t as FrameToken;
-                if (ft != null)
+                if (ft is not null)
                 {
                     // instantiate a new entry and attach a frame info object
                     FormatEntry feFrame = new FormatEntry();
@@ -246,7 +246,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 #region CompoundPropertyToken
                 CompoundPropertyToken cpt = t as CompoundPropertyToken;
-                if (cpt != null)
+                if (cpt is not null)
                 {
                     if (!EvaluateDisplayCondition(so, cpt.conditionToken))
                     {
@@ -270,7 +270,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (resultList.Count > 0)
                         {
                             val = resultList[0].Result;
-                            if (resultList[0].Exception != null)
+                            if (resultList[0].Exception is not null)
                             {
                                 _errorManager.LogPSPropertyExpressionFailedResult(resultList[0], so);
                             }
@@ -290,10 +290,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         FieldFormattingDirective fieldFormattingDirective = null;
                         StringFormatError formatErrorObject = null;
-                        if (cpt.control != null)
+                        if (cpt.control is not null)
                         {
                             fieldFormattingDirective = ((FieldControlBody)cpt.control).fieldFormattingDirective;
-                            if (fieldFormattingDirective != null && _errorManager.DisplayFormatErrorString)
+                            if (fieldFormattingDirective is not null && _errorManager.DisplayFormatErrorString)
                             {
                                 formatErrorObject = new StringFormatError();
                             }
@@ -301,7 +301,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         IEnumerable e = PSObjectHelper.GetEnumerable(val);
                         FormatPropertyField fpf = new FormatPropertyField();
-                        if (cpt.enumerateCollection && e != null)
+                        if (cpt.enumerateCollection && e is not null)
                         {
                             foreach (object x in e)
                             {
@@ -325,7 +325,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             fe.formatValueList.Add(fpf);
                         }
 
-                        if (formatErrorObject != null && formatErrorObject.exception != null)
+                        if (formatErrorObject is not null && formatErrorObject.exception is not null)
                         {
                             _errorManager.LogStringFormatError(formatErrorObject);
                             fpf.propertyValue = _errorManager.FormatErrorString;
@@ -340,7 +340,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
 
                         IEnumerable e = PSObjectHelper.GetEnumerable(val);
-                        if (cpt.enumerateCollection && e != null)
+                        if (cpt.enumerateCollection && e is not null)
                         {
                             foreach (object x in e)
                             {
@@ -375,7 +375,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             PSPropertyExpressionResult expressionResult;
             bool retVal = DisplayCondition.Evaluate(so, ex, out expressionResult);
 
-            if (expressionResult != null && expressionResult.Exception != null)
+            if (expressionResult is not null && expressionResult.Exception is not null)
             {
                 _errorManager.LogPSPropertyExpressionFailedResult(expressionResult, so);
             }
@@ -460,7 +460,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // check if the top level object is an enumeration
                 IEnumerable e = PSObjectHelper.GetEnumerable(so);
 
-                if (e != null)
+                if (e is not null)
                 {
                     // let's start the traversal with an enumeration
                     FormatEntry fe = new FormatEntry();
@@ -492,7 +492,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             fpf.propertyValue = PSObjectHelper.SmartToString(so, _expressionFactory, _enumerationLimit, formatErrorObject);
 
-            if (formatErrorObject != null && formatErrorObject.exception != null)
+            if (formatErrorObject is not null && formatErrorObject.exception is not null)
             {
                 // if we did no thave any errors in the expression evaluation
                 // we might have errors in the formatting, if present
@@ -527,7 +527,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // add the display name of the object
             string objectDisplayName = GetObjectDisplayName(so);
-            if (objectDisplayName != null)
+            if (objectDisplayName is not null)
                 objectDisplayName = "class " + objectDisplayName;
 
             AddPrologue(fe.formatValueList, "{", objectDisplayName);
@@ -553,7 +553,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (resList.Count >= 1)
                 {
                     PSPropertyExpressionResult result = resList[0];
-                    if (result.Exception != null)
+                    if (result.Exception is not null)
                     {
                         _errorManager.LogPSPropertyExpressionFailedResult(result, so);
                         if (_errorManager.DisplayErrorStrings)
@@ -573,7 +573,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 // extract the optional max depth
                 TraversalInfo level = currentLevel;
-                if (a.OriginatingParameter != null)
+                if (a.OriginatingParameter is not null)
                 {
                     object maxDepthKey = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.DepthEntryKey);
                     if (maxDepthKey != AutomationNull.Value)
@@ -584,10 +584,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 IEnumerable e = null;
-                if (val != null || (level.Level >= level.MaxDepth))
+                if (val is not null || (level.Level >= level.MaxDepth))
                     e = PSObjectHelper.GetEnumerable(val);
 
-                if (e != null)
+                if (e is not null)
                 {
                     formatValueList.Add(new FormatNewLine());
                     DisplayEnumeration(e, level.NextLevel, AddIndentationLevel(formatValueList));
@@ -652,7 +652,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // check if the top level object is an enumeration
                     IEnumerable e1 = PSObjectHelper.GetEnumerable(x);
 
-                    if (e1 != null)
+                    if (e1 is not null)
                     {
                         formatValueList.Add(new FormatNewLine());
                         DisplayEnumeration(e1, level.NextLevel, AddIndentationLevel(formatValueList));
@@ -727,7 +727,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static void AddPrologue(List<FormatValue> formatValueList, string openTag, string label)
         {
-            if (label != null)
+            if (label is not null)
             {
                 FormatTextField ftfLabel = new FormatTextField();
                 ftfLabel.text = label;

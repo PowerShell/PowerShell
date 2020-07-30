@@ -36,7 +36,7 @@ namespace System.Management.Automation.Internal
         string
         TruncateToBufferCellWidth(PSHostRawUserInterface rawUI, string toTruncate, int maxWidthInBufferCells)
         {
-            Dbg.Assert(rawUI != null, "need a reference");
+            Dbg.Assert(rawUI is not null, "need a reference");
             Dbg.Assert(maxWidthInBufferCells >= 0, "maxWidthInBufferCells must be positive");
 
             string result;

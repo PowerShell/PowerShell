@@ -142,7 +142,7 @@ namespace System.Management.Automation
                 // Check if it's been aborted underneath us
                 if (
                     (!_isRolledBack) &&
-                    (_transaction != null) &&
+                    (_transaction is not null) &&
                     (_transaction.TransactionInformation.Status == TransactionStatus.Aborted))
                 {
                     _isRolledBack = true;
@@ -193,7 +193,7 @@ namespace System.Management.Automation
         {
             if (disposing)
             {
-                if (_transaction != null)
+                if (_transaction is not null)
                 {
                     _transaction.Dispose();
                 }
@@ -295,7 +295,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal static IDisposable GetEngineProtectionScope()
         {
-            if (s_engineProtectionEnabled && (Transaction.Current != null))
+            if (s_engineProtectionEnabled && (Transaction.Current is not null))
             {
                 return new System.Transactions.TransactionScope(
                     System.Transactions.TransactionScopeOption.Suppress);
@@ -359,7 +359,7 @@ namespace System.Management.Automation.Internal
             PSTransaction currentTransaction = _transactionStack.Peek();
 
             // There is a transaction on the stack
-            if (currentTransaction != null)
+            if (currentTransaction is not null)
             {
                 // If you are already in a transaction that has been aborted, or committed,
                 // create it.
@@ -517,7 +517,7 @@ namespace System.Management.Automation.Internal
             PSTransaction currentTransaction = _transactionStack.Peek();
 
             // If there is a "used" transaction at the top of the stack, clean it up
-            while (_transactionStack.Peek() != null &&
+            while (_transactionStack.Peek() is not null &&
                 (_transactionStack.Peek().IsRolledBack || _transactionStack.Peek().IsCommitted))
             {
                 _transactionStack.Pop().Dispose();
@@ -609,7 +609,7 @@ namespace System.Management.Automation.Internal
             {
                 PSTransaction currentTransaction = _transactionStack.Peek();
 
-                if ((currentTransaction != null) &&
+                if ((currentTransaction is not null) &&
                     (!currentTransaction.IsCommitted) &&
                     (!currentTransaction.IsRolledBack))
                 {
@@ -631,7 +631,7 @@ namespace System.Management.Automation.Internal
             {
                 PSTransaction currentTransaction = _transactionStack.Peek();
 
-                if (currentTransaction != null)
+                if (currentTransaction is not null)
                 {
                     return currentTransaction.IsCommitted;
                 }
@@ -651,7 +651,7 @@ namespace System.Management.Automation.Internal
             {
                 PSTransaction currentTransaction = _transactionStack.Peek();
 
-                if (currentTransaction != null)
+                if (currentTransaction is not null)
                 {
                     return currentTransaction.IsRolledBack;
                 }
@@ -693,7 +693,7 @@ namespace System.Management.Automation.Internal
             {
                 ResetActive();
 
-                while (_transactionStack.Peek() != null)
+                while (_transactionStack.Peek() is not null)
                 {
                     PSTransaction currentTransaction = _transactionStack.Pop();
 

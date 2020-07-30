@@ -120,14 +120,14 @@ namespace System.Management.Automation.Interpreter
 
         protected override CatchBlock VisitCatchBlock(CatchBlock node)
         {
-            if (node.Variable != null)
+            if (node.Variable is not null)
             {
                 _shadowedVars.Push(new HashSet<ParameterExpression>(new[] { node.Variable }));
             }
 
             Expression b = Visit(node.Body);
             Expression f = Visit(node.Filter);
-            if (node.Variable != null)
+            if (node.Variable is not null)
             {
                 _shadowedVars.Pop();
             }
@@ -202,7 +202,7 @@ namespace System.Management.Automation.Interpreter
             {
                 var variable = (ParameterExpression)node.Left;
                 Expression closureItem = GetClosureItem(variable, true);
-                if (closureItem != null)
+                if (closureItem is not null)
                 {
                     // We need to convert to object to store the value in the box.
                     return Expression.Block(

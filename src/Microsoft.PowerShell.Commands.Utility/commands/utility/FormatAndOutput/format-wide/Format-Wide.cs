@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
         {
             FormattingCommandLineParameters parameters = new FormattingCommandLineParameters();
 
-            if (_prop != null)
+            if (_prop is not null)
             {
                 ParameterProcessor processor = new ParameterProcessor(new FormatWideParameterDefinition());
                 TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);

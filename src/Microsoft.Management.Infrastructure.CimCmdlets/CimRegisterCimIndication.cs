@@ -217,7 +217,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             // NOTES: should move after this.Disposed, but need to log the exception
             CimWriteError cimWriteError = actionArgs.Action as CimWriteError;
-            if (cimWriteError != null)
+            if (cimWriteError is not null)
             {
                 this.exception = cimWriteError.Exception;
                 if (!this.ackedEvent.IsSet)
@@ -229,7 +229,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
 
                 EventHandler<CimSubscriptionEventArgs> temp = this.OnNewSubscriptionResult;
-                if (temp != null)
+                if (temp is not null)
                 {
                     DebugHelper.WriteLog("Raise an exception event", 2);
 
@@ -240,13 +240,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             CimWriteResultObject cimWriteResultObject = actionArgs.Action as CimWriteResultObject;
-            if (cimWriteResultObject != null)
+            if (cimWriteResultObject is not null)
             {
                 CimSubscriptionResult result = cimWriteResultObject.Result as CimSubscriptionResult;
-                if (result != null)
+                if (result is not null)
                 {
                     EventHandler<CimSubscriptionEventArgs> temp = this.OnNewSubscriptionResult;
-                    if (temp != null)
+                    if (temp is not null)
                     {
                         DebugHelper.WriteLog("Raise an result event", 2);
                         temp(this, new CimSubscriptionResultEventArgs(result));
@@ -276,10 +276,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
             this.ackedEvent.Wait();
-            if (this.exception != null)
+            if (this.exception is not null)
             {
                 DebugHelper.WriteLogEx("error happened", 0);
-                if (this.Cmdlet != null)
+                if (this.Cmdlet is not null)
                 {
                     DebugHelper.WriteLogEx("Throw Terminating error", 1);
 

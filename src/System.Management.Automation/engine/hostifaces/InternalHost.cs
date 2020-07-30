@@ -38,10 +38,10 @@ namespace System.Management.Automation.Internal.Host
         /// </summary>
         internal InternalHost(PSHost externalHost, ExecutionContext executionContext)
         {
-            Dbg.Assert(externalHost != null, "must supply an PSHost");
+            Dbg.Assert(externalHost is not null, "must supply an PSHost");
             Dbg.Assert(!(externalHost is InternalHost), "try to create an InternalHost from another InternalHost");
 
-            Dbg.Assert(executionContext != null, "must supply an ExecutionContext");
+            Dbg.Assert(executionContext is not null, "must supply an ExecutionContext");
 
             _externalHostRef = new ObjectRef<PSHost>(externalHost);
             Context = executionContext;
@@ -238,11 +238,11 @@ namespace System.Management.Automation.Internal.Host
             try { localRunspace = this.Runspace as LocalRunspace; }
             catch (PSNotImplementedException) { }
 
-            if (localRunspace != null)
+            if (localRunspace is not null)
             {
                 Pipeline currentlyRunningPipeline = this.Runspace.GetCurrentlyRunningPipeline();
 
-                if ((currentlyRunningPipeline != null) &&
+                if ((currentlyRunningPipeline is not null) &&
                     (currentlyRunningPipeline == localRunspace.PulsePipeline))
                     throw new InvalidOperationException();
             }
@@ -278,7 +278,7 @@ namespace System.Management.Automation.Internal.Host
             PSPropertyInfo stackTraceProperty = null;
             object oldCommandInfo = null;
             object oldStackTrace = null;
-            if (callingCommand != null)
+            if (callingCommand is not null)
             {
                 Dbg.Assert(callingCommand.Context == Context, "I expect that the contexts should match");
 
@@ -346,12 +346,12 @@ namespace System.Management.Automation.Internal.Host
             }
             finally
             {
-                if (commandInfoProperty != null)
+                if (commandInfoProperty is not null)
                 {
                     commandInfoProperty.Value = oldCommandInfo;
                 }
 
-                if (stackTraceProperty != null)
+                if (stackTraceProperty is not null)
                 {
                     stackTraceProperty.Value = oldStackTrace;
                 }

@@ -226,7 +226,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     break;
             }
 
-            if (watcher != null)
+            if (watcher is not null)
             {
                 watcher.SetCmdlet(this);
             }
@@ -254,7 +254,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             // Register for the "Unsubscribed" event so that we can stop the
             // Cimindication event watcher.
             PSEventSubscriber newSubscriber = NewSubscriber;
-            if (newSubscriber != null)
+            if (newSubscriber is not null)
             {
                 DebugHelper.WriteLog("RegisterCimIndicationCommand::EndProcessing subscribe to Unsubscribed event", 4);
                 newSubscriber.Unsubscribed += newSubscriber_Unsubscribed;
@@ -274,7 +274,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx();
 
             CimIndicationWatcher watcher = sender as CimIndicationWatcher;
-            if (watcher != null)
+            if (watcher is not null)
             {
                 watcher.Stop();
             }

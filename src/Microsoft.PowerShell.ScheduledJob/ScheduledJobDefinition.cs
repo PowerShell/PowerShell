@@ -219,7 +219,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             _invocationInfo = invocationInfo;
 
             SetTriggers(triggers, false);
-            _options = (options != null) ? new ScheduledJobOptions(options) :
+            _options = (options is not null) ? new ScheduledJobOptions(options) :
                                            new ScheduledJobOptions();
             _options.JobDefinition = this;
 
@@ -456,14 +456,14 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
             finally
             {
-                if (fs != null)
+                if (fs is not null)
                 {
                     fs.Close();
                 }
             }
 
             // If credentials are provided then update permissions.
-            if (Credential != null)
+            if (Credential is not null)
             {
                 UpdateFilePermissions(Credential.UserName);
             }
@@ -491,14 +491,14 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
             finally
             {
-                if (fs != null)
+                if (fs is not null)
                 {
                     fs.Close();
                 }
             }
 
             // If credentials are provided then update permissions.
-            if (Credential != null)
+            if (Credential is not null)
             {
                 UpdateFilePermissions(Credential.UserName);
             }
@@ -536,7 +536,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 ex = e;
             }
 
-            if (ex != null)
+            if (ex is not null)
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.ErrorSettingAccessPermissions, this.Name, Credential.UserName);
                 throw new ScheduledJobException(msg, ex);
@@ -578,7 +578,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="triggers"></param>
         private void ValidateTriggers(IEnumerable<ScheduledJobTrigger> triggers)
         {
-            if (triggers != null)
+            if (triggers is not null)
             {
                 foreach (var trigger in triggers)
                 {
@@ -646,7 +646,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     continue;
                 }
 
-                if (job != null)
+                if (job is not null)
                 {
                     job.Name = newDefName;
                     job.Definition = definition;
@@ -712,7 +712,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 notFoundEx = e;
             }
 
-            if (notFoundEx != null)
+            if (notFoundEx is not null)
             {
                 // There is no corresponding Task Scheduler item for this
                 // scheduled job definition.  Remove this definition from
@@ -764,7 +764,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 ex = e;
             }
 
-            if (ex != null)
+            if (ex is not null)
             {
                 string msg;
                 if (!string.IsNullOrEmpty(ex.Message))
@@ -829,7 +829,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             // If any part of renaming the various scheduled job components fail,
             // aggressively remove scheduled job corrupted state and inform user.
-            if (ex != null)
+            if (ex is not null)
             {
                 try
                 {
@@ -919,7 +919,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 ex = e;
             }
 
-            if (ex != null)
+            if (ex is not null)
             {
                 if (corruptedFile)
                 {
@@ -982,7 +982,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 ex = e;
             }
 
-            if (ex != null)
+            if (ex is not null)
             {
                 // Clean up job store.
                 RemoveFromJobStore();
@@ -1042,7 +1042,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 ex = e;
             }
 
-            if (ex != null)
+            if (ex is not null)
             {
                 // We want this object to remain synchronized with what is in WTS.
                 SyncWithWTS();
@@ -1078,7 +1078,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 ex = e;
             }
 
-            if (ex != null)
+            if (ex is not null)
             {
                 // Remove this from WTS for consistency.
                 RemoveFromWTS(true);
@@ -1157,7 +1157,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 Dispose();
             }
 
-            if (ex != null)
+            if (ex is not null)
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.ErrorRemovingDefinitionStore, this.Name);
                 throw new ScheduledJobException(msg, ex);
@@ -1213,10 +1213,10 @@ namespace Microsoft.PowerShell.ScheduledJob
                 ex = e;
             }
 
-            if (ex != null)
+            if (ex is not null)
             {
                 string msg;
-                if (reason != null)
+                if (reason is not null)
                 {
                     msg = StringUtil.Format(ScheduledJobErrorStrings.ErrorRunningAsTaskWithReason, this.Name, reason);
                 }
@@ -1401,7 +1401,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             _currentTriggerId = 0;
             _triggers = new Dictionary<Int32, ScheduledJobTrigger>();
-            if (newTriggers != null)
+            if (newTriggers is not null)
             {
                 foreach (ScheduledJobTrigger trigger in newTriggers)
                 {
@@ -1511,7 +1511,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             // options == null is allowed and signals the use default
             // Task Scheduler options.
-            _options = (options != null) ? new ScheduledJobOptions(options) :
+            _options = (options is not null) ? new ScheduledJobOptions(options) :
                                            new ScheduledJobOptions();
             _options.JobDefinition = this;
 
@@ -1606,7 +1606,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         {
             IsDisposed();
 
-            _name = (name != null) ? name : string.Empty;
+            _name = (name is not null) ? name : string.Empty;
 
             if (save)
             {
@@ -1667,7 +1667,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 {
                     jobDefinitionNamesHash.Remove(jobDef.Name);
 
-                    if (itemFound != null)
+                    if (itemFound is not null)
                     {
                         itemFound(jobDef);
                     }
@@ -1683,7 +1683,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     ScheduledJobDefinition jobDefinition = ScheduledJobDefinition.LoadDefFromStore(jobDefinitionName, null);
                     Repository.AddOrReplace(jobDefinition);
 
-                    if (itemFound != null)
+                    if (itemFound is not null)
                     {
                         itemFound(jobDefinition);
                     }
@@ -1744,7 +1744,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
             finally
             {
-                if (fs != null)
+                if (fs is not null)
                 {
                     fs.Close();
                 }
@@ -1814,7 +1814,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 corruptedFile = true;
             }
 
-            if (ex != null)
+            if (ex is not null)
             {
                 //
                 // Remove definition if corrupted.
@@ -1965,7 +1965,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     // so that ScheduledJobSourceAdapter knows where the results are
                     // to be stored.
                     ScheduledJob schedJob = job as ScheduledJob;
-                    if (schedJob != null)
+                    if (schedJob is not null)
                     {
                         schedJob.Definition = this;
                         schedJob.AllowSetShouldExit = true;
@@ -2056,14 +2056,14 @@ namespace Microsoft.PowerShell.ScheduledJob
                     ex = e;
                 }
 
-                if (ex != null)
+                if (ex is not null)
                 {
                     // Log error.
                     _tracer.WriteScheduledJobErrorEvent(
                         this.Name,
                         ex.Message,
                         ex.StackTrace.ToString(),
-                        (ex.InnerException != null) ? ex.InnerException.Message : string.Empty);
+                        (ex.InnerException is not null) ? ex.InnerException.Message : string.Empty);
 
                     throw ex;
                 }
@@ -2527,7 +2527,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             // ScriptBlock
             string script = info.GetString("InvocationParam_ScriptBlock");
-            if (script != null)
+            if (script is not null)
             {
                 parameters.Add(ScriptBlockParameter, ScriptBlock.Create(script));
             }
@@ -2557,7 +2557,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             // ArgumentList
             object[] argList = (object[])info.GetValue("InvocationParam_ArgList", typeof(object[]));
-            if (argList != null)
+            if (argList is not null)
             {
                 parameters.Add(ArgumentListParameter, argList);
             }

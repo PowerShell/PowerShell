@@ -154,7 +154,7 @@ namespace System.Management.Automation
         private PSDriveInfo ValidateDriveWithProvider(PSDriveInfo drive, CmdletProviderContext context, bool resolvePathIfPossible)
         {
             Dbg.Diagnostics.Assert(
-                drive != null,
+                drive is not null,
                 "drive should have been validated by the caller");
 
             DriveCmdletProvider namespaceProvider =
@@ -170,11 +170,11 @@ namespace System.Management.Automation
             bool resolvePathIfPossible)
         {
             Dbg.Diagnostics.Assert(
-                drive != null,
+                drive is not null,
                 "drive should have been validated by the caller");
 
             Dbg.Diagnostics.Assert(
-                driveProvider != null,
+                driveProvider is not null,
                 "driveProvider should have been validated by the caller");
 
             // Mark the drive as being created so that the provider can modify the
@@ -184,11 +184,11 @@ namespace System.Management.Automation
 
             // Only try to resolve the root as an MSH path if there is a current drive.
 
-            if (CurrentDrive != null && resolvePathIfPossible)
+            if (CurrentDrive is not null && resolvePathIfPossible)
             {
                 string newRoot = GetProviderRootFromSpecifiedRoot(drive.Root, drive.Provider);
 
-                if (newRoot != null)
+                if (newRoot is not null)
                 {
                     drive.SetRoot(newRoot);
                 }
@@ -751,7 +751,7 @@ namespace System.Management.Automation
             {
                 ProviderInfo providerInfo = GetSingleProvider(name);
 
-                result = providerInfo != null;
+                result = providerInfo is not null;
             }
             catch (ProviderNotFoundException)
             {
@@ -1002,12 +1002,12 @@ namespace System.Management.Automation
             DriveCmdletProvider driveProvider =
                 GetDriveProviderInstance(providerInstance);
 
-            if (driveProvider != null)
+            if (driveProvider is not null)
             {
                 try
                 {
                     Collection<PSDriveInfo> drives = driveProvider.InitializeDefaultDrives(context);
-                    if (drives != null && drives.Count > 0)
+                    if (drives is not null && drives.Count > 0)
                     {
                         newDrives.AddRange(drives);
                         ProvidersCurrentWorkingDrive[provider] = drives[0];
@@ -1044,7 +1044,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (newDrives != null && newDrives.Count > 0)
+            if (newDrives is not null && newDrives.Count > 0)
             {
                 // Add the drives.
 
@@ -1066,7 +1066,7 @@ namespace System.Management.Automation
                     {
                         PSDriveInfo validatedNewDrive = ValidateDriveWithProvider(driveProvider, newDrive, context, false);
 
-                        if (validatedNewDrive != null)
+                        if (validatedNewDrive is not null)
                         {
                             // Since providers are global then the drives created
                             // through InitializeDefaultDrives should also be global.
@@ -1113,7 +1113,7 @@ namespace System.Management.Automation
             // throw the exception so that we give a better error
             // message.
             ProviderInfo existingProvider = ProviderExists(provider);
-            if (existingProvider != null)
+            if (existingProvider is not null)
             {
                 // If it's an already loaded provider, don't return an error...
                 if (existingProvider.ImplementingType == provider.ImplementingType)
@@ -1438,7 +1438,7 @@ namespace System.Management.Automation
                     int driveCount = 0;
                     foreach (PSDriveInfo drive in GetDrivesForProvider(providerName))
                     {
-                        if (drive != null)
+                        if (drive is not null)
                         {
                             ++driveCount;
                             break;
@@ -1453,7 +1453,7 @@ namespace System.Management.Automation
 
                             foreach (PSDriveInfo drive in GetDrivesForProvider(providerName))
                             {
-                                if (drive != null)
+                                if (drive is not null)
                                 {
                                     RemoveDrive(drive, true, null);
                                 }

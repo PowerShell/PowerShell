@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 CimValueConverter.AssertIntrinsicCimType(methodParameter.ParameterType);
                 CimProperty propertyBeingModified = cimInstance.CimInstanceProperties[methodParameter.Name];
-                if (propertyBeingModified != null)
+                if (propertyBeingModified is not null)
                 {
                     propertyBeingModified.Value = methodParameter.Value;
                 }

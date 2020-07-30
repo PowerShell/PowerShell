@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 return InvokeProvider.Property.SetPropertyDynamicParameters(Path[0], mshObject, context);
             }

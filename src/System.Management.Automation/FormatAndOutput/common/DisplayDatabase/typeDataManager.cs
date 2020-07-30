@@ -403,7 +403,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             foreach (PSSnapInTypeAndFormatErrors file in files)
             {
                 // Loads formatting data from ExtendedTypeDefinition instance
-                if (file.FormatData != null)
+                if (file.FormatData is not null)
                 {
                     LoadFormatDataHelper(file.FormatData, expressionFactory, logEntries, ref success, file, db, isBuiltInFormatData: false, isForHelp: false);
                     continue;

@@ -142,7 +142,7 @@ namespace System.Management.Automation
             string configurationName,
             string initialLocation)
         {
-            Dbg.Assert(configData != null, "ConfigurationData cannot be null");
+            Dbg.Assert(configData is not null, "ConfigurationData cannot be null");
 
             _serverCapability = serverCapability;
             _clientPSVersion = psClientVersion;
@@ -272,7 +272,7 @@ namespace System.Management.Automation
                 _applicationPrivateData = new PSPrimitiveDictionary();
             }
 
-            if (_serverRemoteDebugger != null)
+            if (_serverRemoteDebugger is not null)
             {
                 // Current debug mode.
                 DebugModes debugMode = _serverRemoteDebugger.DebugMode;
@@ -342,11 +342,11 @@ namespace System.Management.Automation
             {
                 _isClosed = true;
 
-                if ((_remoteHost != null) && (_remoteHost.IsRunspacePushed))
+                if ((_remoteHost is not null) && (_remoteHost.IsRunspacePushed))
                 {
                     Runspace runspaceToDispose = _remoteHost.PushedRunspace;
                     _remoteHost.PopRunspace();
-                    if (runspaceToDispose != null)
+                    if (runspaceToDispose is not null)
                     {
                         runspaceToDispose.Dispose();
                     }
@@ -360,7 +360,7 @@ namespace System.Management.Automation
                 RunspacePool.Dispose();
                 RunspacePool = null;
 
-                if (_rsToUseForSteppablePipeline != null)
+                if (_rsToUseForSteppablePipeline is not null)
                 {
                     _rsToUseForSteppablePipeline.Close();
                     _rsToUseForSteppablePipeline.Dispose();
@@ -413,7 +413,7 @@ namespace System.Management.Automation
         /// </summary>
         public bool HandleStopSignal()
         {
-            if (_serverRemoteDebugger != null)
+            if (_serverRemoteDebugger is not null)
             {
                 return _serverRemoteDebugger.HandleStopSignal();
             }
@@ -442,7 +442,7 @@ namespace System.Management.Automation
             {
                 // Client is requesting a configured session.
                 // Create a configured remote runspace and push onto host stack.
-                if ((_remoteHost != null) && !(_remoteHost.IsRunspacePushed))
+                if ((_remoteHost is not null) && !(_remoteHost.IsRunspacePushed))
                 {
                     // Let exceptions propagate.
                     RemoteRunspace remoteRunspace = HostUtilities.CreateConfiguredRunspace(_configurationName, _remoteHost);
@@ -473,9 +473,9 @@ namespace System.Management.Automation
 
             // Remote debugger is created only when client version is PSVersion (4.0)
             // or greater, and remote session supports debugging.
-            if ((_driverNestedInvoker != null) &&
-                (_clientPSVersion != null && _clientPSVersion >= PSVersionInfo.PSV4Version) &&
-                (runspace != null && runspace.Debugger != null))
+            if ((_driverNestedInvoker is not null) &&
+                (_clientPSVersion is not null && _clientPSVersion >= PSVersionInfo.PSV4Version) &&
+                (runspace is not null && runspace.Debugger is not null))
             {
                 _serverRemoteDebugger = new ServerRemoteDebugger(this, runspace, runspace.Debugger);
                 _remoteHost.ServerDebugger = _serverRemoteDebugger;
@@ -484,7 +484,7 @@ namespace System.Management.Automation
 
         private void DisposeRemoteDebugger()
         {
-            if (_serverRemoteDebugger != null)
+            if (_serverRemoteDebugger is not null)
             {
                 _serverRemoteDebugger.Dispose();
             }
@@ -498,7 +498,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private PSDataCollection<PSObject> InvokeScript(Command cmdToRun, RunspaceCreatedEventArgs args)
         {
-            Debug.Assert(cmdToRun != null, "cmdToRun shouldn't be null");
+            Debug.Assert(cmdToRun is not null, "cmdToRun shouldn't be null");
 
             // Don't invoke initialization script as trusted (CommandOrigin == Internal) if the system is in lock down mode.
             cmdToRun.CommandOrigin = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) ? CommandOrigin.Runspace : CommandOrigin.Internal;
@@ -518,7 +518,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private PSDataCollection<PSObject> InvokePowerShell(PowerShell powershell, RunspaceCreatedEventArgs args)
         {
-            Debug.Assert(powershell != null, "powershell shouldn't be null");
+            Debug.Assert(powershell is not null, "powershell shouldn't be null");
 
             // run the startup script on the runspace's host
             HostInfo hostInfo = _remoteHost.HostInfo;
@@ -548,16 +548,16 @@ namespace System.Management.Automation
             {
                 string exceptionThrown;
                 ErrorRecord lastErrorRecord = errorList[0] as ErrorRecord;
-                if (lastErrorRecord != null)
+                if (lastErrorRecord is not null)
                 {
                     exceptionThrown = lastErrorRecord.ToString();
                 }
                 else
                 {
                     Exception lastException = errorList[0] as Exception;
-                    if (lastException != null)
+                    if (lastException is not null)
                     {
-                        exceptionThrown = (lastException.Message != null) ? lastException.Message : string.Empty;
+                        exceptionThrown = (lastException.Message is not null) ? lastException.Message : string.Empty;
                     }
                     else
                     {
@@ -635,7 +635,7 @@ namespace System.Management.Automation
                 cmdToRun = new Command(_configData.InitializationScriptForOutOfProcessRunspace, true, false);
             }
 
-            if (cmdToRun != null)
+            if (cmdToRun is not null)
             {
                 InvokeScript(cmdToRun, args);
 
@@ -644,7 +644,7 @@ namespace System.Management.Automation
                 if (RunspacePool.RunspacePoolStateInfo.State == RunspacePoolState.Opening)
                 {
                     object privateDataVariable = args.Runspace.SessionStateProxy.PSVariable.GetValue("global:PSApplicationPrivateData");
-                    if (privateDataVariable != null)
+                    if (privateDataVariable is not null)
                     {
                         _applicationPrivateData = (PSPrimitiveDictionary)LanguagePrimitives.ConvertTo(
                             privateDataVariable,
@@ -730,7 +730,7 @@ namespace System.Management.Automation
             }
 
             // Perform pre-processing of command for over the wire debugging commands.
-            if (_serverRemoteDebugger != null)
+            if (_serverRemoteDebugger is not null)
             {
                 DebuggerCommandArgument commandArgument;
                 bool terminateImmediate = false;
@@ -808,7 +808,7 @@ namespace System.Management.Automation
             {
                 // If we have a pushed runspace then execute there.
                 // Ensure debugger is enabled to the original mode it was set to.
-                if (_serverRemoteDebugger != null)
+                if (_serverRemoteDebugger is not null)
                 {
                     _serverRemoteDebugger.CheckDebuggerState();
                 }
@@ -829,7 +829,7 @@ namespace System.Management.Automation
             {
                 if (RunspacePool.GetMaxRunspaces() == 1)
                 {
-                    if (_driverNestedInvoker != null && _driverNestedInvoker.IsActive)
+                    if (_driverNestedInvoker is not null && _driverNestedInvoker.IsActive)
                     {
                         if (_driverNestedInvoker.IsAvailable == false)
                         {
@@ -860,7 +860,7 @@ namespace System.Management.Automation
                         _driverNestedInvoker.InvokeDriverAsync(srdriver);
                         return;
                     }
-                    else if (_serverRemoteDebugger != null &&
+                    else if (_serverRemoteDebugger is not null &&
                              _serverRemoteDebugger.InBreakpoint &&
                              _serverRemoteDebugger.IsPushed)
                     {
@@ -889,7 +889,7 @@ namespace System.Management.Automation
                     }
 
                     ServerPowerShellDataStructureHandler psHandler = DataStructureHandler.GetPowerShellDataStructureHandler();
-                    if (psHandler != null)
+                    if (psHandler is not null)
                     {
                         // Have steppable invocation request.
                         powershell.SetIsNested(false);
@@ -919,7 +919,7 @@ namespace System.Management.Automation
 
             // Invoke command normally.  Ensure debugger is enabled to the
             // original mode it was set to.
-            if (_serverRemoteDebugger != null)
+            if (_serverRemoteDebugger is not null)
             {
                 _serverRemoteDebugger.CheckDebuggerState();
             }
@@ -956,13 +956,13 @@ namespace System.Management.Automation
                         bool newValue = false;
 
                         InitialSessionState iss = this.RunspacePool.InitialSessionState;
-                        if (iss != null)
+                        if (iss is not null)
                         {
                             IEnumerable<SessionStateCommandEntry> publicGetCommandEntries = iss
                                 .Commands["Get-Command"]
                                 .Where(entry => entry.Visibility == SessionStateEntryVisibility.Public);
                             SessionStateFunctionEntry getCommandProxy = publicGetCommandEntries.OfType<SessionStateFunctionEntry>().FirstOrDefault();
-                            if (getCommandProxy != null)
+                            if (getCommandProxy is not null)
                             {
                                 if (getCommandProxy.ScriptBlock.ParameterMetadata.BindableParameters.ContainsKey("ListImported"))
                                 {
@@ -972,7 +972,7 @@ namespace System.Management.Automation
                             else
                             {
                                 SessionStateCmdletEntry getCommandCmdlet = publicGetCommandEntries.OfType<SessionStateCmdletEntry>().FirstOrDefault();
-                                if ((getCommandCmdlet != null) && (getCommandCmdlet.ImplementingType.Equals(typeof(Microsoft.PowerShell.Commands.GetCommandCommand))))
+                                if ((getCommandCmdlet is not null) && (getCommandCmdlet.ImplementingType.Equals(typeof(Microsoft.PowerShell.Commands.GetCommandCommand))))
                                 {
                                     newValue = true;
                                 }
@@ -1318,7 +1318,7 @@ namespace System.Management.Automation
 
                 DebuggerResumeAction? resumeAction = null;
                 PSObject resumeObject = command.Parameters[0].Value as PSObject;
-                if (resumeObject != null)
+                if (resumeObject is not null)
                 {
                     try
                     {
@@ -1346,7 +1346,7 @@ namespace System.Management.Automation
 
                 DebugModes? mode = null;
                 PSObject modeObject = command.Parameters[0].Value as PSObject;
-                if (modeObject != null)
+                if (modeObject is not null)
                 {
                     try
                     {
@@ -1389,7 +1389,7 @@ namespace System.Management.Automation
 
                 UnhandledBreakpointProcessingMode? mode = null;
                 PSObject modeObject = command.Parameters[0].Value as PSObject;
-                if (modeObject != null)
+                if (modeObject is not null)
                 {
                     try
                     {
@@ -1446,7 +1446,7 @@ namespace System.Management.Automation
                 // Any collection comes through remoting as an ArrayList of Objects so we convert each object
                 // into a breakpoint and add it to the list.
                 var bps = new List<Breakpoint>();
-                if (breakpoints != null)
+                if (breakpoints is not null)
                 {
                     foreach (object obj in breakpoints)
                     {
@@ -1501,7 +1501,7 @@ namespace System.Management.Automation
                 TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
 
                 Breakpoint bp = serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId);
-                if (bp != null)
+                if (bp is not null)
                 {
                     preProcessOutput.Add(serverRemoteDebugger.EnableBreakpoint(bp, runspaceId));
                 }
@@ -1519,7 +1519,7 @@ namespace System.Management.Automation
                 TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
 
                 Breakpoint bp = serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId);
-                if (bp != null)
+                if (bp is not null)
                 {
                     preProcessOutput.Add(serverRemoteDebugger.DisableBreakpoint(bp, runspaceId));
                 }
@@ -1626,7 +1626,7 @@ namespace System.Management.Automation
                         pump = null;
                     }
 
-                    return (pump != null) ? !(pump.IsBusy) : false;
+                    return (pump is not null) ? !(pump.IsBusy) : false;
                 }
             }
 
@@ -1732,7 +1732,7 @@ namespace System.Management.Automation
                                 }
                             }
 
-                            if (driver != null)
+                            if (driver is not null)
                             {
                                 try
                                 {
@@ -1996,7 +1996,7 @@ namespace System.Management.Automation
                 return _wrappedDebugger.Value.ProcessCommand(command, output);
             }
 
-            if (!InBreakpoint || (_threadCommandProcessing != null))
+            if (!InBreakpoint || (_threadCommandProcessing is not null))
             {
                 throw new PSInvalidOperationException(
                     StringUtil.Format(DebuggerStrings.CannotProcessDebuggerCommandNotStopped));
@@ -2029,7 +2029,7 @@ namespace System.Management.Automation
             }
 
             ThreadCommandProcessing threadCommandProcessing = _threadCommandProcessing;
-            if (threadCommandProcessing != null)
+            if (threadCommandProcessing is not null)
             {
                 threadCommandProcessing.Stop();
             }
@@ -2230,12 +2230,12 @@ namespace System.Management.Automation
                 ExitDebugMode(DebuggerResumeAction.Stop);
             }
 
-            if (_nestedDebugStopCompleteEvent != null)
+            if (_nestedDebugStopCompleteEvent is not null)
             {
                 _nestedDebugStopCompleteEvent.Dispose();
             }
 
-            if (_processCommandCompleteEvent != null)
+            if (_processCommandCompleteEvent is not null)
             {
                 _processCommandCompleteEvent.Dispose();
             }
@@ -2290,7 +2290,7 @@ namespace System.Management.Automation
                 _commandCompleteEvent.Wait();
                 _commandCompleteEvent.Reset();
 #if !UNIX
-                if (_identityToImpersonate != null)
+                if (_identityToImpersonate is not null)
                 {
                     _identityToImpersonate.Dispose();
                     _identityToImpersonate = null;
@@ -2298,7 +2298,7 @@ namespace System.Management.Automation
 #endif
 
                 // Propagate exception.
-                if (_exception != null)
+                if (_exception is not null)
                 {
                     throw _exception;
                 }
@@ -2310,7 +2310,7 @@ namespace System.Management.Automation
             public void Stop()
             {
                 Debugger debugger = _wrappedDebugger;
-                if (debugger != null)
+                if (debugger is not null)
                 {
                     debugger.StopProcessCommand();
                 }
@@ -2321,7 +2321,7 @@ namespace System.Management.Automation
                 try
                 {
 #if !UNIX
-                    if (_identityToImpersonate != null)
+                    if (_identityToImpersonate is not null)
                     {
                         _results = WindowsIdentity.RunImpersonated(
                             _identityToImpersonate.AccessToken,
@@ -2351,9 +2351,9 @@ namespace System.Management.Automation
         /// </summary>
         private void SetDebuggerCallbacks()
         {
-            if (_runspace != null &&
-                _runspace.ExecutionContext != null &&
-                _wrappedDebugger.Value != null)
+            if (_runspace is not null &&
+                _runspace.ExecutionContext is not null &&
+                _wrappedDebugger.Value is not null)
             {
                 SubscribeWrappedDebugger(_wrappedDebugger.Value);
 
@@ -2391,9 +2391,9 @@ namespace System.Management.Automation
         /// </summary>
         private void RemoveDebuggerCallbacks()
         {
-            if (_runspace != null &&
-                _runspace.ExecutionContext != null &&
-                _wrappedDebugger.Value != null)
+            if (_runspace is not null &&
+                _runspace.ExecutionContext is not null &&
+                _wrappedDebugger.Value is not null)
             {
                 UnsubscribeWrappedDebugger(_wrappedDebugger.Value);
 
@@ -2441,7 +2441,7 @@ namespace System.Management.Automation
                 contextHost = _runspace.ExecutionContext.InternalHost.ExternalHost;
 
                 // Forward event to remote client.
-                Dbg.Assert(_runspace != null, "Runspace cannot be null.");
+                Dbg.Assert(_runspace is not null, "Runspace cannot be null.");
                 _runspace.ExecutionContext.Events.GenerateEvent(
                     sourceIdentifier: RemoteDebugger.RemoteDebuggerStopEvent,
                     sender: null,
@@ -2486,7 +2486,7 @@ namespace System.Management.Automation
             try
             {
                 // Forward event to remote client.
-                Dbg.Assert(_runspace != null, "Runspace cannot be null.");
+                Dbg.Assert(_runspace is not null, "Runspace cannot be null.");
                 _runspace.ExecutionContext.Events.GenerateEvent(
                     sourceIdentifier: RemoteDebugger.RemoteDebuggerBreakpointUpdatedEvent,
                     sender: null,
@@ -2572,7 +2572,7 @@ namespace System.Management.Automation
                 debugModeCompletedEvent.Wait();
                 debugModeCompletedEvent.Reset();
 
-                if (_threadCommandProcessing != null)
+                if (_threadCommandProcessing is not null)
                 {
                     // Process command.
                     _threadCommandProcessing.DoInvoke();
@@ -2631,10 +2631,10 @@ namespace System.Management.Automation
         {
             // Restriction only occurs on a (non-pushed) local runspace.
             LocalRunspace localRunspace = _runspace as LocalRunspace;
-            if (localRunspace != null)
+            if (localRunspace is not null)
             {
                 CmdletInfo cmdletInfo = localRunspace.ExecutionContext.EngineSessionState.GetCmdlet(SetPSBreakCommandText);
-                if ((cmdletInfo != null) && (cmdletInfo.Visibility != SessionStateEntryVisibility.Public))
+                if ((cmdletInfo is not null) && (cmdletInfo.Visibility != SessionStateEntryVisibility.Public))
                 {
                     return false;
                 }
@@ -2654,7 +2654,7 @@ namespace System.Management.Automation
         internal bool HandleStopSignal()
         {
             // If in pushed mode then stop any running command.
-            if (IsPushed && (_threadCommandProcessing != null))
+            if (IsPushed && (_threadCommandProcessing is not null))
             {
                 StopProcessCommand();
                 return true;
@@ -2700,7 +2700,7 @@ namespace System.Management.Automation
         {
             // For nested debugger command processing, invoke command on new local runspace since
             // the root script debugger runspace is unavailable (it is running a PS script).
-            Runspace runspace = (remoteHost != null) ?
+            Runspace runspace = (remoteHost is not null) ?
                 RunspaceFactory.CreateRunspace(remoteHost) : RunspaceFactory.CreateRunspace();
 
             runspace.Open();
@@ -2762,7 +2762,7 @@ namespace System.Management.Automation
         internal int GetBreakpointCount()
         {
             ScriptDebugger scriptDebugger = _wrappedDebugger.Value as ScriptDebugger;
-            if (scriptDebugger != null)
+            if (scriptDebugger is not null)
             {
                 return scriptDebugger.GetBreakpoints().Count;
             }

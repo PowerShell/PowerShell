@@ -249,7 +249,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-            while (list != null);
+            while (list is not null);
         }
 
         /// <summary>

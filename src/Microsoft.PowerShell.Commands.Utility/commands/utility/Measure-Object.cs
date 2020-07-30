@@ -625,10 +625,10 @@ namespace Microsoft.PowerShell.Commands
             int factor = isMin ? 1 : -1;
 
             double temp;
-            currentValue = ((objValue != null) && LanguagePrimitives.TryConvertTo<double>(objValue, out temp)) ? temp : currentValue;
-            statValue = ((statValue != null) && LanguagePrimitives.TryConvertTo<double>(statValue, out temp)) ? temp : statValue;
+            currentValue = ((objValue is not null) && LanguagePrimitives.TryConvertTo<double>(objValue, out temp)) ? temp : currentValue;
+            statValue = ((statValue is not null) && LanguagePrimitives.TryConvertTo<double>(statValue, out temp)) ? temp : statValue;
 
-            if (currentValue != null && statValue != null && !currentValue.GetType().Equals(statValue.GetType()))
+            if (currentValue is not null && statValue is not null && !currentValue.GetType().Equals(statValue.GetType()))
             {
                 currentValue = PSObject.AsPSObject(currentValue).ToString();
                 statValue = PSObject.AsPSObject(statValue).ToString();
@@ -788,7 +788,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="errorId">The error ID to write.</param>
         private void WritePropertyNotFoundError(string propertyName, string errorId)
         {
-            Diagnostics.Assert(Property != null, "no property and no InputObject should have been addressed");
+            Diagnostics.Assert(Property is not null, "no property and no InputObject should have been addressed");
             ErrorRecord errorRecord = new ErrorRecord(
                     PSTraceSource.NewArgumentException("Property"),
                     errorId,
@@ -816,7 +816,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (string propertyName in _statistics.Keys)
             {
                 Statistics stat = _statistics[propertyName];
-                if (stat.count == 0 && Property != null)
+                if (stat.count == 0 && Property is not null)
                 {
                     // Why are there two different ids for this error?
                     string errorId = (IsMeasuringGeneric) ? "GenericMeasurePropertyNotFound" : "TextMeasurePropertyNotFound";
@@ -842,7 +842,7 @@ namespace Microsoft.PowerShell.Commands
                     mi = CreateTextMeasureInfo(stat);
 
                 // Set common properties.
-                if (Property != null)
+                if (Property is not null)
                     mi.Property = propertyName;
 
                 WriteObject(mi);
@@ -879,7 +879,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_measureMax)
             {
-                if (shouldUseGenericMeasureInfo && (stat.max != null))
+                if (shouldUseGenericMeasureInfo && (stat.max is not null))
                 {
                     double temp;
                     LanguagePrimitives.TryConvertTo<double>(stat.max, out temp);
@@ -893,7 +893,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_measureMin)
             {
-                if (shouldUseGenericMeasureInfo && (stat.min != null))
+                if (shouldUseGenericMeasureInfo && (stat.min is not null))
                 {
                     double temp;
                     LanguagePrimitives.TryConvertTo<double>(stat.min, out temp);
@@ -912,12 +912,12 @@ namespace Microsoft.PowerShell.Commands
                 gmi.Sum = sum;
                 gmi.Average = average;
                 gmi.StandardDeviation = StandardDeviation;
-                if (max != null)
+                if (max is not null)
                 {
                     gmi.Maximum = (double)max;
                 }
 
-                if (min != null)
+                if (min is not null)
                 {
                     gmi.Minimum = (double)min;
                 }

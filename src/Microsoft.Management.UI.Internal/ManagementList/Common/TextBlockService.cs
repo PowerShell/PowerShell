@@ -49,7 +49,7 @@ namespace Microsoft.Management.UI.Internal
 
         private static void UpdateIsTextTrimmed(TextBlock textBlock)
         {
-            Debug.Assert(textBlock != null, "textblock not null");
+            Debug.Assert(textBlock is not null, "textblock not null");
 
             if (textBlock.TextWrapping != TextWrapping.NoWrap || textBlock.TextTrimming == TextTrimming.None)
             {

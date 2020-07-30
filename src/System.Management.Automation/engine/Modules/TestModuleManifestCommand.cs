@@ -129,10 +129,10 @@ namespace Microsoft.PowerShell.Commands
                     null,
                     null);
 
-                    if (module != null)
+                    if (module is not null)
                     {
                         // Validate file existence
-                        if (module.RequiredAssemblies != null)
+                        if (module.RequiredAssemblies is not null)
                         {
                             foreach (string requiredAssembliespath in module.RequiredAssemblies)
                             {
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
                         LoadModuleManifestData(scriptInfo, ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.WriteWarnings, out data, out localizedData, ref containerErrors);
                         ModuleSpecification[] nestedModules;
                         GetScalarFromData(data, scriptInfo.Path, "NestedModules", ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.WriteWarnings, out nestedModules);
-                        if (nestedModules != null)
+                        if (nestedModules is not null)
                         {
                             foreach (ModuleSpecification nestedModule in nestedModules)
                             {
@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
 
                         ModuleSpecification[] requiredModules;
                         GetScalarFromData(data, scriptInfo.Path, "RequiredModules", ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.WriteWarnings, out requiredModules);
-                        if (requiredModules != null)
+                        if (requiredModules is not null)
                         {
                             foreach (ModuleSpecification requiredModule in requiredModules)
                             {
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
 
                         string[] fileListPaths;
                         GetScalarFromData(data, scriptInfo.Path, "FileList", ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.WriteWarnings, out fileListPaths);
-                        if (fileListPaths != null)
+                        if (fileListPaths is not null)
                         {
                             foreach (string fileListPath in fileListPaths)
                             {
@@ -218,7 +218,7 @@ namespace Microsoft.PowerShell.Commands
 
                         ModuleSpecification[] moduleListModules;
                         GetScalarFromData(data, scriptInfo.Path, "ModuleList", ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.WriteWarnings, out moduleListModules);
-                        if (moduleListModules != null)
+                        if (moduleListModules is not null)
                         {
                             foreach (ModuleSpecification moduleListModule in moduleListModules)
                             {
@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
                 catch (ArgumentException) { }
 
                 Version version;
-                if (parent != null && Version.TryParse(parent.Name, out version))
+                if (parent is not null && Version.TryParse(parent.Name, out version))
                 {
                     if (!version.Equals(module.Version))
                     {
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteVerbose(Modules.ModuleVersionEqualsToVersionFolder);
                 }
 
-                if (module != null)
+                if (module is not null)
                 {
                     WriteObject(module);
                 }

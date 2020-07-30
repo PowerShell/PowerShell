@@ -20,7 +20,7 @@ namespace mvc.Controllers
             {
                 {"Status", "FAILED"}
             };
-            if (HttpContext.Connection.ClientCertificate != null)
+            if (HttpContext.Connection.ClientCertificate is not null)
             {
                 output = new Hashtable
                 {

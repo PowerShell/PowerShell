@@ -31,7 +31,7 @@ namespace System.Management.Automation.ComInterop
         public static bool IsComObject(object value)
         {
             return
-                (value != null) &&
+                (value is not null) &&
                 (!WinRTHelper.IsWinRTType(value.GetType())) &&
                 ComObject.IsComObject(value);
         }
@@ -353,7 +353,7 @@ namespace System.Management.Automation.ComInterop
             public override bool Equals(object obj)
             {
                 ComGetMemberBinder other = obj as ComGetMemberBinder;
-                return other != null &&
+                return other is not null &&
                     _CanReturnCallables == other._CanReturnCallables &&
                     _originalBinder.Equals(other._originalBinder);
             }
@@ -392,7 +392,7 @@ namespace System.Management.Automation.ComInterop
             public override bool Equals(object obj)
             {
                 ComInvokeMemberBinder other = obj as ComInvokeMemberBinder;
-                return other != null &&
+                return other is not null &&
                     IsPropertySet == other.IsPropertySet &&
                     _originalBinder.Equals(other._originalBinder);
             }

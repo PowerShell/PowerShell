@@ -185,7 +185,7 @@ namespace System.Management.Automation.Interpreter
         {
             object type = frame.Pop();
             object obj = frame.Pop();
-            frame.Push(ScriptingRuntimeHelpers.BooleanToObject(obj != null && (object)obj.GetType() == type));
+            frame.Push(ScriptingRuntimeHelpers.BooleanToObject(obj is not null && (object)obj.GetType() == type));
             return +1;
         }
 

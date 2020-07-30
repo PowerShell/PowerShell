@@ -64,7 +64,7 @@ namespace System.Management.Automation
             _name = name;
             _parameterType = parameterType;
 
-            if (attributes != null)
+            if (attributes is not null)
             {
                 Attributes = attributes;
             }

@@ -52,7 +52,7 @@ namespace Microsoft.Management.UI.Internal
 
             double padding = 0;
 
-            if (parameter != null)
+            if (parameter is not null)
             {
                 padding = double.Parse((string)parameter, CultureInfo.InvariantCulture);
             }

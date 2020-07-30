@@ -31,7 +31,7 @@ namespace System.Management.Automation.Remoting.WSMan
         internal static void RaiseShuttingDownEvent()
         {
             EventHandler handler = ShuttingDown;
-            if (handler != null)
+            if (handler is not null)
             {
                 handler(null, EventArgs.Empty);
             }
@@ -43,7 +43,7 @@ namespace System.Management.Automation.Remoting.WSMan
         internal static void RaiseActiveSessionsChangedEvent(ActiveSessionsChangedEventArgs eventArgs)
         {
             EventHandler<ActiveSessionsChangedEventArgs> handler = ActiveSessionsChanged;
-            if (handler != null)
+            if (handler is not null)
             {
                 handler(null, eventArgs);
             }

@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal bool IsFormatInfoData(PSObject so)
         {
             var fid = PSObject.Base(so) as FormatInfoData;
-            if (fid != null)
+            if (fid is not null)
             {
                 if (fid is FormatStartData ||
                     fid is FormatEndData ||
@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal object Deserialize(PSObject so)
         {
             var fid = PSObject.Base(so) as FormatInfoData;
-            if (fid != null)
+            if (fid is not null)
             {
                 if (fid is FormatStartData ||
                     fid is FormatEndData ||
@@ -242,7 +242,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (cannotBeNull)
                 VerifyDataNotNull(objRaw, property);
 
-            if (objRaw != null && t != objRaw.GetType())
+            if (objRaw is not null && t != objRaw.GetType())
             {
                 string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_InvalidPropertyType, t.Name, property);
 
@@ -330,14 +330,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             FormatInfoData fid = FormatInfoDataClassFactory.CreateInstance(so, this);
 
-            if (fid != null)
+            if (fid is not null)
                 fid.Deserialize(so, this);
             return fid;
         }
 
         internal void VerifyDataNotNull(object obj, string name)
         {
-            if (obj != null)
+            if (obj is not null)
                 return;
 
             string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_NullDataMember, name);

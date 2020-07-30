@@ -389,14 +389,14 @@ $result
         {
             if (disposing)
             {
-                if (_timer != null)
+                if (_timer is not null)
                 {
                     _timer.Dispose();
                 }
 
                 _waitHandler.Dispose();
                 _cancel.Dispose();
-                if (_powershell != null)
+                if (_powershell is not null)
                 {
                     _powershell.Dispose();
                 }
@@ -423,7 +423,7 @@ $result
                 string targetComputerName = ComputerWMIHelper.ValidateComputerName(name, _shortLocalMachineName, _fullLocalMachineName, ref error);
                 if (targetComputerName is null)
                 {
-                    if (error != null)
+                    if (error is not null)
                     {
                         WriteError(error);
                     }
@@ -511,7 +511,7 @@ $result
             _cancel.Cancel();
             _waitHandler.Set();
 
-            if (_powershell != null)
+            if (_powershell is not null)
             {
                 _powershell.Stop();
                 _powershell.Dispose();
@@ -749,7 +749,7 @@ $result
                 object result = PSObject.Base(psObjectCollection[0]);
                 Hashtable data = result as Hashtable;
 
-                Dbg.Diagnostics.Assert(data != null, "data should never be null");
+                Dbg.Diagnostics.Assert(data is not null, "data should never be null");
                 Dbg.Diagnostics.Assert(data.Count == computerNames.Count, "data should contain results for all computers in computerNames");
 
                 foreach (string computer in computerNames)
@@ -1094,12 +1094,12 @@ $result
             _cancel.Cancel();
             _waitHandler.Set();
 
-            if (_timer != null)
+            if (_timer is not null)
             {
                 _timer.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
             }
 
-            if (_powershell != null)
+            if (_powershell is not null)
             {
                 _powershell.Stop();
                 _powershell.Dispose();
@@ -1380,7 +1380,7 @@ $result
             string targetComputer = ComputerWMIHelper.ValidateComputerName(ComputerName, _shortLocalMachineName, _fullLocalMachineName, ref targetError);
             if (targetComputer is null)
             {
-                if (targetError != null)
+                if (targetError is not null)
                 {
                     WriteError(targetError);
                 }
@@ -1414,7 +1414,7 @@ $result
             }
 
             // Check the length of the new name
-            if (newName != null && newName.Length > ComputerWMIHelper.NetBIOSNameMaxLength)
+            if (newName is not null && newName.Length > ComputerWMIHelper.NetBIOSNameMaxLength)
             {
                 string truncatedName = newName.Substring(0, ComputerWMIHelper.NetBIOSNameMaxLength);
                 string query = StringUtil.Format(ComputerResources.TruncateNetBIOSName, truncatedName);
@@ -1472,7 +1472,7 @@ $result
                         // If the target computer is not in a domain, just use null for the UserName and Password
                         string dUserName = null;
                         string dPassword = null;
-                        if (((bool)cimInstance.CimInstanceProperties["PartOfDomain"].Value) && (DomainCredential != null))
+                        if (((bool)cimInstance.CimInstanceProperties["PartOfDomain"].Value) && (DomainCredential is not null))
                         {
                             dUserName = DomainCredential.UserName;
                             dPassword = Utils.GetStringFromSecureString(DomainCredential.Password);
@@ -1916,10 +1916,10 @@ $result
         {
             string separator = ",";
             RegistryKey regKey = Registry.CurrentUser.OpenSubKey(@"Control Panel\International");
-            if (regKey != null)
+            if (regKey is not null)
             {
                 object sListValue = regKey.GetValue("sList");
-                if (sListValue != null)
+                if (sListValue is not null)
                 {
                     separator = sListValue.ToString();
                 }

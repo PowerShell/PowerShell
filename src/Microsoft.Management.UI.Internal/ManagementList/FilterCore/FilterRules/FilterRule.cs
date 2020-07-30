@@ -68,7 +68,7 @@ namespace Microsoft.Management.UI.Internal
         {
             var eh = this.EvaluationResultInvalidated;
 
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this, new EventArgs());
             }

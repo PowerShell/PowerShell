@@ -109,7 +109,7 @@ namespace System.Management.Automation.Remoting
 
                 _activeCmdTransportManagers.Clear();
 
-                if (_registeredShutDownWaitHandle != null)
+                if (_registeredShutDownWaitHandle is not null)
                 {
                     // This will not wait for the callback to complete.
                     _registeredShutDownWaitHandle.Unregister(null);
@@ -119,14 +119,14 @@ namespace System.Management.Automation.Remoting
                 // Delete the context only if isShuttingDown != true. isShuttingDown will
                 // be true only when the method is called from RegisterWaitForSingleObject
                 // handler..in which case the context will be freed from the callback.
-                if (_shutDownContext != null)
+                if (_shutDownContext is not null)
                 {
                     _shutDownContext = null;
                 }
 
                 // This might happen when client did not send a receive request
                 // but the server is closing
-                if (_requestDetails != null)
+                if (_requestDetails is not null)
                 {
                     // Notify that no more data is being sent on this transport.
                     WSManNativeApi.WSManPluginReceiveResult(

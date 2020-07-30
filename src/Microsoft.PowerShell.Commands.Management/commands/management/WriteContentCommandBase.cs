@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 _pipingPaths = false;
             }
@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Make sure to clean up the content writers that are already there
 
-                if (contentStreams != null && contentStreams.Count > 0)
+                if (contentStreams is not null && contentStreams.Count > 0)
                 {
                     CloseContent(contentStreams, false);
                     _contentWritersOpen = false;
@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (ContentHolder holder in contentStreams)
                 {
-                    if (holder.Writer != null)
+                    if (holder.Writer is not null)
                     {
                         IList result = null;
                         try
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
                             continue;
                         }
 
-                        if (result != null && result.Count > 0 && PassThru)
+                        if (result is not null && result.Count > 0 && PassThru)
                         {
                             WriteContentObject(result, result.Count, holder.PathInfo, currentContext);
                         }
@@ -236,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 return InvokeProvider.Content.GetContentWriterDynamicParameters(Path[0], context);
             }
@@ -308,9 +308,9 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                if (writers != null && writers.Count > 0)
+                if (writers is not null && writers.Count > 0)
                 {
-                    if (writers.Count == 1 && writers[0] != null)
+                    if (writers.Count == 1 && writers[0] is not null)
                     {
                         ContentHolder holder =
                             new ContentHolder(pathInfo, null, writers[0]);

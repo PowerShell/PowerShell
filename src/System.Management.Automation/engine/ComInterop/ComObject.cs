@@ -46,7 +46,7 @@ namespace System.Management.Automation.ComInterop
             // Marshal.Get/SetComObjectData has a LinkDemand for UnmanagedCode which will turn into
             // a full demand. We could avoid this by making this method SecurityCritical
             object data = Marshal.GetComObjectData(rcw, s_comObjectInfoKey);
-            if (data != null)
+            if (data is not null)
             {
                 return (ComObject)data;
             }
@@ -54,7 +54,7 @@ namespace System.Management.Automation.ComInterop
             lock (s_comObjectInfoKey)
             {
                 data = Marshal.GetComObjectData(rcw, s_comObjectInfoKey);
-                if (data != null)
+                if (data is not null)
                 {
                     return (ComObject)data;
                 }
@@ -72,7 +72,7 @@ namespace System.Management.Automation.ComInterop
         // Expression that unwraps ComObject
         internal static MemberExpression RcwFromComObject(Expression comObject)
         {
-            Debug.Assert(comObject != null && typeof(ComObject).IsAssignableFrom(comObject.Type), "must be ComObject");
+            Debug.Assert(comObject is not null && typeof(ComObject).IsAssignableFrom(comObject.Type), "must be ComObject");
 
             return Expression.Property(
                 Helpers.Convert(comObject, typeof(ComObject)),
@@ -92,7 +92,7 @@ namespace System.Management.Automation.ComInterop
         private static ComObject CreateComObject(object rcw)
         {
             IDispatch dispatchObject = rcw as IDispatch;
-            if (dispatchObject != null)
+            if (dispatchObject is not null)
             {
                 // We can do method invocations on IDispatch objects
                 return new IDispatchComObject(dispatchObject);
@@ -122,7 +122,7 @@ namespace System.Management.Automation.ComInterop
         internal static bool IsComObject(object obj)
         {
             // we can't use System.Runtime.InteropServices.Marshal.IsComObject(obj) since it doesn't work in partial trust
-            return obj != null && s_comObjectType.IsAssignableFrom(obj.GetType());
+            return obj is not null && s_comObjectType.IsAssignableFrom(obj.GetType());
         }
     }
 }

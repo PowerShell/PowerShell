@@ -64,20 +64,20 @@ namespace System.Management.Automation
             _scriptPosition = scriptPosition;
 
             ExecutionContext contextToUse = null;
-            if ((commandInfo != null) && (commandInfo.Context != null))
+            if ((commandInfo is not null) && (commandInfo.Context is not null))
             {
                 contextToUse = commandInfo.Context;
             }
-            else if (context != null)
+            else if (context is not null)
             {
                 contextToUse = context;
             }
 
             // Populate the history ID of this command
-            if (contextToUse != null)
+            if (contextToUse is not null)
             {
                 Runspaces.LocalRunspace localRunspace = contextToUse.CurrentRunspace as Runspaces.LocalRunspace;
-                if (localRunspace != null && localRunspace.History != null)
+                if (localRunspace is not null && localRunspace.History is not null)
                 {
                     HistoryId = localRunspace.History.GetNextHistoryId();
                 }
@@ -122,7 +122,7 @@ namespace System.Management.Automation
             // object into an int[] before assigning to pipelineIterationInfo.
             //
             var list = (ArrayList)SerializationUtilities.GetPsObjectPropertyBaseObject(psObject, "InvocationInfo_PipelineIterationInfo");
-            if (list != null)
+            if (list is not null)
             {
                 PipelineIterationInfo = (int[])list.ToArray(typeof(int));
             }
@@ -139,7 +139,7 @@ namespace System.Management.Automation
 
             Dictionary<string, object> dictionary = new Dictionary<string, object>();
 
-            if (hashtable != null)
+            if (hashtable is not null)
             {
                 foreach (DictionaryEntry entry in hashtable)
                 {
@@ -156,7 +156,7 @@ namespace System.Management.Automation
 
             _unboundArguments = new List<object>();
 
-            if (unboundArguments != null)
+            if (unboundArguments is not null)
             {
                 foreach (object o in unboundArguments)
                 {
@@ -167,7 +167,7 @@ namespace System.Management.Automation
             object value = SerializationUtilities.GetPropertyValue(psObject, "SerializeExtent");
             bool serializeExtent = false;
 
-            if (value != null)
+            if (value is not null)
                 serializeExtent = (bool)value;
 
             if (serializeExtent)
@@ -260,7 +260,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (ScriptPosition.StartScriptPosition != null)
+                if (ScriptPosition.StartScriptPosition is not null)
                 {
                     return ScriptPosition.StartScriptPosition.Line;
                 }
@@ -372,7 +372,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (DisplayScriptPosition != null)
+                if (DisplayScriptPosition is not null)
                 {
                     return DisplayScriptPosition;
                 }
@@ -390,7 +390,7 @@ namespace System.Management.Automation
         /// </summary>
         internal string GetFullScript()
         {
-            return (ScriptPosition != null) && (ScriptPosition.StartScriptPosition != null) ?
+            return (ScriptPosition is not null) && (ScriptPosition.StartScriptPosition is not null) ?
                 ScriptPosition.StartScriptPosition.GetFullScript() : null;
         }
 
@@ -432,7 +432,7 @@ namespace System.Management.Automation
             RemotingEncoder.AddNoteProperty<object>(psObject, "InvocationInfo_UnboundArguments", () => this.UnboundArguments);
 
             ScriptExtent extent = DisplayScriptPosition as ScriptExtent;
-            if (extent != null)
+            if (extent is not null)
             {
                 extent.ToPSObjectForRemoting(psObject);
                 RemotingEncoder.AddNoteProperty(psObject, "SerializeExtent", () => true);
@@ -475,7 +475,7 @@ namespace System.Management.Automation
 
             object ctype = SerializationUtilities.GetPsObjectPropertyBaseObject(psObject, "CommandInfo_CommandType");
 
-            if (ctype != null)
+            if (ctype is not null)
             {
                 CommandTypes type = RemotingDecoder.GetPropertyValue<CommandTypes>(psObject, "CommandInfo_CommandType");
                 string name = RemotingDecoder.GetPropertyValue<string>(psObject, "CommandInfo_Name");
@@ -498,7 +498,7 @@ namespace System.Management.Automation
         /// </remarks>
         internal static void ToPSObjectForRemoting(CommandInfo commandInfo, PSObject psObject)
         {
-            if (commandInfo != null)
+            if (commandInfo is not null)
             {
                 RemotingEncoder.AddNoteProperty<CommandTypes>(psObject, "CommandInfo_CommandType", () => commandInfo.CommandType);
                 RemotingEncoder.AddNoteProperty<string>(psObject, "CommandInfo_Definition", () => commandInfo.Definition);

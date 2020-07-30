@@ -120,7 +120,7 @@ namespace System.Management.Automation
             {
                 case RemotingDataType.CreatePowerShell:
                     {
-                        Dbg.Assert(CreateAndInvokePowerShell != null,
+                        Dbg.Assert(CreateAndInvokePowerShell is not null,
                             "The ServerRunspacePoolDriver should subscribe to all data structure handler events");
 
                         CreateAndInvokePowerShell.SafeInvoke(this, new RemoteDataEventArgs<RemoteDataObject<PSObject>>(receivedData));
@@ -130,7 +130,7 @@ namespace System.Management.Automation
 
                 case RemotingDataType.GetCommandMetadata:
                     {
-                        Dbg.Assert(GetCommandMetadata != null,
+                        Dbg.Assert(GetCommandMetadata is not null,
                             "The ServerRunspacePoolDriver should subscribe to all data structure handler events");
 
                         GetCommandMetadata.SafeInvoke(this, new RemoteDataEventArgs<RemoteDataObject<PSObject>>(receivedData));
@@ -140,7 +140,7 @@ namespace System.Management.Automation
 
                 case RemotingDataType.RemoteRunspaceHostResponseData:
                     {
-                        Dbg.Assert(HostResponseReceived != null,
+                        Dbg.Assert(HostResponseReceived is not null,
                             "The ServerRunspacePoolDriver should subscribe to all data structure handler events");
 
                         RemoteHostResponse remoteHostResponse = RemoteHostResponse.Decode(receivedData.Data);
@@ -156,7 +156,7 @@ namespace System.Management.Automation
 
                 case RemotingDataType.SetMaxRunspaces:
                     {
-                        Dbg.Assert(SetMaxRunspacesReceived != null,
+                        Dbg.Assert(SetMaxRunspacesReceived is not null,
                             "The ServerRunspacePoolDriver should subscribe to all data structure handler events");
 
                         SetMaxRunspacesReceived.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
@@ -166,7 +166,7 @@ namespace System.Management.Automation
 
                 case RemotingDataType.SetMinRunspaces:
                     {
-                        Dbg.Assert(SetMinRunspacesReceived != null,
+                        Dbg.Assert(SetMinRunspacesReceived is not null,
                             "The ServerRunspacePoolDriver should subscribe to all data structure handler events");
 
                         SetMinRunspacesReceived.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
@@ -176,7 +176,7 @@ namespace System.Management.Automation
 
                 case RemotingDataType.AvailableRunspaces:
                     {
-                        Dbg.Assert(GetAvailableRunspacesReceived != null,
+                        Dbg.Assert(GetAvailableRunspacesReceived is not null,
                             "The ServerRunspacePoolDriver should subscribe to all data structure handler events");
 
                         GetAvailableRunspacesReceived.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
@@ -186,7 +186,7 @@ namespace System.Management.Automation
 
                 case RemotingDataType.ResetRunspaceState:
                     {
-                        Dbg.Assert(ResetRunspaceState != null,
+                        Dbg.Assert(ResetRunspaceState is not null,
                             "The ServerRunspacePoolDriver should subscribe to all data structure handler events.");
 
                         ResetRunspaceState.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
@@ -213,7 +213,7 @@ namespace System.Management.Automation
             if (instanceId != Guid.Empty)
             {
                 cmdTransportManager = _transportManager.GetCommandTransportManager(instanceId);
-                Dbg.Assert(cmdTransportManager.TypeTable != null, "This should be already set in managed C++ code");
+                Dbg.Assert(cmdTransportManager.TypeTable is not null, "This should be already set in managed C++ code");
             }
 
             ServerPowerShellDataStructureHandler dsHandler =
@@ -244,7 +244,7 @@ namespace System.Management.Automation
                     foreach (object o in _associatedShells.Values)
                     {
                         ServerPowerShellDataStructureHandler result = o as ServerPowerShellDataStructureHandler;
-                        if (result != null)
+                        if (result is not null)
                         {
                             return result;
                         }
@@ -266,7 +266,7 @@ namespace System.Management.Automation
 
             // if data structure handler is not found, then association has already been
             // removed, discard message
-            if (dsHandler != null)
+            if (dsHandler is not null)
             {
                 dsHandler.ProcessReceivedData(rcvdData);
             }
@@ -355,7 +355,7 @@ namespace System.Management.Automation
         /// data structure handler class</remarks>
         private void SendDataAsync(RemoteDataObject data)
         {
-            Dbg.Assert(data != null, "Cannot send null object.");
+            Dbg.Assert(data is not null, "Cannot send null object.");
             _transportManager.SendDataToClient(data, true);
         }
 
@@ -463,7 +463,7 @@ namespace System.Management.Automation
             _streamSerializationOptions = remoteStreamOptions;
             transportManager.Closing += HandleTransportClosing;
 
-            if (localPowerShell != null)
+            if (localPowerShell is not null)
             {
                 localPowerShell.RunspaceAssigned += LocalPowerShell_RunspaceAssigned;
             }
@@ -627,7 +627,7 @@ namespace System.Management.Automation
             {
                 case RemotingDataType.StopPowerShell:
                     {
-                        Dbg.Assert(StopPowerShellReceived != null,
+                        Dbg.Assert(StopPowerShellReceived is not null,
                             "ServerPowerShellDriver should subscribe to all data structure handler events");
                         StopPowerShellReceived.SafeInvoke(this, EventArgs.Empty);
                     }
@@ -636,7 +636,7 @@ namespace System.Management.Automation
 
                 case RemotingDataType.PowerShellInput:
                     {
-                        Dbg.Assert(InputReceived != null,
+                        Dbg.Assert(InputReceived is not null,
                             "ServerPowerShellDriver should subscribe to all data structure handler events");
                         InputReceived.SafeInvoke(this, new RemoteDataEventArgs<object>(receivedData.Data));
                     }
@@ -645,7 +645,7 @@ namespace System.Management.Automation
 
                 case RemotingDataType.PowerShellInputEnd:
                     {
-                        Dbg.Assert(InputEndReceived != null,
+                        Dbg.Assert(InputEndReceived is not null,
                             "ServerPowerShellDriver should subscribe to all data structure handler events");
                         InputEndReceived.SafeInvoke(this, EventArgs.Empty);
                     }
@@ -654,7 +654,7 @@ namespace System.Management.Automation
 
                 case RemotingDataType.RemotePowerShellHostResponseData:
                     {
-                        Dbg.Assert(HostResponseReceived != null,
+                        Dbg.Assert(HostResponseReceived is not null,
                             "ServerPowerShellDriver should subscribe to all data structure handler events");
 
                         RemoteHostResponse remoteHostResponse = RemoteHostResponse.Decode(receivedData.Data);
@@ -678,7 +678,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void RaiseRemoveAssociationEvent()
         {
-            Dbg.Assert(RemoveAssociation != null, @"The ServerRunspacePoolDataStructureHandler should subscribe
+            Dbg.Assert(RemoveAssociation is not null, @"The ServerRunspacePoolDataStructureHandler should subscribe
                 to the RemoveAssociation event of ServerPowerShellDataStructureHandler");
             RemoveAssociation.SafeInvoke(this, EventArgs.Empty);
         }
@@ -791,7 +791,7 @@ namespace System.Management.Automation
         /// data structure handler class</remarks>
         private void SendDataAsync(RemoteDataObject data)
         {
-            Dbg.Assert(data != null, "Cannot send null object.");
+            Dbg.Assert(data is not null, "Cannot send null object.");
             // this is from a command execution..let transport manager collect
             // as much data as possible and send bigger buffer to client.
             _transportManager.SendDataToClient(data, false);

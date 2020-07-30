@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="endTime">EndTime of execution.</param>
         internal HistoryInfo(long pipelineId, string cmdline, PipelineState status, DateTime startTime, DateTime endTime)
         {
-            Dbg.Assert(cmdline != null, "caller should validate the parameter");
+            Dbg.Assert(cmdline is not null, "caller should validate the parameter");
             _pipelineId = pipelineId;
             CommandLine = cmdline;
             ExecutionStatus = status;
@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 HistoryInfo entry = CoreGetEntry(id);
-                if (entry != null)
+                if (entry is not null)
                 {
                     entry.SetStatus(status);
                     entry.SetEndTime(endTime);
@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
                 ReallocateBufferIfNeeded();
 
                 HistoryInfo entry = CoreGetEntry(id);
-                if (entry != null)
+                if (entry is not null)
                     if (entry.Cleared == false)
                         return entry.Clone();
 
@@ -572,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 HistoryInfo entry = CoreGetEntry(id);
-                if (entry != null)
+                if (entry is not null)
                 {
                     entry.Cleared = true;
                     _countEntriesInBuffer--;
@@ -663,7 +663,7 @@ namespace Microsoft.PowerShell.Commands
             for (int i = 0; i < _buffer.Length; i++)
             {
                 // assign the first entry in the buffer as min.
-                if (_buffer[i] != null && _buffer[i].Cleared == false)
+                if (_buffer[i] is not null && _buffer[i].Cleared == false)
                 {
                     minID = _buffer[i].Id;
                     break;
@@ -672,7 +672,7 @@ namespace Microsoft.PowerShell.Commands
             // check for the minimum id that is not cleared
             for (int i = 0; i < _buffer.Length; i++)
             {
-                if (_buffer[i] != null && _buffer[i].Cleared == false)
+                if (_buffer[i] is not null && _buffer[i].Cleared == false)
                     if (minID > _buffer[i].Id)
                         minID = _buffer[i].Id;
             }
@@ -762,8 +762,8 @@ namespace Microsoft.PowerShell.Commands
         {
             int historySize = 0;
             var executionContext = LocalPipeline.GetExecutionContextFromTLS();
-            object obj = (executionContext != null) ? executionContext.GetVariableValue(SpecialVariables.HistorySizeVarPath) : null;
-            if (obj != null)
+            object obj = (executionContext is not null) ? executionContext.GetVariableValue(SpecialVariables.HistorySizeVarPath) : null;
+            if (obj is not null)
             {
                 try
                 {
@@ -911,7 +911,7 @@ namespace Microsoft.PowerShell.Commands
         {
             History history = ((LocalRunspace)Context.CurrentRunspace).History;
 
-            if (_id != null)
+            if (_id is not null)
             {
                 if (!_countParameterSpecified)
                 {
@@ -923,7 +923,7 @@ namespace Microsoft.PowerShell.Commands
 
                         HistoryInfo entry = history.GetEntry(id);
 
-                        if (entry != null && entry.Id == id)
+                        if (entry is not null && entry.Id == id)
                         {
                             WriteObject(entry);
                         }
@@ -1024,7 +1024,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (_id != null)
+                if (_id is not null)
                 {
                     // Id has been set already.
                     _multipleIdProvided = true;
@@ -1055,7 +1055,7 @@ namespace Microsoft.PowerShell.Commands
 
             var ctxRunspace = (LocalRunspace)Context.CurrentRunspace;
             History history = ctxRunspace.History;
-            Dbg.Assert(history != null, "History should be non null");
+            Dbg.Assert(history is not null, "History should be non null");
 
             // Get the history entry to invoke
             HistoryInfo entry = GetHistoryEntryToInvoke(history);
@@ -1123,7 +1123,7 @@ namespace Microsoft.PowerShell.Commands
                     // This ensures that the command being run as nested runs in the correct language mode, because CreatePipelineProcessor()
                     // always forces CommandOrigin to Internal for nested running commands, and Command.CreateCommandProcessor() forces Internal
                     // commands to always run in FullLanguage mode unless in a nested prompt.
-                    if (localRunspace != null)
+                    if (localRunspace is not null)
                     {
                         localRunspace.InInternalNestedPrompt = ps.IsNested;
                     }
@@ -1138,7 +1138,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     history.RemoveFromInvokeHistoryEntrySet(entry);
 
-                    if (localRunspace != null)
+                    if (localRunspace is not null)
                     {
                         localRunspace.InInternalNestedPrompt = false;
                     }
@@ -1197,7 +1197,7 @@ namespace Microsoft.PowerShell.Commands
                 PopulateIdAndCommandLine();
                 // User specified a commandline. Get list of all history entries
                 // and find latest match
-                if (_commandLine != null)
+                if (_commandLine is not null)
                 {
                     HistoryInfo[] entries = history.GetEntries(0, -1, false);
 
@@ -1384,16 +1384,16 @@ namespace Microsoft.PowerShell.Commands
         void ProcessRecord()
         {
             History history = ((LocalRunspace)Context.CurrentRunspace).History;
-            Dbg.Assert(history != null, "History should be non null");
+            Dbg.Assert(history is not null, "History should be non null");
 
-            if (InputObject != null)
+            if (InputObject is not null)
             {
                 foreach (PSObject input in InputObject)
                 {
                     // Wrap the inputobject in PSObject and convert it to
                     // HistoryInfo object.
                     HistoryInfo infoToAdd = GetHistoryInfoObject(input);
-                    if (infoToAdd != null)
+                    if (infoToAdd is not null)
                     {
                         long id = history.AddEntry
                                   (
@@ -1761,7 +1761,7 @@ namespace Microsoft.PowerShell.Commands
                 );
             }
             // if id parameter is not present
-            if (_id != null)
+            if (_id is not null)
             {
                 // if count parameter is not present
                 if (!_countParameterSpecified)
@@ -1771,7 +1771,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         Dbg.Assert(id > 0, "ValidateRangeAttribute should not allow this");
                         HistoryInfo entry = _history.GetEntry(id);
-                        if (entry != null && entry.Id == id)
+                        if (entry is not null && entry.Id == id)
                         {
                             _history.ClearEntry(entry.Id);
                         }
@@ -1871,7 +1871,7 @@ namespace Microsoft.PowerShell.Commands
                 );
             }
             // if command line is not present
-            if (_commandline != null)
+            if (_commandline is not null)
             {
                 // if count parameter is not present
                 if (!_countParameterSpecified)
@@ -1968,7 +1968,7 @@ namespace Microsoft.PowerShell.Commands
             // Clear the History value.
             foreach (HistoryInfo entry in _entries)
             {
-                if (entry != null && entry.Cleared == false)
+                if (entry is not null && entry.Cleared == false)
                     _history.ClearEntry(entry.Id);
             }
 

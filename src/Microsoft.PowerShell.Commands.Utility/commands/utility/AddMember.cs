@@ -225,7 +225,7 @@ namespace Microsoft.PowerShell.Commands
                 fdc.Add(new FieldDescription("Value"));
                 string prompt = StringUtil.Format(AddMember.Value1Prompt, _memberType);
                 Dictionary<string, PSObject> result = this.Host.UI.Prompt(prompt, null, fdc);
-                if (result != null)
+                if (result is not null)
                 {
                     _value1 = result["Value"].BaseObject;
                 }
@@ -349,7 +349,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (_typeName != null && string.IsNullOrWhiteSpace(_typeName))
+            if (_typeName is not null && string.IsNullOrWhiteSpace(_typeName))
             {
                 ThrowTerminatingError(NewError("TypeNameShouldNotBeEmpty", "TypeNameShouldNotBeEmpty", _typeName));
             }
@@ -437,7 +437,7 @@ namespace Microsoft.PowerShell.Commands
             if (!AddMemberToTarget(member))
                 return;
 
-            if (_typeName != null)
+            if (_typeName is not null)
             {
                 UpdateTypeNames();
             }
@@ -456,7 +456,7 @@ namespace Microsoft.PowerShell.Commands
         private bool AddMemberToTarget(PSMemberInfo member)
         {
             PSMemberInfo previousMember = _inputObject.Members[member.Name];
-            if (previousMember != null)
+            if (previousMember is not null)
             {
                 if (!_force)
                 {
@@ -508,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
                     result = true;
             }
 
-            if (result && _typeName != null)
+            if (result && _typeName is not null)
             {
                 UpdateTypeNames();
             }
@@ -559,7 +559,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string notePropertyName = arguments as string;
                 PSMemberTypes memberType;
-                if (notePropertyName != null && LanguagePrimitives.TryConvertTo<PSMemberTypes>(notePropertyName, out memberType))
+                if (notePropertyName is not null && LanguagePrimitives.TryConvertTo<PSMemberTypes>(notePropertyName, out memberType))
                 {
                     switch (memberType)
                     {
@@ -588,7 +588,7 @@ namespace Microsoft.PowerShell.Commands
             public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
             {
                 object target = PSObject.Base(inputData);
-                if (target != null && target.GetType().IsNumeric())
+                if (target is not null && target.GetType().IsNumeric())
                 {
                     var result = LanguagePrimitives.ConvertTo<string>(target);
                     return result;

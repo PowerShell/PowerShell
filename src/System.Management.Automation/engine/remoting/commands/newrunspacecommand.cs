@@ -384,7 +384,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void OnRunspacePSEventReceived(object sender, PSEventArgs e)
         {
-            if (this.Events != null)
+            if (this.Events is not null)
                 this.Events.AddForwardedEvent(e);
         }
 
@@ -431,7 +431,7 @@ namespace Microsoft.PowerShell.Commands
 
             // since we got state changed event..we dont need to listen on
             // URI redirections anymore
-            if (remoteRunspace != null)
+            if (remoteRunspace is not null)
             {
                 remoteRunspace.URIRedirectionReported -= HandleURIDirectionReported;
             }
@@ -474,11 +474,11 @@ namespace Microsoft.PowerShell.Commands
                             reason as PSRemotingTransportException;
                         string errorDetails = null;
                         int transErrorCode = 0;
-                        if (transException != null)
+                        if (transException is not null)
                         {
                             OpenRunspaceOperation senderAsOp = sender as OpenRunspaceOperation;
                             transErrorCode = transException.ErrorCode;
-                            if (senderAsOp != null)
+                            if (senderAsOp is not null)
                             {
                                 string host = senderAsOp.OperatedRunspace.ConnectionInfo.ComputerName;
 
@@ -515,11 +515,11 @@ namespace Microsoft.PowerShell.Commands
                         // add host identification information in data structure handler message
                         PSRemotingDataStructureException protoException = reason as PSRemotingDataStructureException;
 
-                        if (protoException != null)
+                        if (protoException is not null)
                         {
                             OpenRunspaceOperation senderAsOp = sender as OpenRunspaceOperation;
 
-                            if (senderAsOp != null)
+                            if (senderAsOp is not null)
                             {
                                 string host = senderAsOp.OperatedRunspace.ConnectionInfo.ComputerName;
 
@@ -552,11 +552,11 @@ namespace Microsoft.PowerShell.Commands
                             // In case of PSDirectException, we should output the precise error message
                             // in inner exception instead of the generic one in outer exception.
                             //
-                            if ((errorRecord.Exception != null) &&
-                                (errorRecord.Exception.InnerException != null))
+                            if ((errorRecord.Exception is not null) &&
+                                (errorRecord.Exception.InnerException is not null))
                             {
                                 PSDirectException ex = errorRecord.Exception.InnerException as PSDirectException;
-                                if (ex != null)
+                                if (ex is not null)
                                 {
                                     errorRecord = new ErrorRecord(errorRecord.Exception.InnerException,
                                                                   errorRecord.FullyQualifiedErrorId,
@@ -586,7 +586,7 @@ namespace Microsoft.PowerShell.Commands
                             "ConnectionUri", null);
                         string message =
                             GetMessage(RemotingErrorIdStrings.RemoteRunspaceClosed,
-                                        (connectionUri != null) ?
+                                        (connectionUri is not null) ?
                                         connectionUri.AbsoluteUri : string.Empty);
 
                         Action<Cmdlet> verboseWriter = delegate (Cmdlet cmdlet)
@@ -601,7 +601,7 @@ namespace Microsoft.PowerShell.Commands
                         // runspace may not have been opened in certain cases
                         // like when the max memory is set to 25MB, in such
                         // cases write an error record
-                        if (reason != null)
+                        if (reason is not null)
                         {
                             ErrorRecord errorRecord = new ErrorRecord(reason,
                                  "PSSessionStateClosed",
@@ -670,7 +670,7 @@ namespace Microsoft.PowerShell.Commands
                             WSManConnectionInfo originalWSManConnectionInfo = remoteRunspace.ConnectionInfo as WSManConnectionInfo;
                             WSManConnectionInfo newWSManConnectionInfo = null;
 
-                            if (originalWSManConnectionInfo != null)
+                            if (originalWSManConnectionInfo is not null)
                             {
                                 newWSManConnectionInfo = originalWSManConnectionInfo.Copy();
                                 newWSManConnectionInfo.EnableNetworkAccess = (newWSManConnectionInfo.EnableNetworkAccess || EnableNetworkAccess) ? true : false;
@@ -693,9 +693,9 @@ namespace Microsoft.PowerShell.Commands
 
                         RemoteRunspacePoolInternal rrsPool = remoteRunspace.RunspacePool.RemoteRunspacePoolInternal;
                         TypeTable typeTable = null;
-                        if ((rrsPool != null) &&
-                            (rrsPool.DataStructureHandler != null) &&
-                            (rrsPool.DataStructureHandler.TransportManager != null))
+                        if ((rrsPool is not null) &&
+                            (rrsPool.DataStructureHandler is not null) &&
+                            (rrsPool.DataStructureHandler.TransportManager is not null))
                         {
                             typeTable = rrsPool.DataStructureHandler.TransportManager.Fragmentor.TypeTable;
                         }
@@ -747,7 +747,7 @@ namespace Microsoft.PowerShell.Commands
                     WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
                     connectionInfo.ConnectionUri = ConnectionUri[i];
                     connectionInfo.ShellUri = ConfigurationName;
-                    if (CertificateThumbprint != null)
+                    if (CertificateThumbprint is not null)
                     {
                         connectionInfo.CertificateThumbprint = CertificateThumbprint;
                     }
@@ -768,7 +768,7 @@ namespace Microsoft.PowerShell.Commands
                         Utils.GetTypeTableFromExecutionContextTLS(), connectionInfo, this.Host,
                         this.SessionOption.ApplicationArguments, rsName, rsId);
 
-                    Dbg.Assert(remoteRunspace != null,
+                    Dbg.Assert(remoteRunspace is not null,
                             "RemoteRunspace object created using URI is null");
 
                     remoteRunspaces.Add(remoteRunspace);
@@ -823,7 +823,7 @@ namespace Microsoft.PowerShell.Commands
                     connectionInfo.AppName = ApplicationName;
                     connectionInfo.ShellUri = ConfigurationName;
                     connectionInfo.Scheme = scheme;
-                    if (CertificateThumbprint != null)
+                    if (CertificateThumbprint is not null)
                     {
                         connectionInfo.CertificateThumbprint = CertificateThumbprint;
                     }
@@ -1186,7 +1186,7 @@ namespace Microsoft.PowerShell.Commands
             // runspace pool object, which in turn passes it on to the server during
             // construction.  This way the friendly name can be returned when querying
             // the sever for disconnected sessions/runspaces.
-            if (Name != null && rsIndex < Name.Length)
+            if (Name is not null && rsIndex < Name.Length)
             {
                 rsName = Name[rsIndex];
             }
@@ -1359,7 +1359,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (operationStateEventArgs != null)
+            if (operationStateEventArgs is not null)
             {
                 FireEvent(operationStateEventArgs);
             }
@@ -1451,7 +1451,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (operationStateEventArgs != null)
+            if (operationStateEventArgs is not null)
             {
                 // Fire callbacks in list order.
                 FireEvent(operationStateEventArgs);

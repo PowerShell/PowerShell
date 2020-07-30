@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
 
             PSVariable variable = null;
 
-            if (value != null)
+            if (value is not null)
             {
                 variable = value as PSVariable;
                 if (variable is null)
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
 
             PSVariable item = SessionState.Internal.SetVariable(variable, Force, Context.Origin) as PSVariable;
 
-            if (writeItem && item != null)
+            if (writeItem && item is not null)
             {
                 WriteItemObject(item, item.Name, false);
             }
@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetValueOfItem(object item)
         {
             Dbg.Diagnostics.Assert(
-                item != null,
+                item is not null,
                 "Caller should verify the item parameter");
 
             // Call the base class to unwrap the DictionaryEntry
@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
             object value = base.GetValueOfItem(item);
 
             PSVariable var = item as PSVariable;
-            if (var != null)
+            if (var is not null)
             {
                 value = var.Value;
             }
@@ -212,7 +212,7 @@ namespace Microsoft.PowerShell.Commands
             bool result = false;
 
             PSVariable variable = item as PSVariable;
-            if (variable != null)
+            if (variable is not null)
             {
                 if ((variable.Options & ScopedItemOptions.Constant) != 0 ||
                     ((variable.Options & ScopedItemOptions.ReadOnly) != 0 && !Force))

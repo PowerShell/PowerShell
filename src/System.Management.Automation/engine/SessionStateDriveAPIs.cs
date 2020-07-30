@@ -80,7 +80,7 @@ namespace System.Management.Automation
 
             Collection<PSObject> successObjects = context.GetAccumulatedObjects();
 
-            if (successObjects != null &&
+            if (successObjects is not null &&
                 successObjects.Count > 0)
             {
                 Dbg.Diagnostics.Assert(
@@ -270,11 +270,11 @@ namespace System.Management.Automation
         private string GetProviderRootFromSpecifiedRoot(string root, ProviderInfo provider)
         {
             Dbg.Diagnostics.Assert(
-                root != null,
+                root is not null,
                 "Caller should have verified the root");
 
             Dbg.Diagnostics.Assert(
-                provider != null,
+                provider is not null,
                 "Caller should have verified the provider");
 
             string result = root;
@@ -292,7 +292,7 @@ namespace System.Management.Automation
 
                 // If a single path was resolved...
 
-                if (resolvedPaths != null &&
+                if (resolvedPaths is not null &&
                     resolvedPaths.Count == 1)
                 {
                     // and the provider used to resolve the path,
@@ -448,7 +448,7 @@ namespace System.Management.Automation
             {
                 result = processingScope.GetDrive(name);
 
-                if (result != null)
+                if (result is not null)
                 {
                     if (result.IsAutoMounted)
                     {
@@ -460,7 +460,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (result != null)
+                    if (result is not null)
                     {
                         s_tracer.WriteLine("Drive found in scope {0}", scopeID);
                         break;
@@ -542,7 +542,7 @@ namespace System.Management.Automation
                 {
                     result = scope.GetDrive(name);
 
-                    if (result != null)
+                    if (result is not null)
                     {
                         if (result.IsAutoMounted)
                         {
@@ -554,7 +554,7 @@ namespace System.Management.Automation
                             }
                         }
 
-                        if (result != null)
+                        if (result is not null)
                         {
                             break;
                         }
@@ -571,7 +571,7 @@ namespace System.Management.Automation
                 SessionStateScope scope = GetScopeByID(scopeID);
                 result = scope.GetDrive(name);
 
-                if (result != null)
+                if (result is not null)
                 {
                     if (result.IsAutoMounted)
                     {
@@ -653,7 +653,7 @@ namespace System.Management.Automation
                 DriveCmdletProvider driveProvider =
                     GetDriveProviderInstance(this.ExecutionContext.ProviderNames.FileSystem);
 
-                if (driveProvider != null)
+                if (driveProvider is not null)
                 {
                     // Create a new drive
                     string systemDriveName = systemDriveInfo.Name.Substring(0, 1);
@@ -702,7 +702,7 @@ namespace System.Management.Automation
 
                     newPSDriveInfo.DriveBeingCreated = false;
 
-                    if (result != null && !context.HasErrors())
+                    if (result is not null && !context.HasErrors())
                     {
                         // Create the drive in the global scope.
                         GlobalScope.NewDrive(result);
@@ -794,7 +794,7 @@ namespace System.Management.Automation
                 Exception exception = null;
                 s_tracer.WriteLine("Attempting to load module: {0}", moduleName);
                 CommandDiscovery.AutoloadSpecifiedModule(moduleName, context, commandInfo.Visibility, out exception);
-                if (exception != null)
+                if (exception is not null)
                 {
                     // Call-out to user code, catch-all OK
                 }
@@ -860,7 +860,7 @@ namespace System.Management.Automation
                 {
                 }
 
-                if (driveProvider != null)
+                if (driveProvider is not null)
                 {
                     CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
 
@@ -896,7 +896,7 @@ namespace System.Management.Automation
             bool result = false;
 
             // check that drive's provider type is FileSystem
-            if ((drive.Provider != null) && (!drive.Provider.NameEquals(this.ExecutionContext.ProviderNames.FileSystem)))
+            if ((drive.Provider is not null) && (!drive.Provider.NameEquals(this.ExecutionContext.ProviderNames.FileSystem)))
             {
                 return false;
             }
@@ -910,7 +910,7 @@ namespace System.Management.Automation
             //  3. Unmount the VHD in session 'A'.
             // The drive pointing to VHD in session 'B' gets detected as DriveType.NoRootDirectory
             // after the VHD is removed in session 'A'.
-            if (drive != null && !string.IsNullOrEmpty(drive.Name) && drive.Name.Length == 1)
+            if (drive is not null && !string.IsNullOrEmpty(drive.Name) && drive.Name.Length == 1)
             {
                 try
                 {
@@ -961,7 +961,7 @@ namespace System.Management.Automation
 
             foreach (PSDriveInfo drive in Drives(null))
             {
-                if (drive != null &&
+                if (drive is not null &&
                     drive.Provider.NameEquals(providerId))
                 {
                     drives.Add(drive);
@@ -1040,7 +1040,7 @@ namespace System.Management.Automation
             }
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "The caller should verify the context");
 
             PSDriveInfo drive = GetDrive(driveName, scopeID);
@@ -1167,7 +1167,7 @@ namespace System.Management.Automation
                         try
                         {
                             PSDriveInfo result = scope.GetDrive(drive.Name);
-                            if (result != null)
+                            if (result is not null)
                             {
                                 scope.RemoveDrive(drive);
 
@@ -1289,7 +1289,7 @@ namespace System.Management.Automation
                     e);
             }
 
-            if (result != null)
+            if (result is not null)
             {
                 // Make sure the provider didn't try to pull a fast one on us
                 // and substitute a different drive.
@@ -1351,7 +1351,7 @@ namespace System.Management.Automation
                     // drives to overwrite parent scope drives of
                     // the same name.
 
-                    if (drive != null)
+                    if (drive is not null)
                     {
                         bool driveIsValid = true;
 
@@ -1378,7 +1378,7 @@ namespace System.Management.Automation
                 // If the scope was specified then don't loop
                 // through the other scopes
 
-                if (scope != null && scope.Length > 0)
+                if (scope is not null && scope.Length > 0)
                 {
                     break;
                 }
@@ -1391,13 +1391,13 @@ namespace System.Management.Automation
             {
                 foreach (System.IO.DriveInfo fsDriveInfo in alldrives)
                 {
-                    if (fsDriveInfo != null)
+                    if (fsDriveInfo is not null)
                     {
                         string fsDriveName = fsDriveInfo.Name.Substring(0, 1);
                         if (!driveTable.ContainsKey(fsDriveName))
                         {
                             PSDriveInfo automountedDrive = AutomountFileSystemDrive(fsDriveInfo);
-                            if (automountedDrive != null)
+                            if (automountedDrive is not null)
                             {
                                 driveTable[automountedDrive.Name] = automountedDrive;
                             }

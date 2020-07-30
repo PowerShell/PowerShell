@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
             // may be getting piped in.
             bool result = true;
 
-            if (paths != null && paths.Length >= 0)
+            if (paths is not null && paths.Length >= 0)
             {
                 foreach (string path in paths)
                 {
@@ -435,7 +435,7 @@ namespace Microsoft.PowerShell.Commands
                 case LocationParameterSet:
                     PathInfo result = null;
 
-                    if (PSDrive != null && PSDrive.Length > 0)
+                    if (PSDrive is not null && PSDrive.Length > 0)
                     {
                         foreach (string drive in PSDrive)
                         {
@@ -506,7 +506,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     // If the drive wasn't specified but the provider was
                     else if ((PSDrive is null || PSDrive.Length == 0) &&
-                             (PSProvider != null && PSProvider.Length > 0))
+                             (PSProvider is not null && PSProvider.Length > 0))
                     {
                         foreach (string providerName in PSProvider)
                         {
@@ -581,7 +581,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 case StackParameterSet:
-                    if (_stackNames != null)
+                    if (_stackNames is not null)
                     {
                         foreach (string stackName in _stackNames)
                         {
@@ -792,7 +792,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            if (_passThrough && result != null)
+            if (_passThrough && result is not null)
             {
                 WriteObject(result);
             }
@@ -900,7 +900,7 @@ namespace Microsoft.PowerShell.Commands
             // working directory stack
             SessionState.Path.PushCurrentLocation(_stackName);
 
-            if (Path != null)
+            if (Path is not null)
             {
                 try
                 {
@@ -1216,7 +1216,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Check to see if the provider exists
-            if (provider != null)
+            if (provider is not null)
             {
                 // Get the confirmation strings
 
@@ -1452,7 +1452,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (nameMatcher != null && nameMatcher.IsMatch(drive.Name))
+                        if (nameMatcher is not null && nameMatcher.IsMatch(drive.Name))
                             addDrive = true;
                     }
 
@@ -1937,7 +1937,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 return InvokeProvider.Item.GetItemDynamicParameters(Path[0], context);
             }
@@ -2078,7 +2078,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 // Path is only globbed if Name is specified.
                 if (string.IsNullOrEmpty(Name))
@@ -2275,7 +2275,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 return InvokeProvider.Item.SetItemDynamicParameters(Path[0], Value, context);
             }
@@ -2470,7 +2470,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 return InvokeProvider.Item.RemoveItemDynamicParameters(Path[0], Recurse, context);
             }
@@ -2701,7 +2701,7 @@ namespace Microsoft.PowerShell.Commands
                         try
                         {
                             System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(providerPath);
-                            if (di != null && (di.Attributes & System.IO.FileAttributes.ReparsePoint) != 0)
+                            if (di is not null && (di.Attributes & System.IO.FileAttributes.ReparsePoint) != 0)
                             {
                                 shouldRecurse = false;
                                 treatAsFile = true;
@@ -2906,7 +2906,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 return InvokeProvider.Item.MoveItemDynamicParameters(Path[0], Destination, context);
             }
@@ -3658,7 +3658,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 return InvokeProvider.Item.CopyItemDynamicParameters(Path[0], Destination, Recurse, context);
             }
@@ -3864,7 +3864,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 return InvokeProvider.Item.ClearItemDynamicParameters(Path[0], context);
             }
@@ -4034,7 +4034,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 return InvokeProvider.Item.InvokeItemDynamicParameters(Path[0], context);
             }
@@ -4170,7 +4170,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     PSSnapinQualifiedName pssnapinQualifiedProvider = PSSnapinQualifiedName.GetInstance(requestedProvider);
 
-                    if (pssnapinQualifiedProvider != null && WildcardPattern.ContainsWildcardCharacters(pssnapinQualifiedProvider.ShortName))
+                    if (pssnapinQualifiedProvider is not null && WildcardPattern.ContainsWildcardCharacters(pssnapinQualifiedProvider.ShortName))
                     {
                         // The user entered a glob string so use the WildcardPattern to
                         // compare the glob string to the provider names that exist
@@ -4184,7 +4184,7 @@ namespace Microsoft.PowerShell.Commands
                         foreach (ProviderInfo enumeratedProvider in SessionState.Provider.GetAll())
                         {
                             Dbg.Diagnostics.Assert(
-                                enumeratedProvider != null,
+                                enumeratedProvider is not null,
                                 "SessionState.Providers should return only ProviderInfo objects");
 
                             if (enumeratedProvider.IsMatch(matcher, pssnapinQualifiedProvider))

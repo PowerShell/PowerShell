@@ -40,7 +40,7 @@ namespace System.Management.Automation
             InternalCommand command,
             SessionStateScope localScope) : base(invocationInfo, context, command)
         {
-            Diagnostics.Assert(script != null, "caller to verify script is not null.");
+            Diagnostics.Assert(script is not null, "caller to verify script is not null.");
 
             this.Script = script;
             this.LocalScope = localScope;
@@ -105,12 +105,12 @@ namespace System.Management.Automation
                 value = null;
             }
 
-            Diagnostics.Assert(name != null, "The caller should verify that name is not null");
+            Diagnostics.Assert(name is not null, "The caller should verify that name is not null");
 
             var varPath = new VariablePath(name, VariablePathFlags.Variable);
 
             // If the parameter was allocated in the LocalsTuple, we can avoid creating a PSVariable,
-            if (LocalScope != null
+            if (LocalScope is not null
                 && varPath.IsAnyLocal()
                 && LocalScope.TrySetLocalParameterValue(varPath.UnqualifiedPath, CopyMutableValues(value)))
             {
@@ -144,7 +144,7 @@ namespace System.Management.Automation
             object result = parameter.Value;
 
             var compiledDefault = result as Compiler.DefaultValueExpressionWrapper;
-            if (compiledDefault != null)
+            if (compiledDefault is not null)
             {
                 result = compiledDefault.GetValue(Context, Script.SessionStateInternal, implicitUsingParameters);
             }

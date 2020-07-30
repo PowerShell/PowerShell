@@ -40,7 +40,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal ServerRemoteHostRawUserInterface(ServerRemoteHostUserInterface remoteHostUserInterface)
         {
-            Dbg.Assert(remoteHostUserInterface != null, "Expected remoteHostUserInterface != null");
+            Dbg.Assert(remoteHostUserInterface is not null, "Expected remoteHostUserInterface is not null");
             _remoteHostUserInterface = remoteHostUserInterface;
             Dbg.Assert(!remoteHostUserInterface.ServerRemoteHost.HostInfo.IsHostRawUINull, "Expected !remoteHostUserInterface.ServerRemoteHost.HostInfo.IsHostRawUINull");
 

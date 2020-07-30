@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _sourceIdentifier = value;
 
-                if (value != null)
+                if (value is not null)
                 {
                     _matchPattern = WildcardPattern.Get(value, WildcardOptions.IgnoreCase);
                 }
@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (PSEventArgs eventArg in eventArgsCollection)
             {
                 // If they specified a event identifier and we don't match, continue
-                if ((_sourceIdentifier != null) &&
+                if ((_sourceIdentifier is not null) &&
                    (!_matchPattern.IsMatch(eventArg.SourceIdentifier)))
                 {
                     continue;
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
             // and no globbing was done.
             if (!foundMatch)
             {
-                bool lookingForSource = (_sourceIdentifier != null) &&
+                bool lookingForSource = (_sourceIdentifier is not null) &&
                     (!WildcardPattern.ContainsWildcardCharacters(_sourceIdentifier));
                 bool lookingForId = (_eventId >= 0);
 

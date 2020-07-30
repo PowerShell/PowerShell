@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 CultureInfo[] result = null;
-                if (_language != null)
+                if (_language is not null)
                 {
                     result = new CultureInfo[_language.Length];
                     for (int index = 0; index < _language.Length; index++)
@@ -279,19 +279,19 @@ namespace Microsoft.PowerShell.Commands
             List<PSModuleInfo> modules = null;
             string moduleNamePattern = null;
 
-            if (pattern != null)
+            if (pattern is not null)
             {
                 moduleNamePattern = pattern;
                 modules = Utils.GetModules(pattern, context);
             }
-            else if (fullyQualifiedName != null)
+            else if (fullyQualifiedName is not null)
             {
                 moduleNamePattern = fullyQualifiedName.Name;
                 modules = Utils.GetModules(fullyQualifiedName, context);
             }
 
             var helpModules = new Dictionary<Tuple<string, Version>, UpdatableHelpModuleInfo>();
-            if (modules != null)
+            if (modules is not null)
             {
                 foreach (PSModuleInfo module in modules)
                 {
@@ -314,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
                         if (!helpModules.ContainsKey(keyTuple))
                         {
                             List<PSModuleInfo> availableModules = Utils.GetModules(name.Key, context);
-                            if (availableModules != null)
+                            if (availableModules is not null)
                             {
                                 foreach (PSModuleInfo module in availableModules)
                                 {
@@ -366,8 +366,8 @@ namespace Microsoft.PowerShell.Commands
                 UpdatableHelpExceptionContext e = exception;
 
                 if ((exception.Exception.FullyQualifiedErrorId == "HelpCultureNotSupported") &&
-                    ((exception.Cultures != null && exception.Cultures.Count > 1) ||
-                    (exception.Modules != null && exception.Modules.Count > 1)))
+                    ((exception.Cultures is not null && exception.Cultures.Count > 1) ||
+                    (exception.Modules is not null && exception.Modules.Count > 1)))
                 {
                     // Win8: 744749 Rewriting the error message only in the case where either
                     // multiple cultures or multiple modules are involved.
@@ -399,7 +399,7 @@ namespace Microsoft.PowerShell.Commands
         {
             _helpSystem.WebClient.UseDefaultCredentials = _useDefaultCredentials;
 
-            if (moduleNames != null)
+            if (moduleNames is not null)
             {
                 foreach (string name in moduleNames)
                 {
@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell.Commands
                     ProcessModuleWithGlobbing(name);
                 }
             }
-            else if (fullyQualifiedNames != null)
+            else if (fullyQualifiedNames is not null)
             {
                 foreach (var fullyQualifiedName in fullyQualifiedNames)
                 {
@@ -536,7 +536,7 @@ namespace Microsoft.PowerShell.Commands
 #if !CORECLR
                 catch (WebException e)
                 {
-                    if (e.InnerException != null && e.InnerException is UnauthorizedAccessException)
+                    if (e.InnerException is not null && e.InnerException is UnauthorizedAccessException)
                     {
                         ProcessException(module.ModuleName, culture, new UpdatableHelpSystemException("AccessIsDenied",
                             e.InnerException.Message, ErrorCategory.PermissionDenied, null, e));
@@ -553,7 +553,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         installed = false;
 
-                        if (_language != null)
+                        if (_language is not null)
                         {
                             // Display the error message only if we are not using the fallback chain
                             ProcessException(module.ModuleName, culture, e);
@@ -618,7 +618,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (modules.Count == 0 && _exceptions.Count == 0 && !noErrors)
             {
-                var errorMessage = fullyQualifiedName != null ? StringUtil.Format(HelpDisplayStrings.ModuleNotFoundWithFullyQualifiedName, fullyQualifiedName)
+                var errorMessage = fullyQualifiedName is not null ? StringUtil.Format(HelpDisplayStrings.ModuleNotFoundWithFullyQualifiedName, fullyQualifiedName)
                                                               : StringUtil.Format(HelpDisplayStrings.CannotMatchModulePattern, pattern);
 
                 ErrorRecord errorRecord = new ErrorRecord(new Exception(errorMessage),
@@ -642,7 +642,7 @@ namespace Microsoft.PowerShell.Commands
         internal bool IsUpdateNecessary(UpdatableHelpModuleInfo module, UpdatableHelpInfo currentHelpInfo,
             UpdatableHelpInfo newHelpInfo, CultureInfo culture, bool force)
         {
-            Debug.Assert(module != null);
+            Debug.Assert(module is not null);
 
             if (newHelpInfo is null)
             {
@@ -660,7 +660,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Version check
-            if (!force && currentHelpInfo != null && !currentHelpInfo.IsNewerVersion(newHelpInfo, culture))
+            if (!force && currentHelpInfo is not null && !currentHelpInfo.IsNewerVersion(newHelpInfo, culture))
             {
                 return false;
             }
@@ -870,7 +870,7 @@ namespace Microsoft.PowerShell.Commands
 
             _exceptions[except.FullyQualifiedErrorId].Modules.Add(moduleName);
 
-            if (culture != null)
+            if (culture is not null)
             {
                 _exceptions[except.FullyQualifiedErrorId].Cultures.Add(culture);
             }

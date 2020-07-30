@@ -345,7 +345,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal bool IsMatchingResult(CimInstance result)
         {
-            Dbg.Assert(result != null, "Caller should verify result != null");
+            Dbg.Assert(result is not null, "Caller should verify result is not null");
             return this.ClientSideQuery.IsResultMatchingClientSideQuery(result);
         }
 
@@ -358,7 +358,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         CimSession ISessionBoundQueryBuilder<CimSession>.GetTargetSession()
         {
-            if (_associatedObject != null)
+            if (_associatedObject is not null)
             {
                 return CimCmdletAdapter.GetSessionOfOriginFromCimInstance(_associatedObject);
             }

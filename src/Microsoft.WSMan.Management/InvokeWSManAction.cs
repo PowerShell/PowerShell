@@ -295,7 +295,7 @@ namespace Microsoft.WSMan.Management
                     helper.AssertError(m_session.Error, true, resourceuri);
                 }
 
-                if (m_session != null)
+                if (m_session is not null)
                     Dispose(m_session);
             }
         }

@@ -168,7 +168,7 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (m_SessionObj != null)
+                if (m_SessionObj is not null)
                     Dispose(m_SessionObj);
             }
         }

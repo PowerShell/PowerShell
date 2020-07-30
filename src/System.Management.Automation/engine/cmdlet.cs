@@ -137,7 +137,7 @@ namespace System.Management.Automation
         {
             MshCommandRuntime mshRuntime = this.CommandRuntime as MshCommandRuntime;
 
-            if (mshRuntime != null)
+            if (mshRuntime is not null)
             {
                 if (mshRuntime.UseTransaction &&
                    (!this.Context.TransactionManager.HasTransaction))
@@ -342,7 +342,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                     commandRuntime.WriteError(errorRecord);
                 else
                     throw new System.NotImplementedException("WriteError");
@@ -373,7 +373,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                     commandRuntime.WriteObject(sendToPipeline);
                 else
                     throw new System.NotImplementedException("WriteObject");
@@ -409,7 +409,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                     commandRuntime.WriteObject(sendToPipeline, enumerateCollection);
                 else
                     throw new System.NotImplementedException("WriteObject");
@@ -446,7 +446,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                     commandRuntime.WriteVerbose(text);
                 else
                     throw new System.NotImplementedException("WriteVerbose");
@@ -483,7 +483,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                     commandRuntime.WriteWarning(text);
                 else
                     throw new System.NotImplementedException("WriteWarning");
@@ -520,7 +520,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                     commandRuntime.WriteCommandDetail(text);
                 else
                     throw new System.NotImplementedException("WriteCommandDetail");
@@ -559,7 +559,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                     commandRuntime.WriteProgress(progressRecord);
                 else
                     throw new System.NotImplementedException("WriteProgress");
@@ -592,7 +592,7 @@ namespace System.Management.Automation
             Int64 sourceId,
             ProgressRecord progressRecord)
         {
-            if (commandRuntime != null)
+            if (commandRuntime is not null)
                 commandRuntime.WriteProgress(sourceId, progressRecord);
             else
                 throw new System.NotImplementedException("WriteProgress");
@@ -634,7 +634,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                     commandRuntime.WriteDebug(text);
                 else
                     throw new System.NotImplementedException("WriteDebug");
@@ -679,7 +679,7 @@ namespace System.Management.Automation
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 ICommandRuntime2 commandRuntime2 = commandRuntime as ICommandRuntime2;
-                if (commandRuntime2 != null)
+                if (commandRuntime2 is not null)
                 {
                     string source = this.MyInvocation.PSCommandPath;
                     if (string.IsNullOrEmpty(source))
@@ -689,7 +689,7 @@ namespace System.Management.Automation
 
                     InformationRecord informationRecord = new InformationRecord(messageData, source);
 
-                    if (tags != null)
+                    if (tags is not null)
                     {
                         informationRecord.Tags.AddRange(tags);
                     }
@@ -737,7 +737,7 @@ namespace System.Management.Automation
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 ICommandRuntime2 commandRuntime2 = commandRuntime as ICommandRuntime2;
-                if (commandRuntime2 != null)
+                if (commandRuntime2 is not null)
                 {
                     commandRuntime2.WriteInformation(informationRecord);
                 }
@@ -835,7 +835,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                     return commandRuntime.ShouldProcess(target);
                 else
                     return true;
@@ -931,7 +931,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                     return commandRuntime.ShouldProcess(target, action);
                 else
                     return true;
@@ -1041,7 +1041,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                     return commandRuntime.ShouldProcess(verboseDescription, verboseWarning, caption);
                 else
                     return true;
@@ -1160,7 +1160,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                     return commandRuntime.ShouldProcess(verboseDescription, verboseWarning, caption, out shouldProcessReason);
                 else
                 {
@@ -1287,7 +1287,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                     return commandRuntime.ShouldContinue(query, caption);
                 else
                     return true;
@@ -1423,7 +1423,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                     return commandRuntime.ShouldContinue(query, caption, ref yesToAll, ref noToAll);
                 else
                     return true;
@@ -1563,10 +1563,10 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                 {
                     ICommandRuntime2 runtime2 = commandRuntime as ICommandRuntime2;
-                    if (runtime2 != null)
+                    if (runtime2 is not null)
                     {
                         return runtime2.ShouldContinue(query, caption, hasSecurityImpact, ref yesToAll, ref noToAll);
                     }
@@ -1649,7 +1649,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                     return commandRuntime.TransactionAvailable();
                 else
 #pragma warning suppress 56503
@@ -1666,7 +1666,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                     return commandRuntime.CurrentPSTransaction;
                 else
                     // We want to throw in this situation, and want to use a
@@ -1721,11 +1721,11 @@ namespace System.Management.Automation
                 if (errorRecord is null)
                     throw new ArgumentNullException(nameof(errorRecord));
 
-                if (commandRuntime != null)
+                if (commandRuntime is not null)
                 {
                     commandRuntime.ThrowTerminatingError(errorRecord);
                 }
-                else if (errorRecord.Exception != null)
+                else if (errorRecord.Exception is not null)
                 {
                     throw errorRecord.Exception;
                 }

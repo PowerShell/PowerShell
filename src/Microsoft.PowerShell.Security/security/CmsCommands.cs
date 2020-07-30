@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
             ErrorRecord terminatingError = null;
             string encodedContent = CmsUtils.Encrypt(contentBytes, To, this.SessionState, out terminatingError);
 
-            if (terminatingError != null)
+            if (terminatingError is not null)
             {
                 ThrowTerminatingError(terminatingError);
             }
@@ -539,14 +539,14 @@ namespace Microsoft.PowerShell.Commands
             EnvelopedCms cms = new EnvelopedCms();
             X509Certificate2Collection certificates = new X509Certificate2Collection();
 
-            if ((To != null) && (To.Length > 0))
+            if ((To is not null) && (To.Length > 0))
             {
                 ErrorRecord error = null;
 
                 foreach (CmsMessageRecipient recipient in To)
                 {
                     recipient.Resolve(this.SessionState, ResolutionPurpose.Decryption, out error);
-                    if (error != null)
+                    if (error is not null)
                     {
                         ThrowTerminatingError(error);
                         return null;
@@ -560,7 +560,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             string resultString = actualContent;
-            if (messageBytes != null)
+            if (messageBytes is not null)
             {
                 cms.Decode(messageBytes);
                 cms.Decrypt(certificates);
@@ -570,12 +570,12 @@ namespace Microsoft.PowerShell.Commands
 
             if (IncludeContext)
             {
-                if (preContext != null)
+                if (preContext is not null)
                 {
                     resultString = preContext + resultString;
                 }
 
-                if (postContext != null)
+                if (postContext is not null)
                 {
                     resultString = resultString + postContext;
                 }

@@ -321,7 +321,7 @@ namespace System.Management.Automation
                 context = new CmdletProviderContext(this.ExecutionContext);
             }
 
-            if (CurrentDrive != null)
+            if (CurrentDrive is not null)
             {
                 context.Drive = CurrentDrive;
             }
@@ -580,7 +580,7 @@ namespace System.Management.Automation
             this.SetVariable(SpecialVariables.PWDVarPath, this.CurrentLocation, false, true, CommandOrigin.Internal);
 
             // If an action has been defined for location changes, invoke it now.
-            if (PublicSessionState.InvokeCommand.LocationChangedAction != null)
+            if (PublicSessionState.InvokeCommand.LocationChangedAction is not null)
             {
                 var eventArgs = new LocationChangedEventArgs(PublicSessionState, current, CurrentLocation);
                 PublicSessionState.InvokeCommand.LocationChangedAction.Invoke(ExecutionContext.CurrentRunspace, eventArgs);
@@ -649,18 +649,18 @@ namespace System.Management.Automation
                     out provider,
                     out drive);
 
-            if (drive != null)
+            if (drive is not null)
             {
                 s_tracer.WriteLine("Tracing drive");
                 drive.Trace();
             }
 
             Dbg.Diagnostics.Assert(
-                providerSpecificPath != null,
+                providerSpecificPath is not null,
                 "There should always be a way to generate a provider path for a " +
                 "given path");
 
-            if (drive != null)
+            if (drive is not null)
             {
                 context.Drive = drive;
             }
@@ -946,7 +946,7 @@ namespace System.Management.Automation
                 PathInfo poppedWorkingDirectory = locationStack.Pop();
 
                 Dbg.Diagnostics.Assert(
-                    poppedWorkingDirectory != null,
+                    poppedWorkingDirectory is not null,
                     "All items in the workingLocationStack should be " +
                     "of type PathInfo");
 
@@ -1062,7 +1062,7 @@ namespace System.Management.Automation
 
             Stack<PathInfo> locationStack = _workingLocationStack[_defaultStackName];
 
-            if (locationStack != null)
+            if (locationStack is not null)
             {
                 return new PathInfoStack(_defaultStackName, locationStack);
             }

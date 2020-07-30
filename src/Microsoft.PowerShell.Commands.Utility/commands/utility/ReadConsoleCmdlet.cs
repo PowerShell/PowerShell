@@ -96,10 +96,10 @@ namespace Microsoft.PowerShell.Commands
             PSHostUserInterface ui = Host.UI;
             string promptString;
 
-            if (_prompt != null)
+            if (_prompt is not null)
             {
                 IEnumerator e = LanguagePrimitives.GetEnumerator(_prompt);
-                if (e != null)
+                if (e is not null)
                 {
                     StringBuilder sb = new StringBuilder();
 
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
                 Dictionary<string, PSObject> result = Host.UI.Prompt(string.Empty, string.Empty, fdc);
                 // Result can be null depending on the host implementation. One typical
                 // example of a null return is for a canceled dialog.
-                if (result != null)
+                if (result is not null)
                 {
                     foreach (PSObject o in result.Values)
                     {

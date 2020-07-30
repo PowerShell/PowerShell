@@ -166,13 +166,13 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             {
                 if (this.selectedParameterSet != value)
                 {
-                    if (this.selectedParameterSet != null)
+                    if (this.selectedParameterSet is not null)
                     {
                         this.selectedParameterSet.PropertyChanged -= this.SelectedParameterSet_PropertyChanged;
                     }
 
                     this.selectedParameterSet = value;
-                    if (this.selectedParameterSet != null)
+                    if (this.selectedParameterSet is not null)
                     {
                         this.selectedParameterSet.PropertyChanged += this.SelectedParameterSet_PropertyChanged;
                         this.SelectedParameterSetAllMandatoryParametersHaveValues = this.SelectedParameterSet.AllMandatoryParametersHaveValues;
@@ -313,7 +313,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         {
             get
             {
-                if (this.commandInfo != null)
+                if (this.commandInfo is not null)
                 {
                     return this.commandInfo.Name;
                 }
@@ -329,7 +329,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         {
             get
             {
-                if (this.commandInfo != null && this.commandInfo.ModuleName != null)
+                if (this.commandInfo is not null && this.commandInfo.ModuleName is not null)
                 {
                     return this.commandInfo.ModuleName;
                 }
@@ -440,13 +440,13 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
             builder.Append(" ");
 
-            if (this.SelectedParameterSet != null)
+            if (this.SelectedParameterSet is not null)
             {
                 builder.Append(this.SelectedParameterSet.GetScript());
                 builder.Append(" ");
             }
 
-            if (this.CommonParameters != null)
+            if (this.CommonParameters is not null)
             {
                 builder.Append(this.CommonParameters.GetScript());
             }
@@ -559,7 +559,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         internal void OnHelpNeeded()
         {
             EventHandler<HelpNeededEventArgs> handler = this.HelpNeeded;
-            if (handler != null)
+            if (handler is not null)
             {
                 handler(this, new HelpNeededEventArgs(this.Name));
             }
@@ -571,7 +571,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         internal void OnImportModule()
         {
             EventHandler<EventArgs> handler = this.ImportModule;
-            if (handler != null)
+            if (handler is not null)
             {
                 handler(this, new EventArgs());
             }
@@ -594,7 +594,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <returns>0 if they are the same, -1 if source is smaller, 1 if source is larger.</returns>
         private int Compare(ParameterSetViewModel source, ParameterSetViewModel target)
         {
-            if (this.defaultParameterSetName != null)
+            if (this.defaultParameterSetName is not null)
             {
                 if (source.Name.Equals(this.defaultParameterSetName) && target.Name.Equals(this.defaultParameterSetName))
                 {
@@ -622,7 +622,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         private void OnNotifyPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;
-            if (handler != null)
+            if (handler is not null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }

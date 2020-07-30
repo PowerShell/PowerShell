@@ -41,7 +41,7 @@ namespace System.Management.Automation
             if (commandInfo is IScriptCommandInfo scriptCommand)
             {
                 ExperimentalAttribute expAttribute = scriptCommand.ScriptBlock.ExperimentalAttribute;
-                if (expAttribute != null && expAttribute.ToHide)
+                if (expAttribute is not null && expAttribute.ToHide)
                 {
                     string errorTemplate = expAttribute.ExperimentAction == ExperimentAction.Hide
                         ? DiscoveryExceptions.ScriptDisabledWhenFeatureOn
@@ -126,15 +126,15 @@ namespace System.Management.Automation
             set
             {
                 // The command runtime needs to be set up...
-                if (value != null)
+                if (value is not null)
                 {
                     value.commandRuntime = this.commandRuntime;
-                    if (_command != null)
+                    if (_command is not null)
                         value.CommandInfo = _command.CommandInfo;
 
                     // Set the execution context for the command it's currently
                     // null and our context has already been set up.
-                    if (value.Context is null && _context != null)
+                    if (value.Context is null && _context is not null)
                         value.Context = _context;
                 }
 
@@ -367,7 +367,7 @@ namespace System.Management.Automation
 
             Context.EngineSessionState = _previousCommandSessionState;
 
-            if (_previousScope != null)
+            if (_previousScope is not null)
             {
                 // Restore the scope but use the same session state instance we
                 // got it from because the command may have changed the execution context
@@ -394,7 +394,7 @@ namespace System.Management.Automation
         /// </param>
         internal void AddParameter(CommandParameterInternal parameter)
         {
-            Diagnostics.Assert(parameter != null, "Caller to verify parameter argument");
+            Diagnostics.Assert(parameter is not null, "Caller to verify parameter argument");
             arguments.Add(parameter);
         }
 
@@ -442,7 +442,7 @@ namespace System.Management.Automation
                 Prepare(psDefaultParameterValues);
 
                 // Check obsolete attribute after Prepare so that -WarningAction will be respected for cmdlets
-                if (ObsoleteAttribute != null)
+                if (ObsoleteAttribute is not null)
                 {
                     // Obsolete command is rare. Put the IF here to avoid method call overhead
                     HandleObsoleteCommand(ObsoleteAttribute);
@@ -504,7 +504,7 @@ namespace System.Management.Automation
                     // The RedirectShellErrorOutputPipe flag is used by the V2 hosting API to force the
                     // redirection.
                     //
-                    if (this.RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe != null)
+                    if (this.RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe is not null)
                     {
                         _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
                     }
@@ -627,7 +627,7 @@ namespace System.Management.Automation
                 // The RedirectShellErrorOutputPipe flag is used by the V2 hosting API to force the
                 // redirection.
                 //
-                if (this.RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe != null)
+                if (this.RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe is not null)
                 {
                     _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
                 }
@@ -645,13 +645,13 @@ namespace System.Management.Automation
                 _context.CurrentCommandProcessor = oldCurrentCommandProcessor;
 
                 // Destroy the local scope at this point if there is one...
-                if (_useLocalScope && CommandScope != null)
+                if (_useLocalScope && CommandScope is not null)
                 {
                     CommandSessionState.RemoveScope(CommandScope);
                 }
 
                 // and the previous scope...
-                if (_previousScope != null)
+                if (_previousScope is not null)
                 {
                     // Restore the scope but use the same session state instance we
                     // got it from because the command may have changed the execution context
@@ -660,7 +660,7 @@ namespace System.Management.Automation
                 }
 
                 // Restore the previous session state
-                if (_previousCommandSessionState != null)
+                if (_previousCommandSessionState is not null)
                 {
                     Context.EngineSessionState = _previousCommandSessionState;
                 }
@@ -672,7 +672,7 @@ namespace System.Management.Automation
         /// </summary>
         public override string ToString()
         {
-            if (CommandInfo != null)
+            if (CommandInfo is not null)
                 return CommandInfo.ToString();
             return "<NullCommandInfo>"; // does not require localization
         }
@@ -769,12 +769,12 @@ namespace System.Management.Automation
         {
             try
             {
-                if (Command != null)
+                if (Command is not null)
                 {
                     do // false loop
                     {
                         ProviderInvocationException pie = e as ProviderInvocationException;
-                        if (pie != null)
+                        if (pie is not null)
                         {
                             // If a ProviderInvocationException occurred,
                             // discard the ProviderInvocationException and
@@ -802,7 +802,7 @@ namespace System.Management.Automation
                         }
 
                         RuntimeException rte = e as RuntimeException;
-                        if (rte != null && rte.WasThrownFromThrowStatement)
+                        if (rte is not null && rte.WasThrownFromThrowStatement)
                         {
                             // do not rewrap a script based throw
                             break;
@@ -825,7 +825,7 @@ namespace System.Management.Automation
                         // exceedingly obtuse. We clarify things here.
                         bool isTimeoutException = false;
                         Exception tempException = e;
-                        while (tempException != null)
+                        while (tempException is not null)
                         {
                             if (tempException is System.TimeoutException)
                             {
@@ -890,7 +890,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void ManageScriptException(RuntimeException e)
         {
-            if (Command != null && commandRuntime.PipelineProcessor != null)
+            if (Command is not null && commandRuntime.PipelineProcessor is not null)
             {
                 commandRuntime.PipelineProcessor.RecordFailure(e, Command);
 
@@ -909,7 +909,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void ForgetScriptException()
         {
-            if (Command != null && commandRuntime.PipelineProcessor != null)
+            if (Command is not null && commandRuntime.PipelineProcessor is not null)
             {
                 commandRuntime.PipelineProcessor.ForgetFailure();
             }
@@ -947,7 +947,7 @@ namespace System.Management.Automation
                 // whether IDisposable is implemented, in order to avoid
                 // this expensive reflection cast.
                 IDisposable id = Command as IDisposable;
-                if (id != null)
+                if (id is not null)
                 {
                     id.Dispose();
                 }

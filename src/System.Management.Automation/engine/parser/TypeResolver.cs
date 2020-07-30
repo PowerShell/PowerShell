@@ -40,7 +40,7 @@ namespace System.Management.Automation.Language
         private static Type LookForTypeInSingleAssembly(Assembly assembly, string typename)
         {
             Type targetType = assembly.GetType(typename, false, true);
-            if (targetType != null && IsPublic(targetType))
+            if (targetType is not null && IsPublic(targetType))
             {
                 return targetType;
             }
@@ -84,12 +84,12 @@ namespace System.Management.Automation.Language
                 try
                 {
                     Type targetType = LookForTypeInSingleAssembly(assembly, typeName.Name);
-                    if (targetType is null && alternateNameToFind != null)
+                    if (targetType is null && alternateNameToFind is not null)
                     {
                         targetType = LookForTypeInSingleAssembly(assembly, alternateNameToFind);
                     }
 
-                    if (targetType != null)
+                    if (targetType is not null)
                     {
                         if (!reportAmbiguousException)
                         {
@@ -104,7 +104,7 @@ namespace System.Management.Automation.Language
                         // In the case (2) we should not report duplicate, hence this check
                         if (foundType != targetType)
                         {
-                            if (foundType != null)
+                            if (foundType is not null)
                             {
                                 foundType2 = targetType;
                                 break;
@@ -126,7 +126,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (foundType2 != null)
+            if (foundType2 is not null)
             {
                 exception = new AmbiguousTypeException(typeName, new string[] { foundType.AssemblyQualifiedName, foundType2.AssemblyQualifiedName });
                 return null;
@@ -150,7 +150,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            while ((type = type.DeclaringType) != null)
+            while ((type = type.DeclaringType) is not null)
             {
                 if (!(type.IsPublic || type.IsNestedPublic))
                 {
@@ -175,10 +175,10 @@ namespace System.Management.Automation.Language
 
             if (!onlySearchInGivenAssemblies)
             {
-                while (currentScope != null)
+                while (currentScope is not null)
                 {
                     result = currentScope.LookupType(typeName.Name);
-                    if (result != null)
+                    if (result is not null)
                     {
                         return result;
                     }
@@ -193,7 +193,7 @@ namespace System.Management.Automation.Language
             }
 
             result = LookForTypeInAssemblies(typeName, loadedAssemblies, searchedAssemblies, typeResolutionState, reportAmbiguousException, out exception);
-            if (exception != null)
+            if (exception is not null)
             {
                 // skip the rest of lookups, if exception reported.
                 return result;
@@ -246,12 +246,12 @@ namespace System.Management.Automation.Language
             try
             {
                 exception = null;
-                var currentScope = context != null ? context.EngineSessionState.CurrentScope : null;
+                var currentScope = context is not null ? context.EngineSessionState.CurrentScope : null;
                 Type result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, t_searchedAssemblies, typeResolutionState,
                                                     /*onlySearchInGivenAssemblies*/ false, /* reportAmbiguousException */ true, out exception);
                 if (exception is null && result is null)
                 {
-                    if (context != null && !isAssembliesExplicitlyPassedIn)
+                    if (context is not null && !isAssembliesExplicitlyPassedIn)
                     {
                         // If the assemblies to search from is not specified by the caller of 'ResolveTypeNameWithContext',
                         // then we search our assembly cache first, so as to give preference to resolving the type against
@@ -291,7 +291,7 @@ namespace System.Management.Automation.Language
                 var result = Type.GetType(typeName.FullName, false, true) ??
                              Type.GetType("System." + typeName.FullName, false, true);
 
-                if (result != null && IsPublic(result))
+                if (result is not null && IsPublic(result))
                 {
                     return result;
                 }
@@ -320,12 +320,12 @@ namespace System.Management.Automation.Language
             var result = typeResolutionState.ContainsTypeDefined(typeName.Name)
                 ? null
                 : TypeCache.Lookup(typeName, typeResolutionState);
-            if (result != null)
+            if (result is not null)
             {
                 return result;
             }
 
-            if (typeName.AssemblyName != null)
+            if (typeName.AssemblyName is not null)
             {
                 result = ResolveAssemblyQualifiedTypeName(typeName, out exception);
                 TypeCache.Add(typeName, typeResolutionState, result);
@@ -365,7 +365,7 @@ namespace System.Management.Automation.Language
             // We must search all using aliases and REPORT an error if there is an ambiguity.
 
             // If this is TypeDefinition we should not cache anything in TypeCache.
-            if (typeName._typeDefinitionAst != null)
+            if (typeName._typeDefinitionAst is not null)
             {
                 return typeName._typeDefinitionAst.Type;
             }
@@ -378,11 +378,11 @@ namespace System.Management.Automation.Language
             // Use the explicitly passed-in assembly list when it's specified by the caller.
             // Otherwise, retrieve all currently loaded assemblies.
             var assemList = assemblies ?? ClrFacade.GetAssemblies(typeResolutionState, typeName);
-            var isAssembliesExplicitlyPassedIn = assemblies != null;
+            var isAssembliesExplicitlyPassedIn = assemblies is not null;
 
             result = CallResolveTypeNameWorkerHelper(typeName, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
 
-            if (result != null)
+            if (result is not null)
             {
                 TypeCache.Add(typeName, typeResolutionState, result);
                 return result;
@@ -406,12 +406,12 @@ namespace System.Management.Automation.Language
 #endif
                     var newResult = CallResolveTypeNameWorkerHelper(newTypeName, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
 
-                    if (exception != null)
+                    if (exception is not null)
                     {
                         break;
                     }
 
-                    if (newResult != null)
+                    if (newResult is not null)
                     {
                         if (result is null)
                         {
@@ -427,11 +427,11 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (exception != null)
+            if (exception is not null)
             {
                 // AmbiguousTypeException is for internal representation only.
                 var ambiguousException = exception as AmbiguousTypeException;
-                if (ambiguousException != null)
+                if (ambiguousException is not null)
                 {
                     exception = new PSInvalidCastException("AmbiguousTypeReference", exception,
                     ParserStrings.AmbiguousTypeReference, ambiguousException.TypeName.Name,
@@ -439,7 +439,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (result != null)
+            if (result is not null)
             {
                 TypeCache.Add(typeName, typeResolutionState, result);
             }
@@ -456,7 +456,7 @@ namespace System.Management.Automation.Language
         {
             Exception exception;
             type = ResolveType(typeName, out exception);
-            return (type != null);
+            return (type is not null);
         }
 
         internal static Type ResolveITypeName(ITypeName iTypeName, out Exception exception)
@@ -587,7 +587,7 @@ namespace System.Management.Automation.Language
                 context = LocalPipeline.GetExecutionContextFromTLS();
             }
 
-            if (context != null)
+            if (context is not null)
             {
                 return context.EngineSessionState.CurrentScope.TypeResolutionState;
             }
@@ -860,7 +860,7 @@ namespace System.Management.Automation
             // Add all the core types
             foreach (KeyValuePair<Type, string[]> coreType in CoreTypes.Items.Value)
             {
-                if (coreType.Value != null)
+                if (coreType.Value is not null)
                 {
                     foreach (string accelerator in coreType.Value)
                     {
@@ -905,7 +905,7 @@ namespace System.Management.Automation
             {
                 Type resultType = null;
                 builtinTypeAccelerators.TryGetValue(expectedKey, out resultType);
-                if (resultType != null && resultType == type)
+                if (resultType is not null && resultType == type)
                 {
                     return expectedKey;
                 }
@@ -921,7 +921,7 @@ namespace System.Management.Automation
         public static void Add(string typeName, Type type)
         {
             userTypeAccelerators[typeName] = type;
-            if (s_allTypeAccelerators != null)
+            if (s_allTypeAccelerators is not null)
             {
                 s_allTypeAccelerators[typeName] = type;
             }
@@ -935,7 +935,7 @@ namespace System.Management.Automation
         public static bool Remove(string typeName)
         {
             userTypeAccelerators.Remove(typeName);
-            if (s_allTypeAccelerators != null)
+            if (s_allTypeAccelerators is not null)
             {
                 s_allTypeAccelerators.Remove(typeName);
             }

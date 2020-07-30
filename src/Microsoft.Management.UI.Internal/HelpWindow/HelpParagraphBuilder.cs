@@ -60,7 +60,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The string value of a property or null if it could not be retrieved.</returns>
         internal static string GetPropertyString(PSObject psObj, string propertyName)
         {
-            Debug.Assert(psObj != null, "ensured by caller");
+            Debug.Assert(psObj is not null, "ensured by caller");
             object value = GetPropertyObject(psObj, propertyName);
 
             if (value == null)
@@ -138,7 +138,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The object property or null if it could not be retrieved.</returns>
         private static PSPropertyInfo GetProperty(PSObject psObj, string propertyName)
         {
-            Debug.Assert(psObj != null, "ensured by caller");
+            Debug.Assert(psObj is not null, "ensured by caller");
             return psObj.Properties[propertyName];
         }
 
@@ -151,7 +151,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The string from the inner psObject property or null if it could not be retrieved.</returns>
         private static string GetInnerPSObjectPropertyString(PSObject psObj, string psObjectName, string propertyName)
         {
-            Debug.Assert(psObj != null, "ensured by caller");
+            Debug.Assert(psObj is not null, "ensured by caller");
             PSObject innerPsObj = GetPropertyObject(psObj, psObjectName) as PSObject;
 
             if (innerPsObj == null)
@@ -177,7 +177,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The value of a property or null if the value could not be retrieved.</returns>
         private static object GetPropertyObject(PSObject psObj, string propertyName)
         {
-            Debug.Assert(psObj != null, "ensured by caller");
+            Debug.Assert(psObj is not null, "ensured by caller");
             PSPropertyInfo property = HelpParagraphBuilder.GetProperty(psObj, propertyName);
             if (property == null)
             {
@@ -206,7 +206,7 @@ namespace Microsoft.Management.UI.Internal
         private static string GetTextFromArray(PSObject psObj, string propertyText)
         {
             PSObject[] introductionObjects = HelpParagraphBuilder.GetPropertyObject(psObj, propertyText) as PSObject[];
-            if (introductionObjects != null && introductionObjects.Length > 0)
+            if (introductionObjects is not null && introductionObjects.Length > 0)
             {
                 return GetPropertyString(introductionObjects[0], "text");
             }
@@ -225,7 +225,7 @@ namespace Microsoft.Management.UI.Internal
 
             foreach (string str in strs)
             {
-                if (str != null && str.Length > returnValue)
+                if (str is not null && str.Length > returnValue)
                 {
                     returnValue = str.Length;
                 }
@@ -520,7 +520,7 @@ namespace Microsoft.Management.UI.Internal
                     continue;
                 }
 
-                if (title != null)
+                if (title is not null)
                 {
                     this.AddText(HelpParagraphBuilder.AddIndent(title), false);
                     this.AddText("\r\n", false);
@@ -598,10 +598,10 @@ namespace Microsoft.Management.UI.Internal
                 {
                     PSObject fieldData = HelpParagraphBuilder.GetPropertyObject(member, "fieldData") as PSObject;
 
-                    if (fieldData != null)
+                    if (fieldData is not null)
                     {
                         PSObject propertyTypeObject = HelpParagraphBuilder.GetPropertyObject(fieldData, "type") as PSObject;
-                        if (propertyTypeObject != null)
+                        if (propertyTypeObject is not null)
                         {
                             propertyType = GetPropertyString(propertyTypeObject, "name");
                             description = GetPropertyString(propertyTypeObject, "description");
@@ -620,7 +620,7 @@ namespace Microsoft.Management.UI.Internal
                     this.AddText(HelpParagraphBuilder.AddIndent(string.Empty), false);
                     this.AddText(memberText, true);
 
-                    if (description != null)
+                    if (description is not null)
                     {
                         this.AddText(HelpParagraphBuilder.AddIndent(description, 2), false);
                         this.AddText("\r\n", false);
@@ -646,10 +646,10 @@ namespace Microsoft.Management.UI.Internal
 
             // Get method return type
             PSObject returnTypeObject = HelpParagraphBuilder.GetPropertyObject(member, "returnValue") as PSObject;
-            if (returnTypeObject != null)
+            if (returnTypeObject is not null)
             {
                 PSObject returnTypeData = HelpParagraphBuilder.GetPropertyObject(returnTypeObject, "type") as PSObject;
-                if (returnTypeData != null)
+                if (returnTypeData is not null)
                 {
                     returnType = GetPropertyString(returnTypeData, "name");
                 }
@@ -657,7 +657,7 @@ namespace Microsoft.Management.UI.Internal
 
             // Get method description.
             PSObject[] methodDescriptions = HelpParagraphBuilder.GetPropertyObject(member, "introduction") as PSObject[];
-            if (methodDescriptions != null)
+            if (methodDescriptions is not null)
             {
                 foreach (var methodDescription in methodDescriptions)
                 {
@@ -673,11 +673,11 @@ namespace Microsoft.Management.UI.Internal
 
             // Get method parameters.
             PSObject parametersObject = HelpParagraphBuilder.GetPropertyObject(member, "parameters") as PSObject;
-            if (parametersObject != null)
+            if (parametersObject is not null)
             {
                 PSObject[] paramObject = HelpParagraphBuilder.GetPropertyObject(parametersObject, "parameter") as PSObject[];
 
-                if (paramObject != null)
+                if (paramObject is not null)
                 {
                     foreach (var param in paramObject)
                     {
@@ -686,7 +686,7 @@ namespace Microsoft.Management.UI.Internal
 
                         PSObject parameterTypeData = HelpParagraphBuilder.GetPropertyObject(param, "type") as PSObject;
 
-                        if (parameterTypeData != null)
+                        if (parameterTypeData is not null)
                         {
                             parameterType = GetPropertyString(parameterTypeData, "name");
 
@@ -787,7 +787,7 @@ namespace Microsoft.Management.UI.Internal
 
                 this.AddText(parameterText, false);
 
-                if (description != null)
+                if (description is not null)
                 {
                     this.AddText(HelpParagraphBuilder.AddIndent(description, 2), false);
                     this.AddText("\r\n", false);
@@ -950,7 +950,7 @@ namespace Microsoft.Management.UI.Internal
 
                 this.AddText(HelpParagraphBuilder.AddIndent(type), false);
                 this.AddText("\r\n", false);
-                if (description != null)
+                if (description is not null)
                 {
                     this.AddText(HelpParagraphBuilder.AddIndent(description), false);
                     this.AddText("\r\n", false);

@@ -129,7 +129,7 @@ namespace System.Management.Automation.Internal
             {
                 case RemotingDataType.RemoteHostCallUsingRunspaceHost:
                     {
-                        Dbg.Assert(RemoteHostCallReceived != null,
+                        Dbg.Assert(RemoteHostCallReceived is not null,
                             "RemoteRunspacePoolInternal should subscribe to all data structure handler events");
 
                         RemoteHostCall remoteHostCall = RemoteHostCall.Decode(receivedData.Data);
@@ -142,7 +142,7 @@ namespace System.Management.Automation.Internal
                     {
                         RunspacePoolInitInfo initInfo = RemotingDecoder.GetRunspacePoolInitInfo(receivedData.Data);
 
-                        Dbg.Assert(RSPoolInitInfoReceived != null,
+                        Dbg.Assert(RSPoolInitInfoReceived is not null,
                             "RemoteRunspacePoolInternal should subscribe to all data structure handler events");
                         RSPoolInitInfoReceived.SafeInvoke(this,
                             new RemoteDataEventArgs<RunspacePoolInitInfo>(initInfo));
@@ -155,7 +155,7 @@ namespace System.Management.Automation.Internal
                         RunspacePoolStateInfo stateInfo =
                             RemotingDecoder.GetRunspacePoolStateInfo(receivedData.Data);
 
-                        Dbg.Assert(StateInfoReceived != null,
+                        Dbg.Assert(StateInfoReceived is not null,
                             "RemoteRunspacePoolInternal should subscribe to all data structure handler events");
                         StateInfoReceived.SafeInvoke(this,
                             new RemoteDataEventArgs<RunspacePoolStateInfo>(stateInfo));
@@ -168,7 +168,7 @@ namespace System.Management.Automation.Internal
                 case RemotingDataType.ApplicationPrivateData:
                     {
                         PSPrimitiveDictionary applicationPrivateData = RemotingDecoder.GetApplicationPrivateData(receivedData.Data);
-                        Dbg.Assert(ApplicationPrivateDataReceived != null,
+                        Dbg.Assert(ApplicationPrivateDataReceived is not null,
                             "RemoteRunspacePoolInternal should subscribe to all data structure handler events");
                         ApplicationPrivateDataReceived.SafeInvoke(this,
                             new RemoteDataEventArgs<PSPrimitiveDictionary>(applicationPrivateData));
@@ -178,7 +178,7 @@ namespace System.Management.Automation.Internal
 
                 case RemotingDataType.RunspacePoolOperationResponse:
                     {
-                        Dbg.Assert(SetMaxMinRunspacesResponseReceived != null,
+                        Dbg.Assert(SetMaxMinRunspacesResponseReceived is not null,
                             "RemoteRunspacePoolInternal should subscribe to all data structure handler events");
 
                         SetMaxMinRunspacesResponseReceived.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
@@ -190,7 +190,7 @@ namespace System.Management.Automation.Internal
                     {
                         PSEventArgs psEventArgs = RemotingDecoder.GetPSEventArgs(receivedData.Data);
 
-                        Dbg.Assert(PSEventArgsReceived != null,
+                        Dbg.Assert(PSEventArgsReceived is not null,
                             "RemoteRunspacePoolInternal should subscribe to all data structure handler events");
 
                         PSEventArgsReceived.SafeInvoke(this, new RemoteDataEventArgs<PSEventArgs>(psEventArgs));
@@ -233,7 +233,7 @@ namespace System.Management.Automation.Internal
 
             // Find out if this is an invoke and disconnect operation and if so whether the endpoint
             // supports disconnect.  Throw exception if disconnect is not supported.
-            bool invokeAndDisconnect = (shell.Settings != null) ? shell.Settings.InvokeAndDisconnect : false;
+            bool invokeAndDisconnect = (shell.Settings is not null) ? shell.Settings.InvokeAndDisconnect : false;
             if (invokeAndDisconnect && !EndpointSupportsDisconnect)
             {
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.EndpointDoesNotSupportDisconnect);
@@ -275,7 +275,7 @@ namespace System.Management.Automation.Internal
             // if a data structure handler does not exist it means
             // the association has been removed -
             // discard messages
-            if (dsHandler != null)
+            if (dsHandler is not null)
             {
                 dsHandler.ProcessReceivedData(rcvdData);
             }
@@ -550,7 +550,7 @@ namespace System.Management.Automation.Internal
 
                 // if there is a reason associated, then most likely the
                 // runspace pool has broken, so notify accordingly
-                if (reason != null)
+                if (reason is not null)
                 {
                     NotifyAssociatedPowerShells(new RunspacePoolStateInfo(RunspacePoolState.Broken, reason));
                 }
@@ -587,7 +587,7 @@ namespace System.Management.Automation.Internal
             }
             else
             {
-                if (e.SessionStateInfo.Reason != null)
+                if (e.SessionStateInfo.Reason is not null)
                 {
                     _closingReason = e.SessionStateInfo.Reason;
                 }
@@ -899,7 +899,7 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (RemoteSession != null)
+                if (RemoteSession is not null)
                 {
                     return RemoteSession.SessionDataStructureHandler.TransportManager;
                 }
@@ -918,7 +918,7 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (_transportManager != null &&
+                if (_transportManager is not null &&
                     _transportManager is WSManClientSessionTransportManager)
                 {
                     return ((WSManClientSessionTransportManager)(_transportManager)).MaxRetryConnectionTime;
@@ -937,7 +937,7 @@ namespace System.Management.Automation.Internal
             get
             {
                 WSManClientSessionTransportManager wsmanTransportManager = _transportManager as WSManClientSessionTransportManager;
-                return (wsmanTransportManager != null) ? wsmanTransportManager.SupportsDisconnect : false;
+                return (wsmanTransportManager is not null) ? wsmanTransportManager.SupportsDisconnect : false;
             }
         }
 
@@ -963,7 +963,7 @@ namespace System.Management.Automation.Internal
         {
             if (disposing)
             {
-                if (RemoteSession != null)
+                if (RemoteSession is not null)
                 {
                     ((ClientRemoteSessionImpl)RemoteSession).Dispose();
                     RemoteSession = null;
@@ -1218,7 +1218,7 @@ namespace System.Management.Automation.Internal
                         PSInvocationStateInfo stateInfo =
                             RemotingDecoder.GetPowerShellStateInfo(receivedData.Data);
 
-                        Dbg.Assert(InvocationStateInfoReceived != null,
+                        Dbg.Assert(InvocationStateInfoReceived is not null,
                             "ClientRemotePowerShell should subscribe to all data structure handler events");
                         InvocationStateInfoReceived.SafeInvoke(this,
                             new RemoteDataEventArgs<PSInvocationStateInfo>(stateInfo));
@@ -1236,7 +1236,7 @@ namespace System.Management.Automation.Internal
                         // not be added in this case. If a remoting cmdlet
                         // is using PowerShell, then it should take care
                         // of adding the origin information
-                        Dbg.Assert(OutputReceived != null,
+                        Dbg.Assert(OutputReceived is not null,
                             "ClientRemotePowerShell should subscribe to all data structure handler events");
                         OutputReceived.SafeInvoke(this,
                             new RemoteDataEventArgs<object>(outputObject));
@@ -1256,7 +1256,7 @@ namespace System.Management.Automation.Internal
                         // as well. If a remoting cmdlet
                         // is using PowerShell, then it should take care
                         // of adding the origin information
-                        Dbg.Assert(ErrorReceived != null,
+                        Dbg.Assert(ErrorReceived is not null,
                                 "ClientRemotePowerShell should subscribe to all data structure handler events");
 
                         ErrorReceived.SafeInvoke(this,
@@ -1346,7 +1346,7 @@ namespace System.Management.Automation.Internal
         /// goes into a closed or broken state</remarks>
         internal void SetStateToFailed(Exception reason)
         {
-            Dbg.Assert(BrokenNotificationFromRunspacePool != null,
+            Dbg.Assert(BrokenNotificationFromRunspacePool is not null,
                 "ClientRemotePowerShell should subscribe to all data structure handler events");
 
             BrokenNotificationFromRunspacePool.SafeInvoke(this, new RemoteDataEventArgs<Exception>(reason));
@@ -1359,7 +1359,7 @@ namespace System.Management.Automation.Internal
         /// set to a stopped state.</param>
         internal void SetStateToStopped(Exception reason)
         {
-            Dbg.Assert(ClosedNotificationFromRunspacePool != null,
+            Dbg.Assert(ClosedNotificationFromRunspacePool is not null,
                 "ClientRemotePowerShell should subscribe to all data structure handler events");
 
             ClosedNotificationFromRunspacePool.SafeInvoke(this, new RemoteDataEventArgs<Exception>(reason));
@@ -1375,7 +1375,7 @@ namespace System.Management.Automation.Internal
             // wait for the close to complete and then dispose the transport manager
             TransportManager.CloseCompleted += delegate (object source, EventArgs args)
             {
-                if (CloseCompleted != null)
+                if (CloseCompleted is not null)
                 {
                     // If the provided event args are empty then call CloseCompleted with
                     // RemoteSessionStateEventArgs containing session closed reason exception.
@@ -1412,9 +1412,9 @@ namespace System.Management.Automation.Internal
             // disconnect may be called on a pipeline that is already disconnected.
             PSInvocationStateInfo stateInfo =
                             new PSInvocationStateInfo(PSInvocationState.Disconnected,
-                                (rsStateInfo != null) ? rsStateInfo.Reason : null);
+                                (rsStateInfo is not null) ? rsStateInfo.Reason : null);
 
-            Dbg.Assert(InvocationStateInfoReceived != null,
+            Dbg.Assert(InvocationStateInfoReceived is not null,
                 "ClientRemotePowerShell should subscribe to all data structure handler events");
             InvocationStateInfoReceived.SafeInvoke(this,
                 new RemoteDataEventArgs<PSInvocationStateInfo>(stateInfo));

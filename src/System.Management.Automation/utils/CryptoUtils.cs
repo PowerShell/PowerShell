@@ -418,7 +418,7 @@ namespace System.Management.Automation.Internal
         /// <returns>Public key as base64 encoded string.</returns>
         internal string GetPublicKeyAsBase64EncodedString()
         {
-            Dbg.Assert(_rsa != null, "No public key available.");
+            Dbg.Assert(_rsa is not null, "No public key available.");
 
             byte[] capiPublicKeyBlob = PSCryptoNativeConverter.ToCapiPublicKeyBlob(_rsa);
 
@@ -456,7 +456,7 @@ namespace System.Management.Automation.Internal
         /// and encoded as a base 64 string.</returns>
         internal string SafeExportSessionKey()
         {
-            Dbg.Assert(_rsa != null, "No public key available.");
+            Dbg.Assert(_rsa is not null, "No public key available.");
 
             // generate one if not already done.
             GenerateSessionKey();
@@ -616,12 +616,12 @@ namespace System.Management.Automation.Internal
         {
             if (disposing)
             {
-                if (_rsa != null)
+                if (_rsa is not null)
                 {
                     _rsa.Dispose();
                 }
 
-                if (_aes != null)
+                if (_aes is not null)
                 {
                     _aes.Dispose();
                 }
@@ -676,7 +676,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         protected void RunKeyExchangeIfRequired()
         {
-            Dbg.Assert(Session != null, "data structure handler not set");
+            Dbg.Assert(Session is not null, "data structure handler not set");
 
             if (!_rsaCryptoProvider.CanEncrypt)
             {
@@ -784,7 +784,7 @@ namespace System.Management.Automation.Internal
                     throw new PSCryptoException();
                 }
 
-                if (data != null)
+                if (data is not null)
                 {
                     byte[] decryptedData = _rsaCryptoProvider.DecryptWithSessionKey(data);
 
@@ -863,7 +863,7 @@ namespace System.Management.Automation.Internal
         {
             if (disposing)
             {
-                if (_rsaCryptoProvider != null)
+                if (_rsaCryptoProvider is not null)
                 {
                     _rsaCryptoProvider.Dispose();
                 }
@@ -923,7 +923,7 @@ namespace System.Management.Automation.Internal
             // session!=null check required for DRTs TestEncryptSecureString* entries in CryptoUtilsTest/UTUtils.dll
             // for newer clients, server will never initiate key exchange.
             // for server, just the session key is required to encrypt/decrypt anything
-            if ((session != null) && (session.Context.ClientCapability.ProtocolVersion >= RemotingConstants.ProtocolVersionWin8RTM))
+            if ((session is not null) && (session.Context.ClientCapability.ProtocolVersion >= RemotingConstants.ProtocolVersionWin8RTM))
             {
                 _rsaCryptoProvider.GenerateSessionKey();
             }

@@ -96,7 +96,7 @@ namespace System.Management.Automation
 
             _invocationInfo = invocationInfo;
 
-            if (_invocationInfo != null)
+            if (_invocationInfo is not null)
             {
                 _commandName = invocationInfo.MyCommand.Name;
             }
@@ -105,12 +105,12 @@ namespace System.Management.Automation
             _parameterType = parameterType;
             _typeSpecified = typeSpecified;
 
-            if ((errorPosition is null) && (_invocationInfo != null))
+            if ((errorPosition is null) && (_invocationInfo is not null))
             {
                 errorPosition = invocationInfo.ScriptPosition;
             }
 
-            if (errorPosition != null)
+            if (errorPosition is not null)
             {
                 _line = errorPosition.StartLineNumber;
                 _offset = errorPosition.StartColumnNumber;
@@ -119,7 +119,7 @@ namespace System.Management.Automation
             _resourceString = resourceString;
             _errorId = errorId;
 
-            if (args != null)
+            if (args is not null)
             {
                 _args = args;
             }
@@ -218,7 +218,7 @@ namespace System.Management.Automation
                 errorPosition = invocationInfo.ScriptPosition;
             }
 
-            if (errorPosition != null)
+            if (errorPosition is not null)
             {
                 _line = errorPosition.StartLineNumber;
                 _offset = errorPosition.StartColumnNumber;
@@ -227,7 +227,7 @@ namespace System.Management.Automation
             _resourceString = resourceString;
             _errorId = errorId;
 
-            if (args != null)
+            if (args is not null)
             {
                 _args = args;
             }
@@ -257,13 +257,13 @@ namespace System.Management.Automation
             }
 
             _invocationInfo = pbex.CommandInvocation;
-            if (_invocationInfo != null)
+            if (_invocationInfo is not null)
             {
                 _commandName = _invocationInfo.MyCommand.Name;
             }
 
             IScriptExtent errorPosition = null;
-            if (_invocationInfo != null)
+            if (_invocationInfo is not null)
             {
                 errorPosition = _invocationInfo.ScriptPosition;
             }
@@ -278,14 +278,14 @@ namespace System.Management.Automation
 
             _resourceString = resourceString;
 
-            if (args != null)
+            if (args is not null)
             {
                 _args = args;
             }
 
             base.SetErrorCategory(pbex.ErrorRecord._category);
             base.SetErrorId(_errorId);
-            if (_invocationInfo != null)
+            if (_invocationInfo is not null)
             {
                 base.ErrorRecord.SetInvocationInfo(new InvocationInfo(_invocationInfo.MyCommand, errorPosition));
             }
@@ -494,7 +494,7 @@ namespace System.Management.Automation
         {
             object[] messageArgs = Array.Empty<object>();
 
-            if (_args != null)
+            if (_args is not null)
             {
                 messageArgs = new object[_args.Length + 6];
                 messageArgs[0] = _commandName;
@@ -671,7 +671,7 @@ namespace System.Management.Automation
                 args)
         {
             ValidationMetadataException validationException = innerException as ValidationMetadataException;
-            if (validationException != null && validationException.SwallowException)
+            if (validationException is not null && validationException.SwallowException)
             {
                 _swallowException = true;
             }

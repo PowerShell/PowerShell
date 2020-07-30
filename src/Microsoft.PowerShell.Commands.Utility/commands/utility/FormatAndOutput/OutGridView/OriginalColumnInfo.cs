@@ -34,14 +34,14 @@ namespace Microsoft.PowerShell.Commands
                 // The live object has the liveObjectPropertyName property.
                 object liveObjectValue = propertyInfo.Value;
                 ICollection collectionValue = liveObjectValue as ICollection;
-                if (collectionValue != null)
+                if (collectionValue is not null)
                 {
                     liveObjectValue = _parentCmdlet.ConvertToString(PSObjectHelper.AsPSObject(propertyInfo.Value));
                 }
                 else
                 {
                     PSObject psObjectValue = liveObjectValue as PSObject;
-                    if (psObjectValue != null)
+                    if (psObjectValue is not null)
                     {
                         // Since PSObject implements IComparable there is a need to verify if its BaseObject actually implements IComparable.
                         if (psObjectValue.BaseObject is IComparable)

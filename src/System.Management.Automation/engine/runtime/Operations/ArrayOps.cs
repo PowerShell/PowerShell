@@ -43,7 +43,7 @@ namespace System.Management.Automation
         /// <returns>Collection multiplied by integer.</returns>
         internal static T[] Multiply<T>(T[] array, uint times)
         {
-            Diagnostics.Assert(array != null, "Caller should verify the arguments for array multiplication");
+            Diagnostics.Assert(array is not null, "Caller should verify the arguments for array multiplication");
 
             if (times == 1)
             {
@@ -56,7 +56,7 @@ namespace System.Management.Automation
             }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            if (context != null &&
+            if (context is not null &&
                 context.LanguageMode == PSLanguageMode.RestrictedLanguage && (array.Length * times) > 1024)
             {
                 throw InterpreterError.NewInterpreterException(times, typeof(RuntimeException),
@@ -117,7 +117,7 @@ namespace System.Management.Automation
                 {
                     // In strict mode, don't return, fall through and let Array.GetValue raise an exception.
                     var context = LocalPipeline.GetExecutionContextFromTLS();
-                    if (context != null && !context.IsStrictVersion(3))
+                    if (context is not null && !context.IsStrictVersion(3))
                     {
                         // If we're slicing, return AutomationNull.Value to signal no result)
                         return slicing ? AutomationNull.Value : null;
@@ -144,7 +144,7 @@ namespace System.Management.Automation
                 whyFailed = ice;
             }
 
-            if (indexArray != null)
+            if (indexArray is not null)
             {
                 if (indexArray.Length != array.Rank)
                 {
@@ -172,7 +172,7 @@ namespace System.Management.Automation
 
                 if (indexArray is null || indexArray.Length != array.Rank)
                 {
-                    if (whyFailed != null)
+                    if (whyFailed is not null)
                     {
                         // If the first fails, report the original exception and all indices
                         ReportIndexingError(array, indexes, whyFailed);
@@ -271,7 +271,7 @@ namespace System.Management.Automation
             if (indices.Length == 1)
             {
                 var index = indices[0];
-                if (index != null && (LanguagePrimitives.Equals(0, index) || LanguagePrimitives.Equals(-1, index)))
+                if (index is not null && (LanguagePrimitives.Equals(0, index) || LanguagePrimitives.Equals(-1, index)))
                 {
                     return target;
                 }

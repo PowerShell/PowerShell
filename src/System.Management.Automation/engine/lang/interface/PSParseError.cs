@@ -21,8 +21,8 @@ namespace System.Management.Automation
     {
         internal PSParseError(RuntimeException rte)
         {
-            Dbg.Assert(rte != null, "exception argument should not be null");
-            Dbg.Assert(rte.ErrorToken != null, "token for exception should not be null");
+            Dbg.Assert(rte is not null, "exception argument should not be null");
+            Dbg.Assert(rte.ErrorToken is not null, "token for exception should not be null");
 
             Message = rte.Message;
             Token = new PSToken(rte.ErrorToken);

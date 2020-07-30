@@ -37,7 +37,7 @@ namespace System.Management.Automation
             }
 
             _errorRecord = errorRecord;
-            if (errorRecord.Exception != null)
+            if (errorRecord.Exception is not null)
             {
                 // 2005/04/13-JonN Can't do this in an unsealed class: HelpLink = errorRecord.Exception.HelpLink;
                 // Exception.Source is set by Throw
@@ -63,7 +63,7 @@ namespace System.Management.Automation
             // invocationInfo may be null
 
             IContainsErrorRecord icer = innerException as IContainsErrorRecord;
-            if (icer != null && icer.ErrorRecord != null)
+            if (icer is not null && icer.ErrorRecord is not null)
             {
                 _errorRecord = new ErrorRecord(icer.ErrorRecord, innerException);
             }
@@ -146,7 +146,7 @@ namespace System.Management.Automation
             }
 
             base.GetObjectData(info, context);
-            bool hasErrorRecord = (_errorRecord != null);
+            bool hasErrorRecord = (_errorRecord is not null);
             info.AddValue("HasErrorRecord", hasErrorRecord);
             if (hasErrorRecord)
                 info.AddValue("ErrorRecord", _errorRecord);
@@ -541,9 +541,9 @@ namespace System.Management.Automation
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            if (info != null)
+            if (info is not null)
             {
-                bool hasErrorRecord = (_errorRecord != null);
+                bool hasErrorRecord = (_errorRecord is not null);
                 info.AddValue("HasErrorRecord", hasErrorRecord);
                 if (hasErrorRecord)
                 {
@@ -712,7 +712,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _message ?? (_message = (_wrapperException != null) ? _wrapperException.Message : string.Empty);
+                return _message ?? (_message = (_wrapperException is not null) ? _wrapperException.Message : string.Empty);
             }
         }
 

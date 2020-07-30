@@ -130,7 +130,7 @@ namespace System.Management.Automation
 
             typeinfo.GetRefTypeInfo(reftype, out custtypeinfo);
 
-            if (custtypeinfo != null)
+            if (custtypeinfo is not null)
             {
                 string strName, strDoc, strHelp;
                 int id;

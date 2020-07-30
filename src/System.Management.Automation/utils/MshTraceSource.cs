@@ -135,7 +135,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (keyName != null)
+                    if (keyName is not null)
                     {
                         // Get the pre-configured trace source from the catalog
                         PSTraceSource preconfiguredSource = PSTraceSource.PreConfiguredTraceSource[keyName];

@@ -187,7 +187,7 @@ namespace Microsoft.PowerShell.Commands
             BaseResponse = response;
 
             MemoryStream ms = contentStream as MemoryStream;
-            if (ms != null)
+            if (ms is not null)
             {
                 _rawContentStream = ms;
             }

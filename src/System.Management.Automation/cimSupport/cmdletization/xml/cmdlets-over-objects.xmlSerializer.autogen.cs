@@ -567,7 +567,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])o.@Value;
-                if (a != null)
+                if (a is not null)
                 {
                     for (int ia = 0; ia < a.Length; ia++)
                     {
@@ -633,7 +633,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartElement(n, ns, o, false, null);
             if (needType) WriteXsiType(@"ClassMetadataData", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
             WriteAttribute(@"Name", @"", ((global::System.String)o.@Name));
-            if ((object)(o.@Value) != null)
+            if ((object)(o.@Value) is not null)
             {
                 WriteValue(((global::System.String)o.@Value));
             }
@@ -719,7 +719,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
             {
                 global::System.String[] a = (global::System.String[])o.@Aliases;
-                if (a != null)
+                if (a is not null)
                 {
                     Writer.WriteStartAttribute(null, @"Aliases", string.Empty);
                     for (int i = 0; i < a.Length; i++)
@@ -746,7 +746,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
             {
                 global::System.String[] a = (global::System.String[])o.@CmdletParameterSets;
-                if (a != null)
+                if (a is not null)
                 {
                     Writer.WriteStartAttribute(null, @"CmdletParameterSets", string.Empty);
                     for (int i = 0; i < a.Length; i++)
@@ -775,7 +775,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             Write6_Item(@"ValidateRange", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)o.@ValidateRange), false, false);
             {
                 global::System.String[] a = (global::System.String[])((global::System.String[])o.@ValidateSet);
-                if (a != null)
+                if (a is not null)
                 {
                     WriteStartElement(@"ValidateSet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
                     for (int ia = 0; ia < a.Length; ia++)
@@ -1117,7 +1117,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     WriteXsiType(@"ArrayOfString", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::System.String[] a = (global::System.String[])o;
-                        if (a != null)
+                        if (a is not null)
                         {
                             for (int ia = 0; ia < a.Length; ia++)
                             {
@@ -1135,7 +1135,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     WriteXsiType(@"ArrayOfPropertyMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[])o;
-                        if (a != null)
+                        if (a is not null)
                         {
                             for (int ia = 0; ia < a.Length; ia++)
                             {
@@ -1153,7 +1153,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     WriteXsiType(@"ArrayOfAssociation", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::Microsoft.PowerShell.Cmdletization.Xml.Association[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.Association[])o;
-                        if (a != null)
+                        if (a is not null)
                         {
                             for (int ia = 0; ia < a.Length; ia++)
                             {
@@ -1171,7 +1171,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     WriteXsiType(@"ArrayOfQueryOption", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[])o;
-                        if (a != null)
+                        if (a is not null)
                         {
                             for (int ia = 0; ia < a.Length; ia++)
                             {
@@ -1197,7 +1197,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     WriteXsiType(@"ArrayOfStaticMethodParameterMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[])o;
-                        if (a != null)
+                        if (a is not null)
                         {
                             for (int ia = 0; ia < a.Length; ia++)
                             {
@@ -1215,7 +1215,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     WriteXsiType(@"ArrayOfInstanceMethodParameterMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[])o;
-                        if (a != null)
+                        if (a is not null)
                         {
                             for (int ia = 0; ia < a.Length; ia++)
                             {
@@ -1233,7 +1233,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     WriteXsiType(@"ArrayOfStaticCmdletMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[])o;
-                        if (a != null)
+                        if (a is not null)
                         {
                             for (int ia = 0; ia < a.Length; ia++)
                             {
@@ -1251,7 +1251,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     WriteXsiType(@"ArrayOfClassMetadataData", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[])o;
-                        if (a != null)
+                        if (a is not null)
                         {
                             for (int ia = 0; ia < a.Length; ia++)
                             {
@@ -1269,7 +1269,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     WriteXsiType(@"ArrayOfEnumMetadataEnum", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[])o;
-                        if (a != null)
+                        if (a is not null)
                         {
                             for (int ia = 0; ia < a.Length; ia++)
                             {
@@ -1322,7 +1322,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])o.@Value;
-                if (a != null)
+                if (a is not null)
                 {
                     for (int ia = 0; ia < a.Length; ia++)
                     {
@@ -1361,7 +1361,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartElement(n, ns, o, false, null);
             if (needType) WriteXsiType(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
             WriteAttribute(@"Name", @"", ((global::System.String)o.@Name));
-            if ((object)(o.@Value) != null)
+            if ((object)(o.@Value) is not null)
             {
                 WriteValue(((global::System.String)o.@Value));
             }
@@ -1394,7 +1394,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             Write33_Item(@"CmdletMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata)o.@CmdletMetadata), false, false);
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata[])o.@Method;
-                if (a != null)
+                if (a is not null)
                 {
                     for (int ia = 0; ia < a.Length; ia++)
                     {
@@ -1433,7 +1433,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             Write24_Item(@"ReturnValue", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue)o.@ReturnValue), false, false);
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[])((global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[])o.@Parameters);
-                if (a != null)
+                if (a is not null)
                 {
                     WriteStartElement(@"Parameters", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
                     for (int ia = 0; ia < a.Length; ia++)
@@ -1533,7 +1533,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
             {
                 global::System.String[] a = (global::System.String[])o.@Aliases;
-                if (a != null)
+                if (a is not null)
                 {
                     Writer.WriteStartAttribute(null, @"Aliases", string.Empty);
                     for (int i = 0; i < a.Length; i++)
@@ -1569,7 +1569,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             Write6_Item(@"ValidateRange", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)o.@ValidateRange), false, false);
             {
                 global::System.String[] a = (global::System.String[])((global::System.String[])o.@ValidateSet);
-                if (a != null)
+                if (a is not null)
                 {
                     WriteStartElement(@"ValidateSet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
                     for (int ia = 0; ia < a.Length; ia++)
@@ -1677,7 +1677,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteAttribute(@"Noun", @"", ((global::System.String)o.@Noun));
             {
                 global::System.String[] a = (global::System.String[])o.@Aliases;
-                if (a != null)
+                if (a is not null)
                 {
                     Writer.WriteStartAttribute(null, @"Aliases", string.Empty);
                     for (int i = 0; i < a.Length; i++)
@@ -1779,7 +1779,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
             {
                 global::System.String[] a = (global::System.String[])o.@Aliases;
-                if (a != null)
+                if (a is not null)
                 {
                     Writer.WriteStartAttribute(null, @"Aliases", string.Empty);
                     for (int i = 0; i < a.Length; i++)
@@ -1810,7 +1810,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             Write6_Item(@"ValidateRange", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)o.@ValidateRange), false, false);
             {
                 global::System.String[] a = (global::System.String[])((global::System.String[])o.@ValidateSet);
-                if (a != null)
+                if (a is not null)
                 {
                     WriteStartElement(@"ValidateSet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
                     for (int ia = 0; ia < a.Length; ia++)
@@ -1895,7 +1895,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
             {
                 global::System.String[] a = (global::System.String[])o.@Aliases;
-                if (a != null)
+                if (a is not null)
                 {
                     Writer.WriteStartAttribute(null, @"Aliases", string.Empty);
                     for (int i = 0; i < a.Length; i++)
@@ -1922,7 +1922,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
             {
                 global::System.String[] a = (global::System.String[])o.@CmdletParameterSets;
-                if (a != null)
+                if (a is not null)
                 {
                     Writer.WriteStartAttribute(null, @"CmdletParameterSets", string.Empty);
                     for (int i = 0; i < a.Length; i++)
@@ -1946,7 +1946,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             Write6_Item(@"ValidateRange", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)o.@ValidateRange), false, false);
             {
                 global::System.String[] a = (global::System.String[])((global::System.String[])o.@ValidateSet);
-                if (a != null)
+                if (a is not null)
                 {
                     WriteStartElement(@"ValidateSet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
                     for (int ia = 0; ia < a.Length; ia++)
@@ -2056,7 +2056,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             Write2_TypeMetadata(@"Type", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata)o.@Type), false, false);
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[])o.@Items;
-                if (a != null)
+                if (a is not null)
                 {
                     global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[] c = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[])o.@ItemsElementName;
                     if (c == null || c.Length < a.Length)
@@ -2069,27 +2069,27 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                         global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery ai = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)a[ia];
                         global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType ci = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType)c[ia];
                         {
-                            if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@RegularQuery && ((object)(ai) != null))
+                            if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@RegularQuery && ((object)(ai) is not null))
                             {
-                                if (((object)ai) != null && !(ai is global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@RegularQuery");
+                                if (((object)ai) is not null && !(ai is global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@RegularQuery");
                                 Write13_WildcardablePropertyQuery(@"RegularQuery", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)ai), false, false);
                             }
-                            else if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@ExcludeQuery && ((object)(ai) != null))
+                            else if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@ExcludeQuery && ((object)(ai) is not null))
                             {
-                                if (((object)ai) != null && !(ai is global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@ExcludeQuery");
+                                if (((object)ai) is not null && !(ai is global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@ExcludeQuery");
                                 Write13_WildcardablePropertyQuery(@"ExcludeQuery", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)ai), false, false);
                             }
-                            else if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MaxValueQuery && ((object)(ai) != null))
+                            else if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MaxValueQuery && ((object)(ai) is not null))
                             {
-                                if (((object)ai) != null && !(ai is global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MaxValueQuery");
+                                if (((object)ai) is not null && !(ai is global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MaxValueQuery");
                                 Write14_PropertyQuery(@"MaxValueQuery", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)ai), false, false);
                             }
-                            else if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MinValueQuery && ((object)(ai) != null))
+                            else if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MinValueQuery && ((object)(ai) is not null))
                             {
-                                if (((object)ai) != null && !(ai is global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MinValueQuery");
+                                if (((object)ai) is not null && !(ai is global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MinValueQuery");
                                 Write14_PropertyQuery(@"MinValueQuery", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)ai), false, false);
                             }
-                            else if ((object)(ai) != null)
+                            else if ((object)(ai) is not null)
                             {
                                 throw CreateUnknownTypeException(ai);
                             }
@@ -2180,7 +2180,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
             {
                 global::System.String[] a = (global::System.String[])o.@Aliases;
-                if (a != null)
+                if (a is not null)
                 {
                     Writer.WriteStartAttribute(null, @"Aliases", string.Empty);
                     for (int i = 0; i < a.Length; i++)
@@ -2206,7 +2206,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             Write6_Item(@"ValidateRange", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)o.@ValidateRange), false, false);
             {
                 global::System.String[] a = (global::System.String[])((global::System.String[])o.@ValidateSet);
-                if (a != null)
+                if (a is not null)
                 {
                     WriteStartElement(@"ValidateSet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
                     for (int ia = 0; ia < a.Length; ia++)
@@ -2251,7 +2251,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteAttribute(@"DefaultCmdletParameterSet", @"", ((global::System.String)o.@DefaultCmdletParameterSet));
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[])((global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[])o.@QueryableProperties);
-                if (a != null)
+                if (a is not null)
                 {
                     WriteStartElement(@"QueryableProperties", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
                     for (int ia = 0; ia < a.Length; ia++)
@@ -2264,7 +2264,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.Association[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.Association[])((global::Microsoft.PowerShell.Cmdletization.Xml.Association[])o.@QueryableAssociations);
-                if (a != null)
+                if (a is not null)
                 {
                     WriteStartElement(@"QueryableAssociations", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
                     for (int ia = 0; ia < a.Length; ia++)
@@ -2277,7 +2277,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[])((global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[])o.@QueryOptions);
-                if (a != null)
+                if (a is not null)
                 {
                     WriteStartElement(@"QueryOptions", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
                     for (int ia = 0; ia < a.Length; ia++)
@@ -2318,7 +2318,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteAttribute(@"Noun", @"", ((global::System.String)o.@Noun));
             {
                 global::System.String[] a = (global::System.String[])o.@Aliases;
-                if (a != null)
+                if (a is not null)
                 {
                     Writer.WriteStartAttribute(null, @"Aliases", string.Empty);
                     for (int i = 0; i < a.Length; i++)
@@ -2378,7 +2378,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteAttribute(@"Noun", @"", ((global::System.String)o.@Noun));
             {
                 global::System.String[] a = (global::System.String[])o.@Aliases;
-                if (a != null)
+                if (a is not null)
                 {
                     Writer.WriteStartAttribute(null, @"Aliases", string.Empty);
                     for (int i = 0; i < a.Length; i++)
@@ -2459,7 +2459,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             Write24_Item(@"ReturnValue", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue)o.@ReturnValue), false, false);
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[])((global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[])o.@Parameters);
-                if (a != null)
+                if (a is not null)
                 {
                     WriteStartElement(@"Parameters", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
                     for (int ia = 0; ia < a.Length; ia++)
@@ -2607,7 +2607,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             Write32_ClassMetadataInstanceCmdlets(@"InstanceCmdlets", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets)o.@InstanceCmdlets), false, false);
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[])((global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[])o.@StaticCmdlets);
-                if (a != null)
+                if (a is not null)
                 {
                     WriteStartElement(@"StaticCmdlets", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
                     for (int ia = 0; ia < a.Length; ia++)
@@ -2620,7 +2620,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[])((global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[])o.@CmdletAdapterPrivateData);
-                if (a != null)
+                if (a is not null)
                 {
                     WriteStartElement(@"CmdletAdapterPrivateData", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
                     for (int ia = 0; ia < a.Length; ia++)
@@ -2661,7 +2661,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             Write22_GetCmdletMetadata(@"GetCmdlet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata)o.@GetCmdlet), false, false);
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])o.@Cmdlet;
-                if (a != null)
+                if (a is not null)
                 {
                     for (int ia = 0; ia < a.Length; ia++)
                     {
@@ -2699,7 +2699,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             Write22_GetCmdletMetadata(@"GetCmdlet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata)o.@GetCmdlet), false, false);
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])o.@Cmdlet;
-                if (a != null)
+                if (a is not null)
                 {
                     for (int ia = 0; ia < a.Length; ia++)
                     {
@@ -2871,7 +2871,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             Write36_ClassMetadata(@"Class", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata)o.@Class), false, false);
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[])((global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[])o.@Enums);
-                if (a != null)
+                if (a is not null)
                 {
                     WriteStartElement(@"Enums", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
                     for (int ia = 0; ia < a.Length; ia++)
@@ -4619,7 +4619,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (isNull)
                 {
-                    if (xsiType != null) return (global::System.Object)ReadTypedNull(xsiType);
+                    if (xsiType is not null) return (global::System.Object)ReadTypedNull(xsiType);
                     else return null;
                 }
 

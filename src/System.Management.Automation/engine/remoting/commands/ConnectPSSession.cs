@@ -504,10 +504,10 @@ namespace Microsoft.PowerShell.Commands
                 Exception ex = null;
                 try
                 {
-                    if (_queryRunspaces != null)
+                    if (_queryRunspaces is not null)
                     {
                         PSSession newSession = QueryForSession(_session);
-                        if (newSession != null)
+                        if (newSession is not null)
                         {
                             _session.Runspace.StateChanged -= StateCallBackHandler;
                             _oldSession = _session;
@@ -538,7 +538,7 @@ namespace Microsoft.PowerShell.Commands
                     ex = e;
                 }
 
-                if (ex != null)
+                if (ex is not null)
                 {
                     startedSuccessfully = false;
                     WriteConnectFailed(ex, _session);
@@ -554,7 +554,7 @@ namespace Microsoft.PowerShell.Commands
 
             internal override void StopOperation()
             {
-                if (_queryRunspaces != null)
+                if (_queryRunspaces is not null)
                 {
                     _queryRunspaces.StopAllOperations();
                 }
@@ -582,7 +582,7 @@ namespace Microsoft.PowerShell.Commands
                     ex = e;
                 }
 
-                if (ex != null)
+                if (ex is not null)
                 {
                     WriteConnectFailed(ex, session);
                     return null;
@@ -625,7 +625,7 @@ namespace Microsoft.PowerShell.Commands
                     if (_queryRunspaces is null)
                     {
                         PSRemotingTransportException transportException = eArgs.RunspaceStateInfo.Reason as PSRemotingTransportException;
-                        if (transportException != null &&
+                        if (transportException is not null &&
                             transportException.ErrorCode == WSManNativeApi.ERROR_WSMAN_INUSE_CANNOT_RECONNECT)
                         {
                             lock (s_LockObject)
@@ -667,12 +667,12 @@ namespace Microsoft.PowerShell.Commands
                 // Use temporary variable because we need to preserve _session class variable
                 // for later clean up.
                 PSSession outSession = _session;
-                if (_queryRunspaces != null)
+                if (_queryRunspaces is not null)
                 {
                     lock (s_LockObject)
                     {
                         // Pass back the original session if possible.
-                        if (_oldSession != null &&
+                        if (_oldSession is not null &&
                             _oldSession.InsertRunspace(_session.Runspace as RemoteRunspace))
                         {
                             outSession = _oldSession;
@@ -707,11 +707,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string FQEID = "PSSessionConnectFailed";
                     Exception reason;
-                    if (e != null && !string.IsNullOrEmpty(e.Message))
+                    if (e is not null && !string.IsNullOrEmpty(e.Message))
                     {
                         // Update fully qualified error Id if we have a transport error.
                         PSRemotingTransportException transportException = e as PSRemotingTransportException;
-                        if (transportException != null)
+                        if (transportException is not null)
                         {
                             FQEID = WSManTransportManagerUtils.GetFQEIDFromTransportError(transportException.ErrorCode, FQEID);
                         }
@@ -797,7 +797,7 @@ namespace Microsoft.PowerShell.Commands
             // Get all remote runspaces to disconnect.
             if (ParameterSetName == DisconnectPSSessionCommand.SessionParameterSet)
             {
-                if (Session != null)
+                if (Session is not null)
                 {
                     foreach (PSSession psSession in Session)
                     {
@@ -824,7 +824,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                 }
 
-                if (entries != null)
+                if (entries is not null)
                 {
                     foreach (PSSession psSession in entries.Values)
                     {
@@ -934,7 +934,7 @@ namespace Microsoft.PowerShell.Commands
                     connectionInfo.AppName = ApplicationName;
                     connectionInfo.ShellUri = ConfigurationName;
                     connectionInfo.Port = Port;
-                    if (CertificateThumbprint != null)
+                    if (CertificateThumbprint is not null)
                     {
                         connectionInfo.CertificateThumbprint = CertificateThumbprint;
                     }
@@ -957,7 +957,7 @@ namespace Microsoft.PowerShell.Commands
                     WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
                     connectionInfo.ConnectionUri = connectionUri;
                     connectionInfo.ShellUri = ConfigurationName;
-                    if (CertificateThumbprint != null)
+                    if (CertificateThumbprint is not null)
                     {
                         connectionInfo.CertificateThumbprint = CertificateThumbprint;
                     }
@@ -996,7 +996,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Update the connectionInfo object with passed in session options.
-            if (SessionOption != null)
+            if (SessionOption is not null)
             {
                 connectionInfo.SetSessionOptions(SessionOption);
             }

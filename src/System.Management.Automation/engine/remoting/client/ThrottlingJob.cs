@@ -53,7 +53,7 @@ namespace System.Management.Automation
                         childJob.Dispose();
                     }
 
-                    if (_jobResultsThrottlingSemaphore != null)
+                    if (_jobResultsThrottlingSemaphore is not null)
                     {
                         _jobResultsThrottlingSemaphore.Dispose();
                     }
@@ -337,7 +337,7 @@ namespace System.Management.Automation
                 while (_actionsForUnblockingChildAdditions.Count > 0)
                 {
                     Action a = _actionsForUnblockingChildAdditions.Dequeue();
-                    if (a != null)
+                    if (a is not null)
                     {
                         a();
                     }
@@ -406,14 +406,14 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    if (jobEnqueuedAction != null)
+                    if (jobEnqueuedAction is not null)
                     {
                         jobEnqueuedAction();
                     }
                 }
             }
 
-            if (newJobStateInfo != null)
+            if (newJobStateInfo is not null)
             {
                 this.SetJobState(newJobStateInfo.State, newJobStateInfo.Reason);
             }
@@ -434,7 +434,7 @@ namespace System.Management.Automation
 
         private void childJob_ResultsAdded(object sender, DataAddedEventArgs e)
         {
-            Dbg.Assert(_jobResultsThrottlingSemaphore != null, "JobResultsThrottlingSemaphore should be non-null if childJob_ResultsAdded handled is registered");
+            Dbg.Assert(_jobResultsThrottlingSemaphore is not null, "JobResultsThrottlingSemaphore should be non-null if childJob_ResultsAdded handled is registered");
             try
             {
                 long jobResultsUpdatedCount = Interlocked.Increment(ref _jobResultsCurrentCount);
@@ -547,7 +547,7 @@ namespace System.Management.Automation
                 } while (false);
             }
 
-            if (readyToRunChildJob != null)
+            if (readyToRunChildJob is not null)
             {
                 readyToRunChildJob.StartJob();
             }
@@ -628,7 +628,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (finalJobStateInfo != null)
+            if (finalJobStateInfo is not null)
             {
                 this.SetJobState(finalJobStateInfo.State, finalJobStateInfo.Reason);
                 this.CloseAllStreams();
@@ -664,7 +664,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (childJobsToStop != null)
+            if (childJobsToStop is not null)
             {
                 this.SetJobState(JobState.Stopping);
 
@@ -688,7 +688,7 @@ namespace System.Management.Automation
 
         private void childJob_StateChanged(object sender, JobStateEventArgs e)
         {
-            Dbg.Assert(sender != null, "Only our internal implementation of Job should raise this event and it should make sure that sender != null");
+            Dbg.Assert(sender is not null, "Only our internal implementation of Job should raise this event and it should make sure that sender is not null");
             Dbg.Assert(sender is Job, "Only our internal implementation of Job should raise this event and it should make sure that sender is Job");
             var childJob = (Job)sender;
 
@@ -746,7 +746,7 @@ namespace System.Management.Automation
                         if (_actionsForUnblockingChildAdditions.Count > 0)
                         {
                             Action a = _actionsForUnblockingChildAdditions.Dequeue();
-                            if (a != null)
+                            if (a is not null)
                             {
                                 a();
                             }
@@ -1126,7 +1126,7 @@ namespace System.Management.Automation
                 {
                     foreach (var result in _aggregatedResults.GetConsumingEnumerable(_throttlingJob._cancellationTokenSource.Token))
                     {
-                        if (result != null)
+                        if (result is not null)
                         {
 #if DEBUG
                             // CDXML_CLIXML_TEST testability hook
@@ -1140,7 +1140,7 @@ namespace System.Management.Automation
                             {
                                 if (_throttlingJob._cmdletMode)
                                 {
-                                    Dbg.Assert(_throttlingJob._jobResultsThrottlingSemaphore != null, "JobResultsThrottlingSemaphore should be present in cmdlet mode");
+                                    Dbg.Assert(_throttlingJob._jobResultsThrottlingSemaphore is not null, "JobResultsThrottlingSemaphore should be present in cmdlet mode");
                                     Interlocked.Decrement(ref _throttlingJob._jobResultsCurrentCount);
                                     _throttlingJob._jobResultsThrottlingSemaphore.Release();
                                 }
@@ -1236,7 +1236,7 @@ namespace System.Management.Automation
                             }
                             finally
                             {
-                                if (cancellationTokenRegistration != null)
+                                if (cancellationTokenRegistration is not null)
                                 {
                                     cancellationTokenRegistration.Dispose();
                                 }
@@ -1275,7 +1275,7 @@ namespace System.Management.Automation
 
         internal ThrottlingJobChildAddedEventArgs(Job addedChildJob)
         {
-            Dbg.Assert(addedChildJob != null, "Caller should verify addedChildJob != null");
+            Dbg.Assert(addedChildJob is not null, "Caller should verify addedChildJob is not null");
             AddedChildJob = addedChildJob;
         }
     }

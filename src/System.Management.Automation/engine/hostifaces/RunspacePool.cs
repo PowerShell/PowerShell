@@ -776,7 +776,7 @@ namespace System.Management.Automation.Runspaces
             if (ConnectionInfo is NewProcessConnectionInfo)
             {
                 NewProcessConnectionInfo connectionInfo = ConnectionInfo as NewProcessConnectionInfo;
-                if (connectionInfo.Process != null &&
+                if (connectionInfo.Process is not null &&
                     (args.RunspacePoolStateInfo.State == RunspacePoolState.Opened ||
                      args.RunspacePoolStateInfo.State == RunspacePoolState.Broken))
                 {
@@ -839,7 +839,7 @@ namespace System.Management.Automation.Runspaces
         {
             EventHandler<PSEventArgs> eh = InternalForwardEvent;
 
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this, e);
             }

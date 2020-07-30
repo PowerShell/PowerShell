@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
                     Context.LanguageMode = oldLanguageMode;
                 }
 
-                if (_bindingVariable != null)
+                if (_bindingVariable is not null)
                 {
                     VariablePath variablePath = new VariablePath(_bindingVariable);
                     if (variablePath.IsUnscopedVariable)
@@ -255,7 +255,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(dir))
             {
-                if (InvocationExtent != null && !string.IsNullOrEmpty(InvocationExtent.File))
+                if (InvocationExtent is not null && !string.IsNullOrEmpty(InvocationExtent.File))
                 {
                     dir = Path.GetDirectoryName(InvocationExtent.File);
                 }
@@ -302,7 +302,7 @@ namespace Microsoft.PowerShell.Commands
             CultureInfo currentCulture = culture;
             string filePath;
             string fullFileName = fileName + ".psd1";
-            while (currentCulture != null && !string.IsNullOrEmpty(currentCulture.Name))
+            while (currentCulture is not null && !string.IsNullOrEmpty(currentCulture.Name))
             {
                 filePath = Path.Combine(dir, currentCulture.Name, fullFileName);
 

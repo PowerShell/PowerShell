@@ -56,8 +56,8 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private ClientMethodExecutor(BaseClientTransportManager transportManager, PSHost clientHost, Guid clientRunspacePoolId, Guid clientPowerShellId, RemoteHostCall remoteHostCall)
         {
-            Dbg.Assert(transportManager != null, "Expected transportManager != null");
-            Dbg.Assert(remoteHostCall != null, "Expected remoteHostCall != null");
+            Dbg.Assert(transportManager is not null, "Expected transportManager is not null");
+            Dbg.Assert(remoteHostCall is not null, "Expected remoteHostCall is not null");
             _transportManager = transportManager;
             _remoteHostCall = remoteHostCall;
             _clientHost = clientHost;
@@ -92,13 +92,13 @@ namespace System.Management.Automation.Remoting
 
             // Check client host to see if SetShouldExit should be allowed
             bool hostAllowSetShouldExit = false;
-            if (clientHost != null)
+            if (clientHost is not null)
             {
                 PSObject hostPrivateData = clientHost.PrivateData as PSObject;
-                if (hostPrivateData != null)
+                if (hostPrivateData is not null)
                 {
                     PSNoteProperty allowSetShouldExit = hostPrivateData.Properties["AllowSetShouldExitFromRemote"] as PSNoteProperty;
-                    hostAllowSetShouldExit = (allowSetShouldExit != null && allowSetShouldExit.Value is bool) ?
+                    hostAllowSetShouldExit = (allowSetShouldExit is not null && allowSetShouldExit.Value is bool) ?
                         (bool)allowSetShouldExit.Value : false;
                 }
             }
@@ -118,7 +118,7 @@ namespace System.Management.Automation.Remoting
             // Cmdlet case: queue up the executor in the pipeline stream.
             if (isMethodExecutorStreamEnabled)
             {
-                Dbg.Assert(methodExecutorStream != null, "method executor stream can't be null when enabled");
+                Dbg.Assert(methodExecutorStream is not null, "method executor stream can't be null when enabled");
                 methodExecutorStream.Write(methodExecutor);
             }
 
@@ -161,7 +161,7 @@ namespace System.Management.Automation.Remoting
                 {
                     try
                     {
-                        if (_clientHost.UI != null)
+                        if (_clientHost.UI is not null)
                         {
                             _clientHost.UI.WriteErrorLine(errorRecord.ToString());
                         }
@@ -230,7 +230,7 @@ namespace System.Management.Automation.Remoting
                 // Catch-all OK, 3rd party callout.
 
                 // Extract inner exception.
-                if (exception.InnerException != null)
+                if (exception.InnerException is not null)
                 {
                     exception = exception.InnerException;
                 }

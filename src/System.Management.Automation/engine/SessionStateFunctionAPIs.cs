@@ -193,7 +193,7 @@ namespace System.Management.Automation
             // Check both InNestedPrompt and Debugger.InBreakpoint to ensure we don't miss a case.
             // Function is not visible if function and context language modes are different.
             var runspace = this.ExecutionContext.CurrentRunspace;
-            if ((runspace != null) &&
+            if ((runspace is not null) &&
                 (runspace.InNestedPrompt || (runspace.Debugger?.InBreakpoint == true)) &&
                 (fnInfo.DefiningLanguageMode.HasValue && (fnInfo.DefiningLanguageMode != this.ExecutionContext.LanguageMode)))
             {
@@ -771,11 +771,11 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveFunction(string name, PSModuleInfo module)
         {
-            Dbg.Assert(module != null, "Caller should verify that module parameter is not null");
+            Dbg.Assert(module is not null, "Caller should verify that module parameter is not null");
 
             FunctionInfo func = GetFunction(name) as FunctionInfo;
-            if (func != null && func.ScriptBlock != null
-                && func.ScriptBlock.File != null
+            if (func is not null && func.ScriptBlock is not null
+                && func.ScriptBlock.File is not null
                 && func.ScriptBlock.File.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
             {
                 RemoveFunction(name, true);

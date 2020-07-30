@@ -63,7 +63,7 @@ namespace Microsoft.Management.UI.Internal
 
                 type = type.BaseType;
             }
-            while (type != null);
+            while (type is not null);
 
             return base.SelectTemplate(item, container);
         }

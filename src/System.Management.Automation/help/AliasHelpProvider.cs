@@ -106,12 +106,12 @@ namespace System.Management.Automation
                 // commandlet. Just ignore this exception and bail out.
             }
 
-            if ((commandInfo != null) && (commandInfo.CommandType == CommandTypes.Alias))
+            if ((commandInfo is not null) && (commandInfo.CommandType == CommandTypes.Alias))
             {
                 AliasInfo aliasInfo = (AliasInfo)commandInfo;
 
                 HelpInfo helpInfo = AliasHelpInfo.GetHelpInfo(aliasInfo);
-                if (helpInfo != null)
+                if (helpInfo is not null)
                 {
                     yield return helpInfo;
                 }
@@ -198,7 +198,7 @@ namespace System.Management.Automation
 
                     AliasInfo alias = current as AliasInfo;
 
-                    if (alias != null)
+                    if (alias is not null)
                     {
                         string name = alias.Name;
                         HelpRequest exactMatchHelpRequest = helpRequest.Clone();
@@ -237,7 +237,7 @@ namespace System.Management.Automation
 
                     AliasInfo alias = current as AliasInfo;
 
-                    if (alias != null)
+                    if (alias is not null)
                     {
                         string name = alias.Name;
 

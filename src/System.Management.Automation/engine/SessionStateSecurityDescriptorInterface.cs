@@ -138,15 +138,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             // This just verifies that the provider supports the interface.
@@ -284,19 +284,19 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Diagnostics.Assert(
-                securityDescriptor != null,
+                securityDescriptor is not null,
                 "Caller should validate securityDescriptor before calling this method");
 
             Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             // This just verifies that the provider supports the interface.
@@ -434,15 +434,15 @@ namespace System.Management.Automation
 
             // All parameters should have been validated by caller
             Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Diagnostics.Assert(
-                ExecutionContext != null,
+                ExecutionContext is not null,
                 "Caller should validate context before calling this method");
 
             // This just verifies that the provider supports the interface.

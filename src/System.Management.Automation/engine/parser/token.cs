@@ -1402,7 +1402,7 @@ namespace System.Management.Automation.Language
         internal StringExpandableToken(InternalScriptExtent scriptExtent, TokenKind tokenKind, string value, string formatString, List<Token> nestedTokens, TokenFlags flags)
             : base(scriptExtent, tokenKind, flags, value)
         {
-            if (nestedTokens != null && nestedTokens.Count > 0)
+            if (nestedTokens is not null && nestedTokens.Count > 0)
             {
                 _nestedTokens = new ReadOnlyCollection<Token>(nestedTokens.ToArray());
             }
@@ -1413,7 +1413,7 @@ namespace System.Management.Automation.Language
         internal static void ToDebugString(ReadOnlyCollection<Token> nestedTokens,
                                            StringBuilder sb, int indent)
         {
-            Diagnostics.Assert(nestedTokens != null, "caller to verify");
+            Diagnostics.Assert(nestedTokens is not null, "caller to verify");
 
             foreach (Token token in nestedTokens)
             {
@@ -1442,7 +1442,7 @@ namespace System.Management.Automation.Language
             StringBuilder sb = new StringBuilder();
 
             sb.Append(base.ToDebugString(indent));
-            if (_nestedTokens != null)
+            if (_nestedTokens is not null)
             {
                 ToDebugString(_nestedTokens, sb, indent);
             }

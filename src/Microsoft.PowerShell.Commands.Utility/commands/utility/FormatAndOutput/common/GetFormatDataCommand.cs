@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
             //            presumably because only the latter type deserializes type-faithfully.
             var clientVersion = PowerShellVersion;
             PSSenderInfo remotingClientInfo = GetVariableValue("PSSenderInfo") as PSSenderInfo;
-            if (clientVersion is null && remotingClientInfo != null)
+            if (clientVersion is null && remotingClientInfo is not null)
             {
                 clientVersion = PSObject.Base((PSObject.Base(remotingClientInfo.ApplicationArguments["PSVersionTable"]) as PSPrimitiveDictionary)?["PSVersion"]) as Version;
             }
@@ -113,9 +113,9 @@ namespace Microsoft.PowerShell.Commands
             // During remoting, remain compatible with v5.0- clients by default.
             // Passing a -PowerShellVersion argument allows overriding the client version.
             bool writeOldWay =
-                (remotingClientInfo != null && clientVersion is null)  // To be safe: Remoting client version could unexpectedly not be determined.
+                (remotingClientInfo is not null && clientVersion is null)  // To be safe: Remoting client version could unexpectedly not be determined.
                 ||
-                (clientVersion != null
+                (clientVersion is not null
                     &&
                     (clientVersion.Major < 5
                         ||
@@ -141,21 +141,21 @@ namespace Microsoft.PowerShell.Commands
                 PSControl control;
 
                 var tableControlBody = definition.mainControl as TableControlBody;
-                if (tableControlBody != null)
+                if (tableControlBody is not null)
                 {
                     control = new TableControl(tableControlBody, definition);
                 }
                 else
                 {
                     var listControlBody = definition.mainControl as ListControlBody;
-                    if (listControlBody != null)
+                    if (listControlBody is not null)
                     {
                         control = new ListControl(listControlBody, definition);
                     }
                     else
                     {
                         var wideControlBody = definition.mainControl as WideControlBody;
-                        if (wideControlBody != null)
+                        if (wideControlBody is not null)
                         {
                             control = new WideControl(wideControlBody, definition);
                             if (writeOldWay)

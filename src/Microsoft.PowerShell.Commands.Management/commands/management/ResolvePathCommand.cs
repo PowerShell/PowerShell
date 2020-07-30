@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
                             // When result path and base path is on different PSDrive
                             // (../)*path should not go beyond the root of base path
                             if (currentPath.Drive != SessionState.Path.CurrentLocation.Drive &&
-                                SessionState.Path.CurrentLocation.Drive != null &&
+                                SessionState.Path.CurrentLocation.Drive is not null &&
                                 !currentPath.ProviderPath.StartsWith(
                                     SessionState.Path.CurrentLocation.Drive.Root, StringComparison.OrdinalIgnoreCase))
                             {

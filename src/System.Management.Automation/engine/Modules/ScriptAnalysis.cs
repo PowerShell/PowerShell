@@ -23,7 +23,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (Utils.PathIsUnc(path) && (context.CurrentCommandProcessor.CommandRuntime != null))
+                if (Utils.PathIsUnc(path) && (context.CurrentCommandProcessor.CommandRuntime is not null))
                 {
                     ProgressRecord analysisProgress = new ProgressRecord(0,
                         Modules.ScriptAnalysisPreparing,
@@ -189,7 +189,7 @@ namespace System.Management.Automation
             // function Foo-Bar { [Alias("Alias1", "...")] param() ... }
 
             var functionBody = functionDefinitionAst.Body;
-            if ((functionBody.ParamBlock != null) && (functionBody.ParamBlock.Attributes != null))
+            if ((functionBody.ParamBlock is not null) && (functionBody.ParamBlock.Attributes is not null))
             {
                 foreach (AttributeAst attribute in functionBody.ParamBlock.Attributes)
                 {
@@ -198,7 +198,7 @@ namespace System.Management.Automation
                         foreach (ExpressionAst aliasAst in attribute.PositionalArguments)
                         {
                             var aliasExpression = aliasAst as StringConstantExpressionAst;
-                            if (aliasExpression != null)
+                            if (aliasExpression is not null)
                             {
                                 string alias = aliasExpression.Value;
 
@@ -430,14 +430,14 @@ namespace System.Management.Automation
             if (value is null) return;
 
             var commandName = value as string;
-            if (commandName != null)
+            if (commandName is not null)
             {
                 onEachArgument(commandName);
                 return;
             }
 
             var names = value as object[];
-            if (names != null)
+            if (names is not null)
             {
                 foreach (var n in names)
                 {
@@ -466,7 +466,7 @@ namespace System.Management.Automation
             {
                 var element = commandAst.CommandElements[i];
                 var specifiedParameter = element as CommandParameterAst;
-                if (specifiedParameter != null)
+                if (specifiedParameter is not null)
                 {
                     bool boundParameter = false;
                     var specifiedParamName = specifiedParameter.ParameterName;
@@ -483,13 +483,13 @@ namespace System.Management.Automation
                             if (argumentAst is null)
                             {
                                 argumentAst = commandAst.CommandElements[i] as ExpressionAst;
-                                if (argumentAst != null)
+                                if (argumentAst is not null)
                                 {
                                     i += 1;
                                 }
                             }
 
-                            if (argumentAst != null)
+                            if (argumentAst is not null)
                             {
                                 boundParameter = true;
                                 result[parameterInfo.name] =
@@ -500,7 +500,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (boundParameter || specifiedParameter.Argument != null)
+                    if (boundParameter || specifiedParameter.Argument is not null)
                     {
                         continue;
                     }

@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
                     existingAlias = SessionState.Internal.GetAliasAtScope(Name, Scope);
                 }
 
-                if (existingAlias != null)
+                if (existingAlias is not null)
                 {
                     // Throw if alias exists and is private...
                     SessionState.ThrowIfNotVisible(this.CommandOrigin, existingAlias);
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Write the alias to the pipeline if PassThru was specified
 
-                if (PassThru && result != null)
+                if (PassThru && result is not null)
                 {
                     WriteObject(result);
                 }

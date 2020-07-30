@@ -52,7 +52,7 @@ namespace Microsoft.Management.UI.Internal
 
             T textRule = selectorRule.AvailableRules.AvailableValues.Find<T>();
 
-            if (textRule != null)
+            if (textRule is not null)
             {
                 SearchableRule rule = new SearchableRule("RULE_" + this.SearchableRules.Count.ToString(CultureInfo.InvariantCulture), selectorRule, textRule);
 
@@ -150,7 +150,7 @@ namespace Microsoft.Management.UI.Internal
             {
                 string value = match.Groups[ValueGroupName].Value;
 
-                if (match.Groups[FullTextRuleGroupName].Success && this.FullTextRule != null)
+                if (match.Groups[FullTextRuleGroupName].Success && this.FullTextRule is not null)
                 {
                     TextFilterRule fullTextRule = (TextFilterRule)this.FullTextRule.DeepCopy();
                     fullTextRule.Value.Value = value;

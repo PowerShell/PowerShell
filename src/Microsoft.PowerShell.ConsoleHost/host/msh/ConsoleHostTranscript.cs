@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell
         {
             lock (_transcriptionStateLock)
             {
-                if (_isTranscribing && _transcriptionWriter != null)
+                if (_isTranscribing && _transcriptionWriter is not null)
                 {
                     if (newLine)
                     {

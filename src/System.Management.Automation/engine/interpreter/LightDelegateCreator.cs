@@ -58,12 +58,12 @@ namespace System.Management.Automation.Interpreter
 
         private bool HasClosure
         {
-            get { return _interpreter != null && _interpreter.ClosureSize > 0; }
+            get { return _interpreter is not null && _interpreter.ClosureSize > 0; }
         }
 
         internal bool HasCompiled
         {
-            get { return _compiled != null; }
+            get { return _compiled is not null; }
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace System.Management.Automation.Interpreter
 
         internal Delegate CreateDelegate(StrongBox<object>[] closure)
         {
-            if (_compiled != null)
+            if (_compiled is not null)
             {
                 // If the delegate type we want is not a Func/Action, we can't
                 // use the compiled code directly. So instead just fall through
@@ -116,7 +116,7 @@ namespace System.Management.Automation.Interpreter
             get
             {
                 LambdaExpression le = _lambda as LambdaExpression;
-                if (le != null)
+                if (le is not null)
                 {
                     return le.Type;
                 }
@@ -131,7 +131,7 @@ namespace System.Management.Automation.Interpreter
         /// </summary>
         internal Delegate CreateCompiledDelegate(StrongBox<object>[] closure)
         {
-            Debug.Assert(HasClosure == (closure != null));
+            Debug.Assert(HasClosure == (closure is not null));
 
             if (HasClosure)
             {
@@ -150,7 +150,7 @@ namespace System.Management.Automation.Interpreter
         /// </summary>
         internal void Compile(object state)
         {
-            if (_compiled != null)
+            if (_compiled is not null)
             {
                 return;
             }
@@ -158,7 +158,7 @@ namespace System.Management.Automation.Interpreter
             // Compilation is expensive, we only want to do it once.
             lock (_compileLock)
             {
-                if (_compiled != null)
+                if (_compiled is not null)
                 {
                     return;
                 }
@@ -170,7 +170,7 @@ namespace System.Management.Automation.Interpreter
                 // Action<...> so it can be called from the LightLambda.Run
                 // methods.
                 LambdaExpression lambda = (_lambda as LambdaExpression);// ?? (LambdaExpression)((LightLambdaExpression)_lambda).Reduce();
-                if (_interpreter != null)
+                if (_interpreter is not null)
                 {
                     _compiledDelegateType = GetFuncOrAction(lambda);
                     lambda = Expression.Lambda(_compiledDelegateType, lambda.Body, lambda.Name, lambda.Parameters);

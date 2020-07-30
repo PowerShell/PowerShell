@@ -28,7 +28,7 @@ namespace System.Management.Automation.ComInterop
             // !!! Marshal.Get/SetComObjectData has a LinkDemand for UnmanagedCode which will turn into
             // a full demand. We need to avoid this by making this method SecurityCritical
             object data = Marshal.GetComObjectData(rcw, s_comObjectEventSinksKey);
-            if (data != null || createIfNotFound == false)
+            if (data is not null || createIfNotFound == false)
             {
                 return (ComEventSinksContainer)data;
             }
@@ -36,7 +36,7 @@ namespace System.Management.Automation.ComInterop
             lock (s_comObjectEventSinksKey)
             {
                 data = Marshal.GetComObjectData(rcw, s_comObjectEventSinksKey);
-                if (data != null)
+                if (data is not null)
                 {
                     return (ComEventSinksContainer)data;
                 }

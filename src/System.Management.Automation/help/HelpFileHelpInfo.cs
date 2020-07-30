@@ -31,7 +31,7 @@ namespace System.Management.Automation
             // Take the 5th line as synopsis. This may not be true if
             // format of help file is changed later on.
             _synopsis = GetLine(text, 5);
-            if (_synopsis != null)
+            if (_synopsis is not null)
             {
                 _synopsis = _synopsis.Trim();
             }
@@ -129,7 +129,7 @@ namespace System.Management.Automation
 
         internal override bool MatchPatternInContent(WildcardPattern pattern)
         {
-            Diagnostics.Assert(pattern != null, "pattern cannot be null.");
+            Diagnostics.Assert(pattern is not null, "pattern cannot be null.");
 
             string helpContent = string.Empty;
             LanguagePrimitives.TryConvertTo<string>(FullHelp, out helpContent);

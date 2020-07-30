@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell
         private static void AttemptExecPwshLogin(string[] args)
         {
             // If the login environment variable is set, we have already done the login logic and have been exec'd
-            if (Environment.GetEnvironmentVariable(LOGIN_ENV_VAR_NAME) != null)
+            if (Environment.GetEnvironmentVariable(LOGIN_ENV_VAR_NAME) is not null)
             {
                 Environment.SetEnvironmentVariable(LOGIN_ENV_VAR_NAME, null);
                 return;

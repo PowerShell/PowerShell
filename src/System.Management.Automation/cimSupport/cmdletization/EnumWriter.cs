@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Cmdletization
             string fullEnumName = GetEnumFullName(enumMetadata);
 
             Type underlyingType;
-            if (enumMetadata.UnderlyingType != null)
+            if (enumMetadata.UnderlyingType is not null)
             {
                 underlyingType = (Type)LanguagePrimitives.ConvertTo(enumMetadata.UnderlyingType, typeof(Type), CultureInfo.InvariantCulture);
             }

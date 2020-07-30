@@ -188,7 +188,7 @@ namespace System.Management.Automation
             if (!IsVisible(origin, valueToCheck))
             {
                 PSVariable sv = valueToCheck as PSVariable;
-                if (sv != null)
+                if (sv is not null)
                 {
                     exception =
                        new SessionStateException(
@@ -202,10 +202,10 @@ namespace System.Management.Automation
                 }
 
                 CommandInfo cinfo = valueToCheck as CommandInfo;
-                if (cinfo != null)
+                if (cinfo is not null)
                 {
                     string commandName = cinfo.Name;
-                    if (commandName != null)
+                    if (commandName is not null)
                     {
                         // If we have a name, use it in the error message
                         exception =
@@ -254,7 +254,7 @@ namespace System.Management.Automation
             if (origin == CommandOrigin.Internal)
                 return true;
             IHasSessionStateEntryVisibility obj = valueToCheck as IHasSessionStateEntryVisibility;
-            if (obj != null)
+            if (obj is not null)
             {
                 return (obj.Visibility == SessionStateEntryVisibility.Public);
             }

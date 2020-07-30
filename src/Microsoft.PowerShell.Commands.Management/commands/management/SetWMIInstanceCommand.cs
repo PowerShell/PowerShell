@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (InputObject != null)
+            if (InputObject is not null)
             {
                 object result = null;
                 ManagementObject mObj = null;
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
                     PutOptions pOptions = new PutOptions();
                     mObj = SetWmiInstanceGetPipelineObject();
                     pOptions.Type = _putType;
-                    if (mObj != null)
+                    if (mObj is not null)
                     {
                         if (!ShouldProcess(mObj.Path.Path.ToString()))
                         {
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
                 // If Class is specified only CreateOnly flag is supported
                 mPath = this.SetWmiInstanceBuildManagementPath();
                 // If server name is specified loop through it.
-                if (mPath != null)
+                if (mPath is not null)
                 {
                     if (!(mPath.Server == "." && serverNameSpecified))
                     {
@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Commands
                         mObject = this.SetWmiInstanceGetObject(mPath, name);
                         PutOptions pOptions = new PutOptions();
                         pOptions.Type = _putType;
-                        if (mObject != null)
+                        if (mObject is not null)
                         {
                             if (!ShouldProcess(mObject.Path.Path.ToString()))
                             {
@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(errorRecord);
                     }
 
-                    if (result != null)
+                    if (result is not null)
                     {
                         WriteObject(result);
                     }

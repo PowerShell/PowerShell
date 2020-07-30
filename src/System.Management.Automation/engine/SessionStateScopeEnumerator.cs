@@ -17,7 +17,7 @@ namespace System.Management.Automation
         /// </param>
         internal SessionStateScopeEnumerator(SessionStateScope scope)
         {
-            Diagnostics.Assert(scope != null, "Caller to verify scope argument");
+            Diagnostics.Assert(scope is not null, "Caller to verify scope argument");
             _initialScope = scope;
         }
 
@@ -37,7 +37,7 @@ namespace System.Management.Automation
 
             // If the current scope is the global scope there is nowhere else
             // to do the lookup, so return false.
-            return (_currentEnumeratedScope != null);
+            return (_currentEnumeratedScope is not null);
         }
 
         /// <summary>

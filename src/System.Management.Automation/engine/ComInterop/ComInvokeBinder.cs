@@ -52,11 +52,11 @@ namespace System.Management.Automation.ComInterop
                 ComMethodDesc methodDesc
                 )
         {
-            Debug.Assert(callInfo != null, "arguments");
-            Debug.Assert(args != null, "args");
-            Debug.Assert(isByRef != null, "isByRef");
-            Debug.Assert(method != null, "method");
-            Debug.Assert(dispatch != null, "dispatch");
+            Debug.Assert(callInfo is not null, "arguments");
+            Debug.Assert(args is not null, "args");
+            Debug.Assert(isByRef is not null, "isByRef");
+            Debug.Assert(method is not null, "method");
+            Debug.Assert(dispatch is not null, "dispatch");
 
             Debug.Assert(TypeUtils.AreReferenceAssignable(typeof(ComMethodDesc), method.Type), "method");
             Debug.Assert(TypeUtils.AreReferenceAssignable(typeof(IDispatch), dispatch.Type), "dispatch");
@@ -124,7 +124,7 @@ namespace System.Management.Automation.ComInterop
 
         private static ParameterExpression EnsureVariable(ref ParameterExpression var, Type type, string name)
         {
-            if (var != null)
+            if (var is not null)
             {
                 return var;
             }
@@ -176,7 +176,7 @@ namespace System.Management.Automation.ComInterop
 
         private static void AddNotNull(List<ParameterExpression> list, ParameterExpression var)
         {
-            if (var != null) list.Add(var);
+            if (var is not null) list.Add(var);
         }
 
         private Expression CreateScope(Expression expression)
@@ -262,7 +262,7 @@ namespace System.Management.Automation.ComInterop
                     parameters[i + 1]
                 );
 
-                if (marshal != null)
+                if (marshal is not null)
                 {
                     tryStatements.Add(marshal);
                 }
@@ -338,7 +338,7 @@ namespace System.Management.Automation.ComInterop
             for (int i = 0, n = variants.Length; i < n; i++)
             {
                 Expression updateFromReturn = variants[i].UpdateFromReturn(parametersForUpdates[i + 1]);
-                if (updateFromReturn != null)
+                if (updateFromReturn is not null)
                 {
                     tryStatements.Add(updateFromReturn);
                 }
@@ -369,7 +369,7 @@ namespace System.Management.Automation.ComInterop
             for (int i = 0, n = _varEnumSelector.VariantBuilders.Length; i < n; i++)
             {
                 Expression clear = _varEnumSelector.VariantBuilders[i].Clear();
-                if (clear != null)
+                if (clear is not null)
                 {
                     finallyStatements.Add(clear);
                 }
@@ -389,7 +389,7 @@ namespace System.Management.Automation.ComInterop
             //
             // _dispIdsOfKeywordArgsPinned.Free()
             //
-            if (_dispIdsOfKeywordArgsPinned != null)
+            if (_dispIdsOfKeywordArgsPinned is not null)
             {
                 finallyStatements.Add(
                     Expression.Call(
@@ -533,7 +533,7 @@ namespace System.Management.Automation.ComInterop
             var vars = new List<ParameterExpression>();
             foreach (var variant in _varEnumSelector.VariantBuilders)
             {
-                if (variant.TempVariable != null)
+                if (variant.TempVariable is not null)
                 {
                     vars.Add(variant.TempVariable);
                 }
@@ -555,7 +555,7 @@ namespace System.Management.Automation.ComInterop
         {
             Expression[] res;
             int copy = 0;
-            if (_instance != null)
+            if (_instance is not null)
             {
                 res = new Expression[_args.Length + 1];
                 res[copy++] = _instance;

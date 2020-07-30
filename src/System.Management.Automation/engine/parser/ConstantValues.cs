@@ -24,7 +24,7 @@ namespace System.Management.Automation.Language
                 if ((bool)ast.Accept(new IsConstantValueVisitor { CheckingAttributeArgument = forAttribute, CheckingRequiresArgument = forRequires }))
                 {
                     Ast parent = ast.Parent;
-                    while (parent != null)
+                    while (parent is not null)
                     {
                         if (parent is DataStatementAst)
                         {
@@ -146,16 +146,16 @@ namespace System.Management.Automation.Language
 
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
-            if (statementBlockAst.Traps != null) return false;
+            if (statementBlockAst.Traps is not null) return false;
             if (statementBlockAst.Statements.Count > 1) return false;
             var pipeline = statementBlockAst.Statements.FirstOrDefault();
-            return pipeline != null && (bool)pipeline.Accept(this);
+            return pipeline is not null && (bool)pipeline.Accept(this);
         }
 
         public object VisitPipeline(PipelineAst pipelineAst)
         {
             var expr = pipelineAst.GetPureExpression();
-            return expr != null && (bool)expr.Accept(this);
+            return expr is not null && (bool)expr.Accept(this);
         }
 
         private static bool IsNullDivisor(ExpressionAst operand)
@@ -256,7 +256,7 @@ namespace System.Management.Automation.Language
             // until the script/function is first run, so it's OK if a type expression
             // as an attribute argument cannot be resolved yet.
             return CheckingAttributeArgument ||
-                typeExpressionAst.TypeName.GetReflectionType() != null;
+                typeExpressionAst.TypeName.GetReflectionType() is not null;
         }
 
         public object VisitMemberExpression(MemberExpressionAst memberExpressionAst)

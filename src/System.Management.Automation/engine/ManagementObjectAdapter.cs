@@ -100,13 +100,13 @@ namespace System.Management.Automation
             // the immediate parent class, the next is its parent, and so on; the last element
             // is the base class.
             PropertyData derivationData = managementObj.SystemProperties["__Derivation"];
-            if (derivationData != null)
+            if (derivationData is not null)
             {
                 Dbg.Assert(derivationData.IsArray, "__Derivation must be a string array as per MSDN documentation");
 
                 // give the typenames based on NameSpace + __Derivation
                 string[] typeHierarchy = PropertySetAndMethodArgumentConvertTo(derivationData.Value, typeof(string[]), CultureInfo.InvariantCulture) as string[];
-                if (typeHierarchy != null)
+                if (typeHierarchy is not null)
                 {
                     foreach (string t in typeHierarchy)
                     {
@@ -181,7 +181,7 @@ namespace System.Management.Automation
 
             PSProperty property = DoGetProperty(mgmtObject, memberName);
 
-            if (typeof(T).IsAssignableFrom(typeof(PSProperty)) && property != null)
+            if (typeof(T).IsAssignableFrom(typeof(PSProperty)) && property is not null)
             {
                 return property as T;
             }
@@ -191,7 +191,7 @@ namespace System.Management.Automation
                 T returnValue = GetManagementObjectMethod<T>(mgmtObject, memberName);
                 // We only return a method if there is no property by the same name
                 // to match the behavior we have in GetMembers
-                if (returnValue != null && property is null)
+                if (returnValue is not null && property is null)
                 {
                     return returnValue;
                 }
@@ -226,7 +226,7 @@ namespace System.Management.Automation
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
         {
             // obj should never be null
-            Diagnostics.Assert(obj != null, "Input object is null");
+            Diagnostics.Assert(obj is not null, "Input object is null");
 
             ManagementBaseObject wmiObject = (ManagementBaseObject)obj;
             PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
@@ -245,7 +245,7 @@ namespace System.Management.Automation
         protected override object MethodInvoke(PSMethod method, object[] arguments)
         {
             ManagementObject mgmtObject = method.baseObject as ManagementObject;
-            Diagnostics.Assert(mgmtObject != null,
+            Diagnostics.Assert(mgmtObject is not null,
                 "Object is not of ManagementObject type");
 
             WMIMethodCacheEntry methodEntry = (WMIMethodCacheEntry)method.adapterData;
@@ -386,7 +386,7 @@ namespace System.Management.Automation
 
             PropertyData pd = property.adapterData as PropertyData;
 
-            if ((convertIfPossible) && (setValue != null))
+            if ((convertIfPossible) && (setValue is not null))
             {
                 // Convert only if value is not null
                 Type paramType = GetDotNetType(pd);
@@ -460,7 +460,7 @@ namespace System.Management.Automation
                 string key = string.Format(CultureInfo.InvariantCulture, "{0}#{1}", classPath.Path, staticBinding.ToString());
 
                 typeTable = (CacheTable)s_instanceMethodCacheTable[key];
-                if (typeTable != null)
+                if (typeTable is not null)
                 {
                     tracer.WriteLine("Returning method information from internal cache");
                     return typeTable;
@@ -505,9 +505,9 @@ namespace System.Management.Automation
         /// <exception cref="ManagementException"></exception>
         private static void PopulateMethodTable(ManagementClass mgmtClass, CacheTable methodTable, bool staticBinding)
         {
-            Dbg.Assert(mgmtClass != null, "ManagementClass cannot be null in this method");
+            Dbg.Assert(mgmtClass is not null, "ManagementClass cannot be null in this method");
             MethodDataCollection mgmtMethods = mgmtClass.Methods;
-            if (mgmtMethods != null)
+            if (mgmtMethods is not null)
             {
                 ManagementPath classPath = mgmtClass.ClassPath;
                 // new operation will never fail
@@ -546,7 +546,7 @@ namespace System.Management.Automation
 
                 // inherit ManagementObject properties
                 ManagementObject mgmtObject = mgmtBaseObject as ManagementObject;
-                if (mgmtObject != null)
+                if (mgmtObject is not null)
                 {
                     mgmtClass.Scope = mgmtObject.Scope;
                     mgmtClass.Options = mgmtObject.Options;
@@ -600,7 +600,7 @@ namespace System.Management.Automation
         /// <returns>A string representing dotnet type.</returns>
         protected static Type GetDotNetType(PropertyData pData)
         {
-            Diagnostics.Assert(pData != null,
+            Diagnostics.Assert(pData is not null,
                 "Input PropertyData should not be null");
 
             tracer.WriteLine("Getting DotNet Type for CimType : {0}", pData.Type);
@@ -809,7 +809,7 @@ namespace System.Management.Automation
         /// </remarks>
         internal static MethodInformation GetMethodInformation(MethodData mData)
         {
-            Diagnostics.Assert(mData != null, "MethodData should not be null");
+            Diagnostics.Assert(mData is not null, "MethodData should not be null");
 
             // Get Method parameters
             var parameters = new SortedList<int, WMIParameterInformation>();
@@ -961,7 +961,7 @@ namespace System.Management.Automation
         protected override void AddAllProperties<T>(ManagementBaseObject wmiObject,
             PSMemberInfoInternalCollection<T> members)
         {
-            if (wmiObject.SystemProperties != null)
+            if (wmiObject.SystemProperties is not null)
             {
                 foreach (PropertyData property in wmiObject.SystemProperties)
                 {
@@ -972,7 +972,7 @@ namespace System.Management.Automation
 
         protected override PSProperty DoGetProperty(ManagementBaseObject wmiObject, string propertyName)
         {
-            if (wmiObject.SystemProperties != null)
+            if (wmiObject.SystemProperties is not null)
             {
                 foreach (PropertyData property in wmiObject.SystemProperties)
                 {
@@ -1024,7 +1024,7 @@ namespace System.Management.Automation
         protected override void AddAllMethods<T>(ManagementBaseObject wmiObject,
             PSMemberInfoInternalCollection<T> members)
         {
-            Diagnostics.Assert((wmiObject != null) && (members != null),
+            Diagnostics.Assert((wmiObject is not null) && (members is not null),
                 "Input arguments should not be null.");
 
             if (!typeof(T).IsAssignableFrom(typeof(PSMethod)))
@@ -1079,7 +1079,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            if (wmiObject.SystemProperties != null)
+            if (wmiObject.SystemProperties is not null)
             {
                 foreach (PropertyData property in wmiObject.SystemProperties)
                 {
@@ -1125,7 +1125,7 @@ namespace System.Management.Automation
             // Add System properties
             base.AddAllProperties(wmiObject, members);
 
-            if (wmiObject.Properties != null)
+            if (wmiObject.Properties is not null)
             {
                 foreach (PropertyData property in wmiObject.Properties)
                 {
@@ -1141,7 +1141,7 @@ namespace System.Management.Automation
             // First check whether we have any Class properties by this name
             PSProperty returnValue = base.DoGetProperty(wmiObject, propertyName);
 
-            if (returnValue != null)
+            if (returnValue is not null)
             {
                 return returnValue;
             }
@@ -1212,7 +1212,7 @@ namespace System.Management.Automation
         protected override void AddAllMethods<T>(ManagementBaseObject wmiObject,
             PSMemberInfoInternalCollection<T> members)
         {
-            Diagnostics.Assert((wmiObject != null) && (members != null),
+            Diagnostics.Assert((wmiObject is not null) && (members is not null),
                 "Input arguments should not be null.");
 
             if (!typeof(T).IsAssignableFrom(typeof(PSMethod)))

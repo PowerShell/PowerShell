@@ -402,17 +402,17 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         //
         public void Dispose()
         {
-            if (_hDataSource != null && !_hDataSource.IsInvalid)
+            if (_hDataSource is not null && !_hDataSource.IsInvalid)
             {
                 _hDataSource.Dispose();
             }
 
-            if (_hOutputLog != null && !_hOutputLog.IsInvalid)
+            if (_hOutputLog is not null && !_hOutputLog.IsInvalid)
             {
                 _hOutputLog.Dispose();
             }
 
-            if (_hQuery != null && !_hQuery.IsInvalid)
+            if (_hQuery is not null && !_hQuery.IsInvalid)
             {
                 _hQuery.Dispose();
             }
@@ -462,7 +462,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             defaultScale = 0;
             timeBase = 0;
 
-            Debug.Assert(hCounter != null);
+            Debug.Assert(hCounter is not null);
 
             IntPtr pBufferSize = new IntPtr(0);
             res = PdhGetCounterInfo(hCounter, false, ref pBufferSize, IntPtr.Zero);
@@ -500,7 +500,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         public uint ConnectToDataSource()
         {
-            if (_hDataSource != null && !_hDataSource.IsInvalid)
+            if (_hDataSource is not null && !_hDataSource.IsInvalid)
             {
                 _hDataSource.Dispose();
             }
@@ -521,7 +521,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         /// <returns></returns>
         public uint ConnectToDataSource(string dataSourceName)
         {
-            if (_hDataSource != null && !_hDataSource.IsInvalid)
+            if (_hDataSource is not null && !_hDataSource.IsInvalid)
             {
                 _hDataSource.Dispose();
             }
@@ -567,7 +567,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         public uint OpenLogForWriting(string logName, PdhLogFileType logFileType, bool bOverwrite, UInt32 maxSize, bool bCircular, string caption)
         {
-            Debug.Assert(_hQuery != null);
+            Debug.Assert(_hQuery is not null);
 
             UInt32 accessFlags = PdhLogAccess.PDH_LOG_WRITE_ACCESS;
             accessFlags |= bCircular ? PdhLogOpenOption.PDH_LOG_OPT_CIRCULAR : 0;
@@ -586,7 +586,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         public uint SetQueryTimeRange(DateTime startTime, DateTime endTime)
         {
-            Debug.Assert(_hQuery != null);
+            Debug.Assert(_hQuery is not null);
             Debug.Assert(endTime >= startTime);
 
             PDH_TIME_INFO pTimeInfo = new PDH_TIME_INFO();
@@ -748,7 +748,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         public uint GetValidPathsFromFiles(ref StringCollection validPaths)
         {
-            Debug.Assert(_hDataSource != null && !_hDataSource.IsInvalid, "Call ConnectToDataSource before GetValidPathsFromFiles");
+            Debug.Assert(_hDataSource is not null && !_hDataSource.IsInvalid, "Call ConnectToDataSource before GetValidPathsFromFiles");
 
             StringCollection machineNames = new StringCollection();
             uint res = this.EnumBlgFilesMachines(ref machineNames);
@@ -1100,7 +1100,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         public uint AddCounters(ref StringCollection validPaths, bool bFlushOldCounters)
         {
-            Debug.Assert(_hQuery != null && !_hQuery.IsInvalid);
+            Debug.Assert(_hQuery is not null && !_hQuery.IsInvalid);
 
             if (bFlushOldCounters)
             {
@@ -1122,7 +1122,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
                     PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
                     res = ParsePath(counterPath, ref pathElts);
-                    if (res == 0 && pathElts.InstanceName != null)
+                    if (res == 0 && pathElts.InstanceName is not null)
                     {
                         chi.InstanceName = pathElts.InstanceName.ToLowerInvariant();
                     }
@@ -1147,7 +1147,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         public uint ReadNextSet(out PerformanceCounterSampleSet nextSet, bool bSkipReading)
         {
-            Debug.Assert(_hQuery != null && !_hQuery.IsInvalid);
+            Debug.Assert(_hQuery is not null && !_hQuery.IsInvalid);
 
             uint res = 0;
             nextSet = null;
@@ -1190,7 +1190,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 UInt64 timeBase = 0;
 
                 IntPtr hCounter = _consumerPathToHandleAndInstanceMap[path].hCounter;
-                Debug.Assert(hCounter != null);
+                Debug.Assert(hCounter is not null);
 
                 res = GetCounterInfoPlus(hCounter, out counterType, out defaultScale, out timeBase);
                 if (res != 0)

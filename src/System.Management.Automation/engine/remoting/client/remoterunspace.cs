@@ -334,7 +334,7 @@ namespace System.Management.Automation
         /// </summary>
         internal override bool HasAvailabilityChangedSubscribers
         {
-            get { return this.AvailabilityChanged != null; }
+            get { return this.AvailabilityChanged is not null; }
         }
 
         /// <summary>
@@ -344,7 +344,7 @@ namespace System.Management.Automation
         {
             EventHandler<RunspaceAvailabilityEventArgs> eh = this.AvailabilityChanged;
 
-            if (eh != null)
+            if (eh is not null)
             {
                 try
                 {
@@ -592,7 +592,7 @@ namespace System.Management.Automation
 
                 // It is possible for the result ASyncResult object to be null if the runspace
                 // pool is already being closed from a server initiated close event.
-                if (result != null)
+                if (result is not null)
                 {
                     RunspacePool.EndClose(result);
                 }
@@ -642,7 +642,7 @@ namespace System.Management.Automation
                         //
                     }
 
-                    if (_remoteDebugger != null)
+                    if (_remoteDebugger is not null)
                     {
                         // Release RunspacePool event forwarding handlers.
                         _remoteDebugger.Dispose();
@@ -709,7 +709,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (invalidOperation != null)
+            if (invalidOperation is not null)
             {
                 invalidOperation.Source = "ResetRunspaceState";
                 throw invalidOperation;
@@ -962,7 +962,7 @@ namespace System.Management.Automation
             {
                 ContainerConnectionInfo containerConnectionInfo = _connectionInfo as ContainerConnectionInfo;
 
-                if ((containerConnectionInfo != null) &&
+                if ((containerConnectionInfo is not null) &&
                     (containerConnectionInfo.ContainerProc.RuntimeId == Guid.Empty))
                 {
                     returnCaps |= RunspaceCapability.NamedPipeTransport;
@@ -981,8 +981,8 @@ namespace System.Management.Automation
             WSManConnectionInfo runspaceWSManConnectionInfo = RunspacePool.ConnectionInfo as WSManConnectionInfo;
             WSManConnectionInfo wsManConnectionInfo = ConnectionInfo as WSManConnectionInfo;
 
-            Dbg.Assert(runspaceWSManConnectionInfo != null, "Disconnect-Connect feature is currently only supported for WSMan transport");
-            Dbg.Assert(wsManConnectionInfo != null, "Disconnect-Connect feature is currently only supported for WSMan transport");
+            Dbg.Assert(runspaceWSManConnectionInfo is not null, "Disconnect-Connect feature is currently only supported for WSMan transport");
+            Dbg.Assert(wsManConnectionInfo is not null, "Disconnect-Connect feature is currently only supported for WSMan transport");
 
             runspaceWSManConnectionInfo.IdleTimeout = wsManConnectionInfo.IdleTimeout;
             runspaceWSManConnectionInfo.OutputBufferingMode = wsManConnectionInfo.OutputBufferingMode;
@@ -1109,7 +1109,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void AddToRunningPipelineList(RemotePipeline pipeline)
         {
-            Dbg.Assert(pipeline != null, "caller should validate the parameter");
+            Dbg.Assert(pipeline is not null, "caller should validate the parameter");
 
             lock (_syncRoot)
             {
@@ -1126,7 +1126,7 @@ namespace System.Management.Automation
                             _runspaceStateInfo.State,
                             RunspaceState.Opened
                         );
-                    if (this.ConnectionInfo != null)
+                    if (this.ConnectionInfo is not null)
                     {
                         e.Source = this.ConnectionInfo.ComputerName;
                     }
@@ -1151,7 +1151,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveFromRunningPipelineList(RemotePipeline pipeline)
         {
-            Dbg.Assert(pipeline != null, "caller should validate the parameter");
+            Dbg.Assert(pipeline is not null, "caller should validate the parameter");
 
             lock (_syncRoot)
             {
@@ -1270,9 +1270,9 @@ namespace System.Management.Automation
             {
                 IHostSupportsInteractiveSession interactiveHost =
                     RunspacePool.RemoteRunspacePoolInternal.Host as IHostSupportsInteractiveSession;
-                if (interactiveHost != null &&
-                    interactiveHost.Runspace != null &&
-                    interactiveHost.Runspace.Debugger != null)
+                if (interactiveHost is not null &&
+                    interactiveHost.Runspace is not null &&
+                    interactiveHost.Runspace.Debugger is not null)
                 {
                     hostDebugMode = interactiveHost.Runspace.Debugger.DebugMode;
                 }
@@ -1299,7 +1299,7 @@ namespace System.Management.Automation
             bool breakAll = false;
             UnhandledBreakpointProcessingMode unhandledBreakpointMode = UnhandledBreakpointProcessingMode.Ignore;
 
-            if (psApplicationPrivateData != null)
+            if (psApplicationPrivateData is not null)
             {
                 if (psApplicationPrivateData.ContainsKey(RemoteDebugger.DebugModeSetting))
                 {
@@ -1336,7 +1336,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (debugMode != null)
+            if (debugMode is not null)
             {
                 // Server supports remote debugging.  Create Debugger object for
                 // this remote runspace.
@@ -1439,7 +1439,7 @@ namespace System.Management.Automation
                 stateChanged = this.StateChanged;
                 hasAvailabilityChangedSubscribers = this.HasAvailabilityChangedSubscribers;
 
-                if (stateChanged != null || hasAvailabilityChangedSubscribers)
+                if (stateChanged is not null || hasAvailabilityChangedSubscribers)
                 {
                     tempEventQueue = _runspaceEventQueue;
                     _runspaceEventQueue = new Queue<RunspaceEventQueueItem>();
@@ -1453,7 +1453,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (tempEventQueue != null)
+            if (tempEventQueue is not null)
             {
                 while (tempEventQueue.Count > 0)
                 {
@@ -1466,7 +1466,7 @@ namespace System.Management.Automation
 
                     // Exception raised by events are not error condition for runspace
                     // object.
-                    if (stateChanged != null)
+                    if (stateChanged is not null)
                     {
                         try
                         {
@@ -1577,7 +1577,7 @@ namespace System.Management.Automation
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
             WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (wsmanConnectionInfo != null)
+            if (wsmanConnectionInfo is not null)
             {
                 // change the runspace's uri to the new URI.
                 wsmanConnectionInfo.ConnectionUri = eventArgs.Data;
@@ -1614,12 +1614,12 @@ namespace System.Management.Automation
         private void HandleSessionCreateCompleted(object sender, CreateCompleteEventArgs eventArgs)
         {
             // Update connectionInfo with updated information from the transport.
-            if (eventArgs != null)
+            if (eventArgs is not null)
             {
                 _connectionInfo.IdleTimeout = eventArgs.ConnectionInfo.IdleTimeout;
                 _connectionInfo.MaxIdleTimeout = eventArgs.ConnectionInfo.MaxIdleTimeout;
                 WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
-                if (wsmanConnectionInfo != null)
+                if (wsmanConnectionInfo is not null)
                 {
                     wsmanConnectionInfo.OutputBufferingMode =
                         ((WSManConnectionInfo)eventArgs.ConnectionInfo).OutputBufferingMode;
@@ -1633,7 +1633,7 @@ namespace System.Management.Automation
         private void UpdateDisconnectExpiresOn()
         {
             WSManConnectionInfo wsmanConnectionInfo = RunspacePool.RemoteRunspacePoolInternal.ConnectionInfo as WSManConnectionInfo;
-            if (wsmanConnectionInfo != null)
+            if (wsmanConnectionInfo is not null)
             {
                 this.DisconnectedOn = wsmanConnectionInfo.DisconnectedOn;
                 this.ExpiresOn = wsmanConnectionInfo.ExpiresOn;
@@ -1704,7 +1704,7 @@ namespace System.Management.Automation
         internal void SetCurrentInvokeCommand(InvokeCommandCommand invokeCommand,
             long localPipelineId)
         {
-            Dbg.Assert(invokeCommand != null, "InvokeCommand instance cannot be null, use ClearInvokeCommand() method to reset current command");
+            Dbg.Assert(invokeCommand is not null, "InvokeCommand instance cannot be null, use ClearInvokeCommand() method to reset current command");
             Dbg.Assert(localPipelineId != 0, "Local pipeline id needs to be supplied - cannot be 0");
 
             _currentInvokeCommand = invokeCommand;
@@ -1731,7 +1731,7 @@ namespace System.Management.Automation
             System.Management.Automation.Remoting.Client.NamedPipeClientSessionTransportManager transportManager =
                 RunspacePool.RemoteRunspacePoolInternal.DataStructureHandler.TransportManager as System.Management.Automation.Remoting.Client.NamedPipeClientSessionTransportManager;
 
-            if (transportManager != null)
+            if (transportManager is not null)
             {
                 transportManager.AbortConnect();
             }
@@ -1908,9 +1908,9 @@ namespace System.Management.Automation
                             if (item is null) { return; }
 
                             DebuggerCommand dbgCmd = item.BaseObject as DebuggerCommand;
-                            if (dbgCmd != null)
+                            if (dbgCmd is not null)
                             {
-                                bool executedByDebugger = (dbgCmd.ResumeAction != null || dbgCmd.ExecutedByDebugger);
+                                bool executedByDebugger = (dbgCmd.ResumeAction is not null || dbgCmd.ExecutedByDebugger);
                                 results = new DebuggerCommandResults(dbgCmd.ResumeAction, executedByDebugger);
                             }
                             else if (item.BaseObject is DebuggerCommandResults)
@@ -1932,14 +1932,14 @@ namespace System.Management.Automation
                 {
                     executionError = true;
                     RemoteException re = e as RemoteException;
-                    if ((re != null) && (re.ErrorRecord != null))
+                    if ((re is not null) && (re.ErrorRecord is not null))
                     {
                         // Allow the IncompleteParseException to throw so that the console
                         // can handle here strings and continued parsing.
                         if (re.ErrorRecord.CategoryInfo.Reason == typeof(IncompleteParseException).Name)
                         {
                             throw new IncompleteParseException(
-                                (re.ErrorRecord.Exception != null) ? re.ErrorRecord.Exception.Message : null,
+                                (re.ErrorRecord.Exception is not null) ? re.ErrorRecord.Exception.Message : null,
                                 re.ErrorRecord.FullyQualifiedErrorId);
                         }
 
@@ -1949,7 +1949,7 @@ namespace System.Management.Automation
                             (re.ErrorRecord.CategoryInfo.Reason == typeof(RemoteException).Name))
                         {
                             throw new PSRemotingTransportException(
-                                (re.ErrorRecord.Exception != null) ? re.ErrorRecord.Exception.Message : string.Empty);
+                                (re.ErrorRecord.Exception is not null) ? re.ErrorRecord.Exception.Message : string.Empty);
                         }
                     }
 
@@ -1987,7 +1987,7 @@ namespace System.Management.Automation
             CheckForValidateState();
 
             PowerShell ps = _psDebuggerCommand;
-            if ((ps != null) &&
+            if ((ps is not null) &&
                 (ps.InvocationStateInfo.State == PSInvocationState.Running))
             {
                 ps.BeginStop(null, null);
@@ -2272,7 +2272,7 @@ namespace System.Management.Automation
                 if (ps.ErrorBuffer.Count > 0)
                 {
                     Exception e = ps.ErrorBuffer[0].Exception;
-                    if (e != null) { throw e; }
+                    if (e is not null) { throw e; }
                 }
             }
         }
@@ -2298,7 +2298,7 @@ namespace System.Management.Automation
                         if (item is null) { continue; }
 
                         rtnArgs = item.BaseObject as DebuggerStopEventArgs;
-                        if (rtnArgs != null) { break; }
+                        if (rtnArgs is not null) { break; }
                     }
                 }
             }
@@ -2319,8 +2319,8 @@ namespace System.Management.Automation
 
             // Only set debug mode on server if no commands are currently
             // running on remote runspace.
-            if ((_runspace.GetCurrentlyRunningPipeline() != null) ||
-                (_runspace.RemoteCommand != null))
+            if ((_runspace.GetCurrentlyRunningPipeline() is not null) ||
+                (_runspace.RemoteCommand is not null))
             {
                 return;
             }
@@ -2458,7 +2458,7 @@ namespace System.Management.Automation
             _runspace.RemoteDebuggerBreakpointUpdated -= HandleForwardedDebuggerBreakpointUpdatedEvent;
 
 #if !UNIX
-            if (_identityToPersonate != null)
+            if (_identityToPersonate is not null)
             {
                 _identityToPersonate.Dispose();
                 _identityToPersonate = null;
@@ -2480,7 +2480,7 @@ namespace System.Management.Automation
         internal void CheckStateAndRaiseStopEvent()
         {
             DebuggerStopEventArgs stopArgs = GetDebuggerStopArgs();
-            if (stopArgs != null)
+            if (stopArgs is not null)
             {
                 ProcessDebuggerStopEvent(stopArgs);
             }
@@ -2512,7 +2512,7 @@ namespace System.Management.Automation
             UnhandledBreakpointProcessingMode unhandledBreakpointMode,
             Version serverPSVersion)
         {
-            if (debugMode != null)
+            if (debugMode is not null)
             {
                 _remoteDebugSupported = true;
                 DebugMode = debugMode.Value;
@@ -2578,7 +2578,7 @@ namespace System.Management.Automation
             foreach (PSObject obj in breakpoints)
             {
                 Breakpoint breakpoint = obj.BaseObject as Breakpoint;
-                if (breakpoint != null)
+                if (breakpoint is not null)
                 {
                     RaiseBreakpointUpdatedEvent(
                         new BreakpointUpdatedEventArgs(breakpoint, BreakpointUpdateType.Set, _breakpointCount));
@@ -2660,10 +2660,10 @@ namespace System.Management.Automation
             // Attempt to process debugger stop event on original thread if it
             // is available (i.e., if it is blocked by EndInvoke).
             PowerShell powershell = _runspace.RunspacePool.RemoteRunspacePoolInternal.GetCurrentRunningPowerShell();
-            AsyncResult invokeAsyncResult = (powershell != null) ? powershell.EndInvokeAsyncResult : null;
+            AsyncResult invokeAsyncResult = (powershell is not null) ? powershell.EndInvokeAsyncResult : null;
 
             bool invokedOnBlockedThread = false;
-            if ((invokeAsyncResult != null) && (!invokeAsyncResult.IsCompleted))
+            if ((invokeAsyncResult is not null) && (!invokeAsyncResult.IsCompleted))
             {
                 invokedOnBlockedThread = invokeAsyncResult.InvokeCallbackOnThread(
                     ProcessDebuggerStopEventProc,
@@ -2701,7 +2701,7 @@ namespace System.Management.Automation
 
                 // Raise event and wait for response.
                 DebuggerStopEventArgs args = state as DebuggerStopEventArgs;
-                if (args != null)
+                if (args is not null)
                 {
                     if (IsDebuggerStopEventSubscribed())
                     {
@@ -2763,7 +2763,7 @@ namespace System.Management.Automation
             Dbg.Assert(e.SourceArgs.Length == 1, "Forwarded debugger breakpoint event args must always contain one SourceArgs item.");
             BreakpointUpdatedEventArgs bpArgs = e.SourceArgs[0] as BreakpointUpdatedEventArgs;
 
-            if (bpArgs != null)
+            if (bpArgs is not null)
             {
                 UpdateBreakpointCount(bpArgs.BreakpointCount);
                 base.RaiseBreakpointUpdatedEvent(bpArgs);
@@ -2822,7 +2822,7 @@ namespace System.Management.Automation
                 _runspace.RunspacePool.RemoteRunspacePoolInternal.IsRemoteDebugStop = remoteDebug;
             }
 
-            if (availability != null)
+            if (availability is not null)
             {
                 RunspaceAvailability newAvailability = availability.Value;
 
@@ -2884,7 +2884,7 @@ namespace System.Management.Automation
                 if (ps.ErrorBuffer.Count > 0)
                 {
                     Exception e = ps.ErrorBuffer[0].Exception;
-                    if (e != null)
+                    if (e is not null)
                     {
                         throw e;
                     }
@@ -2937,7 +2937,7 @@ namespace System.Management.Automation
 
         internal RemoteSessionStateProxy(RemoteRunspace runspace)
         {
-            Dbg.Assert(runspace != null, "Caller should validate the parameter");
+            Dbg.Assert(runspace is not null, "Caller should validate the parameter");
             _runspace = runspace;
         }
 
@@ -2972,7 +2972,7 @@ namespace System.Management.Automation
 
             // Verify the runspace has the Set-Variable command. For performance, throw if we got an error
             // before.
-            if (_setVariableCommandNotFoundException != null)
+            if (_setVariableCommandNotFoundException is not null)
                 throw _setVariableCommandNotFoundException;
 
             // Since these are implemented as pipelines, we don't need to do our own
@@ -3032,7 +3032,7 @@ namespace System.Management.Automation
 
             // Verify the runspace has the Get-Variable command. For performance, throw if we got an error
             // before.
-            if (_getVariableCommandNotFoundException != null)
+            if (_getVariableCommandNotFoundException is not null)
                 throw _getVariableCommandNotFoundException;
 
             // Since these are implemented as pipelines, we don't need to do our own
@@ -3092,7 +3092,7 @@ namespace System.Management.Automation
             {
                 // Verify the runspace has is not in NoLanguage mode. For performance, throw if we got an error
                 // before.
-                if (_isInNoLanguageModeException != null)
+                if (_isInNoLanguageModeException is not null)
                     throw _isInNoLanguageModeException;
 
                 // Since these are implemented as pipelines, we don't need to do our own
@@ -3137,7 +3137,7 @@ namespace System.Management.Automation
             {
                 // Verify the runspace has is not in NoLanguage mode. For performance, throw if we got an error
                 // before.
-                if (_isInNoLanguageModeException != null)
+                if (_isInNoLanguageModeException is not null)
                     throw _isInNoLanguageModeException;
 
                 // Since these are implemented as pipelines, we don't need to do our own
@@ -3199,7 +3199,7 @@ namespace System.Management.Automation
             {
                 // Verify the runspace has is not in NoLanguage mode. For performance, return our
                 // cached value if we got an error before.
-                if (_isInNoLanguageModeException != null)
+                if (_isInNoLanguageModeException is not null)
                     return PSLanguageMode.NoLanguage;
 
                 // Since these are implemented as pipelines, we don't need to do our own

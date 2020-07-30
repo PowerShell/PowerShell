@@ -90,7 +90,7 @@ namespace ConsoleApplication
             }
 
             string bodyCode = string.Format(BODY, shortClassName, moduleName, entries.ToString(), className, accessModifier, accessModifier.Equals("public", StringComparison.InvariantCultureIgnoreCase) ? "public." : string.Empty);
-            if (namespaceName != null)
+            if (namespaceName is not null)
             {
                 bodyCode = string.Format(NAMESPACE, namespaceName, bodyCode);
             }

@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
                 _nameContainsWildcard = false;
                 _names = value;
 
-                if (value != null)
+                if (value is not null)
                 {
                     foreach (string commandName in value)
                     {
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value != null)
+                if (value is not null)
                 {
                     _moduleSpecifications = value;
                 }
@@ -330,7 +330,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    if ((i != 0) && (ptn.Type != null) && (ptn.Type.Equals(typeof(object))))
+                    if ((i != 0) && (ptn.Type is not null) && (ptn.Type.Equals(typeof(object))))
                     {
                         continue;
                     }
@@ -455,7 +455,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // report not-found errors for ParameterName and ParameterType if needed
-            if ((_matchedParameterNames != null) && (ParameterName != null))
+            if ((_matchedParameterNames is not null) && (ParameterName is not null))
             {
                 foreach (string requestedParameterName in ParameterName)
                 {
@@ -490,7 +490,7 @@ namespace Microsoft.PowerShell.Commands
             OutputResultsHelper(_accumulatedResults);
 
             object pssenderInfo = Context.GetVariableValue(SpecialVariables.PSSenderInfoVarPath);
-            if ((pssenderInfo != null) && (pssenderInfo is System.Management.Automation.Remoting.PSSenderInfo))
+            if ((pssenderInfo is not null) && (pssenderInfo is System.Management.Automation.Remoting.PSSenderInfo))
             {
                 // Win8: 593295. Exchange has around 1000 cmdlets. During Import-PSSession,
                 // Get-Command  | select-object ..,HelpURI,... is run. HelpURI is a script property
@@ -562,7 +562,7 @@ namespace Microsoft.PowerShell.Commands
             // what sort of commands people expect but either don't exist, or maybe should be installed by default.
             // The StartsWith is to avoid logging telemetry when suggestion mode checks the
             // current directory for scripts/exes in the current directory and '.' is not in the path.
-            if (count == 0 && Name != null && Name.Length > 0 && !Name[0].StartsWith(".\\", StringComparison.OrdinalIgnoreCase))
+            if (count == 0 && Name is not null && Name.Length > 0 && !Name[0].StartsWith(".\\", StringComparison.OrdinalIgnoreCase))
             {
                 Telemetry.Internal.TelemetryAPI.ReportGetCommandFailed(Name, _timer.ElapsedMilliseconds);
             }
@@ -588,7 +588,7 @@ namespace Microsoft.PowerShell.Commands
             // So if a user runs Get-Command -Name del -Syntax the code will find del and the command it resolves to as Remove-Item
             // and attempt to return that, but as the user specified del we want to fiddle with the output a bit to make it clear
             // that's an alias but still give the Remove-Item syntax.
-            if (this.Name != null && !Array.Exists(this.Name, name => name.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase)))
+            if (this.Name is not null && !Array.Exists(this.Name, name => name.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase)))
             {
                 string aliasName = _nameContainsWildcard ? command.Name : this.Name[0];
 
@@ -727,7 +727,7 @@ namespace Microsoft.PowerShell.Commands
                 string verb;
                 string noun;
                 CmdletInfo cmdlet = command as CmdletInfo;
-                if (cmdlet != null)
+                if (cmdlet is not null)
                 {
                     verb = cmdlet.Verb;
                     noun = cmdlet.Noun;
@@ -808,7 +808,7 @@ namespace Microsoft.PowerShell.Commands
                     // available modules for the command.
                     string moduleName;
                     string plainCommandName = Utils.ParseCommandName(commandName, out moduleName);
-                    bool isModuleQualified = (moduleName != null);
+                    bool isModuleQualified = (moduleName is not null);
 
                     // If they've specified a module name, we can do some smarter filtering.
                     // Otherwise, we have to filter everything.
@@ -1039,7 +1039,7 @@ namespace Microsoft.PowerShell.Commands
 
                         _accumulatedResults.Add(current);
 
-                        if (ArgumentList != null)
+                        if (ArgumentList is not null)
                         {
                             // Don't iterate the enumerator any more. If -arguments was specified, then we stop at the first match
                             break;
@@ -1106,35 +1106,35 @@ namespace Microsoft.PowerShell.Commands
             do // false loop
             {
                 ApplicationInfo appInfo = info as ApplicationInfo;
-                if (appInfo != null)
+                if (appInfo is not null)
                 {
                     key = appInfo.Path;
                     break;
                 }
 
                 CmdletInfo cmdletInfo = info as CmdletInfo;
-                if (cmdletInfo != null)
+                if (cmdletInfo is not null)
                 {
                     key = cmdletInfo.FullName;
                     break;
                 }
 
                 ScriptInfo scriptInfo = info as ScriptInfo;
-                if (scriptInfo != null)
+                if (scriptInfo is not null)
                 {
                     key = scriptInfo.Definition;
                     break;
                 }
 
                 ExternalScriptInfo externalScriptInfo = info as ExternalScriptInfo;
-                if (externalScriptInfo != null)
+                if (externalScriptInfo is not null)
                 {
                     key = externalScriptInfo.Path;
                     break;
                 }
             } while (false);
 
-            if (key != null)
+            if (key is not null)
             {
                 if (_commandsWritten.ContainsKey(key))
                 {
@@ -1165,7 +1165,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 IDictionary<string, ParameterMetadata> tmp = commandInfo.Parameters;
-                if (tmp != null)
+                if (tmp is not null)
                 {
                     commandParameters = tmp.Values;
                 }
@@ -1234,7 +1234,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 typeIsMatching = false;
-                if (_parameterTypes != null &&
+                if (_parameterTypes is not null &&
                     _parameterTypes.Length > 0)
                 {
                     typeIsMatching |= _parameterTypes.Any(parameterMetadata.IsMatchingType);
@@ -1291,7 +1291,7 @@ namespace Microsoft.PowerShell.Commands
                             isCommandMatch = false;
                         }
                     }
-                    else if (_modulePatterns != null && _modulePatterns.Count > 0)
+                    else if (_modulePatterns is not null && _modulePatterns.Count > 0)
                     {
                         if (!SessionStateUtilities.MatchesAnyWildcardPattern(current.ModuleName, _modulePatterns, true))
                         {
@@ -1320,7 +1320,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (ArgumentList != null && !(current is CmdletInfo || current is IScriptCommandInfo))
+                    if (ArgumentList is not null && !(current is CmdletInfo || current is IScriptCommandInfo))
                     {
                         // If current is not a cmdlet or script, we need to throw a terminating error.
                         ThrowTerminatingError(
@@ -1361,7 +1361,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             CommandInfo newCurrent = current.CreateGetCommandCopy(ArgumentList);
 
-                            if (ArgumentList != null)
+                            if (ArgumentList is not null)
                             {
                                 // We need to prepopulate the parameter metadata in the CmdletInfo to
                                 // ensure there are no errors. Getting the ParameterSets property
@@ -1439,7 +1439,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (isModuleMatch)
                     {
-                        if (module.SessionState != null)
+                        if (module.SessionState is not null)
                         {
                             // Look in function table
                             if ((this.CommandType & (CommandTypes.Function | CommandTypes.Filter | CommandTypes.Configuration)) != 0)
@@ -1487,7 +1487,7 @@ namespace Microsoft.PowerShell.Commands
         private bool IsCommandInResult(CommandInfo command)
         {
             bool isPresent = false;
-            bool commandHasModule = command.Module != null;
+            bool commandHasModule = command.Module is not null;
             foreach (CommandInfo commandInfo in _accumulatedResults)
             {
                 if ((command.CommandType == commandInfo.CommandType &&
@@ -1495,7 +1495,7 @@ namespace Microsoft.PowerShell.Commands
                       // If the command has been imported with a prefix, then just checking the names for duplication will not be enough.
                       // Hence, an additional check is done with the prefix information
                       string.Equals(ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix), command.Name, StringComparison.OrdinalIgnoreCase))
-                    ) && commandInfo.Module != null && commandHasModule &&
+                    ) && commandInfo.Module is not null && commandHasModule &&
                     ( // We do reference equal comparison if both command are imported. If either one is not imported, we compare the module path
                      (commandInfo.IsImported && command.IsImported && commandInfo.Module.Equals(command.Module)) ||
                      ((!commandInfo.IsImported || !command.IsImported) && commandInfo.Module.Path.Equals(command.Module.Path, StringComparison.OrdinalIgnoreCase))
@@ -1547,7 +1547,7 @@ namespace Microsoft.PowerShell.Commands
         private static PSObject GetModuleInfo(CommandInfo cmdInfo)
         {
             PSObject moduleInfo = new PSObject();
-            string moduleName = (cmdInfo.Module != null) ? cmdInfo.Module.Name : string.Empty;
+            string moduleName = (cmdInfo.Module is not null) ? cmdInfo.Module.Name : string.Empty;
             moduleInfo.Properties.Add(new PSNoteProperty("Name", moduleName));
 
             return moduleInfo;
@@ -1558,7 +1558,7 @@ namespace Microsoft.PowerShell.Commands
             ReadOnlyCollection<CommandParameterSetInfo> parameterSets = null;
             try
             {
-                if (cmdInfo.ParameterSets != null)
+                if (cmdInfo.ParameterSets is not null)
                 {
                     parameterSets = cmdInfo.ParameterSets;
                 }
@@ -1602,7 +1602,7 @@ namespace Microsoft.PowerShell.Commands
                 bool hasParameterSet = false;
                 IList<string> validValues = new List<string>();
                 var validateSetAttribute = parameter.Attributes.OfType<ValidateSetAttribute>().LastOrDefault();
-                if (validateSetAttribute != null)
+                if (validateSetAttribute is not null)
                 {
                     hasParameterSet = true;
                     validValues = validateSetAttribute.ValidValues;

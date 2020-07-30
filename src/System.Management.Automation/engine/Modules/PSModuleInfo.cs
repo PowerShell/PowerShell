@@ -76,7 +76,7 @@ namespace System.Management.Automation
         /// <param name="sessionState">The module's sessionstate object - this may be null if the module is a dll.</param>
         internal PSModuleInfo(string name, string path, ExecutionContext context, SessionState sessionState)
         {
-            if (path != null)
+            if (path is not null)
             {
                 string resolvedPath = ModuleCmdletBase.GetResolvedPath(path, context);
                 // The resolved path might be null if we're building a dynamic module and the path
@@ -85,7 +85,7 @@ namespace System.Management.Automation
             }
 
             SessionState = sessionState;
-            if (sessionState != null)
+            if (sessionState is not null)
             {
                 sessionState.Internal.Module = this;
             }
@@ -378,7 +378,7 @@ namespace System.Management.Automation
         private static Uri GetUriFromString(string uriString)
         {
             Uri uri = null;
-            if (uriString != null)
+            if (uriString is not null)
             {
                 // try creating the Uri object
                 // Ignoring the return value from Uri.TryCreate(), as uri value will be null on false or valid uri object on true.
@@ -541,7 +541,7 @@ namespace System.Management.Automation
                 Dictionary<string, FunctionInfo> exports = new Dictionary<string, FunctionInfo>(StringComparer.OrdinalIgnoreCase);
 
                 // If the module is not binary, it may also have functions...
-                if (DeclaredFunctionExports != null)
+                if (DeclaredFunctionExports is not null)
                 {
                     if (DeclaredFunctionExports.Count == 0) { return exports; }
 
@@ -551,11 +551,11 @@ namespace System.Management.Automation
                         exports[fn] = tempFunction;
                     }
                 }
-                else if (SessionState != null)
+                else if (SessionState is not null)
                 {
                     // If there is no session state object associated with this list,
                     // just return a null list of exports...
-                    if (SessionState.Internal.ExportedFunctions != null)
+                    if (SessionState.Internal.ExportedFunctions is not null)
                     {
                         foreach (FunctionInfo fi in SessionState.Internal.ExportedFunctions)
                         {
@@ -585,7 +585,7 @@ namespace System.Management.Automation
         private bool IsScriptModuleFile(string path)
         {
             var ext = System.IO.Path.GetExtension(path);
-            return ext != null && s_scriptModuleExtensions.Contains(ext);
+            return ext is not null && s_scriptModuleExtensions.Contains(ext);
         }
 
         /// <summary>
@@ -603,7 +603,7 @@ namespace System.Management.Automation
                 string rootedPath = null;
                 if (RootModule is null)
                 {
-                    if (this.Path != null)
+                    if (this.Path is not null)
                     {
                         rootedPath = this.Path;
                     }
@@ -614,7 +614,7 @@ namespace System.Management.Automation
                 }
 
                 // ExternalScriptInfo.GetScriptBlockAst() uses a cache layer to avoid re-parsing.
-                CreateExportedTypeDefinitions(rootedPath != null && IsScriptModuleFile(rootedPath) && IO.File.Exists(rootedPath) ?
+                CreateExportedTypeDefinitions(rootedPath is not null && IsScriptModuleFile(rootedPath) && IO.File.Exists(rootedPath) ?
                     (new ExternalScriptInfo(rootedPath, rootedPath)).GetScriptBlockAst() : null);
             }
 
@@ -686,7 +686,7 @@ namespace System.Management.Automation
         /// <param name="name">The function to add.</param>
         internal void AddDetectedFunctionExport(string name)
         {
-            Dbg.Assert(name != null, "AddDetectedFunctionExport should not be called with a null value");
+            Dbg.Assert(name is not null, "AddDetectedFunctionExport should not be called with a null value");
 
             if (!DetectedFunctionExports.Contains(name))
             {
@@ -703,7 +703,7 @@ namespace System.Management.Automation
             {
                 Dictionary<string, CmdletInfo> exports = new Dictionary<string, CmdletInfo>(StringComparer.OrdinalIgnoreCase);
 
-                if (DeclaredCmdletExports != null)
+                if (DeclaredCmdletExports is not null)
                 {
                     if (DeclaredCmdletExports.Count == 0) { return exports; }
 
@@ -713,7 +713,7 @@ namespace System.Management.Automation
                         exports[fn] = tempCmdlet;
                     }
                 }
-                else if ((CompiledExports != null) && (CompiledExports.Count > 0))
+                else if ((CompiledExports is not null) && (CompiledExports.Count > 0))
                 {
                     foreach (CmdletInfo cmdlet in CompiledExports)
                     {
@@ -742,7 +742,7 @@ namespace System.Management.Automation
         /// <param name="cmdlet">The cmdlet to add...</param>
         internal void AddDetectedCmdletExport(string cmdlet)
         {
-            Dbg.Assert(cmdlet != null, "AddDetectedCmdletExport should not be called with a null value");
+            Dbg.Assert(cmdlet is not null, "AddDetectedCmdletExport should not be called with a null value");
 
             if (!DetectedCmdletExports.Contains(cmdlet))
             {
@@ -762,7 +762,7 @@ namespace System.Management.Automation
             {
                 Dictionary<string, CommandInfo> exports = new Dictionary<string, CommandInfo>(StringComparer.OrdinalIgnoreCase);
                 Dictionary<string, CmdletInfo> cmdlets = this.ExportedCmdlets;
-                if (cmdlets != null)
+                if (cmdlets is not null)
                 {
                     foreach (var cmdlet in cmdlets)
                     {
@@ -771,7 +771,7 @@ namespace System.Management.Automation
                 }
 
                 Dictionary<string, FunctionInfo> functions = this.ExportedFunctions;
-                if (functions != null)
+                if (functions is not null)
                 {
                     foreach (var function in functions)
                     {
@@ -780,7 +780,7 @@ namespace System.Management.Automation
                 }
 
                 Dictionary<string, AliasInfo> aliases = this.ExportedAliases;
-                if (aliases != null)
+                if (aliases is not null)
                 {
                     foreach (var alias in aliases)
                     {
@@ -798,7 +798,7 @@ namespace System.Management.Automation
         /// <param name="cmdlet">The cmdlet to add...</param>
         internal void AddExportedCmdlet(CmdletInfo cmdlet)
         {
-            Dbg.Assert(cmdlet != null, "AddExportedCmdlet should not be called with a null value");
+            Dbg.Assert(cmdlet is not null, "AddExportedCmdlet should not be called with a null value");
             _compiledExports.Add(cmdlet);
         }
 
@@ -815,7 +815,7 @@ namespace System.Management.Automation
                 // If this module has a session state instance and there are any
                 // exported cmdlets in the session state, migrate them to the
                 // module info _compiledCmdlets entry.
-                if (SessionState != null && SessionState.Internal.ExportedCmdlets != null &&
+                if (SessionState is not null && SessionState.Internal.ExportedCmdlets is not null &&
                     SessionState.Internal.ExportedCmdlets.Count > 0)
                 {
                     foreach (CmdletInfo ci in SessionState.Internal.ExportedCmdlets)
@@ -838,7 +838,7 @@ namespace System.Management.Automation
         /// <param name="aliasInfo">The cmdlet to add...</param>
         internal void AddExportedAlias(AliasInfo aliasInfo)
         {
-            Dbg.Assert(aliasInfo != null, "AddExportedAlias should not be called with a null value");
+            Dbg.Assert(aliasInfo is not null, "AddExportedAlias should not be called with a null value");
             CompiledAliasExports.Add(aliasInfo);
         }
 
@@ -1082,7 +1082,7 @@ namespace System.Management.Automation
         /// </summary>
         private static void AddModuleToList(PSModuleInfo module, List<PSModuleInfo> moduleList)
         {
-            Dbg.Assert(module != null, "AddModuleToList should not be called with a null value");
+            Dbg.Assert(module is not null, "AddModuleToList should not be called with a null value");
             // Add the module if it isn't already there...
             foreach (PSModuleInfo m in moduleList)
             {
@@ -1105,7 +1105,7 @@ namespace System.Management.Automation
             {
                 Dictionary<string, PSVariable> exportedVariables = new Dictionary<string, PSVariable>(StringComparer.OrdinalIgnoreCase);
 
-                if ((DeclaredVariableExports != null) && (DeclaredVariableExports.Count > 0))
+                if ((DeclaredVariableExports is not null) && (DeclaredVariableExports.Count > 0))
                 {
                     foreach (string fn in DeclaredVariableExports)
                     {
@@ -1141,7 +1141,7 @@ namespace System.Management.Automation
             {
                 Dictionary<string, AliasInfo> exportedAliases = new Dictionary<string, AliasInfo>(StringComparer.OrdinalIgnoreCase);
 
-                if ((DeclaredAliasExports != null) && (DeclaredAliasExports.Count > 0))
+                if ((DeclaredAliasExports is not null) && (DeclaredAliasExports.Count > 0))
                 {
                     foreach (string fn in DeclaredAliasExports)
                     {
@@ -1149,7 +1149,7 @@ namespace System.Management.Automation
                         exportedAliases[fn] = tempAlias;
                     }
                 }
-                else if ((CompiledAliasExports != null) && (CompiledAliasExports.Count > 0))
+                else if ((CompiledAliasExports is not null) && (CompiledAliasExports.Count > 0))
                 {
                     foreach (AliasInfo ai in CompiledAliasExports)
                     {
@@ -1202,7 +1202,7 @@ namespace System.Management.Automation
         /// <param name="value">The command it resolves to.</param>
         internal void AddDetectedAliasExport(string name, string value)
         {
-            Dbg.Assert(name != null, "AddDetectedAliasExport should not be called with a null value");
+            Dbg.Assert(name is not null, "AddDetectedAliasExport should not be called with a null value");
 
             DetectedAliasExports[name] = value;
         }
@@ -1213,7 +1213,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _declaredDscResourceExports != null
+                return _declaredDscResourceExports is not null
                     ? new ReadOnlyCollection<string>(_declaredDscResourceExports)
                     : Utils.EmptyReadOnlyCollection<string>();
             }
@@ -1325,7 +1325,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (callersSessionState != null)
+            if (callersSessionState is not null)
             {
                 return callersSessionState.Internal.GetVariable(variableName);
             }
@@ -1348,7 +1348,7 @@ namespace System.Management.Automation
             var context = LocalPipeline.GetExecutionContextFromTLS();
             var tuple = context.EngineSessionState.CurrentScope.LocalsTuple;
             IEnumerable<PSVariable> variables = context.EngineSessionState.CurrentScope.Variables.Values;
-            if (tuple != null)
+            if (tuple is not null)
             {
                 var result = new Dictionary<string, PSVariable>();
                 tuple.GetVariableTable(result, false);
@@ -1391,7 +1391,7 @@ namespace System.Management.Automation
             foreach (KeyValuePair<string, FunctionInfo> entry in this.ExportedFunctions)
             {
                 FunctionInfo func = entry.Value;
-                if (func != null)
+                if (func is not null)
                 {
                     PSScriptMethod sm = new PSScriptMethod(func.Name, func.ScriptBlock);
                     obj.Members.Add(sm);
@@ -1401,7 +1401,7 @@ namespace System.Management.Automation
             foreach (KeyValuePair<string, PSVariable> entry in this.ExportedVariables)
             {
                 PSVariable var = entry.Value;
-                if (var != null)
+                if (var is not null)
                 {
                     PSVariableProperty sm = new PSVariableProperty(var);
                     obj.Members.Add(sm);
@@ -1621,11 +1621,11 @@ namespace System.Management.Automation
             {
                 int result = 0;
 
-                if (obj != null)
+                if (obj is not null)
                 {
                     // picking two different prime numbers to avoid collisions
                     result = 23;
-                    if (obj.Name != null)
+                    if (obj.Name is not null)
                     {
                         result = result * 17 + obj.Name.GetHashCode();
                     }
@@ -1635,7 +1635,7 @@ namespace System.Management.Automation
                         result = result * 17 + obj.Guid.GetHashCode();
                     }
 
-                    if (obj.Version != null)
+                    if (obj.Version is not null)
                     {
                         result = result * 17 + obj.Version.GetHashCode();
                     }

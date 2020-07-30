@@ -287,7 +287,7 @@ namespace System.Management.Automation.Remoting
             string stream,
             ReceiveDataCollection.OnDataAvailableCallback dataAvailableCallback)
         {
-            Dbg.Assert(data != null, "Cannot process null data");
+            Dbg.Assert(data is not null, "Cannot process null data");
 
             s_baseTracer.WriteLine("Processing incoming data for stream {0}.", stream);
 
@@ -699,14 +699,14 @@ namespace System.Management.Automation.Remoting.Client
 
             lock (_callbackNotificationQueue)
             {
-                if ((remoteObject != null) || (transportErrorArgs != null) || (privateData != null))
+                if ((remoteObject is not null) || (transportErrorArgs is not null) || (privateData is not null))
                 {
                     CallbackNotificationInformation rcvdDataInfo = new CallbackNotificationInformation();
                     rcvdDataInfo.remoteObject = remoteObject;
                     rcvdDataInfo.transportError = transportErrorArgs;
                     rcvdDataInfo.privateData = privateData;
 
-                    if (remoteObject != null && (remoteObject.DataType == RemotingDataType.PublicKey ||
+                    if (remoteObject is not null && (remoteObject.DataType == RemotingDataType.PublicKey ||
                                                  remoteObject.DataType == RemotingDataType.EncryptedSessionKey ||
                                                  remoteObject.DataType == RemotingDataType.PublicKeyRequest))
                     {
@@ -761,7 +761,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             bool interactiveHostCall = false;
 
-            if ((remoteObject != null) &&
+            if ((remoteObject is not null) &&
                 (remoteObject.DataType == RemotingDataType.RemoteHostCallUsingPowerShellHost))
             {
                 RemoteHostMethodId methodId = 0;
@@ -826,15 +826,15 @@ namespace System.Management.Automation.Remoting.Client
                         rcvdDataInfo = _callbackNotificationQueue.Dequeue();
                     }
                     // Handle callback.
-                    if (rcvdDataInfo != null)
+                    if (rcvdDataInfo is not null)
                     {
                         // Handling transport exception in thread-pool thread
-                        if (rcvdDataInfo.transportError != null)
+                        if (rcvdDataInfo.transportError is not null)
                         {
                             RaiseErrorHandler(rcvdDataInfo.transportError);
                             break;
                         }
-                        else if (rcvdDataInfo.privateData != null)
+                        else if (rcvdDataInfo.privateData is not null)
                         {
                             ProcessPrivateData(rcvdDataInfo.privateData);
                         }
@@ -1320,7 +1320,7 @@ namespace System.Management.Automation.Remoting.Server
                             Fragmentor.Fragment<object>(dataToBeSent, serializedData);
                         }
 
-                        if ((_dataToBeSentQueue != null) && (_dataToBeSentQueue.Count > 0))
+                        if ((_dataToBeSentQueue is not null) && (_dataToBeSentQueue.Count > 0))
                         {
                             Tuple<RemoteDataObject, bool, bool> dataToBeSentQueueItem = _dataToBeSentQueue.Dequeue();
                             dataToBeSent = dataToBeSentQueueItem.Item1;
@@ -1331,7 +1331,7 @@ namespace System.Management.Automation.Remoting.Server
                         {
                             dataToBeSent = null;
                         }
-                    } while (dataToBeSent != null);
+                    } while (dataToBeSent is not null);
                 }
                 finally
                 {
@@ -1342,7 +1342,7 @@ namespace System.Management.Automation.Remoting.Server
 
         private void OnDataAvailable(byte[] dataToSend, bool isEndFragment)
         {
-            Dbg.Assert(dataToSend != null, "ServerTransportManager cannot send null fragment");
+            Dbg.Assert(dataToSend is not null, "ServerTransportManager cannot send null fragment");
             // log to crimson log.
             PSEtwLog.LogAnalyticInformational(PSEventId.ServerSendData, PSOpcode.Send, PSTask.None,
                 PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,

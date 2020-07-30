@@ -128,27 +128,27 @@ namespace Microsoft.PowerShell.Commands
         internal void WriteContentObject(object content, long readCount, PathInfo pathInfo, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                content != null,
+                content is not null,
                 "The caller should verify the content.");
 
             Dbg.Diagnostics.Assert(
-                pathInfo != null,
+                pathInfo is not null,
                 "The caller should verify the pathInfo.");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "The caller should verify the context.");
 
             PSObject result = PSObject.AsPSObject(content);
 
             Dbg.Diagnostics.Assert(
-                result != null,
+                result is not null,
                 "A PSObject should always be constructed.");
 
             // Use the cached notes if the cache exists and the path is still the same
             PSNoteProperty note;
 
-            if (_currentContentItem != null &&
+            if (_currentContentItem is not null &&
                 ((_currentContentItem.PathInfo == pathInfo) ||
                     string.Equals(
                         pathInfo.Path,
@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
 
                     string parentPath = null;
 
-                    if (pathInfo.Drive != null)
+                    if (pathInfo.Drive is not null)
                     {
                         parentPath = SessionState.Path.ParseParent(pathInfo.Path, pathInfo.Drive.Root, context);
                     }
@@ -205,7 +205,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // PSDriveInfo
 
-                if (pathInfo.Drive != null)
+                if (pathInfo.Drive is not null)
                 {
                     PSDriveInfo drive = pathInfo.Drive;
                     note = new PSNoteProperty("PSDrive", drive);
@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // PSDriveInfo
 
-                if (PathInfo.Drive != null)
+                if (PathInfo.Drive is not null)
                 {
                     note = new PSNoteProperty("PSDrive", Drive);
                     content.Properties.Add(note, true);
@@ -374,7 +374,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    if (holder.Writer != null)
+                    if (holder.Writer is not null)
                     {
                         holder.Writer.Close();
                     }
@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (holder.Reader != null)
+                    if (holder.Reader is not null)
                     {
                         holder.Reader.Close();
                     }
@@ -533,9 +533,9 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                if (readers != null && readers.Count > 0)
+                if (readers is not null && readers.Count > 0)
                 {
-                    if (readers.Count == 1 && readers[0] != null)
+                    if (readers.Count == 1 && readers[0] is not null)
                     {
                         ContentHolder holder =
                             new ContentHolder(pathInfo, readers[0], null);

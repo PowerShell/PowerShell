@@ -255,7 +255,7 @@ namespace Microsoft.PowerShell.Commands
             if (!IsParameterSetForVM() &&
                 !IsParameterSetForContainer() &&
                 !IsParameterSetForVMContainerSession() &&
-                chost != null && chost.HostInNestedPrompt())
+                chost is not null && chost.HostInNestedPrompt())
             {
                 ThrowTerminatingError(new ErrorRecord(
                     new InvalidOperationException(PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.HostInNestedPrompt)),
@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.Commands
 
             /*Microsoft.Windows.PowerShell.Gui.Internal.GPSHost ghost = this.Host as Microsoft.Windows.PowerShell.Gui.Internal.GPSHost;
 
-            if (ghost != null && ghost.HostInNestedPrompt())
+            if (ghost is not null && ghost.HostInNestedPrompt())
             {
                 ThrowTerminatingError(new ErrorRecord(
                     new InvalidOperationException(PSRemotingErrorInvariants.FormatResourceString(PSRemotingErrorId.HostInNestedPrompt)),
@@ -351,7 +351,7 @@ namespace Microsoft.PowerShell.Commands
                     ex = e;
                 }
 
-                if (ex != null)
+                if (ex is not null)
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.SessionConnectFailed);
                     WriteError(
@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ParameterSetName == SessionParameterSet)
                 {
-                    string sessionName = (Session != null) ? Session.Name : string.Empty;
+                    string sessionName = (Session is not null) ? Session.Name : string.Empty;
                     WriteError(
                         new ErrorRecord(
                             new ArgumentException(GetMessage(RemotingErrorIdStrings.EnterPSSessionBrokenSession,
@@ -393,14 +393,14 @@ namespace Microsoft.PowerShell.Commands
             Debugger debugger = null;
             try
             {
-                if (host.Runspace != null)
+                if (host.Runspace is not null)
                 {
                     debugger = host.Runspace.Debugger;
                 }
             }
             catch (PSNotImplementedException) { }
 
-            bool supportRunningCommand = ((debugger != null) && ((debugger.DebugMode & DebugModes.RemoteScript) == DebugModes.RemoteScript));
+            bool supportRunningCommand = ((debugger is not null) && ((debugger.DebugMode & DebugModes.RemoteScript) == DebugModes.RemoteScript));
             if (remoteRunspace.RunspaceAvailability != RunspaceAvailability.Available)
             {
                 // Session has running command.
@@ -438,7 +438,7 @@ namespace Microsoft.PowerShell.Commands
                     // be going to a job object.
                     Job job = FindJobForRunspace(remoteRunspace.InstanceId);
                     string msg;
-                    if (job != null)
+                    if (job is not null)
                     {
                         msg = StringUtil.Format(
                             RunspaceStrings.RunningCmdWithJob,
@@ -463,7 +463,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Make sure any PSSession object passed in is saved in the local runspace repository.
-            if (Session != null)
+            if (Session is not null)
             {
                 this.RunspaceRepository.AddOrReplace(Session);
             }
@@ -479,7 +479,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // A third-party host can throw any exception here..we should
                 // clean the runspace created in this case.
-                if ((remoteRunspace != null) && (remoteRunspace.ShouldCloseOnPop))
+                if ((remoteRunspace is not null) && (remoteRunspace.ShouldCloseOnPop))
                 {
                     remoteRunspace.Close();
                 }
@@ -495,7 +495,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (_stream != null)
+            if (_stream is not null)
             {
                 while (true)
                 {
@@ -520,7 +520,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing()
         {
             var remoteRunspace = _tempRunspace;
-            if (remoteRunspace != null)
+            if (remoteRunspace is not null)
             {
                 try
                 {
@@ -565,7 +565,7 @@ namespace Microsoft.PowerShell.Commands
                 this.SessionOption.ApplicationArguments,
                 rsName,
                 rsId);
-            Dbg.Assert(remoteRunspace != null, "Expected remoteRunspace != null");
+            Dbg.Assert(remoteRunspace is not null, "Expected remoteRunspace is not null");
             remoteRunspace.URIRedirectionReported += HandleURIDirectionReported;
 
             _stream = new ObjectStream();
@@ -607,7 +607,7 @@ namespace Microsoft.PowerShell.Commands
             PSRemotingTransportException transException =
                         exception as PSRemotingTransportException;
             string errorDetails = null;
-            if ((transException != null) &&
+            if ((transException is not null) &&
                 (transException.ErrorCode ==
                     System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_REDIRECT_REQUESTED))
             {
@@ -675,7 +675,7 @@ namespace Microsoft.PowerShell.Commands
                 connectionInfo.AppName = ApplicationName;
                 connectionInfo.ShellUri = ConfigurationName;
                 connectionInfo.Scheme = scheme;
-                if (CertificateThumbprint != null)
+                if (CertificateThumbprint is not null)
                 {
                     connectionInfo.CertificateThumbprint = CertificateThumbprint;
                 }
@@ -718,7 +718,7 @@ namespace Microsoft.PowerShell.Commands
                 WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
                 connectionInfo.ConnectionUri = ConnectionUri;
                 connectionInfo.ShellUri = ConfigurationName;
-                if (CertificateThumbprint != null)
+                if (CertificateThumbprint is not null)
                 {
                     connectionInfo.CertificateThumbprint = CertificateThumbprint;
                 }
@@ -783,7 +783,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 remoteRunspace = (RemoteRunspace)matches[0].Runspace;
-                Dbg.Assert(remoteRunspace != null, "Expected remoteRunspace != null");
+                Dbg.Assert(remoteRunspace is not null, "Expected remoteRunspace is not null");
             }
 
             return remoteRunspace;
@@ -846,8 +846,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     PSRemotingChildJob remotingChildJob = childJob as PSRemotingChildJob;
 
-                    if (remotingChildJob != null &&
-                        remotingChildJob.Runspace != null &&
+                    if (remotingChildJob is not null &&
+                        remotingChildJob.Runspace is not null &&
                         remotingChildJob.JobStateInfo.State == JobState.Running &&
                         remotingChildJob.Runspace.InstanceId.Equals(id))
                     {
@@ -881,7 +881,7 @@ namespace Microsoft.PowerShell.Commands
             switch (ParameterSetName)
             {
                 case SessionParameterSet:
-                    if (this.Session != null)
+                    if (this.Session is not null)
                     {
                         remoteRunspace = (RemoteRunspace)this.Session.Runspace;
                     }
@@ -904,8 +904,8 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            if ((remoteRunspace != null) &&
-                (remoteRunspace.ConnectionInfo != null))
+            if ((remoteRunspace is not null) &&
+                (remoteRunspace.ConnectionInfo is not null))
             {
                 if ((remoteRunspace.ConnectionInfo is VMConnectionInfo) ||
                     (remoteRunspace.ConnectionInfo is ContainerConnectionInfo))
@@ -1060,7 +1060,7 @@ namespace Microsoft.PowerShell.Commands
                 // In case of PSDirectException, we should output the precise error message
                 // in inner exception instead of the generic one in outer exception.
                 //
-                if ((e.InnerException != null) && (e.InnerException is PSDirectException))
+                if ((e.InnerException is not null) && (e.InnerException is PSDirectException))
                 {
                     errorRecord = new ErrorRecord(e.InnerException,
                         "CreateRemoteRunspaceForVMFailed",
@@ -1100,7 +1100,7 @@ namespace Microsoft.PowerShell.Commands
             RemoteRunspace remoteRunspace = RunspaceFactory.CreateRunspace(connectionInfo, host, typeTable) as RemoteRunspace;
             remoteRunspace.Name = "PowerShellDirectAttach";
 
-            Dbg.Assert(remoteRunspace != null, "Expected remoteRunspace != null");
+            Dbg.Assert(remoteRunspace is not null, "Expected remoteRunspace is not null");
             try
             {
                 remoteRunspace.Open();
@@ -1145,14 +1145,14 @@ namespace Microsoft.PowerShell.Commands
                         break;
 
                     case SessionParameterSet:
-                        targetName = (this.Session != null) ? this.Session.ComputerName : string.Empty;
+                        targetName = (this.Session is not null) ? this.Session.ComputerName : string.Empty;
                         break;
 
                     case InstanceIdParameterSet:
                     case IdParameterSet:
                     case NameParameterSet:
-                        if ((remoteRunspace != null) &&
-                            (remoteRunspace.ConnectionInfo != null))
+                        if ((remoteRunspace is not null) &&
+                            (remoteRunspace.ConnectionInfo is not null))
                         {
                             targetName = remoteRunspace.ConnectionInfo.ComputerName;
                         }
@@ -1236,7 +1236,7 @@ namespace Microsoft.PowerShell.Commands
                 // In case of PSDirectException, we should output the precise error message
                 // in inner exception instead of the generic one in outer exception.
                 //
-                if ((e.InnerException != null) && (e.InnerException is PSDirectException))
+                if ((e.InnerException is not null) && (e.InnerException is PSDirectException))
                 {
                     errorRecord = new ErrorRecord(e.InnerException,
                         "CreateRemoteRunspaceForContainerFailed",
@@ -1294,7 +1294,7 @@ namespace Microsoft.PowerShell.Commands
         internal static RemotePipeline ConnectRunningPipeline(RemoteRunspace remoteRunspace)
         {
             RemotePipeline cmd = null;
-            if (remoteRunspace.RemoteCommand != null)
+            if (remoteRunspace.RemoteCommand is not null)
             {
                 // Reconstruct scenario.
                 // Newly connected pipeline object is added to the RemoteRunspace running
@@ -1309,7 +1309,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Connect the runspace pipeline so that debugging and output data from
             // remote server can continue.
-            if (cmd != null &&
+            if (cmd is not null &&
                 cmd.PipelineStateInfo.State == PipelineState.Disconnected)
             {
                 using (ManualResetEvent connected = new ManualResetEvent(false))
@@ -1338,7 +1338,7 @@ namespace Microsoft.PowerShell.Commands
         {
             RemotePipeline remotePipeline = cmd as RemotePipeline;
 
-            if (remotePipeline != null)
+            if (remotePipeline is not null)
             {
                 using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
                 {
@@ -1355,7 +1355,7 @@ namespace Microsoft.PowerShell.Commands
                     IAsyncResult async = ps.BeginInvoke<PSObject>(input, settings, null, null);
 
                     RemoteDebugger remoteDebugger = remoteRunspace.Debugger as RemoteDebugger;
-                    if (remoteDebugger != null)
+                    if (remoteDebugger is not null)
                     {
                         // Update client with breakpoint information from pushed runspace.
                         // Information will be passed to the client via the Debugger.BreakpointUpdated event.

@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         public void FocusFirstElement()
         {
-            if (this.firstFocusableElement != null)
+            if (this.firstFocusableElement is not null)
             {
                 this.firstFocusableElement.Focus();
             }
@@ -317,7 +317,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                         control = ParameterSetControl.CreateTextBoxControl(parameter, rowNumber);
                     }
 
-                    if (control != null)
+                    if (control is not null)
                     {
                         this.AddControlToMainGrid(control);
                     }

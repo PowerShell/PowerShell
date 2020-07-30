@@ -263,7 +263,7 @@ namespace System.Management.Automation
         {
             string parameterTypeString;
             PSTypeNameAttribute typeName;
-            if (attributes != null && (typeName = attributes.OfType<PSTypeNameAttribute>().FirstOrDefault()) != null)
+            if (attributes is not null && (typeName = attributes.OfType<PSTypeNameAttribute>().FirstOrDefault()) is not null)
             {
                 // If we have a PSTypeName specified on the class, we assume it has a more useful type than the actual
                 // parameter type.  This is a reasonable assumption, the parameter binder does honor this attribute.
@@ -314,7 +314,7 @@ namespace System.Management.Automation
         private void Initialize(MergedCommandParameterMetadata parameterMetadata, uint parameterSetFlag)
         {
             Diagnostics.Assert(
-                parameterMetadata != null,
+                parameterMetadata is not null,
                 "The parameterMetadata should never be null");
 
             Collection<CommandParameterInfo> processedParameters =
@@ -326,7 +326,7 @@ namespace System.Management.Automation
 
             foreach (MergedCompiledCommandParameter parameter in compiledParameters)
             {
-                if (parameter != null)
+                if (parameter is not null)
                 {
                     processedParameters.Add(
                         new CommandParameterInfo(parameter.Parameter, parameterSetFlag));

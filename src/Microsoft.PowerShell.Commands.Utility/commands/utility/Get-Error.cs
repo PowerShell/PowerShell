@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
             var errorRecords = new List<object>();
             var index = 0;
 
-            if (InputObject != null)
+            if (InputObject is not null)
             {
                 if (InputObject.BaseObject is Exception || InputObject.BaseObject is ErrorRecord)
                 {

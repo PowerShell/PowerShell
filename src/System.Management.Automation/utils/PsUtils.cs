@@ -212,7 +212,7 @@ namespace System.Management.Automation
         /// <returns>Base64 encoded string as the key of the UsingExpressionAst.</returns>
         internal static string GetUsingExpressionKey(Language.UsingExpressionAst usingAst)
         {
-            Diagnostics.Assert(usingAst != null, "Caller makes sure the parameter is not null");
+            Diagnostics.Assert(usingAst is not null, "Caller makes sure the parameter is not null");
 
             // We cannot call ToLowerInvariant unconditionally, because usingAst might
             // contain IndexExpressionAst in its SubExpression, such as
@@ -435,16 +435,16 @@ namespace System.Management.Automation
             string unused1;
             string unused2;
             var pipeline = ast.GetSimplePipeline(false, out unused1, out unused2);
-            if (pipeline != null)
+            if (pipeline is not null)
             {
                 var hashtableAst = pipeline.GetPureExpression() as HashtableAst;
-                if (hashtableAst != null)
+                if (hashtableAst is not null)
                 {
                     var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
                     foreach (var pair in hashtableAst.KeyValuePairs)
                     {
                         var key = pair.Item1 as StringConstantExpressionAst;
-                        if (key != null && keys.Contains(key.Value, StringComparer.OrdinalIgnoreCase))
+                        if (key is not null && keys.Contains(key.Value, StringComparer.OrdinalIgnoreCase))
                         {
                             try
                             {

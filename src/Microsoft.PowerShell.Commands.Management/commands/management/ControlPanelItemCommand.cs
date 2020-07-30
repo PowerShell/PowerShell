@@ -230,7 +230,7 @@ $result
                                         ? canonicalName.Substring(0, canonicalName.IndexOf('\0'))
                                         : null;
 
-                    if (canonicalName != null && canonicalName.Equals(RegionCanonicalName, StringComparison.OrdinalIgnoreCase))
+                    if (canonicalName is not null && canonicalName.Equals(RegionCanonicalName, StringComparison.OrdinalIgnoreCase))
                     {
                         // The 'Region' control panel item always has '&Open' (english or other locale) as the first verb name
                         s_verbActionOpenName = item.Verbs().Item(0).Name;
@@ -238,7 +238,7 @@ $result
                     }
                 }
 
-                Dbg.Assert(s_verbActionOpenName != null, "The 'Region' control panel item is available on all SKUs and it always "
+                Dbg.Assert(s_verbActionOpenName is not null, "The 'Region' control panel item is available on all SKUs and it always "
                                                        + "has '&Open' as the first verb item, so VerbActionOpenName should never be null at this point");
             }
 
@@ -257,7 +257,7 @@ $result
 
             using (RegistryKey installation = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion"))
             {
-                Dbg.Assert(installation != null, "the CurrentVersion subkey should exist");
+                Dbg.Assert(installation is not null, "the CurrentVersion subkey should exist");
 
                 string installationType = (string)installation.GetValue("InstallationType", string.Empty);
 
@@ -271,7 +271,7 @@ $result
                     {
                         ps.AddScript(TestHeadlessServerScript);
                         Collection<PSObject> psObjectCollection = ps.Invoke(Array.Empty<object>());
-                        Dbg.Assert(psObjectCollection != null && psObjectCollection.Count == 1, "invoke should never return null, there should be only one return item");
+                        Dbg.Assert(psObjectCollection is not null && psObjectCollection.Count == 1, "invoke should never return null, there should be only one return item");
                         if (LanguagePrimitives.IsTrue(PSObject.Base(psObjectCollection[0])))
                         {
                             result = true;
@@ -451,7 +451,7 @@ $result
                 {
                     string path = item.Path;
                     string canonicalName = (string)item.ExtendedProperty("System.ApplicationName");
-                    canonicalName = canonicalName != null
+                    canonicalName = canonicalName is not null
                                         ? canonicalName.Substring(0, canonicalName.IndexOf('\0'))
                                         : null;
 
@@ -639,7 +639,7 @@ $result
                 string path = item.Path;
                 string description = (string)item.ExtendedProperty("InfoTip");
                 string canonicalName = (string)item.ExtendedProperty("System.ApplicationName");
-                canonicalName = canonicalName != null
+                canonicalName = canonicalName is not null
                                         ? canonicalName.Substring(0, canonicalName.IndexOf('\0'))
                                         : null;
                 int[] categories = (int[])item.ExtendedProperty("System.ControlPanel.Category");

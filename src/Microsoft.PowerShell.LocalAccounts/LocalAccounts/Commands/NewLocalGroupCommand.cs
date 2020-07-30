@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (sam != null)
+            if (sam is not null)
             {
                 sam.Dispose();
                 sam = null;

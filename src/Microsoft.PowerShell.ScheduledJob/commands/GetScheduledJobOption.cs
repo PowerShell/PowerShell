@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
 
             // Return options from the definition object.
-            if (definition != null)
+            if (definition is not null)
             {
                 WriteObject(definition.Options);
             }

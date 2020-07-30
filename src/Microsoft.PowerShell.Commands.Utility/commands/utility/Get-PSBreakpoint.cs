@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Filter by script
-            if (Script != null)
+            if (Script is not null)
             {
                 breakpoints = Filter(
                     breakpoints,

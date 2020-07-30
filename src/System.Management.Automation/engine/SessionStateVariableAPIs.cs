@@ -217,7 +217,7 @@ namespace System.Management.Automation
             if (variablePath.IsVariable)
             {
                 PSVariable variable = GetVariableItem(variablePath, out scope);
-                if (variable != null)
+                if (variable is not null)
                 {
                     result = variable.Value;
                 }
@@ -425,7 +425,7 @@ namespace System.Management.Automation
                     // Read all the content
                     IList resultList = reader.Read(-1);
 
-                    if (resultList != null)
+                    if (resultList is not null)
                     {
                         if (resultList.Count == 0)
                         {
@@ -475,7 +475,7 @@ namespace System.Management.Automation
 
                     Collection<PSObject> items = context.GetAccumulatedObjects ();
 
-                    if (items != null &&
+                    if (items is not null &&
                         items.Count > 0)
                     {
                         result = items[0];
@@ -707,7 +707,7 @@ namespace System.Management.Automation
             {
                 PSDriveInfo drive = lookupScope.GetDrive(variablePath.DriveName);
 
-                if (drive != null)
+                if (drive is not null)
                 {
                     CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
                     context.Drive = drive;
@@ -814,7 +814,7 @@ namespace System.Management.Automation
                         // Read all the content
                         IList resultList = reader.Read(-1);
 
-                        if (resultList != null)
+                        if (resultList is not null)
                         {
                             if (resultList.Count == 0)
                             {
@@ -857,7 +857,7 @@ namespace System.Management.Automation
 
                         Collection<PSObject> results = context.GetAccumulatedObjects ();
 
-                        if (results != null &
+                        if (results is not null &
                             results.Count > 0)
                         {
                             // Only return the first value. If the caller wants globbing
@@ -879,11 +879,11 @@ namespace System.Management.Automation
             // If we get a PSVariable or DictionaryEntry returned then we have to
             // grab the value from it and return that instead.
 
-            if (resultItem != null)
+            if (resultItem is not null)
             {
                 PSVariable variable = resultItem as PSVariable;
 
-                if (variable != null)
+                if (variable is not null)
                 {
                     resultItem = variable.Value;
                 }
@@ -1177,7 +1177,7 @@ namespace System.Management.Automation
                 // If the name is scoped as private we need to mark the
                 // variable as private
 
-                if (variablePath.IsPrivate && varResult != null)
+                if (variablePath.IsPrivate && varResult is not null)
                 {
                     varResult.Options = varResult.Options | ScopedItemOptions.Private;
                 }
@@ -1199,7 +1199,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    if (context != null)
+                    if (context is not null)
                     {
                         try
                         {
@@ -1343,7 +1343,7 @@ namespace System.Management.Automation
                     writer.Close();
                 }
 #else
-                    if (context != null)
+                    if (context is not null)
                     {
                         context.Force = force;
                         SetItem (variablePath.LookupPath.ToString (), newValue, context);
@@ -1355,7 +1355,7 @@ namespace System.Management.Automation
                         Collection<PSObject> setItemResult =
                             SetItem (variablePath.LookupPath.ToString (), newValue);
 
-                        if (setItemResult != null &&
+                        if (setItemResult is not null &&
                             setItemResult.Count > 0)
                         {
                             result = setItemResult[0];
@@ -1572,7 +1572,7 @@ namespace System.Management.Automation
 
             if (variablePath.IsVariable)
             {
-                if (GetVariableItem(variablePath, out scope) != null)
+                if (GetVariableItem(variablePath, out scope) is not null)
                 {
                     scope.RemoveVariable(variablePath.QualifiedName, force);
                 }
@@ -1630,7 +1630,7 @@ namespace System.Management.Automation
 
             SessionStateScope scope = null;
 
-            if (GetVariableItem(variablePath, out scope) != null)
+            if (GetVariableItem(variablePath, out scope) is not null)
             {
                 scope.RemoveVariable(variablePath.QualifiedName, force);
             }
@@ -1718,7 +1718,7 @@ namespace System.Management.Automation
             {
                 PSDriveInfo drive = lookupScope.GetDrive(variablePath.DriveName);
 
-                if (drive != null)
+                if (drive is not null)
                 {
                     CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
                     context.Drive = drive;
@@ -1839,7 +1839,7 @@ namespace System.Management.Automation
                 dottedScope.GetVariableTable(result, includePrivate);
             }
 
-            if (scope.LocalsTuple != null)
+            if (scope.LocalsTuple is not null)
             {
                 scope.LocalsTuple.GetVariableTable(result, includePrivate);
             }

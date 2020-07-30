@@ -131,14 +131,14 @@ namespace System.Management.Automation
             this.IsDynamic = processingDynamicParameters;
 
             var propertyInfo = member as PropertyInfo;
-            if (propertyInfo != null)
+            if (propertyInfo is not null)
             {
                 this.Type = propertyInfo.PropertyType;
             }
             else
             {
                 var fieldInfo = member as FieldInfo;
-                if (fieldInfo != null)
+                if (fieldInfo is not null)
                 {
                     this.Type = fieldInfo.FieldType;
                 }
@@ -438,7 +438,7 @@ namespace System.Management.Automation
             }
 
             ValidateArgumentsAttribute validateAttr = attribute as ValidateArgumentsAttribute;
-            if (validateAttr != null)
+            if (validateAttr is not null)
             {
                 if (validationAttributes is null)
                     validationAttributes = new Collection<ValidateArgumentsAttribute>();
@@ -452,7 +452,7 @@ namespace System.Management.Automation
             }
 
             AliasAttribute aliasAttr = attribute as AliasAttribute;
-            if (aliasAttr != null)
+            if (aliasAttr is not null)
             {
                 if (aliases is null)
                 {
@@ -471,7 +471,7 @@ namespace System.Management.Automation
             }
 
             ArgumentTransformationAttribute argumentAttr = attribute as ArgumentTransformationAttribute;
-            if (argumentAttr != null)
+            if (argumentAttr is not null)
             {
                 if (argTransformationAttributes is null)
                     argTransformationAttributes = new Collection<ArgumentTransformationAttribute>();
@@ -480,35 +480,35 @@ namespace System.Management.Automation
             }
 
             AllowNullAttribute allowNullAttribute = attribute as AllowNullAttribute;
-            if (allowNullAttribute != null)
+            if (allowNullAttribute is not null)
             {
                 this.AllowsNullArgument = true;
                 return;
             }
 
             AllowEmptyStringAttribute allowEmptyStringAttribute = attribute as AllowEmptyStringAttribute;
-            if (allowEmptyStringAttribute != null)
+            if (allowEmptyStringAttribute is not null)
             {
                 this.AllowsEmptyStringArgument = true;
                 return;
             }
 
             AllowEmptyCollectionAttribute allowEmptyCollectionAttribute = attribute as AllowEmptyCollectionAttribute;
-            if (allowEmptyCollectionAttribute != null)
+            if (allowEmptyCollectionAttribute is not null)
             {
                 this.AllowsEmptyCollectionArgument = true;
                 return;
             }
 
             ObsoleteAttribute obsoleteAttr = attribute as ObsoleteAttribute;
-            if (obsoleteAttr != null)
+            if (obsoleteAttr is not null)
             {
                 ObsoleteAttribute = obsoleteAttr;
                 return;
             }
 
             PSTypeNameAttribute psTypeNameAttribute = attribute as PSTypeNameAttribute;
-            if (psTypeNameAttribute != null)
+            if (psTypeNameAttribute is not null)
             {
                 this.PSTypeName = psTypeNameAttribute.PSTypeName;
             }
@@ -596,7 +596,7 @@ namespace System.Management.Automation
         internal ParameterCollectionTypeInformation(Type type)
         {
             ParameterCollectionType = ParameterCollectionType.NotCollection;
-            Diagnostics.Assert(type != null, "Caller to verify type argument");
+            Diagnostics.Assert(type is not null, "Caller to verify type argument");
 
             // NTRAID#Windows OS Bugs-1009284-2004/05/11-JeffJon
             // What other collection types should be supported?
@@ -625,7 +625,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            bool implementsIList = (type.GetInterface(typeof(IList).Name) != null);
+            bool implementsIList = (type.GetInterface(typeof(IList).Name) is not null);
 
             // Look for class Collection<T>.  Collection<T> implements IList, and also IList
             // is more efficient to bind than ICollection<T>.  This optimization
@@ -650,7 +650,7 @@ namespace System.Management.Automation
             // but the advantage over plain IList is that we can typecast the elements.
             Type interfaceICollection =
                 Array.Find(interfaces, i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICollection<>));
-            if (interfaceICollection != null)
+            if (interfaceICollection is not null)
             {
                 // We only deal with the first type for which ICollection<T> is implemented
                 ParameterCollectionType = ParameterCollectionType.ICollectionGeneric;

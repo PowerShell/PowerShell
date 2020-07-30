@@ -138,11 +138,11 @@ namespace System.Management.Automation.PSTasks
 
         private void HandleStateChanged(PSInvocationStateChangedEventArgs stateChangeInfo)
         {
-            if (_dataStreamWriter != null)
+            if (_dataStreamWriter is not null)
             {
                 // Treat any terminating exception as a non-terminating error record
                 var newStateInfo = stateChangeInfo.InvocationStateInfo;
-                if (newStateInfo.Reason != null)
+                if (newStateInfo.Reason is not null)
                 {
                     var errorRecord = new ErrorRecord(
                         newStateInfo.Reason,
@@ -351,7 +351,7 @@ namespace System.Management.Automation.PSTasks
             get
             {
                 PowerShell ps = _powershell;
-                if (ps != null)
+                if (ps is not null)
                 {
                     return ps.InvocationStateInfo.State;
                 }
@@ -430,18 +430,18 @@ namespace System.Management.Automation.PSTasks
         /// <param name="runspace">Runspace used to run task.</param>
         public void Start(Runspace runspace)
         {
-            if (_powershell != null)
+            if (_powershell is not null)
             {
                 Dbg.Assert(false, "A PSTask can be started only once.");
                 return;
             }
 
-            Dbg.Assert(runspace != null, "Task runspace cannot be null.");
+            Dbg.Assert(runspace is not null, "Task runspace cannot be null.");
             _runspace = runspace;
 
             // If available, set current working directory on the runspace.
             // Temporarily set the newly created runspace as the thread default runspace for any needed module loading.
-            if (_currentLocationPath != null)
+            if (_currentLocationPath is not null)
             {
                 var oldDefaultRunspace = Runspace.DefaultRunspace;
                 try
@@ -475,7 +475,7 @@ namespace System.Management.Automation.PSTasks
             // Start the script running in a new thread
             _powershell.AddScript(_scriptBlockToRun.ToString());
             _powershell.Commands.Commands[0].DollarUnderbar = _dollarUnderbar;
-            if (_usingValuesMap != null && _usingValuesMap.Count > 0)
+            if (_usingValuesMap is not null && _usingValuesMap.Count > 0)
             {
                 _powershell.AddParameter(Parser.VERBATIM_ARGUMENT, _usingValuesMap);
             }
@@ -488,7 +488,7 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         public void SignalStop()
         {
-            if (_powershell != null)
+            if (_powershell is not null)
             {
                 _powershell.BeginStop(null, null);
             }
@@ -853,7 +853,7 @@ namespace System.Management.Automation.PSTasks
         private void HandleTaskStateChanged(object sender, PSInvocationStateChangedEventArgs args)
         {
             var task = sender as PSTaskBase;
-            Dbg.Assert(task != null, "State changed sender must always be PSTaskBase");
+            Dbg.Assert(task is not null, "State changed sender must always be PSTaskBase");
             var stateInfo = args.InvocationStateInfo;
             switch (stateInfo.State)
             {
@@ -946,7 +946,7 @@ namespace System.Management.Automation.PSTasks
         private void ReturnRunspace(PSTaskBase task)
         {
             var runspace = task.Runspace;
-            Dbg.Assert(runspace != null, "Task runspace cannot be null.");
+            Dbg.Assert(runspace is not null, "Task runspace cannot be null.");
             if (_useRunspacePool &&
                 runspace.RunspaceStateInfo.State == RunspaceState.Opened &&
                 runspace.RunspaceAvailability == RunspaceAvailability.Available)

@@ -27,7 +27,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal ServerRemoteHostUserInterface(ServerRemoteHost remoteHost)
         {
-            Dbg.Assert(remoteHost != null, "Expected remoteHost != null");
+            Dbg.Assert(remoteHost is not null, "Expected remoteHost is not null");
             ServerRemoteHost = remoteHost;
             Dbg.Assert(!remoteHost.HostInfo.IsHostUINull, "Expected !remoteHost.HostInfo.IsHostUINull");
 
@@ -93,7 +93,7 @@ namespace System.Management.Automation.Remoting
             foreach (FieldDescription description in descriptions)
             {
                 Type requestedType = InternalHostUserInterface.GetFieldType(description);
-                if (requestedType != null)
+                if (requestedType is not null)
                 {
                     PSObject valueFromClient;
                     if (results.TryGetValue(description.Name, out valueFromClient))
@@ -101,7 +101,7 @@ namespace System.Management.Automation.Remoting
                         object conversionResult;
                         if (LanguagePrimitives.TryConvertTo(valueFromClient, requestedType, CultureInfo.InvariantCulture, out conversionResult))
                         {
-                            if (conversionResult != null)
+                            if (conversionResult is not null)
                             {
                                 results[description.Name] = PSObject.AsPSObject(conversionResult);
                             }

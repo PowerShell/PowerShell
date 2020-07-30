@@ -105,7 +105,7 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 inputstream = value;
 
-                if (inputstream != null && (inputstream.IsOpen || inputstream.Count > 0))
+                if (inputstream is not null && (inputstream.IsOpen || inputstream.Count > 0))
                 {
                     noInput = false;
                 }
@@ -166,7 +166,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             outputstream.Close();
             errorstream.Close();
-            if (inputstream != null)
+            if (inputstream is not null)
             {
                 inputstream.Close();
             }
@@ -323,7 +323,7 @@ namespace System.Management.Automation.Runspaces.Internal
             else
             {
                 // First add this command DS handler to the remote runspace pool list.
-                Dbg.Assert(this.shell.RunspacePool != null, "Invalid runspace pool for this powershell object.");
+                Dbg.Assert(this.shell.RunspacePool is not null, "Invalid runspace pool for this powershell object.");
                 this.shell.RunspacePool.RemoteRunspacePoolInternal.AddRemotePowerShellDSHandler(
                                             this.InstanceId, this.dataStructureHandler);
 
@@ -424,7 +424,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     if (stateInfo.State == PSInvocationState.Failed)
                     {
                         PSRemotingTransportException remotingTransportException = stateInfo.Reason as PSRemotingTransportException;
-                        terminateSession = (remotingTransportException != null) &&
+                        terminateSession = (remotingTransportException is not null) &&
                                            (remotingTransportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_TARGETSESSION_DOESNOTEXIST);
                     }
 
@@ -468,7 +468,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private void CheckAndCloseRunspaceAfterStop(Exception ex)
         {
             PSRemotingTransportException transportException = ex as PSRemotingTransportException;
-            if (transportException != null &&
+            if (transportException is not null &&
                 (transportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_SENDDATA_CANNOT_CONNECT ||
                  transportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_SENDDATA_CANNOT_COMPLETE ||
                  transportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_TARGETSESSION_DOESNOTEXIST))
@@ -569,7 +569,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 Collection<RemoteHostCall> prerequisiteCalls =
                     eventArgs.Data.PerformSecurityChecksOnHostMessage(computerName);
 
-                if (HostCallReceived != null)
+                if (HostCallReceived is not null)
                 {
                     // raise events for all prerequisite calls
                     if (prerequisiteCalls.Count > 0)
@@ -645,7 +645,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     // If RemoteSessionStateEventArgs are provided then use them to set the
                     // session close reason when setting finished state.
                     RemoteSessionStateEventArgs sessionEventArgs = args as RemoteSessionStateEventArgs;
-                    Exception closeReason = (sessionEventArgs != null) ? sessionEventArgs.SessionStateInfo.Reason : null;
+                    Exception closeReason = (sessionEventArgs is not null) ? sessionEventArgs.SessionStateInfo.Reason : null;
                     PSInvocationState finishedState = (shell.InvocationStateInfo.State == PSInvocationState.Disconnected) ?
                         PSInvocationState.Failed : PSInvocationState.Stopped;
 
@@ -859,7 +859,7 @@ namespace System.Management.Automation.Runspaces.Internal
             // Update connection status.
             _connectionRetryStatus = connectionRetryStatusArgs.Notification;
 
-            if (warningRecord != null)
+            if (warningRecord is not null)
             {
                 RemotingWarningRecord remotingWarningRecord = new RemotingWarningRecord(
                     warningRecord,
@@ -885,7 +885,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 { }
             }
 
-            if (errorRecord != null)
+            if (errorRecord is not null)
             {
                 RemotingErrorRecord remotingErrorRecord = new RemotingErrorRecord(
                     errorRecord,

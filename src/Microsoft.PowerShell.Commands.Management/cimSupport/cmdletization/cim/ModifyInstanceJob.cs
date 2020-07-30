@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal ModifyInstanceJob(CimJobContext jobContext, bool passThru, CimInstance managementObject, MethodInvocationInfo methodInvocationInfo)
                 : base(jobContext, passThru, managementObject, methodInvocationInfo)
         {
-            Dbg.Assert(this.MethodSubject != null, "Caller should verify managementObject != null");
+            Dbg.Assert(this.MethodSubject is not null, "Caller should verify managementObject is not null");
             _originalInstance = managementObject;
         }
 
@@ -46,13 +46,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         public override void OnNext(CimInstance item)
         {
-            Dbg.Assert(item != null, "ModifyInstance and GetInstance should not return a null instance");
+            Dbg.Assert(item is not null, "ModifyInstance and GetInstance should not return a null instance");
             _resultFromModifyInstance = item;
         }
 
         public override void OnCompleted()
         {
-            Dbg.Assert(_resultFromModifyInstance != null, "ModifyInstance should return an instance over DCOM and WSMan");
+            Dbg.Assert(_resultFromModifyInstance is not null, "ModifyInstance should return an instance over DCOM and WSMan");
             ModifyLocalCimInstance(_originalInstance); /* modify input CimInstance only upon success (fix for bug WinBlue #) */
             base.OnCompleted();
         }
@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             get
             {
-                Dbg.Assert(_resultFromModifyInstance != null, "ModifyInstance should return an instance over DCOM and WSMan");
+                Dbg.Assert(_resultFromModifyInstance is not null, "ModifyInstance should return an instance over DCOM and WSMan");
                 if (IsShowComputerNameMarkerPresent(_originalInstance))
                 {
                     PSObject pso = PSObject.AsPSObject(_resultFromModifyInstance);
@@ -82,13 +82,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         protected override void Dispose(bool disposing)
         {
-            if (!_resultFromModifyInstanceHasBeenPassedThru && _resultFromModifyInstance != null)
+            if (!_resultFromModifyInstanceHasBeenPassedThru && _resultFromModifyInstance is not null)
             {
                 _resultFromModifyInstance.Dispose();
                 _resultFromModifyInstance = null;
             }
 
-            if (_temporaryInstance != null)
+            if (_temporaryInstance is not null)
             {
                 _temporaryInstance.Dispose();
                 _temporaryInstance = null;

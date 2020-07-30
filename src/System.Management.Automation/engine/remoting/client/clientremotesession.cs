@@ -162,7 +162,7 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         internal RemoteRunspacePoolInternal GetRunspacePool(Guid clientRunspacePoolId)
         {
-            if (_remoteRunspacePool != null)
+            if (_remoteRunspacePool is not null)
             {
                 if (_remoteRunspacePool.InstanceId.Equals(clientRunspacePoolId))
                     return _remoteRunspacePool;
@@ -195,7 +195,7 @@ namespace System.Management.Automation.Remoting
         internal ClientRemoteSessionImpl(RemoteRunspacePoolInternal rsPool,
                                        URIDirectionReported uriRedirectionHandler)
         {
-            Dbg.Assert(rsPool != null, "RunspacePool cannot be null");
+            Dbg.Assert(rsPool is not null, "RunspacePool cannot be null");
             base.RemoteRunspacePoolInternal = rsPool;
             Context.RemoteAddress = WSManConnectionInfo.ExtractPropertyAsWsManConnectionInfo<Uri>(rsPool.ConnectionInfo,
                 "ConnectionUri", null);
@@ -498,7 +498,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private bool RunClientNegotiationAlgorithm(RemoteSessionCapability serverRemoteSessionCapability)
         {
-            Dbg.Assert(serverRemoteSessionCapability != null, "server capability cache must be non-null");
+            Dbg.Assert(serverRemoteSessionCapability is not null, "server capability cache must be non-null");
 
             // ProtocolVersion check
             Version serverProtocolVersion = serverRemoteSessionCapability.ProtocolVersion;
@@ -588,7 +588,7 @@ namespace System.Management.Automation.Remoting
         {
             if (disposing)
             {
-                if (_waitHandleForConfigurationReceived != null)
+                if (_waitHandleForConfigurationReceived is not null)
                 {
                     _waitHandleForConfigurationReceived.Dispose();
                     _waitHandleForConfigurationReceived = null;

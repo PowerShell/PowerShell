@@ -414,7 +414,7 @@ namespace System.Management.Automation.Configuration
 
                 // Set the configuration cache.
                 JObject originalValue = Interlocked.CompareExchange(ref configRoots[(int)scope], configData, null);
-                if (originalValue != null)
+                if (originalValue is not null)
                 {
                     configData = originalValue;
                 }

@@ -89,7 +89,7 @@ namespace System.Management.Automation.ComInterop
         internal static bool IsImplicitlyConvertible(Type source, Type destination, bool considerUserDefined)
         {
             return IsImplicitlyConvertible(source, destination) ||
-                (considerUserDefined && GetUserDefinedCoercionMethod(source, destination, true) != null);
+                (considerUserDefined && GetUserDefinedCoercionMethod(source, destination, true) is not null);
         }
 
         // CONFORMING
@@ -101,14 +101,14 @@ namespace System.Management.Automation.ComInterop
             // try exact match on types
             MethodInfo[] eMethods = nnExprType.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
             MethodInfo method = FindConversionOperator(eMethods, convertFrom, convertToType, implicitOnly);
-            if (method != null)
+            if (method is not null)
             {
                 return method;
             }
 
             MethodInfo[] cMethods = nnConvType.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
             method = FindConversionOperator(cMethods, convertFrom, convertToType, implicitOnly);
-            if (method != null)
+            if (method is not null)
             {
                 return method;
             }
@@ -117,7 +117,7 @@ namespace System.Management.Automation.ComInterop
             {
                 method = FindConversionOperator(eMethods, nnExprType, nnConvType, implicitOnly) ??
                          FindConversionOperator(cMethods, nnExprType, nnConvType, implicitOnly);
-                if (method != null)
+                if (method is not null)
                 {
                     return method;
                 }

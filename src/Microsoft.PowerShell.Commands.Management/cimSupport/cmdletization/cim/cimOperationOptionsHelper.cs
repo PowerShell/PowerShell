@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal static CimCustomOptionsDictionary MergeOptions(CimCustomOptionsDictionary optionsFromCommandLine, CimInstance instanceRelatedToThisOperation)
         {
             CimCustomOptionsDictionary instanceRelatedOptions;
-            if (s_cimInstanceToCustomOptions.TryGetValue(instanceRelatedToThisOperation, out instanceRelatedOptions) && instanceRelatedOptions != null)
+            if (s_cimInstanceToCustomOptions.TryGetValue(instanceRelatedToThisOperation, out instanceRelatedOptions) && instanceRelatedOptions is not null)
             {
                 IEnumerable<KeyValuePair<string, object>> instanceRelatedOptionsSnapshot = instanceRelatedOptions.GetSnapshot();
                 IEnumerable<KeyValuePair<string, object>> optionsFromCommandLineSnapshot = optionsFromCommandLine.GetSnapshot();
@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal static CimCustomOptionsDictionary MergeOptions(CimCustomOptionsDictionary optionsFromCommandLine, IEnumerable<CimInstance> instancesRelatedToThisOperation)
         {
             CimCustomOptionsDictionary result = optionsFromCommandLine;
-            if (instancesRelatedToThisOperation != null)
+            if (instancesRelatedToThisOperation is not null)
             {
                 foreach (CimInstance instanceRelatedToThisOperation in instancesRelatedToThisOperation)
                 {
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             IEnumerable<KeyValuePair<string, object>> customOptions,
             CimSensitiveValueConverter cimSensitiveValueConverter)
         {
-            if (customOptions != null)
+            if (customOptions is not null)
             {
                 foreach (KeyValuePair<string, object> queryOption in customOptions)
                 {
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             object optionValue,
             CimSensitiveValueConverter cimSensitiveValueConverter)
         {
-            Dbg.Assert(!string.IsNullOrWhiteSpace(optionName), "Caller should verify optionName != null");
+            Dbg.Assert(!string.IsNullOrWhiteSpace(optionName), "Caller should verify optionName is not null");
 
             if (optionValue is null)
             {

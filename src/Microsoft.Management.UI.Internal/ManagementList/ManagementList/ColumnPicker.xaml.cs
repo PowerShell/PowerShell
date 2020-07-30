@@ -201,7 +201,7 @@ namespace Microsoft.Management.UI.Internal
         internal void AddButtonClick(object sender, RoutedEventArgs e)
         {
             InnerListColumn column = (InnerListColumn)this.PART_NotSelectedList.SelectedItem;
-            Debug.Assert(column != null, "not null");
+            Debug.Assert(column is not null, "not null");
 
             this.SelectedColumns.Add(column);
             this.NotSelectedColumns.Remove(column);
@@ -231,7 +231,7 @@ namespace Microsoft.Management.UI.Internal
         internal void RemoveButtonClick(object sender, RoutedEventArgs e)
         {
             InnerListColumn column = (InnerListColumn)this.PART_SelectedList.SelectedItem;
-            Debug.Assert(column != null, "not null");
+            Debug.Assert(column is not null, "not null");
             int selectedIndex = this.PART_SelectedList.SelectedIndex;
             Debug.Assert(selectedIndex >= 0, "greater than or equal to 0");
 

@@ -57,12 +57,12 @@ namespace Microsoft.Management.UI.Internal
             if (this.SetFocusOnClose)
             {
                 // Find a control to set focus on.
-                if (this.SetFocusOnCloseElement != null)
+                if (this.SetFocusOnCloseElement is not null)
                 {
                     // The focus target is set explicitly.
                     this.SetFocus(this.SetFocusOnCloseElement);
                 }
-                else if (this.PlacementTarget != null)
+                else if (this.PlacementTarget is not null)
                 {
                     // Use PlacementTarget as a first chance option.
                     this.SetFocus(this.PlacementTarget);
@@ -71,7 +71,7 @@ namespace Microsoft.Management.UI.Internal
                 {
                     // Use parent UIObject when neither FocusOnCloseTarget nor PlacementTarget is set.
                     UIElement parent = this.Parent as UIElement;
-                    if (parent != null)
+                    if (parent is not null)
                     {
                         this.SetFocus(parent);
                     }
@@ -110,7 +110,7 @@ namespace Microsoft.Management.UI.Internal
                 element = VisualTreeHelper.GetParent(element);
             }
 
-            Debug.Assert(element != null, "element not null");
+            Debug.Assert(element is not null, "element not null");
 
             return (FrameworkElement)element;
         }
@@ -141,7 +141,7 @@ namespace Microsoft.Management.UI.Internal
 
         private void FocusChild()
         {
-            if (this.Child != null)
+            if (this.Child is not null)
             {
                 this.Child.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
             }

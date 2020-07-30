@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                     return;
                 }
 
-                if (this.selectedCommand != null)
+                if (this.selectedCommand is not null)
                 {
                     this.selectedCommand.PropertyChanged -= this.SelectedCommand_PropertyChanged;
                     this.selectedCommand.HelpNeeded -= this.SelectedCommand_HelpNeeded;
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
                 this.SetIsThereASelectedImportedCommandWhereAllMandatoryParametersHaveValues();
 
-                if (this.selectedCommand != null)
+                if (this.selectedCommand is not null)
                 {
                     this.selectedCommand.PropertyChanged += this.SelectedCommand_PropertyChanged;
                     this.selectedCommand.HelpNeeded += this.SelectedCommand_HelpNeeded;
@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                     continue;
                 }
 
-                if (filterPattern != null)
+                if (filterPattern is not null)
                 {
                     continue;
                 }
@@ -378,7 +378,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         internal void OnRunSelectedCommand()
         {
             EventHandler<CommandEventArgs> handler = this.RunSelectedCommand;
-            if (handler != null)
+            if (handler is not null)
             {
                 handler(this, new CommandEventArgs(this.SelectedCommand));
             }
@@ -391,7 +391,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         internal void OnSelectedCommandNeedsHelp(HelpNeededEventArgs e)
         {
             EventHandler<HelpNeededEventArgs> handler = this.SelectedCommandNeedsHelp;
-            if (handler != null)
+            if (handler is not null)
             {
                 handler(this, e);
             }
@@ -403,7 +403,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         internal void OnSelectedCommandNeedsImportModule()
         {
             EventHandler<ImportModuleEventArgs> handler = this.SelectedCommandNeedsImportModule;
-            if (handler != null)
+            if (handler is not null)
             {
                 handler(this, new ImportModuleEventArgs(this.SelectedCommand.Name, this.SelectedCommand.ModuleName, this.Name));
             }
@@ -419,7 +419,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <returns>True if coparisonText matches str or pattern.</returns>
         private static bool Matches(WildcardPattern filterPattern, string commandName, string filter)
         {
-            if (filterPattern != null)
+            if (filterPattern is not null)
             {
                 return filterPattern.IsMatch(commandName);
             }
@@ -498,7 +498,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         private void SetIsThereASelectedImportedCommandWhereAllMandatoryParametersHaveValues()
         {
             this.IsThereASelectedImportedCommandWhereAllMandatoryParametersHaveValues =
-                this.selectedCommand != null &&
+                this.selectedCommand is not null &&
                 this.selectedCommand.IsImported &&
                 this.selectedCommand.SelectedParameterSetAllMandatoryParametersHaveValues;
         }
@@ -522,7 +522,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         private void OnNotifyPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;
-            if (handler != null)
+            if (handler is not null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }

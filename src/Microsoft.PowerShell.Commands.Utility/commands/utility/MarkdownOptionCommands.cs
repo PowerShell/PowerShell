@@ -283,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
         internal static PSMarkdownOptionInfo Get(CommandInfo command)
         {
             // If we have the moduleInfo then store are module scope variable
-            if (command.Module != null)
+            if (command.Module is not null)
             {
                 return command.Module.SessionState.PSVariable.GetValue(MarkdownOptionInfoVariableName, new PSMarkdownOptionInfo()) as PSMarkdownOptionInfo;
             }
@@ -305,7 +305,7 @@ namespace Microsoft.PowerShell.Commands
         internal static PSMarkdownOptionInfo Set(CommandInfo command, PSMarkdownOptionInfo optionInfo)
         {
             // If we have the moduleInfo then store are module scope variable
-            if (command.Module != null)
+            if (command.Module is not null)
             {
                 command.Module.SessionState.PSVariable.Set(MarkdownOptionInfoVariableName, optionInfo);
                 return optionInfo;

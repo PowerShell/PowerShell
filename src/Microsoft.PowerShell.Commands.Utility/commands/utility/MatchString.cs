@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The string representation of the match object.</returns>
         private string ToString(string directory, string line)
         {
-            string displayPath = (directory != null) ? RelativePath(directory) : _path;
+            string displayPath = (directory is not null) ? RelativePath(directory) : _path;
 
             // Just return a single line if the user didn't
             // enable context-tracking.
@@ -378,7 +378,7 @@ namespace Microsoft.PowerShell.Commands
             // fields that need it.
             MatchInfo clone = (MatchInfo)this.MemberwiseClone();
 
-            if (clone.Context != null)
+            if (clone.Context is not null)
             {
                 clone.Context = (MatchInfoContext)clone.Context.Clone();
             }
@@ -743,11 +743,11 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             private void UpdateQueue()
             {
-                if (_matchInfo != null)
+                if (_matchInfo is not null)
                 {
                     _emitQueue.Add(_matchInfo);
 
-                    if (_matchInfo.Context != null)
+                    if (_matchInfo.Context is not null)
                     {
                         _matchInfo.Context.DisplayPreContext = _collectedPreContext.ToArray();
                         _matchInfo.Context.DisplayPostContext = _collectedPostContext.ToArray();
@@ -896,7 +896,7 @@ namespace Microsoft.PowerShell.Commands
                 for (int i = startIndex; i <= endIndex; i++)
                 {
                     MatchInfo match = _collectedContext[i].Match;
-                    if (match != null)
+                    if (match is not null)
                     {
                         int preStart = Math.Max(i - _preContext, 0);
                         int postLength = Math.Min(_postContext, _collectedContext.Count - i - 1);
@@ -955,7 +955,7 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="postLength">The length of the postContext range.</param>
             private void Emit(MatchInfo match, int preStartIndex, int preLength, int postStartIndex, int postLength)
             {
-                if (match.Context != null)
+                if (match.Context is not null)
                 {
                     match.Context.PreContext = CopyContext(preStartIndex, preLength);
                     match.Context.PostContext = CopyContext(postStartIndex, postLength);
@@ -1475,7 +1475,7 @@ namespace Microsoft.PowerShell.Commands
             // We may only have directories when we have resolved wildcards
             var expandedPathsMaybeDirectory = false;
             List<string> expandedPaths = null;
-            if (Path != null)
+            if (Path is not null)
             {
                 expandedPaths = ResolveFilePaths(Path, _isLiteralPath);
                 if (expandedPaths is null)
@@ -1494,7 +1494,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (expandedPaths != null)
+            if (expandedPaths is not null)
             {
                 foreach (var filename in expandedPaths)
                 {
@@ -1595,7 +1595,7 @@ namespace Microsoft.PowerShell.Commands
 
                         // Read and display lines from the file until the end of
                         // the file is reached.
-                        while ((line = sr.ReadLine()) != null)
+                        while ((line = sr.ReadLine()) is not null)
                         {
                             lineNo++;
 
@@ -1723,7 +1723,7 @@ namespace Microsoft.PowerShell.Commands
         private bool DoMatch(object operand, out MatchInfo matchResult, out string operandString)
         {
             MatchInfo matchInfo = operand as MatchInfo;
-            if (matchInfo != null)
+            if (matchInfo is not null)
             {
                 // We're operating in filter mode. Match
                 // against the provided MatchInfo's line.
@@ -1874,13 +1874,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 // if we were passed a MatchInfo object as the operand,
                 // we're operating in filter mode.
-                if (matchInfo != null)
+                if (matchInfo is not null)
                 {
                     // If the original MatchInfo was tracking context,
                     // we need to copy it and disable display context,
                     // since we can't guarantee it will be displayed
                     // correctly when filtered.
-                    if (matchInfo.Context != null)
+                    if (matchInfo.Context is not null)
                     {
                         matchResult = matchInfo.Clone();
                         matchResult.Context.DisplayPreContext = new string[] { };
@@ -2005,7 +2005,7 @@ namespace Microsoft.PowerShell.Commands
                         object element = argList[i];
 
                         mso = element as PSObject;
-                        if (mso != null)
+                        if (mso is not null)
                         {
                             element = mso.BaseObject;
                         }
@@ -2019,7 +2019,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Handle the singleton case...
                 fileInfo = result as FileInfo;
-                if (fileInfo != null)
+                if (fileInfo is not null)
                 {
                     return fileInfo.FullName;
                 }
@@ -2040,7 +2040,7 @@ namespace Microsoft.PowerShell.Commands
             bool ok = false;
 
             // see if the file is on the include list...
-            if (_include != null)
+            if (_include is not null)
             {
                 foreach (WildcardPattern patternItem in _include)
                 {
@@ -2062,7 +2062,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // now see if it's on the exclude list...
-            if (_exclude != null)
+            if (_exclude is not null)
             {
                 foreach (WildcardPattern patternItem in _exclude)
                 {

@@ -59,7 +59,7 @@ namespace Microsoft.Management.UI.Internal
         private void RaiseChildChanged(PropertyChangedEventArgs<UIElement> e)
         {
             var eh = this.ChildChanged;
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this,e);
             }

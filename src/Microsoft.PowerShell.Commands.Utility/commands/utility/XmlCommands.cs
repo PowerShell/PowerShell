@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell.Commands
         void
         ProcessRecord()
         {
-            if (_serializer != null)
+            if (_serializer is not null)
             {
                 _serializer.Serialize(InputObject);
                 _xw.Flush();
@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
         void
         EndProcessing()
         {
-            if (_serializer != null)
+            if (_serializer is not null)
             {
                 _serializer.Done();
                 _serializer = null;
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void CreateFileStream()
         {
-            Dbg.Assert(Path != null, "FileName is mandatory parameter");
+            Dbg.Assert(Path is not null, "FileName is mandatory parameter");
 
             if (!ShouldProcess(Path)) return;
 
@@ -232,9 +232,9 @@ namespace Microsoft.PowerShell.Commands
         void
         CleanUp()
         {
-            if (_fs != null)
+            if (_fs is not null)
             {
-                if (_xw != null)
+                if (_xw is not null)
                 {
                     _xw.Dispose();
                     _xw = null;
@@ -321,7 +321,7 @@ namespace Microsoft.PowerShell.Commands
             if (!_disposed)
             {
                 GC.SuppressFinalize(this);
-                if (_helper != null)
+                if (_helper is not null)
                 {
                     _helper.Dispose();
                     _helper = null;
@@ -340,7 +340,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (Path != null)
+            if (Path is not null)
             {
                 foreach (string path in Path)
                 {
@@ -439,10 +439,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 CreateMemoryStream();
 
-                if (_serializer != null)
+                if (_serializer is not null)
                     _serializer.SerializeAsStream(InputObject);
 
-                if (_serializer != null)
+                if (_serializer is not null)
                 {
                     _serializer.DoneAsStream();
                     _serializer = null;
@@ -458,7 +458,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                if (_serializer != null)
+                if (_serializer is not null)
                     _serializer.Serialize(InputObject);
             }
         }
@@ -467,7 +467,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (_serializer != null)
+            if (_serializer is not null)
             {
                 _serializer.Done();
                 _serializer = null;
@@ -577,9 +577,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void CleanUp()
         {
-            if (_ms != null)
+            if (_ms is not null)
             {
-                if (_xw != null)
+                if (_xw is not null)
                 {
                     _xw.Dispose();
                     _xw = null;
@@ -637,8 +637,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal ImportXmlHelper(string fileName, PSCmdlet cmdlet, bool isLiteralPath)
         {
-            Dbg.Assert(fileName != null, "filename is mandatory");
-            Dbg.Assert(cmdlet != null, "cmdlet is mandatory");
+            Dbg.Assert(fileName is not null, "filename is mandatory");
+            Dbg.Assert(cmdlet is not null, "cmdlet is mandatory");
             _path = fileName;
             _cmdlet = cmdlet;
             _isLiteralPath = isLiteralPath;
@@ -684,7 +684,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void CleanUp()
         {
-            if (_fs != null)
+            if (_fs is not null)
             {
                 _fs.Dispose();
                 _fs = null;
@@ -751,10 +751,10 @@ namespace Microsoft.PowerShell.Commands
                     object result = _deserializer.Deserialize();
                     PSObject psObject = result as PSObject;
 
-                    if (psObject != null)
+                    if (psObject is not null)
                     {
                         ICollection c = psObject.BaseObject as ICollection;
-                        if (c != null)
+                        if (c is not null)
                         {
                             foreach (object o in c)
                             {
@@ -789,7 +789,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void Stop()
         {
-            if (_deserializer != null)
+            if (_deserializer is not null)
             {
                 _deserializer.Stop();
             }
@@ -874,7 +874,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteResults(XmlNodeList foundXmlNodes, string filePath)
         {
-            Dbg.Assert(foundXmlNodes != null, "Caller should verify foundNodes != null");
+            Dbg.Assert(foundXmlNodes is not null, "Caller should verify foundNodes is not null");
 
             foreach (XmlNode foundXmlNode in foundXmlNodes)
             {
@@ -889,10 +889,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessXmlNode(XmlNode xmlNode, string filePath)
         {
-            Dbg.Assert(xmlNode != null, "Caller should verify xmlNode != null");
+            Dbg.Assert(xmlNode is not null, "Caller should verify xmlNode is not null");
 
             XmlNodeList xList;
-            if (Namespace != null)
+            if (Namespace is not null)
             {
                 XmlNamespaceManager xmlns = AddNameSpaceTable(this.ParameterSetName, xmlNode as XmlDocument, Namespace);
                 xList = xmlNode.SelectNodes(XPath, xmlns);
@@ -1140,7 +1140,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private string ToString(string directory)
         {
-            string displayPath = (directory != null) ? RelativePath(directory) : _path;
+            string displayPath = (directory is not null) ? RelativePath(directory) : _path;
             return FormatLine(GetNodeText(), displayPath);
         }
 
@@ -1151,9 +1151,9 @@ namespace Microsoft.PowerShell.Commands
         internal string GetNodeText()
         {
             string nodeText = string.Empty;
-            if (Node != null)
+            if (Node is not null)
             {
-                if (Node.Value != null)
+                if (Node.Value is not null)
                 {
                     nodeText = Node.Value.Trim();
                 }

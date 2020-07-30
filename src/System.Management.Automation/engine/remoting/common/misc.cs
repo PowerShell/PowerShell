@@ -13,7 +13,7 @@ namespace System.Management.Automation
 
         internal RemoteSessionNegotiationEventArgs(RemoteSessionCapability remoteSessionCapability)
         {
-            Dbg.Assert(remoteSessionCapability != null, "caller should validate the parameter");
+            Dbg.Assert(remoteSessionCapability is not null, "caller should validate the parameter");
 
             if (remoteSessionCapability is null)
             {
@@ -46,7 +46,7 @@ namespace System.Management.Automation
 
         internal RemoteDataEventArgs(RemoteDataObject<PSObject> receivedData)
         {
-            Dbg.Assert(receivedData != null, "caller should validate the parameter");
+            Dbg.Assert(receivedData is not null, "caller should validate the parameter");
 
             if (receivedData is null)
             {
@@ -88,7 +88,7 @@ namespace System.Management.Automation
 
         internal RemoteDataEventArgs(object data)
         {
-            // Dbg.Assert(data != null, "data passed should not be null");
+            // Dbg.Assert(data is not null, "data passed should not be null");
 
             Data = (T)data;
         }
@@ -310,7 +310,7 @@ namespace System.Management.Automation
 
         internal RemoteSessionStateEventArgs(RemoteSessionStateInfo remoteSessionStateInfo)
         {
-            Dbg.Assert(remoteSessionStateInfo != null, "caller should validate the parameter");
+            Dbg.Assert(remoteSessionStateInfo is not null, "caller should validate the parameter");
 
             if (remoteSessionStateInfo is null)
             {

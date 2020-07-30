@@ -61,7 +61,7 @@ namespace System.Management.Automation
             {
                 // First do the lookup based on the assembly location
 
-                if (s_resourceManagerCache.TryGetValue(assemblyManifestFileLocation, out baseNameCache) && baseNameCache != null)
+                if (s_resourceManagerCache.TryGetValue(assemblyManifestFileLocation, out baseNameCache) && baseNameCache is not null)
                 {
                     // Now do the lookup based on the resource base name
                     baseNameCache.TryGetValue(baseName, out manager);
@@ -75,7 +75,7 @@ namespace System.Management.Automation
 
                 // Add the new resource manager to the hash
 
-                if (baseNameCache != null)
+                if (baseNameCache is not null)
                 {
                     lock (s_syncRoot)
                     {
@@ -103,7 +103,7 @@ namespace System.Management.Automation
             }
 
             Diagnostics.Assert(
-                manager != null,
+                manager is not null,
                 "If the manager was not already created, it should have been dynamically created or an exception should have been thrown");
 
             return manager;
@@ -227,7 +227,7 @@ namespace System.Management.Automation
         {
             ResourceManager rm = null;
 
-            if (baseName != null && assemblyToUse != null)
+            if (baseName is not null && assemblyToUse is not null)
             {
                 rm = new ResourceManager(baseName, assemblyToUse);
             }

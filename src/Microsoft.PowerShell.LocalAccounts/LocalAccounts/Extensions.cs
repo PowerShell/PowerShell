@@ -73,11 +73,11 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
         internal static bool HasParameter(this PSCmdlet cmdlet, string parameterName)
         {
             var invocation = cmdlet.MyInvocation;
-            if (invocation != null)
+            if (invocation is not null)
             {
                 var parameters = invocation.BoundParameters;
 
-                if (parameters != null)
+                if (parameters is not null)
                 {
                     // PowerShell sets the parameter names in the BoundParameters dictionary
                     // to their "proper" casing, so we don't have to do a case-insensitive search.
@@ -189,7 +189,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
             // having to have multiple exception handlers in every cmdlet command.
             var exTemp = ex as LocalAccountsException;
 
-            if (exTemp != null)
+            if (exTemp is not null)
                 return MakeErrorRecord(exTemp, target ?? exTemp.Target);
 
             return new ErrorRecord(ex,

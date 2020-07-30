@@ -389,12 +389,12 @@ namespace Microsoft.PowerShell.Commands
                 tmpJob = _job;
             }
 
-            if (tmpPipeline != null)
+            if (tmpPipeline is not null)
             {
                 tmpPipeline.StopAsync();
             }
 
-            if (tmpJob != null)
+            if (tmpJob is not null)
             {
                 tmpJob.StopJob();
             }
@@ -453,11 +453,11 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Filter returned runspaces by ConfigurationName if provided.
-                if (shellUri != null)
+                if (shellUri is not null)
                 {
                     // Compare with returned shell Uri in connection info.
                     WSManConnectionInfo wsmanConnectionInfo = runspace.ConnectionInfo as WSManConnectionInfo;
-                    if (wsmanConnectionInfo != null &&
+                    if (wsmanConnectionInfo is not null &&
                         !shellUri.Equals(wsmanConnectionInfo.ShellUri, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
@@ -489,7 +489,7 @@ namespace Microsoft.PowerShell.Commands
                     Exception ex;
                     PSSession connectedSession = ConnectSession(locSession, out ex);
 
-                    if (connectedSession != null)
+                    if (connectedSession is not null)
                     {
                         // Make sure that this connected session is included in the PSSession repository.
                         // If it already exists then replace it because we want the latest/connected session in the repository.
@@ -515,10 +515,10 @@ namespace Microsoft.PowerShell.Commands
                         // Create and connect session.
                         PSSession newSession = new PSSession(runspace as RemoteRunspace);
                         connectedSession = ConnectSession(newSession, out ex);
-                        if (connectedSession != null)
+                        if (connectedSession is not null)
                         {
                             // Try to reuse the existing local repository PSSession object.
-                            if (locSession != null)
+                            if (locSession is not null)
                             {
                                 connectedSession = locSession.InsertRunspace(connectedSession.Runspace as RemoteRunspace) ? locSession : connectedSession;
                             }
@@ -565,7 +565,7 @@ namespace Microsoft.PowerShell.Commands
                 connectionInfo.AppName = ApplicationName;
                 connectionInfo.ShellUri = ConfigurationName;
                 connectionInfo.Port = Port;
-                if (CertificateThumbprint != null)
+                if (CertificateThumbprint is not null)
                 {
                     connectionInfo.CertificateThumbprint = CertificateThumbprint;
                 }
@@ -581,7 +581,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 connectionInfo.ConnectionUri = ConnectionUri;
                 connectionInfo.ShellUri = ConfigurationName;
-                if (CertificateThumbprint != null)
+                if (CertificateThumbprint is not null)
                 {
                     connectionInfo.CertificateThumbprint = CertificateThumbprint;
                 }
@@ -617,7 +617,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Update the connectionInfo object with passed in session options.
-            if (SessionOption != null)
+            if (SessionOption is not null)
             {
                 connectionInfo.SetSessionOptions(SessionOption);
             }
@@ -714,7 +714,7 @@ namespace Microsoft.PowerShell.Commands
                 // If so then we use this job object, unless the user explicitly specifies
                 // output to host.
                 PSRemotingJob job = FindJobForSession(session);
-                if (job != null)
+                if (job is not null)
                 {
                     // Default is to route data to job.
                     if (OutTarget == OutTarget.Host)
@@ -803,7 +803,7 @@ namespace Microsoft.PowerShell.Commands
 
                 remoteRunspace.Disconnect();
 
-                if (stopPipelineReceive != null)
+                if (stopPipelineReceive is not null)
                 {
                     try
                     {
@@ -812,7 +812,7 @@ namespace Microsoft.PowerShell.Commands
                     catch (ObjectDisposedException) { }
                 }
 
-                if (job != null)
+                if (job is not null)
                 {
                     job.StopJob();
                 }
@@ -834,9 +834,9 @@ namespace Microsoft.PowerShell.Commands
         private void ConnectSessionToHost(PSSession session, PSRemotingJob job = null)
         {
             RemoteRunspace remoteRunspace = session.Runspace as RemoteRunspace;
-            Dbg.Assert(remoteRunspace != null, "PS sessions can only contain RemoteRunspace type.");
+            Dbg.Assert(remoteRunspace is not null, "PS sessions can only contain RemoteRunspace type.");
 
-            if (job != null)
+            if (job is not null)
             {
                 // If we have a job object associated with the session then this means
                 // the user explicitly chose to connect and return data synchronously.
@@ -861,7 +861,7 @@ namespace Microsoft.PowerShell.Commands
 
                         foreach (var result in childJob.ReadAll())
                         {
-                            if (result != null)
+                            if (result is not null)
                             {
                                 result.WriteStreamObject(this);
                             }
@@ -908,7 +908,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _remotePipeline.StateChanged += (sender, args) =>
                             {
-                                if (pipelineConnectedEvent != null &&
+                                if (pipelineConnectedEvent is not null &&
                                     (args.PipelineStateInfo.State == PipelineState.Running ||
                                      args.PipelineStateInfo.State == PipelineState.Stopped ||
                                      args.PipelineStateInfo.State == PipelineState.Failed))
@@ -999,7 +999,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         Exception reason = _remotePipeline.PipelineStateInfo.Reason;
                         string msg;
-                        if (reason != null && !string.IsNullOrEmpty(reason.Message))
+                        if (reason is not null && !string.IsNullOrEmpty(reason.Message))
                         {
                             msg = StringUtil.Format(RemotingErrorIdStrings.PipelineFailedWithReason, reason.Message);
                         }
@@ -1175,7 +1175,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (remoteRunspace != null)
+            if (remoteRunspace is not null)
             {
                 // Try inserting connected runspace into existing PSSession.
                 session = session.InsertRunspace(remoteRunspace) ? session : new PSSession(remoteRunspace);
@@ -1197,7 +1197,7 @@ namespace Microsoft.PowerShell.Commands
             RemoteRunspace remoteSessionRunspace = session.Runspace as RemoteRunspace;
 
             if (remoteSessionRunspace is null ||
-                remoteSessionRunspace.RemoteCommand != null)
+                remoteSessionRunspace.RemoteCommand is not null)
             {
                 // The provided session is created for *reconstruction* and we
                 // cannot connect a previous job even if one exists.  A new job
@@ -1219,7 +1219,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (job != null)
+                    if (job is not null)
                     {
                         break;
                     }

@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     targetInstance.ToString(),
                     methodInvocationInfo)
         {
-            Dbg.Assert(targetInstance != null, "Caller should verify targetInstance != null");
+            Dbg.Assert(targetInstance is not null, "Caller should verify targetInstance is not null");
             _targetInstance = targetInstance;
         }
 

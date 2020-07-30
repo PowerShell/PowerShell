@@ -166,7 +166,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         public override string ToString()
         {
-            if (MessageData != null)
+            if (MessageData is not null)
             {
                 return MessageData.ToString();
             }

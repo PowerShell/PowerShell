@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
         protected override object GetSourceObject()
         {
             string wmiQuery = this.Query;
-            if (this.Class != null)
+            if (this.Class is not null)
             {
                 // Validate class format
                 for (int i = 0; i < this.Class.Length; i++)
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             ConnectionOptions conOptions = new ConnectionOptions();
-            if (this.Credential != null)
+            if (this.Credential is not null)
             {
                 System.Net.NetworkCredential cred = this.Credential.GetNetworkCredential();
                 if (string.IsNullOrEmpty(cred.Domain))
@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
             // Register for the "Unsubscribed" event so that we can stop the
             // event watcher.
             PSEventSubscriber newSubscriber = NewSubscriber;
-            if (newSubscriber != null)
+            if (newSubscriber is not null)
             {
                 newSubscriber.Unsubscribed += new PSEventUnsubscribedEventHandler(newSubscriber_Unsubscribed);
             }
@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
         private void newSubscriber_Unsubscribed(object sender, PSEventUnsubscribedEventArgs e)
         {
             ManagementEventWatcher watcher = sender as ManagementEventWatcher;
-            if (watcher != null)
+            if (watcher is not null)
             {
                 watcher.Stop();
             }

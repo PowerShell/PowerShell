@@ -141,7 +141,7 @@ namespace System.Management.Automation
             base.SetErrorId(_errors[0].ErrorId);
             base.SetErrorCategory(ErrorCategory.ParserError);
 
-            if (errors[0].Extent != null)
+            if (errors[0].Extent is not null)
                 this.ErrorRecord.SetInvocationInfo(new InvocationInfo(null, errors[0].Extent));
         }
 

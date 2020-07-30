@@ -58,7 +58,7 @@ namespace System.Management.Automation
             {
                 result = scope.GetCmdlet(cmdletName);
 
-                if (result != null)
+                if (result is not null)
                 {
                     // Now check the visibility of the cmdlet...
                     SessionState.ThrowIfNotVisible(origin, result);
@@ -117,7 +117,7 @@ namespace System.Management.Automation
             // Make sure the alias isn't private or if it is that the current
             // scope is the same scope the alias was retrieved from.
 
-            if (result != null &&
+            if (result is not null &&
                 (result.Options & ScopedItemOptions.Private) != 0 &&
                  scope != _currentScope)
             {
@@ -251,7 +251,7 @@ namespace System.Management.Automation
                 CmdletInfo cmdletInfo =
                     scope.GetCmdlet(name);
 
-                if (cmdletInfo != null)
+                if (cmdletInfo is not null)
                 {
                     // Make sure the cmdlet isn't private or if it is that the current
                     // scope is the same scope the cmdlet was retrieved from.
@@ -302,7 +302,7 @@ namespace System.Management.Automation
                 CmdletInfo cmdletInfo =
                     scope.GetCmdlet(name);
 
-                if (cmdletInfo != null)
+                if (cmdletInfo is not null)
                 {
                     // Make sure the cmdlet isn't private or if it is that the current
                     // scope is the same scope the cmdlet was retrieved from.

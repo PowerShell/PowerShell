@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _sourceIdentifier = value;
 
-                if (value != null)
+                if (value is not null)
                 {
                     _matchPattern = WildcardPattern.Get(value, WildcardOptions.IgnoreCase);
                 }
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // If the event identifier matches, remove the subscription
                 if (
-                    ((_sourceIdentifier != null) && _matchPattern.IsMatch(subscriber.SourceIdentifier)) ||
+                    ((_sourceIdentifier is not null) && _matchPattern.IsMatch(subscriber.SourceIdentifier)) ||
                     ((SubscriptionId >= 0) && (subscriber.SubscriptionId == SubscriptionId))
                    )
                 {
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Generate an error if we couldn't find the subscription identifier,
             // and no globbing was done.
-            if ((_sourceIdentifier != null) &&
+            if ((_sourceIdentifier is not null) &&
                (!WildcardPattern.ContainsWildcardCharacters(_sourceIdentifier)) &&
                (!_foundMatch))
             {

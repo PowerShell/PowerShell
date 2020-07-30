@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (_eventArguments != null)
+                if (_eventArguments is not null)
                 {
                     _eventArguments = value;
                 }
@@ -107,13 +107,13 @@ namespace Microsoft.PowerShell.Commands
             object[] baseEventArgs = null;
 
             // Get the BaseObject from the event arguments
-            if (_eventArguments != null)
+            if (_eventArguments is not null)
             {
                 baseEventArgs = new object[_eventArguments.Length];
                 int loopCounter = 0;
                 foreach (PSObject eventArg in _eventArguments)
                 {
-                    if (eventArg != null)
+                    if (eventArg is not null)
                         baseEventArgs[loopCounter] = eventArg.BaseObject;
 
                     loopCounter++;
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             object messageSender = null;
-            if (_sender != null) { messageSender = _sender.BaseObject; }
+            if (_sender is not null) { messageSender = _sender.BaseObject; }
 
             // And then generate the event
             WriteObject(Events.GenerateEvent(_sourceIdentifier, messageSender, baseEventArgs, _messageData, true, false));

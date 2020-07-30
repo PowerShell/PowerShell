@@ -139,7 +139,7 @@ namespace Microsoft.Management.UI.Internal
         {
             propertyValue = default(T);
 
-            Debug.Assert(item != null, "item not null");
+            Debug.Assert(item is not null, "item not null");
 
             return FilterRuleCustomizationFactory.FactoryInstance.PropertyValueGetter.TryGetPropertyValue<T>(this.PropertyName, item, out propertyValue);
         }

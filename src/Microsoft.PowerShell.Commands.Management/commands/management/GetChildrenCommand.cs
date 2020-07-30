@@ -218,7 +218,7 @@ namespace Microsoft.PowerShell.Commands
             object result = null;
             string path = string.Empty;
 
-            if (_paths != null && _paths.Length > 0)
+            if (_paths is not null && _paths.Length > 0)
             {
                 path = _paths[0];
             }

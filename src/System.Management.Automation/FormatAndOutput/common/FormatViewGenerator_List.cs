@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void Initialize(TerminatingErrorContext terminatingErrorContext, PSPropertyExpressionFactory mshExpressionFactory, TypeInfoDataBase db, ViewDefinition view, FormattingCommandLineParameters formatParameters)
         {
             base.Initialize(terminatingErrorContext, mshExpressionFactory, db, view, formatParameters);
-            if ((this.dataBaseInfo != null) && (this.dataBaseInfo.view != null))
+            if ((this.dataBaseInfo is not null) && (this.dataBaseInfo.view is not null))
             {
                 _listBody = (ListControlBody)this.dataBaseInfo.view.mainControl;
             }
@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                     PSObject so, TypeInfoDataBase db, FormattingCommandLineParameters parameters)
         {
             base.Initialize(errorContext, expressionFactory, so, db, parameters);
-            if ((this.dataBaseInfo != null) && (this.dataBaseInfo.view != null))
+            if ((this.dataBaseInfo is not null) && (this.dataBaseInfo.view is not null))
             {
                 _listBody = (ListControlBody)this.dataBaseInfo.view.mainControl;
             }
@@ -42,13 +42,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="so"></param>
         internal override void PrepareForRemoteObjects(PSObject so)
         {
-            Diagnostics.Assert(so != null, "so cannot be null");
+            Diagnostics.Assert(so is not null, "so cannot be null");
 
             // make sure computername property exists.
-            Diagnostics.Assert(so.Properties[RemotingConstants.ComputerNameNoteProperty] != null,
+            Diagnostics.Assert(so.Properties[RemotingConstants.ComputerNameNoteProperty] is not null,
                 "PrepareForRemoteObjects cannot be called when the object does not contain ComputerName property.");
 
-            if ((dataBaseInfo != null) && (dataBaseInfo.view != null) && (dataBaseInfo.view.mainControl != null))
+            if ((dataBaseInfo is not null) && (dataBaseInfo.view is not null) && (dataBaseInfo.view.mainControl is not null))
             {
                 _listBody = (ListControlBody)this.dataBaseInfo.view.mainControl.Copy();
                 // build up the definition for computer name.
@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             FormatEntryData fed = new FormatEntryData();
 
-            if (this.dataBaseInfo.view != null)
+            if (this.dataBaseInfo.view is not null)
                 fed.formatEntryInfo = GenerateListViewEntryFromDataBaseInfo(so, enumerationLimit);
             else
                 fed.formatEntryInfo = GenerateListViewEntryFromProperties(so, enumerationLimit);
@@ -98,12 +98,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 lvf.formatPropertyField = GenerateFormatPropertyField(listItem.formatTokenList, so, enumerationLimit, out result);
 
                 // we need now to provide a label
-                if (listItem.label != null)
+                if (listItem.label is not null)
                 {
                     // if the directive provides one, we use it
                     lvf.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(listItem.label);
                 }
-                else if (result != null)
+                else if (result is not null)
                 {
                     // if we got a valid match from the Mshexpression, use it as a label
                     lvf.label = result.ResolvedExpression.ToString();
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // we try to fall back and see if we have an un-resolved PSPropertyExpression
                     FormatToken token = listItem.formatTokenList[0];
                     FieldPropertyToken fpt = token as FieldPropertyToken;
-                    if (fpt != null)
+                    if (fpt is not null)
                     {
                         PSPropertyExpression ex = this.expressionFactory.CreateFromExpressionToken(fpt.expression, this.dataBaseInfo.view.loadingInfo);
 
@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     else
                     {
                         TextToken tt = token as TextToken;
-                        if (tt != null)
+                        if (tt is not null)
                             // we had a text token, use it as a label (last resort...)
                             lvf.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
                     }
@@ -150,14 +150,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            if (match.BestMatch != null)
+            if (match.BestMatch is not null)
             {
                 return match.BestMatch as ListControlEntryDefinition;
             }
             else
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (typesWithoutPrefix != null)
+                if (typesWithoutPrefix is not null)
                 {
                     match = new TypeMatch(expressionFactory, this.dataBaseInfo.db, typesWithoutPrefix);
                     foreach (ListControlEntryDefinition x in listBody.optionalEntryList)
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                     }
 
-                    if (match.BestMatch != null)
+                    if (match.BestMatch is not null)
                     {
                         return match.BestMatch as ListControlEntryDefinition;
                     }
@@ -194,7 +194,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 MshResolvedExpressionParameterAssociation a = this.activeAssociationList[k];
                 ListViewField lvf = new ListViewField();
 
-                if (a.OriginatingParameter != null)
+                if (a.OriginatingParameter is not null)
                 {
                     object key = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.LabelEntryKey);
 
@@ -213,7 +213,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 FieldFormattingDirective directive = null;
-                if (a.OriginatingParameter != null)
+                if (a.OriginatingParameter is not null)
                 {
                     directive = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
                 }
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             List<MshParameter> mshParameterList = null;
 
-            if (this.inputParameters != null)
+            if (this.inputParameters is not null)
                 mshParameterList = this.inputParameters.mshParameterList;
 
             this.activeAssociationList = AssociationManager.SetupActiveProperties(mshParameterList, so, this.expressionFactory);

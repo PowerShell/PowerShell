@@ -111,7 +111,7 @@ namespace System.Management.Automation.ComInterop
                 method
             ).Invoke();
 
-            if ((temps != null) && (temps.Any()))
+            if ((temps is not null) && (temps.Any()))
             {
                 Expression invokeExpression = invoke.Expression;
                 Expression call = Expression.Block(invokeExpression.Type, temps, initTemps.Append(invokeExpression));

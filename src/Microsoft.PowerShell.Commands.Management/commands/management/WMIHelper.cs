@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
             SetWmiInstance setObject = (SetWmiInstance)_wmiObject;
             _state = WmiState.Running;
             RaiseWmiOperationState(null, WmiState.Running);
-            if (setObject.InputObject != null)
+            if (setObject.InputObject is not null)
             {
                 ManagementObject mObj = null;
                 try
@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
                         mObj = (ManagementObject)setObject.InputObject.Clone();
                     }
 
-                    if (setObject.Arguments != null)
+                    if (setObject.Arguments is not null)
                     {
                         IDictionaryEnumerator en = setObject.Arguments.GetEnumerator();
                         while (en.MoveNext())
@@ -254,7 +254,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     pOptions.Type = setObject.PutType;
-                    if (mObj != null)
+                    if (mObj is not null)
                     {
                         mObj.Put(_results, pOptions);
                     }
@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ManagementPath mPath = null;
                 // If Class is specified only CreateOnly flag is supported
-                if (setObject.Class != null)
+                if (setObject.Class is not null)
                 {
                     if (setObject.flagSpecified && setObject.PutType != PutType.CreateOnly)
                     {
@@ -360,7 +360,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
                 // If server name is specified loop through it.
-                if (mPath != null)
+                if (mPath is not null)
                 {
                     if (!(mPath.Server == "." && setObject.serverNameSpecified))
                     {
@@ -372,7 +372,7 @@ namespace Microsoft.PowerShell.Commands
                 ManagementObject mObject = null;
                 try
                 {
-                    if (setObject.Path != null)
+                    if (setObject.Path is not null)
                     {
                         mPath.Server = _computerName;
                         ManagementScope mScope = new ManagementScope(mPath, options);
@@ -437,7 +437,7 @@ namespace Microsoft.PowerShell.Commands
                         mObject = mClass.CreateInstance();
                     }
 
-                    if (setObject.Arguments != null)
+                    if (setObject.Arguments is not null)
                     {
                         IDictionaryEnumerator en = setObject.Arguments.GetEnumerator();
                         while (en.MoveNext())
@@ -448,7 +448,7 @@ namespace Microsoft.PowerShell.Commands
 
                     PutOptions pOptions = new PutOptions();
                     pOptions.Type = setObject.PutType;
-                    if (mObject != null)
+                    if (mObject is not null)
                     {
                         mObject.Put(_results, pOptions);
                     }
@@ -490,13 +490,13 @@ namespace Microsoft.PowerShell.Commands
             _state = WmiState.Running;
             RaiseWmiOperationState(null, WmiState.Running);
 
-            if (invokeObject.InputObject != null)
+            if (invokeObject.InputObject is not null)
             {
                 ManagementBaseObject inputParameters = null;
                 try
                 {
                     inputParameters = invokeObject.InputObject.GetMethodParameters(invokeObject.Name);
-                    if (invokeObject.ArgumentList != null)
+                    if (invokeObject.ArgumentList is not null)
                     {
                         int inParamCount = invokeObject.ArgumentList.Length;
                         foreach (PropertyData property in inputParameters.Properties)
@@ -536,7 +536,7 @@ namespace Microsoft.PowerShell.Commands
                 ConnectionOptions options = invokeObject.GetConnectionOption();
                 ManagementPath mPath = null;
                 ManagementObject mObject = null;
-                if (invokeObject.Path != null)
+                if (invokeObject.Path is not null)
                 {
                     mPath = new ManagementPath(invokeObject.Path);
                     if (string.IsNullOrEmpty(mPath.NamespacePath))
@@ -588,7 +588,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (invokeObject.Path != null)
+                    if (invokeObject.Path is not null)
                     {
                         mPath.Server = _computerName;
                         if (mPath.IsClass)
@@ -614,7 +614,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     ManagementBaseObject inputParameters = mObject.GetMethodParameters(invokeObject.Name);
-                    if (invokeObject.ArgumentList != null)
+                    if (invokeObject.ArgumentList is not null)
                     {
                         int inParamCount = invokeObject.ArgumentList.Length;
                         foreach (PropertyData property in inputParameters.Properties)
@@ -629,7 +629,7 @@ namespace Microsoft.PowerShell.Commands
                     if (needToEnablePrivilege)
                     {
                         ManagementBaseObject result = mObject.InvokeMethod(invokeObject.Name, inputParameters, null);
-                        Dbg.Diagnostics.Assert(result != null, "result cannot be null if the Join method is invoked");
+                        Dbg.Diagnostics.Assert(result is not null, "result cannot be null if the Join method is invoked");
                         int returnCode = Convert.ToInt32(result["ReturnValue"], CultureInfo.CurrentCulture);
                         if (returnCode != 0)
                         {
@@ -716,7 +716,7 @@ namespace Microsoft.PowerShell.Commands
             RemoveWmiObject removeObject = (RemoveWmiObject)_wmiObject;
             _state = WmiState.Running;
             RaiseWmiOperationState(null, WmiState.Running);
-            if (removeObject.InputObject != null)
+            if (removeObject.InputObject is not null)
             {
                 try
                 {
@@ -748,7 +748,7 @@ namespace Microsoft.PowerShell.Commands
                 ConnectionOptions options = removeObject.GetConnectionOption();
                 ManagementPath mPath = null;
                 ManagementObject mObject = null;
-                if (removeObject.Path != null)
+                if (removeObject.Path is not null)
                 {
                     mPath = new ManagementPath(removeObject.Path);
                     if (string.IsNullOrEmpty(mPath.NamespacePath))
@@ -781,7 +781,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (removeObject.Path != null)
+                    if (removeObject.Path is not null)
                     {
                         mPath.Server = _computerName;
                         if (mPath.IsClass)
@@ -1198,7 +1198,7 @@ namespace Microsoft.PowerShell.Commands
             options.Authority = this.Authority;
             options.EnablePrivileges = this.EnableAllPrivileges;
             options.Impersonation = this.Impersonation;
-            if (this.Credential != null)
+            if (this.Credential is not null)
             {
                 if (!(this.Credential.UserName == null && this.Credential.Password == null)) // Empty credential, use implicit credential
                 {
@@ -1217,9 +1217,9 @@ namespace Microsoft.PowerShell.Commands
             ConnectionOptions options = GetConnectionOption();
             ManagementObject mObject = null;
             var setObject = this as SetWmiInstance;
-            if (setObject != null)
+            if (setObject is not null)
             {
-                if (setObject.Path != null)
+                if (setObject.Path is not null)
                 {
                     mPath.Server = serverName;
                     ManagementScope mScope = new ManagementScope(mPath, options);
@@ -1275,7 +1275,7 @@ namespace Microsoft.PowerShell.Commands
                     mObject = mClass.CreateInstance();
                 }
 
-                if (setObject.Arguments != null)
+                if (setObject.Arguments is not null)
                 {
                     IDictionaryEnumerator en = setObject.Arguments.GetEnumerator();
                     while (en.MoveNext())
@@ -1294,10 +1294,10 @@ namespace Microsoft.PowerShell.Commands
         {
             ManagementPath mPath = null;
             var wmiInstance = this as SetWmiInstance;
-            if (wmiInstance != null)
+            if (wmiInstance is not null)
             {
                 // If Class is specified only CreateOnly flag is supported
-                if (wmiInstance.Class != null)
+                if (wmiInstance.Class is not null)
                 {
                     if (wmiInstance.flagSpecified && wmiInstance.PutType != PutType.CreateOnly)
                     {
@@ -1385,10 +1385,10 @@ namespace Microsoft.PowerShell.Commands
             // Should only be called from Set-WMIInstance cmdlet
             ManagementObject mObj = null;
             var wmiInstance = this as SetWmiInstance;
-            if (wmiInstance != null)
+            if (wmiInstance is not null)
             {
                 // Extra check
-                if (wmiInstance.InputObject != null)
+                if (wmiInstance.InputObject is not null)
                 {
                     if (wmiInstance.InputObject.GetType() == typeof(ManagementClass))
                     {
@@ -1429,7 +1429,7 @@ namespace Microsoft.PowerShell.Commands
                         mObj = (ManagementObject)wmiInstance.InputObject.Clone();
                     }
 
-                    if (wmiInstance.Arguments != null)
+                    if (wmiInstance.Arguments is not null)
                     {
                         IDictionaryEnumerator en = wmiInstance.Arguments.GetEnumerator();
                         while (en.MoveNext())
@@ -1449,7 +1449,7 @@ namespace Microsoft.PowerShell.Commands
         internal void RunAsJob(string cmdletName)
         {
             PSWmiJob wmiJob = new PSWmiJob(this, ComputerName, this.ThrottleLimit, Job.GetCommandTextFromInvocationInfo(this.MyInvocation));
-            if (_context != null)
+            if (_context is not null)
             {
                 ((System.Management.Automation.Runspaces.LocalRunspace)_context.CurrentRunspace).JobRepository.Add(wmiJob);
             }

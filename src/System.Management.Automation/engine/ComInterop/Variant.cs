@@ -766,7 +766,7 @@ namespace System.Management.Automation.ComInterop
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
                 VariantType = VarEnum.VT_BSTR;
-                if (value != null)
+                if (value is not null)
                 {
                     Marshal.GetNativeVariantForObject(value, UnsafeMethods.ConvertVariantByrefToPtr(ref this));
                 }
@@ -800,7 +800,7 @@ namespace System.Management.Automation.ComInterop
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
                 VariantType = VarEnum.VT_UNKNOWN;
-                if (value != null)
+                if (value is not null)
                 {
                     _typeUnion._unionTypes._unknown = Marshal.GetIUnknownForObject(value);
                 }
@@ -834,7 +834,7 @@ namespace System.Management.Automation.ComInterop
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
                 VariantType = VarEnum.VT_DISPATCH;
-                if (value != null)
+                if (value is not null)
                 {
                     _typeUnion._unionTypes._unknown = Marshal.GetIDispatchForObject(value);
                 }
@@ -864,7 +864,7 @@ namespace System.Management.Automation.ComInterop
             set
             {
                 Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
-                if (value != null)
+                if (value is not null)
                 {
                     UnsafeMethods.InitVariantForObject(value, ref this);
                 }

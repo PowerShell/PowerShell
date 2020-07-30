@@ -60,7 +60,7 @@ namespace System.Management.Automation
             ExecutionContext = executionContext;
             Origin = CommandOrigin.Internal;
             Drive = executionContext.EngineSessionState.CurrentDrive;
-            if ((executionContext.CurrentCommandProcessor != null) &&
+            if ((executionContext.CurrentCommandProcessor is not null) &&
                 (executionContext.CurrentCommandProcessor.Command is Cmdlet))
             {
                 _command = (Cmdlet)executionContext.CurrentCommandProcessor.Command;
@@ -124,7 +124,7 @@ namespace System.Management.Automation
             _command = command;
             Origin = command.CommandOrigin;
 
-            if (credentials != null)
+            if (credentials is not null)
             {
                 _credentials = credentials;
             }
@@ -178,7 +178,7 @@ namespace System.Management.Automation
             _command = command;
             Origin = command.CommandOrigin;
 
-            if (credentials != null)
+            if (credentials is not null)
             {
                 _credentials = credentials;
             }
@@ -263,7 +263,7 @@ namespace System.Management.Automation
 
             _command = contextToCopyFrom._command;
 
-            if (contextToCopyFrom.Credential != null)
+            if (contextToCopyFrom.Credential is not null)
             {
                 _credentials = contextToCopyFrom.Credential;
             }
@@ -383,7 +383,7 @@ namespace System.Management.Automation
         private void CopyFilters(CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "The caller should have verified the context");
 
             Include = context.Include;
@@ -393,7 +393,7 @@ namespace System.Management.Automation
 
         internal void RemoveStopReferral()
         {
-            if (_copiedContext != null)
+            if (_copiedContext is not null)
             {
                 _copiedContext.StopReferrals.Remove(this);
             }
@@ -414,7 +414,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_command != null)
+                if (_command is not null)
                 {
                     return _command.MyInvocation;
                 }
@@ -450,7 +450,7 @@ namespace System.Management.Automation
 
                 // If the username wasn't specified, use the drive credentials
 
-                if (_credentials is null && Drive != null)
+                if (_credentials is null && Drive is not null)
                 {
                     result = Drive.Credential;
                 }
@@ -468,11 +468,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if ((_command != null) && (_command.CommandRuntime != null))
+                if ((_command is not null) && (_command.CommandRuntime is not null))
                 {
                     MshCommandRuntime mshRuntime = _command.CommandRuntime as MshCommandRuntime;
 
-                    if (mshRuntime != null)
+                    if (mshRuntime is not null)
                     {
                         return mshRuntime.UseTransaction;
                     }
@@ -487,7 +487,7 @@ namespace System.Management.Automation
         /// </summary>
         public bool TransactionAvailable()
         {
-            if (_command != null)
+            if (_command is not null)
             {
                 return _command.TransactionAvailable();
             }
@@ -503,7 +503,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_command != null)
+                if (_command is not null)
                 {
                     return _command.CurrentPSTransaction;
                 }
@@ -568,7 +568,7 @@ namespace System.Management.Automation
             string target)
         {
             bool result = true;
-            if (_command != null)
+            if (_command is not null)
             {
                 result = _command.ShouldProcess(target);
             }
@@ -595,7 +595,7 @@ namespace System.Management.Automation
             string action)
         {
             bool result = true;
-            if (_command != null)
+            if (_command is not null)
             {
                 result = _command.ShouldProcess(target, action);
             }
@@ -635,7 +635,7 @@ namespace System.Management.Automation
             string caption)
         {
             bool result = true;
-            if (_command != null)
+            if (_command is not null)
             {
                 result = _command.ShouldProcess(
                     verboseDescription,
@@ -685,7 +685,7 @@ namespace System.Management.Automation
             out ShouldProcessReason shouldProcessReason)
         {
             bool result = true;
-            if (_command != null)
+            if (_command is not null)
             {
                 result = _command.ShouldProcess(
                     verboseDescription,
@@ -720,7 +720,7 @@ namespace System.Management.Automation
             string caption)
         {
             bool result = true;
-            if (_command != null)
+            if (_command is not null)
             {
                 result = _command.ShouldContinue(query, caption);
             }
@@ -755,7 +755,7 @@ namespace System.Management.Automation
             ref bool noToAll)
         {
             bool result = true;
-            if (_command != null)
+            if (_command is not null)
             {
                 result = _command.ShouldContinue(
                     query, caption, ref yesToAll, ref noToAll);
@@ -777,7 +777,7 @@ namespace System.Management.Automation
         /// </param>
         internal void WriteVerbose(string text)
         {
-            if (_command != null)
+            if (_command is not null)
             {
                 _command.WriteVerbose(text);
             }
@@ -791,7 +791,7 @@ namespace System.Management.Automation
         /// </param>
         internal void WriteWarning(string text)
         {
-            if (_command != null)
+            if (_command is not null)
             {
                 _command.WriteWarning(text);
             }
@@ -799,7 +799,7 @@ namespace System.Management.Automation
 
         internal void WriteProgress(ProgressRecord record)
         {
-            if (_command != null)
+            if (_command is not null)
             {
                 _command.WriteProgress(record);
             }
@@ -813,7 +813,7 @@ namespace System.Management.Automation
         /// </param>
         internal void WriteDebug(string text)
         {
-            if (_command != null)
+            if (_command is not null)
             {
                 _command.WriteDebug(text);
             }
@@ -821,7 +821,7 @@ namespace System.Management.Automation
 
         internal void WriteInformation(InformationRecord record)
         {
-            if (_command != null)
+            if (_command is not null)
             {
                 _command.WriteInformation(record);
             }
@@ -829,7 +829,7 @@ namespace System.Management.Automation
 
         internal void WriteInformation(object messageData, string[] tags)
         {
-            if (_command != null)
+            if (_command is not null)
             {
                 _command.WriteInformation(messageData, tags);
             }
@@ -937,14 +937,14 @@ namespace System.Management.Automation
             {
                 Collection<ErrorRecord> errors = GetAccumulatedErrorObjects();
 
-                if (errors != null && errors.Count > 0)
+                if (errors is not null && errors.Count > 0)
                 {
                     // Throw the first exception
 
                     if (wrapExceptionInProviderException)
                     {
                         ProviderInfo providerInfo = null;
-                        if (this.ProviderInstance != null)
+                        if (this.ProviderInstance is not null)
                         {
                             providerInfo = this.ProviderInstance.ProviderInfo;
                         }
@@ -958,7 +958,7 @@ namespace System.Management.Automation
 
                         MshLog.LogProviderHealthEvent(
                             this.ExecutionContext,
-                            providerInfo != null ? providerInfo.Name : "unknown provider",
+                            providerInfo is not null ? providerInfo.Name : "unknown provider",
                             e,
                             Severity.Warning);
 
@@ -1035,7 +1035,7 @@ namespace System.Management.Automation
 
             if (PassThru)
             {
-                if (_command != null)
+                if (_command is not null)
                 {
                     s_tracer.WriteLine("Writing to command pipeline");
 
@@ -1101,7 +1101,7 @@ namespace System.Management.Automation
 
             if (_streamErrors)
             {
-                if (_command != null)
+                if (_command is not null)
                 {
                     s_tracer.WriteLine("Writing error package to command error pipe");
 
@@ -1120,8 +1120,8 @@ namespace System.Management.Automation
                 // Since we are not streaming, just add the object to the accumulatedErrorObjects
                 _accumulatedErrorObjects.Add(errorRecord);
 
-                if (errorRecord.ErrorDetails != null
-                    && errorRecord.ErrorDetails.TextLookupError != null)
+                if (errorRecord.ErrorDetails is not null
+                    && errorRecord.ErrorDetails.TextLookupError is not null)
                 {
                     Exception textLookupError = errorRecord.ErrorDetails.TextLookupError;
                     errorRecord.ErrorDetails.TextLookupError = null;
@@ -1143,7 +1143,7 @@ namespace System.Management.Automation
         /// </returns>
         internal bool HasErrors()
         {
-            return _accumulatedErrorObjects != null && _accumulatedErrorObjects.Count > 0;
+            return _accumulatedErrorObjects is not null && _accumulatedErrorObjects.Count > 0;
         }
 
         /// <summary>
@@ -1155,7 +1155,7 @@ namespace System.Management.Automation
         {
             Stopping = true;
 
-            if (_providerInstance != null)
+            if (_providerInstance is not null)
             {
                 // We don't need to catch any of the exceptions here because
                 // we are terminating the pipeline and any exception will
@@ -1184,8 +1184,8 @@ namespace System.Management.Automation
         {
             get
             {
-                return ((Include != null && Include.Count > 0) ||
-                        (Exclude != null && Exclude.Count > 0));
+                return ((Include is not null && Include.Count > 0) ||
+                        (Exclude is not null && Exclude.Count > 0));
             }
         }
 

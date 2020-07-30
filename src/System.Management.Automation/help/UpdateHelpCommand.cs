@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
                 // Pull default source path from GP
                 string defaultSourcePath = _helpSystem.GetDefaultSourcePath();
 
-                if (defaultSourcePath != null)
+                if (defaultSourcePath is not null)
                 {
                     _path = new string[1] { defaultSourcePath };
                 }
@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Module and FullyQualifiedModule should not be specified at the same time.
                 // Throw out terminating error if this is the case.
-                if (Module != null && FullyQualifiedModule != null)
+                if (Module is not null && FullyQualifiedModule is not null)
                 {
                     string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "Module", "FullyQualifiedModule");
                     ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell.Commands
                  SessionState.Path.Combine(moduleBase, module.GetHelpInfoName()),
                  null);
 
-            if (xml != null)
+            if (xml is not null)
             {
                 // constructing the helpinfo object from previous update help log xml..
                 // no need to resolve the uri's in this case.
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
 
             _alreadyCheckedOncePerDayPerModule = true;
 
-            if (_path != null)
+            if (_path is not null)
             {
                 UpdatableHelpSystemDrive helpInfoDrive = null;
                 try
@@ -271,7 +271,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             string sourcePath = path;
 
-                            if (_credential != null)
+                            if (_credential is not null)
                             {
                                 UpdatableHelpSystemDrive drive = new UpdatableHelpSystemDrive(this, path, _credential);
                                 sourcePath = drive.DriveName;
@@ -305,7 +305,7 @@ namespace Microsoft.PowerShell.Commands
 
                         xml = UpdatableHelpSystem.LoadStringFromPath(this, literalPath, _credential);
 
-                        if (xml != null)
+                        if (xml is not null)
                         {
                             newHelpInfo = _helpSystem.CreateHelpInfo(xml, module.ModuleName, module.ModuleGuid, culture, resolvedPath,
                                                                      verbose: false, shouldResolveUri: true, ignoreValidationException: false);
@@ -322,7 +322,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 finally
                 {
-                    if (helpInfoDrive != null)
+                    if (helpInfoDrive is not null)
                     {
                         helpInfoDrive.Dispose();
                     }
@@ -348,11 +348,11 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (UpdatableHelpUri contentUri in newHelpInfo.HelpContentUriCollection)
             {
-                Version currentHelpVersion = (currentHelpInfo != null) ? currentHelpInfo.GetCultureVersion(contentUri.Culture) : null;
+                Version currentHelpVersion = (currentHelpInfo is not null) ? currentHelpInfo.GetCultureVersion(contentUri.Culture) : null;
                 string updateHelpShouldProcessAction = string.Format(CultureInfo.InvariantCulture,
                     HelpDisplayStrings.UpdateHelpShouldProcessActionMessage,
                     module.ModuleName,
-                    (currentHelpVersion != null) ? currentHelpVersion.ToString() : "0.0.0.0",
+                    (currentHelpVersion is not null) ? currentHelpVersion.ToString() : "0.0.0.0",
                     newHelpInfo.GetCultureVersion(contentUri.Culture),
                     contentUri.Culture);
                 if (!this.ShouldProcess(updateHelpShouldProcessAction, "Update-Help"))
@@ -380,7 +380,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        Debug.Assert(helpInfoUri != null, "If we are here, helpInfoUri must not be null");
+                        Debug.Assert(helpInfoUri is not null, "If we are here, helpInfoUri must not be null");
 
                         string helpContentUri = contentUri.ResolvedUri;
                         string xsdPath = SessionState.Path.Combine(Utils.GetApplicationBase(Context.ShellID), "Schemas\\PSMaml\\maml.xsd"); // TODO: Edit the maml XSDs and change this
@@ -408,7 +408,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (Directory.Exists(helpContentUri))
                         {
-                            if (_credential != null)
+                            if (_credential is not null)
                             {
                                 string helpContentName = module.GetHelpContentName(contentUri.Culture);
                                 string tempContentPath = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName()));

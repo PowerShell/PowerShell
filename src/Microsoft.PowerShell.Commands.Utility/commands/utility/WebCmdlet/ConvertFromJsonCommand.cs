@@ -115,13 +115,13 @@ namespace Microsoft.PowerShell.Commands
             ErrorRecord error = null;
             object result = JsonObject.ConvertFromJson(input, AsHashtable.IsPresent, Depth, out error);
 
-            if (error != null)
+            if (error is not null)
             {
                 ThrowTerminatingError(error);
             }
 
             WriteObject(result, !NoEnumerate.IsPresent);
-            return (result != null);
+            return (result is not null);
         }
 
         #endregion overrides

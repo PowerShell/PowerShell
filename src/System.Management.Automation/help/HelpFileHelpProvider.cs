@@ -63,7 +63,7 @@ namespace System.Management.Automation
             string helpFileName = helpRequest.Target + ".help.txt";
             Collection<string> filesMatched = MUIFileSearcher.SearchFiles(helpFileName, GetExtendedSearchPaths());
 
-            Diagnostics.Assert(filesMatched != null, "Files collection should not be null.");
+            Diagnostics.Assert(filesMatched is not null, "Files collection should not be null.");
             var matchedFilesToRemove = FilterToLatestModuleVersion(filesMatched);
 
             foreach (string file in filesMatched)
@@ -90,7 +90,7 @@ namespace System.Management.Automation
 
                 HelpInfo helpInfo = GetCache(file);
 
-                if (helpInfo != null)
+                if (helpInfo is not null)
                 {
                     countHelpInfosFound++;
                     yield return helpInfo;
@@ -126,7 +126,7 @@ namespace System.Management.Automation
                         GetModuleNameAndVersion(psModulePath, fileFullName, out moduleName, out moduleVersionFromPath);
 
                         // Skip modules whose root we cannot determine or which do not have versions.
-                        if (moduleVersionFromPath != null && moduleName != null)
+                        if (moduleVersionFromPath is not null && moduleName is not null)
                         {
                             Tuple<string, Version> moduleVersion = null;
                             Tuple<string, string> key = new Tuple<string, string>(moduleName, fileName);
@@ -249,7 +249,7 @@ namespace System.Management.Automation
 
                 HelpFileHelpInfo helpInfo = GetCache(file) as HelpFileHelpInfo;
 
-                if (helpInfo != null)
+                if (helpInfo is not null)
                 {
                     if (searchOnlyContent)
                     {
@@ -314,7 +314,7 @@ namespace System.Management.Automation
 
             HelpInfo helpInfo = GetCache(path);
 
-            if (helpInfo != null)
+            if (helpInfo is not null)
                 return helpInfo;
 
             string helpText = null;

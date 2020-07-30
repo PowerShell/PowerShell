@@ -134,7 +134,7 @@ namespace System.Management.Automation
                 {
                     IContentReader reader = GetContentReaderPrivate(providerInstance, providerPath, context);
 
-                    if (reader != null)
+                    if (reader is not null)
                     {
                         results.Add(reader);
                     }
@@ -174,15 +174,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             IContentReader result = null;
@@ -312,15 +312,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             object result = null;
@@ -475,7 +475,7 @@ namespace System.Management.Automation
                     IContentWriter result =
                         GetContentWriterPrivate(providerInstance, providerPath, context);
 
-                    if (result != null)
+                    if (result is not null)
                     {
                         results.Add(result);
                     }
@@ -513,15 +513,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             IContentWriter result = null;
@@ -657,15 +657,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             object result = null;
@@ -841,15 +841,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             try
@@ -981,15 +981,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             object result = null;

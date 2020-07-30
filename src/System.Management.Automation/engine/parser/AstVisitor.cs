@@ -194,7 +194,7 @@ namespace System.Management.Automation.Language
         {
             if (ast != Root)
             {
-                Diagnostics.Assert(ast.Parent != null, "Parent not set");
+                Diagnostics.Assert(ast.Parent is not null, "Parent not set");
             }
 
             return AstVisitAction.Continue;
@@ -333,7 +333,7 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitTypeConstraint(TypeConstraintAst ast)
         {
             Type type = ast.TypeName.GetReflectionType();
-            if (type != null)
+            if (type is not null)
             {
                 Diagnostics.Assert(!(type is TypeBuilder), "ReflectionType can never be TypeBuilder");
             }
@@ -352,7 +352,7 @@ namespace System.Management.Automation.Language
 
         internal static IEnumerable<Ast> FindAll(Ast ast, Func<Ast, bool> predicate, bool searchNestedScriptBlocks)
         {
-            Diagnostics.Assert(ast != null && predicate != null, "caller to verify arguments");
+            Diagnostics.Assert(ast is not null && predicate is not null, "caller to verify arguments");
 
             var searcher = new AstSearcher(predicate, stopOnFirst: false, searchNestedScriptBlocks: searchNestedScriptBlocks);
             ast.InternalVisit(searcher);
@@ -361,7 +361,7 @@ namespace System.Management.Automation.Language
 
         internal static Ast FindFirst(Ast ast, Func<Ast, bool> predicate, bool searchNestedScriptBlocks)
         {
-            Diagnostics.Assert(ast != null && predicate != null, "caller to verify arguments");
+            Diagnostics.Assert(ast is not null && predicate is not null, "caller to verify arguments");
 
             var searcher = new AstSearcher(predicate, stopOnFirst: true, searchNestedScriptBlocks: searchNestedScriptBlocks);
             ast.InternalVisit(searcher);
@@ -370,7 +370,7 @@ namespace System.Management.Automation.Language
 
         internal static bool Contains(Ast ast, Func<Ast, bool> predicate, bool searchNestedScriptBlocks)
         {
-            Diagnostics.Assert(ast != null && predicate != null, "caller to verify arguments");
+            Diagnostics.Assert(ast is not null && predicate is not null, "caller to verify arguments");
 
             var searcher = new AstSearcher(predicate, stopOnFirst: true, searchNestedScriptBlocks: searchNestedScriptBlocks);
             ast.InternalVisit(searcher);
@@ -384,7 +384,7 @@ namespace System.Management.Automation.Language
                 ast_ =>
                 {
                     var varAst = ast_ as VariableExpressionAst;
-                    if (varAst != null)
+                    if (varAst is not null)
                     {
                         return varAst.VariablePath.IsVariable &&
                                varAst.VariablePath.UnqualifiedPath.Equals(SpecialVariables.Input,

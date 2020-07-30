@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     ServiceController service = GetOneService(pattern);
-                    if (service != null)
+                    if (service is not null)
                     {
                         found = true;
                         IncludeExcludeAdd(matchingServices, service, true);
@@ -517,9 +517,9 @@ namespace Microsoft.PowerShell.Commands
             ServiceController service,
             bool checkDuplicates)
         {
-            if (include != null && !Matches(service, include))
+            if (include is not null && !Matches(service, include))
                 return;
-            if (exclude != null && Matches(service, exclude))
+            if (exclude is not null && Matches(service, exclude))
                 return;
             if (checkDuplicates)
             {
@@ -921,7 +921,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (exception != null)
+            if (exception is not null)
             {
                 // This service refused to accept the start command,
                 // so write a non-terminating error.
@@ -985,7 +985,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!force)
             {
-                if ((dependentServices != null)
+                if ((dependentServices is not null)
                     && (dependentServices.Length > 0))
                 {
                     // Check if all dependent services are stopped
@@ -1005,7 +1005,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (dependentServices != null)
+            if (dependentServices is not null)
             {
                 foreach (ServiceController service in dependentServices)
                 {
@@ -1039,7 +1039,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (exception != null)
+            if (exception is not null)
             {
                 // This service refused to accept the stop command,
                 // so write a non-terminating error.
@@ -1128,7 +1128,7 @@ namespace Microsoft.PowerShell.Commands
             catch (InvalidOperationException e)
             {
                 Win32Exception eInner = e.InnerException as Win32Exception;
-                if (eInner != null
+                if (eInner is not null
                     && NativeMethods.ERROR_SERVICE_NOT_ACTIVE == eInner.NativeErrorCode)
                 {
                     serviceNotRunning = true;
@@ -1137,7 +1137,7 @@ namespace Microsoft.PowerShell.Commands
                 exception = e;
             }
 
-            if (exception != null)
+            if (exception is not null)
             {
                 // This service refused to accept the pause command,
                 // so write a non-terminating error.
@@ -1209,7 +1209,7 @@ namespace Microsoft.PowerShell.Commands
             catch (InvalidOperationException e)
             {
                 Win32Exception eInner = e.InnerException as Win32Exception;
-                if (eInner != null
+                if (eInner is not null
                     && NativeMethods.ERROR_SERVICE_NOT_ACTIVE == eInner.NativeErrorCode)
                 {
                     serviceNotRunning = true;
@@ -1218,7 +1218,7 @@ namespace Microsoft.PowerShell.Commands
                 exception = e;
             }
 
-            if (exception != null)
+            if (exception is not null)
             {
                 // This service refused to accept the continue command,
                 // so write a non-terminating error.
@@ -1684,7 +1684,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                if (InputObject != null)
+                if (InputObject is not null)
                 {
                     service = InputObject;
                     Name = service.ServiceName;
@@ -1771,7 +1771,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     // Modify startup type or display name or credential
                     if (!string.IsNullOrEmpty(DisplayName)
-                        || ServiceStartupType.InvalidValue != StartupType || Credential != null)
+                        || ServiceStartupType.InvalidValue != StartupType || Credential is not null)
                     {
                         DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
                         if (!NativeMethods.TryGetNativeStartupType(StartupType, out dwStartType))
@@ -1784,7 +1784,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         string username = null;
-                        if (Credential != null)
+                        if (Credential is not null)
                         {
                             username = Credential.UserName;
                             password = Marshal.SecureStringToCoTaskMemUnicode(Credential.Password);
@@ -1888,7 +1888,7 @@ namespace Microsoft.PowerShell.Commands
                                 // Check for the dependent services as set-service dont have force parameter
                                 ServiceController[] dependentServices = service.DependentServices;
 
-                                if ((!Force) && (dependentServices != null) && (dependentServices.Length > 0))
+                                if ((!Force) && (dependentServices is not null) && (dependentServices.Length > 0))
                                 {
                                     WriteNonTerminatingError(service, null, "ServiceHasDependentServicesNoForce", ServiceResources.ServiceHasDependentServicesNoForce, ErrorCategory.InvalidOperation);
                                     return;
@@ -2159,7 +2159,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 // set up the double-null-terminated lpDependencies parameter
                 IntPtr lpDependencies = IntPtr.Zero;
-                if (DependsOn != null)
+                if (DependsOn is not null)
                 {
                     int numchars = 1; // final null
                     foreach (string dependedOn in DependsOn)
@@ -2189,7 +2189,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // set up the Credential parameter
                 string username = null;
-                if (Credential != null)
+                if (Credential is not null)
                 {
                     username = Credential.UserName;
                     password = Marshal.SecureStringToCoTaskMemUnicode(Credential.Password);
@@ -2382,7 +2382,7 @@ namespace Microsoft.PowerShell.Commands
             bool objServiceShouldBeDisposed = false;
             try
             {
-                if (InputObject != null)
+                if (InputObject is not null)
                 {
                     service = InputObject;
                     Name = service.ServiceName;

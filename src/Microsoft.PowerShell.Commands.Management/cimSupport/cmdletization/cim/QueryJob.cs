@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal QueryInstancesJob(CimJobContext jobContext, CimQuery cimQuery, string wqlCondition)
                 : base(jobContext, cimQuery)
         {
-            Dbg.Assert(wqlCondition != null, "Caller should verify that wqlCondition is not null");
+            Dbg.Assert(wqlCondition is not null, "Caller should verify that wqlCondition is not null");
 
             var wqlQueryBuilder = new StringBuilder();
             wqlQueryBuilder.Append("SELECT * FROM ");

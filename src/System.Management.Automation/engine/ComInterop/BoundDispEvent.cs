@@ -95,7 +95,7 @@ namespace System.Management.Automation.ComInterop
             VerifyHandler(handler);
 
             ComEventSink comEventSink = ComEventSink.FromRuntimeCallableWrapper(_rcw, _sourceIid, false);
-            if (comEventSink != null)
+            if (comEventSink is not null)
             {
                 comEventSink.RemoveHandler(_dispid, handler);
             }

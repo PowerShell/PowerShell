@@ -61,7 +61,7 @@ namespace System.Management.Automation
             get
             {
                 Dbg.Diagnostics.Assert(
-                    _sessionState != null,
+                    _sessionState is not null,
                     "The only constructor for this class should always set the sessionState field");
 
                 return _sessionState.CurrentLocation;
@@ -86,7 +86,7 @@ namespace System.Management.Automation
         public PathInfo CurrentProviderLocation(string providerName)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -105,7 +105,7 @@ namespace System.Management.Automation
             get
             {
                 Dbg.Diagnostics.Assert(
-                    _sessionState != null,
+                    _sessionState is not null,
                     "The only constructor for this class should always set the sessionState field");
 
                 return CurrentProviderLocation(_sessionState.ExecutionContext.ProviderNames.FileSystem);
@@ -142,7 +142,7 @@ namespace System.Management.Automation
         public PathInfo SetLocation(string path)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -183,7 +183,7 @@ namespace System.Management.Automation
         internal PathInfo SetLocation(string path, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -227,7 +227,7 @@ namespace System.Management.Automation
         internal PathInfo SetLocation(string path, CmdletProviderContext context, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -276,7 +276,7 @@ namespace System.Management.Automation
         internal bool IsCurrentLocationOrAncestor(string path, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -293,7 +293,7 @@ namespace System.Management.Automation
         public void PushCurrentLocation(string stackName)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             _sessionState.PushCurrentLocation(stackName);
@@ -331,7 +331,7 @@ namespace System.Management.Automation
         public PathInfo PopLocation(string stackName)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             return _sessionState.PopLocation(stackName);
@@ -346,7 +346,7 @@ namespace System.Management.Automation
         public PathInfoStack LocationStack(string stackName)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             return _sessionState.LocationStack(stackName);
@@ -364,7 +364,7 @@ namespace System.Management.Automation
         public PathInfoStack SetDefaultLocationStack(string stackName)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             return _sessionState.SetDefaultLocationStack(stackName);
@@ -918,7 +918,7 @@ namespace System.Management.Automation
         public string Combine(string parent, string child)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -960,7 +960,7 @@ namespace System.Management.Automation
         internal string Combine(string parent, string child, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -999,7 +999,7 @@ namespace System.Management.Automation
         public string ParseParent(string path, string root)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -1040,7 +1040,7 @@ namespace System.Management.Automation
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -1087,7 +1087,7 @@ namespace System.Management.Automation
             bool useDefaultProvider)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -1127,7 +1127,7 @@ namespace System.Management.Automation
         public string ParseChildName(string path)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -1168,7 +1168,7 @@ namespace System.Management.Automation
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -1215,7 +1215,7 @@ namespace System.Management.Automation
             bool useDefaultProvider)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -1256,7 +1256,7 @@ namespace System.Management.Automation
         public string NormalizeRelativePath(string path, string basePath)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -1299,7 +1299,7 @@ namespace System.Management.Automation
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -1339,7 +1339,7 @@ namespace System.Management.Automation
         public bool IsValid(string path)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -1380,7 +1380,7 @@ namespace System.Management.Automation
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -1399,7 +1399,7 @@ namespace System.Management.Automation
             get
             {
                 Dbg.Diagnostics.Assert(
-                    _sessionState != null,
+                    _sessionState is not null,
                     "The only constructor for this class should always set the sessionState field");
 
                 return _pathResolver ?? (_pathResolver = _sessionState.ExecutionContext.LocationGlobber);

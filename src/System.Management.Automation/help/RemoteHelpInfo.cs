@@ -23,7 +23,7 @@ namespace System.Management.Automation
             string remoteHelpCategory,
             HelpCategory localHelpCategory) : base(localHelpCategory)
         {
-            Dbg.Assert(remoteRunspace != null, "Caller should verify arguments");
+            Dbg.Assert(remoteRunspace is not null, "Caller should verify arguments");
 
             using (PowerShell powerShell = PowerShell.Create())
             {
@@ -55,16 +55,16 @@ namespace System.Management.Automation
                 // get-help (on par with get-command), it was decided to use the local command name
                 // for the help content.
                 PSPropertyInfo nameInfo = _deserializedRemoteHelp.Properties["Name"];
-                if (nameInfo != null)
+                if (nameInfo is not null)
                 {
                     nameInfo.Value = localCommandName;
                 }
 
                 PSObject commandDetails = this.Details;
-                if (commandDetails != null)
+                if (commandDetails is not null)
                 {
                     nameInfo = commandDetails.Properties["Name"];
-                    if (nameInfo != null)
+                    if (nameInfo is not null)
                     {
                         nameInfo.Value = localCommandName;
                     }

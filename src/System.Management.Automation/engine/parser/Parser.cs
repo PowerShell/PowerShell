@@ -177,7 +177,7 @@ namespace System.Management.Automation.Language
             _parseMode = parseMode;
             _fileName = fileName;
             _tokenizer.Initialize(fileName, input, tokenList);
-            _savingTokens = (tokenList != null);
+            _savingTokens = (tokenList is not null);
             ErrorList.Clear();
 
             try
@@ -312,13 +312,13 @@ namespace System.Management.Automation.Language
         internal void SetPreviousFirstLastToken(ExecutionContext context)
         {
             var firstToken = _tokenizer.FirstToken;
-            if (firstToken != null)
+            if (firstToken is not null)
             {
                 context.SetVariable(SpecialVariables.FirstTokenVarPath, _previousFirstTokenText);
                 if (!IgnoreTokenWhenUpdatingPreviousFirstLast(firstToken))
                 {
                     var stringToken = firstToken as StringToken;
-                    _previousFirstTokenText = stringToken != null
+                    _previousFirstTokenText = stringToken is not null
                         ? stringToken.Value
                         : firstToken.Text;
                 }
@@ -329,7 +329,7 @@ namespace System.Management.Automation.Language
                 if (!IgnoreTokenWhenUpdatingPreviousFirstLast(lastToken))
                 {
                     var stringToken = lastToken as StringToken;
-                    _previousLastTokenText = stringToken != null
+                    _previousLastTokenText = stringToken is not null
                         ? stringToken.Value
                         : lastToken.Text;
                 }
@@ -444,7 +444,7 @@ namespace System.Management.Automation.Language
         private Token NextMemberAccessToken(bool allowLBracket)
         {
             // If _ungotToken is not null, we're in some sort of error state, don't return the token.
-            if (_ungotToken != null)
+            if (_ungotToken is not null)
                 return null;
             return _tokenizer.GetMemberAccessOperator(allowLBracket);
         }
@@ -452,14 +452,14 @@ namespace System.Management.Automation.Language
         private Token NextInvokeMemberToken()
         {
             // If _ungotToken is not null, we're in some sort of error state, don't return the token.
-            if (_ungotToken != null)
+            if (_ungotToken is not null)
                 return null;
             return _tokenizer.GetInvokeMemberOpenParen();
         }
 
         private Token NextLBracket()
         {
-            if (_ungotToken != null)
+            if (_ungotToken is not null)
             {
                 if (_ungotToken.Kind == TokenKind.LBracket) return NextToken();
                 // If _ungotToken is not null, we're in some sort of error state, don't return the token.
@@ -482,7 +482,7 @@ namespace System.Management.Automation.Language
 
         private void SkipToken()
         {
-            Diagnostics.Assert(_ungotToken != null, "Don't skip a token you didn't unget");
+            Diagnostics.Assert(_ungotToken is not null, "Don't skip a token you didn't unget");
             _ungotToken = null;
         }
 
@@ -494,7 +494,7 @@ namespace System.Management.Automation.Language
 
         private void SetTokenizerMode(TokenizerMode mode)
         {
-            if (mode != _tokenizer.Mode && _ungotToken != null)
+            if (mode != _tokenizer.Mode && _ungotToken is not null)
             {
                 // Only rescan tokens that differ b/w command and expression modes.
                 if (!_ungotToken.Kind.HasTrait(TokenFlags.ParseModeInvariant))
@@ -612,22 +612,22 @@ namespace System.Management.Automation.Language
         {
             foreach (object obj in objs)
             {
-                if (obj != null)
+                if (obj is not null)
                 {
                     var token = obj as Token;
-                    if (token != null)
+                    if (token is not null)
                     {
                         return token.Extent;
                     }
 
                     var ast = obj as Ast;
-                    if (ast != null)
+                    if (ast is not null)
                     {
                         return ast.Extent;
                     }
 
                     var typename = obj as ITypeName;
-                    if (typename != null)
+                    if (typename is not null)
                     {
                         return typename.Extent;
                     }
@@ -668,21 +668,21 @@ namespace System.Management.Automation.Language
         {
             foreach (var obj in asts)
             {
-                if (obj != null)
+                if (obj is not null)
                 {
                     Ast ast = obj as Ast;
-                    if (ast != null)
+                    if (ast is not null)
                     {
                         yield return ast;
                     }
                     else
                     {
                         var enumerable = obj as IEnumerable<Ast>;
-                        if (enumerable != null)
+                        if (enumerable is not null)
                         {
                             foreach (var ast2 in enumerable)
                             {
-                                if (ast2 != null)
+                                if (ast2 is not null)
                                 {
                                     yield return ast2;
                                 }
@@ -718,10 +718,10 @@ namespace System.Management.Automation.Language
 
             if ((ast is null) ||
                 parseErrors.Length > 0 ||
-                ast.BeginBlock != null ||
-                ast.ProcessBlock != null ||
-                ast.DynamicParamBlock != null ||
-                ast.EndBlock.Traps != null)
+                ast.BeginBlock is not null ||
+                ast.ProcessBlock is not null ||
+                ast.DynamicParamBlock is not null ||
+                ast.EndBlock.Traps is not null)
             {
                 return false;
             }
@@ -757,7 +757,7 @@ namespace System.Management.Automation.Language
             }
 
             var data = hashtable as Hashtable;
-            Diagnostics.Assert((data != null), "IsConstantValueVisitor.IsConstant() should return false when the specified HashtableAst is not a avalid Hashtable");
+            Diagnostics.Assert((data is not null), "IsConstantValueVisitor.IsConstant() should return false when the specified HashtableAst is not a avalid Hashtable");
             result = data;
             return true;
         }
@@ -825,7 +825,7 @@ namespace System.Management.Automation.Language
                     var usingStatement = statement as UsingStatementAst;
                     // otherwise returned statement is ErrorStatementAst.
                     // We ignore it here, because error already reported to the parser.
-                    if (usingStatement != null)
+                    if (usingStatement is not null)
                     {
                         result.Add(usingStatement);
                     }
@@ -880,18 +880,18 @@ namespace System.Management.Automation.Language
 
                 UngetToken(rParen);
                 endExtent = Before(rParen);
-                ReportIncompleteInput(After(parameters != null && parameters.Count > 0 ? parameters.Last().Extent : lparen.Extent),
+                ReportIncompleteInput(After(parameters is not null && parameters.Count > 0 ? parameters.Last().Extent : lparen.Extent),
                     nameof(ParserStrings.MissingEndParenthesisInFunctionParameterList),
                     ParserStrings.MissingEndParenthesisInFunctionParameterList);
             }
 
             List<AttributeAst> attributes = new List<AttributeAst>();
-            if (candidateAttributes != null)
+            if (candidateAttributes is not null)
             {
                 foreach (AttributeBaseAst attr in candidateAttributes)
                 {
                     AttributeAst attribute = attr as AttributeAst;
-                    if (attribute != null)
+                    if (attribute is not null)
                     {
                         attributes.Add(attribute);
                     }
@@ -924,7 +924,7 @@ namespace System.Management.Automation.Language
                 ParameterAst parameter = ParameterRule();
                 if (parameter is null)
                 {
-                    if (commaToken != null)
+                    if (commaToken is not null)
                     {
                         // ErrorRecovery: ??
 
@@ -976,7 +976,7 @@ namespace System.Management.Automation.Language
                 if (token.Kind != TokenKind.Variable && token.Kind != TokenKind.SplattedVariable)
                 {
                     UngetToken(token);
-                    if (attributes != null)
+                    if (attributes is not null)
                     {
                         // ErrorRecovery: skip to closing paren because returning null signals the last parameter.
 
@@ -1032,7 +1032,7 @@ namespace System.Management.Automation.Language
 
             List<AttributeBaseAst> attributes = new List<AttributeBaseAst>();
             AttributeBaseAst attribute = AttributeRule();
-            while (attribute != null)
+            while (attribute is not null)
             {
                 attributes.Add(attribute);
                 if (!inExpressionMode || attribute is AttributeAst)
@@ -1121,7 +1121,7 @@ namespace System.Management.Automation.Language
                     UngetToken(rBracket);
                     rBracket = null;
                     // Don't bother reporting a missing ']' if we reported a missing ')'.
-                    if (rParen != null)
+                    if (rParen is not null)
                     {
                         ReportIncompleteInput(After(rParen),
                             nameof(ParserStrings.EndSquareBracketExpectedAtEndOfAttribute),
@@ -1177,7 +1177,7 @@ namespace System.Management.Automation.Language
                     ExpressionAst expr;
                     bool expressionOmitted = false;
 
-                    if (name != null)
+                    if (name is not null)
                     {
                         Token token = PeekToken();
                         if (token.Kind == TokenKind.Equals)
@@ -1215,7 +1215,7 @@ namespace System.Management.Automation.Language
                         expr = ExpressionRule();
                     }
 
-                    if (name != null)
+                    if (name is not null)
                     {
                         if (keysSeen.Contains(name.Value))
                         {
@@ -1232,12 +1232,12 @@ namespace System.Management.Automation.Language
                                 name.Value, expr, expressionOmitted));
                         }
                     }
-                    else if (expr != null)
+                    else if (expr is not null)
                     {
                         positionalArguments.Add(expr);
                         lastItemExtent = expr.Extent;
                     }
-                    else if (commaToken != null)
+                    else if (commaToken is not null)
                     {
                         // ErrorRecovery: Pretend we saw the argument and keep going.
 
@@ -1414,7 +1414,7 @@ namespace System.Management.Automation.Language
             }
 
             ITypeName typeName = FinishTypeNameRule(token);
-            if (typeName != null)
+            if (typeName is not null)
             {
                 Token rBracket = NextToken();
                 if (rBracket.Kind != TokenKind.RBracket)
@@ -1599,7 +1599,7 @@ namespace System.Management.Automation.Language
         {
             // If the caller passed in the open curly, then they expect us to consume the closing curly
             // and include that in the extent.
-            if (lCurly != null)
+            if (lCurly is not null)
             {
                 Token rCurly = NextToken();
                 IScriptExtent endScriptBlock;
@@ -1663,12 +1663,12 @@ namespace System.Management.Automation.Language
 
             List<TrapStatementAst> traps = new List<TrapStatementAst>();
             List<StatementAst> statements = new List<StatementAst>();
-            if (predefinedStatementAst != null)
+            if (predefinedStatementAst is not null)
             {
                 statements.Add(predefinedStatementAst);
             }
 
-            IScriptExtent statementListExtent = paramBlockAst != null ? paramBlockAst.Extent : null;
+            IScriptExtent statementListExtent = paramBlockAst is not null ? paramBlockAst.Extent : null;
             IScriptExtent scriptBlockExtent;
 
             while (true)
@@ -1678,7 +1678,7 @@ namespace System.Management.Automation.Language
                 {
                     statementListExtent = extent;
                 }
-                else if (extent != null)
+                else if (extent is not null)
                 {
                     statementListExtent = ExtentOf(statementListExtent, extent);
                 }
@@ -1707,9 +1707,9 @@ namespace System.Management.Automation.Language
             NamedBlockAst beginBlock = null;
             NamedBlockAst processBlock = null;
             NamedBlockAst endBlock = null;
-            IScriptExtent startExtent = lCurly != null
+            IScriptExtent startExtent = lCurly is not null
                                             ? lCurly.Extent
-                                            : (paramBlockAst != null) ? paramBlockAst.Extent : null;
+                                            : (paramBlockAst is not null) ? paramBlockAst.Extent : null;
             IScriptExtent endExtent = null;
             IScriptExtent extent = null;
             IScriptExtent scriptBlockExtent = null;
@@ -1722,7 +1722,7 @@ namespace System.Management.Automation.Language
                     default:
                         // Next token is unexpected.
                         // ErrorRecovery: if 'lCurly' is present, pretend we saw a closing curly; otherwise, eat the unexpected token.
-                        if (lCurly != null)
+                        if (lCurly is not null)
                         {
                             UngetToken(blockNameToken);
                             scriptBlockExtent = ExtentOf(startExtent, endExtent);
@@ -1875,7 +1875,7 @@ namespace System.Management.Automation.Language
                 _tokenizer.CheckAstIsBeforeSignature(statement);
 
                 var trapStatementAst = statement as TrapStatementAst;
-                if (trapStatementAst != null)
+                if (trapStatementAst is not null)
                 {
                     traps.Add(trapStatementAst);
                 }
@@ -1953,7 +1953,7 @@ namespace System.Management.Automation.Language
                 attributes = AttributeListRule(false);
                 token = NextToken();
 
-                if (attributes != null
+                if (attributes is not null
                     && attributes.Count > 0)
                 {
                     if ((token.TokenFlags & TokenFlags.StatementDoesntSupportAttributes) != 0)
@@ -2044,7 +2044,7 @@ namespace System.Management.Automation.Language
                     statement = BlockStatementRule(token);
                     break;
                 case TokenKind.Configuration:
-                    statement = ConfigurationStatementRule(attributes != null ? attributes.OfType<AttributeAst>() : null, token);
+                    statement = ConfigurationStatementRule(attributes is not null ? attributes.OfType<AttributeAst>() : null, token);
                     break;
                 case TokenKind.From:
                 case TokenKind.Define:
@@ -2060,7 +2060,7 @@ namespace System.Management.Automation.Language
                     statement = LabeledStatementRule((LabelToken)token);
                     break;
                 case TokenKind.EndOfInput:
-                    if (attributes != null)
+                    if (attributes is not null)
                     {
                         Resync(restorePoint);
                         statement = PipelineChainRule();
@@ -2105,7 +2105,7 @@ namespace System.Management.Automation.Language
                     break;
 
                 default:
-                    if (attributes != null)
+                    if (attributes is not null)
                     {
                         Resync(restorePoint);
                     }
@@ -2162,7 +2162,7 @@ namespace System.Management.Automation.Language
             // G      unary-expression
 
             var simpleName = SimpleNameRule();
-            if (simpleName != null)
+            if (simpleName is not null)
             {
                 return simpleName;
             }
@@ -2182,7 +2182,7 @@ namespace System.Management.Automation.Language
                     _disableCommaOperator = disableCommaOperator;
                 }
 
-                if (labelExpr != null)
+                if (labelExpr is not null)
                 {
                     return labelExpr;
                 }
@@ -2202,7 +2202,7 @@ namespace System.Management.Automation.Language
             // G      'break'   label-expression:opt
 
             ExpressionAst labelExpr = LabelOrKeyRule();
-            IScriptExtent extent = (labelExpr != null)
+            IScriptExtent extent = (labelExpr is not null)
                 ? ExtentOf(breakToken, labelExpr)
                 : breakToken.Extent;
 
@@ -2215,7 +2215,7 @@ namespace System.Management.Automation.Language
             // G      'continue'   label-expression:opt
 
             ExpressionAst labelExpr = LabelOrKeyRule();
-            IScriptExtent extent = (labelExpr != null)
+            IScriptExtent extent = (labelExpr is not null)
                 ? ExtentOf(continueToken, labelExpr)
                 : continueToken.Extent;
 
@@ -2228,7 +2228,7 @@ namespace System.Management.Automation.Language
             // G      'return'   pipeline-chain:opt
 
             PipelineBaseAst pipeline = PipelineChainRule();
-            IScriptExtent extent = (pipeline != null)
+            IScriptExtent extent = (pipeline is not null)
                 ? ExtentOf(token, pipeline)
                 : token.Extent;
             return new ReturnStatementAst(extent, pipeline);
@@ -2240,7 +2240,7 @@ namespace System.Management.Automation.Language
             // G      'exit'   pipeline-chain:opt
 
             PipelineBaseAst pipeline = PipelineChainRule();
-            IScriptExtent extent = (pipeline != null)
+            IScriptExtent extent = (pipeline is not null)
                 ? ExtentOf(token, pipeline)
                 : token.Extent;
             return new ExitStatementAst(extent, pipeline);
@@ -2252,7 +2252,7 @@ namespace System.Management.Automation.Language
             // G      'throw'    pipeline:opt
 
             PipelineBaseAst pipeline = PipelineChainRule();
-            IScriptExtent extent = (pipeline != null)
+            IScriptExtent extent = (pipeline is not null)
                 ? ExtentOf(token, pipeline)
                 : token.Extent;
 
@@ -2335,7 +2335,7 @@ namespace System.Management.Automation.Language
             // G Command
             // G      InlineScript    scriptblock-expression
 
-            Diagnostics.Assert(elements != null && elements.Count == 0, "The CommandElement list should be empty");
+            Diagnostics.Assert(elements is not null && elements.Count == 0, "The CommandElement list should be empty");
             var commandName = new StringConstantExpressionAst(inlineScriptToken.Extent, inlineScriptToken.Text, StringConstantType.BareWord);
             inlineScriptToken.TokenFlags |= TokenFlags.CommandName;
             elements.Add(commandName);
@@ -2496,7 +2496,7 @@ namespace System.Management.Automation.Language
                 break;
             }
 
-            IScriptExtent endExtent = (elseClause != null)
+            IScriptExtent endExtent = (elseClause is not null)
                 ? elseClause.Extent
                 : clauses[clauses.Count - 1].Item2.Extent;
             IScriptExtent extent = ExtentOf(ifToken, endExtent);
@@ -2799,7 +2799,7 @@ namespace System.Management.Automation.Language
 
                         if (isDefaultClause)
                         {
-                            if (@default != null)
+                            if (@default is not null)
                             {
                                 // ErrorRecovery: just report the error and continue, forget the previous default clause.
 
@@ -2850,7 +2850,7 @@ namespace System.Management.Automation.Language
             }
 
             return new SwitchStatementAst(ExtentOf(labelToken ?? switchToken, rCurly),
-                labelToken != null ? labelToken.LabelText : null, condition, flags, clauses, @default);
+                labelToken is not null ? labelToken.LabelText : null, condition, flags, clauses, @default);
         }
 
         private StatementAst ConfigurationStatementRule(IEnumerable<AttributeAst> customAttributes, Token configurationToken)
@@ -2978,7 +2978,7 @@ namespace System.Management.Automation.Language
 
                 try
                 {
-                    if (localRunspace != null)
+                    if (localRunspace is not null)
                     {
                         p = PowerShell.Create();
                         p.Runspace = localRunspace;
@@ -3006,7 +3006,7 @@ namespace System.Management.Automation.Language
                             }
 
                             // Load any keywords that have been defined earlier in the script.
-                            if (_configurationKeywordsDefinedInThisFile != null)
+                            if (_configurationKeywordsDefinedInThisFile is not null)
                             {
                                 foreach (var kw in _configurationKeywordsDefinedInThisFile.Values)
                                 {
@@ -3033,7 +3033,7 @@ namespace System.Management.Automation.Language
                 }
                 finally
                 {
-                    if (p != null)
+                    if (p is not null)
                     {
                         p.Dispose();
                     }
@@ -3087,7 +3087,7 @@ namespace System.Management.Automation.Language
                 // If we are at the top level, then we'll add it to the list of keywords defined in this
                 // parse so it can be used as a resource in subsequent config statements.
                 var scAst = configurationName as StringConstantExpressionAst;
-                if (scAst != null)
+                if (scAst is not null)
                 {
                     var keywordToAddForThisConfigurationStatement = new System.Management.Automation.Language.DynamicKeyword
                     {
@@ -3116,32 +3116,32 @@ namespace System.Management.Automation.Language
 
                     // Extract the parameters, if any and them to the keyword definition.
                     var sbeAst = configurationBodyScriptBlock as ScriptBlockExpressionAst;
-                    if (sbeAst != null)
+                    if (sbeAst is not null)
                     {
                         var pList = sbeAst.ScriptBlock.ParamBlock;
-                        if (pList != null)
+                        if (pList is not null)
                         {
                             foreach (var parm in pList.Parameters)
                             {
                                 var keywordProp = new DynamicKeywordProperty();
                                 keywordProp.Name = parm.Name.VariablePath.UserPath;
-                                if (parm.Attributes != null)
+                                if (parm.Attributes is not null)
                                 {
                                     foreach (var attr in parm.Attributes)
                                     {
                                         var typeConstraint = attr as TypeConstraintAst;
-                                        if (typeConstraint != null)
+                                        if (typeConstraint is not null)
                                         {
                                             keywordProp.TypeConstraint = typeConstraint.TypeName.Name;
                                             continue;
                                         }
 
                                         var aAst = attr as AttributeAst;
-                                        if (aAst != null)
+                                        if (aAst is not null)
                                         {
                                             if (string.Equals(aAst.TypeName.Name, "Parameter", StringComparison.OrdinalIgnoreCase))
                                             {
-                                                if (aAst.NamedArguments != null)
+                                                if (aAst.NamedArguments is not null)
                                                 {
                                                     foreach (var na in aAst.NamedArguments)
                                                     {
@@ -3151,10 +3151,10 @@ namespace System.Management.Automation.Language
                                                             {
                                                                 keywordProp.Mandatory = true;
                                                             }
-                                                            else if (na.Argument != null)
+                                                            else if (na.Argument is not null)
                                                             {
                                                                 ConstantExpressionAst ceAst = na.Argument as ConstantExpressionAst;
-                                                                if (ceAst != null)
+                                                                if (ceAst is not null)
                                                                 {
                                                                     keywordProp.Mandatory = System.Management.Automation.LanguagePrimitives.IsTrue(ceAst.Value);
                                                                 }
@@ -3194,10 +3194,10 @@ namespace System.Management.Automation.Language
                 //############################################################
 
                 bool isMetaConfiguration = false;
-                if (customAttributes != null)
+                if (customAttributes is not null)
                 {
                     isMetaConfiguration = customAttributes.Any(
-                         attribute => (attribute.TypeName.GetReflectionAttributeType() != null) &&
+                         attribute => (attribute.TypeName.GetReflectionAttributeType() is not null) &&
                                       (attribute.TypeName.GetReflectionAttributeType() == typeof(DscLocalConfigurationManagerAttribute)));
                 }
 
@@ -3226,7 +3226,7 @@ namespace System.Management.Automation.Language
             finally
             {
                 // If we had to allocate a runspace for the parser, we'll free it now.
-                if (localRunspace != null)
+                if (localRunspace is not null)
                 {
                     // If a runspace was created for this operation, close it and reset the default runspace to null.
                     localRunspace.Close();
@@ -3300,7 +3300,7 @@ namespace System.Management.Automation.Language
             // G      command-argument
             // G      primary-expression
 
-            IScriptExtent startOfStatement = labelToken != null ? labelToken.Extent : forEachToken.Extent;
+            IScriptExtent startOfStatement = labelToken is not null ? labelToken.Extent : forEachToken.Extent;
             IScriptExtent endErrorStatement = null;
 
             SkipNewlines();
@@ -3434,14 +3434,14 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (endErrorStatement != null)
+            if (endErrorStatement is not null)
             {
                 return new ErrorStatementAst(ExtentOf(startOfStatement, endErrorStatement),
                                              GetNestedErrorAsts(variableAst, pipeline, body));
             }
 
             return new ForEachStatementAst(ExtentOf(startOfStatement, body),
-                labelToken != null ? labelToken.LabelText : null,
+                labelToken is not null ? labelToken.LabelText : null,
                 flags,
                 throttleLimit, variableAst, pipeline, body);
         }
@@ -3486,7 +3486,7 @@ namespace System.Management.Automation.Language
 
             SkipNewlines();
             PipelineBaseAst initializer = PipelineChainRule();
-            if (initializer != null)
+            if (initializer is not null)
             {
                 endErrorStatement = initializer.Extent;
             }
@@ -3498,7 +3498,7 @@ namespace System.Management.Automation.Language
 
             SkipNewlines();
             PipelineBaseAst condition = PipelineChainRule();
-            if (condition != null)
+            if (condition is not null)
             {
                 endErrorStatement = condition.Extent;
             }
@@ -3510,7 +3510,7 @@ namespace System.Management.Automation.Language
 
             SkipNewlines();
             PipelineBaseAst iterator = PipelineChainRule();
-            if (iterator != null)
+            if (iterator is not null)
             {
                 endErrorStatement = iterator.Extent;
             }
@@ -3554,7 +3554,7 @@ namespace System.Management.Automation.Language
             }
 
             return new ForStatementAst(ExtentOf(labelToken ?? forToken, body),
-                labelToken != null ? labelToken.LabelText : null, initializer, condition, iterator, body);
+                labelToken is not null ? labelToken.LabelText : null, initializer, condition, iterator, body);
         }
 
         private StatementAst WhileStatementRule(LabelToken labelToken, Token whileToken)
@@ -3636,7 +3636,7 @@ namespace System.Management.Automation.Language
             }
 
             return new WhileStatementAst(ExtentOf(labelToken ?? whileToken, body),
-                labelToken != null ? labelToken.LabelText : null, condition, body);
+                labelToken is not null ? labelToken.LabelText : null, condition, body);
         }
 
         /// <summary>
@@ -3658,12 +3658,12 @@ namespace System.Management.Automation.Language
             //////////////////////////////////////////////////////////////////////////////////
             // If a custom action was provided. then invoke it
             //////////////////////////////////////////////////////////////////////////////////
-            if (keywordData.PreParse != null)
+            if (keywordData.PreParse is not null)
             {
                 try
                 {
                     ParseError[] errors = keywordData.PreParse(keywordData);
-                    if (errors != null && errors.Length > 0)
+                    if (errors is not null && errors.Length > 0)
                     {
                         foreach (var e in errors)
                         {
@@ -3875,7 +3875,7 @@ namespace System.Management.Automation.Language
 
                         InvokeMemberExpressionAst instanceInvokeMemberExpressionAst = instanceName as InvokeMemberExpressionAst;
 
-                        if (instanceInvokeMemberExpressionAst != null &&
+                        if (instanceInvokeMemberExpressionAst is not null &&
                             instanceInvokeMemberExpressionAst.Arguments.Count == 1 &&
                             instanceInvokeMemberExpressionAst.Arguments[0] is ScriptBlockExpressionAst &&
                             // the last condition checks that there is no space between "method" name and '{'
@@ -3894,7 +3894,7 @@ namespace System.Management.Automation.Language
                                 lCurly.Text);
                         }
 
-                        if (lCurly.Kind == TokenKind.Dot && originalInstanceName != null && lCurly.Extent.StartOffset == originalInstanceName.Extent.EndOffset)
+                        if (lCurly.Kind == TokenKind.Dot && originalInstanceName is not null && lCurly.Extent.StartOffset == originalInstanceName.Extent.EndOffset)
                         {
                             // Generate more useful ast for tab-completing extension methods on special DSC collection variables
                             // e.g. configuration foo { node $AllNodes.<tab>
@@ -3997,12 +3997,12 @@ namespace System.Management.Automation.Language
             //////////////////////////////////////////////////////////////////////////////////
             // If a custom action was provided. then invoke it
             //////////////////////////////////////////////////////////////////////////////////
-            if (keywordData.PostParse != null)
+            if (keywordData.PostParse is not null)
             {
                 try
                 {
                     ParseError[] errors = keywordData.PostParse(dynamicKeywordAst);
-                    if (errors != null && errors.Length > 0)
+                    if (errors is not null && errors.Length > 0)
                     {
                         foreach (var e in errors)
                         {
@@ -4112,7 +4112,7 @@ namespace System.Management.Automation.Language
                             UngetToken(rParen);
 
                             // If condition is null, we issue an error message already, don't bother with this one.
-                            if (condition != null)
+                            if (condition is not null)
                             {
                                 endErrorStatement = condition.Extent;
                                 ReportIncompleteInput(After(endErrorStatement),
@@ -4125,13 +4125,13 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (endErrorStatement != null)
+            if (endErrorStatement is not null)
             {
                 return new ErrorStatementAst(ExtentOf(startExtent, endErrorStatement), GetNestedErrorAsts(body, condition));
             }
 
             IScriptExtent extent = ExtentOf(startExtent, rParen);
-            string label = (labelToken != null) ? labelToken.LabelText : null;
+            string label = (labelToken is not null) ? labelToken.LabelText : null;
             if (whileOrUntilToken.Kind == TokenKind.Until)
             {
                 return new DoUntilStatementAst(extent, label, condition, body);
@@ -4246,15 +4246,15 @@ namespace System.Management.Automation.Language
                 List<MemberAst> members = new List<MemberAst>();
                 List<Ast> astsOnError = null;
 
-                while ((member = ClassMemberRule(name.Value, out astsOnError)) != null || astsOnError != null)
+                while ((member = ClassMemberRule(name.Value, out astsOnError)) is not null || astsOnError is not null)
                 {
-                    if (member != null)
+                    if (member is not null)
                     {
                         members.Add(member);
                         lastExtent = member.Extent;
                     }
 
-                    if (astsOnError != null && astsOnError.Count > 0)
+                    if (astsOnError is not null && astsOnError.Count > 0)
                     {
                         if (nestedAsts is null)
                         {
@@ -4281,12 +4281,12 @@ namespace System.Management.Automation.Language
                     lastExtent = rCurly.Extent;
                 }
 
-                var startExtent = customAttributes != null && customAttributes.Count > 0
+                var startExtent = customAttributes is not null && customAttributes.Count > 0
                                       ? customAttributes[0].Extent
                                       : classToken.Extent;
                 var extent = ExtentOf(startExtent, lastExtent);
                 var classDefn = new TypeDefinitionAst(extent, name.Value, customAttributes is null ? null : customAttributes.OfType<AttributeAst>(), members, TypeAttributes.Class, superClassesList);
-                if (customAttributes != null && customAttributes.OfType<TypeConstraintAst>().Any())
+                if (customAttributes is not null && customAttributes.OfType<TypeConstraintAst>().Any())
                 {
                     if (nestedAsts is null)
                     {
@@ -4297,7 +4297,7 @@ namespace System.Management.Automation.Language
                     nestedAsts.Add(classDefn);
                 }
 
-                if (nestedAsts != null && nestedAsts.Count > 0)
+                if (nestedAsts is not null && nestedAsts.Count > 0)
                 {
                     return new ErrorStatementAst(extent, nestedAsts);
                 }
@@ -4352,7 +4352,7 @@ namespace System.Management.Automation.Language
                 SkipNewlines();
 
                 var attribute = AttributeRule();
-                if (attribute != null)
+                if (attribute is not null)
                 {
                     lastAttribute = attribute;
                     if (startExtent is null)
@@ -4361,7 +4361,7 @@ namespace System.Management.Automation.Language
                     }
 
                     var attributeAst = attribute as AttributeAst;
-                    if (attributeAst != null)
+                    if (attributeAst is not null)
                     {
                         attributeList.Add(attributeAst);
                     }
@@ -4387,7 +4387,7 @@ namespace System.Management.Automation.Language
                 {
 #if SUPPORT_PUBLIC_PRIVATE
                     case TokenKind.Public:
-                        if (publicToken != null)
+                        if (publicToken is not null)
                         {
                             ReportError(token.Extent,
                                 nameof(ParserStrings.DuplicateQualifier),
@@ -4395,7 +4395,7 @@ namespace System.Management.Automation.Language
                                 token.Text);
                         }
 
-                        if (privateToken != null)
+                        if (privateToken is not null)
                         {
                             ReportError(token.Extent,
                                 nameof(ParserStrings.ModifiersCannotBeCombined),
@@ -4409,7 +4409,7 @@ namespace System.Management.Automation.Language
                         break;
 
                     case TokenKind.Private:
-                        if (privateToken != null)
+                        if (privateToken is not null)
                         {
                             ReportError(token.Extent,
                                 nameof(ParserStrings.DuplicateQualifier),
@@ -4417,7 +4417,7 @@ namespace System.Management.Automation.Language
                                 token.Text);
                         }
 
-                        if (publicToken != null)
+                        if (publicToken is not null)
                         {
                             ReportError(token.Extent,
                                 nameof(ParserStrings.ModifiersCannotBeCombined),
@@ -4432,7 +4432,7 @@ namespace System.Management.Automation.Language
 #endif
 
                     case TokenKind.Hidden:
-                        if (hiddenToken != null)
+                        if (hiddenToken is not null)
                         {
                             ReportError(token.Extent,
                                 nameof(ParserStrings.DuplicateQualifier),
@@ -4446,7 +4446,7 @@ namespace System.Management.Automation.Language
                         break;
 
                     case TokenKind.Static:
-                        if (staticToken != null)
+                        if (staticToken is not null)
                         {
                             ReportError(token.Extent,
                                 nameof(ParserStrings.DuplicateQualifier),
@@ -4481,21 +4481,21 @@ namespace System.Management.Automation.Language
                 }
 
 #if SUPPORT_PUBLIC_PRIVATE
-                PropertyAttributes attributes = privateToken != null ? PropertyAttributes.Private : PropertyAttributes.Public;
+                PropertyAttributes attributes = privateToken is not null ? PropertyAttributes.Private : PropertyAttributes.Public;
 #else
                 PropertyAttributes attributes = PropertyAttributes.Public;
 #endif
-                if (staticToken != null)
+                if (staticToken is not null)
                 {
                     attributes |= PropertyAttributes.Static;
                 }
 
-                if (hiddenToken != null)
+                if (hiddenToken is not null)
                 {
                     attributes |= PropertyAttributes.Hidden;
                 }
 
-                var endExtent = initialValueAst != null ? initialValueAst.Extent : varToken.Extent;
+                var endExtent = initialValueAst is not null ? initialValueAst.Extent : varToken.Extent;
                 Token terminatorToken = PeekToken();
                 if (terminatorToken.Kind != TokenKind.NewLine && terminatorToken.Kind != TokenKind.Semi && terminatorToken.Kind != TokenKind.RCurly)
                 {
@@ -4533,7 +4533,7 @@ namespace System.Management.Automation.Language
             if (TryUseTokenAsSimpleName(token))
             {
                 SkipToken();
-                var functionDefinition = MethodDeclarationRule(token, className, staticToken != null) as FunctionDefinitionAst;
+                var functionDefinition = MethodDeclarationRule(token, className, staticToken is not null) as FunctionDefinitionAst;
 
                 if (functionDefinition is null)
                 {
@@ -4546,16 +4546,16 @@ namespace System.Management.Automation.Language
                 }
 
 #if SUPPORT_PUBLIC_PRIVATE
-                MethodAttributes attributes = privateToken != null ? MethodAttributes.Private : MethodAttributes.Public;
+                MethodAttributes attributes = privateToken is not null ? MethodAttributes.Private : MethodAttributes.Public;
 #else
                 MethodAttributes attributes = MethodAttributes.Public;
 #endif
-                if (staticToken != null)
+                if (staticToken is not null)
                 {
                     attributes |= MethodAttributes.Static;
                 }
 
-                if (hiddenToken != null)
+                if (hiddenToken is not null)
                 {
                     attributes |= MethodAttributes.Hidden;
                 }
@@ -4563,7 +4563,7 @@ namespace System.Management.Automation.Language
                 return new FunctionMemberAst(ExtentOf(startExtent, functionDefinition), functionDefinition, typeConstraint, attributeList, attributes);
             }
 
-            if (lastAttribute != null)
+            if (lastAttribute is not null)
             {
                 // We have the start of a member, but didn't see a variable or 'def'.
                 ReportIncompleteInput(After(ExtentFromFirstOf(lastAttribute)),
@@ -4725,7 +4725,7 @@ namespace System.Management.Automation.Language
                 IScriptExtent lastExtent = lCurly.Extent;
                 MemberAst member;
                 List<MemberAst> members = new List<MemberAst>();
-                while ((member = EnumMemberRule()) != null)
+                while ((member = EnumMemberRule()) is not null)
                 {
                     members.Add(member);
                     lastExtent = member.Extent;
@@ -4742,12 +4742,12 @@ namespace System.Management.Automation.Language
                         ParserStrings.MissingEndCurlyBrace);
                 }
 
-                var startExtent = customAttributes != null && customAttributes.Count > 0
+                var startExtent = customAttributes is not null && customAttributes.Count > 0
                                           ? customAttributes[0].Extent
                                           : enumToken.Extent;
                 var extent = ExtentOf(startExtent, rCurly);
                 var enumDefn = new TypeDefinitionAst(extent, name.Value, customAttributes is null ? null : customAttributes.OfType<AttributeAst>(), members, TypeAttributes.Enum, underlyingTypeConstraint is null ? null : new[] { underlyingTypeConstraint });
-                if (customAttributes != null && customAttributes.OfType<TypeConstraintAst>().Any())
+                if (customAttributes is not null && customAttributes.OfType<TypeConstraintAst>().Any())
                 {
                     // No need to report error since there is error reported in method StatementRule
                     List<Ast> nestedAsts = new List<Ast>();
@@ -5055,7 +5055,7 @@ namespace System.Management.Automation.Language
                             // # using assembly behavior should be the same in these two cases:
                             // cd A; $script.Invoke()
                             // cd B; $script.Invoke()
-                            if (Runspaces.Runspace.DefaultRunspace != null)
+                            if (Runspaces.Runspace.DefaultRunspace is not null)
                             {
                                 workingDirectory = Runspaces.Runspace.DefaultRunspace.ExecutionContext.EngineIntrinsics.SessionState.Path.CurrentLocation.Path;
                             }
@@ -5207,7 +5207,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (endErrorStatement != null)
+            if (endErrorStatement is not null)
             {
                 return new ErrorStatementAst(ExtentOf(functionNameToken, endErrorStatement), parameters);
             }
@@ -5217,7 +5217,7 @@ namespace System.Management.Automation.Language
             {
                 IScriptExtent baseCallExtent;
                 IScriptExtent baseKeywordExtent;
-                if (baseToken != null)
+                if (baseToken is not null)
                 {
                     baseCallExtent = ExtentOf(baseToken, baseCallLastExtent);
                     baseKeywordExtent = baseToken.Extent;
@@ -5319,7 +5319,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (endErrorStatement != null)
+            if (endErrorStatement is not null)
             {
                 return new ErrorStatementAst(ExtentOf(functionToken, endErrorStatement), parameters);
             }
@@ -5390,7 +5390,7 @@ namespace System.Management.Automation.Language
             SkipNewlines();
             AttributeBaseAst type = AttributeRule();
             var typeConstraintAst = type as TypeConstraintAst;
-            if (type != null && typeConstraintAst is null)
+            if (type is not null && typeConstraintAst is null)
             {
                 // Presumably we parsed an attribute instead of a type.  Put it back and let the code
                 // below report a missing trap body.  The attribute might belong to something that
@@ -5452,7 +5452,7 @@ namespace System.Management.Automation.Language
 
                 if (type is null)
                 {
-                    if (commaToken != null)
+                    if (commaToken is not null)
                     {
                         // ErrorRecovery: Just consume the comma, pretend it wasn't there and look for the handler block.
 
@@ -5504,13 +5504,13 @@ namespace System.Management.Automation.Language
                 {
                     // ErrorRecovery: just use the "missing" block in the result ast.
 
-                    endErrorStatement = exceptionTypes != null ? exceptionTypes.Last().Extent : catchToken.Extent;
+                    endErrorStatement = exceptionTypes is not null ? exceptionTypes.Last().Extent : catchToken.Extent;
                     ReportIncompleteInput(After(endErrorStatement),
                         nameof(ParserStrings.MissingCatchHandlerBlock),
                         ParserStrings.MissingCatchHandlerBlock);
                 }
 
-                if (exceptionTypes != null)
+                if (exceptionTypes is not null)
                 {
                     if (errorAsts is null)
                     {
@@ -5562,7 +5562,7 @@ namespace System.Management.Automation.Language
             CatchClauseAst catchClause;
             List<CatchClauseAst> catches = new List<CatchClauseAst>();
             List<TypeConstraintAst> errorAsts = null;
-            while ((catchClause = CatchBlockRule(ref endErrorStatement, ref errorAsts)) != null)
+            while ((catchClause = CatchBlockRule(ref endErrorStatement, ref errorAsts)) is not null)
             {
                 catches.Add(catchClause);
             }
@@ -5598,12 +5598,12 @@ namespace System.Management.Automation.Language
                     ParserStrings.MissingCatchOrFinally);
             }
 
-            if (endErrorStatement != null)
+            if (endErrorStatement is not null)
             {
                 return new ErrorStatementAst(ExtentOf(tryToken, endErrorStatement), GetNestedErrorAsts(body, catches, errorAsts));
             }
 
-            return new TryStatementAst(ExtentOf(tryToken, finallyBlock != null ? finallyBlock.Extent : catches.Last().Extent),
+            return new TryStatementAst(ExtentOf(tryToken, finallyBlock is not null ? finallyBlock.Extent : catches.Last().Extent),
                                        body, catches, finallyBlock);
         }
 
@@ -5624,7 +5624,7 @@ namespace System.Management.Automation.Language
             IScriptExtent endErrorStatement = null;
             SkipNewlines();
             var dataVariableNameAst = SimpleNameRule();
-            string dataVariableName = (dataVariableNameAst != null) ? dataVariableNameAst.Value : null;
+            string dataVariableName = (dataVariableNameAst is not null) ? dataVariableNameAst.Value : null;
 
             SkipNewlines();
             Token supportedCommandToken = PeekToken();
@@ -5662,7 +5662,7 @@ namespace System.Management.Automation.Language
                                 ParserStrings.MissingValueForSupportedCommandInDataSectionStatement);
                         }
 
-                        endErrorStatement = commaToken != null ? commaToken.Extent : supportedCommandToken.Extent;
+                        endErrorStatement = commaToken is not null ? commaToken.Extent : supportedCommandToken.Extent;
                         break;
                     }
 
@@ -5687,7 +5687,7 @@ namespace System.Management.Automation.Language
                 {
                     // ErrorRecovery: return an error statement.
 
-                    endErrorStatement = commands != null
+                    endErrorStatement = commands is not null
                                             ? commands.Last().Extent
                                             : ExtentFromFirstOf(dataVariableNameAst, dataToken);
                     ReportIncompleteInput(After(endErrorStatement),
@@ -5696,7 +5696,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (endErrorStatement != null)
+            if (endErrorStatement is not null)
             {
                 return new ErrorStatementAst(ExtentOf(dataToken, endErrorStatement), GetNestedErrorAsts(commands));
             }
@@ -5736,7 +5736,7 @@ namespace System.Management.Automation.Language
             {
                 SetTokenizerMode(TokenizerMode.Expression);
                 expr = ExpressionRule();
-                if (expr != null)
+                if (expr is not null)
                 {
                     // We peek here because we are in expression mode, otherwise =0 will get scanned
                     // as a single token.
@@ -5754,7 +5754,7 @@ namespace System.Management.Automation.Language
             }
 
             // If we have an assign token, deal with assignment
-            if (expr != null && assignToken != null)
+            if (expr is not null && assignToken is not null)
             {
                 SkipNewlines();
                 StatementAst statement = StatementRule();
@@ -5794,7 +5794,7 @@ namespace System.Management.Automation.Language
                 // in enclosing calls to PipelineChainRule
                 PipelineAst nextPipeline;
                 Token firstPipelineToken = null;
-                if (startExpression != null)
+                if (startExpression is not null)
                 {
                     nextPipeline = (PipelineAst)PipelineRule(startExpression);
                     startExpression = null;
@@ -5966,7 +5966,7 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                if (expr != null)
+                if (expr is not null)
                 {
                     if (pipelineElements.Count > 0)
                     {
@@ -5980,7 +5980,7 @@ namespace System.Management.Automation.Language
                     RedirectionAst[] redirections = null;
                     var redirectionToken = PeekToken() as RedirectionToken;
                     RedirectionAst lastRedirection = null;
-                    while (redirectionToken != null)
+                    while (redirectionToken is not null)
                     {
                         SkipToken();
 
@@ -5995,18 +5995,18 @@ namespace System.Management.Automation.Language
                         redirectionToken = PeekToken() as RedirectionToken;
                     }
 
-                    var exprExtent = lastRedirection != null ? ExtentOf(expr, lastRedirection) : expr.Extent;
+                    var exprExtent = lastRedirection is not null ? ExtentOf(expr, lastRedirection) : expr.Extent;
                     commandAst = new CommandExpressionAst(
                         exprExtent,
                         expr,
-                        redirections?.Where(r => r != null));
+                        redirections?.Where(r => r is not null));
                 }
                 else
                 {
                     commandAst = (CommandAst)CommandRule(forDynamicKeyword: false);
                 }
 
-                if (commandAst != null)
+                if (commandAst is not null)
                 {
                     if (startExtent is null)
                     {
@@ -6021,7 +6021,7 @@ namespace System.Management.Automation.Language
                     // If the first pipe element is null, the position points to the pipe (ideally it would
                     // point before, but the pipe could be the first character), otherwise the empty element
                     // is after the pipe character.
-                    IScriptExtent errorPosition = nextToken != null ? After(nextToken) : PeekToken().Extent;
+                    IScriptExtent errorPosition = nextToken is not null ? After(nextToken) : PeekToken().Extent;
                     ReportIncompleteInput(
                         errorPosition,
                         nameof(ParserStrings.EmptyPipeElement),
@@ -6118,7 +6118,7 @@ namespace System.Management.Automation.Language
             RedirectionAst result;
 
             var fileRedirectionToken = redirectionToken as FileRedirectionToken;
-            if (fileRedirectionToken != null || (redirectionToken is InputRedirectionToken))
+            if (fileRedirectionToken is not null || (redirectionToken is InputRedirectionToken))
             {
                 // get location
                 var filename = GetSingleCommandArgument(CommandArgumentContext.FileName);
@@ -6293,7 +6293,7 @@ namespace System.Management.Automation.Language
                     case TokenKind.LCurly:
                         UngetToken(token);
                         exprAst = PrimaryExpressionRule(withMemberAccess: true);
-                        Diagnostics.Assert(exprAst != null, "PrimaryExpressionRule should never return null");
+                        Diagnostics.Assert(exprAst is not null, "PrimaryExpressionRule should never return null");
                         break;
 
                     case TokenKind.Generic:
@@ -6306,7 +6306,7 @@ namespace System.Management.Automation.Language
                         var expandableToken = genericToken as StringExpandableToken;
                         // A command name w/o invocation operator is not expandable even if the token has expandable parts
                         // If we have seen an invocation operator, the command name is expandable.
-                        if (expandableToken != null && context != CommandArgumentContext.CommandName)
+                        if (expandableToken is not null && context != CommandArgumentContext.CommandName)
                         {
                             var nestedExpressions = ParseNestedExpressions(expandableToken);
                             exprAst = new ExpandableStringExpressionAst(expandableToken, expandableToken.Value,
@@ -6377,9 +6377,9 @@ namespace System.Management.Automation.Language
                 token = NextToken();
             }
 
-            Diagnostics.Assert(commandArgs != null || exprAst != null, "How did that happen?");
+            Diagnostics.Assert(commandArgs is not null || exprAst is not null, "How did that happen?");
 
-            if (commandArgs != null)
+            if (commandArgs is not null)
             {
                 commandArgs.Add(exprAst);
                 return new ArrayLiteralAst(ExtentOf(commandArgs[0], commandArgs[commandArgs.Count - 1]), commandArgs);
@@ -6569,13 +6569,13 @@ namespace System.Management.Automation.Language
 
                                 // If this is the special verbatim argument syntax, look for the next element
                                 StringToken argumentToken = token as StringToken;
-                                if ((argumentToken != null) && string.Equals(argumentToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
+                                if ((argumentToken is not null) && string.Equals(argumentToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
                                 {
                                     elements.Add(ast);
                                     endExtent = ast.Extent;
 
                                     var verbatimToken = GetVerbatimCommandArgumentToken();
-                                    if (verbatimToken != null)
+                                    if (verbatimToken is not null)
                                     {
                                         foundVerbatimArgument = true;
                                         scanning = false;
@@ -6630,7 +6630,7 @@ namespace System.Management.Automation.Language
 
             return new CommandAst(ExtentOf(firstToken, endExtent), elements,
                                   dotSource || ampersand ? firstToken.Kind : TokenKind.Unknown,
-                                  redirections != null ? redirections.Where(r => r != null) : null);
+                                  redirections is not null ? redirections.Where(r => r is not null) : null);
         }
 
         #endregion Pipelines
@@ -6804,7 +6804,7 @@ namespace System.Management.Automation.Language
                 if (!token.Kind.HasTrait(TokenFlags.BinaryOperator))
                 {
                     paramToken = token as ParameterToken;
-                    if (paramToken != null)
+                    if (paramToken is not null)
                     {
                         return ErrorRecoveryParameterInExpression(paramToken, expr);
                     }
@@ -6886,7 +6886,7 @@ namespace System.Management.Automation.Language
                     rhs = new BinaryExpressionAst(ExtentOf(lhs, rhs), lhs, token.Kind, rhs, token.Extent);
                 }
 
-                if (paramToken != null)
+                if (paramToken is not null)
                 {
                     return ErrorRecoveryParameterInExpression(paramToken, rhs);
                 }
@@ -7013,7 +7013,7 @@ namespace System.Management.Automation.Language
                 _tokenizer.AllowSignedNumbers = true;
                 _tokenizer.ForceEndNumberOnTernaryOpChars = endNumberOnTernaryOpChars;
 
-                if (_ungotToken != null)
+                if (_ungotToken is not null)
                 {
                     // Possibly a signed number. Need to resync.
                     bool needResync = _ungotToken.Kind == TokenKind.Minus;
@@ -7051,7 +7051,7 @@ namespace System.Management.Automation.Language
 
                 // We have seen a unary operator token and now expecting an expression.
                 child = UnaryExpressionRule(endNumberOnTernaryOpChars: true);
-                if (child != null)
+                if (child is not null)
                 {
                     if (token.Kind == TokenKind.Comma)
                     {
@@ -7117,8 +7117,8 @@ namespace System.Management.Automation.Language
 
                     // If we've looked ahead, don't go looking for a member access token, we've already issued an error,
                     // just assume we're not trying to access a member.
-                    var memberAccessToken = _ungotToken != null ? null : NextMemberAccessToken(false);
-                    if (memberAccessToken != null)
+                    var memberAccessToken = _ungotToken is not null ? null : NextMemberAccessToken(false);
+                    if (memberAccessToken is not null)
                     {
                         expr = CheckPostPrimaryExpressionOperators(
                             memberAccessToken,
@@ -7131,7 +7131,7 @@ namespace System.Management.Automation.Language
                         {
                             // We are now expecting a child expression.
                             child = UnaryExpressionRule(endNumberOnTernaryOpChars: true);
-                            if (child != null)
+                            if (child is not null)
                             {
                                 expr = new ConvertExpressionAst(
                                     ExtentOf(lastAttribute, child),
@@ -7150,7 +7150,7 @@ namespace System.Management.Automation.Language
                 {
                     var typeConstraint = attributes[i] as TypeConstraintAst;
 
-                    expr = typeConstraint != null
+                    expr = typeConstraint is not null
                                 ? new ConvertExpressionAst(ExtentOf(typeConstraint, expr), typeConstraint, expr)
                                 : new AttributedExpressionAst(ExtentOf(attributes[i], expr), attributes[i], expr);
                 }
@@ -7160,7 +7160,7 @@ namespace System.Management.Automation.Language
                 expr = PrimaryExpressionRule(withMemberAccess: true);
             }
 
-            if (expr != null)
+            if (expr is not null)
             {
                 token = PeekToken();
                 TokenKind operation = (token.Kind == TokenKind.PlusPlus)
@@ -7271,7 +7271,7 @@ namespace System.Management.Automation.Language
 
         private ExpressionAst CheckPostPrimaryExpressionOperators(Token token, ExpressionAst expr)
         {
-            while (token != null)
+            while (token is not null)
             {
                 // To support fluent style programming, allow newlines after the member access operator.
                 SkipNewlines();
@@ -7582,7 +7582,7 @@ namespace System.Management.Automation.Language
                 ExpressionAst exprAst;
                 var varToken = token as VariableToken;
 
-                if (varToken != null)
+                if (varToken is not null)
                 {
                     exprAst = CheckUsingVariable(varToken, false);
                     if (_savingTokens) { newNestedTokens.Add(varToken); }
@@ -7631,7 +7631,7 @@ namespace System.Management.Automation.Language
 
             ExpressionAst expr;
             // We need to scan the nested tokens even if there was some error. This is used by the tab completion: "pshome is $psh<tab>
-            if (strToken.NestedTokens != null)
+            if (strToken.NestedTokens is not null)
             {
                 List<ExpressionAst> nestedExpressions = ParseNestedExpressions(strToken);
                 expr = new ExpandableStringExpressionAst(strToken, strToken.Value, strToken.FormatString, nestedExpressions);
@@ -7654,7 +7654,7 @@ namespace System.Management.Automation.Language
             // G      value
 
             ExpressionAst simpleName = SimpleNameRule();
-            if (simpleName != null)
+            if (simpleName is not null)
             {
                 return simpleName;
             }
@@ -7692,7 +7692,7 @@ namespace System.Management.Automation.Language
             else
             {
                 Token lParen = NextInvokeMemberToken();
-                if (lParen != null)
+                if (lParen is not null)
                 {
                     Diagnostics.Assert(lParen.Kind == TokenKind.LParen || lParen.Kind == TokenKind.LCurly, "token kind incorrect");
                     Diagnostics.Assert(member.Extent.EndColumnNumber == lParen.Extent.StartColumnNumber,
@@ -7772,7 +7772,7 @@ namespace System.Management.Automation.Language
                     ExpressionAst argument = ExpressionRule();
                     if (argument is null)
                     {
-                        if (comma != null)
+                        if (comma is not null)
                         {
                             // ErrorRecovery: sync at closing paren or newline.
 
@@ -7893,7 +7893,7 @@ namespace System.Management.Automation.Language
         {
             AssertErrorIdCorrespondsToMsgString(errorId, errorMsg);
 
-            if (args != null && args.Length > 0)
+            if (args is not null && args.Length > 0)
             {
                 errorMsg = string.Format(CultureInfo.CurrentCulture, errorMsg, args);
             }
@@ -8017,11 +8017,11 @@ namespace System.Management.Automation.Language
         private void ReportErrorsAsWarnings(Collection<Exception> errors)
         {
             var executionContext = Runspaces.Runspace.DefaultRunspace.ExecutionContext;
-            if (executionContext != null && executionContext.InternalHost != null && executionContext.InternalHost.UI != null)
+            if (executionContext is not null && executionContext.InternalHost is not null && executionContext.InternalHost.UI is not null)
             {
                 foreach (var error in errors)
                 {
-                    if (error != null)
+                    if (error is not null)
                     {
                         executionContext.InternalHost.UI.WriteWarningLine(error.ToString());
                     }
@@ -8051,7 +8051,7 @@ namespace System.Management.Automation.Language
 
         internal ParseError(IScriptExtent extent, string errorId, string message, bool incompleteInput)
         {
-            Diagnostics.Assert(extent != null, "can't have a null position for a parse error");
+            Diagnostics.Assert(extent is not null, "can't have a null position for a parse error");
             Diagnostics.Assert(!string.IsNullOrEmpty(message), "can't have a null error message");
             Diagnostics.Assert(!string.IsNullOrEmpty(errorId), "can't have a null error id");
 

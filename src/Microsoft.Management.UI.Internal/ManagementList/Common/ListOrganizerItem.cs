@@ -35,7 +35,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                return (this.renameButton != null) ? this.renameButton.IsChecked.Value : false;
+                return (this.renameButton is not null) ? this.renameButton.IsChecked.Value : false;
             }
         }
 
@@ -234,7 +234,7 @@ namespace Microsoft.Management.UI.Internal
             this.editBox.LostFocus += this.EditBox_LostFocus;
 
             this.templatedParent = this.TemplatedParent as FrameworkElement;
-            if (this.templatedParent != null)
+            if (this.templatedParent is not null)
             {
                 this.templatedParent.KeyDown += this.TemplatedParent_OnKeyDown;
             }
@@ -242,14 +242,14 @@ namespace Microsoft.Management.UI.Internal
 
         private void DetachFromVisualTree()
         {
-            if (this.editBox != null)
+            if (this.editBox is not null)
             {
                 this.editBox.IsVisibleChanged -= this.EditBox_IsVisibleChanged;
                 this.editBox.KeyDown -= this.EditBox_KeyDown;
                 this.editBox.LostFocus -= this.EditBox_LostFocus;
             }
 
-            if (this.templatedParent != null)
+            if (this.templatedParent is not null)
             {
                 this.templatedParent.KeyDown -= this.TemplatedParent_OnKeyDown;
             }

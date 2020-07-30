@@ -81,7 +81,7 @@ namespace System.Management.Automation
             // that uses variables qualified by script: it works.
             GlobalScope.ScriptScope = GlobalScope;
 
-            if (parent != null)
+            if (parent is not null)
             {
                 GlobalScope.Parent = parent.GlobalScope;
 
@@ -89,7 +89,7 @@ namespace System.Management.Automation
                 CopyProviders(parent);
                 // During loading of core modules, providers are not populated.
                 // We set the drive information later
-                if (Providers != null && Providers.Count > 0)
+                if (Providers is not null && Providers.Count > 0)
                 {
                     CurrentDrive = parent.CurrentDrive;
                 }
@@ -522,7 +522,7 @@ namespace System.Management.Automation
             //  ProviderInvocationException, and we don't want to
             //  re-wrap it.
             ProviderInvocationException pie = e as ProviderInvocationException;
-            if (pie != null)
+            if (pie is not null)
             {
                 pie._providerInfo = provider;
                 return pie;

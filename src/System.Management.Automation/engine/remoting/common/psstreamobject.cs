@@ -102,7 +102,7 @@ namespace System.Management.Automation.Remoting.Internal
         /// <param name="overrideInquire">Used by Receive-Job to suppress inquire preference.</param>
         public void WriteStreamObject(Cmdlet cmdlet, bool overrideInquire = false)
         {
-            if (cmdlet != null)
+            if (cmdlet is not null)
             {
                 switch (this.ObjectType)
                 {
@@ -118,7 +118,7 @@ namespace System.Management.Automation.Remoting.Internal
                             ErrorRecord errorRecord = (ErrorRecord)this.Value;
                             errorRecord.PreserveInvocationInfoOnce = true;
                             MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
+                            if (mshCommandRuntime is not null)
                             {
                                 mshCommandRuntime.WriteError(errorRecord, overrideInquire);
                             }
@@ -131,7 +131,7 @@ namespace System.Management.Automation.Remoting.Internal
                             string debug = (string)Value;
                             DebugRecord debugRecord = new DebugRecord(debug);
                             MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
+                            if (mshCommandRuntime is not null)
                             {
                                 mshCommandRuntime.WriteDebug(debugRecord, overrideInquire);
                             }
@@ -144,7 +144,7 @@ namespace System.Management.Automation.Remoting.Internal
                             string warning = (string)Value;
                             WarningRecord warningRecord = new WarningRecord(warning);
                             MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
+                            if (mshCommandRuntime is not null)
                             {
                                 mshCommandRuntime.WriteWarning(warningRecord, overrideInquire);
                             }
@@ -157,7 +157,7 @@ namespace System.Management.Automation.Remoting.Internal
                             string verbose = (string)Value;
                             VerboseRecord verboseRecord = new VerboseRecord(verbose);
                             MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
+                            if (mshCommandRuntime is not null)
                             {
                                 mshCommandRuntime.WriteVerbose(verboseRecord, overrideInquire);
                             }
@@ -168,7 +168,7 @@ namespace System.Management.Automation.Remoting.Internal
                     case PSStreamObjectType.Progress:
                         {
                             MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
+                            if (mshCommandRuntime is not null)
                             {
                                 mshCommandRuntime.WriteProgress((ProgressRecord)Value, overrideInquire);
                             }
@@ -179,7 +179,7 @@ namespace System.Management.Automation.Remoting.Internal
                     case PSStreamObjectType.Information:
                         {
                             MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
+                            if (mshCommandRuntime is not null)
                             {
                                 mshCommandRuntime.WriteInformation((InformationRecord)Value, overrideInquire);
                             }
@@ -191,7 +191,7 @@ namespace System.Management.Automation.Remoting.Internal
                         {
                             WarningRecord warningRecord = (WarningRecord)Value;
                             MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
+                            if (mshCommandRuntime is not null)
                             {
                                 mshCommandRuntime.AppendWarningVarList(warningRecord);
                             }
@@ -272,7 +272,7 @@ namespace System.Management.Automation.Remoting.Internal
                         if (instanceId != Guid.Empty)
                         {
                             PSObject o = Value as PSObject;
-                            if (o != null)
+                            if (o is not null)
                                 AddSourceJobNoteProperty(o, instanceId);
                         }
 
@@ -290,7 +290,7 @@ namespace System.Management.Automation.Remoting.Internal
                         {
                             // if we get a base ErrorRecord object, check if the computerName is
                             // populated in the RecommendedAction field
-                            if (errorRecord.ErrorDetails != null && !string.IsNullOrEmpty(errorRecord.ErrorDetails.RecommendedAction))
+                            if (errorRecord.ErrorDetails is not null && !string.IsNullOrEmpty(errorRecord.ErrorDetails.RecommendedAction))
                             {
                                 string computerName;
                                 Guid jobInstanceId;
@@ -309,7 +309,7 @@ namespace System.Management.Automation.Remoting.Internal
 
                         errorRecord.PreserveInvocationInfoOnce = true;
                         MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
+                        if (mshCommandRuntime is not null)
                         {
                             mshCommandRuntime.WriteError(errorRecord, overrideInquire);
                         }
@@ -322,7 +322,7 @@ namespace System.Management.Automation.Remoting.Internal
                         string warning = (string)Value;
                         WarningRecord warningRecord = new WarningRecord(warning);
                         MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
+                        if (mshCommandRuntime is not null)
                         {
                             mshCommandRuntime.WriteWarning(warningRecord, overrideInquire);
                         }
@@ -335,7 +335,7 @@ namespace System.Management.Automation.Remoting.Internal
                         string verbose = (string)Value;
                         VerboseRecord verboseRecord = new VerboseRecord(verbose);
                         MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
+                        if (mshCommandRuntime is not null)
                         {
                             mshCommandRuntime.WriteVerbose(verboseRecord, overrideInquire);
                         }
@@ -363,7 +363,7 @@ namespace System.Management.Automation.Remoting.Internal
                         }
 
                         MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
+                        if (mshCommandRuntime is not null)
                         {
                             mshCommandRuntime.WriteProgress(progressRecord, overrideInquire);
                         }
@@ -376,7 +376,7 @@ namespace System.Management.Automation.Remoting.Internal
                         string debug = (string)Value;
                         DebugRecord debugRecord = new DebugRecord(debug);
                         MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
+                        if (mshCommandRuntime is not null)
                         {
                             mshCommandRuntime.WriteDebug(debugRecord, overrideInquire);
                         }
@@ -409,7 +409,7 @@ namespace System.Management.Automation.Remoting.Internal
                         }
 
                         MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
+                        if (mshCommandRuntime is not null)
                         {
                             mshCommandRuntime.WriteInformation(informationRecord, overrideInquire);
                         }
@@ -446,7 +446,7 @@ namespace System.Management.Automation.Remoting.Internal
 
         private static void InvokeCmdletMethodAndWaitForResults<T>(CmdletMethodInvoker<T> cmdletMethodInvoker, Cmdlet cmdlet)
         {
-            Dbg.Assert(cmdletMethodInvoker != null, "Caller should verify cmdletMethodInvoker != null");
+            Dbg.Assert(cmdletMethodInvoker is not null, "Caller should verify cmdletMethodInvoker is not null");
 
             cmdletMethodInvoker.MethodResult = default(T);
             try
@@ -468,7 +468,7 @@ namespace System.Management.Automation.Remoting.Internal
             }
             finally
             {
-                if (cmdletMethodInvoker.Finished != null)
+                if (cmdletMethodInvoker.Finished is not null)
                 {
                     cmdletMethodInvoker.Finished.Set();
                 }
@@ -477,8 +477,8 @@ namespace System.Management.Automation.Remoting.Internal
 
         internal static void AddSourceJobNoteProperty(PSObject psObj, Guid instanceId)
         {
-            Dbg.Assert(psObj != null, "psObj is null trying to add a note property.");
-            if (psObj.Properties[RemotingConstants.SourceJobInstanceId] != null)
+            Dbg.Assert(psObj is not null, "psObj is null trying to add a note property.");
+            if (psObj.Properties[RemotingConstants.SourceJobInstanceId] is not null)
             {
                 psObj.Properties.Remove(RemotingConstants.SourceJobInstanceId);
             }

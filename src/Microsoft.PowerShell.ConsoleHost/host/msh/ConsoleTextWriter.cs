@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell
             :
             base(System.Globalization.CultureInfo.CurrentCulture)
         {
-            Dbg.Assert(ui != null, "ui needs a value");
+            Dbg.Assert(ui is not null, "ui needs a value");
 
             _ui = ui;
         }

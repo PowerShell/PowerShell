@@ -31,7 +31,7 @@ namespace System.Management.Automation.ComInterop
 
             // See if this is actually a property set
             ComBinder.ComInvokeMemberBinder comInvokeBinder = binder as ComBinder.ComInvokeMemberBinder;
-            if ((comInvokeBinder != null) && (comInvokeBinder.IsPropertySet))
+            if ((comInvokeBinder is not null) && (comInvokeBinder.IsPropertySet))
             {
                 DynamicMetaObject value = args[args.Length - 1];
 
@@ -51,7 +51,7 @@ namespace System.Management.Automation.ComInterop
                 }
             }
 
-            if (method != null)
+            if (method is not null)
             {
                 List<ParameterExpression> temps = new List<ParameterExpression>();
                 List<Expression> initTemps = new List<Expression>();
@@ -94,7 +94,7 @@ namespace System.Management.Automation.ComInterop
                 method
             ).Invoke();
 
-            if ((temps != null) && (temps.Any()))
+            if ((temps is not null) && (temps.Any()))
             {
                 Expression invokeExpression = invoke.Expression;
                 Expression call = Expression.Block(invokeExpression.Type, temps, initTemps.Append(invokeExpression));

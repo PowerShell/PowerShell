@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         {
             this.InitializeComponent();
 
-            if (this.AllModulesControl != null && this.AllModulesControl.ShowModuleControl != null)
+            if (this.AllModulesControl is not null && this.AllModulesControl.ShowModuleControl is not null)
             {
                 this.AllModulesControl.ShowModuleControl.Owner = this;
             }

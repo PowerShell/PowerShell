@@ -23,8 +23,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal MethodInvocationJobBase(CimJobContext jobContext, bool passThru, string methodSubject, MethodInvocationInfo methodInvocationInfo)
                 : base(jobContext)
         {
-            Dbg.Assert(methodInvocationInfo != null, "Caller should verify methodInvocationInfo != null");
-            Dbg.Assert(methodSubject != null, "Caller should verify methodSubject != null");
+            Dbg.Assert(methodInvocationInfo is not null, "Caller should verify methodInvocationInfo is not null");
+            Dbg.Assert(methodSubject is not null, "Caller should verify methodSubject is not null");
 
             _passThru = passThru;
             MethodSubject = methodSubject;
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal IEnumerable<MethodParameter> GetMethodOutputParameters()
         {
             IEnumerable<MethodParameter> allParameters_plus_returnValue = _methodInvocationInfo.Parameters;
-            if (_methodInvocationInfo.ReturnValue != null)
+            if (_methodInvocationInfo.ReturnValue is not null)
             {
                 allParameters_plus_returnValue = allParameters_plus_returnValue.Append(_methodInvocationInfo.ReturnValue);
             }
@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal bool ShouldProcess()
         {
-            Dbg.Assert(this.MethodSubject != null, "MethodSubject property should be initialized before starting main job processing");
+            Dbg.Assert(this.MethodSubject is not null, "MethodSubject property should be initialized before starting main job processing");
             if (!this.JobContext.CmdletInvocationContext.CmdletDefinitionContext.ClientSideShouldProcess)
             {
                 return true;
@@ -164,12 +164,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             this.ExceptionSafeWrapper(
                     delegate
                     {
-                        Dbg.Assert(this.MethodSubject != null, "MethodSubject property should be initialized before starting main job processing");
+                        Dbg.Assert(this.MethodSubject is not null, "MethodSubject property should be initialized before starting main job processing");
 
                         if (this.IsPassThruObjectNeeded())
                         {
                             object passThruObject = this.PassThruObject;
-                            if (passThruObject != null)
+                            if (passThruObject is not null)
                             {
                                 this.WriteObject(passThruObject);
                             }

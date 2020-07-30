@@ -198,7 +198,7 @@ namespace System.Management.Automation
             {
                 if (_version is null)
                 {
-                    if (Module != null)
+                    if (Module is not null)
                     {
                         if (Module.Version.Equals(new Version(0, 0)))
                         {
@@ -235,7 +235,7 @@ namespace System.Management.Automation
             set
             {
                 _context = value;
-                if ((value != null) && !this.DefiningLanguageMode.HasValue)
+                if ((value is not null) && !this.DefiningLanguageMode.HasValue)
                 {
                     this.DefiningLanguageMode = value.LanguageMode;
                 }
@@ -324,7 +324,7 @@ namespace System.Management.Automation
                     CopiedCommand.Visibility = value;
                 }
 
-                if (value == SessionStateEntryVisibility.Private && Module != null)
+                if (value == SessionStateEntryVisibility.Private && Module is not null)
                 {
                     Module.ModuleHasPrivateMembers = true;
                 }
@@ -362,14 +362,14 @@ namespace System.Management.Automation
             {
                 string moduleName = null;
 
-                if (Module != null && !string.IsNullOrEmpty(Module.Name))
+                if (Module is not null && !string.IsNullOrEmpty(Module.Name))
                 {
                     moduleName = Module.Name;
                 }
                 else
                 {
                     CmdletInfo cmdlet = this as CmdletInfo;
-                    if (cmdlet != null && cmdlet.PSSnapIn != null)
+                    if (cmdlet is not null && cmdlet.PSSnapIn is not null)
                     {
                         moduleName = cmdlet.PSSnapInName;
                     }
@@ -464,7 +464,7 @@ namespace System.Management.Automation
                         processInCurrentThread: true,
                         waitForCompletionInCurrentThread: true);
 
-                    if (eventArgs.Exception != null)
+                    if (eventArgs.Exception is not null)
                     {
                         // An exception happened on a different thread, rethrow it here on the correct thread.
                         eventArgs.Exception.Throw();
@@ -487,7 +487,7 @@ namespace System.Management.Automation
         private void OnGetMergedCommandParameterMetadataSafelyEventHandler(object sender, PSEventArgs args)
         {
             var eventArgs = args.SourceEventArgs as GetMergedCommandParameterMetadataSafelyEventArgs;
-            if (eventArgs != null)
+            if (eventArgs is not null)
             {
                 try
                 {
@@ -515,7 +515,7 @@ namespace System.Management.Automation
             // metadata actually stems from the running of the same cmdlet. In this case, we can just use the current CommandProcessor to
             // retrieve all bindable parameters, which should include the dynamic parameters that have been discovered already.
             CommandProcessor processor;
-            if (Context.CurrentCommandProcessor != null && Context.CurrentCommandProcessor.CommandInfo == this)
+            if (Context.CurrentCommandProcessor is not null && Context.CurrentCommandProcessor.CommandInfo == this)
             {
                 // Accessing the parameters within the invocation of the same cmdlet/advanced function.
                 processor = (CommandProcessor)Context.CurrentCommandProcessor;
@@ -523,7 +523,7 @@ namespace System.Management.Automation
             else
             {
                 IScriptCommandInfo scriptCommand = this as IScriptCommandInfo;
-                processor = scriptCommand != null
+                processor = scriptCommand is not null
                     ? new CommandProcessor(scriptCommand, _context, useLocalScope: true, fromScriptFile: false,
                         sessionState: scriptCommand.ScriptBlock.SessionStateInternal ?? Context.EngineSessionState)
                     : new CommandProcessor((CmdletInfo)this, _context) { UseLocalScope = true };
@@ -564,7 +564,7 @@ namespace System.Management.Automation
             {
                 Dictionary<string, ParameterMetadata> result = new Dictionary<string, ParameterMetadata>(StringComparer.OrdinalIgnoreCase);
 
-                if (ImplementsDynamicParameters && Context != null)
+                if (ImplementsDynamicParameters && Context is not null)
                 {
                     MergedCommandParameterMetadata merged = GetMergedCommandParameterMetadataSafely();
 
@@ -712,7 +712,7 @@ namespace System.Management.Automation
         {
             Collection<CommandParameterSetInfo> result = new Collection<CommandParameterSetInfo>();
 
-            if (parameterMetadata != null)
+            if (parameterMetadata is not null)
             {
                 if (parameterMetadata.ParameterSetCount == 0)
                 {
@@ -765,7 +765,7 @@ namespace System.Management.Automation
         public PSTypeName(Type type)
         {
             _type = type;
-            if (_type != null)
+            if (_type is not null)
             {
                 Name = _type.FullName;
             }
@@ -818,14 +818,14 @@ namespace System.Management.Automation
             }
 
             _type = typeName.GetReflectionType();
-            if (_type != null)
+            if (_type is not null)
             {
                 Name = _type.FullName;
             }
             else
             {
                 var t = typeName as TypeName;
-                if (t != null && t._typeDefinitionAst != null)
+                if (t is not null && t._typeDefinitionAst is not null)
                 {
                     TypeDefinitionAst = t._typeDefinitionAst;
                     Name = TypeDefinitionAst.Name;
@@ -855,7 +855,7 @@ namespace System.Management.Automation
                 {
                     if (_type is null)
                     {
-                        if (TypeDefinitionAst != null)
+                        if (TypeDefinitionAst is not null)
                         {
                             _type = TypeDefinitionAst.Type;
                         }
@@ -868,7 +868,7 @@ namespace System.Management.Automation
                     if (_type is null)
                     {
                         // We ignore the exception.
-                        if (Name != null &&
+                        if (Name is not null &&
                             Name.StartsWith('[') &&
                             Name.EndsWith(']'))
                         {

@@ -22,7 +22,7 @@ namespace System.Management.Automation
 
         private ExecutionContextForStepping(ExecutionContext ctxt)
         {
-            Dbg.Assert(ctxt != null, "ExecutionContext cannot be null.");
+            Dbg.Assert(ctxt is not null, "ExecutionContext cannot be null.");
             _executionContext = ctxt;
         }
 
@@ -241,7 +241,7 @@ namespace System.Management.Automation
 
             _eventSubscriber.FireStartSteppablePipeline(this);
 
-            if (_powershellInput != null)
+            if (_powershellInput is not null)
             {
                 _powershellInput.Pulse();
             }
@@ -262,7 +262,7 @@ namespace System.Management.Automation
 
             CheckAndPulseForProcessing(true);
 
-            if (_powershellInput != null)
+            if (_powershellInput is not null)
             {
                 _powershellInput.Pulse();
             }
@@ -272,7 +272,7 @@ namespace System.Management.Automation
         {
             // Close input if its active. no need to synchronize as input stream would have already been processed
             // when connect call came into PS plugin
-            if (Input != null)
+            if (Input is not null)
             {
                 Input.Complete();
             }
@@ -302,7 +302,7 @@ namespace System.Management.Automation
 
             PerformStop();
 
-            if (_powershellInput != null)
+            if (_powershellInput is not null)
             {
                 _powershellInput.Pulse();
             }
@@ -317,7 +317,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(!NoInput, "Input data should not be received for powershells created with no input");
 
-            if (Input != null)
+            if (Input is not null)
             {
                 lock (SyncObject)
                 {
@@ -326,7 +326,7 @@ namespace System.Management.Automation
 
                 CheckAndPulseForProcessing(false);
 
-                if (_powershellInput != null)
+                if (_powershellInput is not null)
                 {
                     _powershellInput.Pulse();
                 }

@@ -596,7 +596,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(errorRecord);
             }
 
-            if (WorkingDirectory != null && !Directory.Exists(WorkingDirectory))
+            if (WorkingDirectory is not null && !Directory.Exists(WorkingDirectory))
             {
                 string message = StringUtil.Format(RemotingErrorIdStrings.StartJobWorkingDirectoryNotFound, WorkingDirectory);
                 var errorRecord = new ErrorRecord(
@@ -644,7 +644,7 @@ namespace Microsoft.PowerShell.Commands
             // we can't protect that boundary
             if ((Context.LanguageMode == PSLanguageMode.ConstrainedLanguage) &&
                 (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Enforce) &&
-                ((ScriptBlock != null) || (InitializationScript != null)))
+                ((ScriptBlock is not null) || (InitializationScript is not null)))
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
@@ -723,7 +723,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (jobs.Count == 0)
                 {
-                    string message = (_definitionType != null) ?
+                    string message = (_definitionType is not null) ?
                         StringUtil.Format(RemotingErrorIdStrings.StartJobDefinitionNotFound2, _definitionType, _definitionName) :
                         StringUtil.Format(RemotingErrorIdStrings.StartJobDefinitionNotFound1, _definitionName);
 

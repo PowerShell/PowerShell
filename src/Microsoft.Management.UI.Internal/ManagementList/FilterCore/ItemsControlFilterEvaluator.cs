@@ -31,7 +31,7 @@ namespace Microsoft.Management.UI.Internal
 
             set
             {
-                if (this.filterTarget != null)
+                if (this.filterTarget is not null)
                 {
                     this.StopFilter();
                 }
@@ -73,7 +73,7 @@ namespace Microsoft.Management.UI.Internal
             // Cache the expression for filtering so subsequent changes are ignored \\
             this.CachedFilterExpression = this.FilterExpression;
 
-            if (this.CachedFilterExpression != null)
+            if (this.CachedFilterExpression is not null)
             {
                 this.FilterTarget.Items.Filter = this.FilterExpressionAdapter;
                 this.FilterStatus = FilterStatus.Applied;
@@ -95,7 +95,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             // Only clear the filter if necessary, since clearing it causes sorting to be re-evaluated \\
-            if (this.FilterTarget.Items.Filter != null)
+            if (this.FilterTarget.Items.Filter is not null)
             {
                 this.FilterTarget.Items.Filter = null;
             }
@@ -109,7 +109,7 @@ namespace Microsoft.Management.UI.Internal
 
         private bool FilterExpressionAdapter(object item)
         {
-            Debug.Assert(this.CachedFilterExpression != null, "not null");
+            Debug.Assert(this.CachedFilterExpression is not null, "not null");
 
             try
             {
@@ -129,7 +129,7 @@ namespace Microsoft.Management.UI.Internal
         private bool TryNotifyFilterException(Exception e)
         {
             EventHandler<FilterExceptionEventArgs> eh = this.FilterExceptionOccurred;
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this, new FilterExceptionEventArgs(e));
                 return true;

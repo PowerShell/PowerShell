@@ -44,7 +44,7 @@ namespace System.Management.Automation.Interpreter
             _offset = offset;
 
             var cache = Cache;
-            if (cache != null && offset >= 0 && offset < cache.Length)
+            if (cache is not null && offset >= 0 && offset < cache.Length)
             {
                 return cache[offset] ?? (cache[offset] = this);
             }
@@ -140,7 +140,7 @@ namespace System.Management.Automation.Interpreter
         {
             Debug.Assert(_offset != Unknown);
 
-            if (frame.Peek() != null)
+            if (frame.Peek() is not null)
             {
                 return _offset;
             }
@@ -312,7 +312,7 @@ namespace System.Management.Automation.Interpreter
 
         internal void SetTryHandler(TryCatchFinallyHandler tryHandler)
         {
-            Debug.Assert(_tryHandler is null && tryHandler != null, "the tryHandler can be set only once");
+            Debug.Assert(_tryHandler is null && tryHandler is not null, "the tryHandler can be set only once");
             _tryHandler = tryHandler;
         }
 
@@ -336,7 +336,7 @@ namespace System.Management.Automation.Interpreter
 
         public override int Run(InterpretedFrame frame)
         {
-            Debug.Assert(_tryHandler != null, "the tryHandler must be set already");
+            Debug.Assert(_tryHandler is not null, "the tryHandler must be set already");
 
             if (_hasFinally)
             {

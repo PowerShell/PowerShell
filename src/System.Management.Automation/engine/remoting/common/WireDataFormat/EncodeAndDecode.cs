@@ -1014,7 +1014,7 @@ namespace System.Management.Automation
                 }
             }
 
-            Dbg.Assert(getCommand != null, "Whoever sets PowerShell.IsGetCommandMetadataSpecialPipeline needs to make sure Get-Command is present");
+            Dbg.Assert(getCommand is not null, "Whoever sets PowerShell.IsGetCommandMetadataSpecialPipeline needs to make sure Get-Command is present");
 
             string[] name = null;
             CommandTypes commandTypes = CommandTypes.Alias | CommandTypes.Cmdlet | CommandTypes.Function | CommandTypes.Filter | CommandTypes.Configuration;
@@ -1047,7 +1047,7 @@ namespace System.Management.Automation
             }
 
             RunspacePool rsPool = shell.PowerShell.GetRunspaceConnection() as RunspacePool;
-            Dbg.Assert(rsPool != null, "Runspacepool cannot be null for a CreatePowerShell request");
+            Dbg.Assert(rsPool is not null, "Runspacepool cannot be null for a CreatePowerShell request");
             Guid clientRunspacePoolId = rsPool.InstanceId;
 
             PSObject dataAsPSObject = CreateEmptyPSObject();
@@ -1096,7 +1096,7 @@ namespace System.Management.Automation
 
             RunspacePool rsPool = powerShell.GetRunspaceConnection() as RunspacePool;
 
-            Dbg.Assert(rsPool != null, "Runspacepool cannot be null for a CreatePowerShell request");
+            Dbg.Assert(rsPool is not null, "Runspacepool cannot be null for a CreatePowerShell request");
 
             clientRunspacePoolId = rsPool.InstanceId;
 
@@ -1194,7 +1194,7 @@ namespace System.Management.Automation
             dataAsPSObject.Properties.Add(stateProperty);
 
             // Add Reason property
-            if (stateInfo.Reason != null)
+            if (stateInfo.Reason is not null)
             {
                 // If Reason is of not type IContainsErrorRecord, a new ErrorRecord is
                 // created using this errorId
@@ -1277,7 +1277,7 @@ namespace System.Management.Automation
         /// <returns>PS remoting protocol version.</returns>
         internal static Version GetPSRemotingProtocolVersion(RunspacePool rsPool)
         {
-            return (rsPool != null && rsPool.RemoteRunspacePoolInternal != null) ?
+            return (rsPool is not null && rsPool.RemoteRunspacePoolInternal is not null) ?
                 rsPool.RemoteRunspacePoolInternal.PSRemotingProtocolVersion : null;
         }
 
@@ -1513,7 +1513,7 @@ namespace System.Management.Automation
             dataAsPSObject.Properties.Add(stateProperty);
 
             // Add exception property
-            if (stateInfo.Reason != null)
+            if (stateInfo.Reason is not null)
             {
                 // If Reason is of not type IContainsErrorRecord,
                 // a new ErrorRecord is created using this errorId
@@ -1545,11 +1545,11 @@ namespace System.Management.Automation
         /// </returns>
         internal static ErrorRecord GetErrorRecordFromException(Exception exception)
         {
-            Dbg.Assert(exception != null, "Caller should validate the data");
+            Dbg.Assert(exception is not null, "Caller should validate the data");
 
             ErrorRecord er = null;
             IContainsErrorRecord cer = exception as IContainsErrorRecord;
-            if (cer != null)
+            if (cer is not null)
             {
                 er = cer.ErrorRecord;
                 // Exception inside the error record is ParentContainsErrorRecordException which
@@ -1569,7 +1569,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static PSNoteProperty GetExceptionProperty(Exception exception, string errorId, ErrorCategory category)
         {
-            Dbg.Assert(exception != null, "Caller should validate the data");
+            Dbg.Assert(exception is not null, "Caller should validate the data");
 
             ErrorRecord er = GetErrorRecordFromException(exception) ??
                              new ErrorRecord(exception, errorId, category, null);
@@ -1703,7 +1703,7 @@ namespace System.Management.Automation
                     RemotingErrorIdStrings.CantCastPropertyToExpectedType,
                     propertyName,
                     typeof(T).FullName,
-                    propertyValue != null ? propertyValue.GetType().FullName : "null");
+                    propertyValue is not null ? propertyValue.GetType().FullName : "null");
             }
             else if (propertyValue is T)
             {
@@ -1728,7 +1728,7 @@ namespace System.Management.Automation
                         RemotingErrorIdStrings.CantCastPropertyToExpectedType,
                         propertyName,
                         typeof(T).FullName,
-                        propertyValue != null ? propertyValue.GetType().FullName : "null");
+                        propertyValue is not null ? propertyValue.GetType().FullName : "null");
                 }
             }
             else
@@ -1793,7 +1793,7 @@ namespace System.Management.Automation
             }
 
             IEnumerable e = GetPropertyValue<IEnumerable>(psObject, propertyName);
-            if (e != null)
+            if (e is not null)
             {
                 foreach (object o in e)
                 {
@@ -1815,7 +1815,7 @@ namespace System.Management.Automation
             }
 
             Hashtable h = GetPropertyValue<Hashtable>(psObject, propertyName);
-            if (h != null)
+            if (h is not null)
             {
                 foreach (DictionaryEntry e in h)
                 {
@@ -2041,7 +2041,7 @@ namespace System.Management.Automation
         {
             // Check if exception is encoded as errorrecord
             PSPropertyInfo property = stateInfo.Properties[RemoteDataNameStrings.ExceptionAsErrorRecord];
-            if (property != null && property.Value != null)
+            if (property is not null && property.Value is not null)
             {
                 return GetExceptionFromSerializedErrorRecord(property.Value);
             }
@@ -2219,7 +2219,7 @@ namespace System.Management.Automation
             CommandTypes commandType = GetPropertyValue<CommandTypes>(dataAsPSObject, RemoteDataNameStrings.DiscoveryType);
 
             string[] name;
-            if (GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryName) != null)
+            if (GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryName) is not null)
             {
                 IEnumerable<string> tmp = EnumerateListProperty<string>(dataAsPSObject, RemoteDataNameStrings.DiscoveryName);
                 name = new List<string>(tmp).ToArray();
@@ -2230,7 +2230,7 @@ namespace System.Management.Automation
             }
 
             string[] module;
-            if (GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryModule) != null)
+            if (GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryModule) is not null)
             {
                 IEnumerable<string> tmp = EnumerateListProperty<string>(dataAsPSObject, RemoteDataNameStrings.DiscoveryModule);
                 module = new List<string>(tmp).ToArray();
@@ -2243,14 +2243,14 @@ namespace System.Management.Automation
             ModuleSpecification[] fullyQualifiedName = null;
             if (DeserializingTypeConverter.GetPropertyValue<PSObject>(dataAsPSObject,
                                                                       RemoteDataNameStrings.DiscoveryFullyQualifiedModule,
-                                                                      DeserializingTypeConverter.RehydrationFlags.NullValueOk | DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk) != null)
+                                                                      DeserializingTypeConverter.RehydrationFlags.NullValueOk | DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk) is not null)
             {
                 IEnumerable<ModuleSpecification> tmp = EnumerateListProperty<ModuleSpecification>(dataAsPSObject, RemoteDataNameStrings.DiscoveryFullyQualifiedModule);
                 fullyQualifiedName = new List<ModuleSpecification>(tmp).ToArray();
             }
 
             object[] argumentList;
-            if (GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryArgumentList) != null)
+            if (GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryArgumentList) is not null)
             {
                 IEnumerable<object> tmp = EnumerateListProperty<object>(dataAsPSObject, RemoteDataNameStrings.DiscoveryArgumentList);
                 argumentList = new List<object>(tmp).ToArray();
@@ -2264,7 +2264,7 @@ namespace System.Management.Automation
             powerShell.AddCommand("Get-Command");
             powerShell.AddParameter("Name", name);
             powerShell.AddParameter("CommandType", commandType);
-            if (fullyQualifiedName != null)
+            if (fullyQualifiedName is not null)
             {
                 powerShell.AddParameter("FullyQualifiedModule", fullyQualifiedName);
             }
@@ -2374,7 +2374,7 @@ namespace System.Management.Automation
                 RemotingDestination.InvalidDestination,
                 protocolVersion, psVersion, serializationVersion);
 
-            if (dataAsPSObject.Properties[RemoteDataNameStrings.TimeZone] != null)
+            if (dataAsPSObject.Properties[RemoteDataNameStrings.TimeZone] is not null)
             {
                 // Binary deserialization of timezone info via BinaryFormatter is unsafe,
                 // so don't deserialize any untrusted client data using this API.

@@ -426,7 +426,7 @@ namespace System.Management.Automation
         internal static string GetApplicationBaseFromRegistry(string shellId)
         {
             bool wantPsHome = (object)shellId == (object)DefaultPowerShellShellID;
-            if (wantPsHome && s_pshome != null)
+            if (wantPsHome && s_pshome is not null)
                 return s_pshome;
 
             string engineKeyPath = RegistryStrings.MonadRootKeyPath + "\\" +
@@ -434,7 +434,7 @@ namespace System.Management.Automation
 
             using (RegistryKey engineKey = Registry.LocalMachine.OpenSubKey(engineKeyPath))
             {
-                if (engineKey != null)
+                if (engineKey is not null)
                 {
                     var result = engineKey.GetValue(RegistryStrings.MonadEngine_ApplicationBase) as string;
                     result = Environment.ExpandEnvironmentVariables(result);
@@ -463,7 +463,7 @@ namespace System.Management.Automation
                 return InternalTestHooks.TestWindowsPowerShellVersionString;
             }
 
-            if (s_windowsPowerShellVersion != null)
+            if (s_windowsPowerShellVersion is not null)
             {
                 return s_windowsPowerShellVersion;
             }
@@ -473,7 +473,7 @@ namespace System.Management.Automation
 
             using (RegistryKey engineKey = Registry.LocalMachine.OpenSubKey(engineKeyPath))
             {
-                if (engineKey != null)
+                if (engineKey is not null)
                 {
                     s_windowsPowerShellVersion = engineKey.GetValue(RegistryStrings.MonadEngine_MonadVersion) as string;
                     return s_windowsPowerShellVersion;
@@ -569,14 +569,14 @@ namespace System.Management.Automation
                 // HKLM\System\CurrentControlSet\Control\MiniNT
                 winPEKey = Registry.LocalMachine.OpenSubKey(@"System\CurrentControlSet\Control\MiniNT");
 
-                return winPEKey != null;
+                return winPEKey is not null;
             }
             catch (ArgumentException) { }
             catch (SecurityException) { }
             catch (ObjectDisposedException) { }
             finally
             {
-                if (winPEKey != null)
+                if (winPEKey is not null)
                 {
                     winPEKey.Dispose();
                 }
@@ -755,7 +755,7 @@ namespace System.Management.Automation
             // On Windows, group policy settings from registry take precedence.
             // If the requested policy is not defined in registry, we query the configuration file.
             policy = GetPolicySettingFromGPO<T>(preferenceOrder);
-            if (policy != null) { return policy; }
+            if (policy is not null) { return policy; }
 #endif
             policy = GetPolicySettingFromConfigFile<T>(preferenceOrder);
             return policy;
@@ -785,7 +785,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (policies != null)
+                if (policies is not null)
                 {
                     PolicyBase result = null;
                     switch (typeof(T).Name)
@@ -816,7 +816,7 @@ namespace System.Management.Automation
                             break;
                     }
 
-                    if (result != null) { return (T)result; }
+                    if (result is not null) { return (T)result; }
                 }
             }
 
@@ -870,7 +870,7 @@ namespace System.Management.Automation
             var subKeyNameSet = subKeyNames.Length > 0 ? new HashSet<string>(subKeyNames, StringComparer.OrdinalIgnoreCase) : null;
 
             // If there are any values or subkeys in the registry key - read them into the policy instance object
-            if ((valueNameSet != null) || (subKeyNameSet != null))
+            if ((valueNameSet is not null) || (subKeyNameSet is not null))
             {
                 foreach (var property in properties)
                 {
@@ -878,15 +878,15 @@ namespace System.Management.Automation
                     object rawRegistryValue = null;
 
                     // Get the raw value from registry.
-                    if (valueNameSet != null && valueNameSet.Contains(settingName))
+                    if (valueNameSet is not null && valueNameSet.Contains(settingName))
                     {
                         rawRegistryValue = gpoKey.GetValue(settingName);
                     }
-                    else if (subKeyNameSet != null && subKeyNameSet.Contains(settingName))
+                    else if (subKeyNameSet is not null && subKeyNameSet.Contains(settingName))
                     {
                         using (RegistryKey subKey = gpoKey.OpenSubKey(settingName))
                         {
-                            if (subKey != null)
+                            if (subKey is not null)
                             {
                                 rawRegistryValue = subKey.GetValueNames();
                             }
@@ -895,7 +895,7 @@ namespace System.Management.Automation
 
                     // Get the actual property value based on the property type.
                     // If the final property value is not null, then set the property.
-                    if (rawRegistryValue != null)
+                    if (rawRegistryValue is not null)
                     {
                         Type propertyType = property.PropertyType;
                         object propertyValue = null;
@@ -939,7 +939,7 @@ namespace System.Management.Automation
                         }
 
                         // Set the property if the value is not null
-                        if (propertyValue != null)
+                        if (propertyValue is not null)
                         {
                             property.SetValue(instance, propertyValue);
                             isAnyPropertySet = true;
@@ -961,7 +961,7 @@ namespace System.Management.Automation
             RegistryKey rootKey = (scope == ConfigScope.AllUsers) ? Registry.LocalMachine : Registry.CurrentUser;
 
             GroupPolicyKeys.TryGetValue(tType.Name, out string gpoKeyPath);
-            Diagnostics.Assert(gpoKeyPath != null, StringUtil.Format("The GPO registry key path should be pre-defined for {0}", tType.Name));
+            Diagnostics.Assert(gpoKeyPath is not null, StringUtil.Format("The GPO registry key path should be pre-defined for {0}", tType.Name));
 
             using (RegistryKey gpoKey = rootKey.OpenSubKey(gpoKeyPath))
             {
@@ -982,7 +982,7 @@ namespace System.Management.Automation
                 {
                     // when PolicySettingFallbackKey flag is set (REG_DWORD "1") use Windows PS policy reg key
                     WindowsPowershellGroupPolicyKeys.TryGetValue(tType.Name, out string winPowershellGpoKeyPath);
-                    Diagnostics.Assert(winPowershellGpoKeyPath != null, StringUtil.Format("The Windows PS GPO registry key path should be pre-defined for {0}", tType.Name));
+                    Diagnostics.Assert(winPowershellGpoKeyPath is not null, StringUtil.Format("The Windows PS GPO registry key path should be pre-defined for {0}", tType.Name));
                     using (RegistryKey winPowershellGpoKey = rootKey.OpenSubKey(winPowershellGpoKeyPath))
                     {
                         // If the corresponding Windows PS GPO key doesn't exist, return null
@@ -1019,7 +1019,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (policy != null) { return (T)policy; }
+                if (policy is not null) { return (T)policy; }
             }
 
             return null;
@@ -1033,7 +1033,7 @@ namespace System.Management.Automation
 
         internal static void EnsureModuleLoaded(string module, ExecutionContext context)
         {
-            if (context != null && !context.AutoLoadingModuleInProgress.Contains(module))
+            if (context is not null && !context.AutoLoadingModuleInProgress.Contains(module))
             {
                 List<PSModuleInfo> loadedModules = context.Modules.GetModules(new string[] { module }, false);
 
@@ -1069,7 +1069,7 @@ namespace System.Management.Automation
                     finally
                     {
                         context.AutoLoadingModuleInProgress.Remove(module);
-                        if (ps != null)
+                        if (ps is not null)
                         {
                             ps.Dispose();
                         }
@@ -1111,7 +1111,7 @@ namespace System.Management.Automation
                         .AddParameter("ListAvailable");
 
                 Collection<PSModuleInfo> gmoOutPut = ps.Invoke<PSModuleInfo>();
-                if (gmoOutPut != null)
+                if (gmoOutPut is not null)
                 {
                     if (result is null)
                     {
@@ -1129,7 +1129,7 @@ namespace System.Management.Automation
             }
             finally
             {
-                if (ps != null)
+                if (ps is not null)
                 {
                     ps.Dispose();
                 }
@@ -1171,7 +1171,7 @@ namespace System.Management.Automation
                         .AddParameter("ListAvailable");
 
                 Collection<PSModuleInfo> gmoOutput = ps.Invoke<PSModuleInfo>();
-                if (gmoOutput != null)
+                if (gmoOutput is not null)
                 {
                     if (result is null)
                     {
@@ -1190,7 +1190,7 @@ namespace System.Management.Automation
             }
             finally
             {
-                if (ps != null)
+                if (ps is not null)
                 {
                     ps.Dispose();
                 }
@@ -1211,7 +1211,7 @@ namespace System.Management.Automation
                 currentIdentity = null;
             }
 
-            return (currentIdentity != null);
+            return (currentIdentity is not null);
         }
 
         /// <summary>
@@ -1330,7 +1330,7 @@ namespace System.Management.Automation
                                 ? Path.GetFileNameWithoutExtension(assemblyName)
                                 : assemblyName;
 
-                if ((fixedName != null) && PowerShellAssemblies.Contains(fixedName))
+                if ((fixedName is not null) && PowerShellAssemblies.Contains(fixedName))
                 {
                     return true;
                 }
@@ -1348,7 +1348,7 @@ namespace System.Management.Automation
                                 ? Path.GetFileNameWithoutExtension(assemblyName)
                                 : assemblyName;
 
-                if ((fixedName != null) && PowerShellAssemblies.Contains(fixedName))
+                if ((fixedName is not null) && PowerShellAssemblies.Contains(fixedName))
                 {
                     return string.Format(CultureInfo.InvariantCulture, PowerShellAssemblyStrongNameFormat, fixedName);
                 }
@@ -1511,7 +1511,7 @@ namespace System.Management.Automation
             WaitCallback callback = args[1] as WaitCallback;
             object state = args[2];
 
-            if (identityToImpersonate != null)
+            if (identityToImpersonate is not null)
             {
                 WindowsIdentity.RunImpersonated(
                     identityToImpersonate.AccessToken,
@@ -1601,7 +1601,7 @@ namespace System.Management.Automation
 #if UNIX
             return false;
 #else
-            return obj != null && Marshal.IsComObject(obj);
+            return obj is not null && Marshal.IsComObject(obj);
 #endif
         }
 
@@ -1684,7 +1684,7 @@ namespace System.Management.Automation
                     string errorId;
                     string errorMsg;
                     scriptBlockAst.GetSimplePipeline(true, out errorId, out errorMsg);
-                    if (errorId != null)
+                    if (errorId is not null)
                     {
                         WriteVerbose(ps, ParserStrings.ImplicitRemotingPipelineBatchingNotASimplePipeline);
                         return false;
@@ -1971,7 +1971,7 @@ namespace System.Management.Automation
             }
 
             var commandName = commandAst.GetCommandName();
-            if (commandName != null)
+            if (commandName is not null)
             {
                 Commands.Add(commandName);
             }
@@ -2091,7 +2091,7 @@ namespace System.Management.Automation.Internal
         public static void SetTestHook(string property, object value)
         {
             var fieldInfo = typeof(InternalTestHooks).GetField(property, BindingFlags.Static | BindingFlags.NonPublic);
-            if (fieldInfo != null)
+            if (fieldInfo is not null)
             {
                 fieldInfo.SetValue(null, value);
             }

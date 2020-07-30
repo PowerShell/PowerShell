@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal QueryJobBase(CimJobContext jobContext, CimQuery cimQuery)
                 : base(jobContext)
         {
-            Dbg.Assert(cimQuery != null, "Caller should verify cimQuery != null");
+            Dbg.Assert(cimQuery is not null, "Caller should verify cimQuery is not null");
             _cimQuery = cimQuery;
         }
 
@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             this.ExceptionSafeWrapper(
                     delegate
                     {
-                        Dbg.Assert(item != null, "When OnNext is called from our IObservable, item parameter should always be != null");
+                        Dbg.Assert(item is not null, "When OnNext is called from our IObservable, item parameter should always be is not null");
                         if (item is null)
                         {
                             return;

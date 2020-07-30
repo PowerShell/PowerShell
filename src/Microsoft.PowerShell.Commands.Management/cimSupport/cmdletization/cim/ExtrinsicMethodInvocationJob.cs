@@ -50,12 +50,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private void ProcessOutParameter(CimMethodResult methodResult, MethodParameter methodParameter, IDictionary<string, MethodParameter> cmdletOutput)
         {
-            Dbg.Assert(methodResult != null, "Caller should verify methodResult != null");
-            Dbg.Assert(methodParameter != null, "Caller should verify methodParameter != null");
+            Dbg.Assert(methodResult is not null, "Caller should verify methodResult is not null");
+            Dbg.Assert(methodParameter is not null, "Caller should verify methodParameter is not null");
             Dbg.Assert(0 != (methodParameter.Bindings & (MethodParameterBindings.Out | MethodParameterBindings.Error)), "Caller should verify that this is an out parameter");
-            Dbg.Assert(cmdletOutput != null, "Caller should verify cmdletOutput != null");
+            Dbg.Assert(cmdletOutput is not null, "Caller should verify cmdletOutput is not null");
 
-            Dbg.Assert(this.MethodSubject != null, "MethodSubject property should be initialized before starting main job processing");
+            Dbg.Assert(this.MethodSubject is not null, "MethodSubject property should be initialized before starting main job processing");
 
             CimMethodParameter outParameter = methodResult.OutParameters[methodParameter.Name];
             object valueReturnedFromMethod = (outParameter is null) ? null : outParameter.Value;
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 cmdletOutput.Add(methodParameter.Name, methodParameter);
 
                 var cimInstances = dotNetValue as CimInstance[];
-                if (cimInstances != null)
+                if (cimInstances is not null)
                 {
                     foreach (var instance in cimInstances)
                     {
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
 
                 var cimInstance = dotNetValue as CimInstance;
-                if (cimInstance != null)
+                if (cimInstance is not null)
                 {
                     CimCmdletAdapter.AssociateSessionOfOriginWithInstance(cimInstance, this.JobContext.Session);
                 }
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private void OnNext(CimMethodResult methodResult)
         {
-            Dbg.Assert(this.MethodSubject != null, "MethodSubject property should be initialized before starting main job processing");
+            Dbg.Assert(this.MethodSubject is not null, "MethodSubject property should be initialized before starting main job processing");
 
             var cmdletOutput = new Dictionary<string, MethodParameter>(StringComparer.OrdinalIgnoreCase);
             foreach (MethodParameter methodParameter in this.GetMethodOutputParameters())
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
 
                 IEnumerable enumerable = LanguagePrimitives.GetEnumerable(singleOutputParameter.Value);
-                if (enumerable != null)
+                if (enumerable is not null)
                 {
                     foreach (object o in enumerable)
                     {
@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
 
             var array = LanguagePrimitives.GetEnumerable(streamedResult.ItemValue);
-            if (array != null)
+            if (array is not null)
             {
                 foreach (var element in array)
                 {
@@ -173,8 +173,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private void WriteObject(object cmdletOutput, MethodParameter methodParameter)
         {
-            Dbg.Assert(methodParameter != null, "Caller should verify that methodParameter != null");
-            if ((cmdletOutput != null) && (!string.IsNullOrEmpty(methodParameter.ParameterTypeName)))
+            Dbg.Assert(methodParameter is not null, "Caller should verify that methodParameter is not null");
+            if ((cmdletOutput is not null) && (!string.IsNullOrEmpty(methodParameter.ParameterTypeName)))
             {
                 PSObject pso = PSObject.AsPSObject(cmdletOutput);
                 if (!pso.TypeNames.Contains(methodParameter.ParameterTypeName, StringComparer.OrdinalIgnoreCase))
@@ -192,14 +192,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     delegate
                     {
                         var methodResult = item as CimMethodResult;
-                        if (methodResult != null)
+                        if (methodResult is not null)
                         {
                             this.OnNext(methodResult);
                             return;
                         }
 
                         var streamedResult = item as CimMethodStreamedResult;
-                        if (streamedResult != null)
+                        if (streamedResult is not null)
                         {
                             this.OnNext(streamedResult);
                             return;

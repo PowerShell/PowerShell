@@ -46,7 +46,7 @@ namespace System.Management.Automation
         /// <param name="errorRecord">Error record instance to process.</param>
         public void WriteError(ErrorRecord errorRecord)
         {
-            if (errorRecord.Exception != null)
+            if (errorRecord.Exception is not null)
                 throw errorRecord.Exception;
             else
                 throw new InvalidOperationException(errorRecord.ToString());
@@ -231,7 +231,7 @@ namespace System.Management.Automation
         /// <param name="errorRecord">The error record to throw.</param>
         public void ThrowTerminatingError(ErrorRecord errorRecord)
         {
-            if (errorRecord.Exception != null)
+            if (errorRecord.Exception is not null)
             {
                 throw errorRecord.Exception;
             }

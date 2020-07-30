@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private static CimInstance GetEmptyInstance(CimJobContext jobContext)
         {
-            Dbg.Assert(jobContext != null, "Caller should verify jobContext != null");
+            Dbg.Assert(jobContext is not null, "Caller should verify jobContext is not null");
 
             var result = new CimInstance(jobContext.ClassName, jobContext.Namespace);
             return result;
@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private IObservable<CimInstance> GetGetInstanceOperation()
         {
-            Dbg.Assert(_resultFromCreateInstance != null, "GetInstance should only be called after CreteInstance came back with a keyed instance");
+            Dbg.Assert(_resultFromCreateInstance is not null, "GetInstance should only be called after CreteInstance came back with a keyed instance");
             IObservable<CimInstance> observable = this.JobContext.Session.GetInstanceAsync(
                 this.JobContext.Namespace,
                 _resultFromCreateInstance,
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         public override void OnNext(CimInstance item)
         {
-            Dbg.Assert(item != null, "CreateInstance and GetInstance should never return null");
+            Dbg.Assert(item is not null, "CreateInstance and GetInstance should never return null");
             if (_resultFromCreateInstance is null)
             {
                 _resultFromCreateInstance = item;
@@ -116,11 +116,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         public override void OnCompleted()
         {
-            Dbg.Assert(this.DidUserSuppressTheOperation || (_resultFromCreateInstance != null), "OnNext should always be called before OnComplete by CreateInstance");
+            Dbg.Assert(this.DidUserSuppressTheOperation || (_resultFromCreateInstance is not null), "OnNext should always be called before OnComplete by CreateInstance");
 #if DEBUG
             Dbg.Assert(
-                !_getInstanceOperationGotStarted || this.DidUserSuppressTheOperation || (_resultFromGetInstance != null),
-                // <=> (this._getInstanceOperationGotStarted => (this._resultFromGetInstance != null))
+                !_getInstanceOperationGotStarted || this.DidUserSuppressTheOperation || (_resultFromGetInstance is not null),
+                // <=> (this._getInstanceOperationGotStarted => (this._resultFromGetInstance is not null))
                 "GetInstance should cause OnNext to be called which should set this._resultFromGetInstance to non-null");
 #endif
             if (this.IsPassThruObjectNeeded() && (_resultFromGetInstance is null))

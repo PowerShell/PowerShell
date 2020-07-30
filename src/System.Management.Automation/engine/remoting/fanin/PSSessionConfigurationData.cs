@@ -164,7 +164,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private static void AssertValueNotAssigned(string optionName, object originalValue)
         {
-            if (originalValue != null)
+            if (originalValue is not null)
             {
                 throw PSTraceSource.NewArgumentException(optionName,
                     RemotingErrorIdStrings.DuplicateInitializationParameterFound, optionName, SessionConfigToken);
@@ -193,7 +193,7 @@ namespace System.Management.Automation.Remoting
                         foreach (var module in modulesToImport)
                         {
                             var s = module as string;
-                            if (s != null)
+                            if (s is not null)
                             {
                                 _modulesToImport.Add(s.Trim());
 

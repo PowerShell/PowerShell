@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell.Commands
                 if (value is null)
                 {
                     // If they've specified an output directory, use it. Otherwise, use "My Documents"
-                    if (OutputDirectory != null)
+                    if (OutputDirectory is not null)
                     {
                         _outFilename = System.Management.Automation.Host.PSHostUserInterface.GetTranscriptPath(OutputDirectory, false);
                         _isLiteralPath = true;

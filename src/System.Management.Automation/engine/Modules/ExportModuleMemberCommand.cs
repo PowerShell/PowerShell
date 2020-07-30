@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
                 // Create the list of patterns to match at parameter bind time
                 // so errors will be reported before loading the module...
                 _functionPatterns = new List<WildcardPattern>();
-                if (_functionList != null)
+                if (_functionList is not null)
                 {
                     foreach (string pattern in _functionList)
                     {
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
                 // Create the list of patterns to match at parameter bind time
                 // so errors will be reported before loading the module...
                 _cmdletPatterns = new List<WildcardPattern>();
-                if (_cmdletList != null)
+                if (_cmdletList is not null)
                 {
                     foreach (string pattern in _cmdletList)
                     {
@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands
                 // Create the list of patterns to match at parameter bind time
                 // so errors will be reported before loading the module...
                 _variablePatterns = new List<WildcardPattern>();
-                if (_variableExportList != null)
+                if (_variableExportList is not null)
                 {
                     foreach (string pattern in _variableExportList)
                     {
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
                 // Create the list of patterns to match at parameter bind time
                 // so errors will be reported before loading the module...
                 _aliasPatterns = new List<WildcardPattern>();
-                if (_aliasExportList != null)
+                if (_aliasExportList is not null)
                 {
                     foreach (string pattern in _aliasExportList)
                     {
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Prevent script injection attack by disallowing ExportModuleMemberCommand to export module members across
             // language boundaries. This will prevent injected untrusted script from exporting private trusted module functions.
-            if (Context.EngineSessionState.Module?.LanguageMode != null &&
+            if (Context.EngineSessionState.Module?.LanguageMode is not null &&
                 Context.LanguageMode != Context.EngineSessionState.Module.LanguageMode)
             {
                 var se = new PSSecurityException(Modules.CannotExportMembersAccrossLanguageBoundaries);

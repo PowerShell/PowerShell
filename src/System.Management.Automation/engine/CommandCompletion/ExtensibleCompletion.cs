@@ -116,7 +116,7 @@ namespace System.Management.Automation
         protected override void EndProcessing()
         {
             Dictionary<string, ScriptBlock> completerDictionary;
-            if (ParameterName != null)
+            if (ParameterName is not null)
             {
                 completerDictionary = Context.CustomArgumentCompleters ??
                                       (Context.CustomArgumentCompleters = new Dictionary<string, ScriptBlock>(StringComparer.OrdinalIgnoreCase));

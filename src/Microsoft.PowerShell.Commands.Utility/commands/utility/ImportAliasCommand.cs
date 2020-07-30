@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
                         existingAlias = SessionState.Internal.GetAliasAtScope(alias.Name, Scope);
                     }
 
-                    if (existingAlias != null)
+                    if (existingAlias is not null)
                     {
                         // Write an error for aliases that aren't visible...
                         try
@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Write the alias to the pipeline if PassThru was specified
 
-                if (PassThru && result != null)
+                if (PassThru && result is not null)
                 {
                     WriteObject(result);
                 }
@@ -298,7 +298,7 @@ namespace Microsoft.PowerShell.Commands
 
                 Int64 lineNumber = 0;
                 string line = null;
-                while ((line = reader.ReadLine()) != null)
+                while ((line = reader.ReadLine()) is not null)
                 {
                     ++lineNumber;
 

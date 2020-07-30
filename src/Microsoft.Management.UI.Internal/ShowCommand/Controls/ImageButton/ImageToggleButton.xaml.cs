@@ -45,13 +45,13 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         private void ImageButton_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
             object thisAutomationId = this.GetValue(AutomationProperties.AutomationIdProperty);
-            if (thisAutomationId != null)
+            if (thisAutomationId is not null)
             {
                 this.toggleInnerButton.SetValue(AutomationProperties.AutomationIdProperty, thisAutomationId);
             }
 
             object thisAutomationName = this.GetValue(AutomationProperties.NameProperty);
-            if (thisAutomationName != null)
+            if (thisAutomationName is not null)
             {
                 this.toggleInnerButton.SetValue(AutomationProperties.NameProperty, thisAutomationName);
             }

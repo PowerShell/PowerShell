@@ -206,13 +206,13 @@ namespace System.Management.Automation
         internal WideControlEntryItem(WideControlEntryDefinition definition) : this()
         {
             FieldPropertyToken fpt = definition.formatTokenList[0] as FieldPropertyToken;
-            if (fpt != null)
+            if (fpt is not null)
             {
                 DisplayEntry = new DisplayEntry(fpt.expression);
                 FormatString = fpt.fieldFormattingDirective.formatString;
             }
 
-            if (definition.appliesTo != null)
+            if (definition.appliesTo is not null)
             {
                 EntrySelectedBy = EntrySelectedBy.Get(definition.appliesTo.referenceList);
             }

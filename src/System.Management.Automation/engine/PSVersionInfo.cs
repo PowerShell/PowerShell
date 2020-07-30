@@ -142,10 +142,10 @@ namespace System.Management.Automation
             {
                 using (RegistryKey wsManStackVersionKey = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\WSMAN"))
                 {
-                    if (wsManStackVersionKey != null)
+                    if (wsManStackVersionKey is not null)
                     {
                         object wsManStackVersionObj = wsManStackVersionKey.GetValue("ServiceStackVersion");
-                        string wsManStackVersion = (wsManStackVersionObj != null) ? (string)wsManStackVersionObj : null;
+                        string wsManStackVersion = (wsManStackVersionObj is not null) ? (string)wsManStackVersionObj : null;
                         if (!string.IsNullOrEmpty(wsManStackVersion))
                         {
                             version = new Version(wsManStackVersion.Trim());
@@ -571,13 +571,13 @@ namespace System.Management.Automation
             Patch = version.Build == -1 ? 0 : version.Build;
             var psobj = new PSObject(version);
             var preLabelNote = psobj.Properties[PreLabelPropertyName];
-            if (preLabelNote != null)
+            if (preLabelNote is not null)
             {
                 PreReleaseLabel = preLabelNote.Value as string;
             }
 
             var buildLabelNote = psobj.Properties[BuildLabelPropertyName];
-            if (buildLabelNote != null)
+            if (buildLabelNote is not null)
             {
                 BuildLabel = buildLabelNote.Value as string;
             }
@@ -669,7 +669,7 @@ namespace System.Management.Automation
         /// <param name="result">The return value when the string is a valid <see cref="SemanticVersion"/></param>
         public static bool TryParse(string version, out SemanticVersion result)
         {
-            if (version != null)
+            if (version is not null)
             {
                 var r = new VersionResult();
                 r.Init(false);
@@ -778,8 +778,8 @@ namespace System.Management.Automation
                 return false;
             }
 
-            if (preLabel != null && !Regex.IsMatch(preLabel, LabelUnitRegEx) ||
-               (buildLabel != null && !Regex.IsMatch(buildLabel, LabelUnitRegEx)))
+            if (preLabel is not null && !Regex.IsMatch(preLabel, LabelUnitRegEx) ||
+               (buildLabel is not null && !Regex.IsMatch(buildLabel, LabelUnitRegEx)))
             {
                 result.SetFailure(ParseFailureKind.FormatException);
                 return false;
@@ -821,12 +821,12 @@ namespace System.Management.Automation
         /// </summary>
         public static int Compare(SemanticVersion versionA, SemanticVersion versionB)
         {
-            if (versionA != null)
+            if (versionA is not null)
             {
                 return versionA.CompareTo(versionB);
             }
 
-            if (versionB != null)
+            if (versionB is not null)
             {
                 return -1;
             }
@@ -889,7 +889,7 @@ namespace System.Management.Automation
         public bool Equals(SemanticVersion other)
         {
             // SymVer 2.0 standard requires to ignore 'BuildLabel' (Build metadata).
-            return other != null &&
+            return other is not null &&
                    (Major == other.Major) && (Minor == other.Minor) && (Patch == other.Patch) &&
                    string.Equals(PreReleaseLabel, other.PreReleaseLabel, StringComparison.Ordinal);
         }

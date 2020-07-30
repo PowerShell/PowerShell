@@ -28,7 +28,7 @@ namespace System.Management.Automation
             ScopeOrigin = CommandOrigin.Internal;
             Parent = parentScope;
 
-            if (parentScope != null)
+            if (parentScope is not null)
             {
                 // Now copy the script: scope stack from the parent
                 _scriptScope = parentScope.ScriptScope;
@@ -68,7 +68,7 @@ namespace System.Management.Automation
 
             set
             {
-                Diagnostics.Assert(value != null, "Caller to verify scope is not null");
+                Diagnostics.Assert(value is not null, "Caller to verify scope is not null");
                 _scriptScope = value;
             }
         }
@@ -319,7 +319,7 @@ namespace System.Management.Automation
         /// <returns>True if there is a variable in scope, false otherwise.</returns>
         internal bool TryGetVariable(string name, CommandOrigin origin, bool fromNewOrSet, out PSVariable variable)
         {
-            Diagnostics.Assert(name != null, "The caller should verify the name");
+            Diagnostics.Assert(name is not null, "The caller should verify the name");
 
             if (TryGetLocalVariableFromTuple(name, fromNewOrSet, out variable))
             {
@@ -353,7 +353,7 @@ namespace System.Management.Automation
 
             // LocalsTuple should not be null, but the test infrastructure creates scopes
             // and doesn't set LocalsTuple
-            if (LocalsTuple != null && LocalsTuple.IsValueSet(index))
+            if (LocalsTuple is not null && LocalsTuple.IsValueSet(index))
             {
                 return LocalsTuple.GetValue(index);
             }
@@ -396,7 +396,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PSVariable SetVariable(string name, object value, bool asValue, bool force, SessionStateInternal sessionState, CommandOrigin origin = CommandOrigin.Internal, bool fastPath = false)
         {
-            Diagnostics.Assert(name != null, "The caller should verify the name");
+            Diagnostics.Assert(name is not null, "The caller should verify the name");
 
             PSVariable variable;
             PSVariable variableToSet = value as PSVariable;
@@ -405,7 +405,7 @@ namespace System.Management.Automation
             // can only be used for global scope otherwise the slow path is used.
             if (fastPath)
             {
-                if (Parent != null)
+                if (Parent is not null)
                 {
                     throw new NotImplementedException("fastPath");
                 }
@@ -420,7 +420,7 @@ namespace System.Management.Automation
             // Initialize the private variable dictionary if it's not yet
             if (_variables is null) { GetPrivateVariables(); }
 
-            if (!asValue && variableToSet != null)
+            if (!asValue && variableToSet is not null)
             {
                 if (varExists)
                 {
@@ -483,13 +483,13 @@ namespace System.Management.Automation
                     variable = variableToSet;
                 }
             }
-            else if (variable != null)
+            else if (variable is not null)
             {
                 variable.Value = value;
             }
             else
             {
-                variable = (LocalsTuple != null ? LocalsTuple.TrySetVariable(name, value) : null) ?? new PSVariable(name, value);
+                variable = (LocalsTuple is not null ? LocalsTuple.TrySetVariable(name, value) : null) ?? new PSVariable(name, value);
             }
 
             if (ExecutionContext.HasEverUsedConstrainedLanguage)
@@ -511,7 +511,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal void SetVariableForce(PSVariable variableToSet, SessionStateInternal sessionState)
         {
-            if (Parent != null)
+            if (Parent is not null)
             {
                 throw new NotImplementedException("SetVariableForce");
             }
@@ -615,7 +615,7 @@ namespace System.Management.Automation
         internal void RemoveVariable(string name, bool force)
         {
             Diagnostics.Assert(
-                name != null,
+                name is not null,
                 "The caller should verify the name");
 
             PSVariable variable = GetVariable(name);
@@ -661,7 +661,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return LocalsTuple != null && LocalsTuple.TrySetParameter(name, value);
+            return LocalsTuple is not null && LocalsTuple.TrySetParameter(name, value);
         }
 
         /// <summary>
@@ -681,7 +681,7 @@ namespace System.Management.Automation
             }
 
             result = null;
-            return LocalsTuple != null && LocalsTuple.TryGetLocalVariable(name, fromNewOrSet, out result);
+            return LocalsTuple is not null && LocalsTuple.TryGetLocalVariable(name, fromNewOrSet, out result);
         }
 
         #endregion variables
@@ -711,7 +711,7 @@ namespace System.Management.Automation
         internal AliasInfo GetAlias(string name)
         {
             Diagnostics.Assert(
-                name != null,
+                name is not null,
                 "The caller should verify the name");
 
             AliasInfo result;
@@ -747,7 +747,7 @@ namespace System.Management.Automation
         internal AliasInfo SetAliasValue(string name, string value, ExecutionContext context, bool force, CommandOrigin origin)
         {
             Diagnostics.Assert(
-                name != null,
+                name is not null,
                 "The caller should verify the name");
 
             var aliasInfos = GetAliases();
@@ -828,7 +828,7 @@ namespace System.Management.Automation
             CommandOrigin origin)
         {
             Diagnostics.Assert(
-                name != null,
+                name is not null,
                 "The caller should verify the name");
 
             var aliasInfos = GetAliases();
@@ -930,7 +930,7 @@ namespace System.Management.Automation
         internal AliasInfo SetAliasItem(AliasInfo aliasToSet, bool force, CommandOrigin origin = CommandOrigin.Internal)
         {
             Diagnostics.Assert(
-                aliasToSet != null,
+                aliasToSet is not null,
                 "The caller should verify the aliasToSet");
 
             var aliasInfos = GetAliases();
@@ -996,7 +996,7 @@ namespace System.Management.Automation
         internal void RemoveAlias(string name, bool force)
         {
             Diagnostics.Assert(
-                name != null,
+                name is not null,
                 "The caller should verify the name");
 
             // Make sure the alias isn't constant or readonly
@@ -1052,7 +1052,7 @@ namespace System.Management.Automation
         internal FunctionInfo GetFunction(string name)
         {
             Diagnostics.Assert(
-                name != null,
+                name is not null,
                 "The caller should verify the name");
 
             FunctionInfo result;
@@ -1239,7 +1239,7 @@ namespace System.Management.Automation
             Func<string, ScriptBlock, FunctionInfo, ScopedItemOptions, ExecutionContext, string, FunctionInfo> functionFactory)
         {
             Diagnostics.Assert(
-                name != null,
+                name is not null,
                 "The caller should verify the name");
 
             var functionInfos = GetFunctions();
@@ -1349,7 +1349,7 @@ namespace System.Management.Automation
         internal void RemoveFunction(string name, bool force)
         {
             Diagnostics.Assert(
-                name != null,
+                name is not null,
                 "The caller should verify the name");
 
             var functionInfos = GetFunctions();
@@ -1405,7 +1405,7 @@ namespace System.Management.Automation
         internal CmdletInfo GetCmdlet(string name)
         {
             Diagnostics.Assert(
-                name != null,
+                name is not null,
                 "The caller should verify the name");
 
             CmdletInfo result = null;
@@ -1414,7 +1414,7 @@ namespace System.Management.Automation
 
             if (_cmdlets.TryGetValue(name, out cmdlets))
             {
-                if (cmdlets != null && cmdlets.Count > 0)
+                if (cmdlets is not null && cmdlets.Count > 0)
                 {
                     result = cmdlets[0];
                 }
@@ -1455,7 +1455,7 @@ namespace System.Management.Automation
             try
             {
                 Diagnostics.Assert(
-                    name != null,
+                    name is not null,
                     "The caller should verify the name");
 
                 List<CmdletInfo> cmdlets;
@@ -1551,7 +1551,7 @@ namespace System.Management.Automation
         internal void RemoveCmdlet(string name, int index, bool force)
         {
             Diagnostics.Assert(
-                name != null,
+                name is not null,
                 "The caller should verify the name");
 
             List<CmdletInfo> cmdlets;
@@ -1591,7 +1591,7 @@ namespace System.Management.Automation
         internal void RemoveCmdletEntry(string name, bool force)
         {
             Diagnostics.Assert(
-                name != null,
+                name is not null,
                 "The caller should verify the name");
 
             _cmdlets.Remove(name);
@@ -1607,12 +1607,12 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_typeResolutionState != null)
+                if (_typeResolutionState is not null)
                 {
                     return _typeResolutionState;
                 }
 
-                return Parent != null ? Parent.TypeResolutionState : Language.TypeResolutionState.UsingSystem;
+                return Parent is not null ? Parent.TypeResolutionState : Language.TypeResolutionState.UsingSystem;
             }
 
             set { _typeResolutionState = value; }
@@ -1668,7 +1668,7 @@ namespace System.Management.Automation
             {
                 newValue = new ConfigurationInfo(name, (ConfigurationInfo)originalFunction);
             }
-            else if (originalFunction != null)
+            else if (originalFunction is not null)
             {
                 newValue = new FunctionInfo(name, originalFunction);
             }
@@ -1767,7 +1767,7 @@ namespace System.Management.Automation
                 // Create the alias table
                 _alias = new Dictionary<string, AliasInfo>(StringComparer.OrdinalIgnoreCase);
 
-                if (Parent != null)
+                if (Parent is not null)
                 {
                     // Propagate all aliases that are marked AllScope
                     foreach (AliasInfo newAlias in Parent.GetAliases().Values)
@@ -1797,7 +1797,7 @@ namespace System.Management.Automation
                 // Create the functions table
                 _functions = new Dictionary<string, FunctionInfo>(StringComparer.OrdinalIgnoreCase);
 
-                if (Parent != null && Parent._allScopeFunctions != null)
+                if (Parent is not null && Parent._allScopeFunctions is not null)
                 {
                     // Propagate all functions that are marked AllScope
                     foreach (FunctionInfo newFunc in Parent._allScopeFunctions.Values)
@@ -1823,7 +1823,7 @@ namespace System.Management.Automation
         {
             if (_allScopeFunctions is null)
             {
-                if (Parent != null && Parent._allScopeFunctions != null)
+                if (Parent is not null && Parent._allScopeFunctions is not null)
                 {
                     return Parent._allScopeFunctions;
                 }
@@ -1953,7 +1953,7 @@ namespace System.Management.Automation
             else
             {
                 string itemToRemove = list.Find(item => item.Equals(alias, StringComparison.OrdinalIgnoreCase));
-                if (itemToRemove != null)
+                if (itemToRemove is not null)
                 {
                     list.Remove(itemToRemove);
                 }

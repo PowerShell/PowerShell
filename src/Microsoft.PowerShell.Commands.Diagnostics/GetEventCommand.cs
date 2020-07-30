@@ -1283,7 +1283,7 @@ namespace Microsoft.PowerShell.Commands
                 // Build xpath for <Suppress>
                 //
                 Hashtable suppresshash = hash[hashkey_supress_lc] as Hashtable;
-                if (suppresshash != null)
+                if (suppresshash is not null)
                 {
                     xpathStringSuppress = BuildXPathFromHashTable(suppresshash);
                 }
@@ -1351,7 +1351,7 @@ namespace Microsoft.PowerShell.Commands
         {
             StringBuilder ret = new StringBuilder();
             Array idsArray = value as Array;
-            if (idsArray != null)
+            if (idsArray is not null)
             {
                 ret.Append("(");
                 for (int i = 0; i < idsArray.Length; i++)
@@ -1381,7 +1381,7 @@ namespace Microsoft.PowerShell.Commands
         {
             StringBuilder ret = new StringBuilder();
             Array levelsArray = value as Array;
-            if (levelsArray != null)
+            if (levelsArray is not null)
             {
                 ret.Append("(");
                 for (int i = 0; i < levelsArray.Length; i++)
@@ -1413,7 +1413,7 @@ namespace Microsoft.PowerShell.Commands
             Int64 keywordLong = 0;
 
             Array keywordArray = value as Array;
-            if (keywordArray != null)
+            if (keywordArray is not null)
             {
                 foreach (object keyword in keywordArray)
                 {
@@ -1569,7 +1569,7 @@ namespace Microsoft.PowerShell.Commands
         {
             StringBuilder ret = new StringBuilder();
             Array dataArray = value as Array;
-            if (dataArray != null)
+            if (dataArray is not null)
             {
                 ret.Append("(");
                 for (int i = 0; i < dataArray.Length; i++)
@@ -1600,7 +1600,7 @@ namespace Microsoft.PowerShell.Commands
         {
             StringBuilder ret = new StringBuilder();
             Array dataArray = value as Array;
-            if (dataArray != null)
+            if (dataArray is not null)
             {
                 ret.Append("(");
                 for (int i = 0; i < dataArray.Length; i++)
@@ -1848,7 +1848,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         Array eltArray = value as Array;
-                        if (eltArray != null)
+                        if (eltArray is not null)
                         {
                             foreach (object elt in eltArray)
                             {

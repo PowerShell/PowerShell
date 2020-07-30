@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands.Management
         {
             ValidateTransactionOrEnlist();
 
-            if (_enlistedTransaction != null)
+            if (_enlistedTransaction is not null)
             {
                 _temporaryValue.Append(text);
             }
@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands.Management
         {
             ValidateTransactionOrEnlist();
 
-            if (_enlistedTransaction != null)
+            if (_enlistedTransaction is not null)
             {
                 _temporaryValue.Remove(startIndex, length);
             }
@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.Commands.Management
         private void ValidateTransactionOrEnlist()
         {
             // We're in a transaction
-            if (Transaction.Current != null)
+            if (Transaction.Current is not null)
             {
                 // We haven't yet been called inside of a transaction. So enlist
                 // in the transaction, and store our save point
@@ -187,7 +187,7 @@ namespace Microsoft.PowerShell.Commands.Management
             else
             {
                 // If we're not subscribed to a transaction, modify the underlying value
-                if (_enlistedTransaction != null)
+                if (_enlistedTransaction is not null)
                 {
                     throw new InvalidOperationException("Cannot modify string. It has been modified by another transaction.");
                 }

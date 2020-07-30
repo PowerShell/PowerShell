@@ -21,8 +21,8 @@ namespace System.Management.Automation.Help
         /// <param name="version">Version info.</param>
         internal CultureSpecificUpdatableHelp(CultureInfo culture, Version version)
         {
-            Debug.Assert(version != null);
-            Debug.Assert(culture != null);
+            Debug.Assert(version is not null);
+            Debug.Assert(culture is not null);
 
             Culture = culture;
             Version = version;
@@ -51,7 +51,7 @@ namespace System.Management.Automation.Help
         /// <param name="cultures">Supported UI cultures.</param>
         internal UpdatableHelpInfo(string unresolvedUri, CultureSpecificUpdatableHelp[] cultures)
         {
-            Debug.Assert(cultures != null);
+            Debug.Assert(cultures is not null);
 
             UnresolvedUri = unresolvedUri;
             HelpContentUriCollection = new Collection<UpdatableHelpUri>();
@@ -81,12 +81,12 @@ namespace System.Management.Automation.Help
         /// <returns>True if the other HelpInfo is newer, false if not.</returns>
         internal bool IsNewerVersion(UpdatableHelpInfo helpInfo, CultureInfo culture)
         {
-            Debug.Assert(helpInfo != null);
+            Debug.Assert(helpInfo is not null);
 
             Version v1 = helpInfo.GetCultureVersion(culture);
             Version v2 = GetCultureVersion(culture);
 
-            Debug.Assert(v1 != null);
+            Debug.Assert(v1 is not null);
 
             if (v2 is null)
             {
@@ -103,7 +103,7 @@ namespace System.Management.Automation.Help
         /// <returns>True if supported, false if not.</returns>
         internal bool IsCultureSupported(CultureInfo culture)
         {
-            Debug.Assert(culture != null);
+            Debug.Assert(culture is not null);
 
             foreach (CultureSpecificUpdatableHelp updatableHelpItem in UpdatableHelpItems)
             {

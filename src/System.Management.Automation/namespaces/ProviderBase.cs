@@ -142,7 +142,7 @@ namespace System.Management.Automation.Provider
                 }
 
                 // Check that the provider supports the use of credentials
-                if (value.Credential != null &&
+                if (value.Credential is not null &&
                     value.Credential != PSCredential.Empty &&
                     !CmdletProviderManagementIntrinsics.CheckProviderCapabilities(ProviderCapabilities.Credentials, _providerInformation))
                 {
@@ -151,8 +151,8 @@ namespace System.Management.Automation.Provider
                 }
 
                 // Supplying Credentials for the FileSystemProvider is supported only for New-PSDrive Command.
-                if (_providerInformation != null && !string.IsNullOrEmpty(_providerInformation.Name) && _providerInformation.Name.Equals("FileSystem") &&
-                    value.Credential != null &&
+                if (_providerInformation is not null && !string.IsNullOrEmpty(_providerInformation.Name) && _providerInformation.Name.Equals("FileSystem") &&
+                    value.Credential is not null &&
                     value.Credential != PSCredential.Empty &&
                     !value.ExecutionContext.CurrentCommandProcessor.Command.GetType().Name.Equals("NewPSDriveCommand"))
                 {
@@ -1148,7 +1148,7 @@ namespace System.Management.Automation.Provider
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
                     Diagnostics.Assert(
-                        Context != null,
+                        Context is not null,
                         "The context should always be set");
 
                     return Context.Stopping;
@@ -1166,7 +1166,7 @@ namespace System.Management.Automation.Provider
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
                     Diagnostics.Assert(
-                        Context != null,
+                        Context is not null,
                         "The context should always be set");
 
                     return new SessionState(Context.ExecutionContext.EngineSessionState);
@@ -1184,7 +1184,7 @@ namespace System.Management.Automation.Provider
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
                     Diagnostics.Assert(
-                        Context != null,
+                        Context is not null,
                         "The context should always be set");
 
                     return new ProviderIntrinsics(Context.ExecutionContext.EngineSessionState);
@@ -1202,7 +1202,7 @@ namespace System.Management.Automation.Provider
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
                     Diagnostics.Assert(
-                        Context != null,
+                        Context is not null,
                         "The context should always be set");
 
                     return new CommandInvocationIntrinsics(Context.ExecutionContext);
@@ -1220,7 +1220,7 @@ namespace System.Management.Automation.Provider
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
                     Diagnostics.Assert(
-                        Context != null,
+                        Context is not null,
                         "The context should always be set");
 
                     return Context.Credential;
@@ -1257,7 +1257,7 @@ namespace System.Management.Automation.Provider
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
                     Diagnostics.Assert(
-                        Context != null,
+                        Context is not null,
                         "The context should always be set");
 
                     return Context.Drive;
@@ -1276,7 +1276,7 @@ namespace System.Management.Automation.Provider
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
                     Diagnostics.Assert(
-                        Context != null,
+                        Context is not null,
                         "The context should always be set");
 
                     return Context.DynamicParameters;
@@ -1303,7 +1303,7 @@ namespace System.Management.Automation.Provider
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
                     Diagnostics.Assert(
-                        Context != null,
+                        Context is not null,
                         "The context should always be set");
 
                     return Context.Force;
@@ -1321,7 +1321,7 @@ namespace System.Management.Automation.Provider
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
                     Diagnostics.Assert(
-                        Context != null,
+                        Context is not null,
                         "The context should always be set");
 
                     return Context.Filter;
@@ -1340,7 +1340,7 @@ namespace System.Management.Automation.Provider
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
                     Diagnostics.Assert(
-                        Context != null,
+                        Context is not null,
                         "The context should always be set");
 
                     return Context.Include;
@@ -1359,7 +1359,7 @@ namespace System.Management.Automation.Provider
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
                     Diagnostics.Assert(
-                        Context != null,
+                        Context is not null,
                         "The context should always be set");
 
                     return Context.Exclude;
@@ -1377,7 +1377,7 @@ namespace System.Management.Automation.Provider
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
                     Diagnostics.Assert(
-                        Context != null,
+                        Context is not null,
                         "The context should always be set");
 
                     return Context.ExecutionContext.EngineHostInterface;
@@ -1471,8 +1471,8 @@ namespace System.Management.Automation.Provider
                     throw PSTraceSource.NewArgumentNullException(nameof(errorRecord));
                 }
 
-                if (errorRecord.ErrorDetails != null
-                    && errorRecord.ErrorDetails.TextLookupError != null)
+                if (errorRecord.ErrorDetails is not null
+                    && errorRecord.ErrorDetails.TextLookupError is not null)
                 {
                     Exception textLookupError = errorRecord.ErrorDetails.TextLookupError;
                     errorRecord.ErrorDetails.TextLookupError = null;
@@ -1513,7 +1513,7 @@ namespace System.Management.Automation.Provider
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 Diagnostics.Assert(
-                    Context != null,
+                    Context is not null,
                     "The context should always be set");
 
                 return Context.ShouldProcess(target);
@@ -1528,7 +1528,7 @@ namespace System.Management.Automation.Provider
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 Diagnostics.Assert(
-                    Context != null,
+                    Context is not null,
                     "The context should always be set");
 
                 return Context.ShouldProcess(target, action);
@@ -1544,7 +1544,7 @@ namespace System.Management.Automation.Provider
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 Diagnostics.Assert(
-                    Context != null,
+                    Context is not null,
                     "The context should always be set");
 
                 return Context.ShouldProcess(
@@ -1564,7 +1564,7 @@ namespace System.Management.Automation.Provider
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 Diagnostics.Assert(
-                    Context != null,
+                    Context is not null,
                     "The context should always be set");
 
                 return Context.ShouldProcess(
@@ -1583,7 +1583,7 @@ namespace System.Management.Automation.Provider
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 Diagnostics.Assert(
-                    Context != null,
+                    Context is not null,
                     "The context should always be set");
 
                 return Context.ShouldContinue(query, caption);
@@ -1600,7 +1600,7 @@ namespace System.Management.Automation.Provider
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 Diagnostics.Assert(
-                    Context != null,
+                    Context is not null,
                     "The context should always be set");
 
                 return Context.ShouldContinue(
@@ -1646,7 +1646,7 @@ namespace System.Management.Automation.Provider
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 Diagnostics.Assert(
-                    Context != null,
+                    Context is not null,
                     "The context should always be set");
 
                 Context.WriteVerbose(text);
@@ -1659,7 +1659,7 @@ namespace System.Management.Automation.Provider
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 Diagnostics.Assert(
-                    Context != null,
+                    Context is not null,
                     "The context should always be set");
 
                 Context.WriteWarning(text);
@@ -1672,7 +1672,7 @@ namespace System.Management.Automation.Provider
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 Diagnostics.Assert(
-                    Context != null,
+                    Context is not null,
                     "The context should always be set");
 
                 if (progressRecord is null)
@@ -1690,7 +1690,7 @@ namespace System.Management.Automation.Provider
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 Diagnostics.Assert(
-                    Context != null,
+                    Context is not null,
                     "The context should always be set");
 
                 Context.WriteDebug(text);
@@ -1703,7 +1703,7 @@ namespace System.Management.Automation.Provider
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 Diagnostics.Assert(
-                    Context != null,
+                    Context is not null,
                     "The context should always be set");
 
                 Context.WriteInformation(record);
@@ -1716,7 +1716,7 @@ namespace System.Management.Automation.Provider
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 Diagnostics.Assert(
-                    Context != null,
+                    Context is not null,
                     "The context should always be set");
 
                 Context.WriteInformation(messageData, tags);
@@ -1749,7 +1749,7 @@ namespace System.Management.Automation.Provider
             providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSIsContainer", isContainer);
 
             Diagnostics.Assert(
-                Context != null,
+                Context is not null,
                 "The context should always be set");
 
             Context.WriteObject(result);
@@ -1772,7 +1772,7 @@ namespace System.Management.Automation.Provider
             PSObject result = WrapOutputInPSObject(item, path);
 
             Diagnostics.Assert(
-                Context != null,
+                Context is not null,
                 "The context should always be set");
 
             Context.WriteObject(result);
@@ -1807,14 +1807,14 @@ namespace System.Management.Automation.Provider
             PSObject result = new PSObject(item);
 
             Diagnostics.Assert(
-                ProviderInfo != null,
+                ProviderInfo is not null,
                 "The ProviderInfo should always be set");
 
             // Move the TypeNames to the wrapping object if the wrapped object
             // was an PSObject
 
             PSObject mshObj = item as PSObject;
-            if (mshObj != null)
+            if (mshObj is not null)
             {
                 result.InternalTypeNames = new ConsolidatedString(mshObj.InternalTypeNames);
             }
@@ -1830,13 +1830,13 @@ namespace System.Management.Automation.Provider
             // Now get the parent path and child name
 
             NavigationCmdletProvider navProvider = this as NavigationCmdletProvider;
-            if (navProvider != null && path != null)
+            if (navProvider is not null && path is not null)
             {
                 // Get the parent path
 
                 string parentPath = null;
 
-                if (PSDriveInfo != null)
+                if (PSDriveInfo is not null)
                 {
                     parentPath = navProvider.GetParentPath(path, PSDriveInfo.Root, Context);
                 }
@@ -1887,7 +1887,7 @@ namespace System.Management.Automation.Provider
 
             // PSDriveInfo
 
-            if (PSDriveInfo != null)
+            if (PSDriveInfo is not null)
             {
                 result.AddOrSetProperty(this.PSDriveInfo.GetNotePropertyForProviderCmdlets("PSDrive"));
                 providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSDrive", this.PSDriveInfo);
@@ -1995,7 +1995,7 @@ namespace System.Management.Automation.Provider
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 Diagnostics.Assert(
-                    Context != null,
+                    Context is not null,
                     "The context should always be set");
 
                 if (errorRecord is null)
@@ -2003,8 +2003,8 @@ namespace System.Management.Automation.Provider
                     throw PSTraceSource.NewArgumentNullException(nameof(errorRecord));
                 }
 
-                if (errorRecord.ErrorDetails != null
-                    && errorRecord.ErrorDetails.TextLookupError != null)
+                if (errorRecord.ErrorDetails is not null
+                    && errorRecord.ErrorDetails.TextLookupError is not null)
                 {
                     MshLog.LogProviderHealthEvent(
                         this.Context.ExecutionContext,

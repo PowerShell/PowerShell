@@ -92,7 +92,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("cmdlet");
             }
 
-            if (_owner != null)
+            if (_owner is not null)
             {
                 _owner.AssertChangesAreAccepted();
             }
@@ -136,7 +136,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(cmdlet));
             }
 
-            if (_owner != null)
+            if (_owner is not null)
             {
                 _owner.AssertChangesAreAccepted();
             }
@@ -178,7 +178,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(script));
             }
 
-            if (_owner != null)
+            if (_owner is not null)
             {
                 _owner.AssertChangesAreAccepted();
             }
@@ -223,7 +223,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(script));
             }
 
-            if (_owner != null)
+            if (_owner is not null)
             {
                 _owner.AssertChangesAreAccepted();
             }
@@ -261,7 +261,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
-            if (_owner != null)
+            if (_owner is not null)
             {
                 _owner.AssertChangesAreAccepted();
             }
@@ -308,7 +308,7 @@ namespace System.Management.Automation
                                                                  new object[] { "PSCommand" });
             }
 
-            if (_owner != null)
+            if (_owner is not null)
             {
                 _owner.AssertChangesAreAccepted();
             }
@@ -350,7 +350,7 @@ namespace System.Management.Automation
                                                                  new object[] { "PSCommand" });
             }
 
-            if (_owner != null)
+            if (_owner is not null)
             {
                 _owner.AssertChangesAreAccepted();
             }
@@ -392,7 +392,7 @@ namespace System.Management.Automation
                                                                  new object[] { "PSCommand" });
             }
 
-            if (_owner != null)
+            if (_owner is not null)
             {
                 _owner.AssertChangesAreAccepted();
             }
@@ -509,7 +509,7 @@ namespace System.Management.Automation
         {
             _commands = new CommandCollection();
 
-            if (command != null)
+            if (command is not null)
             {
                 _currentCommand = new Command(command, isScript, useLocalScope);
                 _commands.Add(_currentCommand);

@@ -78,7 +78,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(typeof(JobSourceAdapter).IsAssignableFrom(jobSourceAdapterType), "BaseType of any type being registered with the JobManager should be JobSourceAdapter.");
             Dbg.Assert(jobSourceAdapterType != typeof(JobSourceAdapter), "JobSourceAdapter abstract type itself should never be registered.");
-            Dbg.Assert(jobSourceAdapterType != null, "JobSourceAdapterType should never be called with null value.");
+            Dbg.Assert(jobSourceAdapterType is not null, "JobSourceAdapterType should never be called with null value.");
             object instance = null;
 
             ConstructorInfo constructor = jobSourceAdapterType.GetConstructor(Type.EmptyTypes);
@@ -120,7 +120,7 @@ namespace System.Management.Automation
                 throw;
             }
 
-            if (instance != null)
+            if (instance is not null)
             {
                 lock (_syncObject)
                 {
@@ -327,7 +327,7 @@ namespace System.Management.Automation
             {
                 adapterTypeName = definition.JobSourceAdapterTypeName;
             }
-            else if (definition.JobSourceAdapterType != null)
+            else if (definition.JobSourceAdapterType is not null)
             {
                 adapterTypeName = definition.JobSourceAdapterType.Name;
             }
@@ -384,7 +384,7 @@ namespace System.Management.Automation
                         ex = e;
                     }
 
-                    if (ex != null)
+                    if (ex is not null)
                     {
                         throw new InvalidOperationException(RemotingErrorIdStrings.JobSourceAdapterNotFound, ex);
                     }
@@ -528,7 +528,7 @@ namespace System.Management.Automation
                 {
                     if (sourceAdapter.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                     {
-                        return (sourceAdapter.GetJobByInstanceId(id, false) != null);
+                        return (sourceAdapter.GetJobByInstanceId(id, false) is not null);
                     }
                 }
             }
@@ -559,7 +559,7 @@ namespace System.Management.Automation
             bool recurse,
             string[] jobSourceAdapterTypes)
         {
-            Diagnostics.Assert(cmdlet != null, "Cmdlet should be passed to JobManager");
+            Diagnostics.Assert(cmdlet is not null, "Cmdlet should be passed to JobManager");
 
             List<Job2> allJobs = new List<Job2>();
 
@@ -626,7 +626,7 @@ namespace System.Management.Automation
             }
 
             string sourceAdapterName = GetAdapterName(sourceAdapter);
-            Diagnostics.Assert(sourceAdapterName != null, "Source adapter should have name or type.");
+            Diagnostics.Assert(sourceAdapterName is not null, "Source adapter should have name or type.");
 
             // Look for name match allowing wildcards.
             foreach (string typeName in jobSourceAdapterTypes)
@@ -684,7 +684,7 @@ namespace System.Management.Automation
                     break;
             }
 
-            if (matches != null)
+            if (matches is not null)
             {
                 jobs.AddRange(matches);
             }
@@ -726,7 +726,7 @@ namespace System.Management.Automation
 
         private Job2 GetJobThroughId<T>(Guid guid, int id, Cmdlet cmdlet, bool writeErrorOnException, bool writeObject, bool recurse)
         {
-            Diagnostics.Assert(cmdlet != null, "Cmdlet should always be passed to JobManager");
+            Diagnostics.Assert(cmdlet is not null, "Cmdlet should always be passed to JobManager");
             Job2 job = null;
             lock (_syncObject)
             {
@@ -791,7 +791,7 @@ namespace System.Management.Automation
             bool writeErrorOnException)
         {
             List<Job2> jobs = new List<Job2>();
-            WildcardPattern typeNamePattern = (definitionType != null) ?
+            WildcardPattern typeNamePattern = (definitionType is not null) ?
                 WildcardPattern.Get(definitionType, WildcardOptions.IgnoreCase) : null;
 
             lock (_syncObject)
@@ -800,7 +800,7 @@ namespace System.Management.Automation
                 {
                     try
                     {
-                        if (typeNamePattern != null)
+                        if (typeNamePattern is not null)
                         {
                             string sourceAdapterName = GetAdapterName(sourceAdapter);
                             if (!typeNamePattern.IsMatch(sourceAdapterName))
@@ -810,12 +810,12 @@ namespace System.Management.Automation
                         }
 
                         Job2 job = sourceAdapter.NewJob(definitionName, definitionPath);
-                        if (job != null)
+                        if (job is not null)
                         {
                             jobs.Add(job);
                         }
 
-                        if (typeNamePattern != null)
+                        if (typeNamePattern is not null)
                         {
                             // Adapter type found, can quit.
                             break;

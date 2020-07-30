@@ -171,7 +171,7 @@ namespace System.Management.Automation
         internal void Stop()
         {
             CustomInternalSerializer serializer = _serializer;
-            if (serializer != null)
+            if (serializer is not null)
             {
                 serializer.Stop();
             }
@@ -222,7 +222,7 @@ namespace System.Management.Automation
         /// </param>
         internal CustomInternalSerializer(XmlWriter writer, bool notypeinformation, bool isfirstcallforObject)
         {
-            Dbg.Assert(writer != null, "caller should validate the parameter");
+            Dbg.Assert(writer is not null, "caller should validate the parameter");
 
             _writer = writer;
             _notypeinformation = notypeinformation;
@@ -315,11 +315,11 @@ namespace System.Management.Automation
         /// </returns>
         private bool HandlePrimitiveKnownType(object source, string property)
         {
-            Dbg.Assert(source != null, "caller should validate the parameter");
+            Dbg.Assert(source is not null, "caller should validate the parameter");
 
             // Check if source is of primitive known type
             TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfo(source.GetType());
-            if (pktInfo != null)
+            if (pktInfo is not null)
             {
                 WriteOnePrimitiveKnownType(_writer, property, source, pktInfo);
                 return true;
@@ -339,16 +339,16 @@ namespace System.Management.Automation
         /// </returns>
         private bool HandlePrimitiveKnownTypePSObject(object source, string property, int depth)
         {
-            Dbg.Assert(source != null, "caller should validate the parameter");
+            Dbg.Assert(source is not null, "caller should validate the parameter");
 
             bool sourceHandled = false;
             PSObject moSource = source as PSObject;
-            if (moSource != null && !moSource.ImmediateBaseObjectIsEmpty)
+            if (moSource is not null && !moSource.ImmediateBaseObjectIsEmpty)
             {
                 // Check if baseObject is primitive known type
                 object baseObject = moSource.ImmediateBaseObject;
                 TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfo(baseObject.GetType());
-                if (pktInfo != null)
+                if (pktInfo is not null)
                 {
                     WriteOnePrimitiveKnownType(_writer, property, baseObject, pktInfo);
                     sourceHandled = true;
@@ -360,7 +360,7 @@ namespace System.Management.Automation
 
         private bool HandleKnownContainerTypes(object source, string property, int depth)
         {
-            Dbg.Assert(source != null, "caller should validate the parameter");
+            Dbg.Assert(source is not null, "caller should validate the parameter");
 
             ContainerType ct = ContainerType.None;
             PSObject mshSource = source as PSObject;
@@ -368,13 +368,13 @@ namespace System.Management.Automation
             IDictionary dictionary = null;
 
             // If passed in object is PSObject with no baseobject, return false.
-            if (mshSource != null && mshSource.ImmediateBaseObjectIsEmpty)
+            if (mshSource is not null && mshSource.ImmediateBaseObjectIsEmpty)
             {
                 return false;
             }
 
             // Check if source (or baseobject in mshSource) is known container type
-            GetKnownContainerTypeInfo(mshSource != null ? mshSource.ImmediateBaseObject : source, out ct,
+            GetKnownContainerTypeInfo(mshSource is not null ? mshSource.ImmediateBaseObject : source, out ct,
                                       out dictionary, out enumerable);
 
             if (ct == ContainerType.None)
@@ -412,7 +412,7 @@ namespace System.Management.Automation
             // We serialize properties of enumerable and on deserialization mark the object
             // as Deserialized. So if object is marked deserialized, we should write properties.
             // Note: we do not serialize the properties of IEnumerable if depth is zero.
-            if (depth != 0 && (ct == ContainerType.Enumerable || (mshSource != null && mshSource.IsDeserialized)))
+            if (depth != 0 && (ct == ContainerType.Enumerable || (mshSource is not null && mshSource.IsDeserialized)))
             {
                 // Note:Depth is the depth for serialization of baseObject.
                 // Depth for serialization of each property is one less.
@@ -420,11 +420,11 @@ namespace System.Management.Automation
             }
 
             // If source is PSObject, serialize notes
-            if (mshSource != null)
+            if (mshSource is not null)
             {
                 // Serialize instanceMembers
                 PSMemberInfoCollection<PSMemberInfo> instanceMembers = mshSource.InstanceMembers;
-                if (instanceMembers != null)
+                if (instanceMembers is not null)
                 {
                     WriteMemberInfoCollection(instanceMembers, depth, true);
                 }
@@ -445,14 +445,14 @@ namespace System.Management.Automation
         private void GetKnownContainerTypeInfo(
             object source, out ContainerType ct, out IDictionary dictionary, out IEnumerable enumerable)
         {
-            Dbg.Assert(source != null, "caller should validate the parameter");
+            Dbg.Assert(source is not null, "caller should validate the parameter");
 
             ct = ContainerType.None;
             dictionary = null;
             enumerable = null;
 
             dictionary = source as IDictionary;
-            if (dictionary != null)
+            if (dictionary is not null)
             {
                 ct = ContainerType.Dictionary;
                 return;
@@ -462,19 +462,19 @@ namespace System.Management.Automation
             {
                 ct = ContainerType.Stack;
                 enumerable = LanguagePrimitives.GetEnumerable(source);
-                Dbg.Assert(enumerable != null, "Stack is enumerable");
+                Dbg.Assert(enumerable is not null, "Stack is enumerable");
             }
             else if (source is Queue)
             {
                 ct = ContainerType.Queue;
                 enumerable = LanguagePrimitives.GetEnumerable(source);
-                Dbg.Assert(enumerable != null, "Queue is enumerable");
+                Dbg.Assert(enumerable is not null, "Queue is enumerable");
             }
             else if (source is IList)
             {
                 ct = ContainerType.List;
                 enumerable = LanguagePrimitives.GetEnumerable(source);
-                Dbg.Assert(enumerable != null, "IList is enumerable");
+                Dbg.Assert(enumerable is not null, "IList is enumerable");
             }
             else
             {
@@ -485,19 +485,19 @@ namespace System.Management.Automation
                     {
                         ct = ContainerType.Stack;
                         enumerable = LanguagePrimitives.GetEnumerable(source);
-                        Dbg.Assert(enumerable != null, "Stack is enumerable");
+                        Dbg.Assert(enumerable is not null, "Stack is enumerable");
                     }
                     else if (DerivesFromGenericType(gt, typeof(Queue<>)))
                     {
                         ct = ContainerType.Queue;
                         enumerable = LanguagePrimitives.GetEnumerable(source);
-                        Dbg.Assert(enumerable != null, "Queue is enumerable");
+                        Dbg.Assert(enumerable is not null, "Queue is enumerable");
                     }
                     else if (DerivesFromGenericType(gt, typeof(List<>)))
                     {
                         ct = ContainerType.List;
                         enumerable = LanguagePrimitives.GetEnumerable(source);
-                        Dbg.Assert(enumerable != null, "Queue is enumerable");
+                        Dbg.Assert(enumerable is not null, "Queue is enumerable");
                     }
                 }
             }
@@ -506,7 +506,7 @@ namespace System.Management.Automation
             if (ct == ContainerType.None)
             {
                 enumerable = LanguagePrimitives.GetEnumerable(source);
-                if (enumerable != null)
+                if (enumerable is not null)
                 {
                     ct = ContainerType.Enumerable;
                 }
@@ -521,9 +521,9 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static bool DerivesFromGenericType(Type derived, Type baseType)
         {
-            Dbg.Assert(derived != null, "caller should validate the parameter");
-            Dbg.Assert(baseType != null, "caller should validate the parameter");
-            while (derived != null)
+            Dbg.Assert(derived is not null, "caller should validate the parameter");
+            Dbg.Assert(baseType is not null, "caller should validate the parameter");
+            while (derived is not null)
             {
                 if (derived.GetTypeInfo().IsGenericType)
                     derived = derived.GetGenericTypeDefinition();
@@ -565,20 +565,20 @@ namespace System.Management.Automation
             string property,
             int depth)
         {
-            Dbg.Assert(source != null, "caller should validate the parameter");
+            Dbg.Assert(source is not null, "caller should validate the parameter");
 
             // Write start of PSObject. Since baseobject is primitive known
             // type, we do not need TypeName information.
-            WriteStartOfPSObject(source, property, source.ToStringFromDeserialization != null);
+            WriteStartOfPSObject(source, property, source.ToStringFromDeserialization is not null);
 
-            if (pktInfo != null)
+            if (pktInfo is not null)
             {
                 WriteOnePrimitiveKnownType(_writer, null, primitive, pktInfo);
             }
 
             // Serialize instanceMembers
             PSMemberInfoCollection<PSMemberInfo> instanceMembers = source.InstanceMembers;
-            if (instanceMembers != null)
+            if (instanceMembers is not null)
             {
                 WriteMemberInfoCollection(instanceMembers, depth, true);
             }
@@ -588,7 +588,7 @@ namespace System.Management.Automation
 
         private void HandleComplexTypePSObject(PSObject source, string property, int depth)
         {
-            Dbg.Assert(source != null, "caller should validate the parameter");
+            Dbg.Assert(source is not null, "caller should validate the parameter");
 
             WriteStartOfPSObject(source, property, true);
 
@@ -643,9 +643,9 @@ namespace System.Management.Automation
             string property,
             bool writeTNH)
         {
-            Dbg.Assert(mshObject != null, "caller should validate the parameter");
+            Dbg.Assert(mshObject is not null, "caller should validate the parameter");
 
-            if (property != null)
+            if (property is not null)
             {
                 WriteStartElement(_writer, CustomSerializationStrings.Properties);
                 WriteAttribute(_writer, CustomSerializationStrings.NameAttribute, property);
@@ -678,7 +678,7 @@ namespace System.Management.Automation
         /// </returns>
         private bool PSObjectHasNotes(PSObject source)
         {
-            if (source.InstanceMembers != null && source.InstanceMembers.Count > 0)
+            if (source.InstanceMembers is not null && source.InstanceMembers.Count > 0)
             {
                 return true;
             }
@@ -701,7 +701,7 @@ namespace System.Management.Automation
         private void WriteMemberInfoCollection(
             PSMemberInfoCollection<PSMemberInfo> me, int depth, bool writeEnclosingMemberSetElementTag)
         {
-            Dbg.Assert(me != null, "caller should validate the parameter");
+            Dbg.Assert(me is not null, "caller should validate the parameter");
 
             foreach (PSMemberInfo info in me)
             {
@@ -734,7 +734,7 @@ namespace System.Management.Automation
         /// </summary>
         private void WritePSObjectProperties(PSObject source, int depth)
         {
-            Dbg.Assert(source != null, "caller should validate the information");
+            Dbg.Assert(source is not null, "caller should validate the information");
 
             depth = GetDepthOfSerialization(source, depth);
 
@@ -747,7 +747,7 @@ namespace System.Management.Automation
                 foreach (string propertyName in source.GetSpecificPropertiesToSerialize(null))
                 {
                     PSPropertyInfo property = source.Properties[propertyName];
-                    if (property != null)
+                    if (property is not null)
                     {
                         specificProperties.Add(property);
                     }
@@ -759,7 +759,7 @@ namespace System.Management.Automation
 
             foreach (PSPropertyInfo prop in source.Properties)
             {
-                Dbg.Assert(prop != null, "propertyCollection should only have member of type PSProperty");
+                Dbg.Assert(prop is not null, "propertyCollection should only have member of type PSProperty");
                 object value = AutomationNull.Value;
                 // PSObject throws GetValueException if it cannot
                 // get value for a property.
@@ -799,7 +799,7 @@ namespace System.Management.Automation
         private void SerializeProperties(
             PSMemberInfoInternalCollection<PSPropertyInfo> propertyCollection, string name, int depth)
         {
-            Dbg.Assert(propertyCollection != null, "caller should validate the parameter");
+            Dbg.Assert(propertyCollection is not null, "caller should validate the parameter");
             if (propertyCollection.Count == 0)
                 return;
 
@@ -807,7 +807,7 @@ namespace System.Management.Automation
             {
                 PSPropertyInfo prop = info as PSPropertyInfo;
 
-                Dbg.Assert(prop != null, "propertyCollection should only have member of type PSProperty");
+                Dbg.Assert(prop is not null, "propertyCollection should only have member of type PSProperty");
 
                 object value = AutomationNull.Value;
                 // PSObject throws GetValueException if it cannot
@@ -840,7 +840,7 @@ namespace System.Management.Automation
         /// <param name="depth"></param>
         private void WriteEnumerable(IEnumerable enumerable, int depth)
         {
-            Dbg.Assert(enumerable != null, "caller should validate the parameter");
+            Dbg.Assert(enumerable is not null, "caller should validate the parameter");
 
             IEnumerator enumerator = null;
             try
@@ -855,7 +855,7 @@ namespace System.Management.Automation
 
             // AD has incorrect implementation of IEnumerable where they returned null
             // for GetEnumerator instead of empty enumerator
-            if (enumerator != null)
+            if (enumerator is not null)
             {
                 while (true)
                 {
@@ -897,7 +897,7 @@ namespace System.Management.Automation
             {
             }
 
-            if (dictionaryEnum != null)
+            if (dictionaryEnum is not null)
             {
                 while (dictionaryEnum.MoveNext())
                 {
@@ -915,15 +915,15 @@ namespace System.Management.Automation
 
         private void HandlePSObjectAsString(PSObject source, string property, int depth)
         {
-            Dbg.Assert(source != null, "caller should validate the information");
+            Dbg.Assert(source is not null, "caller should validate the information");
 
             bool hasNotes = PSObjectHasNotes(source);
             string value = GetStringFromPSObject(source);
 
-            if (value != null)
+            if (value is not null)
             {
                 TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfo(value.GetType());
-                Dbg.Assert(pktInfo != null, "TypeSerializationInfo should be present for string");
+                Dbg.Assert(pktInfo is not null, "TypeSerializationInfo should be present for string");
                 if (hasNotes)
                 {
                     WritePrimitiveTypePSObjectWithNotes(source, value, pktInfo, property, depth);
@@ -958,15 +958,15 @@ namespace System.Management.Automation
         /// </returns>
         private string GetStringFromPSObject(PSObject source)
         {
-            Dbg.Assert(source != null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
 
             // check if we have a well known string serialization source
             PSPropertyInfo serializationProperty = source.GetStringSerializationSource(null);
             string result = null;
-            if (serializationProperty != null)
+            if (serializationProperty is not null)
             {
                 object val = serializationProperty.Value;
-                if (val != null)
+                if (val is not null)
                 {
                     try
                     {
@@ -1036,7 +1036,7 @@ namespace System.Management.Automation
         /// <param name="property"></param>
         private void WriteNull(string property)
         {
-            if (property != null)
+            if (property is not null)
             {
                 WriteStartElement(_writer, CustomSerializationStrings.Properties);
                 WriteAttribute(_writer, CustomSerializationStrings.NameAttribute, property);
@@ -1072,7 +1072,7 @@ namespace System.Management.Automation
         private void WriteObjectString(
             XmlWriter writer, string property, object source, TypeSerializationInfo entry)
         {
-            if (property != null)
+            if (property is not null)
             {
                 WriteStartElement(writer, CustomSerializationStrings.Properties);
                 WriteAttribute(writer, CustomSerializationStrings.NameAttribute, property);

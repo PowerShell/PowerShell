@@ -40,7 +40,7 @@ namespace Microsoft.Management.UI.Internal
         protected override Size ArrangeOverride(Size finalSize)
         {
             // If a vector is provided, specify that the control will use all available area \\
-            if (this.Source != null && this.Source.Brush != null)
+            if (this.Source is not null && this.Source.Brush is not null)
             {
                 return finalSize;
             }
@@ -64,11 +64,11 @@ namespace Microsoft.Management.UI.Internal
             }
 
             // Prefer the vector if it's provided \\
-            if (this.Source.Brush != null)
+            if (this.Source.Brush is not null)
             {
                 drawingContext.DrawRectangle(this.Source.Brush, null, renderArea);
             }
-            else if (this.Source.Image != null)
+            else if (this.Source.Image is not null)
             {
                 drawingContext.DrawImage(this.Source.Image, renderArea);
             }
@@ -91,7 +91,7 @@ namespace Microsoft.Management.UI.Internal
 
         partial void OnSourceChangedImplementation(PropertyChangedEventArgs<ScalableImageSource> e)
         {
-            if (e.NewValue != null)
+            if (e.NewValue is not null)
             {
                 // If a width was provided in the source, use it now \\
                 if (!e.NewValue.Size.Width.Equals(double.NaN))

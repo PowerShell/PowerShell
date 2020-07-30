@@ -162,7 +162,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal override bool MatchPatternInContent(WildcardPattern pattern)
         {
-            Diagnostics.Assert(pattern != null, "pattern cannot be null");
+            Diagnostics.Assert(pattern is not null, "pattern cannot be null");
 
             string synopsis = Synopsis;
             string detailedDescription = DetailedDescription;
@@ -211,7 +211,7 @@ namespace System.Management.Automation
         /// </summary>
         private void LoadCmdletHelps()
         {
-            if (_cmdletHelps != null)
+            if (_cmdletHelps is not null)
                 return;
 
             if (_fullHelpObject is null)
@@ -279,7 +279,7 @@ namespace System.Management.Automation
             {
                 PSObject entry = (PSObject)_dynamicParameterHelps[parameters[i].ToLower()];
 
-                if (entry != null)
+                if (entry is not null)
                     result.Add(entry);
             }
 
@@ -292,7 +292,7 @@ namespace System.Management.Automation
         /// </summary>
         private void LoadDynamicParameterHelps()
         {
-            if (_dynamicParameterHelps != null)
+            if (_dynamicParameterHelps is not null)
                 return;
 
             if (_fullHelpObject is null)

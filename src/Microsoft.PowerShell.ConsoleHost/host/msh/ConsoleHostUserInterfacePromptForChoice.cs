@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell
 
             Dictionary<int, bool> defaultChoiceKeys = new Dictionary<int, bool>();
 
-            if (defaultChoices != null)
+            if (defaultChoices is not null)
             {
                 foreach (int defaultChoice in defaultChoices)
                 {
@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell
             Dictionary<int, bool> defaultChoiceKeys,
             bool shouldEmulateForMultipleChoiceSelection)
         {
-            System.Management.Automation.Diagnostics.Assert(defaultChoiceKeys != null, "defaultChoiceKeys cannot be null.");
+            System.Management.Automation.Diagnostics.Assert(defaultChoiceKeys is not null, "defaultChoiceKeys cannot be null.");
 
             ConsoleColor fg = RawUI.ForegroundColor;
             ConsoleColor bg = RawUI.BackgroundColor;
@@ -411,8 +411,8 @@ namespace Microsoft.PowerShell
 
         private void ShowChoiceHelp(Collection<ChoiceDescription> choices, string[,] hotkeysAndPlainLabels)
         {
-            Dbg.Assert(choices != null, "choices: expected a value");
-            Dbg.Assert(hotkeysAndPlainLabels != null, "hotkeysAndPlainLabels: expected a value");
+            Dbg.Assert(choices is not null, "choices: expected a value");
+            Dbg.Assert(hotkeysAndPlainLabels is not null, "hotkeysAndPlainLabels: expected a value");
 
             for (int i = 0; i < choices.Count; ++i)
             {

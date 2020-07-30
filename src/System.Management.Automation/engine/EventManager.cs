@@ -658,11 +658,11 @@ namespace System.Management.Automation
             bool isOnIdleEvent = false;
             // If we are subscribing to an event on an object, generate the supporting delegate
             // for that object.
-            if (source != null)
+            if (source is not null)
             {
                 // If the identifier starts with "PowerShell.", then it will collide with engine
                 // events
-                if ((sourceIdentifier != null) &&
+                if ((sourceIdentifier is not null) &&
                     (sourceIdentifier.StartsWith("PowerShell.", StringComparison.OrdinalIgnoreCase)))
                 {
                     string errorMessage = StringUtil.Format(EventingResources.ReservedIdentifier, sourceIdentifier);
@@ -692,7 +692,7 @@ namespace System.Management.Automation
 
                 // Try to set the EnableRaisingEvents property if it defines one
                 PropertyInfo eventProperty = sourceType.GetProperty("EnableRaisingEvents");
-                if (eventProperty != null && eventProperty.CanWrite)
+                if (eventProperty is not null && eventProperty.CanWrite)
                 {
                     try
                     {
@@ -701,7 +701,7 @@ namespace System.Management.Automation
                     }
                     catch (TargetInvocationException e)
                     {
-                        if (e.InnerException != null)
+                        if (e.InnerException is not null)
                         {
                             throw e.InnerException;
                         }
@@ -834,7 +834,7 @@ namespace System.Management.Automation
                 subscriber.IsBeingUnsubscribed = true;
             }
 
-            if ((existingSubscriber != null) && (subscriber.SourceObject != null))
+            if ((existingSubscriber is not null) && (subscriber.SourceObject is not null))
             {
                 // Fire the unregistration handler
                 subscriber.OnPSEventUnsubscribed(subscriber.SourceObject,
@@ -847,7 +847,7 @@ namespace System.Management.Automation
                 BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase;
                 eventInfo = sourceType.GetEvent(subscriber.EventName, bindingFlags);
 
-                if ((eventInfo != null) && (existingSubscriber != null))
+                if ((eventInfo is not null) && (existingSubscriber is not null))
                 {
                     eventInfo.RemoveEventHandler(subscriber.SourceObject, existingSubscriber);
                 }
@@ -862,7 +862,7 @@ namespace System.Management.Automation
             }
 
             // Stop the job
-            if (subscriber.Action != null)
+            if (subscriber.Action is not null)
             {
                 subscriber.Action.NotifyJobStopped();
             }
@@ -929,7 +929,7 @@ namespace System.Management.Automation
             {
                 ProcessNewEventImplementation(newEvent, true);
                 ManualResetEventSlim waitHandle = newEvent.EventProcessed;
-                if (waitHandle != null)
+                if (waitHandle is not null)
                 {
                     // Win8: 738767 In Win7, the processInCurrentThread parameter was used to be
                     // called processSynchronously. Even though the parameter was called "processSynchronously",
@@ -975,12 +975,12 @@ namespace System.Management.Automation
                 newEvent.ForwardEvent = subscriber.ForwardEvent;
 
                 // If we found a subscriber and it has an action, queue it up
-                if (subscriber.Action != null)
+                if (subscriber.Action is not null)
                 {
                     AddAction(new EventAction(subscriber, newEvent), processSynchronously);
                     capturedEvent = true;
                 }
-                else if (subscriber.HandlerDelegate != null)
+                else if (subscriber.HandlerDelegate is not null)
                 {
                     if (subscriber.ShouldProcessInExecutionThread)
                     {
@@ -1238,7 +1238,7 @@ namespace System.Management.Automation
 
                 // Invoke the action in its own session state
                 SessionStateInternal oldSessionState = _context.EngineSessionState;
-                if (nextAction.Sender.Action != null)
+                if (nextAction.Sender.Action is not null)
                 {
                     _context.EngineSessionState = nextAction.Sender.Action.ScriptBlock.SessionStateInternal;
                 }
@@ -1252,7 +1252,7 @@ namespace System.Management.Automation
                     // scriptblock will execute under, so that scriptblocks will stay in the same
                     // runspace they were invoked from.
                     Runspace.DefaultRunspace = _context.CurrentRunspace;
-                    if (nextAction.Sender.Action != null)
+                    if (nextAction.Sender.Action is not null)
                     {
                         nextAction.Sender.Action.Invoke(nextAction.Sender, nextAction.Args);
                     }
@@ -1278,7 +1278,7 @@ namespace System.Management.Automation
                 finally
                 {
                     var eventProcessed = nextAction.Args.EventProcessed;
-                    if (!addActionBack && eventProcessed != null)
+                    if (!addActionBack && eventProcessed is not null)
                     {
                         eventProcessed.Set();
                     }
@@ -1292,7 +1292,7 @@ namespace System.Management.Automation
 
         internal bool IsExecutingEventAction
         {
-            get { return (_processingAction != null); }
+            get { return (_processingAction is not null); }
         }
 
         /// <summary>
@@ -1513,7 +1513,7 @@ namespace System.Management.Automation
         {
             EventHandler<PSEventArgs> eh = ForwardEvent;
 
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this, e);
             }
@@ -1549,7 +1549,7 @@ namespace System.Management.Automation
             {
                 lock (_eventSubscribers)
                 {
-                    if (_timer != null)
+                    if (_timer is not null)
                     {
                         _timer.Dispose();
                     }
@@ -1826,7 +1826,7 @@ namespace System.Management.Automation
         {
             EventHandler<PSEventArgs> eh = ForwardEvent;
 
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this, e);
             }
@@ -1914,7 +1914,7 @@ namespace System.Management.Automation
             this(context, id, source, eventName, sourceIdentifier, supportEvent, forwardEvent, maxTriggerCount)
         {
             // Create the bound scriptblock, and job.
-            if (action != null)
+            if (action is not null)
             {
                 ScriptBlock newAction = CreateBoundScriptBlock(action);
                 Action = new PSEventJob(context.Events, this, newAction, sourceIdentifier);
@@ -1926,7 +1926,7 @@ namespace System.Management.Automation
             // Add this event subscriber to the job repository if it's not a support event.
             if (!SupportEvent)
             {
-                if (this.Action != null)
+                if (this.Action is not null)
                 {
                     JobRepository jobRepository = ((LocalRunspace)_context.CurrentRunspace).JobRepository;
                     jobRepository.Add(Action);
@@ -2067,7 +2067,7 @@ namespace System.Management.Automation
 
         internal void OnPSEventUnsubscribed(object sender, PSEventUnsubscribedEventArgs e)
         {
-            if (Unsubscribed != null)
+            if (Unsubscribed is not null)
             {
                 Unsubscribed(sender, e);
             }
@@ -2214,12 +2214,12 @@ namespace System.Management.Automation
         internal PSEventArgs(string computerName, Guid runspaceId, int eventIdentifier, string sourceIdentifier, object sender, object[] originalArgs, PSObject additionalData)
         {
             // Capture the first EventArgs as SourceEventArgs
-            if (originalArgs != null)
+            if (originalArgs is not null)
             {
                 foreach (object argument in originalArgs)
                 {
                     EventArgs sourceEventArgs = argument as EventArgs;
-                    if (sourceEventArgs != null)
+                    if (sourceEventArgs is not null)
                     {
                         SourceEventArgs = sourceEventArgs;
                         break;
@@ -2405,7 +2405,7 @@ namespace System.Management.Automation
         private void OnPSEventReceived(object sender, PSEventArgs e)
         {
             PSEventReceivedEventHandler eventHandler = PSEventReceived;
-            if (eventHandler != null)
+            if (eventHandler is not null)
             {
                 eventHandler(sender, e);
             }

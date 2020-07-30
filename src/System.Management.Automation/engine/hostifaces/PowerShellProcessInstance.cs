@@ -57,7 +57,7 @@ namespace System.Management.Automation.Runspaces
             bool startingWindowsPowerShell51 = false;
 #if !UNIX
             // if requested PS version was "5.1" then we start Windows PS instead of PS Core
-            startingWindowsPowerShell51 = (powerShellVersion != null) && (powerShellVersion.Major == 5) && (powerShellVersion.Minor == 1);
+            startingWindowsPowerShell51 = (powerShellVersion is not null) && (powerShellVersion.Major == 5) && (powerShellVersion.Minor == 1);
             if (startingWindowsPowerShell51)
             {
                 if (WinPwshExePath is null)
@@ -119,7 +119,7 @@ namespace System.Management.Automation.Runspaces
                 _startInfo.ArgumentList.Add(workingDirectory);
             }
 
-            if (initializationScript != null)
+            if (initializationScript is not null)
             {
                 var scriptBlockString = initializationScript.ToString();
                 if (!string.IsNullOrEmpty(scriptBlockString))
@@ -130,7 +130,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if (credential != null)
+            if (credential is not null)
             {
                 Net.NetworkCredential netCredential = credential.GetNetworkCredential();
 
@@ -171,7 +171,7 @@ namespace System.Management.Automation.Runspaces
                 // When process is exited, there is some delay in receiving ProcessExited event and HasExited property on process object.
                 // Using HasExited property on started process object to determine if powershell process has exited.
                 //
-                return _processExited || (_started && Process != null && Process.HasExited);
+                return _processExited || (_started && Process is not null && Process.HasExited);
             }
         }
 
@@ -201,7 +201,7 @@ namespace System.Management.Automation.Runspaces
             {
                 try
                 {
-                    if (Process != null && !Process.HasExited)
+                    if (Process is not null && !Process.HasExited)
                         Process.Kill();
                 }
                 catch (InvalidOperationException)

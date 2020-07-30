@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (sam != null)
+            if (sam is not null)
             {
                 sam.Dispose();
                 sam = null;
@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         private void ProcessName()
         {
-            if (Name != null)
+            if (Name is not null)
             {
                 try
                 {
@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void ProcessSid()
         {
-            if (SID != null)
+            if (SID is not null)
             {
                 try
                 {
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void ProcessGroup()
         {
-            if (InputObject != null)
+            if (InputObject is not null)
             {
                 try
                 {

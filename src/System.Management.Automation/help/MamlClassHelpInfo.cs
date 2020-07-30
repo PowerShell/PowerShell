@@ -97,7 +97,7 @@ namespace System.Management.Automation
                 string tempName = string.Empty;
                 var title = _fullHelpObject.Properties["title"];
 
-                if (title != null && title.Value != null)
+                if (title is not null && title.Value is not null)
                 {
                     tempName = title.Value.ToString();
                 }
@@ -113,7 +113,7 @@ namespace System.Management.Automation
                 string tempSynopsis = string.Empty;
                 var intro = _fullHelpObject.Properties["introduction"];
 
-                if (intro != null && intro.Value != null)
+                if (intro is not null && intro.Value is not null)
                 {
                     tempSynopsis = intro.Value.ToString();
                 }

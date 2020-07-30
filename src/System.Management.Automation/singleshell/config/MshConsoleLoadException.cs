@@ -74,7 +74,7 @@ namespace System.Management.Automation.Runspaces
         {
             StringBuilder sb = new StringBuilder();
 
-            if (PSSnapInExceptions != null)
+            if (PSSnapInExceptions is not null)
             {
                 foreach (PSSnapInException e in PSSnapInExceptions)
                 {
@@ -103,7 +103,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (_errorRecord != null)
+                if (_errorRecord is not null)
                 {
                     return _errorRecord.ToString();
                 }

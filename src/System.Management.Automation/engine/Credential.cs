@@ -119,11 +119,11 @@ namespace System.Management.Automation
             // serialize the secure string
             string safePassword = string.Empty;
 
-            if (_password != null && _password.Length > 0)
+            if (_password is not null && _password.Length > 0)
             {
                 byte[] key;
                 byte[] iv;
-                if (s_delegate != null && s_delegate(context, out key, out iv))
+                if (s_delegate is not null && s_delegate(context, out key, out iv))
                 {
                     safePassword = SecureStringHelper.Encrypt(_password, key, iv).EncryptedData;
                 }
@@ -166,7 +166,7 @@ namespace System.Management.Automation
             {
                 byte[] key;
                 byte[] iv;
-                if (s_delegate != null && s_delegate(context, out key, out iv))
+                if (s_delegate is not null && s_delegate(context, out key, out iv))
                 {
                     _password = SecureStringHelper.Decrypt(safePassword, key, iv);
                 }
@@ -221,11 +221,11 @@ namespace System.Management.Automation
             if (pso is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(pso));
 
-            if (pso.Properties["UserName"] != null)
+            if (pso.Properties["UserName"] is not null)
             {
                 _userName = (string)pso.Properties["UserName"].Value;
 
-                if (pso.Properties["Password"] != null)
+                if (pso.Properties["Password"] is not null)
                     _password = (SecureString)pso.Properties["Password"].Value;
             }
         }

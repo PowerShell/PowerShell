@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 return InvokeProvider.Content.GetContentReaderDynamicParameters(Path[0], context);
             }
@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Commands
                     long countRead = 0;
 
                     Dbg.Diagnostics.Assert(
-                        holder.Reader != null,
+                        holder.Reader is not null,
                         "All holders should have a reader assigned");
 
                     if (_tailSpecified && !(holder.Reader is FileSystemContentReaderWriter))
@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
                                 break;
                             }
 
-                            if (results != null && results.Count > 0)
+                            if (results is not null && results.Count > 0)
                             {
                                 countRead += results.Count;
                                 if (ReadCount == 1)
@@ -253,7 +253,7 @@ namespace Microsoft.PowerShell.Commands
                                     WriteContentObject(results, countRead, holder.PathInfo, currentContext);
                                 }
                             }
-                        } while (results != null && results.Count > 0 && ((TotalCount < 0) || countRead < TotalCount));
+                        } while (results is not null && results.Count > 0 && ((TotalCount < 0) || countRead < TotalCount));
                     }
                 }
             }
@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Commands
         private bool ScanForwardsForTail(ContentHolder holder, CmdletProviderContext currentContext)
         {
             var fsReader = holder.Reader as FileSystemContentReaderWriter;
-            Dbg.Diagnostics.Assert(fsReader != null, "Tail is only supported for FileSystemContentReaderWriter");
+            Dbg.Diagnostics.Assert(fsReader is not null, "Tail is only supported for FileSystemContentReaderWriter");
             var tailResultQueue = new Queue<object>();
             IList results = null;
             ErrorRecord error = null;
@@ -319,7 +319,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
 
-                if (results != null && results.Count > 0)
+                if (results is not null && results.Count > 0)
                 {
                     foreach (object entry in results)
                     {
@@ -328,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
                         tailResultQueue.Enqueue(entry);
                     }
                 }
-            } while (results != null && results.Count > 0);
+            } while (results is not null && results.Count > 0);
 
             if (tailResultQueue.Count > 0)
             {
@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (error != null)
+            if (error is not null)
             {
                 WriteError(error);
                 return false;
@@ -390,7 +390,7 @@ namespace Microsoft.PowerShell.Commands
         private bool SeekPositionForTail(IContentReader reader)
         {
             var fsReader = reader as FileSystemContentReaderWriter;
-            Dbg.Diagnostics.Assert(fsReader != null, "Tail is only supported for FileSystemContentReaderWriter");
+            Dbg.Diagnostics.Assert(fsReader is not null, "Tail is only supported for FileSystemContentReaderWriter");
 
             try
             {

@@ -191,7 +191,7 @@ namespace System.Management.Automation.Language
 
         internal AstPair(CommandParameterAst parameterAst, ExpressionAst argumentAst)
         {
-            if (parameterAst != null && parameterAst.Argument != null)
+            if (parameterAst is not null && parameterAst.Argument is not null)
                 throw PSTraceSource.NewArgumentException(nameof(parameterAst));
 
             if (parameterAst is null && argumentAst is null)
@@ -199,11 +199,11 @@ namespace System.Management.Automation.Language
 
             Parameter = parameterAst;
             ParameterArgumentType = AstParameterArgumentType.AstPair;
-            ParameterSpecified = parameterAst != null;
-            ArgumentSpecified = argumentAst != null;
-            ParameterName = parameterAst != null ? parameterAst.ParameterName : null;
-            ParameterText = parameterAst != null ? parameterAst.ParameterName : null;
-            ArgumentType = argumentAst != null ? argumentAst.StaticType : null;
+            ParameterSpecified = parameterAst is not null;
+            ArgumentSpecified = argumentAst is not null;
+            ParameterName = parameterAst is not null ? parameterAst.ParameterName : null;
+            ParameterText = parameterAst is not null ? parameterAst.ParameterName : null;
+            ArgumentType = argumentAst is not null ? argumentAst.StaticType : null;
 
             ParameterContainsArgument = false;
             Argument = argumentAst;
@@ -211,7 +211,7 @@ namespace System.Management.Automation.Language
 
         internal AstPair(CommandParameterAst parameterAst, CommandElementAst argumentAst)
         {
-            if (parameterAst != null && parameterAst.Argument != null)
+            if (parameterAst is not null && parameterAst.Argument is not null)
                 throw PSTraceSource.NewArgumentException(nameof(parameterAst));
 
             if (parameterAst is null || argumentAst is null)
@@ -293,7 +293,7 @@ namespace System.Management.Automation.Language
         public static StaticBindingResult BindCommand(CommandAst commandAst, bool resolve, string[] desiredParameters)
         {
             // If they specified any desired parameters, first quickly check if they are found
-            if ((desiredParameters != null) && (desiredParameters.Length > 0))
+            if ((desiredParameters is not null) && (desiredParameters.Length > 0))
             {
                 bool possiblyHadDesiredParameter = false;
                 foreach (CommandParameterAst commandParameter in commandAst.CommandElements.OfType<CommandParameterAst>())
@@ -419,7 +419,7 @@ namespace System.Management.Automation.Language
             }
 
             // Add error for duplicate parameters
-            if (bindingInfo.DuplicateParameters != null)
+            if (bindingInfo.DuplicateParameters is not null)
             {
                 foreach (AstParameterArgumentPair duplicateParameter in bindingInfo.DuplicateParameters)
                 {
@@ -428,7 +428,7 @@ namespace System.Management.Automation.Language
             }
 
             // Add error for parameters not found
-            if (bindingInfo.ParametersNotFound != null)
+            if (bindingInfo.ParametersNotFound is not null)
             {
                 foreach (CommandParameterAst parameterNotFound in bindingInfo.ParametersNotFound)
                 {
@@ -447,7 +447,7 @@ namespace System.Management.Automation.Language
             }
 
             // Add error for ambiguous parameters
-            if (bindingInfo.AmbiguousParameters != null)
+            if (bindingInfo.AmbiguousParameters is not null)
             {
                 foreach (CommandParameterAst ambiguousParameter in bindingInfo.AmbiguousParameters)
                 {
@@ -457,7 +457,7 @@ namespace System.Management.Automation.Language
             }
 
             // Add error for unbound positional parameters
-            if (bindingInfo.UnboundArguments != null)
+            if (bindingInfo.UnboundArguments is not null)
             {
                 foreach (AstParameterArgumentPair unboundArgument in bindingInfo.UnboundArguments)
                 {
@@ -478,7 +478,7 @@ namespace System.Management.Automation.Language
             }
 
             // Process the bound parameters
-            if (bindingInfo.BoundParameters != null)
+            if (bindingInfo.BoundParameters is not null)
             {
                 foreach (KeyValuePair<string, MergedCompiledCommandParameter> item in bindingInfo.BoundParameters)
                 {
@@ -488,7 +488,7 @@ namespace System.Management.Automation.Language
 
                     // This is a single argument
                     AstPair argumentAstPair = bindingInfo.BoundArguments[item.Key] as AstPair;
-                    if (argumentAstPair != null)
+                    if (argumentAstPair is not null)
                     {
                         value = argumentAstPair.Argument;
                     }
@@ -496,13 +496,13 @@ namespace System.Management.Automation.Language
                     // This is a parameter that took an argument, as well as ValueFromRemainingArguments.
                     // Merge the arguments into a single fake argument.
                     AstArrayPair argumentAstArrayPair = bindingInfo.BoundArguments[item.Key] as AstArrayPair;
-                    if (argumentAstArrayPair != null)
+                    if (argumentAstArrayPair is not null)
                     {
                         List<ExpressionAst> arguments = new List<ExpressionAst>();
                         foreach (ExpressionAst expression in argumentAstArrayPair.Argument)
                         {
                             ArrayLiteralAst expressionArray = expression as ArrayLiteralAst;
-                            if (expressionArray != null)
+                            if (expressionArray is not null)
                             {
                                 foreach (ExpressionAst newExpression in expressionArray.Elements)
                                 {
@@ -524,7 +524,7 @@ namespace System.Management.Automation.Language
                     // Special handling of switch parameters
                     if (parameter.Type == typeof(SwitchParameter))
                     {
-                        if ((value != null) &&
+                        if ((value is not null) &&
                             (string.Equals("$false", value.Extent.Text, StringComparison.OrdinalIgnoreCase)))
                         {
                             continue;
@@ -534,7 +534,7 @@ namespace System.Management.Automation.Language
                     }
 
                     // We got a parameter and a value
-                    if ((value != null) || (constantValue != null))
+                    if ((value is not null) || (constantValue is not null))
                     {
                         BoundParameters.Add(item.Key, new ParameterBindingResult(parameter, value, constantValue));
                     }
@@ -616,9 +616,9 @@ namespace System.Management.Automation.Language
                 }
 
                 CommandParameterAst parameter = commandElement as CommandParameterAst;
-                if (parameter != null)
+                if (parameter is not null)
                 {
-                    if (currentParameter != null)
+                    if (currentParameter is not null)
                     {
                         // Assume it was a switch
                         AddSwitch(currentParameter.ParameterName, bindingResult);
@@ -630,7 +630,7 @@ namespace System.Management.Automation.Language
                     bindingResult.Value = parameter;
 
                     // If it's a parameter with argument, add them both to the dictionary
-                    if (parameter.Argument != null)
+                    if (parameter.Argument is not null)
                     {
                         bindingResult.Value = parameter.Argument;
 
@@ -647,7 +647,7 @@ namespace System.Management.Automation.Language
                 else
                 {
                     // This isn't a parameter, it's a value for the previous parameter
-                    if (currentParameter != null)
+                    if (currentParameter is not null)
                     {
                         bindingResult.Value = commandElement;
                         AddBoundParameter(currentParameter, currentParameter.ParameterName, bindingResult);
@@ -665,7 +665,7 @@ namespace System.Management.Automation.Language
             }
 
             // Catch any extra parameters at the end of the command
-            if (currentParameter != null)
+            if (currentParameter is not null)
             {
                 // Assume it was a switch
                 AddSwitch(currentParameter.ParameterName, bindingResult);
@@ -733,7 +733,7 @@ namespace System.Management.Automation.Language
 
             internal set
             {
-                if (value != null)
+                if (value is not null)
                 {
                     _constantValue = value;
                 }
@@ -753,7 +753,7 @@ namespace System.Management.Automation.Language
                 _value = value;
 
                 ConstantExpressionAst constantValueAst = value as ConstantExpressionAst;
-                if (constantValueAst != null)
+                if (constantValueAst is not null)
                 {
                     this.ConstantValue = constantValueAst.Value;
                 }
@@ -961,7 +961,7 @@ namespace System.Management.Automation.Language
             // analyze the command and reparse the arguments
             {
                 ExecutionContext executionContext = LocalPipeline.GetExecutionContextFromTLS();
-                if (executionContext != null)
+                if (executionContext is not null)
                 {
                     // WinBlue: 324316. This limits the interaction of pseudoparameterbinder with the actual host.
                     SetTemporaryDefaultHost(executionContext);
@@ -990,7 +990,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (_bindingEffective && (_isPipelineInputExpected || pipeArgumentType != null))
+            if (_bindingEffective && (_isPipelineInputExpected || pipeArgumentType is not null))
             {
                 _pipelineInputType = pipeArgumentType;
             }
@@ -1102,7 +1102,7 @@ namespace System.Management.Automation.Language
             executionContext.EngineHostInterface.RevertHostRef();
 
             // Re-apply saved host if any.
-            if (_restoreHost != null)
+            if (_restoreHost is not null)
             {
                 executionContext.EngineHostInterface.SetHostRef(_restoreHost);
                 _restoreHost = null;
@@ -1199,26 +1199,26 @@ namespace System.Management.Automation.Language
 
             var commandProcessor = processor as CommandProcessor;
             var scriptProcessor = processor as ScriptCommandProcessorBase;
-            bool implementsDynamicParameters = commandProcessor != null &&
+            bool implementsDynamicParameters = commandProcessor is not null &&
                                                commandProcessor.CommandInfo.ImplementsDynamicParameters;
 
             var argumentsToGetDynamicParameters = implementsDynamicParameters
                                                       ? new List<object>(_commandElements.Count)
                                                       : null;
-            if (commandProcessor != null || scriptProcessor != null)
+            if (commandProcessor is not null || scriptProcessor is not null)
             {
                 // Pre-processing the arguments -- command arguments
                 for (commandIndex++; commandIndex < _commandElements.Count; commandIndex++)
                 {
                     var parameter = _commandElements[commandIndex] as CommandParameterAst;
-                    if (parameter != null)
+                    if (parameter is not null)
                     {
-                        if (argumentsToGetDynamicParameters != null)
+                        if (argumentsToGetDynamicParameters is not null)
                         {
                             argumentsToGetDynamicParameters.Add(parameter.Extent.Text);
                         }
 
-                        AstPair parameterArg = parameter.Argument != null
+                        AstPair parameterArg = parameter.Argument is not null
                             ? new AstPair(parameter)
                             : new AstPair(parameter, (ExpressionAst)null);
 
@@ -1227,7 +1227,7 @@ namespace System.Management.Automation.Language
                     else
                     {
                         var dash = _commandElements[commandIndex] as StringConstantExpressionAst;
-                        if (dash != null && dash.Value.Trim().Equals("-", StringComparison.OrdinalIgnoreCase))
+                        if (dash is not null && dash.Value.Trim().Equals("-", StringComparison.OrdinalIgnoreCase))
                         {
                             // "-" is represented by StringConstantExpressionAst. Most likely the user type a tab here,
                             // and we don't want it be treated as an argument
@@ -1235,7 +1235,7 @@ namespace System.Management.Automation.Language
                         }
 
                         var expressionArgument = _commandElements[commandIndex] as ExpressionAst;
-                        if (expressionArgument != null)
+                        if (expressionArgument is not null)
                         {
                             argumentsToGetDynamicParameters?.Add(expressionArgument.Extent.Text);
 
@@ -1245,7 +1245,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (commandProcessor != null)
+            if (commandProcessor is not null)
             {
                 _function = false;
                 if (implementsDynamicParameters)
@@ -1302,7 +1302,7 @@ namespace System.Management.Automation.Language
                 _bindableParameters = commandProcessor.CmdletParameterBinderController.BindableParameters;
                 _defaultParameterSetFlag = commandProcessor.CommandInfo.CommandMetadata.DefaultParameterSetFlag;
             }
-            else if (scriptProcessor != null)
+            else if (scriptProcessor is not null)
             {
                 _function = true;
                 _commandInfo = scriptProcessor.CommandInfo;
@@ -1322,14 +1322,14 @@ namespace System.Management.Automation.Language
             // Check if there is pipeline input
             CommandBaseAst preCmdBaseAst = null;
             var pipe = _commandAst.Parent as PipelineAst;
-            Diagnostics.Assert(pipe != null, "CommandAst should has a PipelineAst parent");
+            Diagnostics.Assert(pipe is not null, "CommandAst should has a PipelineAst parent");
             if (pipe.PipelineElements.Count > 1)
             {
                 foreach (CommandBaseAst cmdBase in pipe.PipelineElements)
                 {
                     if (cmdBase.GetHashCode() == _commandAst.GetHashCode())
                     {
-                        _isPipelineInputExpected = preCmdBaseAst != null;
+                        _isPipelineInputExpected = preCmdBaseAst is not null;
                         if (_isPipelineInputExpected)
                             _pipelineInputType = typeof(object);
                         break;
@@ -1347,7 +1347,7 @@ namespace System.Management.Automation.Language
             // Analyze the Ast
             var exportVisitor = new ExportVisitor(forCompletion: true);
             Ast ast = _commandAst;
-            while (ast.Parent != null)
+            while (ast.Parent is not null)
             {
                 ast = ast.Parent;
             }
@@ -1357,7 +1357,7 @@ namespace System.Management.Automation.Language
             CommandProcessorBase commandProcessor = null;
 
             resolvedCommandName = _commandAst.GetCommandName();
-            if (resolvedCommandName != null)
+            if (resolvedCommandName is not null)
             {
                 string alias;
                 int resolvedAliasCount = 0;
@@ -1471,7 +1471,7 @@ namespace System.Management.Automation.Language
                         {
                             // Testing paramsAstAtCursor ensures we only give up during tab completion,
                             // otherwise we know this is a missing parameter.
-                            if (paramAstAtCursor != null)
+                            if (paramAstAtCursor is not null)
                             {
                                 // Do not use the parsed arguments
                                 _arguments = null;
@@ -1538,7 +1538,7 @@ namespace System.Management.Automation.Language
                     {
                         // The next item is a pure argument.
                         AstPair nextArgument = nextArg as AstPair;
-                        Diagnostics.Assert(nextArgument != null, "the next item should be a pure argument here");
+                        Diagnostics.Assert(nextArgument is not null, "the next item should be a pure argument here");
                         Diagnostics.Assert(nextArgument.ArgumentSpecified && !nextArgument.ArgumentIsCommandParameterAst, "the next item should be a pure argument here");
 
                         AstPair newArg = new AstPair(argument.Parameter, (ExpressionAst)nextArgument.Argument);
@@ -1881,7 +1881,7 @@ namespace System.Management.Automation.Language
             foreach (AstParameterArgumentPair arg in unboundArguments)
             {
                 AstPair realArg = arg as AstPair;
-                Diagnostics.Assert(realArg != null && !realArg.ParameterSpecified && !realArg.ArgumentIsCommandParameterAst,
+                Diagnostics.Assert(realArg is not null && !realArg.ParameterSpecified && !realArg.ArgumentIsCommandParameterAst,
                     "all unbound arguments left should be pure ExpressionAst arguments");
                 argList.Add((ExpressionAst)realArg.Argument);
             }

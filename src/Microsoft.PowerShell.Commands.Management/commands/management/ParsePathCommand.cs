@@ -422,7 +422,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                 }
 
-                if (result != null)
+                if (result is not null)
                 {
                     WriteObject(result);
                 }
@@ -442,7 +442,7 @@ namespace Microsoft.PowerShell.Commands
         private string RemoveQualifier(string path)
         {
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Path should be verified by the caller");
 
             string result = path;

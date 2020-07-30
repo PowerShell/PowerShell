@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     break;
             }
 
-            if (definitions != null)
+            if (definitions is not null)
             {
                 foreach (ScheduledJobDefinition definition in definitions)
                 {
@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
 
             // Check for unknown definition names.
-            if ((_names != null && _names.Length > 0) &&
+            if ((_names is not null && _names.Length > 0) &&
                 (_definitions == null || _definitions.Length < _names.Length))
             {
                 // Make sure there is no PowerShell task in Task Scheduler with removed names.

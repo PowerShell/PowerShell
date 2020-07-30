@@ -412,7 +412,7 @@ namespace System.Management.Automation.Provider
 
                 if (root is null)
                 {
-                    if (PSDriveInfo != null)
+                    if (PSDriveInfo is not null)
                     {
                         root = PSDriveInfo.Root;
                     }
@@ -424,7 +424,7 @@ namespace System.Management.Automation.Provider
                 path = path.TrimEnd(StringLiterals.DefaultPathSeparator);
                 string rootPath = string.Empty;
 
-                if (root != null)
+                if (root is not null)
                 {
                     rootPath = NormalizePath(root);
                 }
@@ -923,7 +923,7 @@ namespace System.Management.Automation.Provider
             {
                 result = true;
             }
-            else if (this.PSDriveInfo != null && !string.IsNullOrEmpty(this.PSDriveInfo.Root) &&
+            else if (this.PSDriveInfo is not null && !string.IsNullOrEmpty(this.PSDriveInfo.Root) &&
                      path.StartsWith(this.PSDriveInfo.Root, StringComparison.OrdinalIgnoreCase))
             {
                 result = true;

@@ -121,7 +121,7 @@ namespace System.Management.Automation
             if (!this.CacheFullyLoaded)
             {
                 IEnumerable<HelpInfo> result = DoSearchHelp(searchHelpRequest);
-                if (result != null)
+                if (result is not null)
                 {
                     foreach (HelpInfo helpInfoToReturn in result)
                     {

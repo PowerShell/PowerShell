@@ -89,7 +89,7 @@ namespace System.Management.Automation
             // If we are debugging, let the unit tests swap the file from beneath us
             if (commandInfo.CommandType == CommandTypes.ExternalScript)
             {
-                while (Environment.GetEnvironmentVariable("PSCommandDiscoveryPreDelay") != null) { System.Threading.Thread.Sleep(100); }
+                while (Environment.GetEnvironmentVariable("PSCommandDiscoveryPreDelay") is not null) { System.Threading.Thread.Sleep(100); }
             }
 #endif
 
@@ -108,7 +108,7 @@ namespace System.Management.Automation
                 // If we are debugging, let the unit tests swap the file from beneath us
                 if (commandInfo.CommandType == CommandTypes.ExternalScript)
                 {
-                    while (Environment.GetEnvironmentVariable("PSCommandDiscoveryPostDelay") != null) { System.Threading.Thread.Sleep(100); }
+                    while (Environment.GetEnvironmentVariable("PSCommandDiscoveryPostDelay") is not null) { System.Threading.Thread.Sleep(100); }
                 }
 #endif
             }
@@ -122,7 +122,7 @@ namespace System.Management.Automation
 
             if (!result)
             {
-                if (authorizationManagerException != null)
+                if (authorizationManagerException is not null)
                 {
                     if (authorizationManagerException is PSSecurityException)
                     {
@@ -171,7 +171,7 @@ namespace System.Management.Automation
                                                   PSHost host,
                                                   out Exception reason)
         {
-            Dbg.Diagnostics.Assert(commandInfo != null, "caller should validate the parameter");
+            Dbg.Diagnostics.Assert(commandInfo is not null, "caller should validate the parameter");
 
             reason = null;
 

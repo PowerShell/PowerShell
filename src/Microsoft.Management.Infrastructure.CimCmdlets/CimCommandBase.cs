@@ -450,7 +450,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 if ((entry.SetMandatoryParameterCount == entry.MandatoryParameterCount) &&
                     this.parametersetNamesList.Contains(parameterSetName))
                 {
-                    if (boundParameterSetName != null)
+                    if (boundParameterSetName is not null)
                     {
                         throw new PSArgumentException(CimCmdletStrings.UnableToResolveParameterSetName);
                     }
@@ -527,7 +527,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         internal void CheckParameterSet()
         {
-            if (this.parameterBinder != null)
+            if (this.parameterBinder is not null)
             {
                 try
                 {
@@ -557,7 +557,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return;
             }
 
-            if (this.parameterBinder != null)
+            if (this.parameterBinder is not null)
             {
                 this.parameterBinder.SetParameter(parameterName, this.AtBeginProcess);
             }
@@ -663,7 +663,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected virtual void DisposeInternal()
         {
             // Dispose managed resources.
-            if (this.operation != null)
+            if (this.operation is not null)
             {
                 this.operation.Dispose();
             }
@@ -976,7 +976,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("PSCredential:{0}; PasswordAuthenticationMechanism:{1}; operationName:{2}; parameterName:{3}.", 0, psCredentials, passwordAuthentication, operationName, parameterName);
 
             CimCredential credentials = null;
-            if (psCredentials != null)
+            if (psCredentials is not null)
             {
                 NetworkCredential networkCredential = psCredentials.GetNetworkCredential();
                 DebugHelper.WriteLog("Domain:{0}; UserName:{1}; Password:{2}.", 1, networkCredential.Domain, networkCredential.UserName, psCredentials.Password);

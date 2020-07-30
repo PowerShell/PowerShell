@@ -87,11 +87,11 @@ namespace System.Management.Automation.Runspaces
             PSInformationalBuffers infoBuffers)
             : base(runspace, command)
         {
-            Dbg.Assert(inputStream != null, "Caller Should validate inputstream parameter");
-            Dbg.Assert(outputStream != null, "Caller Should validate outputStream parameter");
-            Dbg.Assert(errorStream != null, "Caller Should validate errorStream parameter");
-            Dbg.Assert(infoBuffers != null, "Caller Should validate informationalBuffers parameter");
-            Dbg.Assert(command != null, "Command cannot be null");
+            Dbg.Assert(inputStream is not null, "Caller Should validate inputstream parameter");
+            Dbg.Assert(outputStream is not null, "Caller Should validate outputStream parameter");
+            Dbg.Assert(errorStream is not null, "Caller Should validate errorStream parameter");
+            Dbg.Assert(infoBuffers is not null, "Caller Should validate informationalBuffers parameter");
+            Dbg.Assert(command is not null, "Command cannot be null");
 
             // Since we are constructing this pipeline using a commandcollection we dont need
             // to add cmd to CommandCollection again (Initialize does this).. because of this
@@ -399,7 +399,7 @@ namespace System.Management.Automation.Runspaces
             {
                 return new Collection<PSObject>();
             }
-            else if (PipelineStateInfo.State == PipelineState.Failed && PipelineStateInfo.Reason != null)
+            else if (PipelineStateInfo.State == PipelineState.Failed && PipelineStateInfo.Reason is not null)
             {
                 // If this is an error pipe for a hosting applicationand we are logging,
                 // then log the error.
@@ -494,7 +494,7 @@ namespace System.Management.Automation.Runspaces
                 if (syncCall && !(InputStream is PSDataCollectionStream<PSObject> || InputStream is PSDataCollectionStream<object>))
                 {
                     // Method is called from synchronous invoke.
-                    if (input != null)
+                    if (input is not null)
                     {
                         // TO-DO-Add a test make sure that ObjectDisposed
                         // exception is thrown
@@ -627,7 +627,7 @@ namespace System.Management.Automation.Runspaces
                     // Detect if we're running a pulse pipeline, or we're running a nested pipeline
                     // in a pulse pipeline
                     if (currentPipeline == RunspaceBase.PulsePipeline ||
-                        (currentPipeline.IsNested && RunspaceBase.PulsePipeline != null))
+                        (currentPipeline.IsNested && RunspaceBase.PulsePipeline is not null))
                     {
                         // If so, wait and try again
                         if (isInLock)
@@ -685,7 +685,7 @@ namespace System.Management.Automation.Runspaces
                                 RunspaceStrings.NestedPipelineNoParentPipeline);
                     }
 
-                    Dbg.Assert(currentPipeline.NestedPipelineExecutionThread != null, "Current pipeline should always have NestedPipelineExecutionThread set");
+                    Dbg.Assert(currentPipeline.NestedPipelineExecutionThread is not null, "Current pipeline should always have NestedPipelineExecutionThread set");
                     Thread th = Thread.CurrentThread;
 
                     if (currentPipeline.NestedPipelineExecutionThread.Equals(th) == false)
@@ -843,7 +843,7 @@ namespace System.Management.Automation.Runspaces
                 stateChanged = this.StateChanged;
                 runspaceHasAvailabilityChangedSubscribers = _runspace.HasAvailabilityChangedSubscribers;
 
-                if (stateChanged != null || runspaceHasAvailabilityChangedSubscribers)
+                if (stateChanged is not null || runspaceHasAvailabilityChangedSubscribers)
                 {
                     tempEventQueue = _executionEventQueue;
                     _executionEventQueue = new Queue<ExecutionEventQueueItem>();
@@ -857,7 +857,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if (tempEventQueue != null)
+            if (tempEventQueue is not null)
             {
                 while (tempEventQueue.Count > 0)
                 {
@@ -872,7 +872,7 @@ namespace System.Management.Automation.Runspaces
 #pragma warning disable 56500
                     // Exception raised in the eventhandler are not error in pipeline.
                     // silently ignore them.
-                    if (stateChanged != null)
+                    if (stateChanged is not null)
                     {
                         try
                         {
@@ -919,7 +919,7 @@ namespace System.Management.Automation.Runspaces
 
             private set
             {
-                Dbg.Assert(value != null, "ErrorStream cannot be null");
+                Dbg.Assert(value is not null, "ErrorStream cannot be null");
                 _errorStream = value;
                 _errorStream.DataReady += OnErrorStreamDataReady;
             }
@@ -990,7 +990,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         private void Initialize(Runspace runspace, string command, bool addToHistory, bool isNested)
         {
-            Dbg.Assert(runspace != null, "caller should validate the parameter");
+            Dbg.Assert(runspace is not null, "caller should validate the parameter");
             _runspace = runspace;
 
             _isNested = isNested;
@@ -1000,7 +1000,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
-            if (command != null)
+            if (command is not null)
             {
                 Commands.Add(new Command(command, true, false));
             }

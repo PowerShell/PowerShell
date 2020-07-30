@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             this.CmdletInvocationInfo = cmdlet.MyInvocation;
 
             var runtime = cmdlet.CommandRuntime as MshCommandRuntime;
-            Dbg.Assert(runtime != null, "CIM cmdlets should only be run from within PS runtime");
+            Dbg.Assert(runtime is not null, "CIM cmdlets should only be run from within PS runtime");
 
             this.DebugActionPreference = runtime.DebugPreference;
             WarnAboutUnsupportedActionPreferences(

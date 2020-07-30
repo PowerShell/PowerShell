@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void EndProcessing()
         {
             // shut down only if we ever processed a pipeline object
-            if (_mgr != null)
+            if (_mgr is not null)
                 _mgr.ShutDown();
         }
 
@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             lock (_syncRoot)
             {
-                if (_lo != null)
+                if (_lo is not null)
                 {
                     _lo.StopProcessing();
                 }
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         protected override void InternalDispose()
         {
             base.InternalDispose();
-            if (_mgr != null)
+            if (_mgr is not null)
             {
                 _mgr.Dispose();
                 _mgr = null;
@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // select which pipeline should handle the object
             CommandEntry ce = this.GetActiveCommandEntry(so);
 
-            Diagnostics.Assert(ce != null, "CommandEntry ce must not be null");
+            Diagnostics.Assert(ce is not null, "CommandEntry ce must not be null");
 
             // delegate the processing
             ce.command.Process(so);
@@ -273,13 +273,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we assume that command entries are never null
             foreach (CommandEntry ce in _commandEntryList)
             {
-                Diagnostics.Assert(ce != null, "ce != null");
+                Diagnostics.Assert(ce is not null, "ce is not null");
                 ce.command.ShutDown();
                 ce.command = null;
             }
 
             // we assume we always have a default command entry
-            Diagnostics.Assert(_defaultCommandEntry != null, "defaultCommandEntry != null");
+            Diagnostics.Assert(_defaultCommandEntry is not null, "defaultCommandEntry is not null");
             _defaultCommandEntry.command.ShutDown();
             _defaultCommandEntry.command = null;
         }
@@ -289,12 +289,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we assume that command entries are never null
             foreach (CommandEntry ce in _commandEntryList)
             {
-                Diagnostics.Assert(ce != null, "ce != null");
+                Diagnostics.Assert(ce is not null, "ce is not null");
                 ce.Dispose();
             }
 
             // we assume we always have a default command entry
-            Diagnostics.Assert(_defaultCommandEntry != null, "defaultCommandEntry != null");
+            Diagnostics.Assert(_defaultCommandEntry is not null, "defaultCommandEntry is not null");
             _defaultCommandEntry.Dispose();
         }
 

@@ -27,7 +27,7 @@ namespace System.Management.Automation.Interpreter
 
         internal static Type GetNullableType(Type type)
         {
-            Debug.Assert(type != null, "type cannot be null");
+            Debug.Assert(type is not null, "type cannot be null");
             if (type.IsValueType && !IsNullableType(type))
             {
                 return typeof(Nullable<>).MakeGenericType(type);
@@ -143,7 +143,7 @@ namespace System.Management.Automation.Interpreter
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
         internal static Type MakeDelegate(Type[] types)
         {
-            Debug.Assert(types != null && types.Length > 0);
+            Debug.Assert(types is not null && types.Length > 0);
 
             // Can only used predefined delegates if we have no byref types and
             // the arity is small enough to fit in Func<...> or Action<...>
@@ -363,7 +363,7 @@ namespace System.Management.Automation.Interpreter
         private static bool TryGetAssociatedStackTraces(Exception e, out List<StackTrace> traces)
         {
             traces = e.Data[prevStackTraces] as List<StackTrace>;
-            return traces != null;
+            return traces is not null;
         }
     }
 
@@ -396,13 +396,13 @@ namespace System.Management.Automation.Interpreter
 
         public bool TryGetValue(TKey key, out TValue value)
         {
-            Debug.Assert(key != null);
+            Debug.Assert(key is not null);
 
-            if (_dict != null)
+            if (_dict is not null)
             {
                 return _dict.TryGetValue(key, out value);
             }
-            else if (_keysAndValues != null)
+            else if (_keysAndValues is not null)
             {
                 for (int i = 0; i < _keysAndValues.Length; i++)
                 {
@@ -420,13 +420,13 @@ namespace System.Management.Automation.Interpreter
 
         public bool Remove(TKey key)
         {
-            Debug.Assert(key != null);
+            Debug.Assert(key is not null);
 
-            if (_dict != null)
+            if (_dict is not null)
             {
                 return _dict.Remove(key);
             }
-            else if (_keysAndValues != null)
+            else if (_keysAndValues is not null)
             {
                 for (int i = 0; i < _keysAndValues.Length; i++)
                 {
@@ -444,13 +444,13 @@ namespace System.Management.Automation.Interpreter
 
         public bool ContainsKey(TKey key)
         {
-            Debug.Assert(key != null);
+            Debug.Assert(key is not null);
 
-            if (_dict != null)
+            if (_dict is not null)
             {
                 return _dict.ContainsKey(key);
             }
-            else if (_keysAndValues != null)
+            else if (_keysAndValues is not null)
             {
                 for (int i = 0; i < _keysAndValues.Length; i++)
                 {
@@ -468,7 +468,7 @@ namespace System.Management.Automation.Interpreter
         {
             get
             {
-                if (_dict != null)
+                if (_dict is not null)
                 {
                     return _dict.Count;
                 }
@@ -479,7 +479,7 @@ namespace System.Management.Automation.Interpreter
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
-            if (_dict != null)
+            if (_dict is not null)
             {
                 return _dict.GetEnumerator();
             }
@@ -489,11 +489,11 @@ namespace System.Management.Automation.Interpreter
 
         private IEnumerator<KeyValuePair<TKey, TValue>> GetEnumeratorWorker()
         {
-            if (_keysAndValues != null)
+            if (_keysAndValues is not null)
             {
                 for (int i = 0; i < _keysAndValues.Length; i++)
                 {
-                    if (_keysAndValues[i].Key != null)
+                    if (_keysAndValues[i].Key is not null)
                     {
                         yield return _keysAndValues[i];
                     }
@@ -505,7 +505,7 @@ namespace System.Management.Automation.Interpreter
         {
             get
             {
-                Debug.Assert(key != null);
+                Debug.Assert(key is not null);
 
                 TValue res;
                 if (TryGetValue(key, out res))
@@ -518,16 +518,16 @@ namespace System.Management.Automation.Interpreter
 
             set
             {
-                Debug.Assert(key != null);
+                Debug.Assert(key is not null);
 
-                if (_dict != null)
+                if (_dict is not null)
                 {
                     _dict[key] = value;
                 }
                 else
                 {
                     int index;
-                    if (_keysAndValues != null)
+                    if (_keysAndValues is not null)
                     {
                         index = -1;
                         for (int i = 0; i < _keysAndValues.Length; i++)
@@ -602,7 +602,7 @@ namespace System.Management.Automation.Interpreter
             if (_dict.TryGetValue(key, out storedValue))
             {
                 LinkedListNode<TKey> node = storedValue.List;
-                if (node.Previous != null)
+                if (node.Previous is not null)
                 {
                     // move us to the head of the list...
                     _list.Remove(node);
@@ -782,11 +782,11 @@ namespace System.Management.Automation.Interpreter
             int threadId = Thread.CurrentThread.ManagedThreadId;
 
             // fast path if we already have a value in the array
-            if (curStorage != null && curStorage.Length > threadId)
+            if (curStorage is not null && curStorage.Length > threadId)
             {
                 StorageInfo res = curStorage[threadId];
 
-                if (res != null && (_refCounted || res.Thread == Thread.CurrentThread))
+                if (res is not null && (_refCounted || res.Thread == Thread.CurrentThread))
                 {
                     return res;
                 }
@@ -851,7 +851,7 @@ namespace System.Management.Automation.Interpreter
                     for (int i = 0; i < curStorage.Length; i++)
                     {
                         // leave out the threads that have exited
-                        if (curStorage[i] != null && curStorage[i].Thread.IsAlive)
+                        if (curStorage[i] is not null && curStorage[i].Thread.IsAlive)
                         {
                             newStorage[i] = curStorage[i];
                         }
@@ -913,28 +913,28 @@ namespace System.Management.Automation.Interpreter
         [Conditional("DEBUG")]
         public static void NotNull(object var)
         {
-            Debug.Assert(var != null);
+            Debug.Assert(var is not null);
         }
 
         [Conditional("DEBUG")]
         public static void NotNull(object var1, object var2)
         {
-            Debug.Assert(var1 != null && var2 != null);
+            Debug.Assert(var1 is not null && var2 is not null);
         }
 
         [Conditional("DEBUG")]
         public static void NotNull(object var1, object var2, object var3)
         {
-            Debug.Assert(var1 != null && var2 != null && var3 != null);
+            Debug.Assert(var1 is not null && var2 is not null && var3 is not null);
         }
 
         [Conditional("DEBUG")]
         public static void NotNullItems<T>(IEnumerable<T> items) where T : class
         {
-            Debug.Assert(items != null);
+            Debug.Assert(items is not null);
             foreach (object item in items)
             {
-                Debug.Assert(item != null);
+                Debug.Assert(item is not null);
             }
         }
 

@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (ContentHolder holder in contentHolders)
             {
-                if (holder.Writer != null)
+                if (holder.Writer is not null)
                 {
                     try
                     {

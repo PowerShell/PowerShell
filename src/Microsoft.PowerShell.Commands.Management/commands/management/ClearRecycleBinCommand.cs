@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // There are two scenarios:
             // 1) The user provides a list of drives.
-            if (_drivesList != null)
+            if (_drivesList is not null)
             {
                 foreach (var drive in _drivesList)
                 {
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
         private bool ValidDrivePath(string drivePath)
         {
             DriveInfo actualDrive = null;
-            if (_availableDrives != null)
+            if (_availableDrives is not null)
             {
                 foreach (DriveInfo drive in _availableDrives)
                 {

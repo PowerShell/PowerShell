@@ -119,17 +119,17 @@ namespace System.Management.Automation
             CmdletInfo cmdletInfo;
             ExternalScriptInfo scriptInfo;
             FunctionInfo funcInfo;
-            if ((cmdletInfo = commandInfo as CmdletInfo) != null)
+            if ((cmdletInfo = commandInfo as CmdletInfo) is not null)
             {
                 Init(commandInfo.Name, cmdletInfo.FullName, cmdletInfo.ImplementingType, shouldGenerateCommonParameters);
             }
-            else if ((scriptInfo = commandInfo as ExternalScriptInfo) != null)
+            else if ((scriptInfo = commandInfo as ExternalScriptInfo) is not null)
             {
                 // Accessing the script block property here reads and parses the script
                 Init(scriptInfo.ScriptBlock, scriptInfo.Path, shouldGenerateCommonParameters);
                 _wrappedCommandType = CommandTypes.ExternalScript;
             }
-            else if ((funcInfo = commandInfo as FunctionInfo) != null)
+            else if ((funcInfo = commandInfo as FunctionInfo) is not null)
             {
                 Init(funcInfo.ScriptBlock, funcInfo.Name, shouldGenerateCommonParameters);
                 _wrappedCommandType = commandInfo.CommandType;
@@ -238,7 +238,7 @@ namespace System.Management.Automation
             Name = name;
             this.CommandType = commandType;
 
-            if (commandType != null)
+            if (commandType is not null)
             {
                 ConstructCmdletMetadataUsingReflection();
                 _shouldGenerateCommonParameters = shouldGenerateCommonParameters;
@@ -263,7 +263,7 @@ namespace System.Management.Automation
             }
 
             CmdletBindingAttribute cmdletBindingAttribute = scriptBlock.CmdletBindingAttribute;
-            if (cmdletBindingAttribute != null)
+            if (cmdletBindingAttribute is not null)
             {
                 ProcessCmdletAttribute(cmdletBindingAttribute);
             }
@@ -320,7 +320,7 @@ namespace System.Management.Automation
 
             CommandMetadata result = null;
 
-            if ((context != null) && (cmdletType != null))
+            if ((context is not null) && (cmdletType is not null))
             {
                 string cmdletTypeName = cmdletType.AssemblyQualifiedName;
                 s_commandMetadataCache.TryGetValue(cmdletTypeName, out result);
@@ -330,7 +330,7 @@ namespace System.Management.Automation
             {
                 result = new CommandMetadata(commandName, cmdletType, context);
 
-                if ((context != null) && (cmdletType != null))
+                if ((context is not null) && (cmdletType is not null))
                 {
                     string cmdletTypeName = cmdletType.AssemblyQualifiedName;
                     s_commandMetadataCache.TryAdd(cmdletTypeName, result);
@@ -375,7 +375,7 @@ namespace System.Management.Automation
             Name = commandName;
             this.CommandType = cmdletType;
 
-            if (cmdletType != null)
+            if (cmdletType is not null)
             {
                 InternalParameterMetadata parameterMetadata = InternalParameterMetadata.Get(cmdletType, context, false);
                 ConstructCmdletMetadataUsingReflection();
@@ -417,7 +417,7 @@ namespace System.Management.Automation
 
             CmdletBindingAttribute cmdletBindingAttribute = scriptblock.CmdletBindingAttribute;
 
-            if (cmdletBindingAttribute != null)
+            if (cmdletBindingAttribute is not null)
             {
                 ProcessCmdletAttribute(cmdletBindingAttribute);
             }
@@ -520,7 +520,7 @@ namespace System.Management.Automation
             {
                 RemotingCapability currentRemotingCapability = _remotingCapability;
                 if ((currentRemotingCapability == Automation.RemotingCapability.PowerShell) &&
-                    ((this.Parameters != null) && this.Parameters.ContainsKey("ComputerName")))
+                    ((this.Parameters is not null) && this.Parameters.ContainsKey("ComputerName")))
                 {
                     _remotingCapability = Automation.RemotingCapability.SupportedByCommand;
                 }
@@ -552,7 +552,7 @@ namespace System.Management.Automation
                 if (_parameters is null)
                 {
                     // Return parameters for a script block
-                    if (_scriptBlock != null)
+                    if (_scriptBlock is not null)
                     {
                         InternalParameterMetadata parameterMetadata = InternalParameterMetadata.Get(_scriptBlock.RuntimeDefinedParameters, false,
                                                                             _scriptBlock.UsesCmdletBinding);
@@ -560,7 +560,7 @@ namespace System.Management.Automation
                             MergeParameterMetadata(null, parameterMetadata, _shouldGenerateCommonParameters);
                         _parameters = ParameterMetadata.GetParameterMetadata(mergedCommandParameterMetadata);
                     }
-                    else if (this.CommandType != null)
+                    else if (this.CommandType is not null)
                     {
                         // Construct compiled parameter metadata from this
                         InternalParameterMetadata parameterMetadata = InternalParameterMetadata.Get(this.CommandType, null, false);
@@ -675,14 +675,14 @@ namespace System.Management.Automation
         private void ConstructCmdletMetadataUsingReflection()
         {
             Diagnostics.Assert(
-                CommandType != null,
+                CommandType is not null,
                 "This method should only be called when constructed with the Type");
 
             // Determine if the cmdlet implements dynamic parameters by looking for the interface
 
             Type dynamicParametersType = CommandType.GetInterface(typeof(IDynamicParameters).Name, true);
 
-            if (dynamicParametersType != null)
+            if (dynamicParametersType is not null)
             {
                 _implementsDynamicParameters = true;
             }
@@ -694,7 +694,7 @@ namespace System.Management.Automation
             foreach (Attribute attribute in customAttributes)
             {
                 CmdletAttribute cmdletAttribute = attribute as CmdletAttribute;
-                if (cmdletAttribute != null)
+                if (cmdletAttribute is not null)
                 {
                     ProcessCmdletAttribute(cmdletAttribute);
                     this.Name = cmdletAttribute.VerbName + "-" + cmdletAttribute.NounName;
@@ -752,7 +752,7 @@ namespace System.Management.Automation
 
             // Check to see if the cmdlet uses positional binding
             var cmdletBindingAttribute = attribute as CmdletBindingAttribute;
-            if (cmdletBindingAttribute != null)
+            if (cmdletBindingAttribute is not null)
             {
                 PositionalBinding = cmdletBindingAttribute.PositionalBinding;
             }
@@ -969,7 +969,7 @@ end
 
                 foreach (var pair in Parameters)
                 {
-                    if (paramDataPrefix != null)
+                    if (paramDataPrefix is not null)
                     {
                         parameters.Append(paramDataPrefix);
                     }

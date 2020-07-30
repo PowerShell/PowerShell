@@ -64,7 +64,7 @@ namespace Microsoft.Management.UI.Internal
             {
                 var peer = UIElementAutomationPeer.CreatePeerForElement(this);
 
-                if (peer != null)
+                if (peer is not null)
                 {
                     var oldValue = (bool?)args.OldValue;
                     var newValue = (bool?)args.NewValue;

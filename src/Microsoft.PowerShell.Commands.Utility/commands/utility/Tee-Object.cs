@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
             if (!_alreadyDisposed)
             {
                 _alreadyDisposed = true;
-                if (isDisposing && _commandWrapper != null)
+                if (isDisposing && _commandWrapper is not null)
                 {
                     _commandWrapper.Dispose();
                     _commandWrapper = null;

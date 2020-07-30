@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             get
             {
                 CheckStopProcessing();
-                if (_displayCellsPSHost != null)
+                if (_displayCellsPSHost is not null)
                 {
                     return _displayCellsPSHost;
                 }
@@ -269,7 +269,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             PSHostRawUserInterface raw = _console.RawUI;
-            if (raw != null)
+            if (raw is not null)
             {
                 tracer.WriteLine("there is a valid raw interface");
 #if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE

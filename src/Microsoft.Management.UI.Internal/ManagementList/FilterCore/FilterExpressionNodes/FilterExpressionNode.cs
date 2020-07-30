@@ -38,7 +38,7 @@ namespace Microsoft.Management.UI.Internal
             var ts = new List<T>();
 
             var operandNode = this as FilterExpressionOperandNode;
-            if (operandNode != null)
+            if (operandNode is not null)
             {
                 if (typeof(T).IsInstanceOfType(operandNode.Rule))
                 {
@@ -49,7 +49,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             var operatorAndNode = this as FilterExpressionAndOperatorNode;
-            if (operatorAndNode != null)
+            if (operatorAndNode is not null)
             {
                 foreach (var childNode in operatorAndNode.Children)
                 {
@@ -58,7 +58,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             var operatorOrNode = this as FilterExpressionOrOperatorNode;
-            if (operatorOrNode != null)
+            if (operatorOrNode is not null)
             {
                 foreach (var childNode in operatorOrNode.Children)
                 {

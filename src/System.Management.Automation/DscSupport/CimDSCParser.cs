@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 else
                 {
                     Exception innerException = null;
-                    if (powerShell.Streams.Error != null && powerShell.Streams.Error.Count > 0)
+                    if (powerShell.Streams.Error is not null && powerShell.Streams.Error.Count > 0)
                     {
                         innerException = powerShell.Streams.Error[0].Exception;
                     }
@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             foreach (var property in instance.CimInstanceProperties)
             {
-                if (property.Value != null)
+                if (property.Value is not null)
                 {
                     MemberInfo[] memberInfo = targetType.GetMember(property.Name, BindingFlags.Public | BindingFlags.Instance);
 
@@ -91,9 +91,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         case CimType.Instance:
                             {
                                 var cimPropertyInstance = property.Value as CimInstance;
-                                if (cimPropertyInstance != null &&
-                                    cimPropertyInstance.CimClass != null &&
-                                    cimPropertyInstance.CimClass.CimSystemProperties != null &&
+                                if (cimPropertyInstance is not null &&
+                                    cimPropertyInstance.CimClass is not null &&
+                                    cimPropertyInstance.CimClass.CimSystemProperties is not null &&
                                     string.Equals(
                                         cimPropertyInstance.CimClass.CimSystemProperties.ClassName,
                                         "MSFT_Credential", StringComparison.OrdinalIgnoreCase))
@@ -430,7 +430,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
                 {
                     string superClassName = c.CimSuperClassName;
                     string className = c.CimSystemProperties.ClassName;
-                    if ((superClassName != null) && (superClassName.Equals("OMI_BaseResource", StringComparison.OrdinalIgnoreCase)))
+                    if ((superClassName is not null) && (superClassName.Equals("OMI_BaseResource", StringComparison.OrdinalIgnoreCase)))
                     {
                         // Get the name of the file without schema.mof extension
                         if (!(className.Equals(fileNameDefiningClass, StringComparison.OrdinalIgnoreCase)))
@@ -744,7 +744,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
 
                 var programFilesDirectory = Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-                Debug.Assert(programFilesDirectory != null, "Program Files environment variable does not exist!");
+                Debug.Assert(programFilesDirectory is not null, "Program Files environment variable does not exist!");
                 var customResourceRoot = Path.Combine(programFilesDirectory, "WindowsPowerShell\\Configuration");
                 Debug.Assert(Directory.Exists(customResourceRoot), "%ProgramFiles%\\WindowsPowerShell\\Configuration Directory does not exist");
                 var allResourceRoots = new string[] { systemResourceRoot, customResourceRoot };
@@ -894,7 +894,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         PsUtils.ManifestModuleVersionPropertyName);
 
                 object versionValue = dataFileSetting["ModuleVersion"];
-                if (versionValue != null)
+                if (versionValue is not null)
                 {
                     Version moduleVersion;
                     if (LanguagePrimitives.TryConvertTo(versionValue, out moduleVersion))
@@ -968,13 +968,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 // Ignore modules with invalid schemas.
                 s_tracer.WriteLine("DSC ClassCache: Error importing file '{0}', with error '{1}'.  Skipping file.", path, e);
-                if (errors != null)
+                if (errors is not null)
                 {
                     errors.Add(e);
                 }
             }
 
-            if (classes != null)
+            if (classes is not null)
             {
                 foreach (var c in classes)
                 {
@@ -998,7 +998,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                 ParserStrings.DuplicateCimClassDefinition, className, path, files);
 
                             e.SetErrorId("DuplicateCimClassDefinition");
-                            if (errors != null)
+                            if (errors is not null)
                             {
                                 errors.Add(e);
                             }
@@ -1057,7 +1057,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             string passwordValueToAdd = string.Empty;
 
-            if (value != null)
+            if (value is not null)
             {
                 IntPtr ptr = Marshal.SecureStringToCoTaskMemUnicode(value);
                 passwordValueToAdd = Marshal.PtrToStringUni(ptr);
@@ -1153,7 +1153,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 var file = pair.Key;
                 var classList = pair.Value;
-                if (classList != null && classList.Find((CimClass c) => string.Equals(c.CimSystemProperties.ClassName, className, StringComparison.OrdinalIgnoreCase)) != null)
+                if (classList is not null && classList.Find((CimClass c) => string.Equals(c.CimSystemProperties.ClassName, className, StringComparison.OrdinalIgnoreCase)) is not null)
                 {
                     files.Add(file);
                 }
@@ -1277,7 +1277,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             try
             {
                 var aliasQualifier = cimClass.CimClassQualifiers["FriendlyName"];
-                if (aliasQualifier != null)
+                if (aliasQualifier is not null)
                 {
                     return aliasQualifier.Value as string;
                 }
@@ -1304,7 +1304,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 string moduleVersion = splittedName[IndexModuleVersion];
 
                 var keyword = CreateKeywordFromCimClass(moduleName, Version.Parse(moduleVersion), cachedClass.Value.CimClassInstance, null, cachedClass.Value.DscResRunAsCred);
-                if (keyword != null)
+                if (keyword is not null)
                 {
                     keywords.Add(keyword);
                 }
@@ -1345,7 +1345,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             DynamicKeyword.AddKeyword(keyword);
 
             // And now define the driver functions in the current scope...
-            if (functionsToDefine != null)
+            if (functionsToDefine is not null)
             {
                 functionsToDefine[moduleName + "\\" + keyword.Keyword] = CimKeywordImplementationFunction;
             }
@@ -1417,7 +1417,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 try
                 {
                     // If the property has the Read qualifier, also skip it.
-                    if (prop.Qualifiers["Read"] != null)
+                    if (prop.Qualifiers["Read"] is not null)
                     {
                         continue;
                     }
@@ -1507,7 +1507,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
                 }
 
-                if (valueMap != null && keyProp.Values.Count > 0)
+                if (valueMap is not null && keyProp.Values.Count > 0)
                 {
                     if (valueMap.Length != keyProp.Values.Count)
                     {
@@ -1559,17 +1559,17 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 string.Equals(keyword.ResourceName, "MSFT_DSCMetaConfiguration",
                     StringComparison.OrdinalIgnoreCase))
             {
-                if (keyword.Properties["RefreshFrequencyMins"] != null)
+                if (keyword.Properties["RefreshFrequencyMins"] is not null)
                 {
                     keyword.Properties["RefreshFrequencyMins"].Range = new Tuple<int, int>(30, 44640);
                 }
 
-                if (keyword.Properties["ConfigurationModeFrequencyMins"] != null)
+                if (keyword.Properties["ConfigurationModeFrequencyMins"] is not null)
                 {
                     keyword.Properties["ConfigurationModeFrequencyMins"].Range = new Tuple<int, int>(15, 44640);
                 }
 
-                if (keyword.Properties["DebugMode"] != null)
+                if (keyword.Properties["DebugMode"] is not null)
                 {
                     keyword.Properties["DebugMode"].Values.Remove("ResourceScriptBreakAll");
                     keyword.Properties["DebugMode"].ValueMap.Remove("ResourceScriptBreakAll");
@@ -1754,13 +1754,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
 
             // Check here if Version is specified but modulename is not specified
-            if (moduleVersionBindingResult != null && moduleNameBindingResult is null)
+            if (moduleVersionBindingResult is not null && moduleNameBindingResult is null)
             {
                 // only add this error again to the error list if resources is not null
                 // if resources and modules are both null we have already added this error in collection
                 // we do not want to do this twice. since we are giving same error ImportDscResourceNeedParams in both cases
                 // once we have different error messages for 2 scenarios we can remove this check
-                if (resourceNameBindingResult != null)
+                if (resourceNameBindingResult is not null)
                 {
                     errorList.Add(new ParseError(kwAst.Extent,
                                                  "ImportDscResourceNeedModuleNameWithModuleVersion",
@@ -1769,7 +1769,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
 
             string[] resourceNames = null;
-            if (resourceNameBindingResult != null)
+            if (resourceNameBindingResult is not null)
             {
                 object resourceName = null;
                 if (!IsConstantValueVisitor.IsConstant(resourceNameBindingResult.Value, out resourceName, true, true) ||
@@ -1782,7 +1782,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
 
             System.Version moduleVersion = null;
-            if (moduleVersionBindingResult != null)
+            if (moduleVersionBindingResult is not null)
             {
                 object moduleVer = null;
                 if (!IsConstantValueVisitor.IsConstant(moduleVersionBindingResult.Value, out moduleVer, true, true))
@@ -1809,7 +1809,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
 
             ModuleSpecification[] moduleSpecifications = null;
-            if (moduleNameBindingResult != null)
+            if (moduleNameBindingResult is not null)
             {
                 object moduleName = null;
                 if (!IsConstantValueVisitor.IsConstant(moduleNameBindingResult.Value, out moduleName, true, true))
@@ -1822,7 +1822,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 if (LanguagePrimitives.TryConvertTo(moduleName, out moduleSpecifications))
                 {
                     // if resourceNames are specified then we can not specify multiple modules name
-                    if (moduleSpecifications != null && moduleSpecifications.Length > 1 && resourceNames != null)
+                    if (moduleSpecifications is not null && moduleSpecifications.Length > 1 && resourceNames is not null)
                     {
                         errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
                                                      "ImportDscResourceMultipleModulesNotSupportedWithName",
@@ -1830,7 +1830,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
 
                     // if moduleversion is specified then we can not specify multiple modules name
-                    if (moduleSpecifications != null && moduleSpecifications.Length > 1 && moduleVersion != null)
+                    if (moduleSpecifications is not null && moduleSpecifications.Length > 1 && moduleVersion is not null)
                     {
                         errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
                                                      "ImportDscResourceMultipleModulesNotSupportedWithVersion",
@@ -1838,7 +1838,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
 
                     // if moduleversion is specified then we can not specify another version in modulespecification object of ModuleName
-                    if (moduleSpecifications != null && (moduleSpecifications[0].Version != null || moduleSpecifications[0].MaximumVersion != null) && moduleVersion != null)
+                    if (moduleSpecifications is not null && (moduleSpecifications[0].Version is not null || moduleSpecifications[0].MaximumVersion is not null) && moduleVersion is not null)
                     {
                         errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
                                                      "ImportDscResourceMultipleModuleVersionsNotSupported",
@@ -1847,7 +1847,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                     // If moduleVersion is specified we have only one module Name in valid scenario
                     // So update it's version property in module specification object that will be used to load modules
-                    if (moduleSpecifications != null && moduleSpecifications[0].Version is null && moduleSpecifications[0].MaximumVersion is null && moduleVersion != null)
+                    if (moduleSpecifications is not null && moduleSpecifications[0].Version is null && moduleSpecifications[0].MaximumVersion is null && moduleVersion is not null)
                     {
                         moduleSpecifications[0].Version = moduleVersion;
                     }
@@ -1875,7 +1875,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             List<ParseError> errorList = null;
 
             var keywordAst = Ast.GetAncestorAst<DynamicKeywordStatementAst>(kwAst.Parent);
-            while (keywordAst != null)
+            while (keywordAst is not null)
             {
                 if (keywordAst.Keyword.Keyword.Equals("Node"))
                 {
@@ -1893,7 +1893,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 keywordAst = Ast.GetAncestorAst<DynamicKeywordStatementAst>(keywordAst.Parent);
             }
 
-            if (errorList != null)
+            if (errorList is not null)
             {
                 return errorList.ToArray();
             }
@@ -1922,7 +1922,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             foreach (var ast in kwAst.CommandElements)
             {
                 hashtableAst = ast as HashtableAst;
-                if (hashtableAst != null)
+                if (hashtableAst is not null)
                 {
                     break;
                 }
@@ -1940,7 +1940,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 if (IsConstantValueVisitor.IsConstant(pair.Item1, out evalResultObject, forAttribute: false, forRequires: false))
                 {
                     var presentName = evalResultObject as string;
-                    if (presentName != null)
+                    if (presentName is not null)
                     {
                         if (mandatoryPropertiesNames.Remove(presentName) && mandatoryPropertiesNames.Count == 0)
                         {
@@ -1985,19 +1985,19 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             // get all required modules
             var modules = new Collection<PSModuleInfo>();
-            if (moduleSpecifications != null)
+            if (moduleSpecifications is not null)
             {
                 foreach (var moduleToImport in moduleSpecifications)
                 {
                     bool foundModule = false;
                     var moduleInfos = ModuleCmdletBase.GetModuleIfAvailable(moduleToImport);
 
-                    if (moduleInfos.Count >= 1 && (moduleToImport.Version != null || moduleToImport.Guid != null))
+                    if (moduleInfos.Count >= 1 && (moduleToImport.Version is not null || moduleToImport.Guid is not null))
                     {
                         foreach (var psModuleInfo in moduleInfos)
                         {
                             if ((moduleToImport.Guid.HasValue && moduleToImport.Guid.Equals(psModuleInfo.Guid)) ||
-                                (moduleToImport.Version != null &&
+                                (moduleToImport.Version is not null &&
                                  moduleToImport.Version.Equals(psModuleInfo.Version)))
                             {
                                 modules.Add(psModuleInfo);
@@ -2036,7 +2036,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
                 }
             }
-            else if (resourceNames != null)
+            else if (resourceNames is not null)
             {
                 // Lookup the required resources under available PowerShell modules when modulename is not specified
                 using (var powerShell = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
@@ -2197,13 +2197,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += reh;
                     var assembly = moduleInfo.ImplementingAssembly;
-                    if (assembly is null && moduleInfo.Path != null)
+                    if (assembly is null && moduleInfo.Path is not null)
                     {
                         try
                         {
                             var path = moduleInfo.Path;
 
-                            if (moduleInfo.RootModule != null && !Path.GetExtension(moduleInfo.Path).Equals(".dll", StringComparison.OrdinalIgnoreCase))
+                            if (moduleInfo.RootModule is not null && !Path.GetExtension(moduleInfo.Path).Equals(".dll", StringComparison.OrdinalIgnoreCase))
                             {
                                 path = moduleInfo.ModuleBase + "\\" + moduleInfo.RootModule;
                             }
@@ -2214,7 +2214,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
 
                     // Ignore the module if we can't find the assembly.
-                    if (assembly != null)
+                    if (assembly is not null)
                     {
                         ImportKeywordsFromAssembly(moduleInfo, resourcesToImport, resourcesFound, functionsToDefine, assembly);
                     }
@@ -2229,11 +2229,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 string scriptPath = null;
                 // handle RootModule and nestedModule together
-                if (moduleInfo.RootModule != null)
+                if (moduleInfo.RootModule is not null)
                 {
                     scriptPath = Path.Combine(moduleInfo.ModuleBase, moduleInfo.RootModule);
                 }
-                else if (moduleInfo.Path != null)
+                else if (moduleInfo.Path is not null)
                 {
                     scriptPath = moduleInfo.Path;
                 }
@@ -2241,7 +2241,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 ImportKeywordsFromScriptFile(scriptPath, primaryModuleInfo, resourcesToImport, resourcesFound, functionsToDefine, errorList, extent);
             }
 
-            if (moduleInfo.NestedModules != null && recurse)
+            if (moduleInfo.NestedModules is not null && recurse)
             {
                 foreach (var nestedModule in moduleInfo.NestedModules)
                 {
@@ -2255,7 +2255,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             AssemblyName name = new AssemblyName(args.Name);
 
-            if (moduleInfo != null && !string.IsNullOrEmpty(moduleInfo.Path))
+            if (moduleInfo is not null && !string.IsNullOrEmpty(moduleInfo.Path))
             {
                 string asmToCheck = Path.GetDirectoryName(moduleInfo.Path) + "\\" + name.Name + ".dll";
                 if (File.Exists(asmToCheck))
@@ -2304,7 +2304,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             TypeName propTypeName;
             var arrayTypeName = typeName as ArrayTypeName;
-            if (arrayTypeName != null)
+            if (arrayTypeName is not null)
             {
                 isArrayType = true;
                 propTypeName = arrayTypeName.ElementType as TypeName;
@@ -2369,13 +2369,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 var b = bases.Dequeue();
                 var tc = b as TypeConstraintAst;
 
-                if (tc != null)
+                if (tc is not null)
                 {
                     b = tc.TypeName.GetReflectionType();
                     if (b is null)
                     {
                         var td = tc.TypeName as TypeName;
-                        if (td != null && td._typeDefinitionAst != null)
+                        if (td is not null && td._typeDefinitionAst is not null)
                         {
                             ProcessMembers(sb, embeddedInstanceTypes, td._typeDefinitionAst, className);
                             foreach (var b1 in td._typeDefinitionAst.BaseTypes)
@@ -2389,11 +2389,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
 
                 var type = b as Type;
-                if (type != null)
+                if (type is not null)
                 {
                     ProcessMembers(type, sb, embeddedInstanceTypes, className);
                     var t = type.BaseType;
-                    if (t != null)
+                    if (t is not null)
                     {
                         bases.Enqueue(t);
                     }
@@ -2418,7 +2418,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             foreach (var member in typeDefinitionAst.Members)
             {
                 var functionMemberAst = member as FunctionMemberAst;
-                if (functionMemberAst != null)
+                if (functionMemberAst is not null)
                 {
                     if (functionMemberAst.Name.Equals(getMethodName, StringComparison.OrdinalIgnoreCase))
                     {
@@ -2457,12 +2457,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             IEnumerable<Ast> resourceDefinitions;
             List<string> moduleFiles = new List<string>();
-            if (moduleInfo.RootModule != null)
+            if (moduleInfo.RootModule is not null)
             {
                 moduleFiles.Add(moduleInfo.Path);
             }
 
-            if (moduleInfo.NestedModules != null)
+            if (moduleInfo.NestedModules is not null)
             {
                 foreach (var nestedModule in moduleInfo.NestedModules.Where(m => !string.IsNullOrEmpty(m.Path)))
                 {
@@ -2521,7 +2521,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 string embeddedInstanceType;
                 string[] enumNames = null;
 
-                if (memberType != null)
+                if (memberType is not null)
                 {
                     // TODO - validate type and name
                     mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType,
@@ -2586,9 +2586,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             ParseError[] errors;
             var ast = Parser.ParseFile(fileName, out tokens, out errors);
 
-            if (errors != null && errors.Length > 0)
+            if (errors is not null && errors.Length > 0)
             {
-                if (errorList != null && extent != null)
+                if (errorList is not null && extent is not null)
                 {
                     List<string> errorMessages = new List<string>();
                     foreach (var error in errors)
@@ -2606,7 +2606,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             resourceDefinitions = ast.FindAll(n =>
             {
                 var typeAst = n as TypeDefinitionAst;
-                if (typeAst != null)
+                if (typeAst is not null)
                 {
                     for (int i = 0; i < typeAst.Attributes.Count; i++)
                     {
@@ -2678,7 +2678,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                             if (na.ArgumentName.Equals("RunAsCredential", StringComparison.OrdinalIgnoreCase))
                             {
                                 var dscResourceAttribute = attr.GetAttribute() as DscResourceAttribute;
-                                if (dscResourceAttribute != null)
+                                if (dscResourceAttribute is not null)
                                 {
                                     runAsBehavior = dscResourceAttribute.RunAsCredential;
                                 }
@@ -2736,9 +2736,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     return false;
                 }
 
-                if ((qual.Value is null && newQual.Value != null) ||
-                    (qual.Value != null && newQual.Value is null) ||
-                    (qual.Value != null && newQual.Value != null &&
+                if ((qual.Value is null && newQual.Value is not null) ||
+                    (qual.Value is not null && newQual.Value is null) ||
+                    (qual.Value is not null && newQual.Value is not null &&
                         !string.Equals(qual.Value.ToString(), newQual.Value.ToString(), StringComparison.OrdinalIgnoreCase)
                     )
                   )
@@ -2784,8 +2784,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static bool IsSameNestedObject(CimClass oldClass, CimClass newClass)
         {
             // #1 both the classes should be nested class and not DSC resource
-            if ((oldClass.CimSuperClassName != null && string.Equals("OMI_BaseResource", oldClass.CimSuperClassName, StringComparison.OrdinalIgnoreCase)) ||
-                (newClass.CimSuperClassName != null && string.Equals("OMI_BaseResource", newClass.CimSuperClassName, StringComparison.OrdinalIgnoreCase)))
+            if ((oldClass.CimSuperClassName is not null && string.Equals("OMI_BaseResource", oldClass.CimSuperClassName, StringComparison.OrdinalIgnoreCase)) ||
+                (newClass.CimSuperClassName is not null && string.Equals("OMI_BaseResource", newClass.CimSuperClassName, StringComparison.OrdinalIgnoreCase)))
             {
                 return false;
             }
@@ -2916,7 +2916,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             foreach (var attr in customAttributes)
             {
                 var dscProperty = attr as DscPropertyAttribute;
-                if (dscProperty != null)
+                if (dscProperty is not null)
                 {
                     if (dscProperty.Key)
                     {
@@ -2940,7 +2940,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
 
                 var validateSet = attr as ValidateSetAttribute;
-                if (validateSet != null)
+                if (validateSet is not null)
                 {
                     bool valueMapComma = false;
                     StringBuilder sbValues = new StringBuilder(", Values{");
@@ -2967,7 +2967,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 needComma = true;
             }
 
-            if (enumNames != null)
+            if (enumNames is not null)
             {
                 sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
                 needComma = false;
@@ -2987,7 +2987,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 sb.Append("}");
             }
-            else if (embeddedInstanceType != null)
+            else if (embeddedInstanceType is not null)
             {
                 sb.AppendFormat(CultureInfo.InvariantCulture, "{0}EmbeddedInstance(\"{1}\")", needComma ? ", " : string.Empty, embeddedInstanceType);
             }
@@ -3035,7 +3035,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     visitedInstances.Add(batchedTypes[i]);
                     var type = batchedTypes[i] as Type;
-                    if (type != null)
+                    if (type is not null)
                     {
                         GenerateMofForType(type, nestedSb, embeddedInstanceTypes);
                     }
@@ -3239,7 +3239,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 // configuration statement so within a single compile, things shouldn't
                 // change.
                 var classes = GetCachedClassByFileName(schemaFilePath) ?? ImportClasses(schemaFilePath, new Tuple<string, Version>(module.Name, module.Version), errors);
-                if (classes != null)
+                if (classes is not null)
                 {
                     foreach (var c in classes)
                     {
@@ -3267,7 +3267,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                             Debug.Assert(schemaFiles.Length == 1, "A valid DSCResource module can have only one schema mof file");
                             var tempSchemaFilepath = schemaFiles[0];
                             var classes = GetCachedClassByFileName(tempSchemaFilepath) ?? ImportClasses(tempSchemaFilepath, new Tuple<string, Version>(module.Name, module.Version), errors);
-                            if (classes != null)
+                            if (classes is not null)
                             {
                                 //
                                 // search if class's friendly name is the given resourceName
@@ -3683,7 +3683,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
 
             // Do the property values map
-            if (prop.ValueMap != null && prop.ValueMap.Count > 0)
+            if (prop.ValueMap is not null && prop.ValueMap.Count > 0)
             {
                 formattedTypeString.Append(" { " + string.Join(" | ", prop.ValueMap.Keys.OrderBy(x => x)) + " }");
             }

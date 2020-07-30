@@ -76,7 +76,7 @@ namespace System.Management.Automation.Interpreter
             // Prevent the label from being shadowed, which enforces cleaner
             // trees. Also we depend on this for simplicity (keeping only one
             // active IL Label per LabelInfo)
-            for (LabelScopeInfo j = block; j != null; j = j.Parent)
+            for (LabelScopeInfo j = block; j is not null; j = j.Parent)
             {
                 if (j.ContainsTarget(_node))
                 {
@@ -114,7 +114,7 @@ namespace System.Management.Automation.Interpreter
         private void ValidateJump(LabelScopeInfo reference)
         {
             // look for a simple jump out
-            for (LabelScopeInfo j = reference; j != null; j = j.Parent)
+            for (LabelScopeInfo j = reference; j is not null; j = j.Parent)
             {
                 if (DefinedIn(j))
                 {
@@ -190,7 +190,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             HashSet<LabelScopeInfo> definitions = _definitions as HashSet<LabelScopeInfo>;
-            if (definitions != null)
+            if (definitions is not null)
             {
                 return definitions.Contains(scope);
             }
@@ -202,14 +202,14 @@ namespace System.Management.Automation.Interpreter
         {
             get
             {
-                return _definitions != null;
+                return _definitions is not null;
             }
         }
 
         private LabelScopeInfo FirstDefinition()
         {
             LabelScopeInfo scope = _definitions as LabelScopeInfo;
-            if (scope != null)
+            if (scope is not null)
             {
                 return scope;
             }
@@ -252,12 +252,12 @@ namespace System.Management.Automation.Interpreter
             }
 
             var set = new HashSet<T>(cmp);
-            for (T t = first; t != null; t = parent(t))
+            for (T t = first; t is not null; t = parent(t))
             {
                 set.Add(t);
             }
 
-            for (T t = second; t != null; t = parent(t))
+            for (T t = second; t is not null; t = parent(t))
             {
                 if (set.Contains(t))
                 {

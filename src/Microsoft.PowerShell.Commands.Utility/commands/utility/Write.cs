@@ -35,13 +35,13 @@ namespace Microsoft.PowerShell.Commands
             //
             MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
 
-            if (mshCommandRuntime != null)
+            if (mshCommandRuntime is not null)
             {
                 DebugRecord record = new DebugRecord(Message);
 
                 InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
-                if (invocationInfo != null)
+                if (invocationInfo is not null)
                 {
                     record.SetInvocationInfo(invocationInfo);
                 }
@@ -83,13 +83,13 @@ namespace Microsoft.PowerShell.Commands
             //
             MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
 
-            if (mshCommandRuntime != null)
+            if (mshCommandRuntime is not null)
             {
                 VerboseRecord record = new VerboseRecord(Message);
 
                 InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
-                if (invocationInfo != null)
+                if (invocationInfo is not null)
                 {
                     record.SetInvocationInfo(invocationInfo);
                 }
@@ -131,13 +131,13 @@ namespace Microsoft.PowerShell.Commands
             //
             MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
 
-            if (mshCommandRuntime != null)
+            if (mshCommandRuntime is not null)
             {
                 WarningRecord record = new WarningRecord(Message);
 
                 InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
-                if (invocationInfo != null)
+                if (invocationInfo is not null)
                 {
                     record.SetInvocationInfo(invocationInfo);
                 }
@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (Tags != null)
+            if (Tags is not null)
             {
                 foreach (string tag in Tags)
                 {
@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             ErrorRecord errorRecord = this.ErrorRecord;
-            if (errorRecord != null)
+            if (errorRecord is not null)
             {
                 // copy constructor
                 errorRecord = new ErrorRecord(errorRecord, null);
@@ -330,7 +330,7 @@ namespace Microsoft.PowerShell.Commands
                     TargetObject
                     );
 
-                if (this.Exception != null && !string.IsNullOrEmpty(msg))
+                if (this.Exception is not null && !string.IsNullOrEmpty(msg))
                 {
                     errorRecord.ErrorDetails = new ErrorDetails(msg);
                 }
@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell.Commands
             // 2005/07/14-913791 "write-error output is confusing and misleading"
             // set InvocationInfo to the script not the command
             InvocationInfo myInvocation = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
-            if (myInvocation != null)
+            if (myInvocation is not null)
             {
                 errorRecord.SetInvocationInfo(myInvocation);
                 errorRecord.PreserveInvocationInfoOnce = true;

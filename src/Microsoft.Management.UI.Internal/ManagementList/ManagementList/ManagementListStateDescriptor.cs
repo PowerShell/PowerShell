@@ -382,7 +382,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             // NOTE : We only support sorting on one property.
-            if (subject.List.SortedColumn != null)
+            if (subject.List.SortedColumn is not null)
             {
                 this.sortOrderPropertyName = subject.List.SortedColumn.DataDescription.PropertyName;
             }

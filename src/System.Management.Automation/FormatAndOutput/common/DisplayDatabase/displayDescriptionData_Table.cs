@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 autosize = this.autosize,
                 header = this.header.Copy()
             };
-            if (defaultDefinition != null)
+            if (defaultDefinition is not null)
             {
                 result.defaultDefinition = this.defaultDefinition.Copy();
             }
@@ -332,7 +332,7 @@ namespace System.Management.Automation
 
         internal TableControlColumnHeader(TableColumnHeaderDefinition colheaderdefinition)
         {
-            if (colheaderdefinition.label != null)
+            if (colheaderdefinition.label is not null)
             {
                 Label = colheaderdefinition.label.text;
             }
@@ -439,7 +439,7 @@ namespace System.Management.Automation
         internal TableControlRow(TableRowDefinition rowdefinition) : this()
         {
             Wrap = rowdefinition.multiLine;
-            if (rowdefinition.appliesTo != null)
+            if (rowdefinition.appliesTo is not null)
             {
                 SelectedBy = EntrySelectedBy.Get(rowdefinition.appliesTo.referenceList);
             }
@@ -449,7 +449,7 @@ namespace System.Management.Automation
                 FieldPropertyToken fpt = itemdef.formatTokenList[0] as FieldPropertyToken;
                 TableControlColumn column;
 
-                if (fpt != null)
+                if (fpt is not null)
                 {
                     column = new TableControlColumn(fpt.expression.expressionValue, itemdef.alignment,
                                     fpt.expression.isScriptBlock, fpt.fieldFormattingDirective.formatString);
@@ -482,7 +482,7 @@ namespace System.Management.Automation
                     return false;
             }
 
-            return SelectedBy != null && SelectedBy.SafeForExport();
+            return SelectedBy is not null && SelectedBy.SafeForExport();
         }
 
         internal bool CompatibleWithOldPowerShell()
@@ -588,15 +588,15 @@ namespace System.Management.Automation
         public TableRowDefinitionBuilder StartRowDefinition(bool wrap = false, IEnumerable<string> entrySelectedByType = null, IEnumerable<DisplayEntry> entrySelectedByCondition = null)
         {
             var row = new TableControlRow { Wrap = wrap };
-            if (entrySelectedByType != null || entrySelectedByCondition != null)
+            if (entrySelectedByType is not null || entrySelectedByCondition is not null)
             {
                 row.SelectedBy = new EntrySelectedBy();
-                if (entrySelectedByType != null)
+                if (entrySelectedByType is not null)
                 {
                     row.SelectedBy.TypeNames = new List<string>(entrySelectedByType);
                 }
 
-                if (entrySelectedByCondition != null)
+                if (entrySelectedByCondition is not null)
                 {
                     row.SelectedBy.SelectionCondition = new List<DisplayEntry>(entrySelectedByCondition);
                 }

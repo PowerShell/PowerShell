@@ -157,14 +157,14 @@ namespace System.Management.Automation
             }
 
             // If we are in a debugger stop, let the debugger do the command completion.
-            var debugger = (powershell.Runspace != null) ? powershell.Runspace.Debugger : null;
-            if ((debugger != null) && debugger.InBreakpoint)
+            var debugger = (powershell.Runspace is not null) ? powershell.Runspace.Debugger : null;
+            if ((debugger is not null) && debugger.InBreakpoint)
             {
                 return CompleteInputInDebugger(input, cursorIndex, options, debugger);
             }
 
             var remoteRunspace = powershell.Runspace as RemoteRunspace;
-            if (remoteRunspace != null)
+            if (remoteRunspace is not null)
             {
                 // If the runspace is not available to run commands then exit here because nested commands are not
                 // supported on remote runspaces.
@@ -236,14 +236,14 @@ namespace System.Management.Automation
             }
 
             // If we are in a debugger stop, let the debugger do the command completion.
-            var debugger = (powershell.Runspace != null) ? powershell.Runspace.Debugger : null;
-            if ((debugger != null) && debugger.InBreakpoint)
+            var debugger = (powershell.Runspace is not null) ? powershell.Runspace.Debugger : null;
+            if ((debugger is not null) && debugger.InBreakpoint)
             {
                 return CompleteInputInDebugger(ast, tokens, cursorPosition, options, debugger);
             }
 
             var remoteRunspace = powershell.Runspace as RemoteRunspace;
-            if (remoteRunspace != null)
+            if (remoteRunspace is not null)
             {
                 // If the runspace is not available to run commands then exit here because nested commands are not
                 // supported on remote runspaces.
@@ -412,7 +412,7 @@ namespace System.Management.Automation
             if (output.Count == 1)
             {
                 var commandCompletion = output[0].BaseObject as CommandCompletion;
-                if (commandCompletion != null)
+                if (commandCompletion is not null)
                 {
                     return commandCompletion;
                 }
@@ -428,10 +428,10 @@ namespace System.Management.Automation
         private static void CheckScriptCallOnRemoteRunspace(RemoteRunspace remoteRunspace)
         {
             var remoteRunspaceInternal = remoteRunspace.RunspacePool.RemoteRunspacePoolInternal;
-            if (remoteRunspaceInternal != null)
+            if (remoteRunspaceInternal is not null)
             {
                 var transportManager = remoteRunspaceInternal.DataStructureHandler.TransportManager;
-                if (transportManager != null && transportManager.TypeTable is null)
+                if (transportManager is not null && transportManager.TypeTable is null)
                 {
                     // The remote runspace was created without a TypeTable instance.
                     // The tab completion results cannot be deserialized if the TypeTable is not available
@@ -459,7 +459,7 @@ namespace System.Management.Automation
                 {
                     var result = PSObject.Base(results[0]);
                     var commandCompletion = result as CommandCompletion;
-                    if (commandCompletion != null)
+                    if (commandCompletion is not null)
                     {
                         return commandCompletion;
                     }
@@ -496,7 +496,7 @@ namespace System.Management.Automation
                 {
                     var result = PSObject.Base(results[0]);
                     var commandCompletion = result as CommandCompletion;
-                    if (commandCompletion != null)
+                    if (commandCompletion is not null)
                     {
                         return commandCompletion;
                     }
@@ -560,17 +560,17 @@ namespace System.Management.Automation
                         }
 
                         SessionStateScope scopeToRestore = null;
-                        if (tupleForFrameToSkipPast != null)
+                        if (tupleForFrameToSkipPast is not null)
                         {
                             // Find this tuple in the scope stack.
                             scopeToRestore = context.EngineSessionState.CurrentScope;
                             var scope = context.EngineSessionState.CurrentScope;
-                            while (scope != null && scope.LocalsTuple != tupleForFrameToSkipPast)
+                            while (scope is not null && scope.LocalsTuple != tupleForFrameToSkipPast)
                             {
                                 scope = scope.Parent;
                             }
 
-                            if (scope != null)
+                            if (scope is not null)
                             {
                                 context.EngineSessionState.CurrentScope = scope.Parent;
                             }
@@ -585,7 +585,7 @@ namespace System.Management.Automation
                         }
                         finally
                         {
-                            if (scopeToRestore != null)
+                            if (scopeToRestore is not null)
                             {
                                 context.EngineSessionState.CurrentScope = scopeToRestore;
                             }
@@ -631,11 +631,11 @@ namespace System.Management.Automation
 
             // We don't want command discovery to search unloaded modules for TabExpansion.
             var functionInfo = executionContext.EngineSessionState.GetFunction("TabExpansion");
-            if (functionInfo != null)
+            if (functionInfo is not null)
                 return true;
 
             var aliasInfo = executionContext.EngineSessionState.GetAlias("TabExpansion");
-            if (aliasInfo != null)
+            if (aliasInfo is not null)
                 return true;
 
             return false;
@@ -655,7 +655,7 @@ namespace System.Management.Automation
 
             Exception exceptionThrown;
             var oldResults = helper.ExecuteCurrentPowerShell(out exceptionThrown);
-            if (oldResults != null)
+            if (oldResults is not null)
             {
                 results = new List<CompletionResult>();
                 foreach (var oldResult in oldResults)
@@ -687,7 +687,7 @@ namespace System.Management.Automation
                 results = PSv2CompletionCompleter.PSv2GenerateMatchSetOfFiles(helper, lastword, replacementIndex == 0, quoteStr);
                 var cmdletResults = PSv2CompletionCompleter.PSv2GenerateMatchSetOfCmdlets(helper, lastword, quoteStr, replacementIndex == 0);
 
-                if (cmdletResults != null && cmdletResults.Count > 0)
+                if (cmdletResults is not null && cmdletResults.Count > 0)
                 {
                     results.AddRange(cmdletResults);
                 }
@@ -777,7 +777,7 @@ namespace System.Management.Automation
                 Exception exceptionThrown;
                 Collection<PSObject> commands = helper.ExecuteCurrentPowerShell(out exceptionThrown);
 
-                if (commands != null && commands.Count > 0)
+                if (commands is not null && commands.Count > 0)
                 {
                     // convert the PSObjects into strings
                     CommandAndName[] cmdlets = new CommandAndName[commands.Count];
@@ -808,7 +808,7 @@ namespace System.Management.Automation
 
             private static void AddCommandResult(CommandAndName commandAndName, bool useFullName, bool completingAtStartOfLine, string quote, List<CompletionResult> results)
             {
-                Diagnostics.Assert(results != null, "Caller needs to make sure the result list is not null");
+                Diagnostics.Assert(results is not null, "Caller needs to make sure the result list is not null");
 
                 string name = useFullName ? commandAndName.CommandName.FullName : commandAndName.CommandName.ShortName;
                 string quotedFileName = AddQuoteIfNecessary(name, quote, completingAtStartOfLine);
@@ -836,7 +836,7 @@ namespace System.Management.Automation
 
             private static void PrependSnapInNameForSameCmdletNames(CommandAndName[] cmdlets, bool completingAtStartOfLine, string quote, List<CompletionResult> results)
             {
-                Diagnostics.Assert(cmdlets != null && cmdlets.Length > 0,
+                Diagnostics.Assert(cmdlets is not null && cmdlets.Length > 0,
                     "HasMultiplePSSnapIns must be called with a non-empty collection of PSObject");
 
                 int i = 0;
@@ -926,7 +926,7 @@ namespace System.Management.Automation
 
                 IEnumerable<PathItemAndConvertedPath> combinedMatches = CombineMatchSets(s1, s2);
 
-                if (combinedMatches != null)
+                if (combinedMatches is not null)
                 {
                     foreach (var combinedMatch in combinedMatches)
                     {
@@ -940,7 +940,7 @@ namespace System.Management.Automation
                         string childName = SafeGetProperty<string>(combinedMatch.Item, "PSChildName");
                         string toolTip = PowerShellExecutionHelper.SafeToString(combinedMatch.ConvertedPath);
 
-                        if (isContainer != null && childName != null && toolTip != null)
+                        if (isContainer is not null && childName is not null && toolTip is not null)
                         {
                             CompletionResultType resultType = isContainer.Value
                                                                   ? CompletionResultType.ProviderContainer
@@ -986,8 +986,8 @@ namespace System.Management.Automation
                 }
 
                 // s1 and s2 contain results
-                Diagnostics.Assert(s1 != null && s1.Count > 0, "s1 should have results");
-                Diagnostics.Assert(s2 != null && s2.Count > 0, "if s1 has results, s2 must also");
+                Diagnostics.Assert(s1 is not null && s1.Count > 0, "s1 should have results");
+                Diagnostics.Assert(s2 is not null && s2.Count > 0, "if s1 has results, s2 must also");
                 Diagnostics.Assert(s1.Count <= s2.Count, "s2 should always be larger than s1");
 
                 var result = new List<PathItemAndConvertedPath>();
@@ -1114,7 +1114,7 @@ namespace System.Management.Automation
                 foreach (PSObject t in paths)
                 {
                     var pathsArray = t.BaseObject as IList;
-                    if (pathsArray != null && pathsArray.Count == 3)
+                    if (pathsArray is not null && pathsArray.Count == 3)
                     {
                         object objectPath = pathsArray[0];
                         PSObject item = pathsArray[1] as PSObject;
@@ -1139,7 +1139,7 @@ namespace System.Management.Automation
 
                 result.Sort(delegate (PathItemAndConvertedPath x, PathItemAndConvertedPath y)
                                 {
-                                    Diagnostics.Assert(x.Path != null && y.Path != null, "SafeToString always returns a non-null string");
+                                    Diagnostics.Assert(x.Path is not null && y.Path is not null, "SafeToString always returns a non-null string");
                                     return string.Compare(x.Path, y.Path, StringComparison.CurrentCultureIgnoreCase);
                                 });
 
@@ -1163,7 +1163,7 @@ namespace System.Management.Automation
             private LastWordFinder(string sentence)
             {
                 _replacementIndex = 0;
-                Diagnostics.Assert(sentence != null, "need to provide an instance");
+                Diagnostics.Assert(sentence is not null, "need to provide an instance");
                 _sentence = sentence;
             }
 
@@ -1293,7 +1293,7 @@ namespace System.Management.Automation
 
             private void Consume(char c)
             {
-                Diagnostics.Assert(_wordBuffer != null, "wordBuffer is not initialized");
+                Diagnostics.Assert(_wordBuffer is not null, "wordBuffer is not initialized");
                 Diagnostics.Assert(_wordBufferIndex < _wordBuffer.Length, "wordBufferIndex is out of range");
 
                 _wordBuffer[_wordBufferIndex++] = c;

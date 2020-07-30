@@ -239,7 +239,7 @@ namespace System.Management.Automation
         {
             Collection<string> searchPaths = this.HelpSystem.GetSearchPaths();
 
-            Diagnostics.Assert(searchPaths != null,
+            Diagnostics.Assert(searchPaths is not null,
                 "HelpSystem returned an null search path");
 
             string defaultShellSearchPath = GetDefaultShellSearchPath();

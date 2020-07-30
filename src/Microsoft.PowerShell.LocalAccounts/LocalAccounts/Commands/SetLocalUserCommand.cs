@@ -231,19 +231,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 LocalUser user = null;
 
-                if (InputObject != null)
+                if (InputObject is not null)
                 {
                     if (CheckShouldProcess(InputObject.ToString()))
                         user = InputObject;
                 }
-                else if (Name != null)
+                else if (Name is not null)
                 {
                     user = sam.GetLocalUser(Name);
 
                     if (!CheckShouldProcess(Name))
                         user = null;
                 }
-                else if (SID != null)
+                else if (SID is not null)
                 {
                     user = sam.GetLocalUser(SID);
 
@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (sam != null)
+            if (sam is not null)
             {
                 sam.Dispose();
                 sam = null;

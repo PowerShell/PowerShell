@@ -49,7 +49,7 @@ namespace System.Management.Automation
         {
             _useFuzzyMatch = useFuzzyMatch;
             string[] commandPatterns;
-            if (acceptableCommandNames != null)
+            if (acceptableCommandNames is not null)
             {
                 // The name passed in is not a pattern. To minimize enumerating the file system, we
                 // turn the command name into a pattern and then match against extensions in PATHEXT.
@@ -106,7 +106,7 @@ namespace System.Management.Automation
 
             // Only use the directory if it gets resolved by the FileSystemProvider
             bool isCurrentDriveValid =
-                sessionState.CurrentDrive != null &&
+                sessionState.CurrentDrive is not null &&
                 sessionState.CurrentDrive.Provider.NameEquals(fileSystemProviderName) &&
                 sessionState.IsProviderLoaded(fileSystemProviderName);
 
@@ -178,7 +178,7 @@ namespace System.Management.Automation
                 // If we successfully resolved the path, make sure it is unique. Remove
                 // any duplicates found after the first occurrence of the path.
 
-                if (resolvedDirectory != null)
+                if (resolvedDirectory is not null)
                 {
                     int existingIndex = _lookupPaths.IndexOf(resolvedDirectory);
 
@@ -433,14 +433,14 @@ namespace System.Management.Automation
                                 }
                             }
 
-                            result = _postProcessEnumeratedFiles != null
+                            result = _postProcessEnumeratedFiles is not null
                                 ? _postProcessEnumeratedFiles(files.ToArray())
                                 : files;
                         }
                         else
                         {
                             var matchingFiles = Directory.EnumerateFiles(directory, pattern);
-                            result = _postProcessEnumeratedFiles != null
+                            result = _postProcessEnumeratedFiles is not null
                                 ? _postProcessEnumeratedFiles(matchingFiles.ToArray())
                                 : matchingFiles;
                         }
@@ -481,7 +481,7 @@ namespace System.Management.Automation
             // Porting note: allow files with executable bit on non-Windows platforms
 
             Collection<string>? result = null;
-            if (baseNames.Length > 0 && _acceptableCommandNames != null)
+            if (baseNames.Length > 0 && _acceptableCommandNames is not null)
             {
                 foreach (var name in _acceptableCommandNames)
                 {

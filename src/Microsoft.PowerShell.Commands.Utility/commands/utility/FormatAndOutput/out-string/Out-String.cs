@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public int Width
         {
-            get { return (_width != null) ? _width.Value : 0; }
+            get { return (_width is not null) ? _width.Value : 0; }
 
             set { _width = value; }
         }
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
             // compute the # of columns available
             int computedWidth = int.MaxValue;
 
-            if (_width != null)
+            if (_width is not null)
             {
                 // use the value from the command line
                 computedWidth = _width.Value;

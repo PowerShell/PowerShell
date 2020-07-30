@@ -245,7 +245,7 @@ namespace System.Management.Automation.Internal
             bool foundGpScriptParent = false;
             try
             {
-                while (currentProcess != null)
+                while (currentProcess is not null)
                 {
                     if (string.Equals(gpScriptPath,
                             PsUtils.GetMainModule(currentProcess).FileName, StringComparison.OrdinalIgnoreCase))
@@ -407,7 +407,7 @@ namespace System.Management.Automation.Internal
 #else
             // Check the file signature
             Signature fileSignature = SignatureHelper.GetSignature(file, null);
-            if ((fileSignature != null) && (fileSignature.IsOSBinary))
+            if ((fileSignature is not null) && (fileSignature.IsOSBinary))
             {
                 return true;
             }
@@ -448,7 +448,7 @@ namespace System.Management.Automation.Internal
             }
 
             var scriptExecutionSetting = Utils.GetPolicySetting<ScriptExecution>(scopeKey);
-            if (scriptExecutionSetting != null)
+            if (scriptExecutionSetting is not null)
             {
                 if (scriptExecutionSetting.EnableScripts == false)
                 {
@@ -517,7 +517,7 @@ namespace System.Management.Automation.Internal
                 NativeConstants.SAFER_CRITERIA_AUTHENTICODE);
             codeProperties.ImagePath = path;
 
-            if (handle != null)
+            if (handle is not null)
             {
                 codeProperties.hImageFileHandle = handle.DangerousGetHandle();
             }
@@ -665,7 +665,7 @@ namespace System.Management.Automation.Internal
             foreach (X509Extension extension in c.Extensions)
             {
                 X509KeyUsageExtension keyUsageExtension = extension as X509KeyUsageExtension;
-                if (keyUsageExtension != null)
+                if (keyUsageExtension is not null)
                 {
                     if ((keyUsageExtension.KeyUsages & keyUsage) == keyUsage)
                     {
@@ -887,12 +887,12 @@ namespace System.Management.Automation
             foreach (CmsMessageRecipient recipient in recipients)
             {
                 // Resolve the recipient, if it hasn't been done yet.
-                if ((recipient.Certificates != null) && (recipient.Certificates.Count == 0))
+                if ((recipient.Certificates is not null) && (recipient.Certificates.Count == 0))
                 {
                     recipient.Resolve(sessionState, ResolutionPurpose.Encryption, out error);
                 }
 
-                if (error != null)
+                if (error is not null)
                 {
                     return null;
                 }
@@ -1030,37 +1030,37 @@ namespace System.Management.Automation
             error = null;
 
             // Process the certificate if that was supplied exactly
-            if (_pendingCertificate != null)
+            if (_pendingCertificate is not null)
             {
                 ProcessResolvedCertificates(
                     purpose,
                     new X509Certificate2Collection(_pendingCertificate),
                     out error);
-                if ((error != null) || (Certificates.Count != 0))
+                if ((error is not null) || (Certificates.Count != 0))
                 {
                     return;
                 }
             }
 
-            if (_identifier != null)
+            if (_identifier is not null)
             {
                 // First try to resolve assuming that the cert was Base64 encoded.
                 ResolveFromBase64Encoding(purpose, out error);
-                if ((error != null) || (Certificates.Count != 0))
+                if ((error is not null) || (Certificates.Count != 0))
                 {
                     return;
                 }
 
                 // Then try to resolve by path.
                 ResolveFromPath(sessionState, purpose, out error);
-                if ((error != null) || (Certificates.Count != 0))
+                if ((error is not null) || (Certificates.Count != 0))
                 {
                     return;
                 }
 
                 // Then by cert store
                 ResolveFromStoreById(purpose, out error);
-                if ((error != null) || (Certificates.Count != 0))
+                if ((error is not null) || (Certificates.Count != 0))
                 {
                     return;
                 }
@@ -1138,7 +1138,7 @@ namespace System.Management.Automation
             }
 
             // If we got a resolved path, try to load certs from that path.
-            if ((resolvedPaths != null) && (resolvedPaths.Count != 0))
+            if ((resolvedPaths is not null) && (resolvedPaths.Count != 0))
             {
                 // Ensure the path is from the file system provider
                 if (!string.Equals(pathProvider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase))

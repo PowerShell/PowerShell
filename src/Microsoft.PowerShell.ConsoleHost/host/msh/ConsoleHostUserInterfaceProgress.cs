@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell
             // so we need the lock
             lock (_instanceLock)
             {
-                if (_progPaneUpdateTimer != null)
+                if (_progPaneUpdateTimer is not null)
                 {
                     // Stop update a progress pane and destroy timer
                     _progPaneUpdateTimer.Dispose();
@@ -39,9 +39,9 @@ namespace Microsoft.PowerShell
                 //    So we cannot guarantee the flag is truly set to 0.
                 // 2. When creating a new timer in 'HandleIncomingProgressRecord', we will set the flag to 1 anyway
 
-                if (_progPane != null)
+                if (_progPane is not null)
                 {
-                    Dbg.Assert(_pendingProgress != null, "How can you have a progress pane and no backing data structure?");
+                    Dbg.Assert(_pendingProgress is not null, "How can you have a progress pane and no backing data structure?");
 
                     _progPane.Hide();
                     _progPane = null;
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell
         void
         HandleIncomingProgressRecord(Int64 sourceId, ProgressRecord record)
         {
-            Dbg.Assert(record != null, "record should not be null");
+            Dbg.Assert(record is not null, "record should not be null");
 
             if (_pendingProgress is null)
             {
@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell
         void
         PreWrite()
         {
-            if (_progPane != null)
+            if (_progPane is not null)
             {
                 _progPane.Hide();
             }
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell
         void
         PostWrite()
         {
-            if (_progPane != null)
+            if (_progPane is not null)
             {
                 _progPane.Show();
             }
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell
         void
         PreRead()
         {
-            if (_progPane != null)
+            if (_progPane is not null)
             {
                 _progPane.Hide();
             }
@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell
         void
         PostRead()
         {
-            if (_progPane != null)
+            if (_progPane is not null)
             {
                 _progPane.Show();
             }

@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (_powerShell != null)
+            if (_powerShell is not null)
             {
                 _powerShell.Dispose();
             }

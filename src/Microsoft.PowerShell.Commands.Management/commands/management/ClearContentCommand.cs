@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 // Go ahead an let any exceptions terminate the pipeline.
                 return InvokeProvider.Content.ClearContentDynamicParameters(Path[0], context);

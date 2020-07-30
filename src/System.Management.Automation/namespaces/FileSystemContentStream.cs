@@ -448,7 +448,7 @@ namespace Microsoft.PowerShell.Commands
             s_tracer.WriteLine("blocks seek backwards = {0}", backCount);
 
             var blocks = new List<object>();
-            if (_reader != null)
+            if (_reader is not null)
             {
                 // Make the reader automatically detect the encoding
                 Seek(0, SeekOrigin.Begin);
@@ -530,7 +530,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (currentBlock == backCount)
                         {
-                            Dbg.Diagnostics.Assert(lastDelimiterMatch != null, "lastDelimiterMatch should not be null when currentBlock == backCount");
+                            Dbg.Diagnostics.Assert(lastDelimiterMatch is not null, "lastDelimiterMatch should not be null when currentBlock == backCount");
                             if (lastDelimiterMatch.EndsWith(actualDelimiter, StringComparison.Ordinal))
                             {
                                 curStreamPosition += _backReader.GetByteCount(_delimiter);
@@ -578,7 +578,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (line != null)
+            if (line is not null)
             {
                 blocks.Add(line);
             }
@@ -864,7 +864,7 @@ namespace Microsoft.PowerShell.Commands
                 if ((fileAccess & (FileAccess.Write)) != 0)
                 {
                     // Ensure we are using the proper encoding
-                    if ((_reader != null) &&
+                    if ((_reader is not null) &&
                         ((fileAccess & (FileAccess.Read)) != 0))
                     {
                         _reader.Peek();
@@ -889,7 +889,7 @@ namespace Microsoft.PowerShell.Commands
         private void WaitForChanges(string filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, Encoding fileEncoding)
         {
             // Close the old stream, and store our current position.
-            if (_stream != null)
+            if (_stream is not null)
             {
                 _fileOffset = _stream.Position;
                 _stream.Dispose();
@@ -926,7 +926,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         bool isTaskCompleted = tcs.Task.Wait(500);
 
-                        if (errorEventArgs != null)
+                        if (errorEventArgs is not null)
                         {
                             throw errorEventArgs.GetException();
                         }
@@ -971,9 +971,9 @@ namespace Microsoft.PowerShell.Commands
 
             // Seek to the place we last left off.
             _stream.Seek(_fileOffset, SeekOrigin.Begin);
-            if (_reader != null) { _reader.DiscardBufferedData(); }
+            if (_reader is not null) { _reader.DiscardBufferedData(); }
 
-            if (_backReader != null) { _backReader.DiscardBufferedData(); }
+            if (_backReader is not null) { _backReader.DiscardBufferedData(); }
         }
 
         /// <summary>
@@ -987,15 +987,15 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         public void Seek(long offset, SeekOrigin origin)
         {
-            if (_writer != null) { _writer.Flush(); }
+            if (_writer is not null) { _writer.Flush(); }
 
             _stream.Seek(offset, origin);
 
-            if (_writer != null) { _writer.Flush(); }
+            if (_writer is not null) { _writer.Flush(); }
 
-            if (_reader != null) { _reader.DiscardBufferedData(); }
+            if (_reader is not null) { _reader.DiscardBufferedData(); }
 
-            if (_backReader != null) { _backReader.DiscardBufferedData(); }
+            if (_backReader is not null) { _backReader.DiscardBufferedData(); }
         }
 
         /// <summary>
@@ -1005,7 +1005,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool streamClosed = false;
 
-            if (_writer != null)
+            if (_writer is not null)
             {
                 try
                 {
@@ -1018,13 +1018,13 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (_reader != null)
+            if (_reader is not null)
             {
                 _reader.Dispose();
                 streamClosed = true;
             }
 
-            if (_backReader != null)
+            if (_backReader is not null)
             {
                 _backReader.Dispose();
                 streamClosed = true;
@@ -1057,7 +1057,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (object line in content)
             {
                 object[] contentArray = line as object[];
-                if (contentArray != null)
+                if (contentArray is not null)
                 {
                     foreach (object obj in contentArray)
                     {
@@ -1119,13 +1119,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (isDisposing)
             {
-                if (_stream != null)
+                if (_stream is not null)
                     _stream.Dispose();
-                if (_reader != null)
+                if (_reader is not null)
                     _reader.Dispose();
-                if (_backReader != null)
+                if (_backReader is not null)
                     _backReader.Dispose();
-                if (_writer != null)
+                if (_writer is not null)
                     _writer.Dispose();
             }
         }
@@ -1176,7 +1176,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private bool IsSingleByteCharacterSet()
         {
-            if (_singleByteCharSet != null)
+            if (_singleByteCharSet is not null)
                 return (bool)_singleByteCharSet;
 
             // Porting note: only UTF-8 is supported on Linux, which is not an SBCS

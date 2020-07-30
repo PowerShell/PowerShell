@@ -215,7 +215,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private static void ProcessElement(XmlReader xmlReader, DataProcessingDelegates callbacks)
         {
-            Dbg.Assert(xmlReader != null, "xmlReader cannot be null.");
+            Dbg.Assert(xmlReader is not null, "xmlReader cannot be null.");
             Dbg.Assert(xmlReader.NodeType == XmlNodeType.Element, "xmlReader's NodeType should be of type Element");
 
             PowerShellTraceSource tracer = PowerShellTraceSourceFactory.GetTraceSource();
@@ -416,7 +416,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="writerToWrap"></param>
         internal OutOfProcessTextWriter(TextWriter writerToWrap)
         {
-            Dbg.Assert(writerToWrap != null, "Cannot wrap a null writer.");
+            Dbg.Assert(writerToWrap is not null, "Cannot wrap a null writer.");
             _writer = writerToWrap;
         }
 
@@ -608,7 +608,7 @@ namespace System.Management.Automation.Remoting.Client
             ClientRemotePowerShell cmd,
             bool noInput)
         {
-            Dbg.Assert(cmd != null, "Cmd cannot be null");
+            Dbg.Assert(cmd is not null, "Cmd cannot be null");
 
             OutOfProcessClientCommandTransportManager result = new
                 OutOfProcessClientCommandTransportManager(cmd, noInput, this, stdInWriter);
@@ -851,7 +851,7 @@ namespace System.Management.Automation.Remoting.Client
             // This will either return data or register callback but doesn't do both.
             byte[] data = dataToBeSent.ReadOrRegisterCallback(_onDataAvailableToSendCallback,
                 out priorityType);
-            if (data != null)
+            if (data is not null)
             {
                 SendData(data, priorityType);
             }
@@ -859,7 +859,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private void OnDataAvailableCallback(byte[] data, DataPriorityType priorityType)
         {
-            Dbg.Assert(data != null, "data cannot be null in the data available callback");
+            Dbg.Assert(data is not null, "data cannot be null in the data available callback");
 
             tracer.WriteLine("Received data to be sent from the callback.");
             SendData(data, priorityType);
@@ -924,7 +924,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 // this is for a command
                 OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-                if (cmdTM != null)
+                if (cmdTM is not null)
                 {
                     // not throwing the exception in null case as the command might have already
                     // closed. The RS data structure handler does not wait for the close ack before
@@ -945,7 +945,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 // this is for a command
                 OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-                if (cmdTM != null)
+                if (cmdTM is not null)
                 {
                     // not throwing the exception in null case as the command might have already
                     // closed. The RS data structure handler does not wait for the close ack before
@@ -995,7 +995,7 @@ namespace System.Management.Automation.Remoting.Client
             else
             {
                 OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-                if (cmdTM != null)
+                if (cmdTM is not null)
                 {
                     cmdTM.OnRemoteCmdSignalCompleted();
                 }
@@ -1028,7 +1028,7 @@ namespace System.Management.Automation.Remoting.Client
                 _tracer.WriteMessage("OutOfProcessClientSessionTransportManager.OnCloseAckReceived, in progress command count should be greater than zero: " + commandCount + ", RunSpacePool Id : " + this.RunspacePoolInstanceId + ", psGuid : " + psGuid.ToString());
 
                 OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-                if (cmdTM != null)
+                if (cmdTM is not null)
                 {
                     // this might legitimately happen if cmd is already closed before we get an
                     // ACK back from server.
@@ -1087,14 +1087,14 @@ namespace System.Management.Automation.Remoting.Client
         /// </exception>
         internal override void CreateAsync()
         {
-            if (_connectionInfo != null)
+            if (_connectionInfo is not null)
             {
                 _processInstance = _connectionInfo.Process ?? new PowerShellProcessInstance(_connectionInfo.PSVersion,
                                                                                            _connectionInfo.Credential,
                                                                                            _connectionInfo.InitializationScript,
                                                                                            _connectionInfo.RunAs32,
                                                                                            _connectionInfo.WorkingDirectory);
-                if (_connectionInfo.Process != null)
+                if (_connectionInfo.Process is not null)
                 {
                     _processCreated = false;
                 }
@@ -1116,7 +1116,7 @@ namespace System.Management.Automation.Remoting.Client
                     // Attach handlers and start the process
                     _serverProcess = _processInstance.Process;
 
-                    if (_processInstance.RunspacePool != null)
+                    if (_processInstance.RunspacePool is not null)
                     {
                         _processInstance.RunspacePool.Close();
                         _processInstance.RunspacePool.Dispose();
@@ -1174,7 +1174,7 @@ namespace System.Management.Automation.Remoting.Client
                 try
                 {
                     string data = reader.ReadLine();
-                    while (data != null)
+                    while (data is not null)
                     {
                         HandleOutputDataReceived(data);
                         data = reader.ReadLine();
@@ -1207,7 +1207,7 @@ namespace System.Management.Automation.Remoting.Client
                 try
                 {
                     string data = reader.ReadLine();
-                    while (data != null)
+                    while (data is not null)
                     {
                         HandleErrorDataReceived(data);
                         data = reader.ReadLine();
@@ -1243,7 +1243,7 @@ namespace System.Management.Automation.Remoting.Client
             if (isDisposing)
             {
                 KillServerProcess();
-                if (_serverProcess != null && _processCreated)
+                if (_serverProcess is not null && _processCreated)
                 {
                     // null can happen if Dispose is called before ConnectAsync()
                     _serverProcess.Dispose();
@@ -1332,7 +1332,7 @@ namespace System.Management.Automation.Remoting.Client
 
             if (isDisposing)
             {
-                if (_client != null)
+                if (_client is not null)
                 {
                     _client.Dispose();
                 }
@@ -1362,7 +1362,7 @@ namespace System.Management.Automation.Remoting.Client
             try
             {
                 StreamReader reader = state as StreamReader;
-                Dbg.Assert(reader != null, "Reader cannot be null.");
+                Dbg.Assert(reader is not null, "Reader cannot be null.");
 
                 // Send one fragment.
                 SendOneItem();
@@ -1407,7 +1407,7 @@ namespace System.Management.Automation.Remoting.Client
                     Dbg.Assert(false, "Need to adjust transport fragmentor to accomodate read buffer size.");
                 }
 
-                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                string errorMsg = (e.Message is not null) ? e.Message : string.Empty;
                 _tracer.WriteMessage("HyperVSocketClientSessionTransportManager", "StartReaderThread", Guid.Empty,
                     "Transport manager reader thread ended with error: {0}", errorMsg);
 
@@ -1654,13 +1654,13 @@ namespace System.Management.Automation.Remoting.Client
         private void CloseConnection()
         {
             var stdInWriter = Interlocked.Exchange(ref _stdInWriter, null);
-            if (stdInWriter != null) { stdInWriter.Dispose(); }
+            if (stdInWriter is not null) { stdInWriter.Dispose(); }
 
             var stdOutReader = Interlocked.Exchange(ref _stdOutReader, null);
-            if (stdOutReader != null) { stdOutReader.Dispose(); }
+            if (stdOutReader is not null) { stdOutReader.Dispose(); }
 
             var stdErrReader = Interlocked.Exchange(ref _stdErrReader, null);
-            if (stdErrReader != null) { stdErrReader.Dispose(); }
+            if (stdErrReader is not null) { stdErrReader.Dispose(); }
 
             // The CloseConnection() method can be called multiple times from multiple places.
             // Set the _sshProcessId to zero here so that we go through the work of finding
@@ -1671,7 +1671,7 @@ namespace System.Management.Automation.Remoting.Client
                 try
                 {
                     var sshProcess = System.Diagnostics.Process.GetProcessById(sshProcessId);
-                    if ((sshProcess != null) && (sshProcess.Handle != IntPtr.Zero) && !sshProcess.HasExited)
+                    if ((sshProcess is not null) && (sshProcess.Handle != IntPtr.Zero) && !sshProcess.HasExited)
                     {
                         sshProcess.Kill();
                     }
@@ -1697,7 +1697,7 @@ namespace System.Management.Automation.Remoting.Client
             try
             {
                 StreamReader reader = state as StreamReader;
-                Dbg.Assert(reader != null, "Reader cannot be null.");
+                Dbg.Assert(reader is not null, "Reader cannot be null.");
 
                 while (true)
                 {
@@ -1723,7 +1723,7 @@ namespace System.Management.Automation.Remoting.Client
             }
             catch (Exception e)
             {
-                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                string errorMsg = (e.Message is not null) ? e.Message : string.Empty;
                 _tracer.WriteMessage("SSHClientSessionTransportManager", "ProcessErrorThread", Guid.Empty,
                     "Transport manager error thread ended with error: {0}", errorMsg);
 
@@ -1770,7 +1770,7 @@ namespace System.Management.Automation.Remoting.Client
                 try
                 {
                     var task = reader.ReadLineAsync();
-                    if (task.Wait(1000) && (task.Result != null))
+                    if (task.Wait(1000) && (task.Result is not null))
                     {
                         sb.Append(Environment.NewLine);
                         sb.Append(task.Result);
@@ -1803,7 +1803,7 @@ namespace System.Management.Automation.Remoting.Client
             try
             {
                 StreamReader reader = state as StreamReader;
-                Dbg.Assert(reader != null, "Reader cannot be null.");
+                Dbg.Assert(reader is not null, "Reader cannot be null.");
 
                 // Send one fragment.
                 SendOneItem();
@@ -1847,7 +1847,7 @@ namespace System.Management.Automation.Remoting.Client
                     Dbg.Assert(false, "Need to adjust transport fragmentor to accomodate read buffer size.");
                 }
 
-                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                string errorMsg = (e.Message is not null) ? e.Message : string.Empty;
                 _tracer.WriteMessage("SSHClientSessionTransportManager", "ProcessReaderThread", Guid.Empty,
                     "Transport manager reader thread ended with error: {0}", errorMsg);
             }
@@ -1895,7 +1895,7 @@ namespace System.Management.Automation.Remoting.Client
 
             if (isDisposing)
             {
-                if (_clientPipe != null)
+                if (_clientPipe is not null)
                 {
                     _clientPipe.Dispose();
                 }
@@ -1929,7 +1929,7 @@ namespace System.Management.Automation.Remoting.Client
             try
             {
                 StreamReader reader = state as StreamReader;
-                Dbg.Assert(reader != null, "Reader cannot be null.");
+                Dbg.Assert(reader is not null, "Reader cannot be null.");
 
                 // Send one fragment.
                 SendOneItem();
@@ -1974,7 +1974,7 @@ namespace System.Management.Automation.Remoting.Client
                     Dbg.Assert(false, "Need to adjust transport fragmentor to accommodate read buffer size.");
                 }
 
-                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                string errorMsg = (e.Message is not null) ? e.Message : string.Empty;
                 _tracer.WriteMessage("NamedPipeClientSessionTransportManager", "StartReaderThread", Guid.Empty,
                     "Transport manager reader thread ended with error: {0}", errorMsg);
             }
@@ -2042,7 +2042,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         public void AbortConnect()
         {
-            if (_clientPipe != null)
+            if (_clientPipe is not null)
             {
                 _clientPipe.AbortConnect();
             }
@@ -2185,7 +2185,7 @@ namespace System.Management.Automation.Remoting.Client
                 RunspacePoolInstanceId.ToString(), powershellInstanceId.ToString());
 
             // Send Close information to the server
-            if (_stdInWriter != null)
+            if (_stdInWriter is not null)
             {
                 try
                 {
@@ -2341,7 +2341,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </param>
         internal override void ProcessPrivateData(object privateData)
         {
-            Dbg.Assert(privateData != null, "privateData cannot be null.");
+            Dbg.Assert(privateData is not null, "privateData cannot be null.");
 
             // For this version...only a boolean can be used for privateData.
             bool shouldRaiseSignalCompleted = (bool)privateData;
@@ -2379,7 +2379,7 @@ namespace System.Management.Automation.Remoting.Client
                 data = dataToBeSent.ReadOrRegisterCallback(_onDataAvailableToSendCallback, out priorityType);
             }
 
-            if (data != null)
+            if (data is not null)
             {
                 SendData(data, priorityType);
             }
@@ -2409,7 +2409,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private void OnDataAvailableCallback(byte[] data, DataPriorityType priorityType)
         {
-            Dbg.Assert(data != null, "data cannot be null in the data available callback");
+            Dbg.Assert(data is not null, "data cannot be null in the data available callback");
 
             tracer.WriteLine("Received data from dataToBeSent store.");
             SendData(data, priorityType);
@@ -2437,8 +2437,8 @@ namespace System.Management.Automation.Remoting.Server
         internal OutOfProcessServerSessionTransportManager(OutOfProcessTextWriter outWriter, OutOfProcessTextWriter errWriter, PSRemotingCryptoHelperServer cryptoHelper)
             : base(BaseTransportManager.DefaultFragmentSize, cryptoHelper)
         {
-            Dbg.Assert(outWriter != null, "outWriter cannot be null.");
-            Dbg.Assert(errWriter != null, "errWriter cannot be null.");
+            Dbg.Assert(outWriter is not null, "outWriter cannot be null.");
+            Dbg.Assert(errWriter is not null, "errWriter cannot be null.");
             _stdOutWriter = outWriter;
             _stdErrWriter = errWriter;
             _cmdTransportManagers = new Dictionary<Guid, OutOfProcessServerTransportManager>();

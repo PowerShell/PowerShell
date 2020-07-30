@@ -93,9 +93,9 @@ namespace System.Management.Automation
             ExecutionContext context,
             InternalCommand command)
         {
-            Diagnostics.Assert(target != null, "caller to verify target is not null.");
-            Diagnostics.Assert(invocationInfo != null, "caller to verify invocationInfo is not null.");
-            Diagnostics.Assert(context != null, "caller to verify context is not null.");
+            Diagnostics.Assert(target is not null, "caller to verify target is not null.");
+            Diagnostics.Assert(invocationInfo is not null, "caller to verify invocationInfo is not null.");
+            Diagnostics.Assert(context is not null, "caller to verify context is not null.");
 
             bindingTracer.ShowHeaders = false;
 
@@ -125,8 +125,8 @@ namespace System.Management.Automation
             ExecutionContext context,
             InternalCommand command)
         {
-            Diagnostics.Assert(invocationInfo != null, "caller to verify invocationInfo is not null.");
-            Diagnostics.Assert(context != null, "caller to verify context is not null.");
+            Diagnostics.Assert(invocationInfo is not null, "caller to verify invocationInfo is not null.");
+            Diagnostics.Assert(context is not null, "caller to verify context is not null.");
 
             bindingTracer.ShowHeaders = false;
 
@@ -150,7 +150,7 @@ namespace System.Management.Automation
             get
             {
                 Diagnostics.Assert(
-                    _target != null,
+                    _target is not null,
                     "The target should always be set for the binder");
 
                 return _target;
@@ -229,8 +229,8 @@ namespace System.Management.Automation
             bool retryOtherBindingAfterFailure,
             object parameterValue)
         {
-            Dbg.Assert(parameter != null, "Caller should verify parameter != null");
-            Dbg.Assert(parameterMetadata != null, "Caller should verify parameterMetadata != null");
+            Dbg.Assert(parameter is not null, "Caller should verify parameter is not null");
+            Dbg.Assert(parameterMetadata is not null, "Caller should verify parameterMetadata is not null");
 
             if (parameterValue is null)
             {
@@ -246,7 +246,7 @@ namespace System.Management.Automation
                 PSInvalidCastException e = new PSInvalidCastException(nameof(ErrorCategory.InvalidArgument),
                         null,
                         ParameterBinderStrings.MismatchedPSTypeName,
-                        (_invocationInfo != null) && (_invocationInfo.MyCommand != null) ? _invocationInfo.MyCommand.Name : string.Empty,
+                        (_invocationInfo is not null) && (_invocationInfo.MyCommand is not null) ? _invocationInfo.MyCommand.Name : string.Empty,
                         parameterMetadata.Name,
                         parameterMetadata.Type,
                         parameterValue.GetType(),
@@ -361,7 +361,7 @@ namespace System.Management.Automation
                     // Now call any argument transformation attributes that might be present on the parameter
                     ScriptParameterBinder spb = this as ScriptParameterBinder;
                     bool usesCmdletBinding = false;
-                    if (spb != null)
+                    if (spb is not null)
                     {
                         usesCmdletBinding = spb.Script.UsesCmdletBinding;
                     }
@@ -392,7 +392,7 @@ namespace System.Management.Automation
                             {
                                 ArgumentTypeConverterAttribute argumentTypeConverter = dma as ArgumentTypeConverterAttribute;
 
-                                if (argumentTypeConverter != null)
+                                if (argumentTypeConverter is not null)
                                 {
                                     if (coerceTypeIfNeeded)
                                     {
@@ -412,7 +412,7 @@ namespace System.Management.Automation
                                     //  2. If we use script binding (ScriptParameterBinderController is used), then parameters won't have the
                                     //     ParameterAttribute declared for them, and thus are definitely not mandatory.
                                     // So we check 'IsParameterMandatory' only if we are not binding default values.
-                                    if ((parameterValue != null) ||
+                                    if ((parameterValue is not null) ||
                                         (!isDefaultValue && (parameterMetadata.IsMandatoryInSomeParameterSet ||
                                                              parameterMetadata.CannotBeNull ||
                                                              dma.TransformNullOptionalParameters)))
@@ -475,10 +475,10 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if ((parameterMetadata.PSTypeName != null) && (parameterValue != null))
+                    if ((parameterMetadata.PSTypeName is not null) && (parameterValue is not null))
                     {
                         IEnumerable parameterValueAsEnumerable = LanguagePrimitives.GetEnumerable(parameterValue);
-                        if (parameterValueAsEnumerable != null)
+                        if (parameterValueAsEnumerable is not null)
                         {
                             foreach (object o in parameterValueAsEnumerable)
                             {
@@ -548,9 +548,9 @@ namespace System.Management.Automation
                     //  1. We are binding parameters for a simple function/script
                     //  2. We are not binding a default parameter value
 
-                    if (parameterMetadata.ObsoleteAttribute != null &&
+                    if (parameterMetadata.ObsoleteAttribute is not null &&
                         (!isDefaultValue) &&
-                        spb != null && !usesCmdletBinding)
+                        spb is not null && !usesCmdletBinding)
                     {
                         string obsoleteWarning = string.Format(
                             CultureInfo.InvariantCulture,
@@ -559,7 +559,7 @@ namespace System.Management.Automation
                             parameterMetadata.ObsoleteAttribute.Message);
 
                         var mshCommandRuntime = this.Command.commandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
+                        if (mshCommandRuntime is not null)
                         {
                             // Write out warning only if we are in the context of MshCommandRuntime.
                             // This is because
@@ -584,7 +584,7 @@ namespace System.Management.Automation
                         bindError = setValueException;
                     }
 
-                    if (bindError != null)
+                    if (bindError is not null)
                     {
                         Type specifiedType = (parameterValue is null) ? null : parameterValue.GetType();
                         ParameterBindingException bindingException =
@@ -620,16 +620,16 @@ namespace System.Management.Automation
                     }
 
                     MshCommandRuntime cmdRuntime = this.Command.commandRuntime as MshCommandRuntime;
-                    if ((cmdRuntime != null) &&
+                    if ((cmdRuntime is not null) &&
                         (cmdRuntime.LogPipelineExecutionDetail || _isTranscribing) &&
-                        (cmdRuntime.PipelineProcessor != null))
+                        (cmdRuntime.PipelineProcessor is not null))
                     {
                         string stringToPrint = null;
                         try
                         {
                             // Unroll parameter value
                             IEnumerable values = LanguagePrimitives.GetEnumerable(parameterValue);
-                            if (values != null)
+                            if (values is not null)
                             {
                                 var sb = new Text.StringBuilder(256);
                                 var sep = string.Empty;
@@ -648,7 +648,7 @@ namespace System.Management.Automation
 
                                 stringToPrint = sb.ToString();
                             }
-                            else if (parameterValue != null)
+                            else if (parameterValue is not null)
                             {
                                 stringToPrint = parameterValue.ToString();
                             }
@@ -657,7 +657,7 @@ namespace System.Management.Automation
                         {
                         }
 
-                        if (stringToPrint != null)
+                        if (stringToPrint is not null)
                         {
                             cmdRuntime.PipelineProcessor.LogExecutionParameterBinding(this.InvocationInfo, parameter.ParameterName, stringToPrint);
                         }
@@ -722,7 +722,7 @@ namespace System.Management.Automation
                 // is not null and not empty or that the parameter can accept null or empty.
                 string stringParamValue = parameterValue as string;
                 Diagnostics.Assert(
-                    stringParamValue != null,
+                    stringParamValue is not null,
                     "Type coercion should have already converted the argument value to a string");
 
                 if (stringParamValue.Length == 0 && !parameterMetadata.AllowsEmptyStringArgument)
@@ -762,13 +762,13 @@ namespace System.Management.Automation
             // All these collection types implement IEnumerable
             IEnumerator ienum = LanguagePrimitives.GetEnumerator(parameterValue);
             Diagnostics.Assert(
-                ienum != null,
+                ienum is not null,
                 "Type coercion should have already converted the argument value to an IEnumerator");
 
             // Ensure that each element abides by the metadata
             bool isEmpty = true;
             Type elementType = parameterMetadata.CollectionTypeInformation.ElementType;
-            bool isElementValueType = elementType != null && elementType.IsValueType;
+            bool isElementValueType = elementType is not null && elementType.IsValueType;
 
             // Note - we explicitly don't pass the context here because we don't want
             // the overhead of the calls that check for stopping.
@@ -852,7 +852,7 @@ namespace System.Management.Automation
             }
 
             var psobj = parameterValue as PSObject;
-            if (psobj != null && !psobj.ImmediateBaseObjectIsEmpty)
+            if (psobj is not null && !psobj.ImmediateBaseObjectIsEmpty)
             {
                 // See if the base object is of the same type or
                 // as subclass of the parameter
@@ -1045,7 +1045,7 @@ namespace System.Management.Automation
                             // as is to a PSObject parameter in which case, we want to make
                             // sure that we're using the same shell object instead of creating an
                             // alias object.
-                            if (_command != null &&
+                            if (_command is not null &&
                                 currentValue == _command.CurrentPipelineObject.BaseObject)
                             {
                                 currentValue = _command.CurrentPipelineObject;
@@ -1187,7 +1187,7 @@ namespace System.Management.Automation
                             || collectionTypeInfo.ParameterCollectionType == ParameterCollectionType.IList)
                         {
                             object currentValueToConvert = PSObject.Base(currentValue);
-                            if (currentValueToConvert != null)
+                            if (currentValueToConvert is not null)
                             {
                                 ConversionRank rank = LanguagePrimitives.GetConversionRank(currentValueToConvert.GetType(), toType);
                                 if (rank == ConversionRank.Constructor || rank == ConversionRank.ImplicitCast || rank == ConversionRank.ExplicitCast)
@@ -1214,7 +1214,7 @@ namespace System.Management.Automation
                                     collectionTypeInfo,
                                     toType,
                                     currentValue,
-                                    (collectionTypeInfo.ElementType != null),
+                                    (collectionTypeInfo.ElementType is not null),
                                     out ignored);
 
                             break;
@@ -1225,7 +1225,7 @@ namespace System.Management.Automation
                             // we don't want to attempt to bind a collection to a scalar unless
                             // the parameter type is Object or PSObject or enum.
 
-                            if (GetIList(currentValue) != null &&
+                            if (GetIList(currentValue) is not null &&
                                 toType != typeof(object) &&
                                 toType != typeof(PSObject) &&
                                 toType != typeof(PSListModifier) &&
@@ -1322,7 +1322,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (result != null)
+            if (result is not null)
             {
                 // Set the converted result object untrusted if necessary
                 ExecutionContext.PropagateInputSource(originalValue, result, Context.LanguageMode);
@@ -1490,7 +1490,7 @@ namespace System.Management.Automation
 
                 IList currentValueAsIList = GetIList(currentValue);
 
-                if (currentValueAsIList != null)
+                if (currentValueAsIList is not null)
                 {
                     numberOfElements = currentValueAsIList.Count;
 
@@ -1572,7 +1572,7 @@ namespace System.Management.Automation
                             // extract the ICollection<T>::Add(T) method
                             const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance;
                             Type elementType = collectionTypeInformation.ElementType;
-                            Diagnostics.Assert(elementType != null, "null ElementType");
+                            Diagnostics.Assert(elementType is not null, "null ElementType");
                             Exception getMethodError = null;
                             try
                             {
@@ -1684,7 +1684,7 @@ namespace System.Management.Automation
                 // Now that the new collection instance has been created, coerce each element type
                 // of the current value to the element type of the property value and add it
 
-                if (currentValueAsIList != null)
+                if (currentValueAsIList is not null)
                 {
                     // Since arrays don't support the Add method, we must use indexing
                     // to set the value.
@@ -1717,7 +1717,7 @@ namespace System.Management.Automation
                                         null,
                                         valueElement);
                         }
-                        else if (collectionElementType != null && currentValueElement != null)
+                        else if (collectionElementType is not null && currentValueElement is not null)
                         {
                             Type currentValueElementType = currentValueElement.GetType();
                             Type desiredElementType = collectionElementType;
@@ -1768,7 +1768,7 @@ namespace System.Management.Automation
                             // The inner exception to TargetInvocationException
                             // (if present) has a better Message
                             if (error is TargetInvocationException &&
-                                error.InnerException != null)
+                                error.InnerException is not null)
                             {
                                 error = error.InnerException;
                             }
@@ -1796,7 +1796,7 @@ namespace System.Management.Automation
                         "Argument type {0} is not IList, treating this as scalar",
                         currentValue.GetType().Name);
 
-                    if (collectionElementType != null)
+                    if (collectionElementType is not null)
                     {
                         if (coerceElementTypeIfNeeded)
                         {
@@ -1865,7 +1865,7 @@ namespace System.Management.Automation
                         // The inner exception to TargetInvocationException
                         // (if present) has a better Message
                         if (error is TargetInvocationException &&
-                            error.InnerException != null)
+                            error.InnerException is not null)
                         {
                             error = error.InnerException;
                         }
@@ -1903,7 +1903,7 @@ namespace System.Management.Automation
         {
             var baseObj = PSObject.Base(value);
             var result = baseObj as IList;
-            if (result != null)
+            if (result is not null)
             {
                 // Reference comparison to determine if 'value' is a PSObject
                 s_tracer.WriteLine(baseObj == value
@@ -2014,7 +2014,7 @@ namespace System.Management.Automation
 
         internal void SetPSBoundParametersVariable(ExecutionContext context)
         {
-            Dbg.Assert(context != null, "caller should verify that context != null");
+            Dbg.Assert(context is not null, "caller should verify that context is not null");
 
             context.SetVariable(SpecialVariables.PSBoundParametersVarPath, _dictionary);
         }
@@ -2026,7 +2026,7 @@ namespace System.Management.Automation
             {
                 // Handle downlevel V4 case where using parameters are passed as an array list.
                 IList implicitArrayUsingParameters = PSObject.Base(obj) as IList;
-                if ((implicitArrayUsingParameters != null) && (implicitArrayUsingParameters.Count > 0))
+                if ((implicitArrayUsingParameters is not null) && (implicitArrayUsingParameters.Count > 0))
                 {
                     // Convert array to hash table.
                     _dictionary.ImplicitUsingParameters = new Hashtable();
@@ -2050,7 +2050,7 @@ namespace System.Management.Automation
 
         internal void UpdateInvocationInfo(InvocationInfo invocationInfo)
         {
-            Dbg.Assert(invocationInfo != null, "caller should verify that invocationInfo != null");
+            Dbg.Assert(invocationInfo is not null, "caller should verify that invocationInfo is not null");
             invocationInfo.BoundParameters = _dictionary;
         }
 

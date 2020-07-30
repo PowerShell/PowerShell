@@ -448,7 +448,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string resultObjectPSType = null;
             PSObject resultObject = null;
             CimMethodResult methodResult = value as CimMethodResult;
-            if (methodResult != null)
+            if (methodResult is not null)
             {
                 resultObjectPSType = PSTypeCimMethodResult;
                 resultObject = new PSObject();
@@ -460,7 +460,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             else
             {
                 CimMethodStreamedResult methodStreamedResult = value as CimMethodStreamedResult;
-                if (methodStreamedResult != null)
+                if (methodStreamedResult is not null)
                 {
                     resultObjectPSType = PSTypeCimMethodStreamedResult;
                     resultObject = new PSObject();
@@ -470,7 +470,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            if (resultObject != null)
+            if (resultObject is not null)
             {
                 resultObject.Properties.Add(new PSNoteProperty(@"PSComputerName", this.CurrentSession.ComputerName));
                 resultObject.TypeNames.Insert(0, resultObjectPSType);

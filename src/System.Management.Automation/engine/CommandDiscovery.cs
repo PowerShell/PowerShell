@@ -70,7 +70,7 @@ namespace System.Management.Automation
             set
             {
                 _scriptBlock = value;
-                if (_scriptBlock != null)
+                if (_scriptBlock is not null)
                 {
                     string dynamicName = "LookupHandlerReplacementFor<<" + CommandName + ">>";
                     Command = new FunctionInfo(dynamicName, _scriptBlock, _context);
@@ -273,7 +273,7 @@ namespace System.Management.Automation
             CommandProcessorBase processor = null;
             CommandInfo commandInfo = LookupCommandInfo(commandName, commandOrigin);
 
-            if (commandInfo != null)
+            if (commandInfo is not null)
             {
                 processor = LookupCommandProcessor(commandInfo, commandOrigin, useLocalScope, null);
                 // commandInfo.Name might be different than commandName - restore the original invocation name
@@ -286,7 +286,7 @@ namespace System.Management.Automation
         internal static void VerifyRequiredModules(ExternalScriptInfo scriptInfo, ExecutionContext context)
         {
             // Check Required Modules
-            if (scriptInfo.RequiresModules != null)
+            if (scriptInfo.RequiresModules is not null)
             {
                 foreach (var requiredModule in scriptInfo.RequiresModules)
                 {
@@ -298,7 +298,7 @@ namespace System.Management.Automation
                         moduleManifestPath: null,
                         manifestProcessingFlags: ModuleCmdletBase.ManifestProcessingFlags.LoadElements | ModuleCmdletBase.ManifestProcessingFlags.WriteErrors,
                         error: out error);
-                    if (error != null)
+                    if (error is not null)
                     {
                         ScriptRequiresException scriptRequiresException =
                             new ScriptRequiresException(
@@ -330,11 +330,11 @@ namespace System.Management.Automation
             VerifyScriptRequirements(scriptInfo, Context);
 
             IEnumerable<PSSnapInSpecification> requiresPSSnapIns = scriptInfo.RequiresPSSnapIns;
-            if (requiresPSSnapIns != null && requiresPSSnapIns.Any())
+            if (requiresPSSnapIns is not null && requiresPSSnapIns.Any())
             {
                 Collection<string> requiresMissingPSSnapIns = null;
                 VerifyRequiredSnapins(requiresPSSnapIns, context, out requiresMissingPSSnapIns);
-                if (requiresMissingPSSnapIns != null)
+                if (requiresMissingPSSnapIns is not null)
                 {
                     ScriptRequiresException scriptRequiresException =
                         new ScriptRequiresException(
@@ -369,7 +369,7 @@ namespace System.Management.Automation
         private static void VerifyRequiredSnapins(IEnumerable<PSSnapInSpecification> requiresPSSnapIns, ExecutionContext context, out Collection<string> requiresMissingPSSnapIns)
         {
             requiresMissingPSSnapIns = null;
-            Dbg.Assert(context.InitialSessionState != null, "PowerShell should be hosted with InitialSessionState");
+            Dbg.Assert(context.InitialSessionState is not null, "PowerShell should be hosted with InitialSessionState");
 
             foreach (var requiresPSSnapIn in requiresPSSnapIns)
             {
@@ -388,11 +388,11 @@ namespace System.Management.Automation
                 {
                     // the requires PSSnapin is loaded. now check the PSSnapin version
                     PSSnapInInfo loadedPSSnapIn = loadedPSSnapIns.First();
-                    Diagnostics.Assert(loadedPSSnapIn.Version != null,
+                    Diagnostics.Assert(loadedPSSnapIn.Version is not null,
                         string.Format(
                             CultureInfo.InvariantCulture,
                             "Version is null for loaded PSSnapin {0}.", loadedPSSnapIn));
-                    if (requiresPSSnapIn.Version != null)
+                    if (requiresPSSnapIn.Version is not null)
                     {
                         if (!AreInstalledRequiresVersionsCompatible(
                             requiresPSSnapIn.Version, loadedPSSnapIn.Version))
@@ -426,7 +426,7 @@ namespace System.Management.Automation
         {
             Version requiresPSVersion = scriptInfo.RequiresPSVersion;
             // in single shell mode
-            if (requiresPSVersion != null)
+            if (requiresPSVersion is not null)
             {
                 if (!Utils.IsPSVersionSupported(requiresPSVersion))
                 {
@@ -443,7 +443,7 @@ namespace System.Management.Automation
 
         internal static void VerifyPSEdition(ExternalScriptInfo scriptInfo)
         {
-            if (scriptInfo.RequiresPSEditions != null)
+            if (scriptInfo.RequiresPSEditions is not null)
             {
                 var isCurrentEditionListed = false;
                 var isRequiresPSEditionSpecified = false;
@@ -654,7 +654,7 @@ namespace System.Management.Automation
         {
             sessionState = sessionState ?? scriptInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
             CommandProcessorBase scriptAsCmdletProcessor = GetScriptAsCmdletProcessor(scriptInfo, context, useNewScope, true, sessionState);
-            if (scriptAsCmdletProcessor != null)
+            if (scriptAsCmdletProcessor is not null)
             {
                 return scriptAsCmdletProcessor;
             }
@@ -666,7 +666,7 @@ namespace System.Management.Automation
         {
             sessionState = sessionState ?? scriptInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
             CommandProcessorBase scriptAsCmdletProcessor = GetScriptAsCmdletProcessor(scriptInfo, context, useNewScope, true, sessionState);
-            if (scriptAsCmdletProcessor != null)
+            if (scriptAsCmdletProcessor is not null)
             {
                 return scriptAsCmdletProcessor;
             }
@@ -678,7 +678,7 @@ namespace System.Management.Automation
         {
             sessionState = sessionState ?? functionInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
             CommandProcessorBase scriptAsCmdletProcessor = GetScriptAsCmdletProcessor(functionInfo, context, useNewScope, false, sessionState);
-            if (scriptAsCmdletProcessor != null)
+            if (scriptAsCmdletProcessor is not null)
             {
                 return scriptAsCmdletProcessor;
             }
@@ -764,7 +764,7 @@ namespace System.Management.Automation
             CommandLookupEventArgs eventArgs = null;
             EventHandler<CommandLookupEventArgs> preCommandLookupEvent = context.EngineIntrinsics.InvokeCommand.PreCommandLookupAction;
 
-            if (preCommandLookupEvent != null)
+            if (preCommandLookupEvent is not null)
             {
                 discoveryTracer.WriteLine("Executing PreCommandLookupAction: {0}", commandName);
                 try
@@ -795,7 +795,7 @@ namespace System.Management.Automation
 
                     result = TryNormalSearch(commandName, context, commandOrigin, searchResolutionOptions, commandTypes, ref lastError);
 
-                    if (result != null)
+                    if (result is not null)
                         break;
 
                     // Try the module-qualified auto-loading (unless module auto-loading has been entirely disabled)
@@ -804,7 +804,7 @@ namespace System.Management.Automation
                         result = TryModuleAutoLoading(commandName, context, originalCommandName, commandOrigin, ref lastError);
                     }
 
-                    if (result != null)
+                    if (result is not null)
                         break;
 
                     // See if the this was not module-qualified. In that case, we should look for the first module
@@ -824,17 +824,17 @@ namespace System.Management.Automation
             }
             else
             {
-                if (eventArgs.Command != null)
+                if (eventArgs.Command is not null)
                 {
                     result = eventArgs.Command;
                 }
             }
 
             // If we resolved a command, give the PostCommandLookup a chance to change it
-            if (result != null)
+            if (result is not null)
             {
                 System.EventHandler<CommandLookupEventArgs> postAction = context.EngineIntrinsics.InvokeCommand.PostCommandLookupAction;
-                if (postAction != null)
+                if (postAction is not null)
                 {
                     discoveryTracer.WriteLine("Executing PostCommandLookupAction: {0}", originalCommandName);
                     try
@@ -845,7 +845,7 @@ namespace System.Management.Automation
                         eventArgs.Command = result;
                         postAction.Invoke(originalCommandName, eventArgs);
 
-                        if (eventArgs != null)
+                        if (eventArgs is not null)
                         {
                             result = eventArgs.Command;
                             discoveryTracer.WriteLine("PreCommandLookupAction returned: {0}", eventArgs.Command);
@@ -896,7 +896,7 @@ namespace System.Management.Automation
                 {
                     CmdletInfo cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Import-Module");
                     if ((commandOrigin == CommandOrigin.Internal) ||
-                        ((cmdletInfo != null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public)))
+                        ((cmdletInfo is not null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public)))
                     {
                         foreach (var module in System.Management.Automation.ExecutionContext.ModulesWithJobSourceAdapters)
                         {
@@ -954,7 +954,7 @@ namespace System.Management.Automation
             CommandInfo result = null;
             CommandLookupEventArgs eventArgs;
             System.EventHandler<CommandLookupEventArgs> cmdNotFoundHandler = context.EngineIntrinsics.InvokeCommand.CommandNotFoundAction;
-            if (cmdNotFoundHandler != null)
+            if (cmdNotFoundHandler is not null)
             {
                 discoveryTracer.WriteLine("Executing CommandNotFoundAction: {0}", commandName);
                 try
@@ -1062,13 +1062,13 @@ namespace System.Management.Automation
 
                 CmdletInfo cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Get-Module");
                 if ((commandOrigin == CommandOrigin.Internal) ||
-                    ((cmdletInfo != null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public)))
+                    ((cmdletInfo is not null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public)))
                 {
                     // Search for a module with a matching command, as long as the user would have the ability to
                     // import the module.
                     cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Import-Module");
                     if (((commandOrigin == CommandOrigin.Internal) ||
-                         ((cmdletInfo != null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public))))
+                         ((cmdletInfo is not null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public))))
                     {
                         discoveryTracer.WriteLine("Executing non module-qualified search: {0}", commandName);
                         context.CommandDiscovery.RegisterLookupCommandInfoAction("ActiveModuleSearch", commandName);
@@ -1098,7 +1098,7 @@ namespace System.Management.Automation
                                 Exception exception;
                                 discoveryTracer.WriteLine("Found in module: {0}", expandedModulePath);
                                 Collection<PSModuleInfo> matchingModule = AutoloadSpecifiedModule(expandedModulePath, context,
-                                    cmdletInfo != null ? cmdletInfo.Visibility : SessionStateEntryVisibility.Private,
+                                    cmdletInfo is not null ? cmdletInfo.Visibility : SessionStateEntryVisibility.Private,
                                         out exception);
                                 lastError = exception;
                                 if ((matchingModule is null) || (matchingModule.Count == 0))
@@ -1114,7 +1114,7 @@ namespace System.Management.Automation
                                 result = LookupCommandInfo(commandName, commandTypes, searchResolutionOptions, commandOrigin, context);
                             }
 
-                            if (result != null)
+                            if (result is not null)
                             {
                                 break;
                             }
@@ -1122,7 +1122,7 @@ namespace System.Management.Automation
 
 #if !CORECLR
                         // Close the progress pane that may have popped up from analyzing UNC paths.
-                        if (context.CurrentCommandProcessor != null)
+                        if (context.CurrentCommandProcessor is not null)
                         {
                             ProgressRecord analysisProgress = new ProgressRecord(0, Modules.ScriptAnalysisPreparing, " ");
                             analysisProgress.RecordType = ProgressRecordType.Completed;
@@ -1201,7 +1201,7 @@ namespace System.Management.Automation
                 // Verify that auto-loading is only done on for internal commands if it's not public
                 CmdletInfo cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Import-Module");
                 if ((commandOrigin == CommandOrigin.Internal) ||
-                    ((cmdletInfo != null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public)))
+                    ((cmdletInfo is not null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public)))
                 {
                     List<PSModuleInfo> existingModule = context.Modules.GetModules(new string[] { moduleName }, false);
                     PSModuleInfo discoveredModule = null;
@@ -1307,9 +1307,9 @@ namespace System.Management.Automation
                 path);
 
             bool isPathCacheValid =
-                path != null &&
+                path is not null &&
                 string.Equals(_pathCacheKey, path, StringComparison.OrdinalIgnoreCase) &&
-                _cachedPath != null;
+                _cachedPath is not null;
 
             if (!isPathCacheValid)
             {
@@ -1320,7 +1320,7 @@ namespace System.Management.Automation
 
                 _pathCacheKey = path;
 
-                if (_pathCacheKey != null)
+                if (_pathCacheKey is not null)
                 {
                     string[] tokenizedPath = _pathCacheKey.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries);
                     _cachedPath = new Collection<string>();
@@ -1413,7 +1413,7 @@ namespace System.Management.Automation
         {
             lock (s_lockObject)
             {
-                s_cachedPathExtCollection = pathExt != null
+                s_cachedPathExtCollection = pathExt is not null
                     ? pathExt.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
                     : Array.Empty<string>();
                 s_cachedPathExtCollectionWithPs1 = new string[s_cachedPathExtCollection.Length + 1];
@@ -1519,8 +1519,8 @@ namespace System.Management.Automation
 
         internal static PSModuleAutoLoadingPreference GetCommandDiscoveryPreference(ExecutionContext context, VariablePath variablePath, string environmentVariable)
         {
-            Dbg.Assert(context != null, "context cannot be Null");
-            Dbg.Assert(variablePath != null, "variablePath must be non empty");
+            Dbg.Assert(context is not null, "context cannot be Null");
+            Dbg.Assert(variablePath is not null, "variablePath must be non empty");
             Dbg.Assert(!string.IsNullOrEmpty(environmentVariable), "environmentVariable must be non empty");
 
             if (context is null)
@@ -1533,7 +1533,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (result != null)
+                if (result is not null)
                 {
                     return LanguagePrimitives.ConvertTo<PSModuleAutoLoadingPreference>(result);
                 }

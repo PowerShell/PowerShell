@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
             _expressionFactory = new PSPropertyExpressionFactory();
 
             // If the value of the Title parameter is valid, use it as a window's title.
-            if (this.Title != null)
+            if (this.Title is not null)
             {
                 _windowProxy = new OutWindowProxy(this.Title, OutputMode, this);
             }
@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Output selected items to pipeline.
             List<PSObject> selectedItems = _windowProxy.GetSelectedItems();
-            if (this.OutputMode != OutputModeOption.None && selectedItems != null)
+            if (this.OutputMode != OutputModeOption.None && selectedItems is not null)
             {
                 foreach (PSObject selectedItem in selectedItems)
                 {
@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             IDictionary dictionary = InputObject.BaseObject as IDictionary;
-            if (dictionary != null)
+            if (dictionary is not null)
             {
                 // Dictionaries should be enumerated through because the pipeline does not enumerate through them.
                 foreach (DictionaryEntry entry in dictionary)
@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
                                                                 _expressionFactory,
                                                                 InnerFormatShapeCommand.FormatEnumerationLimit(),
                                                                 formatErrorObject);
-            if (formatErrorObject.exception != null)
+            if (formatErrorObject.exception is not null)
             {
                 // There was a formatting error that should be sent to the console.
                 this.WriteError(
@@ -247,7 +247,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 LocalPipeline pipeline = (LocalPipeline)this.Context.CurrentRunspace.GetCurrentlyRunningPipeline();
 
-                if (pipeline != null && !pipeline.IsStopping)
+                if (pipeline is not null && !pipeline.IsStopping)
                 {
                     // Stop the pipeline cleanly.
                     pipeline.StopAsync();
@@ -287,7 +287,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Some thread synchronization needed.
             Exception exception = _windowProxy.GetLastException();
-            if (exception != null)
+            if (exception is not null)
             {
                 ErrorRecord error = new ErrorRecord(
                     exception,
@@ -362,7 +362,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Request a view definition from the type database.
                 ViewDefinition viewDefinition = DisplayDataQuery.GetViewByShapeAndType(parentCmd._expressionFactory, parentCmd._typeInfoDataBase, FormatShape.Table, input.TypeNames, null);
-                if (viewDefinition != null)
+                if (viewDefinition is not null)
                 {
                     // Create a header using a view definition provided by the types database.
                     parentCmd._windowProxy.AddColumnsAndItem(input, tableView, (TableControlBody)viewDefinition.mainControl);
@@ -476,7 +476,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (isDisposing)
             {
-                if (_windowProxy != null)
+                if (_windowProxy is not null)
                 {
                     _windowProxy.Dispose();
                     _windowProxy = null;

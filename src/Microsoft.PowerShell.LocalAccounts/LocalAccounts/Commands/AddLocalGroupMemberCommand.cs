@@ -120,11 +120,11 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
-                if (Group != null)
+                if (Group is not null)
                     ProcessGroup(Group);
-                else if (Name != null)
+                else if (Name is not null)
                     ProcessName(Name);
-                else if (SID != null)
+                else if (SID is not null)
                     ProcessSid(SID);
             }
             catch (GroupNotFoundException ex)
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (sam != null)
+            if (sam is not null)
             {
                 sam.Dispose();
                 sam = null;
@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
         {
             LocalPrincipal principal = null;
             // if the member has a SID, we can use it directly
-            if (member.SID != null)
+            if (member.SID is not null)
             {
                 principal = member;
             }
@@ -193,7 +193,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 SecurityIdentifier sid = this.TrySid(member.Name);
 
-                if (sid != null)
+                if (sid is not null)
                 {
                     member.SID = sid;
                     principal = member;
@@ -252,10 +252,10 @@ namespace Microsoft.PowerShell.Commands
             foreach (var member in this.Member)
             {
                 LocalPrincipal principal = MakePrincipal(groupId, member);
-                if (principal != null)
+                if (principal is not null)
                 {
                     var ex = sam.AddLocalGroupMember(group, principal);
-                    if (ex != null)
+                    if (ex is not null)
                     {
                         WriteError(ex.MakeErrorRecord());
                     }
@@ -286,10 +286,10 @@ namespace Microsoft.PowerShell.Commands
             foreach (var member in this.Member)
             {
                 LocalPrincipal principal = MakePrincipal(groupSid.ToString(), member);
-                if (principal != null)
+                if (principal is not null)
                 {
                     var ex = sam.AddLocalGroupMember(groupSid, principal);
-                    if (ex != null)
+                    if (ex is not null)
                     {
                         WriteError(ex.MakeErrorRecord());
                     }

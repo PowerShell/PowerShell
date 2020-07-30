@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // if the Property parameter was given, determine the requested
             // property names
-            if (Property != null && Property.Length > 0)
+            if (Property is not null && Property.Length > 0)
             {
                 try
                 {
@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // if the user provided property names but no matching properties
             // were found, return an empty custom object
-            if (_namedProperties != null && _namedProperties.Count == 0)
+            if (_namedProperties is not null && _namedProperties.Count == 0)
             {
                 WriteObject(new PSObject());
                 return;
@@ -167,11 +167,11 @@ namespace Microsoft.PowerShell.Commands
                 osInfo.os = session.GetFirst<WmiOperatingSystem>(CIMHelper.ClassNames.OperatingSystem);
                 osInfo.pageFileUsage = session.GetAll<WmiPageFileUsage>(CIMHelper.ClassNames.PageFileUsage);
 
-                if (osInfo.os != null)
+                if (osInfo.os is not null)
                 {
                     osInfo.halVersion = GetHalVersion(session, osInfo.os.SystemDirectory);
 
-                    if (osInfo.os.LastBootUpTime != null)
+                    if (osInfo.os.LastBootUpTime is not null)
                         osInfo.upTime = now - osInfo.os.LastBootUpTime.Value;
                 }
 
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
 
             var infoOutput = CreateFullOutputObject(systemInfo, osInfo, miscInfo);
 
-            if (_namedProperties != null)
+            if (_namedProperties is not null)
             {
                 // var output = CreateCustomOutputObject(namedProperties, systemInfo, osInfo, miscInfo);
                 var output = CreateCustomOutputObject(infoOutput, _namedProperties);
@@ -251,7 +251,7 @@ namespace Microsoft.PowerShell.Commands
                 var query = string.Format("SELECT * FROM CIM_DataFile Where Name='{0}'", halPath);
                 var instance = session.QueryFirstInstance(query);
 
-                if (instance != null)
+                if (instance is not null)
                     halVersion = instance.CimInstanceProperties["Version"].Value.ToString();
             }
             catch (Exception)
@@ -285,13 +285,13 @@ namespace Microsoft.PowerShell.Commands
 
             var list = new List<NetworkAdapter>();
 
-            if (adapters != null && configs != null)
+            if (adapters is not null && configs is not null)
             {
                 var configDict = new Dictionary<uint, WmiNetworkAdapterConfiguration>();
 
                 foreach (var config in configs)
                 {
-                    if (config.Index != null)
+                    if (config.Index is not null)
                         configDict[config.Index.Value] = config;
                 }
 
@@ -301,8 +301,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // Only include adapters that have a non-null connection status
                         // and a non-null index
-                        if (adapter.NetConnectionStatus != null
-                            && adapter.Index != null)
+                        if (adapter.NetConnectionStatus is not null
+                            && adapter.Index is not null)
                         {
                             if (configDict.ContainsKey(adapter.Index.Value))
                             {
@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
         {
             var processors = session.GetAll<WmiProcessor>(CIMHelper.ClassNames.Processor);
 
-            if (processors != null)
+            if (processors is not null)
             {
                 var list = new List<Processor>();
 
@@ -429,10 +429,10 @@ namespace Microsoft.PowerShell.Commands
                 var wmiGuard = session.GetFirst<WmiDeviceGuard>(CIMHelper.DeviceGuardNamespace,
                                                                 CIMHelper.ClassNames.DeviceGuard);
 
-                if (wmiGuard != null)
+                if (wmiGuard is not null)
                 {
                     var smartStatus = EnumConverter<DeviceGuardSmartStatus>.Convert((int?)wmiGuard.VirtualizationBasedSecurityStatus ?? 0);
-                    if (smartStatus != null)
+                    if (smartStatus is not null)
                     {
                         status = (DeviceGuardSmartStatus)smartStatus;
                     }
@@ -454,13 +454,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static bool? GetBooleanProperty(CimInstance instance, string propertyName)
         {
-            if (instance != null)
+            if (instance is not null)
             {
                 try
                 {
                     var property = instance.CimInstanceProperties[propertyName];
 
-                    if (property != null && property.Value != null)
+                    if (property is not null && property.Value is not null)
                         return (bool)property.Value;
                 }
                 catch (Exception)
@@ -492,7 +492,7 @@ namespace Microsoft.PowerShell.Commands
 
             using (instance = session.QueryFirstInstance(CIMHelper.WqlQueryAll(CIMHelper.ClassNames.ComputerSystem)))
             {
-                if (instance != null)
+                if (instance is not null)
                 {
                     info.Present = GetBooleanProperty(instance, "HypervisorPresent");
                     ok = true;
@@ -501,12 +501,12 @@ namespace Microsoft.PowerShell.Commands
 
             // don't bother checking requirements if the HyperV in present
             // when the HyperV is present, the requirements values are misleading
-            if (ok && info.Present != null && info.Present.Value)
+            if (ok && info.Present is not null && info.Present.Value)
                 return info;
 
             using (instance = session.QueryFirstInstance(CIMHelper.WqlQueryAll(CIMHelper.ClassNames.OperatingSystem)))
             {
-                if (instance != null)
+                if (instance is not null)
                 {
                     info.DataExecutionPreventionAvailable = GetBooleanProperty(instance, "DataExecutionPrevention_Available");
                     ok = true;
@@ -515,7 +515,7 @@ namespace Microsoft.PowerShell.Commands
 
             using (instance = session.QueryFirstInstance(CIMHelper.WqlQueryAll(CIMHelper.ClassNames.Processor)))
             {
-                if (instance != null)
+                if (instance is not null)
                 {
                     info.SecondLevelAddressTranslation = GetBooleanProperty(instance, "SecondLevelAddressTranslationExtensions");
                     info.VirtualizationFirmwareEnabled = GetBooleanProperty(instance, "VirtualizationFirmwareEnabled");
@@ -569,7 +569,7 @@ namespace Microsoft.PowerShell.Commands
             // get time zone
             // we'll use .Net's TimeZoneInfo for now. systeminfo uses Caption from Win32_TimeZone
             var tzi = TimeZoneInfo.Local;
-            if (tzi != null)
+            if (tzi is not null)
                 rv.timeZone = tzi.DisplayName;
 
             rv.logonServer = RegistryInfo.GetLogonServer();
@@ -672,7 +672,7 @@ namespace Microsoft.PowerShell.Commands
             var output = new ComputerInfo();
 
             var regCurVer = osInfo.regCurVer;
-            if (regCurVer != null)
+            if (regCurVer is not null)
             {
                 output.WindowsBuildLabEx = regCurVer.BuildLabEx;
                 output.WindowsCurrentVersion = regCurVer.CurrentVersion;
@@ -689,7 +689,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             var os = osInfo.os;
-            if (os != null)
+            if (os is not null)
             {
                 output.OsName = os.Caption;
                 output.OsBootDevice = os.BootDevice;
@@ -715,7 +715,7 @@ namespace Microsoft.PowerShell.Commands
                 output.OsFreeSpaceInPagingFiles = os.FreeSpaceInPagingFiles;
                 output.OsTotalVirtualMemorySize = os.TotalVirtualMemorySize;
                 output.OsFreeVirtualMemory = os.FreeVirtualMemory;
-                if (os.TotalVirtualMemorySize != null && os.FreeVirtualMemory != null)
+                if (os.TotalVirtualMemorySize is not null && os.FreeVirtualMemory is not null)
                     output.OsInUseVirtualMemory = os.TotalVirtualMemorySize - os.FreeVirtualMemory;
                 output.OsInstallDate = os.InstallDate;
                 output.OsLastBootUpTime = os.LastBootUpTime;
@@ -758,7 +758,7 @@ namespace Microsoft.PowerShell.Commands
                 output.OsHotFixes = osInfo.hotFixes;
 
                 var pageFileUsage = osInfo.pageFileUsage;
-                if (pageFileUsage != null)
+                if (pageFileUsage is not null)
                 {
                     output.OsPagingFiles = new string[pageFileUsage.Length];
 
@@ -768,7 +768,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             var bios = systemInfo.bios;
-            if (bios != null)
+            if (bios is not null)
             {
                 output.BiosCharacteristics = bios.BiosCharacteristics;
                 output.BiosBuildNumber = bios.BuildNumber;
@@ -801,12 +801,12 @@ namespace Microsoft.PowerShell.Commands
                 output.BiosTargetOperatingSystem = bios.TargetOperatingSystem;
                 output.BiosVersion = bios.Version;
 
-                if (otherInfo != null)
+                if (otherInfo is not null)
                     output.BiosFirmwareType = otherInfo.firmwareType;
             }
 
             var computer = systemInfo.computer;
-            if (computer != null)
+            if (computer is not null)
             {
                 output.CsAdminPasswordStatus = EnumConverter<HardwareSecurity>.Convert(computer.AdminPasswordStatus);
                 output.CsAutomaticManagedPagefile = computer.AutomaticManagedPagefile;
@@ -869,13 +869,13 @@ namespace Microsoft.PowerShell.Commands
                 output.CsWakeUpType = EnumConverter<WakeUpType>.Convert(computer.WakeUpType);
                 output.CsWorkgroup = computer.Workgroup;
 
-                if (otherInfo != null)
+                if (otherInfo is not null)
                 {
                     output.CsPhysicallyInstalledMemory = otherInfo.physicallyInstalledMemory;
                 }
             }
 
-            if (otherInfo != null)
+            if (otherInfo is not null)
             {
                 output.TimeZone = otherInfo.timeZone;
                 output.LogonServer = otherInfo.logonServer;
@@ -892,7 +892,7 @@ namespace Microsoft.PowerShell.Commands
                     output.KeyboardLayout = Conversion.GetLocaleName(layout);
                 }
 
-                if (otherInfo.hyperV != null)
+                if (otherInfo.hyperV is not null)
                 {
                     output.HyperVisorPresent = otherInfo.hyperV.Present;
                     output.HyperVRequirementDataExecutionPreventionAvailable = otherInfo.hyperV.DataExecutionPreventionAvailable;
@@ -904,12 +904,12 @@ namespace Microsoft.PowerShell.Commands
                 output.OsServerLevel = otherInfo.serverLevel;
 
                 var deviceGuardInfo = otherInfo.deviceGuard;
-                if (deviceGuardInfo != null)
+                if (deviceGuardInfo is not null)
                 {
                     output.DeviceGuardSmartStatus = deviceGuardInfo.status;
 
                     var deviceGuard = deviceGuardInfo.deviceGuard;
-                    if (deviceGuard != null)
+                    if (deviceGuard is not null)
                     {
                         output.DeviceGuardRequiredSecurityProperties = deviceGuard.RequiredSecurityProperties;
                         output.DeviceGuardAvailableSecurityProperties = deviceGuard.AvailableSecurityProperties;
@@ -942,7 +942,7 @@ namespace Microsoft.PowerShell.Commands
         {
             var rv = new PSObject();
 
-            if (info != null && namedProperties != null && namedProperties.Count > 0)
+            if (info is not null && namedProperties is not null && namedProperties.Count > 0)
             {
                 // Walk the list of named properties, find a matching property in the
                 // info object, and create a new property on the results object
@@ -953,7 +953,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     var propInfo = type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
 
-                    if (propInfo != null)
+                    if (propInfo is not null)
                     {
                         object value = propInfo.GetValue(info);
                         rv.Properties.Add(new PSNoteProperty(propertyName, value));
@@ -1049,7 +1049,7 @@ namespace Microsoft.PowerShell.Commands
                     var propertyName = availableProperties.Find(pred);
 
                     // add the properly-cased name, if found, to the list
-                    if (propertyName != null && !rv.Contains(propertyName))
+                    if (propertyName is not null && !rv.Contains(propertyName))
                         rv.Add(propertyName);
                 }
             }
@@ -1117,7 +1117,7 @@ namespace Microsoft.PowerShell.Commands
         {
             CultureInfo culture = null;
 
-            if (locale != null)
+            if (locale is not null)
             {
                 try
                 {
@@ -1239,7 +1239,7 @@ namespace Microsoft.PowerShell.Commands
 
             using (var key = Registry.LocalMachine.OpenSubKey(keyPath))
             {
-                if (key != null)
+                if (key is not null)
                 {
                     foreach (var name in key.GetValueNames())
                     {
@@ -1262,7 +1262,7 @@ namespace Microsoft.PowerShell.Commands
 
             using (var key = Registry.CurrentUser.OpenSubKey(keyPath))
             {
-                if (key != null)
+                if (key is not null)
                     return (string)key.GetValue(valueName, null);
             }
 
@@ -1273,7 +1273,7 @@ namespace Microsoft.PowerShell.Commands
         {
             using (var key = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows NT\CurrentVersion"))
             {
-                if (key != null)
+                if (key is not null)
                 {
                     object temp = key.GetValue("InstallDate");
 
@@ -1321,7 +1321,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         protected static string GetLanguageName(uint? lcid)
         {
-            if (lcid != null && lcid >= 0)
+            if (lcid is not null && lcid >= 0)
             {
                 try
                 {
@@ -1468,7 +1468,7 @@ namespace Microsoft.PowerShell.Commands
 
         public PowerManagementCapabilities[] GetPowerManagementCapabilities()
         {
-            if (PowerManagementCapabilities != null)
+            if (PowerManagementCapabilities is not null)
             {
                 var list = new List<PowerManagementCapabilities>();
 
@@ -1476,7 +1476,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     var val = EnumConverter<PowerManagementCapabilities>.Convert(cap);
 
-                    if (val != null)
+                    if (val is not null)
                         list.Add(val.Value);
                 }
 
@@ -1505,14 +1505,14 @@ namespace Microsoft.PowerShell.Commands
                 var guard = new DeviceGuard();
 
                 var status = EnumConverter<DeviceGuardSmartStatus>.Convert((int?)VirtualizationBasedSecurityStatus);
-                if (status != null && status != DeviceGuardSmartStatus.Off)
+                if (status is not null && status != DeviceGuardSmartStatus.Off)
                 {
                     var listHardware = new List<DeviceGuardHardwareSecure>();
                     for (int i = 0; i < RequiredSecurityProperties.Length; i++)
                     {
                         var temp = EnumConverter<DeviceGuardHardwareSecure>.Convert((int?)RequiredSecurityProperties[i]);
 
-                        if (temp != null)
+                        if (temp is not null)
                             listHardware.Add(temp.Value);
                     }
 
@@ -1523,7 +1523,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         var temp = EnumConverter<DeviceGuardHardwareSecure>.Convert((int?)AvailableSecurityProperties[i]);
 
-                        if (temp != null)
+                        if (temp is not null)
                             listHardware.Add(temp.Value);
                     }
 
@@ -1534,7 +1534,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         var temp = EnumConverter<DeviceGuardSoftwareSecure>.Convert((int?)SecurityServicesConfigured[i]);
 
-                        if (temp != null)
+                        if (temp is not null)
                             listSoftware.Add(temp.Value);
                     }
 
@@ -1545,7 +1545,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         var temp = EnumConverter<DeviceGuardSoftwareSecure>.Convert((int?)SecurityServicesRunning[i]);
 
-                        if (temp != null)
+                        if (temp is not null)
                             listSoftware.Add(temp.Value);
                     }
 

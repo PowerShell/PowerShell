@@ -28,7 +28,7 @@ namespace System.Management.Automation.Help
         internal UpdatableHelpModuleInfo(string name, Guid guid, string path, string uri)
         {
             Debug.Assert(!string.IsNullOrEmpty(name));
-            Debug.Assert(guid != null);
+            Debug.Assert(guid is not null);
             Debug.Assert(!string.IsNullOrEmpty(path));
             Debug.Assert(!string.IsNullOrEmpty(uri));
 
@@ -73,7 +73,7 @@ namespace System.Management.Automation.Help
         /// <returns>HelpContent name.</returns>
         internal string GetHelpContentName(CultureInfo culture)
         {
-            Debug.Assert(culture != null);
+            Debug.Assert(culture is not null);
 
             return ModuleName + "_" + _moduleGuid.ToString() + "_" + culture.Name + "_" + HelpContentZipName;
         }

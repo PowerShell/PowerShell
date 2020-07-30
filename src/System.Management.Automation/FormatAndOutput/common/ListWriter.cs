@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             _disabled = false;
 
-            Debug.Assert(propertyNames != null, "propertyNames is null");
+            Debug.Assert(propertyNames is not null, "propertyNames is null");
             Debug.Assert(propertyNames.Length > 0, "propertyNames has zero length");
 
             // assess the useful widths
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             Span<int> propertyNameCellCounts = propertyNames.Length <= OutCommandInner.StackAllocThreshold ? stackalloc int[propertyNames.Length] : new int[propertyNames.Length];
             for (int k = 0; k < propertyNames.Length; k++)
             {
-                Debug.Assert(propertyNames[k] != null, "propertyNames[k] is null");
+                Debug.Assert(propertyNames[k] is not null, "propertyNames[k] is null");
                 propertyNameCellCounts[k] = dc.Length(propertyNames[k]);
                 if (propertyNameCellCounts[k] > _propertyLabelsDisplayLength)
                     _propertyLabelsDisplayLength = propertyNameCellCounts[k];
@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 valuesToPrint = values;
             }
 
-            Debug.Assert(lo != null, "LineOutput is null");
+            Debug.Assert(lo is not null, "LineOutput is null");
 
             for (int k = 0; k < _propertyLabels.Length; k++)
             {

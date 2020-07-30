@@ -48,7 +48,7 @@ namespace System.Management.Automation.ComInterop
         public override bool Equals(object obj)
         {
             var other = obj as DispCallable;
-            return other != null && other.DispatchComObject == DispatchComObject && other.DispId == DispId;
+            return other is not null && other.DispatchComObject == DispatchComObject && other.DispId == DispId;
         }
 
         public override int GetHashCode()

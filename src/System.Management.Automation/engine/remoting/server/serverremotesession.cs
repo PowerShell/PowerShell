@@ -124,7 +124,7 @@ namespace System.Management.Automation.Remoting
             string initializationParameters,
             AbstractServerSessionTransportManager transportManager)
         {
-            Dbg.Assert(transportManager != null, "transportManager cannot be null.");
+            Dbg.Assert(transportManager is not null, "transportManager cannot be null.");
 
             // let input,output and error from native commands redirect as we have
             // to send (or receive) them back to client for action.
@@ -196,7 +196,7 @@ namespace System.Management.Automation.Remoting
             string initialLocation = null)
         {
             Dbg.Assert(
-                (senderInfo != null) && (senderInfo.UserInfo != null),
+                (senderInfo is not null) && (senderInfo.UserInfo is not null),
                 "senderInfo and userInfo cannot be null.");
 
             s_trace.WriteLine("Finding InitialSessionState provider for id : {0}", configurationProviderId);
@@ -497,7 +497,7 @@ namespace System.Management.Automation.Remoting
         internal void Close(RemoteSessionStateMachineEventArgs reasonForClose)
         {
             Closed.SafeInvoke(this, reasonForClose);
-            if (_runspacePoolDriver != null)
+            if (_runspacePoolDriver is not null)
                 _runspacePoolDriver.Closed -= HandleResourceClosing;
         }
 
@@ -642,7 +642,7 @@ namespace System.Management.Automation.Remoting
             int clientRequestedMinRunspaces = -1;
             int clientRequestedMaxRunspaces = -1;
             bool clientRequestedRunspaceCount = false;
-            if (connectRunspacePoolObject.Data.Properties[RemoteDataNameStrings.MinRunspaces] != null && connectRunspacePoolObject.Data.Properties[RemoteDataNameStrings.MaxRunspaces] != null)
+            if (connectRunspacePoolObject.Data.Properties[RemoteDataNameStrings.MinRunspaces] is not null && connectRunspacePoolObject.Data.Properties[RemoteDataNameStrings.MaxRunspaces] is not null)
             {
                 try
                 {
@@ -704,7 +704,7 @@ namespace System.Management.Automation.Remoting
             runspacepoolInitData.Serialize(stream, fragmentor);
             stream.Exit();
             byte[] outbuffer = stream.Read();
-            Dbg.Assert(outbuffer != null, "connect response data should be serialized");
+            Dbg.Assert(outbuffer is not null, "connect response data should be serialized");
             stream.Dispose();
             // we are done
             connectResponseData = outbuffer;
@@ -725,7 +725,7 @@ namespace System.Management.Automation.Remoting
         // pass on application private data when session is connected from new client
         internal void HandlePostConnect()
         {
-            if (_runspacePoolDriver != null)
+            if (_runspacePoolDriver is not null)
             {
                 _runspacePoolDriver.SendApplicationPrivateDataToClient();
             }
@@ -747,11 +747,11 @@ namespace System.Management.Automation.Remoting
             }
 
             RemoteDataObject<PSObject> rcvdData = createRunspaceEventArg.ReceivedData;
-            Dbg.Assert(rcvdData != null, "rcvdData must be non-null");
+            Dbg.Assert(rcvdData is not null, "rcvdData must be non-null");
 
             // set the PSSenderInfo sent in the first packets
             // This is used by the initial session state configuration providers like Exchange.
-            if (Context != null)
+            if (Context is not null)
             {
                 _senderInfo.ClientTimeZone = Context.ClientCapability.TimeZone;
             }
@@ -792,7 +792,7 @@ namespace System.Management.Automation.Remoting
 
             InitialSessionState rsSessionStateToUse = null;
 
-            if (configurationData.SessionConfigurationData != null)
+            if (configurationData.SessionConfigurationData is not null)
             {
                 try
                 {
@@ -827,15 +827,15 @@ namespace System.Management.Automation.Remoting
             // check if the current scenario is Win7(client) to Win8(server). Add back the PSv2 version TabExpansion
             // function if necessary.
             Version psClientVersion = null;
-            if (_senderInfo.ApplicationArguments != null && _senderInfo.ApplicationArguments.ContainsKey("PSversionTable"))
+            if (_senderInfo.ApplicationArguments is not null && _senderInfo.ApplicationArguments.ContainsKey("PSversionTable"))
             {
                 var value = PSObject.Base(_senderInfo.ApplicationArguments["PSversionTable"]) as PSPrimitiveDictionary;
-                if (value != null)
+                if (value is not null)
                 {
                     if (value.ContainsKey("WSManStackVersion"))
                     {
                         var wsmanStackVersion = PSObject.Base(value["WSManStackVersion"]) as Version;
-                        if (wsmanStackVersion != null && wsmanStackVersion.Major < 3)
+                        if (wsmanStackVersion is not null && wsmanStackVersion.Major < 3)
                         {
                             // The client side is PSv2. This is the Win7 to Win8 scenario. We need to add the PSv2
                             // TabExpansion function back in to keep the tab expansion functionable on the client side.
@@ -871,7 +871,7 @@ namespace System.Management.Automation.Remoting
             ApartmentState apartmentState = RemotingDecoder.GetApartmentState(rcvdData.Data);
             HostInfo hostInfo = RemotingDecoder.GetHostInfo(rcvdData.Data);
 
-            if (_runspacePoolDriver != null)
+            if (_runspacePoolDriver is not null)
             {
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.RunspaceAlreadyExists,
                     _runspacePoolDriver.InstanceId);
@@ -961,14 +961,14 @@ namespace System.Management.Automation.Remoting
         /// <param name="eventArgs"></param>
         private void HandleSessionDSHandlerClosing(object sender, EventArgs eventArgs)
         {
-            if (_runspacePoolDriver != null)
+            if (_runspacePoolDriver is not null)
             {
                 _runspacePoolDriver.Close();
             }
 
             // dispose the session configuration object..this will let them
             // clean their resources.
-            if (_sessionConfigProvider != null)
+            if (_sessionConfigProvider is not null)
             {
                 _sessionConfigProvider.Dispose();
                 _sessionConfigProvider = null;
@@ -1009,7 +1009,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private bool RunServerNegotiationAlgorithm(RemoteSessionCapability clientCapability, bool onConnect)
         {
-            Dbg.Assert(clientCapability != null, "Client capability cache must be non-null");
+            Dbg.Assert(clientCapability is not null, "Client capability cache must be non-null");
 
             Version clientProtocolVersion = clientCapability.ProtocolVersion;
             Version serverProtocolVersion = Context.ServerCapability.ProtocolVersion;
@@ -1166,7 +1166,7 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal void ApplyQuotaOnCommandTransportManager(AbstractServerTransportManager cmdTransportManager)
         {
-            Dbg.Assert(cmdTransportManager != null, "cmdTransportManager cannot be null");
+            Dbg.Assert(cmdTransportManager is not null, "cmdTransportManager cannot be null");
             cmdTransportManager.ReceivedDataCollection.MaximumReceivedDataSize = _maxRecvdDataSizeCommand;
             cmdTransportManager.ReceivedDataCollection.MaximumReceivedObjectSize = _maxRecvdObjectSize;
         }

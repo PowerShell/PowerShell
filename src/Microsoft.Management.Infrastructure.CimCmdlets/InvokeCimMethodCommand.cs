@@ -397,7 +397,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void EndProcessing()
         {
             CimInvokeCimMethod cimInvokeMethod = this.GetOperationAgent();
-            if (cimInvokeMethod != null)
+            if (cimInvokeMethod is not null)
             {
                 cimInvokeMethod.ProcessRemainActions(this.CmdletOperation);
             }

@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
 
             key = GetRegkeyForPathWriteIfError(path, false);
 
-            if (key != null)
+            if (key is not null)
             {
                 try
                 {
@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
 
             key = GetRegkeyForPathWriteIfError(path, true);
 
-            if (key != null)
+            if (key is not null)
             {
                 //
                 // the caller already checks for the following exceptions:

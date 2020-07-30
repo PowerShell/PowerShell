@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
 
         internal void InitPrimitiveIDs()
         {
-            if (_tokenID != null) return;
+            if (_tokenID is not null) return;
 
             object ns = _r.NameTable.Add("http://www.w3.org/2001/XMLSchema");
             object ns2 = _r.NameTable.Add("http://microsoft.com/wsdl/types/");
@@ -392,7 +392,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             // In this case, we use 'ReadContentAsString()' to read the text content at the current position.
             // We cannot use 'ReadElementContentAsString()'. It will fail because the XmlReader is not positioned on an Element start node.
             string str = _r.ReadContentAsString();
-            if (str != null && trim)
+            if (str is not null && trim)
                 str = str.Trim();
             if (value is null || value.Length == 0)
                 return str;
@@ -2266,7 +2266,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (isNull)
                 {
-                    if (xsiType != null) return (global::System.Object)ReadTypedNull(xsiType);
+                    if (xsiType is not null) return (global::System.Object)ReadTypedNull(xsiType);
                     else return null;
                 }
 

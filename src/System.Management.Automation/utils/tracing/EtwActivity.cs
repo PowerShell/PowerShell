@@ -211,7 +211,7 @@ namespace System.Management.Automation.Tracing
             /// </summary>
             public void Callback(object state, System.Timers.ElapsedEventArgs args)
             {
-                Debug.Assert(callbackWithStateAndArgs != null, "callback is NULL.  There MUST always ba a valid callback!");
+                Debug.Assert(callbackWithStateAndArgs is not null, "callback is NULL.  There MUST always ba a valid callback!");
 
                 Correlate();
                 this.callbackWithStateAndArgs(state, args);
@@ -230,7 +230,7 @@ namespace System.Management.Automation.Tracing
             /// </summary>
             public void Callback()
             {
-                Debug.Assert(callbackNoParam != null, "callback is NULL.  There MUST always ba a valid callback");
+                Debug.Assert(callbackNoParam is not null, "callback is NULL.  There MUST always ba a valid callback");
 
                 Correlate();
                 this.callbackNoParam();
@@ -241,7 +241,7 @@ namespace System.Management.Automation.Tracing
             /// </summary>
             public void Callback(object state)
             {
-                Debug.Assert(callbackWithState != null, "callback is NULL.  There MUST always ba a valid callback!");
+                Debug.Assert(callbackWithState is not null, "callback is NULL.  There MUST always ba a valid callback!");
 
                 Correlate();
                 this.callbackWithState(state);
@@ -252,7 +252,7 @@ namespace System.Management.Automation.Tracing
             /// </summary>
             public void Callback(IAsyncResult asyncResult)
             {
-                Debug.Assert(asyncCallback != null, "callback is NULL.  There MUST always ba a valid callback!");
+                Debug.Assert(asyncCallback is not null, "callback is NULL.  There MUST always ba a valid callback!");
 
                 Correlate();
                 this.asyncCallback(asyncResult);
@@ -469,7 +469,7 @@ namespace System.Management.Automation.Tracing
             if (!provider.IsEnabled())
                 return;
 
-            if (payload != null)
+            if (payload is not null)
             {
                 for (int i = 0; i < payload.Length; i++)
                 {
@@ -481,7 +481,7 @@ namespace System.Management.Automation.Tracing
             }
 
             bool success = provider.WriteEvent(ref ed, payload);
-            if (EventWritten != null)
+            if (EventWritten is not null)
             {
                 EventWritten.Invoke(this, new EtwEventArgs(ed, success, payload));
             }
@@ -489,12 +489,12 @@ namespace System.Management.Automation.Tracing
 
         private EventProvider GetProvider()
         {
-            if (currentProvider != null)
+            if (currentProvider is not null)
                 return currentProvider;
 
             lock (syncLock)
             {
-                if (currentProvider != null)
+                if (currentProvider is not null)
                     return currentProvider;
 
                 if (!providers.TryGetValue(ProviderId, out currentProvider))

@@ -246,7 +246,7 @@ namespace System.Management.Automation.PerformanceData
 
         private void UpdateCounterByValue(CounterData TargetCounterData, long stepAmount)
         {
-            Debug.Assert(TargetCounterData != null);
+            Debug.Assert(TargetCounterData is not null);
             if (stepAmount == -1)
             {
                 TargetCounterData.Decrement();
@@ -361,7 +361,7 @@ namespace System.Management.Automation.PerformanceData
             if (base.RetrieveTargetCounterIdIfValid(counterId, isNumerator, out targetCounterId))
             {
                 CounterData targetCounterData = _CounterSetInstance.Counters[targetCounterId];
-                if (targetCounterData != null)
+                if (targetCounterData is not null)
                 {
                     this.UpdateCounterByValue(targetCounterData, stepAmount);
                     return true;
@@ -443,7 +443,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 CounterData targetCounterData = _CounterSetInstance.Counters[targetCounterId];
 
-                if (targetCounterData != null)
+                if (targetCounterData is not null)
                 {
                     targetCounterData.Value = counterValue;
                     return true;
@@ -527,7 +527,7 @@ namespace System.Management.Automation.PerformanceData
             {
                 CounterData targetCounterData = _CounterSetInstance.Counters[targetCounterId];
 
-                if (targetCounterData != null)
+                if (targetCounterData is not null)
                 {
                     counterValue = targetCounterData.Value;
                     return true;

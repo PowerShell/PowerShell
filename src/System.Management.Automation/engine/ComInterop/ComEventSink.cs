@@ -170,7 +170,7 @@ namespace System.Management.Automation.ComInterop
                 foreach (Delegate d in delegates)
                 {
                     SplatCallSite callContext = d.Target as SplatCallSite;
-                    if (callContext != null && callContext._callable.Equals(func))
+                    if (callContext is not null && callContext._callable.Equals(func))
                     {
                         sinkEntry._handlers -= d as Func<object[], object>;
                         break;
@@ -200,7 +200,7 @@ namespace System.Management.Automation.ComInterop
             ComEventSinkMethod site;
             site = FindSinkMethod(name);
 
-            if (site != null && site._handlers != null)
+            if (site is not null && site._handlers is not null)
             {
                 return site._handlers(args);
             }
@@ -331,7 +331,7 @@ namespace System.Management.Automation.ComInterop
                 // the Unadvise is going to throw.  In this case, since we're going away anyway,
                 // we'll ignore the failure and quietly go on our merry way.
                 COMException exCOM = ex as COMException;
-                if (exCOM != null && exCOM.ErrorCode == ComHresults.CONNECT_E_NOCONNECTION)
+                if (exCOM is not null && exCOM.ErrorCode == ComHresults.CONNECT_E_NOCONNECTION)
                 {
                     Debug.Assert(false, "IConnectionPoint::Unadvise returned CONNECT_E_NOCONNECTION.");
                     throw;

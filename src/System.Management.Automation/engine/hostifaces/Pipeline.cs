@@ -200,7 +200,7 @@ namespace System.Management.Automation.Runspaces
         /// </throws>
         internal PipelineStateInfo(PipelineStateInfo pipelineStateInfo)
         {
-            Dbg.Assert(pipelineStateInfo != null, "caller should validate the parameter");
+            Dbg.Assert(pipelineStateInfo is not null, "caller should validate the parameter");
 
             State = pipelineStateInfo.State;
             Reason = pipelineStateInfo.Reason;
@@ -258,7 +258,7 @@ namespace System.Management.Automation.Runspaces
         /// </throws>
         internal PipelineStateEventArgs(PipelineStateInfo pipelineStateInfo)
         {
-            Dbg.Assert(pipelineStateInfo != null, "caller should validate the parameter");
+            Dbg.Assert(pipelineStateInfo is not null, "caller should validate the parameter");
             PipelineStateInfo = pipelineStateInfo;
         }
 
@@ -309,7 +309,7 @@ namespace System.Management.Automation.Runspaces
             }
             // This constructor is used only internally.
             // Caller should make sure the input is valid
-            Dbg.Assert(command != null, "Command cannot be null");
+            Dbg.Assert(command is not null, "Command cannot be null");
             InstanceId = runspace.GeneratePipelineId();
             Commands = command;
 

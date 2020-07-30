@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         var data = ast.Find(a => a is HashtableAst, false);
-                        if (data != null)
+                        if (data is not null)
                         {
                             WriteObject(data.SafeGetValue());
                         }

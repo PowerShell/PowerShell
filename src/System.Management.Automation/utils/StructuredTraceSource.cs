@@ -291,7 +291,7 @@ namespace System.Management.Automation
                         StringComparison.OrdinalIgnoreCase))
                 {
                     string options = this.TraceSource.Attributes["Options"];
-                    if (options != null)
+                    if (options is not null)
                     {
                         _flags = (PSTraceSourceOptions)Enum.Parse(typeof(PSTraceSourceOptions), options, true);
                     }
@@ -405,7 +405,7 @@ namespace System.Management.Automation
                 "\tDescription: {0}",
                 Description);
 
-            if (callingAssembly != null)
+            if (callingAssembly is not null)
             {
                 // Assembly name
 
@@ -1116,12 +1116,12 @@ namespace System.Management.Automation
                 // user provided format string together
                 StringBuilder output = new StringBuilder();
 
-                if (classFormatter != null)
+                if (classFormatter is not null)
                 {
                     output.Append(classFormatter);
                 }
 
-                if (format != null)
+                if (format is not null)
                 {
                     output.AppendFormat(
                         CultureInfo.CurrentCulture,
@@ -1347,7 +1347,7 @@ namespace System.Management.Automation
             try
             {
                 Diagnostics.Assert(
-                    format != null,
+                    format is not null,
                     "The format string should not be null");
 
                 StringBuilder lineBuilder = new StringBuilder();
@@ -1362,7 +1362,7 @@ namespace System.Management.Automation
                 // Add the spaces for the indent
                 AddTab(lineBuilder);
 
-                if (arg != null)
+                if (arg is not null)
                 {
                     lineBuilder.AppendFormat(
                         CultureInfo.CurrentCulture,
@@ -1650,7 +1650,7 @@ namespace System.Management.Automation
 
             // Call the helper
 
-            if (format != null)
+            if (format is not null)
             {
                 ScopeTracerHelper(
                     flag,

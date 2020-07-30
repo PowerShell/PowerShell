@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     {
                         lock (_jobStateLock)
                         {
-                            if (_sleepAndRetryTimer != null)
+                            if (_sleepAndRetryTimer is not null)
                             {
                                 _sleepAndRetryTimer.Dispose();
                                 _sleepAndRetryTimer = null;
@@ -316,7 +316,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 this.ExceptionSafeWrapper(delegate
                 {
                     IObservable<T> observable = this.GetCimOperation();
-                    if (observable != null)
+                    if (observable is not null)
                     {
                         observable.Subscribe(this);
                     }
@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 try
                 {
-                    Dbg.Assert(action != null, "Caller should verify action != null");
+                    Dbg.Assert(action is not null, "Caller should verify action is not null");
                     action();
                 }
                 catch (CimJobException e)
@@ -414,7 +414,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             operationOptions.Flags |= this.JobContext.CmdletInvocationContext.CmdletDefinitionContext.SchemaConformanceLevel;
 
-            if (this.JobContext.CmdletInvocationContext.CmdletDefinitionContext.ResourceUri != null)
+            if (this.JobContext.CmdletInvocationContext.CmdletDefinitionContext.ResourceUri is not null)
             {
                 operationOptions.ResourceUri = this.JobContext.CmdletInvocationContext.CmdletDefinitionContext.ResourceUri;
             }
@@ -499,7 +499,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     CimSensitiveValueConverter);
             }
 
-            if (this.JobContext.CmdletizationModuleVersion != null)
+            if (this.JobContext.CmdletizationModuleVersion is not null)
             {
                 CimOperationOptionsHelper.SetCustomOption(
                     operationOptions,
@@ -523,7 +523,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
 
             CimCustomOptionsDictionary jobSpecificCustomOptions = this.GetJobSpecificCustomOptions();
-            if (jobSpecificCustomOptions != null)
+            if (jobSpecificCustomOptions is not null)
             {
                 jobSpecificCustomOptions.Apply(operationOptions, CimSensitiveValueConverter);
             }
@@ -564,7 +564,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 {
                     this.SetCompletedJobState(JobState.Stopped, null);
                 }
-                else if (_sleepAndRetryTimer != null)
+                else if (_sleepAndRetryTimer is not null)
                 {
                     _sleepAndRetryTimer.Dispose();
                     _sleepAndRetryTimer = null;
@@ -614,7 +614,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
             }
 
-            if (brokenSessionException != null)
+            if (brokenSessionException is not null)
             {
                 string brokenSessionMessage = string.Format(
                     CultureInfo.InvariantCulture,
@@ -631,7 +631,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             else
             {
                 CimJobException cje = exception as CimJobException;
-                if ((cje != null) && (cje.IsTerminatingError))
+                if ((cje is not null) && (cje.IsTerminatingError))
                 {
                     terminatingErrorTracker.MarkSessionAsTerminated(this.JobContext.Session, out sessionWasAlreadyTerminated);
                     isThisTerminatingError = true;
@@ -706,7 +706,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
                 _alreadyReachedCompletedState = true;
 
-                if ((state == JobState.Failed) || (reason != null))
+                if ((state == JobState.Failed) || (reason is not null))
                 {
                     _jobHadErrors = true;
                 }
@@ -861,7 +861,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                         this.WriteError(errorRecord, out exceptionThrownOnCmdletThread);
                     });
 
-            return (exceptionThrownOnCmdletThread != null)
+            return (exceptionThrownOnCmdletThread is not null)
                        ? CimResponseType.NoToAll
                        : CimResponseType.Yes;
         }
@@ -940,7 +940,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             Exception exceptionThrownOnCmdletThread;
             ShouldProcessReason shouldProcessReason;
             bool shouldProcessResponse = this.ShouldProcess(verboseDescription, verboseWarning, caption, out shouldProcessReason, out exceptionThrownOnCmdletThread);
-            if (exceptionThrownOnCmdletThread != null)
+            if (exceptionThrownOnCmdletThread is not null)
             {
                 return CimResponseType.NoToAll;
             }
@@ -992,7 +992,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     break;
             }
 
-            if (exceptionThrownOnCmdletThread != null)
+            if (exceptionThrownOnCmdletThread is not null)
             {
                 result = CimResponseType.NoToAll;
             }
@@ -1022,7 +1022,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal static void AddShowComputerNameMarker(PSObject pso)
         {
             PSPropertyInfo psShowComputerNameProperty = pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] as PSPropertyInfo;
-            if (psShowComputerNameProperty != null)
+            if (psShowComputerNameProperty is not null)
             {
                 psShowComputerNameProperty.Value = true;
             }
@@ -1047,7 +1047,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 cimInstance = outputObject as CimInstance;
             }
 
-            if (cimInstance != null)
+            if (cimInstance is not null)
             {
                 CimCmdletAdapter.AssociateSessionOfOriginWithInstance(cimInstance, this.JobContext.Session);
                 CimCustomOptionsDictionary.AssociateCimInstanceWithCustomOptions(cimInstance, this.GetJobSpecificCustomOptions());

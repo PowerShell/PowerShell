@@ -57,7 +57,7 @@ namespace System.Management.Automation
             Exception exceptionThrown;
             Collection<PSObject> streamResults = ExecuteCurrentPowerShell(out exceptionThrown);
 
-            if (exceptionThrown != null || streamResults is null || streamResults.Count == 0)
+            if (exceptionThrown is not null || streamResults is null || streamResults.Count == 0)
             {
                 return false;
             }
@@ -71,7 +71,7 @@ namespace System.Management.Automation
             Exception exceptionThrown;
             Collection<PSObject> streamResults = ExecuteCurrentPowerShell(out exceptionThrown);
 
-            if (exceptionThrown != null || streamResults is null || streamResults.Count == 0)
+            if (exceptionThrown is not null || streamResults is null || streamResults.Count == 0)
             {
                 return null;
             }
@@ -88,7 +88,7 @@ namespace System.Management.Automation
 
         internal Collection<PSObject> ExecuteCommand(string command, bool isScript, out Exception exceptionThrown, Hashtable args)
         {
-            Diagnostics.Assert(command != null, "caller to verify command is not null");
+            Diagnostics.Assert(command is not null, "caller to verify command is not null");
 
             exceptionThrown = null;
 
@@ -101,7 +101,7 @@ namespace System.Management.Automation
             CurrentPowerShell.AddCommand(command);
 
             Command cmd = new Command(command, isScript);
-            if (args != null)
+            if (args is not null)
             {
                 foreach (DictionaryEntry arg in args)
                 {
@@ -186,10 +186,10 @@ namespace System.Management.Automation
             {
                 PSObject pso = obj as PSObject;
                 string result;
-                if (pso != null)
+                if (pso is not null)
                 {
                     object baseObject = pso.BaseObject;
-                    if (baseObject != null && !(baseObject is PSCustomObject))
+                    if (baseObject is not null && !(baseObject is PSCustomObject))
                         result = baseObject.ToString();
                     else
                         result = pso.ToString();
@@ -235,11 +235,11 @@ namespace System.Management.Automation
 
         internal static PowerShell AddCommandWithPreferenceSetting(this PowerShell powershell, string command, Type type = null)
         {
-            Diagnostics.Assert(powershell != null, "the passed-in powershell cannot be null");
+            Diagnostics.Assert(powershell is not null, "the passed-in powershell cannot be null");
             Diagnostics.Assert(!string.IsNullOrWhiteSpace(command),
                 "the passed-in command name should not be null or whitespaces");
 
-            if (type != null)
+            if (type is not null)
             {
                 var cmdletInfo = new CmdletInfo(command, type);
 

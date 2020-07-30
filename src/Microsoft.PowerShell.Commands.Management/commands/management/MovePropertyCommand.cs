@@ -87,12 +87,12 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             string propertyName = string.Empty;
-            if (Name != null && Name.Length > 0)
+            if (Name is not null && Name.Length > 0)
             {
                 propertyName = Name[0];
             }
 
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 return InvokeProvider.Property.MovePropertyDynamicParameters(Path[0], propertyName, Destination, propertyName, context);
             }

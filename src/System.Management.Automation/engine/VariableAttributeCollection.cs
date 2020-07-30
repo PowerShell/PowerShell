@@ -120,14 +120,14 @@ namespace System.Management.Automation
 
             // Perform transformation before validating
             ArgumentTransformationAttribute argumentTransformation = item as ArgumentTransformationAttribute;
-            if (argumentTransformation != null)
+            if (argumentTransformation is not null)
             {
                 // Get an EngineIntrinsics instance using the context of the thread.
 
                 ExecutionContext context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
                 EngineIntrinsics engine = null;
 
-                if (context != null)
+                if (context is not null)
                 {
                     engine = context.EngineIntrinsics;
                 }
@@ -142,7 +142,7 @@ namespace System.Management.Automation
                     null,
                     Metadata.InvalidMetadataForCurrentValue,
                     _variable.Name,
-                    ((_variable.Value != null) ? _variable.Value.ToString() : string.Empty));
+                    ((_variable.Value is not null) ? _variable.Value.ToString() : string.Empty));
 
                 throw e;
             }

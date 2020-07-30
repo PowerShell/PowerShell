@@ -36,8 +36,8 @@ namespace System.Management.Automation.Remoting
         internal ServerRemoteSessionDSHandlerImpl(ServerRemoteSession session,
             AbstractServerSessionTransportManager transportManager)
         {
-            Dbg.Assert(session != null, "session cannot be null.");
-            Dbg.Assert(transportManager != null, "transportManager cannot be null.");
+            Dbg.Assert(session is not null, "session cannot be null.");
+            Dbg.Assert(transportManager is not null, "transportManager cannot be null.");
 
             _session = session;
             _stateMachine = new ServerRemoteSessionDSHandlerStateMachine(session);
@@ -217,7 +217,7 @@ namespace System.Management.Automation.Remoting
                     capabilityArg.RemoteSessionCapability = capability;
                     _stateMachine.RaiseEvent(capabilityArg);
 
-                    if (NegotiationReceived != null)
+                    if (NegotiationReceived is not null)
                     {
                         RemoteSessionNegotiationEventArgs negotiationArg = new RemoteSessionNegotiationEventArgs(capability);
                         negotiationArg.RemoteData = rcvdData;

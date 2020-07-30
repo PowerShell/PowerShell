@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                if (Schema != null)
+                if (Schema is not null)
                 {
                     try
                     {
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
                         ae.Handle(UnwrapException);
                     }
                 }
-                else if (SchemaFile != null)
+                else if (SchemaFile is not null)
                 {
                     try
                     {
@@ -142,10 +142,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 parsedJson = JObject.Parse(Json);
 
-                if (_jschema != null)
+                if (_jschema is not null)
                 {
                     var errorMessages = _jschema.Validate(parsedJson);
-                    if (errorMessages != null && errorMessages.Count != 0)
+                    if (errorMessages is not null && errorMessages.Count != 0)
                     {
                         result = false;
 

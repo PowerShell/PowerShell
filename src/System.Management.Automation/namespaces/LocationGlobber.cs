@@ -273,7 +273,7 @@ namespace System.Management.Automation
 
                     // Only do the expansion if the path actually contains wildcard
                     // characters.
-                    if ((itemProvider != null) &&
+                    if ((itemProvider is not null) &&
                         (WildcardPattern.ContainsWildcardCharacters(providerPath)))
                     {
                         stringResult = new Collection<string>(itemProvider.ExpandPath(providerPath, context));
@@ -287,7 +287,7 @@ namespace System.Management.Automation
                 {
                     s_pathResolutionTracer.WriteLine("Wildcard matching is being performed by the engine.");
 
-                    if (containerCmdletProvider != null)
+                    if (containerCmdletProvider is not null)
                     {
                         // Since it is really a provider-internal path, use provider-to-provider globbing
                         // and then add back on the provider ID.
@@ -310,7 +310,7 @@ namespace System.Management.Automation
             // They are suppressing wildcard expansion
             else
             {
-                if (itemProvider != null)
+                if (itemProvider is not null)
                 {
                     if (allowNonexistingPaths || itemProvider.ItemExists(providerPath, context))
                     {
@@ -444,11 +444,11 @@ namespace System.Management.Automation
                     out providerInstance);
 
             Dbg.Diagnostics.Assert(
-                drive != null,
+                drive is not null,
                 "GetDriveRootRelativePathFromPSPath should always return a valid drive");
 
             Dbg.Diagnostics.Assert(
-                relativePath != null,
+                relativePath is not null,
                 "There should always be a way to generate a provider path for a " +
                 "given path");
 
@@ -494,7 +494,7 @@ namespace System.Management.Automation
 
                     // Only do the expansion if the path actually contains wildcard
                     // characters.
-                    if ((itemProvider != null) &&
+                    if ((itemProvider is not null) &&
                         (WildcardPattern.ContainsWildcardCharacters(relativePath)))
                     {
                         foreach (string pathResult in itemProvider.ExpandPath(itemPath, context))
@@ -525,7 +525,7 @@ namespace System.Management.Automation
             // They are suppressing wildcard expansion
             else
             {
-                if (itemProvider != null)
+                if (itemProvider is not null)
                 {
                     if (allowNonexistingPaths || itemProvider.ItemExists(itemPath, context))
                     {
@@ -768,7 +768,7 @@ namespace System.Management.Automation
                     return new Collection<string>();
                 }
 
-                if (drive != null)
+                if (drive is not null)
                 {
                     context.Drive = drive;
                 }
@@ -868,7 +868,7 @@ namespace System.Management.Automation
                 // Throw the first error
                 ErrorRecord errorRecord = context.GetAccumulatedErrorObjects()[0];
 
-                if (errorRecord != null)
+                if (errorRecord is not null)
                 {
                     throw errorRecord.Exception;
                 }
@@ -1072,7 +1072,7 @@ namespace System.Management.Automation
             {
                 Collection<ErrorRecord> errors = context.GetAccumulatedErrorObjects();
 
-                if (errors != null &&
+                if (errors is not null &&
                     errors.Count > 0)
                 {
                     throw errors[0].Exception;
@@ -1274,11 +1274,11 @@ namespace System.Management.Automation
                 string relativePath = GetDriveRootRelativePathFromPSPath(path, context, false, out drive, out providerInstance);
 
                 Dbg.Diagnostics.Assert(
-                    drive != null,
+                    drive is not null,
                     "GetDriveRootRelativePathFromPSPath should always return a valid drive");
 
                 Dbg.Diagnostics.Assert(
-                    relativePath != null,
+                    relativePath is not null,
                     "There should always be a way to generate a provider path for a " +
                     "given path");
 
@@ -1305,11 +1305,11 @@ namespace System.Management.Automation
             s_pathResolutionTracer.WriteLine("RESOLVED PATH: {0}", result);
 
             // If this is a private provider, don't allow access to it directly from the runspace.
-            if ((provider != null) &&
-                (context != null) &&
-                (context.MyInvocation != null) &&
-                (context.ExecutionContext != null) &&
-                (context.ExecutionContext.InitialSessionState != null))
+            if ((provider is not null) &&
+                (context is not null) &&
+                (context.MyInvocation is not null) &&
+                (context.ExecutionContext is not null) &&
+                (context.ExecutionContext.InitialSessionState is not null))
             {
                 foreach (Runspaces.SessionStateProviderEntry sessionStateProvider in context.ExecutionContext.InitialSessionState.Providers[provider.Name])
                 {
@@ -1566,7 +1566,7 @@ namespace System.Management.Automation
 
             bool result = false;
 
-            if (_sessionState.Drive.Current != null)
+            if (_sessionState.Drive.Current is not null)
             {
                 driveName = _sessionState.Drive.Current.Name;
             }
@@ -1632,7 +1632,7 @@ namespace System.Management.Automation
             if (result)
             {
                 Dbg.Diagnostics.Assert(
-                    driveName != null,
+                    driveName is not null,
                     "The drive name should always have a value, " +
                     "the default is the current working drive");
 
@@ -1823,7 +1823,7 @@ namespace System.Management.Automation
             workingDriveForPath = null;
             string driveName = null;
 
-            if (_sessionState.Drive.Current != null)
+            if (_sessionState.Drive.Current is not null)
             {
                 driveName = _sessionState.Drive.Current.Name;
             }
@@ -1834,7 +1834,7 @@ namespace System.Management.Automation
             if (IsAbsolutePath(path, out driveName))
             {
                 Dbg.Diagnostics.Assert(
-                    driveName != null,
+                    driveName is not null,
                     "IsAbsolutePath should be returning the drive name");
 
                 s_tracer.WriteLine(
@@ -2249,7 +2249,7 @@ namespace System.Management.Automation
             }
 
             NavigationCmdletProvider navigationProvider = providerInstance as NavigationCmdletProvider;
-            if (navigationProvider != null)
+            if (navigationProvider is not null)
             {
                 string rootedPath = _sessionState.Internal.MakePath(context.Drive.Root, driveRootRelativeWorkingPath, context);
                 string normalizedRelativePath = navigationProvider.ContractRelativePath(rootedPath, context.Drive.Root, false, context);
@@ -2521,7 +2521,7 @@ namespace System.Management.Automation
         {
             bool pathContainsGlobCharacters = false;
 
-            if (path != null)
+            if (path is not null)
             {
                 pathContainsGlobCharacters = StringContainsGlobCharacters(path);
             }
@@ -2529,12 +2529,12 @@ namespace System.Management.Automation
             bool contextContainsIncludeExclude = false;
             bool contextContainsNoGlob = false;
 
-            if (context != null)
+            if (context is not null)
             {
-                bool includePresent = context.Include != null && context.Include.Count > 0;
+                bool includePresent = context.Include is not null && context.Include.Count > 0;
                 s_pathResolutionTracer.WriteLine("INCLUDE filter present: {0}", includePresent);
 
-                bool excludePresent = context.Exclude != null && context.Exclude.Count > 0;
+                bool excludePresent = context.Exclude is not null && context.Exclude.Count > 0;
                 s_pathResolutionTracer.WriteLine("EXCLUDE filter present: {0}", excludePresent);
 
                 contextContainsIncludeExclude = includePresent || excludePresent;
@@ -2687,7 +2687,7 @@ namespace System.Management.Automation
 
                             string leafElement = path;
 
-                            if (navigationProvider != null)
+                            if (navigationProvider is not null)
                             {
                                 leafElement = navigationProvider.GetChildName(path, context);
                             }
@@ -2707,7 +2707,7 @@ namespace System.Management.Automation
 
                             // Now use the parent path for the next iteration
 
-                            if (navigationProvider != null)
+                            if (navigationProvider is not null)
                             {
                                 // Now call GetParentPath with the root
 
@@ -2758,7 +2758,7 @@ namespace System.Management.Automation
                         {
                             string leafElement = path;
 
-                            if (navigationProvider != null)
+                            if (navigationProvider is not null)
                             {
                                 leafElement = navigationProvider.GetChildName(path, context);
 
@@ -2799,7 +2799,7 @@ namespace System.Management.Automation
                         string leafElement = leafElements.Pop();
 
                         Dbg.Diagnostics.Assert(
-                            leafElement != null,
+                            leafElement is not null,
                             "I am only pushing strings onto this stack so I should be able " +
                             "to cast any Pop to a string without failure.");
 
@@ -2835,7 +2835,7 @@ namespace System.Management.Automation
 
                                     // Check to see if the matching item is a container
 
-                                    if (navigationProvider != null &&
+                                    if (navigationProvider is not null &&
                                         !_sessionState.Internal.IsItemContainer(
                                             resolvedPath,
                                             context))
@@ -2852,7 +2852,7 @@ namespace System.Management.Automation
                                     else if (navigationProvider is null)
                                     {
                                         Dbg.Diagnostics.Assert(
-                                            navigationProvider != null,
+                                            navigationProvider is not null,
                                             "The path in the dirs should never be a container unless " +
                                             "the provider implements the NavigationCmdletProvider interface. If it " +
                                             "doesn't, there should be no more leafElements in the stack " +
@@ -2872,7 +2872,7 @@ namespace System.Management.Automation
                     }
 
                     Dbg.Diagnostics.Assert(
-                        dirs != null,
+                        dirs is not null,
                         "GenerateNewPathsWithGlobLeaf() should return the base path as an element " +
                         "even if there are no globing characters");
 
@@ -2949,7 +2949,7 @@ namespace System.Management.Automation
             }
 
             Dbg.Diagnostics.Assert(
-                result != null,
+                result is not null,
                 "This method should at least return the path or more if it has glob characters");
 
             return result;
@@ -2978,7 +2978,7 @@ namespace System.Management.Automation
         internal static string GetMshQualifiedPath(string path, PSDriveInfo drive)
         {
             Dbg.Diagnostics.Assert(
-                drive != null,
+                drive is not null,
                 "The caller should verify drive before calling this method");
 
             string result = null;
@@ -3018,11 +3018,11 @@ namespace System.Management.Automation
         internal static string RemoveMshQualifier(string path, PSDriveInfo drive)
         {
             Dbg.Diagnostics.Assert(
-                drive != null,
+                drive is not null,
                 "The caller should verify drive before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "The caller should verify path before calling this method");
 
             string result = null;
@@ -3150,7 +3150,7 @@ namespace System.Management.Automation
         private static string RemoveDriveQualifier(string path)
         {
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should verify path");
 
             string result = path;
@@ -3252,7 +3252,7 @@ namespace System.Management.Automation
         internal static string RemoveProviderQualifier(string path)
         {
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should verify path");
 
             string result = path;
@@ -3437,7 +3437,7 @@ namespace System.Management.Automation
                             {
                                 string childPath = child;
 
-                                if (navigationProvider != null)
+                                if (navigationProvider is not null)
                                 {
                                     string parentPath = RemoveMshQualifier(mshQualifiedParentPath, drive);
 
@@ -3484,7 +3484,7 @@ namespace System.Management.Automation
 
                         string childPath = backslashEscapedLeafElement;
 
-                        if (navigationProvider != null)
+                        if (navigationProvider is not null)
                         {
                             string parentPath = RemoveMshQualifier(resolvedPath, drive);
 
@@ -3645,7 +3645,7 @@ namespace System.Management.Automation
 
                             string leafElement = path;
 
-                            if (navigationProvider != null)
+                            if (navigationProvider is not null)
                             {
                                 leafElement = navigationProvider.GetChildName(path, context);
                             }
@@ -3665,17 +3665,17 @@ namespace System.Management.Automation
 
                             // Now use the parent path for the next iteration
 
-                            if (navigationProvider != null)
+                            if (navigationProvider is not null)
                             {
                                 // See if we can get the root from the context
 
                                 string root = string.Empty;
 
-                                if (context != null)
+                                if (context is not null)
                                 {
                                     PSDriveInfo drive = context.Drive;
 
-                                    if (drive != null)
+                                    if (drive is not null)
                                     {
                                         root = drive.Root;
                                     }
@@ -3729,7 +3729,7 @@ namespace System.Management.Automation
                         {
                             string leafElement = path;
 
-                            if (navigationProvider != null)
+                            if (navigationProvider is not null)
                             {
                                 leafElement = navigationProvider.GetChildName(path, context);
 
@@ -3768,7 +3768,7 @@ namespace System.Management.Automation
                         string leafElement = leafElements.Pop();
 
                         Dbg.Diagnostics.Assert(
-                            leafElement != null,
+                            leafElement is not null,
                             "I am only pushing strings onto this stack so I should be able " +
                             "to cast any Pop to a string without failure.");
 
@@ -3800,7 +3800,7 @@ namespace System.Management.Automation
 
                                     // Check to see if the matching item is a container
 
-                                    if (navigationProvider != null &&
+                                    if (navigationProvider is not null &&
                                         !navigationProvider.IsItemContainer(
                                             dirs[index],
                                             context))
@@ -3817,7 +3817,7 @@ namespace System.Management.Automation
                                     else if (navigationProvider is null)
                                     {
                                         Dbg.Diagnostics.Assert(
-                                            navigationProvider != null,
+                                            navigationProvider is not null,
                                             "The path in the dirs should never be a container unless " +
                                             "the provider implements the NavigationCmdletProvider interface. If it " +
                                             "doesn't, there should be no more leafElements in the stack " +
@@ -3837,7 +3837,7 @@ namespace System.Management.Automation
                     }
 
                     Dbg.Diagnostics.Assert(
-                        dirs != null,
+                        dirs is not null,
                         "GenerateNewPathsWithGlobLeaf() should return the base path as an element " +
                         "even if there are no globing characters");
 
@@ -3878,7 +3878,7 @@ namespace System.Management.Automation
             }
 
             Dbg.Diagnostics.Assert(
-                result != null,
+                result is not null,
                 "This method should at least return the path or more if it has glob characters");
 
             if (changedPathOrFilter)
@@ -4029,7 +4029,7 @@ namespace System.Management.Automation
                             {
                                 string childPath = child;
 
-                                if (navigationProvider != null)
+                                if (navigationProvider is not null)
                                 {
                                     childPath = navigationProvider.MakePath(unescapedDir, child, context);
                                 }
@@ -4066,7 +4066,7 @@ namespace System.Management.Automation
 
                         string childPath = backslashEscapedLeafElement;
 
-                        if (navigationProvider != null)
+                        if (navigationProvider is not null)
                         {
                             childPath =
                                 navigationProvider.
@@ -4220,7 +4220,7 @@ namespace System.Management.Automation
                 else
                 {
                     Dbg.Diagnostics.Assert(
-                        drive != null,
+                        drive is not null,
                         "Caller should verify that drive is not null when dirIsProviderPath is false");
 
                     // If the directory is an MSH path we must resolve it before calling GetChildNames()
@@ -4278,7 +4278,7 @@ namespace System.Management.Automation
                 {
                     Collection<ErrorRecord> errors = getChildNamesContext.GetAccumulatedErrorObjects();
 
-                    if (errors != null &&
+                    if (errors is not null &&
                         errors.Count > 0)
                     {
                         foreach (ErrorRecord errorRecord in errors)
@@ -4613,7 +4613,7 @@ namespace System.Management.Automation
 
             string result = path;
 
-            if (IsHomePath(path) && _sessionState.Drive.Current != null)
+            if (IsHomePath(path) && _sessionState.Drive.Current is not null)
             {
                 ProviderInfo provider = _sessionState.Drive.Current.Provider;
 
@@ -4653,7 +4653,7 @@ namespace System.Management.Automation
                     // Now piece together the provider's home path and the remaining
                     // portion of the passed in path
 
-                    if (provider.Home != null &&
+                    if (provider.Home is not null &&
                         provider.Home.Length > 0)
                     {
                         CmdletProviderContext context =
@@ -4698,7 +4698,7 @@ namespace System.Management.Automation
                 // Trace the filter
                 s_pathResolutionTracer.WriteLine("Filter: {0}", context.Filter ?? string.Empty);
 
-                if (context.Include != null)
+                if (context.Include is not null)
                 {
                     // Trace the include filters
                     StringBuilder includeString = new StringBuilder();
@@ -4710,7 +4710,7 @@ namespace System.Management.Automation
                     s_pathResolutionTracer.WriteLine("Include: {0}", includeString.ToString());
                 }
 
-                if (context.Exclude != null)
+                if (context.Exclude is not null)
                 {
                     // Trace the exclude filters
                     StringBuilder excludeString = new StringBuilder();

@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         [System.Diagnostics.CodeAnalysis.SuppressMessage("GoldMan", "#pw17903:UseOfLCID", Justification = "The CultureNumber is only used if the property has been set with a hex string starting with 0x")]
         public string Culture
         {
-            get { return _cultureInfo != null ? _cultureInfo.ToString() : null; }
+            get { return _cultureInfo is not null ? _cultureInfo.ToString() : null; }
 
             set
             {
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (InputObject != null && InputObject != AutomationNull.Value)
+            if (InputObject is not null && InputObject != AutomationNull.Value)
             {
                 InputObjects.Add(InputObject);
             }
@@ -217,12 +217,12 @@ namespace Microsoft.PowerShell.Commands
                 new ParameterProcessor(new SortObjectExpressionParameterDefinition()) :
                 new ParameterProcessor(new GroupObjectExpressionParameterDefinition());
 
-            if (expr is null && inputObjects != null && inputObjects.Count > 0)
+            if (expr is null && inputObjects is not null && inputObjects.Count > 0)
             {
                 expr = GetDefaultKeyPropertySet(inputObjects[0]);
             }
 
-            if (expr != null)
+            if (expr is not null)
             {
                 List<MshParameter> unexpandedParameterList = processor.ProcessParameters(expr, invocationContext);
                 mshParameterList = ExpandExpressions(inputObjects, unexpandedParameterList);
@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands
                 new ParameterProcessor(new SortObjectExpressionParameterDefinition()) :
                 new ParameterProcessor(new GroupObjectExpressionParameterDefinition());
 
-            if (expr != null)
+            if (expr is not null)
             {
                 if (_unexpandedParameterList is null)
                 {
@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.Commands
         {
             List<MshParameter> expandedParameterList = new List<MshParameter>();
 
-            if (unexpandedParameterList != null)
+            if (unexpandedParameterList is not null)
             {
                 foreach (MshParameter unexpandedParameter in unexpandedParameterList)
                 {
@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         SortedDictionary<string, PSPropertyExpression> expandedPropertyNames = new SortedDictionary<string, PSPropertyExpression>(StringComparer.OrdinalIgnoreCase);
-                        if (inputObjects != null)
+                        if (inputObjects is not null)
                         {
                             foreach (object inputObject in inputObjects)
                             {
@@ -321,7 +321,7 @@ namespace Microsoft.PowerShell.Commands
         // match property names on the incoming objects.
         private static void ExpandExpressions(PSObject inputObject, List<MshParameter> UnexpandedParametersWithWildCardPattern, List<MshParameter> expandedParameterList)
         {
-            if (UnexpandedParametersWithWildCardPattern != null)
+            if (UnexpandedParametersWithWildCardPattern is not null)
             {
                 foreach (MshParameter unexpandedParameter in UnexpandedParametersWithWildCardPattern)
                 {
@@ -406,7 +406,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static bool isOrderEntryKeyDefined(object orderEntryKey)
         {
-            return orderEntryKey != null && orderEntryKey != AutomationNull.Value;
+            return orderEntryKey is not null && orderEntryKey != AutomationNull.Value;
         }
 
         private static OrderByPropertyComparer CreateComparer(
@@ -422,7 +422,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             bool?[] ascendingOverrides = null;
-            if (mshParameterList != null && mshParameterList.Count != 0)
+            if (mshParameterList is not null && mshParameterList.Count != 0)
             {
                 ascendingOverrides = new bool?[mshParameterList.Count];
                 for (int k = 0; k < ascendingOverrides.Length; k++)
@@ -472,7 +472,7 @@ namespace Microsoft.PowerShell.Commands
             bool caseSensitive
             )
         {
-            Diagnostics.Assert(cmdlet != null, "cmdlet must be an instance");
+            Diagnostics.Assert(cmdlet is not null, "cmdlet must be an instance");
 
             ProcessExpressionParameter(inputObjects, cmdlet, expr, out _mshParameterList);
             OrderMatrix = CreateOrderMatrix(cmdlet, inputObjects, _mshParameterList);
@@ -502,9 +502,9 @@ namespace Microsoft.PowerShell.Commands
             bool isCaseSensitive,
             CultureInfo cultureInfo)
         {
-            Diagnostics.Assert(cmdlet != null, "cmdlet must be an instance");
+            Diagnostics.Assert(cmdlet is not null, "cmdlet must be an instance");
 
-            if (_unExpandedParametersWithWildCardPattern != null)
+            if (_unExpandedParametersWithWildCardPattern is not null)
             {
                 ExpandExpressions(inputObject, _unExpandedParametersWithWildCardPattern, _mshParameterList);
             }
@@ -543,8 +543,8 @@ namespace Microsoft.PowerShell.Commands
         internal static OrderByPropertyEntry ProcessObject(PSObject inputObject, List<MshParameter> mshParameterList,
             List<ErrorRecord> errors, List<string> propertyNotFoundMsgs, bool isCaseSensitive = false, CultureInfo cultureInfo = null, int originalIndex = -1)
         {
-            Diagnostics.Assert(errors != null, "errors cannot be null!");
-            Diagnostics.Assert(propertyNotFoundMsgs != null, "propertyNotFoundMsgs cannot be null!");
+            Diagnostics.Assert(errors is not null, "errors cannot be null!");
+            Diagnostics.Assert(propertyNotFoundMsgs is not null, "propertyNotFoundMsgs cannot be null!");
             OrderByPropertyEntry entry = new OrderByPropertyEntry();
             entry.inputObject = inputObject;
             entry.originalIndex = originalIndex;
@@ -683,7 +683,7 @@ namespace Microsoft.PowerShell.Commands
             bool[] ascending = new bool[maxEntries];
             for (int k = 0; k < maxEntries; k++)
             {
-                if (ascendingOverrides != null && ascendingOverrides[k].HasValue)
+                if (ascendingOverrides is not null && ascendingOverrides[k].HasValue)
                 {
                     ascending[k] = ascendingOverrides[k].Value;
                 }

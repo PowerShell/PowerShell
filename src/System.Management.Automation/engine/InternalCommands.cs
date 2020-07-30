@@ -524,7 +524,7 @@ namespace Microsoft.PowerShell.Commands
         private void ProcessParallelParameterSet()
         {
             // Validate piped InputObject
-            if (_inputObject != null &&
+            if (_inputObject is not null &&
                 _inputObject.BaseObject is ScriptBlock)
             {
                 WriteError(
@@ -596,7 +596,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Check for an unexpected error from the _taskCollection handler thread and report here.
             var ex = _taskCollectionException;
-            if (ex != null)
+            if (ex is not null)
             {
                 var msg = string.Format(CultureInfo.InvariantCulture, InternalCommandStrings.ParallelPipedInputProcessingError, ex);
                 WriteError(
@@ -640,7 +640,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (LanguagePrimitives.IsNull(InputObject))
             {
-                if (_arguments != null && _arguments.Length > 0)
+                if (_arguments is not null && _arguments.Length > 0)
                 {
                     WriteError(GenerateNameParameterError("InputObject", ParserStrings.InvokeMethodOnNull,
                                                           "InvokeMethodOnNull", _inputObject));
@@ -679,7 +679,7 @@ namespace Microsoft.PowerShell.Commands
             ErrorRecord errorRecord = null;
 
             // if args exist, this is explicitly a method invocation
-            if (_arguments != null && _arguments.Length > 0)
+            if (_arguments is not null && _arguments.Length > 0)
             {
                 MethodCallWithArguments();
             }
@@ -695,7 +695,7 @@ namespace Microsoft.PowerShell.Commands
                     // get the matched member(s)
                     ReadOnlyPSMemberInfoCollection<PSMemberInfo> members =
                         _inputObject.Members.Match(_propertyOrMethodName, PSMemberTypes.All);
-                    Dbg.Assert(members != null, "The return value of Members.Match should never be null");
+                    Dbg.Assert(members is not null, "The return value of Members.Match should never be null");
 
                     if (members.Count > 1)
                     {
@@ -727,7 +727,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // first we check if the member is a ParameterizedProperty
                     PSParameterizedProperty targetParameterizedProperty = member as PSParameterizedProperty;
-                    if (targetParameterizedProperty != null)
+                    if (targetParameterizedProperty is not null)
                     {
                         // should process
                         string propertyAction = string.Format(CultureInfo.InvariantCulture,
@@ -743,7 +743,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     PSMethodInfo targetMethod = member as PSMethodInfo;
-                    Dbg.Assert(targetMethod != null, "targetMethod should not be null here.");
+                    Dbg.Assert(targetMethod is not null, "targetMethod should not be null here.");
                     try
                     {
                         // should process
@@ -767,7 +767,7 @@ namespace Microsoft.PowerShell.Commands
                     catch (Exception ex)
                     {
                         MethodException mex = ex as MethodException;
-                        if (mex != null && mex.ErrorRecord != null && mex.ErrorRecord.FullyQualifiedErrorId == "MethodCountCouldNotFindBest")
+                        if (mex is not null && mex.ErrorRecord is not null && mex.ErrorRecord.FullyQualifiedErrorId == "MethodCountCouldNotFindBest")
                         {
                             WriteObject(targetMethod.Value);
                         }
@@ -887,7 +887,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (errorRecord != null)
+            if (errorRecord is not null)
             {
                 string propertyAction = string.Format(CultureInfo.InvariantCulture,
                     InternalCommandStrings.ForEachObjectPropertyAction, _propertyOrMethodName);
@@ -922,7 +922,7 @@ namespace Microsoft.PowerShell.Commands
                 // because it allows you to parameterize a command - for example you might allow
                 // for actions before and after the main processing script. They could be null
                 // by default and therefore ignored then filled in later...
-                if (_scripts[i] != null)
+                if (_scripts[i] is not null)
                 {
                     _scripts[i].InvokeUsingCmdlet(
                         contextCmdlet: this,
@@ -945,7 +945,7 @@ namespace Microsoft.PowerShell.Commands
             // Not using MshCommandRuntime, as those variables will be affected by ScriptCmdlet
             // infrastructure (wherein ScriptCmdlet modifies the global preferences).
             Dictionary<string, object> psBoundParameters = this.MyInvocation.BoundParameters;
-            if (psBoundParameters != null)
+            if (psBoundParameters is not null)
             {
                 SwitchParameter whatIf = false;
                 SwitchParameter confirm = false;
@@ -1017,7 +1017,7 @@ namespace Microsoft.PowerShell.Commands
                     _propertyOrMethodName,
                     PSMemberTypes.Methods | PSMemberTypes.ParameterizedProperty);
 
-            Dbg.Assert(methods != null, "The return value of Members.Match should never be null.");
+            Dbg.Assert(methods is not null, "The return value of Members.Match should never be null.");
             if (methods.Count > 1)
             {
                 // write error record: method ambiguous
@@ -1048,7 +1048,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 PSMethodInfo targetMethod = methods[0] as PSMethodInfo;
-                Dbg.Assert(targetMethod != null, "targetMethod should not be null here.");
+                Dbg.Assert(targetMethod is not null, "targetMethod should not be null here.");
 
                 // should process
                 StringBuilder arglist = new StringBuilder(GetStringRepresentation(_arguments[0]));
@@ -1105,7 +1105,7 @@ namespace Microsoft.PowerShell.Commands
             if (string.IsNullOrEmpty(objInString))
             {
                 var psobj = obj as PSObject;
-                objInString = psobj != null ? psobj.BaseObject.GetType().FullName : obj.GetType().FullName;
+                objInString = psobj is not null ? psobj.BaseObject.GetType().FullName : obj.GetType().FullName;
             }
 
             return objInString;
@@ -1123,7 +1123,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                if (hash != null && hash.Contains(_propertyOrMethodName))
+                if (hash is not null && hash.Contains(_propertyOrMethodName))
                 {
                     string keyAction = string.Format(
                         CultureInfo.InvariantCulture,
@@ -1155,7 +1155,7 @@ namespace Microsoft.PowerShell.Commands
         private void WriteToPipelineWithUnrolling(object obj)
         {
             IEnumerator objAsEnumerator = LanguagePrimitives.GetEnumerator(obj);
-            if (objAsEnumerator != null)
+            if (objAsEnumerator is not null)
             {
                 WriteOutIEnumerator(objAsEnumerator);
             }
@@ -1171,7 +1171,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="list">Source list.</param>
         private void WriteOutIEnumerator(IEnumerator list)
         {
-            if (list != null)
+            if (list is not null)
             {
                 while (ParserOps.MoveNext(this.Context, null, list))
                 {
@@ -2023,7 +2023,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary/>
         protected override void BeginProcessing()
         {
-            if (_script != null)
+            if (_script is not null)
             {
                 return;
             }
@@ -2196,7 +2196,7 @@ namespace Microsoft.PowerShell.Commands
                     case TokenKind.IsNot:
                         // users might input [int], [string] as they do when using scripts
                         var strValue = _convertedValue as string;
-                        if (strValue != null)
+                        if (strValue is not null)
                         {
                             var typeLength = strValue.Length;
                             if (typeLength > 2 && strValue[0] == '[' && strValue[typeLength - 1] == ']')
@@ -2228,7 +2228,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (_script != null)
+            if (_script is not null)
             {
                 object result = _script.DoInvokeReturnAsIs(
                     useLocalScope: false,
@@ -2341,7 +2341,7 @@ namespace Microsoft.PowerShell.Commands
             IDictionary hash = target as IDictionary;
             try
             {
-                if (hash != null && hash.Contains(_property))
+                if (hash is not null && hash.Contains(_property))
                 {
                     return hash[_property];
                 }
@@ -2474,7 +2474,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 PSMemberInfoInternalCollection<PSMemberInfo> results = new PSMemberInfoInternalCollection<PSMemberInfo>();
                 PSMemberInfo member = _inputObject.Members[_property];
-                if (member != null)
+                if (member is not null)
                 {
                     results.Add(member);
                 }
@@ -2483,7 +2483,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             ReadOnlyPSMemberInfoCollection<PSMemberInfo> members = _inputObject.Members.Match(_property, PSMemberTypes.All);
-            Dbg.Assert(members != null, "The return value of Members.Match should never be null.");
+            Dbg.Assert(members is not null, "The return value of Members.Match should never be null.");
             return members;
         }
     }
@@ -2584,13 +2584,13 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                if (_trace >= 0 || _step != null)
+                if (_trace >= 0 || _step is not null)
                 {
                     Context.Debugger.EnableTracing(_trace, _step);
                 }
 
                 // Version 0 is the same as off
-                if (_strict != null)
+                if (_strict is not null)
                 {
                     Context.EngineSessionState.GlobalScope.StrictModeVersion = new Version((bool)_strict ? 1 : 0, 0);
                 }
@@ -2652,7 +2652,7 @@ namespace Microsoft.PowerShell.Commands
                 object version = PSObject.Base(inputData);
 
                 string versionStr = version as string;
-                if (versionStr != null)
+                if (versionStr is not null)
                 {
                     if (versionStr.Equals("latest", StringComparison.OrdinalIgnoreCase))
                     {

@@ -48,7 +48,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                return this.FilterExpression != null;
+                return this.FilterExpression is not null;
             }
         }
 
@@ -220,7 +220,7 @@ namespace Microsoft.Management.UI.Internal
 
         private int GetInsertionIndex(FilterRulePanelItem item)
         {
-            Debug.Assert(item != null, "not null");
+            Debug.Assert(item is not null, "not null");
 
             for (int i = this.filterRulePanelItems.Count - 1; i >= 0; i--)
             {
@@ -267,7 +267,7 @@ namespace Microsoft.Management.UI.Internal
         protected virtual void NotifyFilterExpressionChanged()
         {
             EventHandler eh = this.FilterExpressionChanged;
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this, new EventArgs());
             }

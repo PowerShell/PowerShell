@@ -97,12 +97,12 @@ namespace PSTests.Sequential
         public void Dispose()
         {
             CleanupConfigFiles();
-            if (systemWideConfigBackupFile != null)
+            if (systemWideConfigBackupFile is not null)
             {
                 File.Move(systemWideConfigBackupFile, systemWideConfigFile);
             }
 
-            if (currentUserConfigBackupFile != null)
+            if (currentUserConfigBackupFile is not null)
             {
                 File.Move(currentUserConfigBackupFile, currentUserConfigFile);
             }

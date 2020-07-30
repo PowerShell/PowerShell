@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell
         void
         Render(ArrayList strCollection, int indentation, int maxWidth, PSHostRawUserInterface rawUI)
         {
-            Dbg.Assert(strCollection != null, "strCollection should not be null");
+            Dbg.Assert(strCollection is not null, "strCollection should not be null");
             Dbg.Assert(indentation >= 0, "indentation is negative");
             Dbg.Assert(this.RecordType != ProgressRecordType.Completed, "should never render completed records");
 

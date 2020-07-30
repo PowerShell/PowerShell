@@ -862,7 +862,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // Check to see if this is a steppable pipeline case.
                         RemoteRunspace remoteRunspace = session.Runspace as RemoteRunspace;
-                        if ((remoteRunspace != null) &&
+                        if ((remoteRunspace is not null) &&
                             (remoteRunspace.RunspaceAvailability == RunspaceAvailability.Busy) &&
                             (remoteRunspace.IsAnotherInvokeCommandExecuting(this, localPipelineId)))
                         {
@@ -901,7 +901,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet))
             {
-                if (FilePath != null)
+                if (FilePath is not null)
                 {
                     ScriptBlock = GetScriptBlockFromFile(FilePath, false);
                 }
@@ -972,14 +972,14 @@ namespace Microsoft.PowerShell.Commands
                         // of this bug in Win8 where not responding can occur during data piping.
                         // We are reverting to Win7 behavior for {icm | icm} and {proxycommand | proxycommand}
                         // cases. For ICM | % ICM case, we are using remote steppable pipeline.
-                        if ((MyInvocation != null) && (MyInvocation.PipelinePosition == 1) && (MyInvocation.ExpectingInput == false))
+                        if ((MyInvocation is not null) && (MyInvocation.PipelinePosition == 1) && (MyInvocation.ExpectingInput == false))
                         {
                             PSPrimitiveDictionary table = (object)runspaceInfo.ApplicationPrivateData[PSVersionInfo.PSVersionTableName] as PSPrimitiveDictionary;
-                            if (table != null)
+                            if (table is not null)
                             {
                                 Version version = (object)table[PSVersionInfo.PSRemotingProtocolVersionName] as Version;
 
-                                if (version != null)
+                                if (version is not null)
                                 {
                                     // In order to support foreach remoting properly ( icm | % { icm } ), the server must
                                     // be using protocol version 2.2. Otherwise, we skip this and assume the old behavior.
@@ -1137,7 +1137,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _input.Add(InputObject);
                 }
-                else if (ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet) && (_steppablePipeline != null))
+                else if (ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet) && (_steppablePipeline is not null))
                 {
                     _steppablePipeline.Process(InputObject);
                 }
@@ -1170,7 +1170,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet))
                 {
-                    if (_steppablePipeline != null)
+                    if (_steppablePipeline is not null)
                     {
                         _steppablePipeline.End();
                     }
@@ -1189,7 +1189,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     // runspace and computername parameter sets
-                    if (_job != null)
+                    if (_job is not null)
                     {
                         // The job/command is disconnected immediately after it is invoked.  The command
                         // will continue to run on the server but we don't wait and return immediately.
@@ -1289,7 +1289,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Ensure that any runspace debug processing is ended
             var hostDebugger = GetHostDebugger();
-            if (hostDebugger != null)
+            if (hostDebugger is not null)
             {
                 try
                 {
@@ -1309,7 +1309,7 @@ namespace Microsoft.PowerShell.Commands
                     bool stopjob = false;
                     lock (_jobSyncObject)
                     {
-                        if (_job != null)
+                        if (_job is not null)
                         {
                             stopjob = true;
                         }
@@ -1421,7 +1421,7 @@ namespace Microsoft.PowerShell.Commands
             operation.RunspaceDebugStop -= HandleRunspaceDebugStop;
 
             var hostDebugger = GetHostDebugger();
-            if (hostDebugger != null)
+            if (hostDebugger is not null)
             {
                 hostDebugger.QueueRunspaceForDebug(args.Runspace);
             }
@@ -1441,7 +1441,7 @@ namespace Microsoft.PowerShell.Commands
                 // Signal that this job has been disconnected, or has ended.
                 lock (_jobSyncObject)
                 {
-                    if (_disconnectComplete != null)
+                    if (_disconnectComplete is not null)
                     {
                         _disconnectComplete.Set();
                     }
@@ -1459,7 +1459,7 @@ namespace Microsoft.PowerShell.Commands
             Collection<System.Management.Automation.PowerShell> powershells = job.GetPowerShells();
             foreach (var ps in powershells)
             {
-                if (ps.RemotePowerShell != null)
+                if (ps.RemotePowerShell is not null)
                 {
                     ps.RemotePowerShell.RCConnectionNotification += RCConnectionNotificationHandler;
                 }
@@ -1479,7 +1479,7 @@ namespace Microsoft.PowerShell.Commands
             Collection<System.Management.Automation.PowerShell> powershells = job.GetPowerShells();
             foreach (var ps in powershells)
             {
-                if (ps.RemotePowerShell != null)
+                if (ps.RemotePowerShell is not null)
                 {
                     ps.RemotePowerShell.RCConnectionNotification -= RCConnectionNotificationHandler;
                 }
@@ -1509,7 +1509,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WaitForDisconnectAndDisposeJob()
         {
-            if (_disconnectComplete != null)
+            if (_disconnectComplete is not null)
             {
                 _disconnectComplete.WaitOne();
 
@@ -1545,13 +1545,13 @@ namespace Microsoft.PowerShell.Commands
             foreach (System.Management.Automation.PowerShell ps in powershells)
             {
                 // Get the command information from the PowerShell object.
-                string commandText = (ps.Commands != null && ps.Commands.Commands.Count > 0) ?
+                string commandText = (ps.Commands is not null && ps.Commands.Commands.Count > 0) ?
                     ps.Commands.Commands[0].CommandText : string.Empty;
                 ConnectCommandInfo cmdInfo = new ConnectCommandInfo(ps.InstanceId, commandText);
 
                 // Get the old RunspacePool object that the command was initially run on.
                 RunspacePool oldRunspacePool = null;
-                if (ps.RunspacePool != null)
+                if (ps.RunspacePool is not null)
                 {
                     oldRunspacePool = ps.RunspacePool;
                 }
@@ -1559,14 +1559,14 @@ namespace Microsoft.PowerShell.Commands
                 {
                     object rsConnection = ps.GetRunspaceConnection();
                     RunspacePool rsPool = rsConnection as RunspacePool;
-                    if (rsPool != null)
+                    if (rsPool is not null)
                     {
                         oldRunspacePool = rsPool;
                     }
                     else
                     {
                         RemoteRunspace remoteRs = rsConnection as RemoteRunspace;
-                        if (remoteRs != null)
+                        if (remoteRs is not null)
                         {
                             oldRunspacePool = remoteRs.RunspacePool;
                         }
@@ -1576,7 +1576,7 @@ namespace Microsoft.PowerShell.Commands
                 // Create a new disconnected PSSession object and return to the user.
                 // The user can use this object to connect to the command on the server
                 // and retrieve data.
-                if (oldRunspacePool != null)
+                if (oldRunspacePool is not null)
                 {
                     if (oldRunspacePool.RunspacePoolStateInfo.State != RunspacePoolState.Disconnected)
                     {
@@ -1685,7 +1685,7 @@ namespace Microsoft.PowerShell.Commands
                         // ensure that the thread blocks. Else
                         // the thread will spin leading to a CPU
                         // usage spike
-                        if (_disconnectComplete != null)
+                        if (_disconnectComplete is not null)
                         {
                             // An auto-disconnect can occur and we need to detect
                             // this condition along with a job results signal.
@@ -1723,7 +1723,7 @@ namespace Microsoft.PowerShell.Commands
                     caughtPipelineStoppedException = pse;
                 }
 
-                if (caughtPipelineStoppedException != null)
+                if (caughtPipelineStoppedException is not null)
                 {
                     HandlePipelinesStopped();
                     throw caughtPipelineStoppedException;
@@ -1737,7 +1737,7 @@ namespace Microsoft.PowerShell.Commands
                         // Create a PSRemoting job we can add to the job repository and that
                         // a user can reconnect to (via Receive-PSSession).
                         PSRemotingJob rtnJob = _job.CreateDisconnectedRemotingJob();
-                        if (rtnJob != null)
+                        if (rtnJob is not null)
                         {
                             rtnJob.PSJobTypeName = RemoteJobType;
 
@@ -1750,11 +1750,11 @@ namespace Microsoft.PowerShell.Commands
                             foreach (var cjob in rtnJob.ChildJobs)
                             {
                                 PSRemotingChildJob childJob = cjob as PSRemotingChildJob;
-                                if (childJob != null)
+                                if (childJob is not null)
                                 {
                                     // Get session for this job.
                                     PSSession session = GetPSSession(childJob.Runspace.InstanceId);
-                                    if (session != null)
+                                    if (session is not null)
                                     {
                                         // Write network failed, auto-disconnect error
                                         WriteNetworkFailedError(session);
@@ -1846,7 +1846,7 @@ namespace Microsoft.PowerShell.Commands
             Collection<System.Management.Automation.PowerShell> powershells = _job.GetPowerShells();
             foreach (System.Management.Automation.PowerShell ps in powershells)
             {
-                if (ps.RemotePowerShell != null &&
+                if (ps.RemotePowerShell is not null &&
                     ps.RemotePowerShell.ConnectionRetryStatus != PSConnectionRetryStatus.None &&
                     ps.RemotePowerShell.ConnectionRetryStatus != PSConnectionRetryStatus.ConnectionRetrySucceeded &&
                     ps.RemotePowerShell.ConnectionRetryStatus != PSConnectionRetryStatus.AutoDisconnectSucceeded)
@@ -1857,7 +1857,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             if (retryCanceled &&
-                this.Host != null)
+                this.Host is not null)
             {
                 // Write warning directly to host since pipeline has been stopped.
                 this.Host.UI.WriteWarningLine(RemotingErrorIdStrings.StopCommandOnRetry);
@@ -1890,7 +1890,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (var result in results)
             {
-                if (result != null)
+                if (result is not null)
                 {
                     PreProcessStreamObject(result);
                     result.WriteStreamObject(this);
@@ -1963,12 +1963,12 @@ namespace Microsoft.PowerShell.Commands
             // In case of PSDirectException, we should output the precise error message
             // in inner exception instead of the generic one in outer exception.
             //
-            if ((errorRecord != null) &&
-                (errorRecord.Exception != null) &&
-                (errorRecord.Exception.InnerException != null))
+            if ((errorRecord is not null) &&
+                (errorRecord.Exception is not null) &&
+                (errorRecord.Exception.InnerException is not null))
             {
                 PSDirectException ex = errorRecord.Exception.InnerException as PSDirectException;
-                if (ex != null)
+                if (ex is not null)
                 {
                     streamObject.Value = new ErrorRecord(errorRecord.Exception.InnerException,
                                                          errorRecord.FullyQualifiedErrorId,
@@ -2048,7 +2048,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!_asjob)
                 {
-                    if (_job != null)
+                    if (_job is not null)
                     {
                         // job will be null in the "InProcess" case
                         _job.Dispose();
@@ -2069,7 +2069,7 @@ namespace Microsoft.PowerShell.Commands
 
                 lock (_jobSyncObject)
                 {
-                    if (_disconnectComplete != null)
+                    if (_disconnectComplete is not null)
                     {
                         _disconnectComplete.Dispose();
                         _disconnectComplete = null;

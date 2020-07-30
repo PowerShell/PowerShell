@@ -304,7 +304,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             }
 
             StringConstantExpressionAst stringValue = commandAst.CommandElements[2] as StringConstantExpressionAst;
-            if (stringValue != null)
+            if (stringValue is not null)
             {
                 if (errors.Length == 0)
                 {
@@ -370,7 +370,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         private void OnNotifyPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;
-            if (handler != null)
+            if (handler is not null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }

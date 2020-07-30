@@ -53,7 +53,7 @@ namespace System.Management.Automation
 
         internal TypeTable GetTypeTable()
         {
-            if (_typeTable != null && _typeTable.TryGetTarget(out TypeTable typeTable))
+            if (_typeTable is not null && _typeTable.TryGetTarget(out TypeTable typeTable))
             {
                 return typeTable;
             }
@@ -205,7 +205,7 @@ namespace System.Management.Automation
         private static PSMemberInfoInternalCollection<T> DotNetGetMembersDelegate<T>(PSObject msjObj) where T : PSMemberInfo
         {
             // Don't lookup dotnet members if the object doesn't insist.
-            if (msjObj.InternalBaseDotNetAdapter != null)
+            if (msjObj.InternalBaseDotNetAdapter is not null)
             {
                 PSMemberInfoInternalCollection<T> retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
                 PSObject.MemberResolution.WriteLine("DotNet members: {0}.", retValue.VisibleCount);
@@ -218,7 +218,7 @@ namespace System.Management.Automation
         private static T DotNetGetMemberDelegate<T>(PSObject msjObj, string name) where T : PSMemberInfo
         {
             // Don't lookup dotnet member if the object doesn't insist.
-            if (msjObj.InternalBaseDotNetAdapter != null)
+            if (msjObj.InternalBaseDotNetAdapter is not null)
             {
                 T retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, name);
                 PSObject.MemberResolution.WriteLine("DotNet member: {0}.", retValue is null ? "not found" : retValue.Name);
@@ -410,7 +410,7 @@ namespace System.Management.Automation
 
         private void CommonInitialization(object obj)
         {
-            Diagnostics.Assert(obj != null, "checked by callers");
+            Diagnostics.Assert(obj is not null, "checked by callers");
             if (obj is PSCustomObject)
             {
                 this.ImmediateBaseObjectIsEmpty = true;
@@ -463,7 +463,7 @@ namespace System.Management.Automation
 
             PSObject.AdapterSet adapter = typeTable?.GetTypeAdapter(objectType);
 
-            if (adapter != null)
+            if (adapter is not null)
             {
                 // We don't cache results found via the type table because type tables may differ b/w runspaces,
                 // our cache is app domain wide, and the key is simply the type.
@@ -480,7 +480,7 @@ namespace System.Management.Automation
                 foreach (var mapper in s_adapterSetMappers)
                 {
                     result = mapper(obj);
-                    if (result != null)
+                    if (result is not null)
                     {
                         break;
                     }
@@ -509,14 +509,14 @@ namespace System.Management.Automation
                         // (typically), the runtime type is always the same.  That's why this if statement is here and returns.
 
                         ComTypeInfo info = ComTypeInfo.GetDispatchTypeInfo(obj);
-                        return info != null
+                        return info is not null
                                    ? new AdapterSet(new ComAdapter(info), DotNetInstanceAdapter)
                                    : PSObject.s_dotNetInstanceAdapterSet;
                     }
                     else
                     {
                         ComTypeInfo info = ComTypeInfo.GetDispatchTypeInfo(obj);
-                        result = info != null
+                        result = info is not null
                                    ? new AdapterSet(new DotNetAdapterWithComTypeName(info), null)
                                    : PSObject.s_dotNetInstanceAdapterSet;
                     }
@@ -820,7 +820,7 @@ namespace System.Management.Automation
                 {
                     returnValue = mshObj._immediateBaseObject;
                     mshObj = returnValue as PSObject;
-                } while (mshObj != null);
+                } while (mshObj is not null);
 
                 return returnValue;
             }
@@ -847,7 +847,7 @@ namespace System.Management.Automation
 
                             object baseObj = BaseObject;
                             // In most cases, the TypeNames will be modified after it's returned
-                            if (baseObj != null) { PSVariableAssignmentBinder.NoteTypeHasInstanceMemberOrTypeName(baseObj.GetType()); }
+                            if (baseObj is not null) { PSVariableAssignmentBinder.NoteTypeHasInstanceMemberOrTypeName(baseObj.GetType()); }
 
                             return _typeNames;
                         }
@@ -925,7 +925,7 @@ namespace System.Management.Automation
 
                 instanceMembers = psobj._instanceMembers;
             }
-            else if (obj != null)
+            else if (obj is not null)
             {
                 s_instanceMembersResurrectionTable.TryGetValue(GetKeyForResurrectionTables(obj), out instanceMembers);
             }
@@ -934,7 +934,7 @@ namespace System.Management.Automation
                 instanceMembers = null;
             }
 
-            return instanceMembers != null && instanceMembers.Count > 0;
+            return instanceMembers is not null && instanceMembers.Count > 0;
         }
 
         private static readonly ConditionalWeakTable<object, PSMemberInfoInternalCollection<PSMemberInfo>> s_instanceMembersResurrectionTable =
@@ -1006,7 +1006,7 @@ namespace System.Management.Automation
             {
                 returnValue = mshObj._immediateBaseObject;
                 mshObj = returnValue as PSObject;
-            } while ((mshObj != null) && (!mshObj.ImmediateBaseObjectIsEmpty));
+            } while ((mshObj is not null) && (!mshObj.ImmediateBaseObjectIsEmpty));
 
             return returnValue;
         }
@@ -1102,13 +1102,13 @@ namespace System.Management.Automation
 
         private static string GetSeparator(ExecutionContext context, string separator)
         {
-            if (separator != null)
+            if (separator is not null)
             {
                 return separator;
             }
 
             object obj = context?.GetVariableValue(SpecialVariables.OFSVarPath);
-            if (obj != null)
+            if (obj is not null)
             {
                 return obj.ToString();
             }
@@ -1143,7 +1143,7 @@ namespace System.Management.Automation
             string separatorToUse = GetSeparator(context, separator);
             foreach (object obj in enumerable)
             {
-                if (obj != null)
+                if (obj is not null)
                 {
                     PSObject mshObj = PSObject.AsPSObject(obj);
                     returnValue.Append(PSObject.ToString(context, mshObj, separator, format, formatProvider, false, false));
@@ -1325,7 +1325,7 @@ namespace System.Management.Automation
                 if (recurse)
                 {
                     IEnumerable enumerable = LanguagePrimitives.GetEnumerable(obj);
-                    if (enumerable != null)
+                    if (enumerable is not null)
                     {
                         try
                         {
@@ -1340,7 +1340,7 @@ namespace System.Management.Automation
                     if (unravelEnumeratorOnRecurse)
                     {
                         IEnumerator enumerator = LanguagePrimitives.GetEnumerator(obj);
-                        if (enumerator != null)
+                        if (enumerator is not null)
                         {
                             try
                             {
@@ -1363,7 +1363,7 @@ namespace System.Management.Automation
                     if (objFormattable is null)
                     {
                         Type type = obj as Type;
-                        if (type != null)
+                        if (type is not null)
                         {
                             return Microsoft.PowerShell.ToStringCodeMethods.Type(type);
                         }
@@ -1398,10 +1398,10 @@ namespace System.Management.Automation
                 if (mshObj.InternalTypeNames.Count != 0)
                 {
                     TypeTable table = mshObj.GetTypeTable();
-                    if (table != null)
+                    if (table is not null)
                     {
                         method = table.GetMembers<PSMethodInfo>(mshObj.InternalTypeNames)["ToString"];
-                        if (method != null)
+                        if (method is not null)
                         {
                             method = (PSMethodInfo)method.Copy();
                             method.instance = mshObj;
@@ -1410,21 +1410,21 @@ namespace System.Management.Automation
                 }
             }
 
-            if (method != null)
+            if (method is not null)
             {
                 try
                 {
                     // Even if a format specifier has been provided, if there is only one overload
                     // then it can't take a format specified...
                     object retObj;
-                    if (formatProvider != null && method.OverloadDefinitions.Count > 1)
+                    if (formatProvider is not null && method.OverloadDefinitions.Count > 1)
                     {
                         retObj = method.Invoke(format, formatProvider);
-                        return retObj != null ? retObj.ToString() : string.Empty;
+                        return retObj is not null ? retObj.ToString() : string.Empty;
                     }
 
                     retObj = method.Invoke();
-                    return retObj != null ? retObj.ToString() : string.Empty;
+                    return retObj is not null ? retObj.ToString() : string.Empty;
                 }
                 catch (MethodException e)
                 {
@@ -1451,7 +1451,7 @@ namespace System.Management.Automation
                 }
 
                 IEnumerable enumerable = LanguagePrimitives.GetEnumerable(mshObj);
-                if (enumerable != null)
+                if (enumerable is not null)
                 {
                     try
                     {
@@ -1466,7 +1466,7 @@ namespace System.Management.Automation
                 if (unravelEnumeratorOnRecurse)
                 {
                     IEnumerator enumerator = LanguagePrimitives.GetEnumerator(mshObj);
-                    if (enumerator != null)
+                    if (enumerator is not null)
                     {
                         try
                         {
@@ -1485,7 +1485,7 @@ namespace System.Management.Automation
 
             // If we've cached a string representation for this object, use that. This
             // is used to preserve the original string for numeric literals.
-            if (mshObj.TokenText != null)
+            if (mshObj.TokenText is not null)
             {
                 return mshObj.TokenText;
             }
@@ -1527,7 +1527,7 @@ namespace System.Management.Automation
         {
             // If ToString value from deserialization is available,
             // simply return it.
-            if (ToStringFromDeserialization != null)
+            if (ToStringFromDeserialization is not null)
             {
                 return ToStringFromDeserialization;
             }
@@ -1548,7 +1548,7 @@ namespace System.Management.Automation
         {
             // If ToString value from deserialization is available,
             // simply return it.
-            if (ToStringFromDeserialization != null)
+            if (ToStringFromDeserialization is not null)
             {
                 return ToStringFromDeserialization;
             }
@@ -1881,7 +1881,7 @@ namespace System.Management.Automation
             int result = 0;
 
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
-            if (typeTable != null)
+            if (typeTable is not null)
             {
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(this,
                     typeTable, TypeTable.PSStandardMembers);
@@ -1918,7 +1918,7 @@ namespace System.Management.Automation
             SerializationMethod result = TypeTable.DefaultSerializationMethod;
 
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
-            if (typeTable != null)
+            if (typeTable is not null)
             {
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(this,
                     typeTable, TypeTable.PSStandardMembers);
@@ -1934,7 +1934,7 @@ namespace System.Management.Automation
             get
             {
                 var retVal = TypeTableGetMemberDelegate<PSMemberSet>(this, TypeTable.PSStandardMembers);
-                if (retVal != null)
+                if (retVal is not null)
                 {
                     retVal = (PSMemberSet)retVal.Copy();
                     retVal.ReplicateInstance(this);
@@ -1951,11 +1951,11 @@ namespace System.Management.Automation
             PSMemberInfo result = null;
 
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
-            if (typeTable != null)
+            if (typeTable is not null)
             {
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(
                     this, typeTable, TypeTable.PSStandardMembers);
-                if (standardMemberSet != null)
+                if (standardMemberSet is not null)
                 {
                     standardMemberSet.ReplicateInstance(this);
                     PSMemberInfoIntegratingCollection<PSMemberInfo> members =
@@ -1996,7 +1996,7 @@ namespace System.Management.Automation
         internal Collection<string> GetSpecificPropertiesToSerialize(TypeTable backupTypeTable)
         {
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
-            if (typeTable != null)
+            if (typeTable is not null)
             {
                 Collection<string> tmp = typeTable.GetSpecificProperties(this.InternalTypeNames);
                 return tmp;
@@ -2009,7 +2009,7 @@ namespace System.Management.Automation
         {
             if (this.IsDeserialized)
             {
-                return this.AdaptedMembers != null;
+                return this.AdaptedMembers is not null;
             }
 
             return !this.ImmediateBaseObjectIsEmpty;
@@ -2062,7 +2062,7 @@ namespace System.Management.Automation
         internal void SetCoreOnDeserialization(object value, bool overrideTypeInfo)
         {
             Diagnostics.Assert(this.ImmediateBaseObjectIsEmpty, "BaseObject should be PSCustomObject for deserialized objects");
-            Diagnostics.Assert(value != null, "known objects are never null");
+            Diagnostics.Assert(value is not null, "known objects are never null");
             this.ImmediateBaseObjectIsEmpty = false;
             _immediateBaseObject = value;
             _adapterSet = GetMappedAdapter(_immediateBaseObject, GetTypeTable());

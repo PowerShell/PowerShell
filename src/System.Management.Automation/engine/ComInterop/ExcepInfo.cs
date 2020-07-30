@@ -75,7 +75,7 @@ namespace System.Management.Automation.ComInterop
             Exception exception = Marshal.GetExceptionForHR(errorCode);
 
             string message = ConvertAndFreeBstr(ref _bstrDescription);
-            if (message != null)
+            if (message is not null)
             {
                 // If we have a custom message, create a new Exception object with the message set correctly.
                 // We need to create a new object because "exception.Message" is a read-only property.
@@ -87,7 +87,7 @@ namespace System.Management.Automation.ComInterop
                 {
                     Type exceptionType = exception.GetType();
                     ConstructorInfo ctor = exceptionType.GetConstructor(new Type[] { typeof(string) });
-                    if (ctor != null)
+                    if (ctor is not null)
                     {
                         exception = (Exception)ctor.Invoke(new object[] { message });
                     }
@@ -97,7 +97,7 @@ namespace System.Management.Automation.ComInterop
             exception.Source = ConvertAndFreeBstr(ref _bstrSource);
 
             string helpLink = ConvertAndFreeBstr(ref _bstrHelpFile);
-            if (helpLink != null && _dwHelpContext != 0)
+            if (helpLink is not null && _dwHelpContext != 0)
             {
                 helpLink += "#" + _dwHelpContext;
             }

@@ -131,15 +131,15 @@ namespace System.Management.Automation.Language {
         /// Write out the given AST.
         /// </summary>
         internal static void WriteTo(Expression node, TextWriter writer) {
-            Debug.Assert(node != null);
-            Debug.Assert(writer != null);
+            Debug.Assert(node is not null);
+            Debug.Assert(writer is not null);
 
             new DebugViewWriter(writer).WriteTo(node);
         }
 
         private void WriteTo(Expression node) {
             var lambda = node as LambdaExpression;
-            if (lambda != null) {
+            if (lambda is not null) {
                 WriteLambda(lambda);
             } else {
                 Visit(node);
@@ -150,7 +150,7 @@ namespace System.Management.Automation.Language {
             // Output all lambda expression definitions.
             // in the order of their appearances in the tree.
             //
-            while (_lambdas != null && _lambdas.Count > 0) {
+            while (_lambdas is not null && _lambdas.Count > 0) {
                 WriteLine();
                 WriteLine();
                 WriteLambda(_lambdas.Dequeue());
@@ -239,29 +239,29 @@ namespace System.Management.Automation.Language {
             UnaryOperationBinder unary;
             BinaryOperationBinder binary;
 
-            if ((convert = binder as ConvertBinder) != null) {
+            if ((convert = binder as ConvertBinder) is not null) {
                 return "Convert " + convert.Type.ToString();
-            } else if ((getMember = binder as GetMemberBinder) != null) {
+            } else if ((getMember = binder as GetMemberBinder) is not null) {
                 return "GetMember " + getMember.Name;
-            } else if ((setMember = binder as SetMemberBinder) != null) {
+            } else if ((setMember = binder as SetMemberBinder) is not null) {
                 return "SetMember " + setMember.Name;
-            } else if ((deleteMember = binder as DeleteMemberBinder) != null) {
+            } else if ((deleteMember = binder as DeleteMemberBinder) is not null) {
                 return "DeleteMember " + deleteMember.Name;
-            } else if ((getIndex = binder as GetIndexBinder) != null) {
+            } else if ((getIndex = binder as GetIndexBinder) is not null) {
                 return "GetIndex";
-            } else if ((setIndex = binder as SetIndexBinder) != null) {
+            } else if ((setIndex = binder as SetIndexBinder) is not null) {
                 return "SetIndex";
-            } else if ((deleteIndex = binder as DeleteIndexBinder) != null) {
+            } else if ((deleteIndex = binder as DeleteIndexBinder) is not null) {
                 return "DeleteIndex";
-            } else if ((call = binder as InvokeMemberBinder) != null) {
+            } else if ((call = binder as InvokeMemberBinder) is not null) {
                 return "Call " + call.Name;
-            } else if ((invoke = binder as InvokeBinder) != null) {
+            } else if ((invoke = binder as InvokeBinder) is not null) {
                 return "Invoke";
-            } else if ((create = binder as CreateInstanceBinder) != null) {
+            } else if ((create = binder as CreateInstanceBinder) is not null) {
                 return "Create";
-            } else if ((unary = binder as UnaryOperationBinder) != null) {
+            } else if ((unary = binder as UnaryOperationBinder) is not null) {
                 return "UnaryOperation " + unary.Operation;
-            } else if ((binary = binder as BinaryOperationBinder) != null) {
+            } else if ((binary = binder as BinaryOperationBinder) is not null) {
                 return "BinaryOperation " + binary.Operation;
             } else {
                 return binder.ToString();
@@ -292,7 +292,7 @@ namespace System.Management.Automation.Language {
         private void VisitExpressions<T>(char open, char separator, IList<T> expressions, Action<T> visit) {
             Out(open.ToString());
 
-            if (expressions != null) {
+            if (expressions is not null) {
                 Indent();
                 bool isFirst = true;
                 foreach (T e in expressions) {
@@ -469,7 +469,7 @@ namespace System.Management.Automation.Language {
 
         private static bool IsSimpleExpression(Expression node) {
             var binary = node as BinaryExpression;
-            if (binary != null) {
+            if (binary is not null) {
                 return !(binary.Left is BinaryExpression || binary.Right is BinaryExpression);
             }
 
@@ -520,7 +520,7 @@ namespace System.Management.Automation.Language {
                 Out(value.ToString());
             } else {
                 string suffix = GetConstantValueSuffix(node.Type);
-                if (suffix != null) {
+                if (suffix is not null) {
                     Out(value.ToString());
                     Out(suffix);
                 } else {
@@ -571,7 +571,7 @@ namespace System.Management.Automation.Language {
 
         // Prints ".instanceField" or "declaringType.staticField"
         private void OutMember(Expression node, Expression instance, MemberInfo member) {
-            if (instance != null) {
+            if (instance is not null) {
                 ParenthesizedVisit(node, instance);
                 Out("." + member.Name);
             } else {
@@ -594,7 +594,7 @@ namespace System.Management.Automation.Language {
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         private static bool NeedsParentheses(Expression parent, Expression child) {
-            Debug.Assert(parent != null);
+            Debug.Assert(parent is not null);
             if (child is null) {
                 return false;
             }
@@ -646,7 +646,7 @@ namespace System.Management.Automation.Language {
                     case ExpressionType.Divide:
                     case ExpressionType.Modulo:
                         BinaryExpression binary = parent as BinaryExpression;
-                        Debug.Assert(binary != null);
+                        Debug.Assert(binary is not null);
                         // Need to have parenthesis for the right operand.
                         return child == binary.Right;
                 }
@@ -656,7 +656,7 @@ namespace System.Management.Automation.Language {
 
             // Special case: negate of a constant needs parentheses, to
             // disambiguate it from a negative constant.
-            if (child != null && child.NodeType == ExpressionType.Constant &&
+            if (child is not null && child.NodeType == ExpressionType.Constant &&
                 (parent.NodeType == ExpressionType.Negate || parent.NodeType == ExpressionType.NegateChecked)) {
                 return true;
             }
@@ -798,9 +798,9 @@ namespace System.Management.Automation.Language {
 
         protected override Expression VisitMethodCall(MethodCallExpression node) {
             Out(".Call ");
-            if (node.Object != null) {
+            if (node.Object is not null) {
                 ParenthesizedVisit(node, node.Object);
-            } else if (node.Method.DeclaringType != null) {
+            } else if (node.Method.DeclaringType is not null) {
                 Out(node.Method.DeclaringType.ToString());
             } else {
                 Out("<UnknownType>");
@@ -1022,7 +1022,7 @@ namespace System.Management.Automation.Language {
 
         protected override Expression VisitLoop(LoopExpression node) {
             Out(".Loop", Flow.Space);
-            if (node.ContinueLabel != null) {
+            if (node.ContinueLabel is not null) {
                 DumpLabel(node.ContinueLabel);
             }
 
@@ -1031,7 +1031,7 @@ namespace System.Management.Automation.Language {
             Visit(node.Body);
             Dedent();
             Out(Flow.NewLine, "}");
-            if (node.BreakLabel != null) {
+            if (node.BreakLabel is not null) {
                 Out(string.Empty, Flow.NewLine);
                 DumpLabel(node.BreakLabel);
             }
@@ -1059,7 +1059,7 @@ namespace System.Management.Automation.Language {
             Visit(node.SwitchValue);
             Out(") {", Flow.NewLine);
             Visit(node.Cases, VisitSwitchCase);
-            if (node.DefaultBody != null) {
+            if (node.DefaultBody is not null) {
                 Out(".Default:", Flow.NewLine);
                 Indent(); Indent();
                 Visit(node.DefaultBody);
@@ -1073,12 +1073,12 @@ namespace System.Management.Automation.Language {
 
         protected override CatchBlock VisitCatchBlock(CatchBlock node) {
             Out(Flow.NewLine, "} .Catch (" + node.Test.ToString());
-            if (node.Variable != null) {
+            if (node.Variable is not null) {
                 Out(Flow.Space, string.Empty);
                 VisitParameter(node.Variable);
             }
 
-            if (node.Filter != null) {
+            if (node.Filter is not null) {
                 Out(") .If (", Flow.Break);
                 Visit(node.Filter);
             }
@@ -1096,12 +1096,12 @@ namespace System.Management.Automation.Language {
             Visit(node.Body);
             Dedent();
             Visit(node.Handlers, VisitCatchBlock);
-            if (node.Finally != null) {
+            if (node.Finally is not null) {
                 Out(Flow.NewLine, "} .Finally {", Flow.NewLine);
                 Indent();
                 Visit(node.Finally);
                 Dedent();
-            } else if (node.Fault != null) {
+            } else if (node.Fault is not null) {
                 Out(Flow.NewLine, "} .Fault {", Flow.NewLine);
                 Indent();
                 Visit(node.Fault);
@@ -1113,7 +1113,7 @@ namespace System.Management.Automation.Language {
         }
 
         protected override Expression VisitIndex(IndexExpression node) {
-            if (node.Indexer != null) {
+            if (node.Indexer is not null) {
                 OutMember(node, node.Object, node.Indexer);
             } else {
                 ParenthesizedVisit(node, node.Object);

@@ -56,7 +56,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>A Size object representing the amount of layout space needed by the popupAdorner.</returns>
         protected override Size MeasureOverride(Size constraint)
         {
-            if (this.Child != null)
+            if (this.Child is not null)
             {
                 this.Child.Measure(constraint);
                 return this.Child.DesiredSize;
@@ -74,7 +74,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The actual size used.</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            if (this.Child != null)
+            if (this.Child is not null)
             {
                 Point location = new Point(0, 0);
                 Rect rect = new Rect(location, finalSize);
@@ -89,13 +89,13 @@ namespace Microsoft.Management.UI.Internal
 
         partial void OnChildChangedImplementation(PropertyChangedEventArgs<UIElement> e)
         {
-            if (e.OldValue != null)
+            if (e.OldValue is not null)
             {
                 this.children.Remove(e.OldValue);
                 this.RemoveLogicalChild(e.OldValue);
             }
 
-            if (this.Child != null)
+            if (this.Child is not null)
             {
                 this.children.Add(this.Child);
                 this.AddLogicalChild(this.Child);

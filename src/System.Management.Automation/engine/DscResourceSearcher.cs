@@ -18,7 +18,7 @@ namespace System.Management.Automation
             string resourceName,
             ExecutionContext context)
         {
-            Diagnostics.Assert(context != null, "caller to verify context is not null");
+            Diagnostics.Assert(context is not null, "caller to verify context is not null");
             Diagnostics.Assert(!string.IsNullOrEmpty(resourceName), "caller to verify commandName is valid");
 
             _resourceName = resourceName;
@@ -81,7 +81,7 @@ namespace System.Management.Automation
         {
             _currentMatch = GetNextDscResource();
 
-            if (_currentMatch != null)
+            if (_currentMatch is not null)
                 return true;
 
             return false;
@@ -134,7 +134,7 @@ namespace System.Management.Automation
 
                 foreach (dynamic resource in psObjs)
                 {
-                    if (resource.Name != null)
+                    if (resource.Name is not null)
                     {
                         string resourceName = resource.Name;
 
@@ -153,10 +153,10 @@ namespace System.Management.Automation
 
                             PSModuleInfo psMod = resource.Module as PSModuleInfo;
 
-                            if (psMod != null)
+                            if (psMod is not null)
                                 resourceInfo.Module = psMod;
 
-                            if (resource.ImplementedAs != null)
+                            if (resource.ImplementedAs is not null)
                             {
                                 ImplementedAsType impType;
                                 if (Enum.TryParse<ImplementedAsType>(resource.ImplementedAs.ToString(), out impType))
@@ -165,7 +165,7 @@ namespace System.Management.Automation
 
                             var properties = resource.Properties as IList;
 
-                            if (properties != null)
+                            if (properties is not null)
                             {
                                 List<DscResourcePropertyInfo> propertyList = new List<DscResourcePropertyInfo>();
 

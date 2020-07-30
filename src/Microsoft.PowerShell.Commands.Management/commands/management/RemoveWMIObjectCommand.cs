@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (_inputObject != null)
+            if (_inputObject is not null)
             {
                 try
                 {
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
                 ConnectionOptions options = GetConnectionOption();
                 ManagementPath mPath = null;
                 ManagementObject mObject = null;
-                if (_path != null)
+                if (_path is not null)
                 {
                     mPath = new ManagementPath(_path);
                     if (string.IsNullOrEmpty(mPath.NamespacePath))
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        if (_path != null)
+                        if (_path is not null)
                         {
                             mPath.Server = name;
                             if (mPath.IsClass)

@@ -214,7 +214,7 @@ namespace Microsoft.Management.UI.Internal
         protected virtual void NotifyFilterExpressionChanged()
         {
             EventHandler eh = this.FilterExpressionChanged;
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this, new EventArgs());
             }
@@ -235,7 +235,7 @@ namespace Microsoft.Management.UI.Internal
 
         partial void OnAddRulesExecutedImplementation(ExecutedRoutedEventArgs e)
         {
-            Debug.Assert(e != null, "not null");
+            Debug.Assert(e is not null, "not null");
 
             if (e.Parameter == null)
             {
@@ -270,7 +270,7 @@ namespace Microsoft.Management.UI.Internal
 
         partial void OnRemoveRuleExecutedImplementation(ExecutedRoutedEventArgs e)
         {
-            Debug.Assert(e != null, "not null");
+            Debug.Assert(e is not null, "not null");
 
             if (e.Parameter == null)
             {
@@ -339,13 +339,13 @@ namespace Microsoft.Management.UI.Internal
 
         private void AddFilterRulePanelItemContentTemplate(Type type, string resourceName)
         {
-            Debug.Assert(type != null, "not null");
+            Debug.Assert(type is not null, "not null");
             Debug.Assert(!string.IsNullOrEmpty(resourceName), "not null");
 
             var templateInfo = new ComponentResourceKey(typeof(FilterRulePanel), resourceName);
 
             DataTemplate template = (DataTemplate)this.TryFindResource(templateInfo);
-            Debug.Assert(template != null, "not null");
+            Debug.Assert(template is not null, "not null");
 
             this.AddFilterRulePanelItemContentTemplate(type, template);
         }
@@ -356,7 +356,7 @@ namespace Microsoft.Management.UI.Internal
 
         private void AddFilterRuleInternal(FilterRulePanelItem item)
         {
-            Debug.Assert(item != null, "not null");
+            Debug.Assert(item is not null, "not null");
 
             FilterRulePanelItem newItem = new FilterRulePanelItem(item.Rule.DeepCopy(), item.GroupId);
             this.Controller.AddFilterRulePanelItem(newItem);
@@ -364,7 +364,7 @@ namespace Microsoft.Management.UI.Internal
 
         private void RemoveFilterRuleInternal(FilterRulePanelItem item)
         {
-            Debug.Assert(item != null, "not null");
+            Debug.Assert(item is not null, "not null");
             this.Controller.RemoveFilterRulePanelItem(item);
         }
 

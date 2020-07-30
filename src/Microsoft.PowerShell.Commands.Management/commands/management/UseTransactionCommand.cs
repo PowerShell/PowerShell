@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
                     // exceedingly obtuse. We clarify things here.
                     bool isTimeoutException = false;
                     Exception tempException = e;
-                    while (tempException != null)
+                    while (tempException is not null)
                     {
                         if (tempException is System.TimeoutException)
                         {

@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool VerifyTemplate(EventMetadata emd)
         {
-            if (emd.Template != null)
+            if (emd.Template is not null)
             {
                 XmlReaderSettings readerSettings = new XmlReaderSettings
                 {
@@ -271,7 +271,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 if ((_payload is null && definedParameterCount != 0)
-                    || ((_payload != null) && _payload.Length != definedParameterCount))
+                    || ((_payload is not null) && _payload.Length != definedParameterCount))
                 {
                     string warning = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("PayloadMismatch"), _id, emd.Template);
                     WriteWarning(warning);
@@ -318,7 +318,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 EventDescriptor ed = _eventDescriptor.Value;
 
-                if (_payload != null && _payload.Length > 0)
+                if (_payload is not null && _payload.Length > 0)
                 {
                     for (int i = 0; i < _payload.Length; i++)
                     {
@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (_providerMetadata != null)
+            if (_providerMetadata is not null)
                 _providerMetadata.Dispose();
 
             base.EndProcessing();

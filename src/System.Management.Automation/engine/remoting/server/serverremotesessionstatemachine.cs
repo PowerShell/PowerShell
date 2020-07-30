@@ -262,7 +262,7 @@ namespace System.Management.Automation.Remoting
             }
 
             EventHandler<RemoteSessionStateMachineEventArgs> handler = _stateMachineHandle[(int)_state, (int)fsmEventArg.StateEvent];
-            if (handler != null)
+            if (handler is not null)
             {
                 s_trace.WriteLine("Before calling state machine event handler: state = {0}, event = {1}", _state, fsmEventArg.StateEvent);
 
@@ -357,7 +357,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.NegotiationReceived, "StateEvent must be NegotiationReceived");
-                Dbg.Assert(fsmEventArg.RemoteSessionCapability != null, "RemoteSessioncapability must be non-null");
+                Dbg.Assert(fsmEventArg.RemoteSessionCapability is not null, "RemoteSessioncapability must be non-null");
                 Dbg.Assert(_state == RemoteSessionState.NegotiationPending, "state must be in NegotiationPending state");
 
                 if (fsmEventArg.StateEvent != RemoteSessionEvent.NegotiationReceived)
@@ -536,7 +536,7 @@ namespace System.Management.Automation.Remoting
                         clientRunspacePoolId = fsmEventArg.RemoteData.RunspacePoolId;
                         runspacePoolDriver = _session.GetRunspacePoolDriver(clientRunspacePoolId);
 
-                        if (runspacePoolDriver != null)
+                        if (runspacePoolDriver is not null)
                         {
                             runspacePoolDriver.DataStructureHandler.ProcessReceivedData(fsmEventArg.RemoteData);
                         }
@@ -916,7 +916,7 @@ namespace System.Management.Automation.Remoting
                         {
                             // reset the timer
                             Timer tmp = Interlocked.Exchange(ref _keyExchangeTimer, null);
-                            if (tmp != null)
+                            if (tmp is not null)
                             {
                                 tmp.Dispose();
                             }
@@ -987,7 +987,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(_state == RemoteSessionState.EstablishedAndKeyRequested, "timeout should only happen when waiting for a key");
 
             Timer tmp = Interlocked.Exchange(ref _keyExchangeTimer, null);
-            if (tmp != null)
+            if (tmp is not null)
             {
                 tmp.Dispose();
             }

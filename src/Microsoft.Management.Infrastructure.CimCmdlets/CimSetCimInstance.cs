@@ -146,7 +146,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         Exception exception = null;
                         CimInstance instance = cmdlet.CimInstance;
                         // For CimInstance parameter sets, Property is an optional parameter
-                        if (cmdlet.Property != null)
+                        if (cmdlet.Property is not null)
                         {
                             if (!SetProperty(cmdlet.Property, ref instance, ref exception))
                             {
@@ -226,7 +226,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     CimProperty property = cimInstance.CimInstanceProperties[key];
                     // modify existing property value if found
-                    if (property != null)
+                    if (property is not null)
                     {
                         if ((property.Flags & CimFlags.ReadOnly) == CimFlags.ReadOnly)
                         {
@@ -255,7 +255,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         {
                             CimType referenceType = CimType.Unknown;
                             object referenceObject = GetReferenceOrReferenceArrayObject(value, ref referenceType);
-                            if (referenceObject != null)
+                            if (referenceObject is not null)
                             {
                                 newProperty = CimProperty.Create(
                                     key,

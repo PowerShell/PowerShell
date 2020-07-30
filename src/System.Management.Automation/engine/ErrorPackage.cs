@@ -230,7 +230,7 @@ namespace System.Management.Automation
                     return _errorRecord._activityOverride;
                 }
 
-                if (_errorRecord.InvocationInfo != null
+                if (_errorRecord.InvocationInfo is not null
                     && (_errorRecord.InvocationInfo.MyCommand is CmdletInfo || _errorRecord.InvocationInfo.MyCommand is IScriptCommandInfo)
                     && !string.IsNullOrEmpty(_errorRecord.InvocationInfo.MyCommand.Name)
                     )
@@ -266,7 +266,7 @@ namespace System.Management.Automation
                     return _errorRecord._reasonOverride;
                 }
 
-                if (_errorRecord.Exception != null)
+                if (_errorRecord.Exception is not null)
                 {
                     _reasonIsExceptionType = true;
                     return _errorRecord.Exception.GetType().Name;
@@ -302,7 +302,7 @@ namespace System.Management.Automation
                     return _errorRecord._targetNameOverride;
                 }
 
-                if (_errorRecord.TargetObject != null)
+                if (_errorRecord.TargetObject is not null)
                 {
                     string targetInString;
                     try
@@ -345,7 +345,7 @@ namespace System.Management.Automation
                     return _errorRecord._targetTypeOverride;
                 }
 
-                if (_errorRecord.TargetObject != null)
+                if (_errorRecord.TargetObject is not null)
                 {
                     return _errorRecord.TargetObject.GetType().Name;
                 }
@@ -723,7 +723,7 @@ namespace System.Management.Automation
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info != null)
+            if (info is not null)
             {
                 info.AddValue("ErrorDetails_Message", _message);
                 info.AddValue("ErrorDetails_RecommendedAction",
@@ -1080,7 +1080,7 @@ namespace System.Management.Automation
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info != null)
+            if (info is not null)
             {
                 PSObject psObject = RemotingEncoder.CreateEmptyPSObject();
 
@@ -1183,10 +1183,10 @@ namespace System.Management.Automation
             _targetNameOverride = errorCategory_TargetName;
             _targetTypeOverride = errorCategory_TargetType;
             _serializedErrorCategoryMessageOverride = errorCategory_Message;
-            if (errorDetails_Message != null)
+            if (errorDetails_Message is not null)
             {
                 ErrorDetails = new ErrorDetails(errorDetails_Message);
-                if (errorDetails_RecommendedAction != null)
+                if (errorDetails_RecommendedAction is not null)
                 {
                     ErrorDetails.RecommendedAction = errorDetails_RecommendedAction;
                 }
@@ -1217,7 +1217,7 @@ namespace System.Management.Automation
             RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_TargetType", delegate () { return CategoryInfo.TargetType; });
             RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Message", delegate () { return CategoryInfo.GetMessage(CultureInfo.CurrentCulture); });
 
-            if (ErrorDetails != null)
+            if (ErrorDetails is not null)
             {
                 RemotingEncoder.AddNoteProperty<string>(dest, "ErrorDetails_Message", delegate () { return ErrorDetails.Message; });
                 RemotingEncoder.AddNoteProperty<string>(dest, "ErrorDetails_RecommendedAction", delegate () { return ErrorDetails.RecommendedAction; });
@@ -1299,10 +1299,10 @@ namespace System.Management.Automation
             object targetObject = RemotingDecoder.GetPropertyValue<object>(serializedErrorRecord, "TargetObject");
 
             string exceptionMessage = null;
-            if (serializedException != null)
+            if (serializedException is not null)
             {
                 PSPropertyInfo messageProperty = serializedException.Properties["Message"] as PSPropertyInfo;
-                if (messageProperty != null)
+                if (messageProperty is not null)
                 {
                     exceptionMessage = messageProperty.Value as string;
                 }
@@ -1368,7 +1368,7 @@ namespace System.Management.Automation
                 _invocationInfo = new InvocationInfo(serializedErrorRecord);
 
                 ArrayList iterationInfo = RemotingDecoder.GetPropertyValue<ArrayList>(serializedErrorRecord, "PipelineIterationInfo");
-                if (iterationInfo != null)
+                if (iterationInfo is not null)
                 {
                     _pipelineIterationInfo = new ReadOnlyCollection<int>((int[])iterationInfo.ToArray(typeof(Int32)));
                 }
@@ -1399,7 +1399,7 @@ namespace System.Management.Automation
                 throw new PSArgumentNullException(nameof(errorRecord));
             }
 
-            if (replaceParentContainsErrorRecordException != null
+            if (replaceParentContainsErrorRecordException is not null
                 && (errorRecord.Exception is ParentContainsErrorRecordException))
             {
                 _error = replaceParentContainsErrorRecordException;
@@ -1416,7 +1416,7 @@ namespace System.Management.Automation
             _reasonOverride = errorRecord._reasonOverride;
             _targetNameOverride = errorRecord._targetNameOverride;
             _targetTypeOverride = errorRecord._targetTypeOverride;
-            if (errorRecord.ErrorDetails != null)
+            if (errorRecord.ErrorDetails is not null)
             {
                 ErrorDetails = new ErrorDetails(errorRecord.ErrorDetails);
             }
@@ -1456,7 +1456,7 @@ namespace System.Management.Automation
         {
             get
             {
-                Diagnostics.Assert(_error != null, "_error is null");
+                Diagnostics.Assert(_error is not null, "_error is null");
                 return _error;
             }
         }
@@ -1501,7 +1501,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_serializedFullyQualifiedErrorId != null)
+                if (_serializedFullyQualifiedErrorId is not null)
                 {
                     return _serializedFullyQualifiedErrorId;
                 }
@@ -1539,13 +1539,13 @@ namespace System.Management.Automation
         {
             // Save the DisplayScriptPosition, if set
             IScriptExtent savedDisplayScriptPosition = null;
-            if (_invocationInfo != null)
+            if (_invocationInfo is not null)
             {
                 savedDisplayScriptPosition = _invocationInfo.DisplayScriptPosition;
             }
 
             // Assign the invocationInfo
-            if (invocationInfo != null)
+            if (invocationInfo is not null)
             {
                 _invocationInfo = new InvocationInfo(invocationInfo.MyCommand, invocationInfo.ScriptPosition);
                 _invocationInfo.InvocationName = invocationInfo.InvocationName;
@@ -1558,7 +1558,7 @@ namespace System.Management.Automation
             }
 
             // Restore the DisplayScriptPosition
-            if (savedDisplayScriptPosition != null)
+            if (savedDisplayScriptPosition is not null)
             {
                 _invocationInfo.DisplayScriptPosition = savedDisplayScriptPosition;
             }
@@ -1568,7 +1568,7 @@ namespace System.Management.Automation
             //
             // Copy a snapshot of the PipelinePositionInfo from the InvocationInfo to this ErrorRecord
             //
-            if (invocationInfo != null && invocationInfo.PipelineIterationInfo != null)
+            if (invocationInfo is not null && invocationInfo.PipelineIterationInfo is not null)
             {
                 int[] snapshot = (int[])invocationInfo.PipelineIterationInfo.Clone();
 
@@ -1588,13 +1588,13 @@ namespace System.Management.Automation
 
         internal void LockScriptStackTrace()
         {
-            if (_scriptStackTrace != null)
+            if (_scriptStackTrace is not null)
             {
                 return;
             }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            if (context != null)
+            if (context is not null)
             {
                 StringBuilder sb = new StringBuilder();
                 var callstack = context.Debugger.GetCallStack();
@@ -1663,7 +1663,7 @@ namespace System.Management.Automation
             }
 
             IScriptCommandInfo scriptInfo = commandInfo as IScriptCommandInfo;
-            if (scriptInfo != null)
+            if (scriptInfo is not null)
             {
                 return commandInfo.Name;
             }
@@ -1686,12 +1686,12 @@ namespace System.Management.Automation
         /// <returns>Developer-readable identifier.</returns>
         public override string ToString()
         {
-            if (ErrorDetails != null && !string.IsNullOrEmpty(ErrorDetails.Message))
+            if (ErrorDetails is not null && !string.IsNullOrEmpty(ErrorDetails.Message))
             {
                 return ErrorDetails.Message;
             }
 
-            if (Exception != null)
+            if (Exception is not null)
             {
                 if (!string.IsNullOrEmpty(Exception.Message))
                 {

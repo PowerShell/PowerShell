@@ -157,7 +157,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         TableColumnHeaderDefinition chd = LoadColumnHeaderDefinition(n, columnIndex++);
 
-                        if (chd != null)
+                        if (chd is not null)
                             tableBody.header.columnHeaderDefinitionList.Add(chd);
                         else
                         {
@@ -420,7 +420,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (MatchNodeName(n, XmlTags.TableColumnItemNode))
                     {
                         TableRowItemDefinition rid = LoadColumnEntry(n, columnEntryIndex++);
-                        if (rid != null)
+                        if (rid is not null)
                         {
                             trd.rowItemDefinitionList.Add(rid);
                         }
@@ -480,11 +480,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 // finally build the item to return
                 // add either the text token or the PSPropertyExpression with optional format string
-                if (match.TextToken != null)
+                if (match.TextToken is not null)
                 {
                     rid.formatTokenList.Add(match.TextToken);
                 }
-                else if (match.Expression != null)
+                else if (match.Expression is not null)
                 {
                     FieldPropertyToken fpt = new FieldPropertyToken();
                     fpt.expression = match.Expression;

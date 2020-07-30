@@ -170,15 +170,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerId before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ItemCmdletProvider itemCmdletProvider =
@@ -315,15 +315,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -484,15 +484,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ItemCmdletProvider itemCmdletProvider =
@@ -670,15 +670,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             bool result = false;
@@ -904,15 +904,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerId != null,
+                providerId is not null,
                 "Caller should validate providerId before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             CmdletProvider providerInstance = GetProviderInstance(providerId);
@@ -955,15 +955,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -1148,15 +1148,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -1357,7 +1357,7 @@ namespace System.Management.Automation
                             {
                                 if (!string.Equals(childName, "*", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    if (context.Include != null)
+                                    if (context.Include is not null)
                                     {
                                         context.Include.Add(childName);
                                         modifiedInclude = true;
@@ -1420,9 +1420,9 @@ namespace System.Management.Automation
                     // To fix this Perf regression, using getChildrenBecauseNoGlob (+recurse) variables
                     // to decide when to use ManualGetChildItems and when not to.
                     if (
-                        (recurse && !getChildrenBecauseNoGlob && (include != null) && (include.Count == 0)) ||
-                        (include != null && include.Count > 0) ||
-                        (exclude != null && exclude.Count > 0))
+                        (recurse && !getChildrenBecauseNoGlob && (include is not null) && (include.Count == 0)) ||
+                        (include is not null && include.Count > 0) ||
+                        (exclude is not null && exclude.Count > 0))
                     {
                         // Do the recursion manually so that we can apply the
                         // include and exclude filters
@@ -1483,7 +1483,7 @@ namespace System.Management.Automation
                         out provider,
                         out drive);
 
-                if (drive != null)
+                if (drive is not null)
                 {
                     context.Drive = drive;
                 }
@@ -1491,8 +1491,8 @@ namespace System.Management.Automation
                 ContainerCmdletProvider providerInstance = GetContainerProviderInstance(provider);
 
                 if (
-                    (context.Include != null && context.Include.Count > 0) ||
-                    (context.Exclude != null && context.Exclude.Count > 0))
+                    (context.Include is not null && context.Include.Count > 0) ||
+                    (context.Exclude is not null && context.Exclude.Count > 0))
                 {
                     // Do the recursion manually so that we can apply the
                     // include and exclude filters
@@ -1508,7 +1508,7 @@ namespace System.Management.Automation
                         context.SuppressWildcardExpansion = true;
                     }
                 }
-                else if (path != null && this.ItemExists(providerInstance, path, context))
+                else if (path is not null && this.ItemExists(providerInstance, path, context))
                 {
                     if (IsItemContainer(providerInstance, path, context))
                     {
@@ -1567,15 +1567,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -1637,7 +1637,7 @@ namespace System.Management.Automation
             catch (ProviderInvocationException accessException)
             {
                 // if providerinvocationexception is wrapping access denied error, it is ok to not terminate the pipeline
-                if (accessException.InnerException != null &&
+                if (accessException.InnerException is not null &&
                     accessException.InnerException.GetType().Equals(typeof(System.UnauthorizedAccessException)))
                 {
                     context.WriteError(new ErrorRecord(accessException, "GetItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
@@ -1753,15 +1753,15 @@ namespace System.Management.Automation
             childrenNotMatchingFilterCriteria = 0;
 
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "The caller should have verified the providerInstance");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "The caller should have verified the path");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "The caller should have verified the context");
 
             // Construct the include filter
@@ -1819,7 +1819,7 @@ namespace System.Management.Automation
                         foreach (PSObject filteredChildName in filteredChildNameObjects)
                         {
                             string filteredName = filteredChildName.BaseObject as string;
-                            if (filteredName != null)
+                            if (filteredName is not null)
                             {
                                 filteredChildNameDictionary[filteredName] = true;
                             }
@@ -1871,7 +1871,7 @@ namespace System.Management.Automation
                             false))
                         {
                             bool emitItem = true;
-                            if (filteredChildNameDictionary != null)
+                            if (filteredChildNameDictionary is not null)
                             {
                                 bool isChildNameInDictionary = false;
                                 emitItem = filteredChildNameDictionary.TryGetValue(childName, out isChildNameInDictionary);
@@ -2038,21 +2038,21 @@ namespace System.Management.Automation
                 }
             }
 
-            if (providerPaths != null && providerPaths.Count > 0)
+            if (providerPaths is not null && providerPaths.Count > 0)
             {
                 // Get the dynamic parameters for the first resolved path
                 return GetChildItemsDynamicParameters(providerInstance, providerPaths[0], recurse, newContext);
             }
             else
             {
-                if (providerInstance != null)
+                if (providerInstance is not null)
                 {
                     PSDriveInfo drive = null;
                     // If we get here, the GetProviderPath should always succeed. This method was already invoked
                     // in the call to GetGlobbedProviderPathsFromMonadPath, and since "providerInstance" is not null,
                     // the invocation in method GetGlobbedProviderPathsFromMonadPath should succeed.
                     string providerPath = Globber.GetProviderPath(path, context, out provider, out drive);
-                    if (providerPath != null)
+                    if (providerPath is not null)
                     {
                         return GetChildItemsDynamicParameters(providerInstance, providerPath, recurse, newContext);
                     }
@@ -2076,11 +2076,11 @@ namespace System.Management.Automation
                 providerType = providerType.BaseType;
             } while (
                 (mi is null) &&
-                (providerType != null) &&
+                (providerType is not null) &&
                 (providerType != typeof(ContainerCmdletProvider))
             );
 
-            return (mi != null);
+            return (mi is not null);
         }
 
         /// <summary>
@@ -2119,15 +2119,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -2363,7 +2363,7 @@ namespace System.Management.Automation
                         out provider,
                         out providerInstance);
 
-                if (resolvePathContext.Drive != null)
+                if (resolvePathContext.Drive is not null)
                 {
                     context.Drive = resolvePathContext.Drive;
                 }
@@ -2448,7 +2448,7 @@ namespace System.Management.Automation
 
                 ContainerCmdletProvider providerInstance = GetContainerProviderInstance(provider);
 
-                if (drive != null)
+                if (drive is not null)
                 {
                     context.Drive = drive;
                 }
@@ -2547,15 +2547,15 @@ namespace System.Management.Automation
             uint depth)
         {
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "The providerInstance should have been verified by the caller");
 
             Dbg.Diagnostics.Assert(
-                providerPath != null,
+                providerPath is not null,
                 "The paths should have been verified by the caller");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "The context should have been verified by the caller");
 
             string newProviderPath =
@@ -2723,15 +2723,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -2838,21 +2838,21 @@ namespace System.Management.Automation
             }
 
             object result = null;
-            if (providerPaths != null && providerPaths.Count > 0)
+            if (providerPaths is not null && providerPaths.Count > 0)
             {
                 // Get the dynamic parameters for the first resolved path
                 result = GetChildNamesDynamicParameters(providerInstance, providerPaths[0], newContext);
             }
             else
             {
-                if (providerInstance != null)
+                if (providerInstance is not null)
                 {
                     PSDriveInfo drive = null;
                     // If we get here, the GetProviderPath should always succeed. This method was already invoked
                     // in the call to GetGlobbedProviderPathsFromMonadPath, and since "providerInstance" is not null,
                     // the invocation in method GetGlobbedProviderPathsFromMonadPath should succeed.
                     string providerPath = Globber.GetProviderPath(path, context, out provider, out drive);
-                    if (providerPath != null)
+                    if (providerPath is not null)
                     {
                         result = GetChildNamesDynamicParameters(providerInstance, providerPath, newContext);
                     }
@@ -2894,15 +2894,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerId before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -3106,15 +3106,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -3255,15 +3255,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -3485,7 +3485,7 @@ namespace System.Management.Automation
                     // Symbolic link targets are allowed to not exist on both Windows and Linux
                     bool allowNonexistingPath = false;
 
-                    if (type != null)
+                    if (type is not null)
                     {
                         WildcardPattern typeEvaluator = WildcardPattern.Get(type + "*", WildcardOptions.IgnoreCase | WildcardOptions.Compiled);
 
@@ -3579,11 +3579,11 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -3731,15 +3731,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -3994,15 +3994,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -4176,15 +4176,15 @@ namespace System.Management.Automation
             string providerDestinationPath;
             Runspaces.PSSession session = null;
 
-            if (dynamicParams != null)
+            if (dynamicParams is not null)
             {
-                if (dynamicParams.FromSession != null)
+                if (dynamicParams.FromSession is not null)
                 {
                     sourceIsRemote = true;
                     session = dynamicParams.FromSession;
                 }
 
-                if (dynamicParams.ToSession != null)
+                if (dynamicParams.ToSession is not null)
                 {
                     destinationIsRemote = true;
                     session = dynamicParams.ToSession;
@@ -4470,15 +4470,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -4542,7 +4542,7 @@ namespace System.Management.Automation
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "The providerInstance should have been verified by the caller");
 
             Dbg.Diagnostics.Assert(
@@ -4554,7 +4554,7 @@ namespace System.Management.Automation
                 "The destinationPath should have been verified by the caller");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "The context should have been verified by the caller");
 
             ContainerCmdletProvider containerProviderInstance =
@@ -4687,7 +4687,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (providerPath != null)
+            if (providerPath is not null)
             {
                 // Get the dynamic parameters for the first resolved path
                 return CopyItemDynamicParameters(providerInstance, providerPath, destination, recurse, newContext);
@@ -4736,15 +4736,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -4853,7 +4853,7 @@ namespace System.Management.Automation
             }
 
             // If the remote path is not absolute, display an error to the user.
-            if (op["IsAbsolute"] != null)
+            if (op["IsAbsolute"] is not null)
             {
                 bool isAbsolute = (bool)op["IsAbsolute"];
                 if (!isAbsolute)
@@ -4872,10 +4872,10 @@ namespace System.Management.Automation
             bool pathExist = false;
             string root = null;
 
-            if (op["Exists"] != null)
+            if (op["Exists"] is not null)
                 pathExist = (bool)op["Exists"];
 
-            if (op["Root"] != null)
+            if (op["Root"] is not null)
                 root = (string)op["Root"];
 
             // Here there are two scenarios:

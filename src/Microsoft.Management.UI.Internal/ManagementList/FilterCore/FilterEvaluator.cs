@@ -127,7 +127,7 @@ namespace Microsoft.Management.UI.Internal
                 foreach (IFilterExpressionProvider provider in this.FilterExpressionProviders)
                 {
                     FilterExpressionNode node = provider.FilterExpression;
-                    if (node != null)
+                    if (node is not null)
                     {
                         andNode.Children.Add(node);
                     }
@@ -185,7 +185,7 @@ namespace Microsoft.Management.UI.Internal
 
             PropertyChangedEventHandler eh = this.PropertyChanged;
 
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this, new PropertyChangedEventArgs(propertyName));
             }
@@ -208,7 +208,7 @@ namespace Microsoft.Management.UI.Internal
         protected virtual void NotifyFilterExpressionChanged()
         {
             EventHandler eh = this.FilterExpressionChanged;
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this, new EventArgs());
             }

@@ -144,7 +144,7 @@ namespace System.Management.Automation.Internal
                 // Write a progress message for UNC paths, so that users know what is happening
                 try
                 {
-                    if ((context.CurrentCommandProcessor != null) && Utils.PathIsUnc(directory))
+                    if ((context.CurrentCommandProcessor is not null) && Utils.PathIsUnc(directory))
                     {
                         analysisProgress = new ProgressRecord(0,
                             Modules.DeterminingAvailableModules,
@@ -360,7 +360,7 @@ namespace System.Management.Automation.Internal
         {
             version = null;
             string folderName = Path.GetDirectoryName(modulePath);
-            if (folderName != null)
+            if (folderName is not null)
             {
                 folderName = Path.GetFileName(folderName);
                 return Version.TryParse(folderName, out version);
@@ -423,7 +423,7 @@ namespace System.Management.Automation.Internal
             PSModuleAutoLoadingPreference moduleAutoLoadingPreference = CommandDiscovery.GetCommandDiscoveryPreference(context, SpecialVariables.PSModuleAutoLoadingPreferenceVarPath, "PSModuleAutoLoadingPreference");
 
             if ((moduleAutoLoadingPreference != PSModuleAutoLoadingPreference.None) &&
-                ((commandOrigin == CommandOrigin.Internal) || ((cmdletInfo != null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public))))
+                ((commandOrigin == CommandOrigin.Internal) || ((cmdletInfo is not null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public))))
             {
                 foreach (string modulePath in GetDefaultAvailableModuleFiles(isForAutoDiscovery: false, context))
                 {
@@ -517,17 +517,17 @@ namespace System.Management.Automation.Internal
                             bool shouldExportCommand = true;
 
                             // Verify that we don't already have it represented in the initial session state.
-                            if ((context.InitialSessionState != null) && (commandOrigin == CommandOrigin.Runspace))
+                            if ((context.InitialSessionState is not null) && (commandOrigin == CommandOrigin.Runspace))
                             {
                                 foreach (SessionStateCommandEntry commandEntry in context.InitialSessionState.Commands[commandName])
                                 {
                                     string moduleCompareName = null;
 
-                                    if (commandEntry.Module != null)
+                                    if (commandEntry.Module is not null)
                                     {
                                         moduleCompareName = commandEntry.Module.Name;
                                     }
-                                    else if (commandEntry.PSSnapIn != null)
+                                    else if (commandEntry.PSSnapIn is not null)
                                     {
                                         moduleCompareName = commandEntry.PSSnapIn.Name;
                                     }

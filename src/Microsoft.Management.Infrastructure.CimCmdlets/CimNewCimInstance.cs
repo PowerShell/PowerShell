@@ -208,7 +208,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             NewCimInstanceCommand cmdlet)
         {
             proxy.OperationTimeout = cmdlet.OperationTimeoutSec;
-            if (cmdlet.ResourceUri != null)
+            if (cmdlet.ResourceUri is not null)
             {
                 proxy.ResourceUri = cmdlet.ResourceUri;
             }
@@ -274,7 +274,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             List<string> keys = new List<string>();
-            if (key != null)
+            if (key is not null)
             {
                 foreach (string keyName in key)
                 {
@@ -297,7 +297,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 DebugHelper.WriteLog("Create and add new property to ciminstance: name = {0}; value = {1}; flags = {2}", 5, propertyName, propertyValue, flag);
 
                 PSReference cimReference = propertyValue as PSReference;
-                if (cimReference != null)
+                if (cimReference is not null)
                 {
                     CimProperty newProperty = CimProperty.Create(propertyName, GetBaseObject(cimReference.Value), CimType.Reference, flag);
                     cimInstance.CimInstanceProperties.Add(newProperty);

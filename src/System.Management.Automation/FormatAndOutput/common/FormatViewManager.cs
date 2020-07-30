@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static string PSObjectTypeName(PSObject so)
         {
             // if so is not null, its TypeNames will not be null
-            if (so != null)
+            if (so is not null)
             {
                 var typeNames = so.InternalTypeNames;
                 if (typeNames.Count > 0)
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, null);
                     }
 
-                    if (view != null)
+                    if (view is not null)
                     {
                         // we got a matching view from the database
                         // use this and we are done
@@ -140,14 +140,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // we have a predefined shape: did the user specify properties on the command line?
-                if (parameters != null && parameters.mshParameterList.Count > 0)
+                if (parameters is not null && parameters.mshParameterList.Count > 0)
                 {
                     _viewGenerator = SelectViewGeneratorFromProperties(shape, so, errorContext, expressionFactory, db, parameters);
                     return;
                 }
 
                 // predefined shape: did the user specify the name of a view?
-                if (parameters != null && !string.IsNullOrEmpty(parameters.viewName))
+                if (parameters is not null && !string.IsNullOrEmpty(parameters.viewName))
                 {
                     using (s_formatViewBindingTracer.TraceScope(findViewNameType, parameters.viewName,
                         PSObjectTypeName(so)))
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, parameters.viewName);
                     }
 
-                    if (view != null)
+                    if (view is not null)
                     {
                         _viewGenerator = SelectViewGeneratorFromViewDefinition(
                                                     errorContext,
@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, null);
                 }
 
-                if (view != null)
+                if (view is not null)
                 {
                     _viewGenerator = SelectViewGeneratorFromViewDefinition(
                                                 errorContext,
@@ -237,9 +237,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             string separator = ", ";
             StringBuilder validViewFormats = new StringBuilder();
 
-            if (so != null && so.BaseObject != null &&
-                db != null && db.viewDefinitionsSection != null &&
-                db.viewDefinitionsSection.viewDefinitionList != null &&
+            if (so is not null && so.BaseObject is not null &&
+                db is not null && db.viewDefinitionsSection is not null &&
+                db.viewDefinitionsSection.viewDefinitionList is not null &&
                 db.viewDefinitionsSection.viewDefinitionList.Count > 0)
             {
                 StringBuilder validViews = new StringBuilder();
@@ -267,11 +267,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     formatTypeName = "Custom";
                 }
 
-                if (formatType != null)
+                if (formatType is not null)
                 {
                     foreach (ViewDefinition currentViewDefinition in db.viewDefinitionsSection.viewDefinitionList)
                     {
-                        if (currentViewDefinition.mainControl != null)
+                        if (currentViewDefinition.mainControl is not null)
                         {
                             foreach (TypeOrGroupReference currentTypeOrGroupReference in currentViewDefinition.appliesTo.referenceList)
                             {
@@ -361,7 +361,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                Diagnostics.Assert(_viewGenerator != null, "this.viewGenerator cannot be null");
+                Diagnostics.Assert(_viewGenerator is not null, "this.viewGenerator cannot be null");
                 return _viewGenerator;
             }
         }
@@ -391,7 +391,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 viewGenerator = new ComplexViewGenerator();
             }
 
-            Diagnostics.Assert(viewGenerator != null, "viewGenerator != null");
+            Diagnostics.Assert(viewGenerator is not null, "viewGenerator is not null");
             viewGenerator.Initialize(errorContext, expressionFactory, db, view, parameters);
             return viewGenerator;
         }
@@ -447,7 +447,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 viewGenerator = new ComplexViewGenerator();
             }
 
-            Diagnostics.Assert(viewGenerator != null, "viewGenerator != null");
+            Diagnostics.Assert(viewGenerator is not null, "viewGenerator is not null");
 
             viewGenerator.Initialize(errorContext, expressionFactory, so, db, parameters);
             return viewGenerator;
@@ -476,7 +476,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static readonly MemberNamePredicate NameIsNotRemotingProperty = IsNotRemotingProperty;
 
-        internal static bool HasNonRemotingProperties(PSObject so) => so.GetFirstPropertyOrDefault(NameIsNotRemotingProperty) != null;
+        internal static bool HasNonRemotingProperties(PSObject so) => so.GetFirstPropertyOrDefault(NameIsNotRemotingProperty) is not null;
 
         internal static FormatEntryData GenerateOutOfBandData(TerminatingErrorContext errorContext, PSPropertyExpressionFactory expressionFactory,
                     TypeInfoDataBase db, PSObject so, int enumerationLimit, bool useToStringFallback, out List<ErrorRecord> errors)
@@ -487,7 +487,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ViewDefinition view = DisplayDataQuery.GetOutOfBandView(expressionFactory, db, typeNames);
 
             ViewGenerator outOfBandViewGenerator;
-            if (view != null)
+            if (view is not null)
             {
                 // process an out of band view retrieved from the display database
                 if (view.mainControl is ComplexControlBody)
@@ -629,7 +629,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             foreach (FormattingError error in _formattingErrorList)
             {
                 ErrorRecord errorRecord = GenerateErrorRecord(error);
-                if (errorRecord != null)
+                if (errorRecord is not null)
                     retVal.Add(errorRecord);
             }
 
@@ -647,7 +647,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ErrorRecord errorRecord = null;
             string msg = null;
             PSPropertyExpressionError psPropertyExpressionError = error as PSPropertyExpressionError;
-            if (psPropertyExpressionError != null)
+            if (psPropertyExpressionError is not null)
             {
                 errorRecord = new ErrorRecord(
                                 psPropertyExpressionError.result.Exception,
@@ -661,7 +661,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             StringFormatError formattingError = error as StringFormatError;
-            if (formattingError != null)
+            if (formattingError is not null)
             {
                 errorRecord = new ErrorRecord(
                                 formattingError.exception,

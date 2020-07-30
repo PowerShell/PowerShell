@@ -132,7 +132,7 @@ namespace System.Management.Automation
         public JobDefinition(Type jobSourceAdapterType, string command, string name)
         {
             JobSourceAdapterType = jobSourceAdapterType;
-            if (jobSourceAdapterType != null)
+            if (jobSourceAdapterType is not null)
             {
                 _jobSourceAdapterTypeName = jobSourceAdapterType.Name;
             }
@@ -279,7 +279,7 @@ namespace System.Management.Automation
         {
             _definition = definition;
             var convertedCollection = ConvertDictionaryToParameterCollection(parameters);
-            if (convertedCollection != null)
+            if (convertedCollection is not null)
             {
                 Parameters.Add(convertedCollection);
             }
@@ -301,7 +301,7 @@ namespace System.Management.Automation
             {
                 if (parameterCollection is null) continue;
                 CommandParameterCollection convertedCollection = ConvertDictionaryToParameterCollection(parameterCollection);
-                if (convertedCollection != null)
+                if (convertedCollection is not null)
                 {
                     Parameters.Add(convertedCollection);
                 }
@@ -409,7 +409,7 @@ namespace System.Management.Automation
             }
 
             JobManager.SaveJobId(job.InstanceId, job.Id, this.GetType().Name);
-            if (recurse && job.ChildJobs != null && job.ChildJobs.Count > 0)
+            if (recurse && job.ChildJobs is not null && job.ChildJobs.Count > 0)
             {
                 Hashtable duplicateDetector = new Hashtable();
                 duplicateDetector.Add(job.InstanceId, job.InstanceId);

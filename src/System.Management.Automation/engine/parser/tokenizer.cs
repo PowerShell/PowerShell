@@ -363,7 +363,7 @@ namespace System.Management.Automation.Language
         internal static bool IsMetaDSCResource(this DynamicKeyword keyword)
         {
             string implementingModule = keyword.ImplementingModule;
-            if (implementingModule != null)
+            if (implementingModule is not null)
             {
                 return implementingModule.Equals(DscClassCache.DefaultModuleInfoForMetaConfigResource.Item1, StringComparison.OrdinalIgnoreCase);
             }
@@ -805,7 +805,7 @@ namespace System.Management.Automation.Language
             _script = nestedText.Value;
             _tokenStart = 0;
             _skippedCharOffsets = nestedText.SkippedCharOffsets;
-            TokenList = (TokenList != null) ? new List<Token>() : null;
+            TokenList = (TokenList is not null) ? new List<Token>() : null;
 
             return ts;
         }
@@ -983,7 +983,7 @@ namespace System.Management.Automation.Language
             NormalizeCRLF(c);
 
             // Memory optimization: only create the token if it will be stored
-            if (TokenList != null)
+            if (TokenList is not null)
             {
                 NewToken(TokenKind.NewLine);
             }
@@ -994,7 +994,7 @@ namespace System.Management.Automation.Language
             _tokenStart = _currentIndex - 1;
 
             // Memory optimization: only create the token if it will be stored
-            if (TokenList != null)
+            if (TokenList is not null)
             {
                 NewToken(TokenKind.Semi);
             }
@@ -1006,7 +1006,7 @@ namespace System.Management.Automation.Language
             NormalizeCRLF(c);
 
             // Memory optimization: only create the token if it will be stored
-            if (TokenList != null)
+            if (TokenList is not null)
             {
                 NewToken(TokenKind.LineContinuation);
             }
@@ -1029,7 +1029,7 @@ namespace System.Management.Automation.Language
         internal void Resync(int start)
         {
             int adjustment = _nestedTokensAdjustment;
-            if (_skippedCharOffsets != null)
+            if (_skippedCharOffsets is not null)
             {
                 for (int i = _nestedTokensAdjustment; i < start - 1 && i < _skippedCharOffsets.Length; ++i)
                 {
@@ -1050,18 +1050,18 @@ namespace System.Management.Automation.Language
                 _currentIndex = 0;
             }
 
-            if (FirstToken != null && _currentIndex <= ((InternalScriptExtent)FirstToken.Extent).StartOffset)
+            if (FirstToken is not null && _currentIndex <= ((InternalScriptExtent)FirstToken.Extent).StartOffset)
             {
                 FirstToken = null;
             }
 
-            if (TokenList != null && TokenList.Count > 0)
+            if (TokenList is not null && TokenList.Count > 0)
             {
                 // If we were saving tokens, remove all tokens from token to the end of the saved tokens.
                 RemoveTokensFromListDuringResync(TokenList, start);
             }
 
-            if (RequiresTokens != null && RequiresTokens.Count > 0)
+            if (RequiresTokens is not null && RequiresTokens.Count > 0)
             {
                 RemoveTokensFromListDuringResync(RequiresTokens, start);
             }
@@ -1172,7 +1172,7 @@ namespace System.Management.Automation.Language
         {
             int start = _tokenStart + _nestedTokensAdjustment;
             int end = _currentIndex + _nestedTokensAdjustment;
-            if (_skippedCharOffsets != null)
+            if (_skippedCharOffsets is not null)
             {
                 int i = _nestedTokensAdjustment;
                 for (; i < start && i < _skippedCharOffsets.Length; ++i)
@@ -1208,7 +1208,7 @@ namespace System.Management.Automation.Language
 
         private T SaveToken<T>(T token) where T : Token
         {
-            if (TokenList != null)
+            if (TokenList is not null)
             {
                 TokenList.Add(token);
             }
@@ -1263,7 +1263,7 @@ namespace System.Management.Automation.Language
 
         private StringToken NewStringExpandableToken(string value, string formatString, TokenKind tokenKind, List<Token> nestedTokens, TokenFlags flags)
         {
-            if (nestedTokens != null && nestedTokens.Count == 0)
+            if (nestedTokens is not null && nestedTokens.Count == 0)
             {
                 nestedTokens = null;
             }
@@ -1916,7 +1916,7 @@ namespace System.Management.Automation.Language
                 string snapinName = null;
                 Version snapinVersion = null;
 
-                if (commandAst != null)
+                if (commandAst is not null)
                 {
                     var commandName = commandAst.GetCommandName();
                     if (!string.Equals(commandName, "requires", StringComparison.OrdinalIgnoreCase))
@@ -1931,7 +1931,7 @@ namespace System.Management.Automation.Language
                     {
                         var parameter = commandAst.CommandElements[i] as CommandParameterAst;
 
-                        if (parameter != null &&
+                        if (parameter is not null &&
                             PSSnapinToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
                         {
                             snapinSpecified = true;
@@ -1947,7 +1947,7 @@ namespace System.Management.Automation.Language
                     for (int i = 1; i < commandAst.CommandElements.Count; i++)
                     {
                         var parameter = commandAst.CommandElements[i] as CommandParameterAst;
-                        if (parameter != null)
+                        if (parameter is not null)
                         {
                             HandleRequiresParameter(parameter, commandAst.CommandElements, snapinSpecified,
                                 ref i, ref snapinName, ref snapinVersion,
@@ -1961,7 +1961,7 @@ namespace System.Management.Automation.Language
                         }
                     }
 
-                    if (snapinName != null)
+                    if (snapinName is not null)
                     {
                         Diagnostics.Assert(PSSnapInInfo.IsPSSnapinIdValid(snapinName), "we shouldn't set snapinName if it wasn't valid");
                         requiredSnapins.Add(new PSSnapInSpecification(snapinName) { Version = snapinVersion });
@@ -1973,16 +1973,16 @@ namespace System.Management.Automation.Language
             {
                 RequiredApplicationId = requiredShellId,
                 RequiredPSVersion = requiredVersion,
-                RequiredPSEditions = requiredEditions != null
+                RequiredPSEditions = requiredEditions is not null
                                                     ? new ReadOnlyCollection<string>(requiredEditions)
                                                     : ScriptRequirements.EmptyEditionCollection,
-                RequiresPSSnapIns = requiredSnapins != null
+                RequiresPSSnapIns = requiredSnapins is not null
                                                    ? new ReadOnlyCollection<PSSnapInSpecification>(requiredSnapins)
                                                    : ScriptRequirements.EmptySnapinCollection,
-                RequiredAssemblies = requiredAssemblies != null
+                RequiredAssemblies = requiredAssemblies is not null
                                                     ? new ReadOnlyCollection<string>(requiredAssemblies)
                                                     : ScriptRequirements.EmptyAssemblyCollection,
-                RequiredModules = requiredModules != null
+                RequiredModules = requiredModules is not null
                                                     ? new ReadOnlyCollection<ModuleSpecification>(requiredModules)
                                                     : ScriptRequirements.EmptyModuleCollection,
                 IsElevationRequired = requiresElevation
@@ -2015,7 +2015,7 @@ namespace System.Management.Automation.Language
             if (elevationToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
                 requiresElevation = true;
-                if (argumentAst != null)
+                if (argumentAst is not null)
                 {
                     ReportError(parameter.Extent,
                         nameof(ParserStrings.ParameterCannotHaveArgument),
@@ -2046,7 +2046,7 @@ namespace System.Management.Automation.Language
 
             if (shellIDToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
-                if (requiredShellId != null)
+                if (requiredShellId is not null)
                 {
                     ReportError(parameter.Extent,
                         nameof(ParameterBinderStrings.ParameterAlreadyBound),
@@ -2078,7 +2078,7 @@ namespace System.Management.Automation.Language
                     return;
                 }
 
-                if (snapinName != null)
+                if (snapinName is not null)
                 {
                     ReportError(parameter.Extent,
                         nameof(ParameterBinderStrings.ParameterAlreadyBound),
@@ -2100,7 +2100,7 @@ namespace System.Management.Automation.Language
             }
             else if (editionToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
-                if (requiredEditions != null)
+                if (requiredEditions is not null)
                 {
                     ReportError(parameter.Extent,
                         nameof(ParameterBinderStrings.ParameterAlreadyBound),
@@ -2136,7 +2136,7 @@ namespace System.Management.Automation.Language
 
                 if (snapinSpecified)
                 {
-                    if (snapinVersion != null)
+                    if (snapinVersion is not null)
                     {
                         ReportError(parameter.Extent,
                             nameof(ParameterBinderStrings.ParameterAlreadyBound),
@@ -2150,7 +2150,7 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    if (requiredVersion != null && !requiredVersion.Equals(version))
+                    if (requiredVersion is not null && !requiredVersion.Equals(version))
                     {
                         ReportError(parameter.Extent,
                             nameof(ParameterBinderStrings.ParameterAlreadyBound),
@@ -2554,7 +2554,7 @@ namespace System.Management.Automation.Language
                 Mode = oldTokenizerMode;
             }
 
-            if (nestedToken != null)
+            if (nestedToken is not null)
             {
                 sb.Append(_script, dollarIndex, _currentIndex - dollarIndex);
                 formatSb.Append('{');
@@ -4457,7 +4457,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (sb != null)
+            if (sb is not null)
                 Release(sb);
             return NewToken(TokenKind.Identifier);
         }

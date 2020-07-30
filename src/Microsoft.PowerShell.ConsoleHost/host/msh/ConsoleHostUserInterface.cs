@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell
 
         internal ConsoleHostUserInterface(ConsoleHost parent)
         {
-            Dbg.Assert(parent != null, "parent may not be null");
+            Dbg.Assert(parent is not null, "parent may not be null");
 
             _parent = parent;
             _rawui = new ConsoleHostRawUserInterface(this);
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(_rawui != null, "rawui should have been created by ctor");
+                Dbg.Assert(_rawui is not null, "rawui should have been created by ctor");
 
                 // no locking because this is read-only, and allocated in the ctor.
 
@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                return _commandCompletionPowerShell != null &&
+                return _commandCompletionPowerShell is not null &&
                        _commandCompletionPowerShell.InvocationStateInfo.State == PSInvocationState.Running;
             }
         }
@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell
             }
 
             StringBuilder resultSb = result as StringBuilder;
-            Dbg.Assert(resultSb != null, "ReadLineMaskedAsString did not return a stringBuilder");
+            Dbg.Assert(resultSb is not null, "ReadLineMaskedAsString did not return a stringBuilder");
 
             return resultSb.ToString();
         }
@@ -240,7 +240,7 @@ namespace Microsoft.PowerShell
             }
 
             SecureString secureResult = result as SecureString;
-            System.Management.Automation.Diagnostics.Assert(secureResult != null, "ReadLineSafe did not return a SecureString");
+            System.Management.Automation.Diagnostics.Assert(secureResult is not null, "ReadLineSafe did not return a SecureString");
 
             return secureResult;
         }
@@ -725,7 +725,7 @@ namespace Microsoft.PowerShell
             }
 
             // If the test hook is set, write to it and continue.
-            if (s_h != null)
+            if (s_h is not null)
             {
                 if (newLine)
                 {
@@ -1475,7 +1475,7 @@ namespace Microsoft.PowerShell
             result = ReadLineResult.endedOnEnter;
 
             // If the test hook is set, read from it.
-            if (s_h != null) return s_h.ReadLine();
+            if (s_h is not null) return s_h.ReadLine();
 
             string restOfLine = null;
 
@@ -1492,7 +1492,7 @@ namespace Microsoft.PowerShell
                 PostRead();
             }
 
-            if (restOfLine != null)
+            if (restOfLine is not null)
                 s += restOfLine;
 
             return s;
@@ -1626,7 +1626,7 @@ namespace Microsoft.PowerShell
                     keyInfo = Console.ReadKey(true);
 #else
                 s += ConsoleControl.ReadConsole(handle, initialContent.Length, inputBuffer, MaxInputLineLength, endOnTab, out keyState);
-                Dbg.Assert(s != null, "s should never be null");
+                Dbg.Assert(s is not null, "s should never be null");
 #endif
 
 #if UNIX
@@ -1850,7 +1850,7 @@ namespace Microsoft.PowerShell
 
             Dbg.Assert(
                        (s is null && result == ReadLineResult.endedOnBreak)
-                       || (s != null && result != ReadLineResult.endedOnBreak),
+                       || (s is not null && result != ReadLineResult.endedOnBreak),
                        "s should only be null if input ended with a break");
 
             return s;
@@ -1999,7 +1999,7 @@ namespace Microsoft.PowerShell
                     }
 
                     var completionResult = commandCompletion.GetNextResult(rlResult == ReadLineResult.endedOnTab);
-                    if (completionResult != null)
+                    if (completionResult is not null)
                     {
                         completedInput = completionInput.Substring(0, commandCompletion.ReplacementIndex)
                                          + completionResult.CompletionText;
@@ -2131,7 +2131,7 @@ namespace Microsoft.PowerShell
                 var runspace = _parent.Runspace;
                 var debugger = runspace.Debugger;
 
-                if ((debugger != null) && debugger.InBreakpoint)
+                if ((debugger is not null) && debugger.InBreakpoint)
                 {
                     // If in debug stop mode do command completion though debugger process command.
                     try
@@ -2171,7 +2171,7 @@ namespace Microsoft.PowerShell
             // this function.
 
             var runspace = _parent.LocalRunspace;
-            if (runspace != null &&
+            if (runspace is not null &&
                 runspace.Engine.Context.EngineIntrinsics.InvokeCommand.GetCommands(CustomReadlineCommand,
                     CommandTypes.Function | CommandTypes.Cmdlet, nameIsPattern: false).Any())
             {
@@ -2179,7 +2179,7 @@ namespace Microsoft.PowerShell
                 {
                     PowerShell ps;
                     if ((runspace.ExecutionContext.EngineHostInterface.NestedPromptCount > 0) &&
-                        (Runspace.DefaultRunspace != null))
+                        (Runspace.DefaultRunspace is not null))
                     {
                         ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
                     }

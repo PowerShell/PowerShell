@@ -22,10 +22,10 @@ namespace System.Management.Automation
             bool useWildCards,
             ExecutionContext context)
         {
-            Diagnostics.Assert(context != null, "caller to verify context is not null");
+            Diagnostics.Assert(context is not null, "caller to verify context is not null");
             _context = context;
 
-            Diagnostics.Assert(className != null, "caller to verify className is not null");
+            Diagnostics.Assert(className is not null, "caller to verify className is not null");
             _className = className;
             _useWildCards = useWildCards;
             _moduleInfoCache = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
@@ -90,7 +90,7 @@ namespace System.Management.Automation
         {
             _currentMatch = GetNextClass();
 
-            if (_currentMatch != null)
+            if (_currentMatch is not null)
                 return true;
 
             return false;
@@ -165,7 +165,7 @@ namespace System.Management.Automation
                 string expandedModulePath = IO.Path.GetFullPath(modulePath);
                 var cachedClasses = AnalysisCache.GetExportedClasses(expandedModulePath, _context);
 
-                if (cachedClasses != null)
+                if (cachedClasses is not null)
                 {
                     // Exact match
                     if (!_useWildCards)
@@ -173,7 +173,7 @@ namespace System.Management.Automation
                         if (cachedClasses.ContainsKey(_className))
                         {
                             var classInfo = CachedItemToPSClassInfo(classNameMatcher, modulePath);
-                            if (classInfo != null)
+                            if (classInfo is not null)
                             {
                                 _matchingClassList.Add(classInfo);
                                 matchFound = true;
@@ -187,7 +187,7 @@ namespace System.Management.Automation
                             if (classNameMatcher.IsMatch(className))
                             {
                                 var classInfo = CachedItemToPSClassInfo(classNameMatcher, modulePath);
-                                if (classInfo != null)
+                                if (classInfo is not null)
                                 {
                                     _matchingClassList.Add(classInfo);
                                     matchFound = true;
@@ -222,7 +222,7 @@ namespace System.Management.Automation
                     if (exportedTypes.TryGetValue(_className, out typeAst))
                     {
                         ast = typeAst.Parent.Parent as ScriptBlockAst;
-                        if (ast != null)
+                        if (ast is not null)
                             return ConvertToClassInfo(module, ast, typeAst);
                     }
                 }
@@ -230,12 +230,12 @@ namespace System.Management.Automation
                 {
                     foreach (var exportedType in exportedTypes)
                     {
-                        if (exportedType.Value != null &&
+                        if (exportedType.Value is not null &&
                             classNameMatcher.IsMatch(exportedType.Value.Name) &&
                             exportedType.Value.IsClass)
                         {
                             ast = exportedType.Value.Parent.Parent as ScriptBlockAst;
-                            if (ast != null)
+                            if (ast is not null)
                                 return ConvertToClassInfo(module, ast, exportedType.Value);
                         }
                     }
@@ -254,7 +254,7 @@ namespace System.Management.Automation
                 _moduleInfoCache.TryGetValue(modulePath, out moduleInfo);
             }
 
-            if (moduleInfo != null)
+            if (moduleInfo is not null)
             {
                 var returnValue = new Collection<PSModuleInfo>();
                 returnValue.Add(moduleInfo);
@@ -291,7 +291,7 @@ namespace System.Management.Automation
         private PSClassInfo ConvertToClassInfo(PSModuleInfo module, ScriptBlockAst ast, TypeDefinitionAst statement)
         {
             PSClassInfo classInfo = new PSClassInfo(statement.Name);
-            Dbg.Assert(statement.Name != null, "statement should have a name.");
+            Dbg.Assert(statement.Name is not null, "statement should have a name.");
             classInfo.Module = module;
             Collection<PSClassMemberInfo> properties = new Collection<PSClassMemberInfo>();
 
@@ -299,11 +299,11 @@ namespace System.Management.Automation
             {
                 if (member is PropertyMemberAst propAst && !propAst.PropertyAttributes.HasFlag(PropertyAttributes.Hidden))
                 {
-                    Dbg.Assert(propAst.Name != null, "PropName cannot be null");
-                    Dbg.Assert(propAst.PropertyType != null, "PropertyType cannot be null");
-                    Dbg.Assert(propAst.PropertyType.TypeName != null, "Property TypeName cannot be null");
-                    Dbg.Assert(propAst.Extent != null, "Property Extent cannot be null");
-                    Dbg.Assert(propAst.Extent.Text != null, "Property ExtentText cannot be null");
+                    Dbg.Assert(propAst.Name is not null, "PropName cannot be null");
+                    Dbg.Assert(propAst.PropertyType is not null, "PropertyType cannot be null");
+                    Dbg.Assert(propAst.PropertyType.TypeName is not null, "Property TypeName cannot be null");
+                    Dbg.Assert(propAst.Extent is not null, "Property Extent cannot be null");
+                    Dbg.Assert(propAst.Extent.Text is not null, "Property ExtentText cannot be null");
 
                     PSClassMemberInfo classProperty = new PSClassMemberInfo(propAst.Name,
                                                                           propAst.PropertyType.TypeName.FullName,
@@ -315,7 +315,7 @@ namespace System.Management.Automation
             classInfo.UpdateMembers(properties);
 
             string mamlHelpFile = null;
-            if (ast.GetHelpContent() != null)
+            if (ast.GetHelpContent() is not null)
                 mamlHelpFile = ast.GetHelpContent().MamlHelpFile;
 
             if (!string.IsNullOrEmpty(mamlHelpFile))

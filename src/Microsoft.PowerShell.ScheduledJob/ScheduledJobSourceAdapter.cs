@@ -387,12 +387,12 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
             finally
             {
-                if (fsStatus != null)
+                if (fsStatus is not null)
                 {
                     fsStatus.Close();
                 }
 
-                if (fsResults != null)
+                if (fsResults is not null)
                 {
                     fsResults.Close();
                 }
@@ -538,7 +538,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
             finally
             {
-                if (fsResults != null)
+                if (fsResults is not null)
                 {
                     fsResults.Close();
                 }
@@ -550,7 +550,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 ScheduledJobStore.RemoveJobRun(definitionName, jobRun);
             }
 
-            if (ex != null)
+            if (ex is not null)
             {
                 string msg = StringUtil.Format(ScheduledJobErrorStrings.CantLoadJobRunFromStore, definitionName, jobRun);
                 throw new ScheduledJobException(msg, ex);
@@ -742,7 +742,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             { }
 
             // Update job in repository based on new job store data.
-            if (job != null)
+            if (job is not null)
             {
                 updateJob.Update(job as ScheduledJob);
             }

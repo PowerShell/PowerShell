@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell
                     updateFilePath: out _,
                     out SemanticVersion lastUpdateVersion,
                     lastUpdateDate: out _)
-               && lastUpdateVersion != null)
+               && lastUpdateVersion is not null)
             {
                 string releaseTag = lastUpdateVersion.ToString();
                 string notificationMsgTemplate = s_notificationType == NotificationType.LTS
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell
 
             // Daily builds do not support update notifications
             string preReleaseLabel = PSVersionInfo.PSCurrentVersion.PreReleaseLabel;
-            if (preReleaseLabel != null && preReleaseLabel.StartsWith("daily", StringComparison.OrdinalIgnoreCase))
+            if (preReleaseLabel is not null && preReleaseLabel.StartsWith("daily", StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell
                 out DateTime lastUpdateDate);
 
             DateTime today = DateTime.UtcNow;
-            if (parseSuccess && updateFilePath != null && (today - lastUpdateDate).TotalDays < 7)
+            if (parseSuccess && updateFilePath is not null && (today - lastUpdateDate).TotalDays < 7)
             {
                 // There is an existing update file, and the last update was less than 1 week ago.
                 // It's unlikely a new version is released within 1 week, so we can skip this check.
@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell
                     SemanticVersion baselineVersion = lastUpdateVersion ?? PSVersionInfo.PSCurrentVersion;
                     Release release = await QueryNewReleaseAsync(baselineVersion);
 
-                    if (release != null)
+                    if (release is not null)
                     {
                         // The date part of the string is 'YYYY-MM-DD'.
                         const int dateLength = 10;

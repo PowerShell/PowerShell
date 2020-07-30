@@ -95,7 +95,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             proxy.OperationTimeout = cmdlet.OperationTimeoutSec;
             proxy.KeyOnly = cmdlet.KeyOnly;
-            if (cmdlet.ResourceUri != null)
+            if (cmdlet.ResourceUri is not null)
             {
                 proxy.ResourceUri = cmdlet.ResourceUri;
             }

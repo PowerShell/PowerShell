@@ -247,7 +247,7 @@ namespace System.Management.Automation
         internal Collection<string> GetSearchPaths()
         {
             // return the cache if already present.
-            if (_searchPaths != null)
+            if (_searchPaths is not null)
             {
                 return _searchPaths;
             }
@@ -255,7 +255,7 @@ namespace System.Management.Automation
             _searchPaths = new Collection<string>();
 
             // add loaded modules paths to the search path
-            if (ExecutionContext.Modules != null)
+            if (ExecutionContext.Modules is not null)
             {
                 foreach (PSModuleInfo loadedModule in ExecutionContext.Modules.ModuleTable.Values)
                 {
@@ -294,7 +294,7 @@ namespace System.Management.Automation
             {
                 HelpInfo helpInfo = GetDefaultHelp();
 
-                if (helpInfo != null)
+                if (helpInfo is not null)
                 {
                     yield return helpInfo;
                 }
@@ -617,7 +617,7 @@ namespace System.Management.Automation
             {
                 HelpProvider helpProvider = GetHelpProvider(_providerInfos[i]);
 
-                if (helpProvider != null)
+                if (helpProvider is not null)
                 {
                     helpProvider.Initialize(this._executionContext);
                     _helpProviders.Add(helpProvider);
@@ -640,7 +640,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (providerAssembly != null)
+                if (providerAssembly is not null)
                 {
                     HelpProvider helpProvider =
                         (HelpProvider)providerAssembly.CreateInstance(providerInfo.ClassName,
@@ -658,7 +658,7 @@ namespace System.Management.Automation
             catch (TargetInvocationException e)
             {
                 System.Console.WriteLine(e.Message);
-                if (e.InnerException != null)
+                if (e.InnerException is not null)
                 {
                     System.Console.WriteLine(e.InnerException.Message);
                     System.Console.WriteLine(e.InnerException.StackTrace);

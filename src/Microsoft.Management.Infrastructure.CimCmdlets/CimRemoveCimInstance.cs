@@ -88,7 +88,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.CimInstanceComputerSet:
                 case CimBaseCommand.CimInstanceSessionSet:
                     string nameSpace = null;
-                    if (cmdlet.ResourceUri != null)
+                    if (cmdlet.ResourceUri is not null)
                     {
                         nameSpace = GetCimInstanceParameter(cmdlet).CimSystemProperties.Namespace;
                     }
@@ -135,7 +135,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             CimRemoveCimInstanceContext removeContext = context as CimRemoveCimInstanceContext;
-            Debug.Assert(removeContext != null, "CimRemoveCimInstance::RemoveCimInstance should has CimRemoveCimInstanceContext != NULL.");
+            Debug.Assert(removeContext is not null, "CimRemoveCimInstance::RemoveCimInstance should has CimRemoveCimInstanceContext is not null.");
 
             CimSessionProxy proxy = CreateCimSessionProxy(removeContext.Proxy);
             proxy.DeleteInstanceAsync(removeContext.Namespace, cimInstance);

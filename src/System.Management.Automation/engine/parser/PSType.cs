@@ -33,7 +33,7 @@ namespace System.Management.Automation.Language
         private static bool TryConvertArg(object arg, Type type, out object result, Parser parser, IScriptExtent errorExtent)
         {
             // This code could be added to LanguagePrimitives.ConvertTo
-            if (arg != null && arg.GetType() == type)
+            if (arg is not null && arg.GetType() == type)
             {
                 result = arg;
                 return true;
@@ -54,7 +54,7 @@ namespace System.Management.Automation.Language
         private static CustomAttributeBuilder GetAttributeBuilder(Parser parser, AttributeAst attributeAst, AttributeTargets attributeTargets)
         {
             var attributeType = attributeAst.TypeName.GetReflectionAttributeType();
-            Diagnostics.Assert(attributeType != null, "Semantic checks should have verified attribute type exists");
+            Diagnostics.Assert(attributeType is not null, "Semantic checks should have verified attribute type exists");
 
             Diagnostics.Assert(
                 attributeType.GetCustomAttribute<AttributeUsageAttribute>(true) is null ||
@@ -110,7 +110,7 @@ namespace System.Management.Automation.Language
                 // This inconsistent behavior affects OneCore powershell because we are using the extension method here when compiling
                 // against CoreCLR. So we need to add a null check until this is fixed in CLR.
                 var paramArrayAttrs = parameterInfo[argIndex].GetCustomAttributes(typeof(ParamArrayAttribute), true);
-                if (paramArrayAttrs != null && paramArrayAttrs.Length > 0 && expandParamsOnBest)
+                if (paramArrayAttrs is not null && paramArrayAttrs.Length > 0 && expandParamsOnBest)
                 {
                     var elementType = parameterInfo[argIndex].ParameterType.GetElementType();
                     var paramsArray = Array.CreateInstance(elementType, positionalArgCount - argIndex);
@@ -159,9 +159,9 @@ namespace System.Management.Automation.Language
                 arg = namedArg.Argument.Accept(cvv);
 
                 var propertyInfo = members[0] as PropertyInfo;
-                if (propertyInfo != null)
+                if (propertyInfo is not null)
                 {
-                    Diagnostics.Assert(propertyInfo.GetSetMethod() != null, "Semantic checks ensures property is settable");
+                    Diagnostics.Assert(propertyInfo.GetSetMethod() is not null, "Semantic checks ensures property is settable");
 
                     if (!TryConvertArg(arg, propertyInfo.PropertyType, out arg, parser, namedArg.Argument.Extent))
                     {
@@ -192,12 +192,12 @@ namespace System.Management.Automation.Language
 
         internal static void DefineCustomAttributes(TypeBuilder member, ReadOnlyCollection<AttributeAst> attributes, Parser parser, AttributeTargets attributeTargets)
         {
-            if (attributes != null)
+            if (attributes is not null)
             {
                 foreach (var attr in attributes)
                 {
                     var cabuilder = GetAttributeBuilder(parser, attr, attributeTargets);
-                    if (cabuilder != null)
+                    if (cabuilder is not null)
                     {
                         member.SetCustomAttribute(cabuilder);
                     }
@@ -207,12 +207,12 @@ namespace System.Management.Automation.Language
 
         internal static void DefineCustomAttributes(PropertyBuilder member, ReadOnlyCollection<AttributeAst> attributes, Parser parser, AttributeTargets attributeTargets)
         {
-            if (attributes != null)
+            if (attributes is not null)
             {
                 foreach (var attr in attributes)
                 {
                     var cabuilder = GetAttributeBuilder(parser, attr, attributeTargets);
-                    if (cabuilder != null)
+                    if (cabuilder is not null)
                     {
                         member.SetCustomAttribute(cabuilder);
                     }
@@ -222,12 +222,12 @@ namespace System.Management.Automation.Language
 
         internal static void DefineCustomAttributes(ConstructorBuilder member, ReadOnlyCollection<AttributeAst> attributes, Parser parser, AttributeTargets attributeTargets)
         {
-            if (attributes != null)
+            if (attributes is not null)
             {
                 foreach (var attr in attributes)
                 {
                     var cabuilder = GetAttributeBuilder(parser, attr, attributeTargets);
-                    if (cabuilder != null)
+                    if (cabuilder is not null)
                     {
                         member.SetCustomAttribute(cabuilder);
                     }
@@ -237,12 +237,12 @@ namespace System.Management.Automation.Language
 
         internal static void DefineCustomAttributes(MethodBuilder member, ReadOnlyCollection<AttributeAst> attributes, Parser parser, AttributeTargets attributeTargets)
         {
-            if (attributes != null)
+            if (attributes is not null)
             {
                 foreach (var attr in attributes)
                 {
                     var cabuilder = GetAttributeBuilder(parser, attr, attributeTargets);
-                    if (cabuilder != null)
+                    if (cabuilder is not null)
                     {
                         member.SetCustomAttribute(cabuilder);
                     }
@@ -252,12 +252,12 @@ namespace System.Management.Automation.Language
 
         internal static void DefineCustomAttributes(EnumBuilder member, ReadOnlyCollection<AttributeAst> attributes, Parser parser, AttributeTargets attributeTargets)
         {
-            if (attributes != null)
+            if (attributes is not null)
             {
                 foreach (var attr in attributes)
                 {
                     var cabuilder = GetAttributeBuilder(parser, attr, attributeTargets);
-                    if (cabuilder != null)
+                    if (cabuilder is not null)
                     {
                         member.SetCustomAttribute(cabuilder);
                     }
@@ -377,12 +377,12 @@ namespace System.Management.Automation.Language
                         }
                     }
 
-                    if (baseClass != null)
+                    if (baseClass is not null)
                     {
                         // All PS classes are TypeName instances.
                         // For PS classes we cannot use reflection API, because type is not created yet.
                         var baseTypeName = firstBaseTypeAst.TypeName as TypeName;
-                        if (baseTypeName != null)
+                        if (baseTypeName is not null)
                         {
                             _baseClassHasDefaultCtor = baseTypeName.HasDefaultCtor();
                         }
@@ -488,10 +488,10 @@ namespace System.Management.Automation.Language
                 foreach (var member in _typeDefinitionAst.Members)
                 {
                     var propertyMemberAst = member as PropertyMemberAst;
-                    if (propertyMemberAst != null)
+                    if (propertyMemberAst is not null)
                     {
                         DefineProperty(propertyMemberAst);
-                        if (propertyMemberAst.InitialValue != null)
+                        if (propertyMemberAst.InitialValue is not null)
                         {
                             if (propertyMemberAst.IsStatic)
                             {
@@ -506,7 +506,7 @@ namespace System.Management.Automation.Language
                     else
                     {
                         FunctionMemberAst method = member as FunctionMemberAst;
-                        Diagnostics.Assert(method != null, StringUtil.Format("Unexpected subtype of MemberAst '{0}'. Expect `{1}`",
+                        Diagnostics.Assert(method is not null, StringUtil.Format("Unexpected subtype of MemberAst '{0}'. Expect `{1}`",
                             member.GetType().Name, typeof(FunctionMemberAst).GetType().Name));
                         if (method.IsConstructor)
                         {
@@ -603,7 +603,7 @@ namespace System.Management.Automation.Language
                 else
                 {
                     type = propertyMemberAst.PropertyType.TypeName.GetReflectionType();
-                    Diagnostics.Assert(type != null, "Semantic checks should have ensure type can't be null");
+                    Diagnostics.Assert(type is not null, "Semantic checks should have ensure type can't be null");
                 }
 
                 PropertyBuilder property = this.EmitPropertyIl(propertyMemberAst, type);
@@ -633,12 +633,12 @@ namespace System.Management.Automation.Language
                 var backingField = _typeBuilder.DefineField(backingFieldName, type, backingFieldAttributes);
 
                 bool hasValidateAttributes = false;
-                if (propertyMemberAst.Attributes != null)
+                if (propertyMemberAst.Attributes is not null)
                 {
                     for (int i = 0; i < propertyMemberAst.Attributes.Count; i++)
                     {
                         Type attributeType = propertyMemberAst.Attributes[i].TypeName.GetReflectionAttributeType();
-                        if (attributeType != null && attributeType.IsSubclassOf(typeof(ValidateArgumentsAttribute)))
+                        if (attributeType is not null && attributeType.IsSubclassOf(typeof(ValidateArgumentsAttribute)))
                         {
                             hasValidateAttributes = true;
                             break;
@@ -776,7 +776,7 @@ namespace System.Management.Automation.Language
                 for (var i = 0; i < parameters.Count; i++)
                 {
                     var typeConstraint = parameters[i].Attributes.OfType<TypeConstraintAst>().FirstOrDefault();
-                    var paramType = (typeConstraint != null)
+                    var paramType = (typeConstraint is not null)
                                         ? typeConstraint.TypeName.GetReflectionType()
                                         : typeof(object);
                     if (paramType is null)
@@ -813,7 +813,7 @@ namespace System.Management.Automation.Language
                 }
 
                 var mi = baseType.GetMethod(methodName, parameterTypes);
-                return mi != null && mi.IsFinal;
+                return mi is not null && mi.IsFinal;
             }
 
             private void DefineMethod(FunctionMemberAst functionMemberAst)
@@ -1085,13 +1085,13 @@ namespace System.Management.Automation.Language
                         foreach (var memberExpr in initExpr.FindAll(ast => ast is MemberExpressionAst, false))
                         {
                             var typeExpr = ((MemberExpressionAst)memberExpr).Expression as TypeExpressionAst;
-                            if (typeExpr != null)
+                            if (typeExpr is not null)
                             {
                                 // We only want to add edges for enums being defined in the current scope.
                                 // We detect this by seeing if the ast is in our graph or not.
                                 var typeName = typeExpr.TypeName as TypeName;
-                                if (typeName != null
-                                    && typeName._typeDefinitionAst != null
+                                if (typeName is not null
+                                    && typeName._typeDefinitionAst is not null
                                     && typeName._typeDefinitionAst != helper._enumDefinitionAst  // Don't add self edges
                                     && graph.ContainsKey(typeName._typeDefinitionAst))
                                 {
@@ -1203,14 +1203,14 @@ namespace System.Management.Automation.Language
                 foreach (var member in _enumDefinitionAst.Members)
                 {
                     var enumerator = (PropertyMemberAst)member;
-                    if (enumerator.InitialValue != null)
+                    if (enumerator.InitialValue is not null)
                     {
                         object constValue;
                         if (IsConstantValueVisitor.IsConstant(enumerator.InitialValue, out constValue, false, false))
                         {
                             if (!LanguagePrimitives.TryConvertTo(constValue, underlyingType, out value))
                             {
-                                if (constValue != null &&
+                                if (constValue is not null &&
                                     LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constValue.GetType())))
                                 {
                                     _parser.ReportError(
@@ -1257,7 +1257,7 @@ namespace System.Management.Automation.Language
                             ParserStrings.MemberAlreadyDefined,
                             enumerator.Name);
                     }
-                    else if (value != null)
+                    else if (value is not null)
                     {
                         value = Convert.ChangeType(value, underlyingType);
                         definedEnumerators.Add(enumerator.Name);
@@ -1363,7 +1363,7 @@ namespace System.Management.Automation.Language
                         SessionStateKeeper sessionStateKeeper = new SessionStateKeeper();
                         helperType.GetField(s_sessionStateKeeperFieldName, BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, sessionStateKeeper);
 
-                        if (helper._fieldsToInitForMemberFunctions != null)
+                        if (helper._fieldsToInitForMemberFunctions is not null)
                         {
                             foreach (var tuple in helper._fieldsToInitForMemberFunctions)
                             {
@@ -1407,13 +1407,13 @@ namespace System.Management.Automation.Language
             // Only allocate a list if necessary - in the most common case, we don't need it.
             List<string> nameParts = null;
             var parent = typeDefinitionAst.Parent;
-            while (parent.Parent != null)
+            while (parent.Parent is not null)
             {
                 if (parent is IParameterMetadataProvider)
                 {
                     nameParts = nameParts ?? new List<string>();
                     var fnDefn = parent.Parent as FunctionDefinitionAst;
-                    if (fnDefn != null)
+                    if (fnDefn is not null)
                     {
                         parent = fnDefn;
                         nameParts.Add(fnDefn.Name);

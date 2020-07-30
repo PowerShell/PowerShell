@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
             // Unsubscribe, and write the event information we received
             Events.ReceivedEvents.PSEventReceived -= ReceivedEvents_PSEventReceived;
 
-            if (_receivedEvent != null)
+            if (_receivedEvent is not null)
             {
                 WriteObject(_receivedEvent);
             }

@@ -218,7 +218,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             CimJobContext jobContext = this.CreateJobContext(session, objectInstance);
 
-            Dbg.Assert(objectInstance != null, "Caller should verify objectInstance != null");
+            Dbg.Assert(objectInstance is not null, "Caller should verify objectInstance is not null");
 
             StartableJob result;
             if (methodInvocationInfo.MethodName.Equals(CimCmdletAdapter.DeleteInstance_MethodName, StringComparison.OrdinalIgnoreCase))
@@ -255,11 +255,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             bool whatIfSwitchSpecified = this.CmdletInvocationInfo.BoundParameters.ContainsKey("WhatIf");
             if (confirmSwitchSpecified || whatIfSwitchSpecified)
             {
-                if (cimSession.ComputerName != null && (!cimSession.ComputerName.Equals("localhost", StringComparison.OrdinalIgnoreCase)))
+                if (cimSession.ComputerName is not null && (!cimSession.ComputerName.Equals("localhost", StringComparison.OrdinalIgnoreCase)))
                 {
                     PSPropertyInfo protocolProperty = PSObject.AsPSObject(cimSession).Properties["Protocol"];
-                    if ((protocolProperty != null) &&
-                        (protocolProperty.Value != null) &&
+                    if ((protocolProperty is not null) &&
+                        (protocolProperty.Value is not null) &&
                         (protocolProperty.Value.ToString().Equals("DCOM", StringComparison.OrdinalIgnoreCase)))
                     {
                         bool sessionWasAlreadyTerminated;
@@ -351,7 +351,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal static CimSession GetSessionOfOriginFromCimInstance(CimInstance instance)
         {
             CimSession result = null;
-            if (instance != null)
+            if (instance is not null)
             {
                 s_cimInstanceToSessionOfOrigin.TryGetValue(instance, out result);
             }

@@ -37,16 +37,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             Exception inner,
             CimResultContext cimResultContext)
         {
-            Debug.Assert(inner != null, "Caller should verify inner != null");
+            Debug.Assert(inner is not null, "Caller should verify inner is not null");
 
             CimException cimException = inner as CimException;
-            if (cimException != null)
+            if (cimException is not null)
             {
                 return CreateFromCimException(context, cimException, cimResultContext);
             }
 
             var containsErrorRecord = inner as IContainsErrorRecord;
-            if (containsErrorRecord != null)
+            if (containsErrorRecord is not null)
             {
                 return InitializeErrorRecord(context,
                     exception: inner,
@@ -77,7 +77,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimException cimException,
             CimResultContext cimResultContext)
         {
-            Debug.Assert(cimException != null, "Caller should verify cimException != null");
+            Debug.Assert(cimException is not null, "Caller should verify cimException is not null");
 
             return InitializeErrorRecord(context, cimException, cimResultContext);
         }
@@ -125,7 +125,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 errorCategory: ConvertCimExceptionToErrorCategory(cimException),
                 cimResultContext: cimResultContext);
 
-            if (cimException.ErrorData != null)
+            if (cimException.ErrorData is not null)
             {
                 errorRecord.CategoryInfo.TargetName = cimException.ErrorSource;
             }
@@ -150,16 +150,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimResultContext cimResultContext)
         {
             object theTargetObject = null;
-            if (cimResultContext != null)
+            if (cimResultContext is not null)
             {
                 theTargetObject = cimResultContext.ErrorSource;
             }
 
             if (theTargetObject is null)
             {
-                if (context != null)
+                if (context is not null)
                 {
-                    if (context.TargetCimInstance != null)
+                    if (context.TargetCimInstance is not null)
                     {
                         theTargetObject = context.TargetCimInstance;
                     }
@@ -198,7 +198,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             ErrorCategory result = ErrorCategory.NotSpecified;
 
-            if (cimException.ErrorData != null)
+            if (cimException.ErrorData is not null)
             {
                 result = ConvertCimErrorToErrorCategory(cimException.ErrorData);
             }
@@ -345,10 +345,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cmdlet"></param>
         public override void Execute(CmdletOperationBase cmdlet)
         {
-            Debug.Assert(cmdlet != null, "Caller should verify that cmdlet != null");
+            Debug.Assert(cmdlet is not null, "Caller should verify that cmdlet is not null");
             try
             {
-                Exception errorException = (error != null) ? new CimException(error) : this.Exception;
+                Exception errorException = (error is not null) ? new CimException(error) : this.Exception;
 
                 // PS engine takes care of handling error action
                 cmdlet.WriteError(ErrorToErrorRecord.ErrorRecordFromAnyException(this.invocationContext, errorException, this.cimResultContext));

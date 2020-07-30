@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (Credential != null)
+            if (Credential is not null)
             {
                 WriteObject(Credential);
                 return;
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(errorRecord);
             }
 
-            if (Credential != null)
+            if (Credential is not null)
             {
                 WriteObject(Credential);
             }

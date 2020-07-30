@@ -300,7 +300,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     addedTrigger = true;
                 }
 
-                if (Trigger != null || ScheduledJobOption != null || Credential != null || addedTrigger)
+                if (Trigger is not null || ScheduledJobOption is not null || Credential is not null || addedTrigger)
                 {
                     // Save definition to file and update WTS.
                     _definition.Save();
@@ -320,14 +320,14 @@ namespace Microsoft.PowerShell.ScheduledJob
             {
                 ErrorRecord errorRecord;
 
-                if (e.InnerException != null &&
+                if (e.InnerException is not null &&
                     e.InnerException is System.UnauthorizedAccessException)
                 {
                     string msg = StringUtil.Format(ScheduledJobErrorStrings.NoAccessOnSetJobDefinition, _definition.Name);
                     errorRecord = new ErrorRecord(new RuntimeException(msg, e),
                         "NoAccessFailureOnSetJobDefinition", ErrorCategory.InvalidOperation, _definition);
                 }
-                else if (e.InnerException != null &&
+                else if (e.InnerException is not null &&
                          e.InnerException is System.IO.IOException)
                 {
                     string msg = StringUtil.Format(ScheduledJobErrorStrings.IOFailureOnSetJobDefinition, _definition.Name);
@@ -364,7 +364,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private void UpdateDefinition()
         {
-            if (_name != null &&
+            if (_name is not null &&
                 string.Compare(_name, _definition.Name, StringComparison.OrdinalIgnoreCase) != 0)
             {
                 _definition.RenameAndSave(_name);
@@ -377,17 +377,17 @@ namespace Microsoft.PowerShell.ScheduledJob
                 _definition.SetExecutionHistoryLength(MaxResultCount, false);
             }
 
-            if (Credential != null)
+            if (Credential is not null)
             {
                 _definition.Credential = Credential;
             }
 
-            if (Trigger != null)
+            if (Trigger is not null)
             {
                 _definition.SetTriggers(Trigger, false);
             }
 
-            if (ScheduledJobOption != null)
+            if (ScheduledJobOption is not null)
             {
                 _definition.UpdateOptions(ScheduledJobOption, false);
             }
@@ -403,11 +403,11 @@ namespace Microsoft.PowerShell.ScheduledJob
             string name = _definition.Name;
             string command;
 
-            if (ScriptBlock != null)
+            if (ScriptBlock is not null)
             {
                 command = ScriptBlock.ToString();
             }
-            else if (FilePath != null)
+            else if (FilePath is not null)
             {
                 command = FilePath;
             }
@@ -484,7 +484,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
 
             // ScriptBlock
-            if (ScriptBlock != null)
+            if (ScriptBlock is not null)
             {
                 // FilePath cannot also be specified.
                 if (newParameters.ContainsKey(ScheduledJobInvocationInfo.FilePathParameter))
@@ -503,7 +503,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
 
             // FilePath
-            if (FilePath != null)
+            if (FilePath is not null)
             {
                 // ScriptBlock cannot also be specified.
                 if (newParameters.ContainsKey(ScheduledJobInvocationInfo.ScriptBlockParameter))
@@ -527,7 +527,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 // Clear existing argument list only if new scriptblock or script file path was specified
                 // (in this case old argument list is invalid).
                 if (newParameters.ContainsKey(ScheduledJobInvocationInfo.ArgumentListParameter) &&
-                    (ScriptBlock != null || FilePath != null))
+                    (ScriptBlock is not null || FilePath is not null))
                 {
                     newParameters.Remove(ScheduledJobInvocationInfo.ArgumentListParameter);
                 }

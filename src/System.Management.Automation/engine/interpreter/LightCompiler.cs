@@ -86,7 +86,7 @@ namespace System.Management.Automation.Interpreter
 
         internal bool IsInsideFinallyBlock(int index)
         {
-            Debug.Assert(Parent != null);
+            Debug.Assert(Parent is not null);
             return Parent.IsFinallyBlockExist && index >= Parent.FinallyStartIndex && index < Parent.FinallyEndIndex;
         }
 
@@ -117,7 +117,7 @@ namespace System.Management.Automation.Interpreter
 
         internal bool IsCatchBlockExist
         {
-            get { return (_handlers != null); }
+            get { return (_handlers is not null); }
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace System.Management.Automation.Interpreter
         internal TryCatchFinallyHandler(int tryStart, int tryEnd, int gotoEndTargetIndex, ExceptionHandler[] handlers)
             : this(tryStart, tryEnd, gotoEndTargetIndex, Instruction.UnknownInstrIndex, Instruction.UnknownInstrIndex, handlers)
         {
-            Debug.Assert(handlers != null, "catch blocks should exist");
+            Debug.Assert(handlers is not null, "catch blocks should exist");
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace System.Management.Automation.Interpreter
 
             _handlers = handlers;
 
-            if (_handlers != null)
+            if (_handlers is not null)
             {
                 for (int index = 0; index < _handlers.Length; index++)
                 {
@@ -166,7 +166,7 @@ namespace System.Management.Automation.Interpreter
         /// </summary>
         internal int GotoHandler(InterpretedFrame frame, object exception, out ExceptionHandler handler)
         {
-            Debug.Assert(_handlers != null, "we should have at least one handler if the method gets called");
+            Debug.Assert(_handlers is not null, "we should have at least one handler if the method gets called");
             handler = Array.Find(_handlers, t => t.Matches(exception.GetType()));
             if (handler is null) { return 0; }
 
@@ -259,7 +259,7 @@ namespace System.Management.Automation.Interpreter
 
         public override string ToString()
         {
-            return MethodName + (DebugInfo != null ? ": " + DebugInfo : null);
+            return MethodName + (DebugInfo is not null ? ": " + DebugInfo : null);
         }
     }
 
@@ -386,7 +386,7 @@ namespace System.Management.Automation.Interpreter
                 if (type.IsValueType)
                 {
                     object value = ScriptingRuntimeHelpers.GetPrimitiveDefaultValue(type);
-                    if (value != null)
+                    if (value is not null)
                     {
                         _instructions.EmitLoad(value);
                     }
@@ -414,7 +414,7 @@ namespace System.Management.Automation.Interpreter
 
                 return local;
             }
-            else if (_parent != null)
+            else if (_parent is not null)
             {
                 _parent.EnsureAvailableForClosure(expr);
                 return _locals.AddClosureVariable(expr);
@@ -585,7 +585,7 @@ namespace System.Management.Automation.Interpreter
             var index = (IndexExpression)expr;
 
             // instance:
-            if (index.Object != null)
+            if (index.Object is not null)
             {
                 Compile(index.Object);
             }
@@ -597,7 +597,7 @@ namespace System.Management.Automation.Interpreter
                 Compile(arg);
             }
 
-            if (index.Indexer != null)
+            if (index.Indexer is not null)
             {
                 _instructions.EmitCall(index.Indexer.GetMethod);
             }
@@ -621,7 +621,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             // instance:
-            if (index.Object != null)
+            if (index.Object is not null)
             {
                 Compile(index.Object);
             }
@@ -636,7 +636,7 @@ namespace System.Management.Automation.Interpreter
             // value:
             Compile(node.Right);
 
-            if (index.Indexer != null)
+            if (index.Indexer is not null)
             {
                 _instructions.EmitCall(index.Indexer.SetMethod);
             }
@@ -655,10 +655,10 @@ namespace System.Management.Automation.Interpreter
             var member = (MemberExpression)node.Left;
 
             PropertyInfo pi = member.Member as PropertyInfo;
-            if (pi != null)
+            if (pi is not null)
             {
                 var method = pi.SetMethod;
-                if (member.Expression != null)
+                if (member.Expression is not null)
                 {
                     Compile(member.Expression);
                 }
@@ -683,9 +683,9 @@ namespace System.Management.Automation.Interpreter
             }
 
             FieldInfo fi = member.Member as FieldInfo;
-            if (fi != null)
+            if (fi is not null)
             {
-                if (member.Expression != null)
+                if (member.Expression is not null)
                 {
                     Compile(member.Expression);
                 }
@@ -748,7 +748,7 @@ namespace System.Management.Automation.Interpreter
         {
             var node = (BinaryExpression)expr;
 
-            if (node.Method != null)
+            if (node.Method is not null)
             {
                 Compile(node.Left);
                 Compile(node.Right);
@@ -855,7 +855,7 @@ namespace System.Management.Automation.Interpreter
         private void CompileConvertUnaryExpression(Expression expr)
         {
             var node = (UnaryExpression)expr;
-            if (node.Method != null)
+            if (node.Method is not null)
             {
                 Compile(node.Operand);
 
@@ -923,7 +923,7 @@ namespace System.Management.Automation.Interpreter
         {
             var node = (UnaryExpression)expr;
 
-            if (node.Method != null)
+            if (node.Method is not null)
             {
                 Compile(node.Operand);
                 _instructions.EmitCall(node.Method);
@@ -957,7 +957,7 @@ namespace System.Management.Automation.Interpreter
         private void CompileLogicalBinaryExpression(Expression expr, bool andAlso)
         {
             var node = (BinaryExpression)expr;
-            if (node.Method != null)
+            if (node.Method is not null)
             {
                 throw new NotImplementedException();
             }
@@ -1057,7 +1057,7 @@ namespace System.Management.Automation.Interpreter
             var node = (SwitchExpression)expr;
 
             // Currently only supports int test values, with no method
-            if (node.SwitchValue.Type != typeof(int) || node.Comparison != null)
+            if (node.SwitchValue.Type != typeof(int) || node.Comparison is not null)
             {
                 throw new NotImplementedException();
             }
@@ -1076,7 +1076,7 @@ namespace System.Management.Automation.Interpreter
             int switchIndex = _instructions.Count;
             _instructions.EmitSwitch(caseDict);
 
-            if (node.DefaultBody != null)
+            if (node.DefaultBody is not null)
             {
                 Compile(node.DefaultBody);
             }
@@ -1129,7 +1129,7 @@ namespace System.Management.Automation.Interpreter
                 }
 
                 // if we're in a switch or block, we should've found the label
-                Debug.Assert(label != null);
+                Debug.Assert(label is not null);
             }
 
             if (label is null)
@@ -1137,7 +1137,7 @@ namespace System.Management.Automation.Interpreter
                 label = DefineLabel(node.Target);
             }
 
-            if (node.DefaultValue != null)
+            if (node.DefaultValue is not null)
             {
                 if (node.Target.Type == typeof(void))
                 {
@@ -1157,12 +1157,12 @@ namespace System.Management.Automation.Interpreter
             var node = (GotoExpression)expr;
             var labelInfo = ReferenceLabel(node.Target);
 
-            if (node.Value != null)
+            if (node.Value is not null)
             {
                 Compile(node.Value);
             }
 
-            _instructions.EmitGoto(labelInfo.GetLabel(this), node.Type != typeof(void), node.Value != null && node.Value.Type != typeof(void));
+            _instructions.EmitGoto(labelInfo.GetLabel(this), node.Type != typeof(void), node.Value is not null && node.Value.Type != typeof(void));
         }
 
         public BranchLabel GetBranchLabel(LabelTarget target)
@@ -1178,7 +1178,7 @@ namespace System.Management.Automation.Interpreter
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "kind")]
         public void PopLabelBlock(LabelScopeKind kind)
         {
-            Debug.Assert(_labelBlock != null && _labelBlock.Kind == kind);
+            Debug.Assert(_labelBlock is not null && _labelBlock.Kind == kind);
             _labelBlock = _labelBlock.Parent;
         }
 
@@ -1308,7 +1308,7 @@ namespace System.Management.Automation.Interpreter
                 Expression e = block.Expressions[i];
 
                 var label = e as LabelExpression;
-                if (label != null)
+                if (label is not null)
                 {
                     DefineLabel(label.Target);
                 }
@@ -1366,7 +1366,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             BlockExpression block = expr as BlockExpression;
-            if (block != null)
+            if (block is not null)
             {
                 return EndsWithRethrow(block.Expressions[block.Expressions.Count - 1]);
             }
@@ -1404,7 +1404,7 @@ namespace System.Management.Automation.Interpreter
             int tryStart = _instructions.Count;
 
             BranchLabel startOfFinally = null;
-            if (node.Finally != null)
+            if (node.Finally is not null)
             {
                 startOfFinally = _instructions.MakeLabel();
                 _instructions.EmitEnterTryFinally(startOfFinally);
@@ -1416,7 +1416,7 @@ namespace System.Management.Automation.Interpreter
 
             List<ExceptionHandler> exHandlers = null;
             var enterTryInstr = _instructions.GetInstruction(tryStart) as EnterTryCatchFinallyInstruction;
-            Debug.Assert(enterTryInstr != null);
+            Debug.Assert(enterTryInstr is not null);
 
             PushLabelBlock(LabelScopeKind.Try);
             Compile(node.Body);
@@ -1471,7 +1471,7 @@ namespace System.Management.Automation.Interpreter
                     var handler = node.Handlers[index];
                     PushLabelBlock(LabelScopeKind.Catch);
 
-                    if (handler.Filter != null)
+                    if (handler.Filter is not null)
                     {
                         // PushLabelBlock(LabelScopeKind.Filter);
                         throw new NotImplementedException();
@@ -1513,15 +1513,15 @@ namespace System.Management.Automation.Interpreter
                     _locals.UndefineLocal(local, _instructions.Count);
                 }
 
-                if (node.Fault != null)
+                if (node.Fault is not null)
                 {
                     throw new NotImplementedException();
                 }
             }
 
-            if (node.Finally != null)
+            if (node.Finally is not null)
             {
-                Debug.Assert(startOfFinally != null);
+                Debug.Assert(startOfFinally is not null);
                 PushLabelBlock(LabelScopeKind.Finally);
 
                 _instructions.MarkLabel(startOfFinally);
@@ -1532,12 +1532,12 @@ namespace System.Management.Automation.Interpreter
                 enterTryInstr.SetTryHandler(
                     new TryCatchFinallyHandler(tryStart, tryEnd, gotoEnd.TargetIndex,
                         startOfFinally.TargetIndex, _instructions.Count,
-                        exHandlers != null ? exHandlers.ToArray() : null));
+                        exHandlers is not null ? exHandlers.ToArray() : null));
                 PopLabelBlock(LabelScopeKind.Finally);
             }
             else
             {
-                Debug.Assert(exHandlers != null);
+                Debug.Assert(exHandlers is not null);
                 enterTryInstr.SetTryHandler(
                     new TryCatchFinallyHandler(tryStart, tryEnd, gotoEnd.TargetIndex, exHandlers.ToArray()));
             }
@@ -1598,7 +1598,7 @@ namespace System.Management.Automation.Interpreter
         {
             var node = (NewExpression)expr;
 
-            if (node.Constructor != null)
+            if (node.Constructor is not null)
             {
                 var parameters = node.Constructor.GetParameters();
                 if (!parameters.TrueForAll(p => !p.ParameterType.IsByRef))
@@ -1607,7 +1607,7 @@ namespace System.Management.Automation.Interpreter
                 }
             }
 
-            if (node.Constructor != null)
+            if (node.Constructor is not null)
             {
                 for (int index = 0; index < node.Arguments.Count; index++)
                 {
@@ -1630,7 +1630,7 @@ namespace System.Management.Automation.Interpreter
 
             var member = node.Member;
             FieldInfo fi = member as FieldInfo;
-            if (fi != null)
+            if (fi is not null)
             {
                 if (fi.IsLiteral)
                 {
@@ -1657,10 +1657,10 @@ namespace System.Management.Automation.Interpreter
             }
 
             PropertyInfo pi = member as PropertyInfo;
-            if (pi != null)
+            if (pi is not null)
             {
                 var method = pi.GetMethod;
-                if (node.Expression != null)
+                if (node.Expression is not null)
                 {
                     Compile(node.Expression);
                 }
@@ -1709,7 +1709,7 @@ namespace System.Management.Automation.Interpreter
         private void CompileExtensionExpression(Expression expr)
         {
             var instructionProvider = expr as IInstructionProvider;
-            if (instructionProvider != null)
+            if (instructionProvider is not null)
             {
                 instructionProvider.AddInstructions(this);
                 return;
@@ -1760,7 +1760,7 @@ namespace System.Management.Automation.Interpreter
             var compiler = new LightCompiler(this);
             var creator = compiler.CompileTop(node);
 
-            if (compiler._locals.ClosureVariables != null)
+            if (compiler._locals.ClosureVariables is not null)
             {
                 foreach (ParameterExpression variable in compiler._locals.ClosureVariables.Keys)
                 {
@@ -1779,7 +1779,7 @@ namespace System.Management.Automation.Interpreter
             {
                 throw new NotImplementedException();
             }
-            else if (node.Conversion != null)
+            else if (node.Conversion is not null)
             {
                 throw new NotImplementedException();
             }

@@ -61,7 +61,7 @@ namespace System.Management.Automation
         public PSVariable Get(string name)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -72,7 +72,7 @@ namespace System.Management.Automation
             // 2. If the requested variable is not null and does not exist in the session scope, then a null value is returned to the pipeline.
             // 3. If the requested variable is null then an NewArgumentNullException is thrown.
             // PowerShell V3 has the similar experience.
-            if (name != null && name.Equals(string.Empty))
+            if (name is not null && name.Equals(string.Empty))
             {
                 return null;
             }
@@ -109,7 +109,7 @@ namespace System.Management.Automation
         internal PSVariable GetAtScope(string name, string scope)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -146,7 +146,7 @@ namespace System.Management.Automation
         public object GetValue(string name)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -188,7 +188,7 @@ namespace System.Management.Automation
         public object GetValue(string name, object defaultValue)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -238,7 +238,7 @@ namespace System.Management.Automation
         internal object GetValueAtScope(string name, string scope)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -278,7 +278,7 @@ namespace System.Management.Automation
         public void Set(string name, object value)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -301,7 +301,7 @@ namespace System.Management.Automation
         public void Set(PSVariable variable)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -338,7 +338,7 @@ namespace System.Management.Automation
         public void Remove(string name)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -361,7 +361,7 @@ namespace System.Management.Automation
         public void Remove(PSVariable variable)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -397,7 +397,7 @@ namespace System.Management.Automation
         internal void RemoveAtScope(string name, string scope)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -429,7 +429,7 @@ namespace System.Management.Automation
         internal void RemoveAtScope(PSVariable variable, string scope)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object

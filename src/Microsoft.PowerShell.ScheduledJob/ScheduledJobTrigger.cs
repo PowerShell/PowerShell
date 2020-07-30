@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             set
             {
                 // A TimeSpan value of zero is equivalent to a null value.
-                _repInterval = (value != null && value.Value == TimeSpan.Zero) ?
+                _repInterval = (value is not null && value.Value == TimeSpan.Zero) ?
                     null : value;
             }
         }
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             set
             {
                 // A TimeSpan value of zero is equivalent to a null value.
-                _repDuration = (value != null && value.Value == TimeSpan.Zero) ?
+                _repDuration = (value is not null && value.Value == TimeSpan.Zero) ?
                     null : value;
             }
         }
@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                         throw new ScheduledJobException(msg);
                     }
 
-                    if (_repInterval != null || _repDuration != null)
+                    if (_repInterval is not null || _repDuration is not null)
                     {
                         ValidateOnceRepetitionParams(_repInterval, _repDuration);
                     }
@@ -550,7 +550,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             Int32 id,
             bool enabled)
         {
-            List<DayOfWeek> lDaysOfWeek = (daysOfWeek != null) ? new List<DayOfWeek>(daysOfWeek) : null;
+            List<DayOfWeek> lDaysOfWeek = (daysOfWeek is not null) ? new List<DayOfWeek>(daysOfWeek) : null;
 
             return new ScheduledJobTrigger(
                 enabled,
@@ -812,7 +812,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             cimInstance.CimInstanceProperties["RandomDelay"].Value = ScheduledJobWTS.ConvertTimeSpanToWTSString(trigger.RandomDelay);
 
-            if (trigger.RepetitionInterval != null && trigger.RepetitionDuration != null)
+            if (trigger.RepetitionInterval is not null && trigger.RepetitionDuration is not null)
             {
                 CimClass cimRepClass = cimSession.GetClass(CIM_TRIGGER_NAMESPACE, "MSFT_TaskRepetitionPattern");
                 CimInstance cimRepInstance = new CimInstance(cimRepClass);
@@ -886,7 +886,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         {
             cimInstance.CimInstanceProperties["Enabled"].Value = trigger.Enabled;
 
-            if (trigger.At != null)
+            if (trigger.At is not null)
             {
                 cimInstance.CimInstanceProperties["StartBoundary"].Value = ScheduledJobWTS.ConvertDateTimeToString(trigger.At);
             }

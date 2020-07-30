@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
             Collection<string> propertyCollection = new Collection<string>();
             propertyCollection.Add(_property);
 
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 // Go ahead and let any exception terminate the pipeline.
 

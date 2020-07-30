@@ -47,7 +47,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         public CommandParameter(string name, object value)
         {
-            if (name != null)
+            if (name is not null)
             {
                 if (string.IsNullOrWhiteSpace(name))
                 {
@@ -103,7 +103,7 @@ namespace System.Management.Automation.Runspaces
                     name = name + " ";
                 }
 
-                Diagnostics.Assert(name != null, "'name' variable should be initialized at this point");
+                Diagnostics.Assert(name is not null, "'name' variable should be initialized at this point");
                 Diagnostics.Assert(name[0].IsDash(), "first character in parameter name must be a dash");
                 Diagnostics.Assert(name.Trim().Length != 1, "Parameter name has to have some non-whitespace characters in it");
             }
@@ -113,7 +113,7 @@ namespace System.Management.Automation.Runspaces
                 return new CommandParameter(name, internalParameter.ArgumentValue);
             }
 
-            if (name != null) // either a switch parameter or first part of parameter+argument
+            if (name is not null) // either a switch parameter or first part of parameter+argument
             {
                 return new CommandParameter(name);
             }

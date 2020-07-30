@@ -99,7 +99,7 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                Dbg.Assert(this.label != null, "label should not be null");
+                Dbg.Assert(this.label is not null, "label should not be null");
 
                 return this.label;
             }
@@ -122,7 +122,7 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                Dbg.Assert(this.helpMessage != null, "helpMessage should not be null");
+                Dbg.Assert(this.helpMessage is not null, "helpMessage should not be null");
 
                 return this.helpMessage;
             }

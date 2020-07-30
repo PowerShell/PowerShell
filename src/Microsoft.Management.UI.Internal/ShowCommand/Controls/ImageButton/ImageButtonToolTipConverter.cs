@@ -42,12 +42,12 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             }
 
             object toolTipObj = imageButtonBase.GetValue(Button.ToolTipProperty);
-            if (toolTipObj != null)
+            if (toolTipObj is not null)
             {
                 return toolTipObj.ToString();
             }
 
-            if (imageButtonBase.Command != null && !string.IsNullOrEmpty(imageButtonBase.Command.Text))
+            if (imageButtonBase.Command is not null && !string.IsNullOrEmpty(imageButtonBase.Command.Text))
             {
                 return imageButtonBase.Command.Text.Replace("_", string.Empty);
             }

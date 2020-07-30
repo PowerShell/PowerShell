@@ -143,7 +143,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.ResourceUriComputerSet:
                     {
                         string target = string.Format(CultureInfo.CurrentUICulture, targetClass, cmdlet.ClassName);
-                        if (cmdlet.ResourceUri != null)
+                        if (cmdlet.ResourceUri is not null)
                         {
                             nameSpace = cmdlet.Namespace;
                         }
@@ -210,7 +210,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.CimInstanceSessionSet:
                     {
                         string target = cmdlet.CimInstance.ToString();
-                        if (cmdlet.ResourceUri != null)
+                        if (cmdlet.ResourceUri is not null)
                         {
                             nameSpace = cmdlet.Namespace;
                         }
@@ -250,7 +250,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
             CimInvokeCimMethodContext cimInvokeCimMethodContext = context as CimInvokeCimMethodContext;
-            Debug.Assert(cimInvokeCimMethodContext != null, "CimInvokeCimMethod::InvokeCimMethodOnCimInstance should has CimInvokeCimMethodContext != NULL.");
+            Debug.Assert(cimInvokeCimMethodContext is not null, "CimInvokeCimMethod::InvokeCimMethodOnCimInstance should has CimInvokeCimMethodContext is not null.");
 
             string action = string.Format(CultureInfo.CurrentUICulture, actionTemplate, cimInvokeCimMethodContext.MethodName);
             if (!operation.ShouldProcess(cimInstance.ToString(), action))
@@ -280,7 +280,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             InvokeCimMethodCommand cmdlet)
         {
             proxy.OperationTimeout = cmdlet.OperationTimeoutSec;
-            if (cmdlet.ResourceUri != null)
+            if (cmdlet.ResourceUri is not null)
             {
                 proxy.ResourceUri = cmdlet.ResourceUri;
             }
@@ -385,7 +385,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 CimMethodParameter parameter = null;
                 CimMethodDeclaration declaration = null;
                 string className = null;
-                if (cimClass != null)
+                if (cimClass is not null)
                 {
                     className = cimClass.CimSystemProperties.ClassName;
                     declaration = cimClass.CimClassMethods[methodName];
@@ -395,13 +395,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                 CultureInfo.CurrentUICulture, CimCmdletStrings.InvalidMethod, methodName, className));
                     }
                 }
-                else if (cimInstance != null)
+                else if (cimInstance is not null)
                 {
                     className = cimInstance.CimClass.CimSystemProperties.ClassName;
                     declaration = cimInstance.CimClass.CimClassMethods[methodName];
                 }
 
-                if (declaration != null)
+                if (declaration is not null)
                 {
                     CimMethodParameterDeclaration paramDeclaration = declaration.Parameters[parameterName];
                     if (paramDeclaration is null)
@@ -433,7 +433,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         CimType referenceType = CimType.Unknown;
                         object referenceObject = GetReferenceOrReferenceArrayObject(parameterValue, ref referenceType);
-                        if (referenceObject != null)
+                        if (referenceObject is not null)
                         {
                             parameter = CimMethodParameter.Create(
                                 parameterName,
@@ -451,7 +451,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     }
                 }
 
-                if (parameter != null)
+                if (parameter is not null)
                     collection.Add(parameter);
             }
 

@@ -45,7 +45,7 @@ namespace System.Management.Automation
                 {
                     _eventManager = (object)driver.LocalPowerShell.Runspace.Events as PSLocalEventManager;
 
-                    if (_eventManager != null)
+                    if (_eventManager is not null)
                     {
                         _startSubscriber = _eventManager.SubscribeEvent(this, "StartSteppablePipeline", Guid.NewGuid().ToString(), null,
                             new PSEventReceivedEventHandler(this.HandleStartEvent), true, false, true);
@@ -102,7 +102,7 @@ namespace System.Management.Automation
                 exceptionOccurred = e;
             }
 
-            if (exceptionOccurred != null)
+            if (exceptionOccurred is not null)
             {
                 driver.SetState(PSInvocationState.Failed, exceptionOccurred);
             }
@@ -259,7 +259,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (exceptionOccurred != null)
+            if (exceptionOccurred is not null)
             {
                 driver.SetState(PSInvocationState.Failed, exceptionOccurred);
             }
@@ -273,7 +273,7 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
-                if (_eventManager != null)
+                if (_eventManager is not null)
                 {
                     _eventManager.GenerateEvent(_startSubscriber.SourceIdentifier, this,
                         new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);
@@ -289,7 +289,7 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
-                if (_eventManager != null)
+                if (_eventManager is not null)
                 {
                     _eventManager.GenerateEvent(_processSubscriber.SourceIdentifier, this,
                         new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);

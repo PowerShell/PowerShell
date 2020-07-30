@@ -429,7 +429,7 @@ namespace Microsoft.WSMan.Management
             {
                 int flags = 0;
                 IWSManEnumerator obj;
-                if (returntype != null)
+                if (returntype is not null)
                 {
                     if (returntype.Equals("object", StringComparison.OrdinalIgnoreCase))
                     {
@@ -458,7 +458,7 @@ namespace Microsoft.WSMan.Management
                     flags |= wsmanObject.EnumerationFlagHierarchyDeep();
                 }
 
-                if (dialect != null && filter != null)
+                if (dialect is not null && filter is not null)
                 {
                     if (dialect.ToString().Equals(helper.ALIAS_WQL, StringComparison.OrdinalIgnoreCase) || dialect.ToString().Equals(helper.URI_WQL_DIALECT, StringComparison.OrdinalIgnoreCase))
                     {
@@ -488,7 +488,7 @@ namespace Microsoft.WSMan.Management
 
                     obj = (IWSManEnumerator)wsmanSession.Enumerate(wsmanResourceLocator, filter, dialect.ToString(), flags);
                 }
-                else if (filter != null)
+                else if (filter is not null)
                 {
                     fragment = helper.URI_WQL_DIALECT;
                     dialect = new Uri(fragment);
@@ -524,7 +524,7 @@ namespace Microsoft.WSMan.Management
             helper.WSManOp = "Get";
             string connectionStr = null;
             connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
-            if (connectionuri != null)
+            if (connectionuri is not null)
             {
                 try
                 {
@@ -589,7 +589,7 @@ namespace Microsoft.WSMan.Management
                     helper.AssertError(m_session.Error, true, resourceuri);
                 }
 
-                if (m_session != null)
+                if (m_session is not null)
                     Dispose(m_session);
             }
         }
@@ -890,7 +890,7 @@ namespace Microsoft.WSMan.Management
             helper.WSManOp = "set";
             IWSManSession m_session = null;
 
-            if (dialect != null)
+            if (dialect is not null)
             {
                 if (dialect.ToString().Equals(helper.ALIAS_WQL, StringComparison.OrdinalIgnoreCase))
                     dialect = new Uri(helper.URI_WQL_DIALECT);
@@ -904,7 +904,7 @@ namespace Microsoft.WSMan.Management
             {
                 string connectionStr = string.Empty;
                 connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
-                if (connectionuri != null)
+                if (connectionuri is not null)
                 {
                     try
                     {
@@ -960,7 +960,7 @@ namespace Microsoft.WSMan.Management
                     helper.AssertError(m_session.Error, true, resourceuri);
                 }
 
-                if (m_session != null)
+                if (m_session is not null)
                     Dispose(m_session);
             }
         }
@@ -1198,7 +1198,7 @@ namespace Microsoft.WSMan.Management
             {
                 string connectionStr = string.Empty;
                 connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
-                if (connectionuri != null)
+                if (connectionuri is not null)
                 {
                     try
                     {
@@ -1237,7 +1237,7 @@ namespace Microsoft.WSMan.Management
                     helper.AssertError(m_wsmanObject.Error, true, resourceuri);
                 }
 
-                if (m_session != null)
+                if (m_session is not null)
                     Dispose(m_session);
             }
         }
@@ -1487,7 +1487,7 @@ namespace Microsoft.WSMan.Management
             helper = new WSManHelper(this);
             helper.WSManOp = "new";
             connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
-            if (connectionuri != null)
+            if (connectionuri is not null)
             {
                 try
                 {
@@ -1540,7 +1540,7 @@ namespace Microsoft.WSMan.Management
                     helper.AssertError(m_session.Error, true, resourceuri);
                 }
 
-                if (m_session != null)
+                if (m_session is not null)
                 {
                     Dispose(m_session);
                 }

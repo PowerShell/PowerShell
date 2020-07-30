@@ -27,13 +27,13 @@ namespace System.Management.Automation.ComInterop
 
         internal override Expression Marshal(Expression parameter)
         {
-            Debug.Assert(parameter != null);
+            Debug.Assert(parameter is not null);
             return Helpers.Convert(parameter, ParameterType);
         }
 
         internal override Expression UnmarshalFromRef(Expression newValue)
         {
-            Debug.Assert(newValue != null && newValue.Type.IsAssignableFrom(ParameterType));
+            Debug.Assert(newValue is not null && newValue.Type.IsAssignableFrom(ParameterType));
 
             return base.UnmarshalFromRef(newValue);
         }

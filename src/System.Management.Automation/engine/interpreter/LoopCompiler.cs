@@ -103,7 +103,7 @@ namespace System.Management.Automation.Interpreter
                 if (local.InClosureOrBoxed)
                 {
                     var box = variable.Value.BoxStorage;
-                    Debug.Assert(box != null);
+                    Debug.Assert(box is not null);
                     body.Add(Expression.Assign(box, elemRef));
                     AddTemp(box);
                 }
@@ -135,7 +135,7 @@ namespace System.Management.Automation.Interpreter
             body.Add(Expression.Label(_returnLabel, Expression.Constant(_loopEndInstructionIndex - _loopStartInstructionIndex)));
 
             var lambda = Expression.Lambda<LoopFunc>(
-                _temps != null ? Expression.Block(_temps, body) : Expression.Block(body),
+                _temps is not null ? Expression.Block(_temps, body) : Expression.Block(body),
                 new[] { _frameDataVar, _frameClosureVar, _frameVar }
             );
             return lambda.Compile();
@@ -177,7 +177,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             return Expression.Return(_returnLabel,
-                (value != null && value.Type != typeof(void)) ?
+                (value is not null && value.Type != typeof(void)) ?
                     Expression.Call(_frameVar, InterpretedFrame.GotoMethod, Expression.Constant(label.LabelIndex), AstUtils.Box(value)) :
                     Expression.Call(_frameVar, InterpretedFrame.VoidGotoMethod, Expression.Constant(label.LabelIndex)),
                 node.Type
@@ -219,7 +219,7 @@ namespace System.Management.Automation.Interpreter
 
         protected override CatchBlock VisitCatchBlock(CatchBlock node)
         {
-            if (node.Variable != null)
+            if (node.Variable is not null)
             {
                 var prevLocals = EnterVariableScope(new[] { node.Variable });
                 var res = base.VisitCatchBlock(node);
@@ -261,7 +261,7 @@ namespace System.Management.Automation.Interpreter
             Debug.Assert(!node.NodeType.IsReadWriteAssignment());
 
             var param = node.Left as ParameterExpression;
-            if (param != null && node.NodeType == ExpressionType.Assign)
+            if (param is not null && node.NodeType == ExpressionType.Assign)
             {
                 var left = VisitVariable(param, ExpressionAccess.Write);
                 var right = Visit(node.Right);
@@ -340,7 +340,7 @@ namespace System.Management.Automation.Interpreter
                 _loopVariables[node] = new LoopVariable(existing.Access | access, box);
             }
             else if (_outerVariables.TryGetValue(node, out loc) ||
-              (_closureVariables != null && _closureVariables.TryGetValue(node, out loc)))
+              (_closureVariables is not null && _closureVariables.TryGetValue(node, out loc)))
             {
                 // not tracking this variable yet, but defined in outer scope and seen for the 1st time
                 box = loc.InClosureOrBoxed ? Expression.Parameter(typeof(StrongBox<object>), node.Name) : null;
@@ -352,7 +352,7 @@ namespace System.Management.Automation.Interpreter
                 return node;
             }
 
-            if (box != null)
+            if (box is not null)
             {
                 if ((access & ExpressionAccess.Write) != 0)
                 {

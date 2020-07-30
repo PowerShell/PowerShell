@@ -35,9 +35,9 @@ namespace System.Management.Automation
         /// </param>
         internal ParameterBinderController(InvocationInfo invocationInfo, ExecutionContext context, ParameterBinderBase parameterBinder)
         {
-            Diagnostics.Assert(invocationInfo != null, "Caller to verify invocationInfo is not null.");
-            Diagnostics.Assert(parameterBinder != null, "Caller to verify parameterBinder is not null.");
-            Diagnostics.Assert(context != null, "call to verify context is not null.");
+            Diagnostics.Assert(invocationInfo is not null, "Caller to verify invocationInfo is not null.");
+            Diagnostics.Assert(parameterBinder is not null, "Caller to verify parameterBinder is not null.");
+            Diagnostics.Assert(context is not null, "call to verify context is not null.");
 
             this.DefaultParameterBinder = parameterBinder;
             Context = context;
@@ -200,7 +200,7 @@ namespace System.Management.Automation
                                 true,
                                 new InvocationInfo(this.InvocationInfo.MyCommand, nextArgument.ParameterExtent));
 
-                        if ((nextMatchingParameter != null) || nextArgument.ParameterAndArgumentSpecified)
+                        if ((nextMatchingParameter is not null) || nextArgument.ParameterAndArgumentSpecified)
                         {
                             // Since the next argument is a valid parameter that means the current
                             // argument doesn't have a value
@@ -313,10 +313,10 @@ namespace System.Management.Automation
         /// </param>
         internal static void AddArgumentsToCommandProcessor(CommandProcessorBase commandProcessor, object[] arguments)
         {
-            if ((arguments != null) && (arguments.Length > 0))
+            if ((arguments is not null) && (arguments.Length > 0))
             {
                 PSBoundParametersDictionary boundParameters = arguments[0] as PSBoundParametersDictionary;
-                if ((boundParameters != null) && (arguments.Length == 1))
+                if ((boundParameters is not null) && (arguments.Length == 1))
                 {
                     // If they are supplying a dictionary of parameters, use those directly
                     foreach (KeyValuePair<string, object> boundParameter in boundParameters)
@@ -410,7 +410,7 @@ namespace System.Management.Automation
                     true,
                     new InvocationInfo(this.InvocationInfo.MyCommand, argument.ParameterExtent));
 
-            if (matchingParameter != null)
+            if (matchingParameter is not null)
             {
                 // Now check to make sure it hasn't already been
                 // bound by looking in the boundParameters collection
@@ -840,7 +840,7 @@ namespace System.Management.Automation
                         bindingException = e;
                     }
 
-                    if (parameterBindingExceptionToThrown != null)
+                    if (parameterBindingExceptionToThrown is not null)
                     {
                         if (!DefaultParameterBindingInUse)
                         {
@@ -875,7 +875,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(pbex));
             }
 
-            Diagnostics.Assert(pbex.ErrorRecord != null, "ErrorRecord should not be null in a ParameterBindingException");
+            Diagnostics.Assert(pbex.ErrorRecord is not null, "ErrorRecord should not be null in a ParameterBindingException");
 
             // Original error message
             string oldMsg = pbex.Message;
@@ -1125,7 +1125,7 @@ namespace System.Management.Automation
                     // We may pass a magic parameter from the remote end with the values for the using expressions.
                     // In this case, we want to use those values to evaluate the default value. e.g. param($a = $using:date)
                     System.Collections.IDictionary implicitUsingParameters = null;
-                    if (DefaultParameterBinder.CommandLineParameters != null)
+                    if (DefaultParameterBinder.CommandLineParameters is not null)
                     {
                         implicitUsingParameters = DefaultParameterBinder.CommandLineParameters.GetImplicitUsingParameters();
                     }

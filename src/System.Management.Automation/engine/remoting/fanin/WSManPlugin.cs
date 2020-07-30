@@ -330,7 +330,7 @@ namespace System.Management.Automation.Remoting
                 AddToActiveShellSessions(mgdShellSession);
                 mgdShellSession.SessionClosed += HandleShellSessionClosed;
 
-                if (inboundShellInformation != null)
+                if (inboundShellInformation is not null)
                 {
                     if ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT != inboundShellInformation.Type)
                     {
@@ -441,7 +441,7 @@ namespace System.Management.Automation.Remoting
 
             try
             {
-                if (convertedBase64 != null)
+                if (convertedBase64 is not null)
                 {
                     mgdShellSession.SendOneItemToSessionHelper(convertedBase64, WSManPluginConstants.SupportedInputStream);
                 }
@@ -1114,12 +1114,12 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManSenderDetails senderDetails)
         {
             // senderDetails will not be null.
-            Dbg.Assert(senderDetails != null, "senderDetails cannot be null");
+            Dbg.Assert(senderDetails is not null, "senderDetails cannot be null");
 
             // Construct PSIdentity
             PSCertificateDetails psCertDetails = null;
             // Construct Certificate Details
-            if (senderDetails.certificateDetails != null)
+            if (senderDetails.certificateDetails is not null)
             {
                 psCertDetails = new PSCertificateDetails(
                     senderDetails.certificateDetails.subject,
@@ -1170,7 +1170,7 @@ namespace System.Management.Automation.Remoting
         private IntPtr GetRunAsClientToken()
         {
             string clientTokenStr = System.Environment.GetEnvironmentVariable(WSManRunAsClientTokenName);
-            if (clientTokenStr != null)
+            if (clientTokenStr is not null)
             {
                 // Remove the token value from the environment variable
                 System.Environment.SetEnvironmentVariable(WSManRunAsClientTokenName, null);
@@ -1264,7 +1264,7 @@ namespace System.Management.Automation.Remoting
             System.Version clientVersion = Utils.StringToVersion(clientVersionString);
             System.Version serverVersion = Utils.StringToVersion(WSManPluginConstants.PowerShellStartupProtocolVersionValue);
 
-            if ((clientVersion != null) && (serverVersion != null) &&
+            if ((clientVersion is not null) && (serverVersion is not null) &&
                 (clientVersion.Major == serverVersion.Major) &&
                 (clientVersion.Minor >= serverVersion.Minor))
             {
@@ -1581,7 +1581,7 @@ namespace System.Management.Automation.Remoting
                 {
                     // Close operations associated with this command..
                     WSManPluginOperationShutdownContext cmdCtxt = new WSManPluginOperationShutdownContext(pluginContext, shellContext, commandContext, false);
-                    if (cmdCtxt != null)
+                    if (cmdCtxt is not null)
                     {
                         PerformCloseOperation(cmdCtxt);
                     }
@@ -1701,7 +1701,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest requestDetails,
             WSManPluginErrorCodes errorCode)
         {
-            Dbg.Assert(requestDetails != null, "requestDetails cannot be null in operation complete.");
+            Dbg.Assert(requestDetails is not null, "requestDetails cannot be null in operation complete.");
 
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.ReportOperationComplete,
@@ -1724,13 +1724,13 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest requestDetails,
             Exception reasonForClose)
         {
-            Dbg.Assert(requestDetails != null, "requestDetails cannot be null in operation complete.");
+            Dbg.Assert(requestDetails is not null, "requestDetails cannot be null in operation complete.");
 
             WSManPluginErrorCodes error = WSManPluginErrorCodes.NoError;
             string errorMessage = string.Empty;
             string stackTrace = string.Empty;
 
-            if (reasonForClose != null)
+            if (reasonForClose is not null)
             {
                 error = WSManPluginErrorCodes.ManagedException;
                 errorMessage = reasonForClose.Message;
@@ -1746,7 +1746,7 @@ namespace System.Management.Automation.Remoting
                 errorMessage,
                 stackTrace);
 
-            if (reasonForClose != null)
+            if (reasonForClose is not null)
             {
                 // report operation complete to wsman with the error message (if any).
                 ReportOperationComplete(
@@ -1775,7 +1775,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest requestDetails)
         {
             // requestDetails cannot not be null.
-            Dbg.Assert(requestDetails != null, "requestDetails cannot be null");
+            Dbg.Assert(requestDetails is not null, "requestDetails cannot be null");
 
             // IntPtr nativeLocaleData = IntPtr.Zero;
             WSManNativeApi.WSManDataStruct outputStruct = new WSManNativeApi.WSManDataStruct();
@@ -1865,7 +1865,7 @@ namespace System.Management.Automation.Remoting
             WSManPluginErrorCodes errorCode,
             string errorMessage)
         {
-            if (requestDetails != null)
+            if (requestDetails is not null)
             {
                 ReportOperationComplete(requestDetails.unmanagedHandle, errorCode, errorMessage);
             }
@@ -1881,7 +1881,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest requestDetails,
             WSManPluginErrorCodes errorCode)
         {
-            if (requestDetails != null &&
+            if (requestDetails is not null &&
                 IntPtr.Zero != requestDetails.unmanagedHandle)
             {
                 wsmanPinvokeStatic.WSManPluginOperationComplete(

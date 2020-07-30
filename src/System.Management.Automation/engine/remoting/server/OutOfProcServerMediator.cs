@@ -142,7 +142,7 @@ namespace System.Management.Automation.Remoting.Server
                     cmdTM = sessionTM.GetCommandTransportManager(psGuid);
                 }
 
-                if (cmdTM != null)
+                if (cmdTM is not null)
                 {
                     // not throwing when there is no associated command as the command might have
                     // legitimately closed while the client is sending data. however the client
@@ -209,7 +209,7 @@ namespace System.Management.Automation.Remoting.Server
                     }
 
                     // dont throw if there is no cmdTM as it might have legitimately closed
-                    if (cmdTM != null)
+                    if (cmdTM is not null)
                     {
                         cmdTM.Close(null);
                     }
@@ -253,7 +253,7 @@ namespace System.Management.Automation.Remoting.Server
                 {
                     tracer.WriteMessage("OnClosePacketReceived, in progress commands count should be zero : " + _inProgressCommandsCount + ", psGuid : " + psGuid.ToString());
 
-                    if (sessionTM != null)
+                    if (sessionTM is not null)
                     {
                         // it appears that when closing PowerShell ISE, therefore closing OutOfProcServerMediator, there are 2 Close command requests
                         // changing PSRP/IPC at this point is too risky, therefore protecting about this duplication
@@ -277,7 +277,7 @@ namespace System.Management.Automation.Remoting.Server
                 }
 
                 // dont throw if there is no cmdTM as it might have legitimately closed
-                if (cmdTM != null)
+                if (cmdTM is not null)
                 {
                     cmdTM.Close(null);
                 }
@@ -494,7 +494,7 @@ namespace System.Management.Automation.Remoting.Server
         {
             lock (SyncObject)
             {
-                if (s_singletonInstance != null)
+                if (s_singletonInstance is not null)
                 {
                     Dbg.Assert(false, "Run should not be called multiple times");
                     return;
@@ -559,7 +559,7 @@ namespace System.Management.Automation.Remoting.Server
         {
             lock (SyncObject)
             {
-                if (s_singletonInstance != null)
+                if (s_singletonInstance is not null)
                 {
                     Dbg.Assert(false, "Run should not be called multiple times");
                     return;
@@ -628,7 +628,7 @@ namespace System.Management.Automation.Remoting.Server
         {
             lock (SyncObject)
             {
-                if (s_singletonInstance != null && !s_singletonInstance.IsDisposed)
+                if (s_singletonInstance is not null && !s_singletonInstance.IsDisposed)
                 {
                     Dbg.Assert(false, "Run should not be called multiple times, unless the singleton was disposed.");
                     return;
@@ -676,7 +676,7 @@ namespace System.Management.Automation.Remoting.Server
 
         internal override void WriteLine(string data)
         {
-            string dataToWrite = (data != null) ? _errorPrepend + data : null;
+            string dataToWrite = (data is not null) ? _errorPrepend + data : null;
             base.WriteLine(dataToWrite);
         }
 
@@ -768,7 +768,7 @@ namespace System.Management.Automation.Remoting.Server
 
         internal override void WriteLine(string data)
         {
-            string dataToWrite = (data != null) ? _errorPrepend + data : null;
+            string dataToWrite = (data is not null) ? _errorPrepend + data : null;
             base.WriteLine(dataToWrite);
         }
 

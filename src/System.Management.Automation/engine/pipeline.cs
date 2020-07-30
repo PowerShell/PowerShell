@@ -179,7 +179,7 @@ namespace System.Management.Automation.Internal
             if (invocationInfo is null)
                 return string.Empty;
 
-            if (invocationInfo.MyCommand != null)
+            if (invocationInfo.MyCommand is not null)
             {
                 return invocationInfo.MyCommand.Name;
             }
@@ -190,7 +190,7 @@ namespace System.Management.Automation.Internal
         private string GetCommand(Exception exception)
         {
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (icer != null && icer.ErrorRecord != null)
+            if (icer is not null && icer.ErrorRecord is not null)
                 return GetCommand(icer.ErrorRecord.InvocationInfo);
 
             return string.Empty;
@@ -199,13 +199,13 @@ namespace System.Management.Automation.Internal
         private void Log(string logElement, InvocationInfo invocation, PipelineExecutionStatus pipelineExecutionStatus)
         {
             System.Management.Automation.Host.PSHostUserInterface hostInterface = null;
-            if (this.LocalPipeline != null)
+            if (this.LocalPipeline is not null)
             {
                 hostInterface = this.LocalPipeline.Runspace.GetExecutionContext.EngineHostInterface.UI;
             }
 
             // Acknowledge command completion
-            if (hostInterface != null)
+            if (hostInterface is not null)
             {
                 if (pipelineExecutionStatus == PipelineExecutionStatus.Complete)
                 {
@@ -222,7 +222,7 @@ namespace System.Management.Automation.Internal
             // Log the cmdlet invocation execution details if we didn't have an associated script line with it.
             if ((invocation is null) || string.IsNullOrEmpty(invocation.Line))
             {
-                if (hostInterface != null)
+                if (hostInterface is not null)
                 {
                     hostInterface.TranscribeCommand(logElement, invocation);
                 }
@@ -258,7 +258,7 @@ namespace System.Management.Automation.Internal
             {
                 MshCommandRuntime cmdRuntime = commandProcessor.Command.commandRuntime as MshCommandRuntime;
 
-                if (cmdRuntime != null && cmdRuntime.LogPipelineExecutionDetail)
+                if (cmdRuntime is not null && cmdRuntime.LogPipelineExecutionDetail)
                     return true;
             }
 
@@ -381,7 +381,7 @@ namespace System.Management.Automation.Internal
                     throw PSTraceSource.NewInvalidOperationException();
                 }
 
-                if (UpstreamPipe.DownstreamCmdlet != null)
+                if (UpstreamPipe.DownstreamCmdlet is not null)
                 {
                     throw PSTraceSource.NewInvalidOperationException(
                         PipelineStrings.PipeAlreadyTaken);
@@ -406,9 +406,9 @@ namespace System.Management.Automation.Internal
                             throw PSTraceSource.NewInvalidOperationException();
                         }
                         // check whether the error output is already claimed
-                        if (prevcommandProcessor.CommandRuntime.ErrorOutputPipe.DownstreamCmdlet != null)
+                        if (prevcommandProcessor.CommandRuntime.ErrorOutputPipe.DownstreamCmdlet is not null)
                             continue;
-                        if (prevcommandProcessor.CommandRuntime.ErrorOutputPipe.ExternalWriter != null)
+                        if (prevcommandProcessor.CommandRuntime.ErrorOutputPipe.ExternalWriter is not null)
                             continue;
 
                         // Set the upstream cmdlet's error output to go down
@@ -502,7 +502,7 @@ namespace System.Management.Automation.Internal
                     CommandProcessorBase firstCommandProcessor = _commands[0];
 
                     // Add any input to the first command.
-                    if (ExternalInput != null)
+                    if (ExternalInput is not null)
                     {
                         firstCommandProcessor.CommandRuntime.InputPipe.ExternalReader
                             = ExternalInput;
@@ -513,7 +513,7 @@ namespace System.Management.Automation.Internal
                 catch (PipelineStoppedException)
                 {
                     StopUpstreamCommandsException stopUpstreamCommandsException =
-                        _firstTerminatingError != null
+                        _firstTerminatingError is not null
                             ? _firstTerminatingError.SourceException as StopUpstreamCommandsException
                             : null;
                     if (stopUpstreamCommandsException is null)
@@ -532,7 +532,7 @@ namespace System.Management.Automation.Internal
                 // By this point, we are sure all commandProcessors hosted by the current pipelineProcess are done execution,
                 // so if there are any redirection pipelineProcessors associated with any of those commandProcessors, we should
                 // call DoComplete on them.
-                if (_redirectionPipes != null)
+                if (_redirectionPipes is not null)
                 {
                     foreach (PipelineProcessor redirectPipelineProcessor in _redirectionPipes)
                     {
@@ -556,7 +556,7 @@ namespace System.Management.Automation.Internal
                 // The error we want to report is the first terminating error
                 // which occurred during pipeline execution, regardless
                 // of whether other errors occurred afterward.
-                if (_firstTerminatingError != null)
+                if (_firstTerminatingError is not null)
                 {
                     toRethrowInfo = _firstTerminatingError;
                 }
@@ -581,7 +581,7 @@ namespace System.Management.Automation.Internal
 
             // The only reason we should get here is if
             // an exception should be rethrown.
-            Diagnostics.Assert(toRethrowInfo != null, "Alternate protocol path failure");
+            Diagnostics.Assert(toRethrowInfo is not null, "Alternate protocol path failure");
             toRethrowInfo.Throw();
             return null; // UNREACHABLE
         }
@@ -591,7 +591,7 @@ namespace System.Management.Automation.Internal
             // Call DoComplete() for all the commands. DoComplete() will internally call Complete()
             MshCommandRuntime lastCommandRuntime = null;
 
-            if (_commands != null)
+            if (_commands is not null)
             {
                 for (int i = 0; i < _commands.Count; i++)
                 {
@@ -609,7 +609,7 @@ namespace System.Management.Automation.Internal
                         continue; // do not call DoComplete/EndProcessing on the command that initiated stopping
                     }
 
-                    if (commandRequestingUpstreamCommandsToStop != null)
+                    if (commandRequestingUpstreamCommandsToStop is not null)
                     {
                         continue; // do not call DoComplete/EndProcessing on commands that were stopped upstream
                     }
@@ -621,7 +621,7 @@ namespace System.Management.Automation.Internal
                     catch (PipelineStoppedException)
                     {
                         StopUpstreamCommandsException stopUpstreamCommandsException =
-                            _firstTerminatingError != null
+                            _firstTerminatingError is not null
                                 ? _firstTerminatingError.SourceException as StopUpstreamCommandsException
                                 : null;
                         if (stopUpstreamCommandsException is null)
@@ -656,7 +656,7 @@ namespace System.Management.Automation.Internal
             }
 
             // Log the pipeline completion.
-            if (lastCommandRuntime != null)
+            if (lastCommandRuntime is not null)
             {
                 // Only log the pipeline completion if this wasn't a nested pipeline, as
                 // pipeline state in transcription is associated with the toplevel pipeline
@@ -667,7 +667,7 @@ namespace System.Management.Automation.Internal
             }
 
             // If a terminating error occurred, report it now.
-            if (_firstTerminatingError != null)
+            if (_firstTerminatingError is not null)
             {
                 this.LogExecutionException(_firstTerminatingError.SourceException);
                 _firstTerminatingError.Throw();
@@ -713,7 +713,7 @@ namespace System.Management.Automation.Internal
                 // The error we want to report is the first terminating error
                 // which occurred during pipeline execution, regardless
                 // of whether other errors occurred afterward.
-                if (_firstTerminatingError != null)
+                if (_firstTerminatingError is not null)
                 {
                     toRethrowInfo = _firstTerminatingError;
                 }
@@ -738,7 +738,7 @@ namespace System.Management.Automation.Internal
 
             // The only reason we should get here is if
             // an exception should be rethrown.
-            Diagnostics.Assert(toRethrowInfo != null, "Alternate protocol path failure");
+            Diagnostics.Assert(toRethrowInfo is not null, "Alternate protocol path failure");
             toRethrowInfo.Throw();
             return null; // UNREACHABLE
         }
@@ -758,7 +758,7 @@ namespace System.Management.Automation.Internal
                 Start(expectInput);
 
                 // If a terminating error occurred, report it now.
-                if (_firstTerminatingError != null)
+                if (_firstTerminatingError is not null)
                 {
                     _firstTerminatingError.Throw();
                 }
@@ -770,7 +770,7 @@ namespace System.Management.Automation.Internal
                 // The error we want to report is the first terminating error
                 // which occurred during pipeline execution, regardless
                 // of whether other errors occurred afterward.
-                if (_firstTerminatingError != null)
+                if (_firstTerminatingError is not null)
                 {
                     _firstTerminatingError.Throw();
                 }
@@ -871,7 +871,7 @@ namespace System.Management.Automation.Internal
                 Inject(input, enumerate: false);
 
                 // If a terminating error occurred, report it now.
-                if (_firstTerminatingError != null)
+                if (_firstTerminatingError is not null)
                 {
                     _firstTerminatingError.Throw();
                 }
@@ -885,7 +885,7 @@ namespace System.Management.Automation.Internal
                 // The error we want to report is the first terminating error
                 // which occurred during pipeline execution, regardless
                 // of whether other errors occurred afterward.
-                if (_firstTerminatingError != null)
+                if (_firstTerminatingError is not null)
                 {
                     _firstTerminatingError.Throw();
                 }
@@ -974,7 +974,7 @@ namespace System.Management.Automation.Internal
                 throw PSTraceSource.NewInvalidOperationException();
             }
 
-            if (ExternalSuccessOutput != null)
+            if (ExternalSuccessOutput is not null)
             {
                 LastCommandProcessor.CommandRuntime.OutputPipe.ExternalWriter
                     = ExternalSuccessOutput;
@@ -1078,7 +1078,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         private void SetExternalErrorOutput()
         {
-            if (ExternalErrorOutput != null)
+            if (ExternalErrorOutput is not null)
             {
                 for (int i = 0; i < _commands.Count; i++)
                 {
@@ -1160,7 +1160,7 @@ namespace System.Management.Automation.Internal
                 {
                     IEnumerator enumerator = LanguagePrimitives.GetEnumerator(input);
 
-                    if (enumerator != null)
+                    if (enumerator is not null)
                     {
                         firstcommandProcessor.CommandRuntime.InputPipe = new Pipe(enumerator);
                     }
@@ -1249,7 +1249,7 @@ namespace System.Management.Automation.Internal
         /// <param name="pipeToUse">The pipeline to write success objects to.</param>
         internal void LinkPipelineSuccessOutput(Pipe pipeToUse)
         {
-            Dbg.Assert(pipeToUse != null, "Caller should verify pipeToUse != null");
+            Dbg.Assert(pipeToUse is not null, "Caller should verify pipeToUse is not null");
 
             CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];
             if (LastCommandProcessor is null
@@ -1265,7 +1265,7 @@ namespace System.Management.Automation.Internal
 
         internal void LinkPipelineErrorOutput(Pipe pipeToUse)
         {
-            Dbg.Assert(pipeToUse != null, "Caller should verify pipeToUse != null");
+            Dbg.Assert(pipeToUse is not null, "Caller should verify pipeToUse is not null");
 
             for (int i = 0; i < _commands.Count; i++)
             {
@@ -1302,12 +1302,12 @@ namespace System.Management.Automation.Internal
 
             LogToEventLog();
 
-            if (_commands != null)
+            if (_commands is not null)
             {
                 for (int i = 0; i < _commands.Count; i++)
                 {
                     CommandProcessorBase commandProcessor = _commands[i];
-                    if (commandProcessor != null)
+                    if (commandProcessor is not null)
                     {
 #pragma warning disable 56500
                         // If Dispose throws an exception, record it as a
@@ -1324,12 +1324,12 @@ namespace System.Management.Automation.Internal
                         catch (Exception e) // Catch-all OK, 3rd party callout.
                         {
                             InvocationInfo myInvocation = null;
-                            if (commandProcessor.Command != null)
+                            if (commandProcessor.Command is not null)
                                 myInvocation = commandProcessor.Command.MyInvocation;
 
                             ProviderInvocationException pie =
                                 e as ProviderInvocationException;
-                            if (pie != null)
+                            if (pie is not null)
                             {
                                 e = new CmdletProviderInvocationException(
                                     pie,
@@ -1359,7 +1359,7 @@ namespace System.Management.Automation.Internal
             _commands = null;
 
             // Now dispose any pipes that were used for redirection...
-            if (_redirectionPipes != null)
+            if (_redirectionPipes is not null)
             {
                 foreach (PipelineProcessor redirPipe in _redirectionPipes)
                 {
@@ -1369,7 +1369,7 @@ namespace System.Management.Automation.Internal
                     // exceptions...
                     try
                     {
-                        if (redirPipe != null)
+                        if (redirPipe is not null)
                         {
                             redirPipe.Dispose();
                         }
@@ -1407,11 +1407,11 @@ namespace System.Management.Automation.Internal
                 // before hitting the error, therefore we check whether
                 // firstTerminatingError is PipelineStoppedException.
                 else if ((!(_firstTerminatingError.SourceException is PipelineStoppedException))
-                    && command != null && command.Context != null)
+                    && command is not null && command.Context is not null)
                 {
                     Exception ex = e;
                     while ((ex is TargetInvocationException || ex is CmdletInvocationException)
-                            && (ex.InnerException != null))
+                            && (ex.InnerException is not null))
                     {
                         ex = ex.InnerException;
                     }
@@ -1556,7 +1556,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal bool Stopping
         {
-            get { return _localPipeline != null && _localPipeline.IsStopping; }
+            get { return _localPipeline is not null && _localPipeline.IsStopping; }
         }
 
         private LocalPipeline _localPipeline;

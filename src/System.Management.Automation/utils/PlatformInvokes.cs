@@ -621,19 +621,19 @@ namespace System.Management.Automation
             {
                 if (disposing)
                 {
-                    if ((this.hStdInput != null) && !this.hStdInput.IsInvalid)
+                    if ((this.hStdInput is not null) && !this.hStdInput.IsInvalid)
                     {
                         this.hStdInput.Dispose();
                         this.hStdInput = null;
                     }
 
-                    if ((this.hStdOutput != null) && !this.hStdOutput.IsInvalid)
+                    if ((this.hStdOutput is not null) && !this.hStdOutput.IsInvalid)
                     {
                         this.hStdOutput.Dispose();
                         this.hStdOutput = null;
                     }
 
-                    if ((this.hStdError != null) && !this.hStdError.IsInvalid)
+                    if ((this.hStdError is not null) && !this.hStdError.IsInvalid)
                     {
                         this.hStdError.Dispose();
                         this.hStdError = null;

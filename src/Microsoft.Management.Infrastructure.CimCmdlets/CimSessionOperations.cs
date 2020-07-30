@@ -793,7 +793,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 CurrentRunspaceId,
                 delegate (Guid instanceId)
                 {
-                    if (Runspace.DefaultRunspace != null)
+                    if (Runspace.DefaultRunspace is not null)
                     {
                         Runspace.DefaultRunspace.StateChanged += DefaultRunspace_StateChanged;
                     }
@@ -838,7 +838,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                if (Runspace.DefaultRunspace != null)
+                if (Runspace.DefaultRunspace is not null)
                 {
                     return Runspace.DefaultRunspace.InstanceId;
                 }
@@ -1005,7 +1005,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimTestCimSessionContext testCimSessionContext = context as CimTestCimSessionContext;
             uint sessionId = this.sessionState.GenerateSessionId();
             string originalSessionName = testCimSessionContext.CimSessionWrapper.Name;
-            string sessionName = (originalSessionName != null) ? originalSessionName : string.Format(CultureInfo.CurrentUICulture, @"{0}{1}", CimSessionState.CimSessionClassName, sessionId);
+            string sessionName = (originalSessionName is not null) ? originalSessionName : string.Format(CultureInfo.CurrentUICulture, @"{0}{1}", CimSessionState.CimSessionClassName, sessionId);
 
             // detach CimSession from the proxy object
             CimSession createdCimSession = testCimSessionContext.Proxy.Detach();
@@ -1173,7 +1173,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     break;
             }
 
-            if (sessionToGet != null)
+            if (sessionToGet is not null)
             {
                 foreach (PSObject psobject in sessionToGet)
                 {
@@ -1181,7 +1181,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            if (errorRecords != null)
+            if (errorRecords is not null)
             {
                 foreach (ErrorRecord errRecord in errorRecords)
                 {
@@ -1250,7 +1250,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     break;
             }
 
-            if (sessionToRemove != null)
+            if (sessionToRemove is not null)
             {
                 foreach (PSObject psobject in sessionToRemove)
                 {
@@ -1261,7 +1261,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            if (errorRecords != null)
+            if (errorRecords is not null)
             {
                 foreach (ErrorRecord errRecord in errorRecords)
                 {

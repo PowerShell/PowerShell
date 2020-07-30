@@ -156,7 +156,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (_errorRecord != null && !_isErrorRecordOriginallyNull)
+                if (_errorRecord is not null && !_isErrorRecordOriginallyNull)
                 {
                     return _errorRecord.ToString();
                 }

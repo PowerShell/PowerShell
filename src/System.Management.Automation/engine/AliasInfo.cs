@@ -36,7 +36,7 @@ namespace System.Management.Automation
             _definition = definition;
             this.Context = context;
 
-            if (context != null)
+            if (context is not null)
             {
                 this.Module = context.SessionState.Internal.Module;
             }
@@ -73,7 +73,7 @@ namespace System.Management.Automation
             this.Context = context;
             _options = options;
 
-            if (context != null)
+            if (context is not null)
             {
                 this.Module = context.SessionState.Internal.Module;
             }
@@ -98,7 +98,7 @@ namespace System.Management.Automation
 
                 CommandInfo referencedCommand = null;
 
-                if ((_definition != null) && (Context != null))
+                if ((_definition is not null) && (Context is not null))
                 {
                     CommandSearcher commandSearcher =
                         new CommandSearcher(
@@ -140,14 +140,14 @@ namespace System.Management.Automation
 
                 CommandInfo result = null;
 
-                if (_definition != null)
+                if (_definition is not null)
                 {
                     List<string> cyclePrevention = new List<string>();
                     cyclePrevention.Add(Name);
 
                     string commandNameToResolve = _definition;
                     result = ReferencedCommand;
-                    while (result != null && result.CommandType == CommandTypes.Alias)
+                    while (result is not null && result.CommandType == CommandTypes.Alias)
                     {
                         result = ((AliasInfo)result).ReferencedCommand;
 
@@ -350,7 +350,7 @@ namespace System.Management.Automation
             get
             {
                 CommandInfo resolvedCommand = this.ResolvedCommand;
-                if (resolvedCommand != null)
+                if (resolvedCommand is not null)
                 {
                     return resolvedCommand.OutputType;
                 }

@@ -191,7 +191,7 @@ namespace Microsoft.WSMan.Management
             string template = resourceManager.GetString(resourceName);
 
             string result = null;
-            if (template != null)
+            if (template is not null)
             {
                 result = string.Format(CultureInfo.CurrentCulture,
                     template, args);
@@ -291,7 +291,7 @@ namespace Microsoft.WSMan.Management
         internal string GetRootNodeName(string operation, string resourceUri, string actionStr)
         {
             string resultStr = null, sfx = null;
-            if (resourceUri != null)
+            if (resourceUri is not null)
             {
                 resultStr = resourceUri;
                 resultStr = StripParams(resultStr);
@@ -370,13 +370,13 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (_sr != null)
+                if (_sr is not null)
                 {
                     // _sr.Close();
                     _sr.Dispose();
                 }
 
-                if (_fs != null)
+                if (_fs is not null)
                 {
                     // _fs.Close();
                     _fs.Dispose();
@@ -411,7 +411,7 @@ namespace Microsoft.WSMan.Management
                     string xmlns = GetXmlNs(resourceUri.ResourceUri);
 
                     // if valueset is given, i.e hashtable
-                    if (valueset != null)
+                    if (valueset is not null)
                     {
                         foreach (DictionaryEntry entry in valueset)
                         {
@@ -436,7 +436,7 @@ namespace Microsoft.WSMan.Management
                     xmlfile.LoadXml(getResult);
 
                     string xpathString = null;
-                    if (valueset != null)
+                    if (valueset is not null)
                     {
                         foreach (DictionaryEntry entry in valueset)
                         {
@@ -523,13 +523,13 @@ namespace Microsoft.WSMan.Management
         internal string CreateConnectionString(Uri ConnUri, int port, string computername, string applicationname)
         {
             string ConnectionString = null;
-            if (ConnUri != null)
+            if (ConnUri is not null)
             {
                 ConnectionString = ConnUri.OriginalString;
             }
             else
             {
-                if (computername is null && (port != 0 || applicationname != null))
+                if (computername is null && (port != 0 || applicationname is not null))
                 {
                     // the user didn't give us a computer name but he gave a port and/or application name;
                     // in this case we need to have a computer name, to form the connection string;
@@ -543,7 +543,7 @@ namespace Microsoft.WSMan.Management
                     ConnectionString = ConnectionString + ":" + port;
                 }
 
-                if (applicationname != null)
+                if (applicationname is not null)
                 {
                     ConnectionString = ConnectionString + "/" + applicationname;
                 }
@@ -555,12 +555,12 @@ namespace Microsoft.WSMan.Management
         internal IWSManResourceLocator InitializeResourceLocator(Hashtable optionset, Hashtable selectorset, string fragment, Uri dialect, IWSManEx wsmanObj, Uri resourceuri)
         {
             string resource = null;
-            if (resourceuri != null)
+            if (resourceuri is not null)
             {
                 resource = resourceuri.ToString();
             }
 
-            if (selectorset != null)
+            if (selectorset is not null)
             {
                 resource = resource + "?";
                 int i = 0;
@@ -578,7 +578,7 @@ namespace Microsoft.WSMan.Management
             {
                 m_resource = (IWSManResourceLocator)wsmanObj.CreateResourceLocator(resource);
 
-                if (optionset != null)
+                if (optionset is not null)
                 {
                     foreach (DictionaryEntry entry in optionset)
                     {
@@ -598,7 +598,7 @@ namespace Microsoft.WSMan.Management
                     m_resource.FragmentPath = fragment;
                 }
 
-                if (dialect != null)
+                if (dialect is not null)
                 {
                     m_resource.FragmentDialect = dialect.ToString();
                 }
@@ -624,7 +624,7 @@ namespace Microsoft.WSMan.Management
         /// </exception>
         internal static void ValidateSpecifiedAuthentication(AuthenticationMechanism authentication, PSCredential credential, string certificateThumbprint)
         {
-            if ((credential != null) && (certificateThumbprint != null))
+            if ((credential is not null) && (certificateThumbprint is not null))
             {
                 string message = FormatResourceMsgFromResourcetextS(
                     "AmbiguosAuthentication",
@@ -635,7 +635,7 @@ namespace Microsoft.WSMan.Management
 
             if ((authentication != AuthenticationMechanism.Default) &&
                 (authentication != AuthenticationMechanism.ClientCertificate) &&
-                (certificateThumbprint != null))
+                (certificateThumbprint is not null))
             {
                 string message = FormatResourceMsgFromResourcetextS(
                     "AmbiguosAuthentication",
@@ -652,7 +652,7 @@ namespace Microsoft.WSMan.Management
             ////if authentication is given
             int sessionFlags = 0;
 
-            if (authentication.ToString() != null)
+            if (authentication.ToString() is not null)
             {
                 if (authentication.Equals(AuthenticationMechanism.None))
                 {
@@ -691,11 +691,11 @@ namespace Microsoft.WSMan.Management
             }
 
             IWSManConnectionOptionsEx2 connObject = (IWSManConnectionOptionsEx2)wsmanObject.CreateConnectionOptions();
-            if (credential != null)
+            if (credential is not null)
             {
                 // connObject = (IWSManConnectionOptionsEx2)wsmanObject.CreateConnectionOptions();
                 System.Net.NetworkCredential nwCredential = new System.Net.NetworkCredential();
-                if (credential.UserName != null)
+                if (credential.UserName is not null)
                 {
                     nwCredential = credential.GetNetworkCredential();
                     if (string.IsNullOrEmpty(nwCredential.Domain))
@@ -723,13 +723,13 @@ namespace Microsoft.WSMan.Management
                 }
             }
 
-            if (certificateThumbprint != null)
+            if (certificateThumbprint is not null)
             {
                 connObject.CertificateThumbprint = certificateThumbprint;
                 sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUseClientCertificate;
             }
 
-            if (sessionoption != null)
+            if (sessionoption is not null)
             {
                 if (sessionoption.ProxyAuthentication != 0)
                 {
@@ -765,7 +765,7 @@ namespace Microsoft.WSMan.Management
                         ProxyAuthenticationFlags = connObject.ProxyAuthenticationUseDigest();
                     }
 
-                    if (sessionoption.ProxyCredential != null)
+                    if (sessionoption.ProxyCredential is not null)
                     {
                         try
                         {
@@ -832,7 +832,7 @@ namespace Microsoft.WSMan.Management
             try
             {
                 m_SessionObj = (IWSManSession)wsmanObject.CreateSession(connectionString, sessionFlags, connObject);
-                if (sessionoption != null)
+                if (sessionoption is not null)
                 {
                     if (sessionoption.OperationTimeout > 0)
                     {
@@ -850,13 +850,13 @@ namespace Microsoft.WSMan.Management
 
         internal void CleanUp()
         {
-            if (_sr != null)
+            if (_sr is not null)
             {
                 _sr.Dispose();
                 _sr = null;
             }
 
-            if (_fs != null)
+            if (_fs is not null)
             {
                 _fs.Dispose();
                 _fs = null;
@@ -868,7 +868,7 @@ namespace Microsoft.WSMan.Management
             StringBuilder filter = new StringBuilder();
             foreach (DictionaryEntry entry in seletorset)
             {
-                if (entry.Key != null && entry.Value != null)
+                if (entry.Key is not null && entry.Value is not null)
                 {
                     filter.Append(entry.Key.ToString());
                     filter.Append("=");
@@ -889,7 +889,7 @@ namespace Microsoft.WSMan.Management
                 ErrorDoc.LoadXml(ErrorMessage);
                 InvalidOperationException ex = new InvalidOperationException(ErrorDoc.OuterXml);
                 ErrorRecord er = new ErrorRecord(ex, "WsManError", ErrorCategory.InvalidOperation, targetobject);
-                if (cmdletname != null)
+                if (cmdletname is not null)
                 {
                     cmdletname.ThrowTerminatingError(er);
                 }
@@ -902,7 +902,7 @@ namespace Microsoft.WSMan.Management
             {
                 InvalidOperationException ex = new InvalidOperationException(ErrorMessage);
                 ErrorRecord er = new ErrorRecord(ex, "WsManError", ErrorCategory.InvalidOperation, targetobject);
-                if (cmdletname != null)
+                if (cmdletname is not null)
                 {
                     cmdletname.ThrowTerminatingError(er);
                 }
@@ -950,7 +950,7 @@ namespace Microsoft.WSMan.Management
             try
             {
                 string connectionStr = CreateConnectionString(connectionuri, port, computername, applicationname);
-                if (connectionuri != null)
+                if (connectionuri is not null)
                 {
                     // in the format http(s)://server[:port/applicationname]
                     string[] constrsplit = connectionStr.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
@@ -1016,7 +1016,7 @@ namespace Microsoft.WSMan.Management
                     RegistryKeyPermissionCheck.ReadWriteSubTree,
                     System.Security.AccessControl.RegistryRights.FullControl);
 
-                if (rGPOLocalMachineKey != null)
+                if (rGPOLocalMachineKey is not null)
                 {
                     rGPOLocalMachineKey = rGPOLocalMachineKey.OpenSubKey(
                         Key_Allow_Fresh_Credentials,
@@ -1038,7 +1038,7 @@ namespace Microsoft.WSMan.Management
                     {
                         object keyvalue = rGPOLocalMachineKey.GetValue(value);
 
-                        if (keyvalue != null && keyvalue.ToString().StartsWith(applicationname, StringComparison.OrdinalIgnoreCase))
+                        if (keyvalue is not null && keyvalue.ToString().StartsWith(applicationname, StringComparison.OrdinalIgnoreCase))
                         {
                             if (!AllowFreshCredentialsValueShouldBePresent)
                             {

@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual object GetValueOfItem(object item)
         {
             Dbg.Diagnostics.Assert(
-                item != null,
+                item is not null,
                 "Caller should verify the item parameter");
 
             object value = item;
@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
             object item = null;
 
             IDictionary table = GetSessionStateTable();
-            if (table != null)
+            if (table is not null)
             {
                 if (string.IsNullOrEmpty(name))
                 {
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (item != null)
+            if (item is not null)
             {
                 if (SessionState.IsVisible(this.Context.Origin, item))
                 {
@@ -393,7 +393,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                if (item != null)
+                if (item is not null)
                 {
                     if (SessionState.IsVisible(origin, item))
                     {
@@ -485,7 +485,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                if (item != null)
+                if (item is not null)
                 {
                     if (SessionState.IsVisible(origin, item))
                     {
@@ -567,7 +567,7 @@ namespace Microsoft.PowerShell.Commands
                             path));
                 }
 
-                if (item != null)
+                if (item is not null)
                 {
                     result = true;
                 }
@@ -796,7 +796,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (item != null)
+            if (item is not null)
             {
                 // Confirm the new item with the user
 
@@ -892,7 +892,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (item != null)
+            if (item is not null)
             {
                 if (ItemExists(newName) && !Force)
                 {
@@ -1140,11 +1140,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 object item = _provider.GetSessionStateItem(_path);
 
-                if (item != null)
+                if (item is not null)
                 {
                     object getItemValueResult = _provider.GetValueOfItem(item);
 
-                    if (getItemValueResult != null)
+                    if (getItemValueResult is not null)
                     {
                         result = getItemValueResult as IList ?? new object[] { getItemValueResult };
                     }

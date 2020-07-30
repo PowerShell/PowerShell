@@ -446,7 +446,7 @@ namespace Microsoft.PowerShell
                 dataIn.cbData = (uint)userData.Length;
                 dataIn.pbData = pbDataIn.AddrOfPinnedObject();
                 CAPI.CRYPTOAPI_BLOB entropy = new CAPI.CRYPTOAPI_BLOB();
-                if (optionalEntropy != null)
+                if (optionalEntropy is not null)
                 {
                     pOptionalEntropy = GCHandle.Alloc(optionalEntropy, GCHandleType.Pinned);
                     entropy.cbData = (uint)optionalEntropy.Length;
@@ -534,7 +534,7 @@ namespace Microsoft.PowerShell
                 dataIn.cbData = (uint)encryptedData.Length;
                 dataIn.pbData = pbDataIn.AddrOfPinnedObject();
                 CAPI.CRYPTOAPI_BLOB entropy = new CAPI.CRYPTOAPI_BLOB();
-                if (optionalEntropy != null)
+                if (optionalEntropy is not null)
                 {
                     pOptionalEntropy = GCHandle.Alloc(optionalEntropy, GCHandleType.Pinned);
                     entropy.cbData = (uint)optionalEntropy.Length;

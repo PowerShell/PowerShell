@@ -296,7 +296,7 @@ namespace System.Management.Automation.Language
 
             InternalScriptExtent startExtent = start as InternalScriptExtent;
             InternalScriptExtent endExtent = end as InternalScriptExtent;
-            Diagnostics.Assert(startExtent != null && endExtent != null, "This function only handles internal and empty extents");
+            Diagnostics.Assert(startExtent is not null && endExtent is not null, "This function only handles internal and empty extents");
             Diagnostics.Assert(startExtent.PositionHelper == endExtent.PositionHelper, "Extents must be from same source");
 
             return new InternalScriptExtent(startExtent.PositionHelper, startExtent.StartOffset, endExtent.EndOffset);

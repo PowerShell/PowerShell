@@ -19,9 +19,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                         ViewDefinition view,
                                         FormattingCommandLineParameters formatParameters)
         {
-            Diagnostics.Assert(mshExpressionFactory != null, "mshExpressionFactory cannot be null");
-            Diagnostics.Assert(db != null, "db cannot be null");
-            Diagnostics.Assert(view != null, "view cannot be null");
+            Diagnostics.Assert(mshExpressionFactory is not null, "mshExpressionFactory cannot be null");
+            Diagnostics.Assert(db is not null, "db cannot be null");
+            Diagnostics.Assert(view is not null, "view cannot be null");
 
             errorContext = terminatingErrorContext;
             expressionFactory = mshExpressionFactory;
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void InitializeFormatErrorManager()
         {
             FormatErrorPolicy formatErrorPolicy = new FormatErrorPolicy();
-            if (parameters != null && parameters.showErrorsAsMessages.HasValue)
+            if (parameters is not null && parameters.showErrorsAsMessages.HasValue)
             {
                 formatErrorPolicy.ShowErrorsAsMessages = parameters.showErrorsAsMessages.Value;
             }
@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 formatErrorPolicy.ShowErrorsAsMessages = this.dataBaseInfo.db.defaultSettingsSection.formatErrorPolicy.ShowErrorsAsMessages;
             }
 
-            if (parameters != null && parameters.showErrorsInFormattedOutput.HasValue)
+            if (parameters is not null && parameters.showErrorsInFormattedOutput.HasValue)
             {
                 formatErrorPolicy.ShowErrorsInFormattedOutput = parameters.showErrorsInFormattedOutput.Value;
             }
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void InitializeGroupBy()
         {
             // first check if there is an override from the command line
-            if (parameters != null && parameters.groupByParameter != null)
+            if (parameters is not null && parameters.groupByParameter is not null)
             {
                 // get the expression to use
                 PSPropertyExpression groupingKeyExpression = parameters.groupByParameter.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // check if we have a view to initialize from
-            if (this.dataBaseInfo.view != null)
+            if (this.dataBaseInfo.view is not null)
             {
                 GroupBy gb = this.dataBaseInfo.view.groupBy;
                 if (gb is null)
@@ -135,16 +135,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void InitializeAutoSize()
         {
             // check the autosize flag first
-            if (parameters != null && parameters.autosize.HasValue)
+            if (parameters is not null && parameters.autosize.HasValue)
             {
                 _autosize = parameters.autosize.Value;
                 return;
             }
             // check if we have a view with autosize checked
-            if (this.dataBaseInfo.view != null && this.dataBaseInfo.view.mainControl != null)
+            if (this.dataBaseInfo.view is not null && this.dataBaseInfo.view.mainControl is not null)
             {
                 ControlBody controlBody = this.dataBaseInfo.view.mainControl as ControlBody;
-                if (controlBody != null && controlBody.autosize.HasValue)
+                if (controlBody is not null && controlBody.autosize.HasValue)
                 {
                     _autosize = controlBody.autosize.Value;
                 }
@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private void InitializeRepeatHeader()
         {
-            if (parameters != null)
+            if (parameters is not null)
             {
                 _repeatHeader = parameters.repeatHeader;
             }
@@ -189,9 +189,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we need to determine how to display the group header
             ControlBase control = null;
             TextToken labelTextToken = null;
-            if (this.dataBaseInfo.view != null && this.dataBaseInfo.view.groupBy != null)
+            if (this.dataBaseInfo.view is not null && this.dataBaseInfo.view.groupBy is not null)
             {
-                if (this.dataBaseInfo.view.groupBy.startGroup != null)
+                if (this.dataBaseInfo.view.groupBy.startGroup is not null)
                 {
                     // NOTE: from the database constraints, only one of the
                     // two will be non null
@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 string currentGroupingValueDisplay = PSObjectHelper.SmartToString(so, this.expressionFactory, enumerationLimit, formatErrorObject);
 
-                if (formatErrorObject != null && formatErrorObject.exception != null)
+                if (formatErrorObject is not null && formatErrorObject.exception is not null)
                 {
                     // if we did no thave any errors in the expression evaluation
                     // we might have errors in the formatting, if present
@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // database, let's use it, else fall back to the string provided
                 // by the grouping manager
                 string label;
-                if (labelTextToken != null)
+                if (labelTextToken is not null)
                     label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(labelTextToken);
                 else
                     label = _groupingManager.GroupingKeyDisplayName;
@@ -302,7 +302,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return true;
             }
 
-            bool result = match.BestMatch != null;
+            bool result = match.BestMatch is not null;
 
             // we were unable to find a best match so far..try
             // to get rid of Deserialization prefix and see if a
@@ -310,7 +310,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (false == result)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (typesWithoutPrefix != null)
+                if (typesWithoutPrefix is not null)
                 {
                     result = IsObjectApplicable(typesWithoutPrefix);
                 }
@@ -374,10 +374,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             string retVal = PSObjectHelper.GetExpressionDisplayValue(so, enumerationLimit, ex,
                                 directive, formatErrorObject, expressionFactory, out expressionResult);
 
-            if (expressionResult != null)
+            if (expressionResult is not null)
             {
                 // we obtained a result, check if there is an error
-                if (expressionResult.Exception != null)
+                if (expressionResult.Exception is not null)
                 {
                     _errorManager.LogPSPropertyExpressionFailedResult(expressionResult, so);
                     if (_errorManager.DisplayErrorStrings)
@@ -385,7 +385,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         retVal = _errorManager.ErrorString;
                     }
                 }
-                else if (formatErrorObject != null && formatErrorObject.exception != null)
+                else if (formatErrorObject is not null && formatErrorObject.exception is not null)
                 {
                     // if we did no thave any errors in the expression evaluation
                     // we might have errors in the formatting, if present
@@ -409,7 +409,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             PSPropertyExpressionResult expressionResult;
             bool retVal = DisplayCondition.Evaluate(so, ex, out expressionResult);
 
-            if (expressionResult != null && expressionResult.Exception != null)
+            if (expressionResult is not null && expressionResult.Exception is not null)
             {
                 _errorManager.LogPSPropertyExpressionFailedResult(expressionResult, so);
             }
@@ -440,7 +440,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 FormatToken token = formatTokenList[0];
                 FieldPropertyToken fpt = token as FieldPropertyToken;
-                if (fpt != null)
+                if (fpt is not null)
                 {
                     PSPropertyExpression ex = this.expressionFactory.CreateFromExpressionToken(fpt.expression, this.dataBaseInfo.view.loadingInfo);
                     fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, ex, fpt.fieldFormattingDirective, out result);
@@ -448,7 +448,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 else
                 {
                     TextToken tt = token as TextToken;
-                    if (tt != null)
+                    if (tt is not null)
                         fpf.propertyValue = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
                 }
             }

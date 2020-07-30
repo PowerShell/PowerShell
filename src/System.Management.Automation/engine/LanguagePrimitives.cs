@@ -509,7 +509,7 @@ namespace System.Management.Automation
             catch (Exception innerException)
             {
                 e = GetEnumerableFromIEnumerableT(obj);
-                if (e != null)
+                if (e is not null)
                 {
                     return e;
                 }
@@ -568,10 +568,10 @@ namespace System.Management.Automation
         public static PSDataCollection<PSObject> GetPSDataCollection(object inputValue)
         {
             PSDataCollection<PSObject> result = new PSDataCollection<PSObject>();
-            if (inputValue != null)
+            if (inputValue is not null)
             {
                 IEnumerator e = GetEnumerator(inputValue);
-                if (e != null)
+                if (e is not null)
                 {
                     while (e.MoveNext())
                     {
@@ -658,7 +658,7 @@ namespace System.Management.Automation
 
             string firstString = first as string;
             string secondString;
-            if (firstString != null)
+            if (firstString is not null)
             {
                 secondString = second as string ?? (string)LanguagePrimitives.ConvertTo(second, typeof(string), culture);
                 return (culture.CompareInfo.Compare(firstString, secondString,
@@ -679,7 +679,7 @@ namespace System.Management.Automation
             if (firstType == typeof(char) && ignoreCase)
             {
                 secondString = second as string;
-                if (secondString != null && secondString.Length == 1)
+                if (secondString is not null && secondString.Length == 1)
                 {
                     char firstAsUpper = culture.TextInfo.ToUpper((char)first);
                     char secondAsUpper = culture.TextInfo.ToUpper(secondString[0]);
@@ -1017,7 +1017,7 @@ namespace System.Management.Automation
                 return ((SwitchParameter)obj).ToBool();
 
             IList objectArray = obj as IList;
-            if (objectArray != null)
+            if (objectArray is not null)
             {
                 return IsTrue(objectArray);
             }
@@ -1326,7 +1326,7 @@ namespace System.Management.Automation
 
         internal static bool IsCimIntrinsicScalarType(Type type)
         {
-            Dbg.Assert(type != null, "Caller should verify type != null");
+            Dbg.Assert(type is not null, "Caller should verify type is not null");
 
             // using type code we can cover all intrinsic types from the table
             // on page 11 of DSP0004, except:
@@ -1472,21 +1472,21 @@ namespace System.Management.Automation
         {
             object typesXmlConverter = null;
             ExecutionContext ecFromTLS = LocalPipeline.GetExecutionContextFromTLS();
-            if (ecFromTLS != null)
+            if (ecFromTLS is not null)
             {
-                s_tracer.WriteLine("ecFromTLS != null");
+                s_tracer.WriteLine("ecFromTLS is not null");
                 typesXmlConverter = ecFromTLS.TypeTable.GetTypeConverter(type.FullName);
             }
 
-            if ((typesXmlConverter is null) && (backupTypeTable != null))
+            if ((typesXmlConverter is null) && (backupTypeTable is not null))
             {
                 s_tracer.WriteLine("Using provided TypeTable to get the type converter");
                 typesXmlConverter = backupTypeTable.GetTypeConverter(type.FullName);
             }
 
-            if (typesXmlConverter != null)
+            if (typesXmlConverter is not null)
             {
-                s_tracer.WriteLine("typesXmlConverter != null");
+                s_tracer.WriteLine("typesXmlConverter is not null");
                 return typesXmlConverter;
             }
 
@@ -1750,7 +1750,7 @@ namespace System.Management.Automation
         /// <returns>Converted value.</returns>
         public static object ConvertPSObjectToType(PSObject valueToConvert, Type resultType, bool recursion, IFormatProvider formatProvider, bool ignoreUnknownMembers)
         {
-            if (valueToConvert != null)
+            if (valueToConvert is not null)
             {
                 ConstructorInfo toConstructor = resultType.GetConstructor(Type.EmptyTypes);
                 ConvertViaNoArgumentConstructor noArgumentConstructorConverter = new ConvertViaNoArgumentConstructor(toConstructor, resultType);
@@ -2094,7 +2094,7 @@ namespace System.Management.Automation
 
             protected static object BaseConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase, bool multipleValues)
             {
-                Diagnostics.Assert(sourceValue != null, "the type converter has a special case for null source values");
+                Diagnostics.Assert(sourceValue is not null, "the type converter has a special case for null source values");
                 string sourceValueString = sourceValue as string;
                 if (sourceValueString is null)
                 {
@@ -2196,7 +2196,7 @@ namespace System.Management.Automation
                     {
                         string name = names[j];
 
-                        if (fromValuePattern != null)
+                        if (fromValuePattern is not null)
                         {
                             if (!fromValuePattern.IsMatch(name))
                                 continue;
@@ -2585,10 +2585,10 @@ namespace System.Management.Automation
                 // first using ConvertTo for the original type
                 object valueConverter = GetConverter(originalType, backupTypeTable);
 
-                if ((valueConverter != null))
+                if ((valueConverter is not null))
                 {
                     TypeConverter valueTypeConverter = valueConverter as TypeConverter;
-                    if (valueTypeConverter != null)
+                    if (valueTypeConverter is not null)
                     {
                         typeConversion.WriteLine("Original type's converter is TypeConverter.");
                         if (valueTypeConverter.CanConvertTo(resultType))
@@ -2614,7 +2614,7 @@ namespace System.Management.Automation
                     }
 
                     PSTypeConverter valuePSTypeConverter = valueConverter as PSTypeConverter;
-                    if (valuePSTypeConverter != null)
+                    if (valuePSTypeConverter is not null)
                     {
                         typeConversion.WriteLine("Original type's converter is PSTypeConverter.");
                         PSObject psValueToConvert = PSObject.AsPSObject(valueToConvert);
@@ -2645,10 +2645,10 @@ namespace System.Management.Automation
 
                 // now ConvertFrom for the destination type
                 valueConverter = GetConverter(resultType, backupTypeTable);
-                if (valueConverter != null)
+                if (valueConverter is not null)
                 {
                     TypeConverter valueTypeConverter = valueConverter as TypeConverter;
-                    if (valueTypeConverter != null)
+                    if (valueTypeConverter is not null)
                     {
                         typeConversion.WriteLine("Destination type's converter is TypeConverter that can convert from originalType.");
                         if (valueTypeConverter.CanConvertFrom(originalType))
@@ -2674,7 +2674,7 @@ namespace System.Management.Automation
                     }
 
                     PSTypeConverter valuePSTypeConverter = valueConverter as PSTypeConverter;
-                    if (valuePSTypeConverter != null)
+                    if (valuePSTypeConverter is not null)
                     {
                         typeConversion.WriteLine("Destination type's converter is PSTypeConverter.");
                         PSObject psValueToConvert = PSObject.AsPSObject(valueToConvert);
@@ -2901,7 +2901,7 @@ namespace System.Management.Automation
                                                      TypeTable backupTable)
         {
             var strToConvert = valueToConvert as string;
-            Diagnostics.Assert(strToConvert != null, "Value to convert must be a string");
+            Diagnostics.Assert(strToConvert is not null, "Value to convert must be a string");
             Diagnostics.Assert(IsNumeric(GetTypeCode(resultType)), "Result type must be numeric");
 
             if (strToConvert.Length == 0)
@@ -2928,7 +2928,7 @@ namespace System.Management.Automation
             {
                 // This catch has one extra reason to be generic (Exception e).
                 // integerConverter.ConvertFrom warps its exceptions in a System.Exception.
-                if (e.InnerException != null)
+                if (e.InnerException is not null)
                 {
                     e = e.InnerException;
                 }
@@ -3085,7 +3085,7 @@ namespace System.Management.Automation
                                                TypeTable backupTable)
         {
             typeConversion.WriteLine("Converting ref to boolean.");
-            return valueToConvert != null;
+            return valueToConvert is not null;
         }
 
         private static bool ConvertValueToBool(object valueToConvert,
@@ -3281,7 +3281,7 @@ namespace System.Management.Automation
                                                      IFormatProvider formatProvider,
                                                      TypeTable backupTable)
         {
-            if (originalValueToConvert != null && originalValueToConvert.TokenText != null)
+            if (originalValueToConvert is not null && originalValueToConvert.TokenText is not null)
             {
                 return originalValueToConvert.TokenText;
             }
@@ -3358,7 +3358,7 @@ namespace System.Management.Automation
         {
             typeConversion.WriteLine("Converting to PSReference.");
 
-            Dbg.Assert(valueToConvert != null, "[ref]$null cast should be handler earlier with a separate ConvertNullToPSReference method");
+            Dbg.Assert(valueToConvert is not null, "[ref]$null cast should be handler earlier with a separate ConvertNullToPSReference method");
 
             return PSReference.CreateInstance(valueToConvert, valueToConvert.GetType());
         }
@@ -3483,7 +3483,7 @@ namespace System.Management.Automation
         {
             typeConversion.WriteLine("Value to convert is scalar.");
 
-            if (originalValueToConvert != null && originalValueToConvert.TokenText != null)
+            if (originalValueToConvert is not null && originalValueToConvert.TokenText is not null)
             {
                 valueToConvert = originalValueToConvert;
             }
@@ -3625,7 +3625,7 @@ namespace System.Management.Automation
                     // then convert the enum back to a string and finally append it to the string builder to
                     // preserve consistent semantics between quoted and unquoted lists...
                     object tempResult = ConvertTo(e.Current, resultType, recursion, formatProvider, backupTable);
-                    if (tempResult != null)
+                    if (tempResult is not null)
                     {
                         sbResult.Append(tempResult.ToString());
                     }
@@ -3842,7 +3842,7 @@ namespace System.Management.Automation
                     {
                         // typeof(Array).IsAssignableFrom(typeof(object[])) == true
                         array = valueToConvert as Array;
-                        listSize = array != null ? array.Length : 1;
+                        listSize = array is not null ? array.Length : 1;
                     }
 
                     resultAsList = ListCtorLambda(listSize);
@@ -3912,7 +3912,7 @@ namespace System.Management.Automation
 
             internal ConvertViaNoArgumentConstructor(ConstructorInfo constructor, Type type)
             {
-                var newExpr = (constructor != null) ? Expression.New(constructor) : Expression.New(type);
+                var newExpr = (constructor is not null) ? Expression.New(constructor) : Expression.New(type);
                 _constructor = Expression.Lambda<Func<object>>(newExpr.Cast(typeof(object))).Compile();
             }
 
@@ -3947,7 +3947,7 @@ namespace System.Management.Automation
                     {
                         result = _constructor();
                         var psobject = valueToConvert as PSObject;
-                        if (psobject != null)
+                        if (psobject is not null)
                         {
                             // Use PSObject properties to perform conversion.
                             SetObjectProperties(result, psobject, resultType, CreateMemberNotFoundError, CreateMemberSetValueError, formatProvider, recursion, ignoreUnknownMembers);
@@ -4073,7 +4073,7 @@ namespace System.Management.Automation
         {
             // If the original object was a number, then try and do a conversion on the string
             // equivalent of that number...
-            if (originalValueToConvert != null && originalValueToConvert.TokenText != null)
+            if (originalValueToConvert is not null && originalValueToConvert.TokenText is not null)
             {
                 return LanguagePrimitives.ConvertTo(originalValueToConvert.TokenText,
                     resultType, recursion, formatProvider, backupTable);
@@ -4103,7 +4103,7 @@ namespace System.Management.Automation
             {
                 object result = null;
 
-                if (tryfirstConverter != null)
+                if (tryfirstConverter is not null)
                 {
                     try
                     {
@@ -4120,7 +4120,7 @@ namespace System.Management.Automation
                     return result;
                 }
 
-                if (fallbackConverter != null)
+                if (fallbackConverter is not null)
                 {
                     return fallbackConverter(valueToConvert, resultType, recursion, originalValueToConvert, formatProvider, backupTable);
                 }
@@ -4551,7 +4551,7 @@ namespace System.Management.Automation
             {
                 object baseObj = PSObject.Base(psObject);
                 var dictionary = baseObj as IDictionary;
-                if (dictionary != null)
+                if (dictionary is not null)
                 {
                     // Win8:649519
                     return SetObjectProperties(o, dictionary, resultType, memberNotFoundErrorAction, memberSetValueErrorAction, enableMethodCall: false);
@@ -4560,7 +4560,7 @@ namespace System.Management.Automation
                 {
                     // Support PSObject to Strong type conversion.
                     PSObject psBaseObject = baseObj as PSObject;
-                    if (psBaseObject != null)
+                    if (psBaseObject is not null)
                     {
                         Dictionary<string, object> properties = new Dictionary<string, object>();
                         foreach (var item in psBaseObject.Properties)
@@ -4595,24 +4595,24 @@ namespace System.Management.Automation
         internal static PSObject SetObjectProperties(object o, IDictionary properties, Type resultType, MemberNotFoundError memberNotFoundErrorAction, MemberSetValueError memberSetValueErrorAction, bool enableMethodCall, IFormatProvider formatProvider, bool recursion = false, bool ignoreUnknownMembers = false)
         {
             PSObject pso = PSObject.AsPSObject(o);
-            if (properties != null)
+            if (properties is not null)
             {
                 foreach (DictionaryEntry prop in properties)
                 {
                     PSMethodInfo method = enableMethodCall ? pso.Methods[prop.Key.ToString()] : null;
                     try
                     {
-                        if (method != null)
+                        if (method is not null)
                         {
                             method.Invoke(new object[] { prop.Value });
                         }
                         else
                         {
                             PSPropertyInfo property = pso.Properties[prop.Key.ToString()];
-                            if (property != null)
+                            if (property is not null)
                             {
                                 object propValue = prop.Value;
-                                if (recursion && prop.Value != null)
+                                if (recursion && prop.Value is not null)
                                 {
                                     Type propType;
                                     if (TypeResolver.TryResolveType(property.TypeNameOfValue, out propType))
@@ -4622,7 +4622,7 @@ namespace System.Management.Automation
                                         try
                                         {
                                             PSObject propertyValue = prop.Value as PSObject;
-                                            if (propertyValue != null)
+                                            if (propertyValue is not null)
                                             {
                                                 propValue = LanguagePrimitives.ConvertPSObjectToType(propertyValue, propType, recursion, formatProvider, ignoreUnknownMembers);
                                             }
@@ -4650,7 +4650,7 @@ namespace System.Management.Automation
                                 {
                                     var key = prop.Key as string;
                                     var value = prop.Value as string;
-                                    if (key != null && value != null && key.Equals("PSTypeName", StringComparison.OrdinalIgnoreCase))
+                                    if (key is not null && value is not null && key.Equals("PSTypeName", StringComparison.OrdinalIgnoreCase))
                                     {
                                         pso.TypeNames.Insert(0, value);
                                     }
@@ -4684,7 +4684,7 @@ namespace System.Management.Automation
             StringBuilder availableProperties = new StringBuilder();
             bool first = true;
 
-            if (pso != null && pso.Properties != null)
+            if (pso is not null && pso.Properties is not null)
             {
                 foreach (PSPropertyInfo p in pso.Properties)
                 {
@@ -4727,7 +4727,7 @@ namespace System.Management.Automation
                 return data;
             }
 
-            if (valueAsPsObj != null)
+            if (valueAsPsObj is not null)
             {
                 debase = true;
 
@@ -4868,7 +4868,7 @@ namespace System.Management.Automation
             valueDependentRank = ConversionRank.None;
 
             Type underlyingType = Nullable.GetUnderlyingType(toType);
-            if (underlyingType != null)
+            if (underlyingType is not null)
             {
                 IConversionData nullableConversion = FigureConversion(fromType, underlyingType);
                 if (nullableConversion.Rank != ConversionRank.None)
@@ -5199,7 +5199,7 @@ namespace System.Management.Automation
                     typeConversion.WriteLine("Exception finding Parse method with CultureInfo: \"{0}\".", e.Message);
                 }
 
-                if (parse != null)
+                if (parse is not null)
                 {
                     ConvertViaParseMethod converter = new ConvertViaParseMethod();
                     converter.parse = parse;
@@ -5219,7 +5219,7 @@ namespace System.Management.Automation
                     typeConversion.WriteLine("Exception finding Parse method: \"{0}\".", e.Message);
                 }
 
-                if (parse != null)
+                if (parse is not null)
                 {
                     ConvertViaParseMethod converter = new ConvertViaParseMethod();
                     converter.parse = parse;
@@ -5272,7 +5272,7 @@ namespace System.Management.Automation
                     if (typeof(Array) == fromType || typeof(object[]) == fromType ||
                         elementType.IsAssignableFrom(fromType) ||
                         // WinBlue: 423899 : To support scenario like [list[int]]"4"
-                        (FigureConversion(fromType, elementType) != null))
+                        (FigureConversion(fromType, elementType) is not null))
                     {
                         isScalar = elementType.IsAssignableFrom(fromType);
                         ConstructorInfo[] ctors = toType.GetConstructors();
@@ -5489,7 +5489,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (castOperator != null)
+            if (castOperator is not null)
             {
                 rank = castOperator.Name.Equals("op_Implicit", StringComparison.OrdinalIgnoreCase)
                     ? ConversionRank.ImplicitCast : ConversionRank.ExplicitCast;
@@ -5538,7 +5538,7 @@ namespace System.Management.Automation
         internal static IConversionData FigureConversion(Type fromType, Type toType)
         {
             IConversionData data = GetConversionData(fromType, toType);
-            if (data != null)
+            if (data is not null)
             {
                 return data;
             }
@@ -5582,7 +5582,7 @@ namespace System.Management.Automation
             {
                 var context = LocalPipeline.GetExecutionContextFromTLS();
 
-                if ((context != null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage))
+                if ((context is not null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage))
                 {
                     if ((toType != typeof(object)) &&
                         (toType != typeof(object[])) &&
@@ -5607,12 +5607,12 @@ namespace System.Management.Automation
             PSConverter<object> valueDependentConversion = null;
             ConversionRank valueDependentRank = ConversionRank.None;
             IConversionData conversionData = FigureLanguageConversion(fromType, toType, out valueDependentConversion, out valueDependentRank);
-            if (conversionData != null)
+            if (conversionData is not null)
             {
                 return conversionData;
             }
 
-            rank = valueDependentConversion != null ? ConversionRank.Language : ConversionRank.None;
+            rank = valueDependentConversion is not null ? ConversionRank.Language : ConversionRank.None;
             converter = FigureParseConversion(fromType, toType);
             if (converter is null)
             {
@@ -5655,7 +5655,7 @@ namespace System.Management.Automation
                                 // So, we need to check only for the first condition
                                 ConstructorInfo resultConstructor = toType.GetConstructor(Type.EmptyTypes);
 
-                                if (resultConstructor != null || (toType.IsValueType && !toType.IsPrimitive))
+                                if (resultConstructor is not null || (toType.IsValueType && !toType.IsPrimitive))
                                 {
                                     ConvertViaNoArgumentConstructor noArgumentConstructorConverter = new ConvertViaNoArgumentConstructor(resultConstructor, toType);
                                     converter = noArgumentConstructorConverter.Convert;
@@ -5682,7 +5682,7 @@ namespace System.Management.Automation
             if (converter is null)
             {
                 var tuple = FigureIEnumerableConstructorConversion(fromType, toType);
-                if (tuple != null)
+                if (tuple is not null)
                 {
                     converter = tuple.Item1;
                     rank = tuple.Item2;
@@ -5695,7 +5695,7 @@ namespace System.Management.Automation
             }
 
             if (TypeConverterPossiblyExists(fromType) || TypeConverterPossiblyExists(toType)
-                || (converter != null && valueDependentConversion != null))
+                || (converter is not null && valueDependentConversion is not null))
             {
                 ConvertCheckingForCustomConverter customConverter = new ConvertCheckingForCustomConverter();
                 customConverter.tryfirstConverter = valueDependentConversion;
@@ -5710,7 +5710,7 @@ namespace System.Management.Automation
                     rank = ConversionRank.Custom;
                 }
             }
-            else if (valueDependentConversion != null)
+            else if (valueDependentConversion is not null)
             {
                 converter = valueDependentConversion;
                 rank = valueDependentRank;
@@ -5730,12 +5730,12 @@ namespace System.Management.Automation
         private static IConversionData FigureConversionFromNull(Type toType)
         {
             IConversionData data = GetConversionData(typeof(Null), toType);
-            if (data != null)
+            if (data is not null)
             {
                 return data;
             }
 
-            if (Nullable.GetUnderlyingType(toType) != null)
+            if (Nullable.GetUnderlyingType(toType) is not null)
             {
                 return CacheConversion<object>(typeof(Null), toType, LanguagePrimitives.ConvertNullToNullable, ConversionRank.NullToValue);
             }
@@ -5756,7 +5756,7 @@ namespace System.Management.Automation
 
             PSObject pso = PSObject.AsPSObject(o);
             var typeNames = pso.InternalTypeNames;
-            if ((typeNames != null) && (typeNames.Count > 0))
+            if ((typeNames is not null) && (typeNames.Count > 0))
             {
                 return typeNames[0];
             }

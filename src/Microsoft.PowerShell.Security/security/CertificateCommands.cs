@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
             // this cannot happen as we have specified the Path
             // property to be a mandatory parameter
             //
-            Dbg.Assert((FilePath != null) && (FilePath.Length > 0),
+            Dbg.Assert((FilePath is not null) && (FilePath.Length > 0),
                        "GetCertificateCommand: Param binder did not bind path");
 
             X509Certificate2 cert = null;

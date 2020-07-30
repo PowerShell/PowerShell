@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (Type type in verbTypes)
             {
                 string groupName = type.Name.Substring(5);
-                if (this.Group != null)
+                if (this.Group is not null)
                 {
                     if (!SessionStateUtilities.CollectionContainsValue(this.Group, groupName, StringComparer.OrdinalIgnoreCase))
                     {
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (field.IsLiteral)
                     {
-                        if (this.Verb != null)
+                        if (this.Verb is not null)
                         {
                             if (!SessionStateUtilities.MatchesAnyWildcardPattern(field.Name, matchingVerbs, false))
                             {

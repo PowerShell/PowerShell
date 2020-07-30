@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (this.PathType == TestPathType.Any && !IsValid)
             {
-                if (Path != null && Path.Length > 0 && Path[0] != null)
+                if (Path is not null && Path.Length > 0 && Path[0] is not null)
                 {
                     result = InvokeProvider.Item.ItemExistsDynamicParameters(Path[0], context);
                 }

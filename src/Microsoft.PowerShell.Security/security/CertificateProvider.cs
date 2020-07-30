@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool match = false;
 
-            if (_unicodeName != null && dnsName._unicodeName != null)
+            if (_unicodeName is not null && dnsName._unicodeName is not null)
             {
                 if (string.Equals(
                             _unicodeName,
@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
 
         public void Open(bool includeArchivedCerts)
         {
-            if (_storeHandle != null && _archivedCerts != includeArchivedCerts)
+            if (_storeHandle is not null && _archivedCerts != includeArchivedCerts)
             {
                 _storeHandle = null;        // release the old handle
             }
@@ -727,11 +727,11 @@ namespace Microsoft.PowerShell.Commands
                 ThrowInvalidOperation(errorId, message);
             }
 
-            if (DynamicParameters != null)
+            if (DynamicParameters is not null)
             {
                 ProviderRemoveItemDynamicParameters dp =
                     DynamicParameters as ProviderRemoveItemDynamicParameters;
-                if (dp != null)
+                if (dp is not null)
                 {
                     if (dp.DeleteKey)
                     {
@@ -885,7 +885,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (cert != null) // we get cert
+            if (cert is not null) // we get cert
             {
                 // get destination store
                 bool isDestContainer = false;
@@ -894,7 +894,7 @@ namespace Microsoft.PowerShell.Commands
                 X509Certificate2 certificate = cert as X509Certificate2;
                 X509NativeStore certstore = store as X509NativeStore;
 
-                if (certstore != null)
+                if (certstore is not null)
                 {
                     certstore.Open(true);
 
@@ -1073,17 +1073,17 @@ namespace Microsoft.PowerShell.Commands
 
             object item = GetItemAtPath(path, false, out isContainer);
 
-            if ((item != null) && isContainer)
+            if ((item is not null) && isContainer)
             {
                 X509StoreLocation storeLocation = item as X509StoreLocation;
-                if (storeLocation != null)
+                if (storeLocation is not null)
                 {
                     result = storeLocation.StoreNames.Count > 0;
                 }
                 else
                 {
                     X509NativeStore store = item as X509NativeStore;
-                    if (store != null)
+                    if (store is not null)
                     {
                         store.Open(IncludeArchivedCerts());
                         IntPtr certContext = store.GetFirstCert();
@@ -1236,7 +1236,7 @@ namespace Microsoft.PowerShell.Commands
             object item = GetItemAtPath(path, false, out isContainer);
             CertificateFilterInfo filter = GetFilter();
 
-            if (item != null)
+            if (item is not null)
             {
                 if (!isContainer) // certificate
                 {
@@ -1250,7 +1250,7 @@ namespace Microsoft.PowerShell.Commands
                         // The filter is non null. If the certificate
                         // satisfies the filter, output it. Otherwise, don't.
                         X509Certificate2 cert = item as X509Certificate2;
-                        Dbg.Diagnostics.Assert(cert != null, "item should be a certificate");
+                        Dbg.Diagnostics.Assert(cert is not null, "item should be a certificate");
 
                         if (MatchesFilter(cert, filter))
                         {
@@ -1261,20 +1261,20 @@ namespace Microsoft.PowerShell.Commands
                 else  // container
                 {
                     // The item is a container. If the filter is non null, we don't output it.
-                    if (filter != null)
+                    if (filter is not null)
                     {
                         return;
                     }
 
                     X509StoreLocation storeLocation = item as X509StoreLocation;
-                    if (storeLocation != null)  // store location
+                    if (storeLocation is not null)  // store location
                     {
                         WriteItemObject(item, path, isContainer);
                     }
                     else // store
                     {
                         X509NativeStore store = item as X509NativeStore;
-                        if (store != null)
+                        if (store is not null)
                         {
                             // create X509Store
                             X509Store outStore = new X509Store(
@@ -1318,7 +1318,7 @@ namespace Microsoft.PowerShell.Commands
         protected override string GetChildName(string path)
         {
             // Path for root is empty string
-            if (path != null && path.Length == 0)
+            if (path is not null && path.Length == 0)
             {
                 return path;
             }
@@ -1814,7 +1814,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>No return.</returns>
         private void RemoveCertItem(X509Certificate2 cert, bool fDeleteKey, bool fMachine, string sourcePath)
         {
-            if (cert != null)
+            if (cert is not null)
             {
                 string action = null;
                 if (fDeleteKey)
@@ -2138,7 +2138,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if ((item != null) && test)
+            if ((item is not null) && test)
             {
                 item = true;
             }
@@ -2548,7 +2548,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowItemNotFound(storePath, CertificateProviderItem.Store);
             }
 
-            if (s_storeCache != null)
+            if (s_storeCache is not null)
             {
                 if (s_storeCache.Location != storeLocation ||
                     !string.Equals(
@@ -2663,11 +2663,11 @@ namespace Microsoft.PowerShell.Commands
         {
             CertificateFilterInfo filter = null;
 
-            if (DynamicParameters != null)
+            if (DynamicParameters is not null)
             {
                 CertificateProviderDynamicParameters dp =
                     DynamicParameters as CertificateProviderDynamicParameters;
-                if (dp != null)
+                if (dp is not null)
                 {
                     if (dp.CodeSigningCert)
                     {
@@ -2681,13 +2681,13 @@ namespace Microsoft.PowerShell.Commands
                         filter.Purpose = CertificatePurpose.DocumentEncryption;
                     }
 
-                    if (dp.DnsName != null)
+                    if (dp.DnsName is not null)
                     {
                         filter = filter ?? new CertificateFilterInfo();
                         filter.DnsName = new WildcardPattern(dp.DnsName, WildcardOptions.IgnoreCase);
                     }
 
-                    if (dp.Eku != null)
+                    if (dp.Eku is not null)
                     {
                         filter = filter ?? new CertificateFilterInfo();
                         filter.Eku = new List<WildcardPattern>();
@@ -2739,12 +2739,12 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            if (filter.DnsName != null && !CertContainsName(cert, filter.DnsName))
+            if (filter.DnsName is not null && !CertContainsName(cert, filter.DnsName))
             {
                 return false;
             }
 
-            if (filter.Eku != null && !CertContainsEku(cert, filter.Eku))
+            if (filter.Eku is not null && !CertContainsEku(cert, filter.Eku))
             {
                 return false;
             }
@@ -2865,7 +2865,7 @@ namespace Microsoft.PowerShell.Commands
                 if (s_pathCache.ContainsKey(path))
                 {
                     item = s_pathCache[path];
-                    Dbg.Diagnostics.Assert(item != null, "GetCachedItem");
+                    Dbg.Diagnostics.Assert(item is not null, "GetCachedItem");
                 }
             }
 
@@ -2876,7 +2876,7 @@ namespace Microsoft.PowerShell.Commands
         {
             lock (s_staticLock)
             {
-                if ((item != null) && (!s_pathCache.ContainsKey(path)))
+                if ((item is not null) && (!s_pathCache.ContainsKey(path)))
                 {
                     s_pathCache.Add(path, item);
                 }
@@ -2956,7 +2956,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Execute the XPath query and return its MAML snippet
                 XmlNode result = document.SelectSingleNode(xpathQuery, nsMgr);
-                if (result != null)
+                if (result is not null)
                 {
                     return result.OuterXml;
                 }
@@ -3101,7 +3101,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool match = false;
 
-            if (_oid != null && keyUsage._oid != null)
+            if (_oid is not null && keyUsage._oid is not null)
             {
                 // OID strings only contain numbers and periods
 
@@ -3211,7 +3211,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (certPath != null)
+                    if (certPath is not null)
                     {
                         // try to open the store and get the cert out
                         // in case the store handle is already released
@@ -3252,7 +3252,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // set property
                     if (!Security.NativeMethods.CertSetCertificateContextProperty(
-                                certFromStore != null ? certFromStore.Handle : cert.Handle,
+                                certFromStore is not null ? certFromStore.Handle : cert.Handle,
                                 Security.NativeMethods.CertPropertyId.CERT_SEND_AS_TRUSTED_ISSUER_PROP_ID,
                                 0,
                                 propertyPtr))
@@ -3338,7 +3338,7 @@ namespace Microsoft.PowerShell.Commands
                 if (extension.Oid.Value == "2.5.29.37")
                 {
                     X509EnhancedKeyUsageExtension ext = extension as X509EnhancedKeyUsageExtension;
-                    if (ext != null)
+                    if (ext is not null)
                     {
                         OidCollection oids = ext.EnhancedKeyUsages;
                         foreach (Oid oid in oids)

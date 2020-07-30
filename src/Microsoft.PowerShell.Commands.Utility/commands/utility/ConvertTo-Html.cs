@@ -369,13 +369,13 @@ namespace Microsoft.PowerShell.Commands
                 // Accept the width both as a string and as an int.
                 string width;
                 int? widthNum = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as int?;
-                width = widthNum != null ? widthNum.Value.ToString() : p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
+                width = widthNum is not null ? widthNum.Value.ToString() : p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
                 PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
                 List<PSPropertyExpression> resolvedNames = ex.ResolveNames(_inputObject);
                 foreach (PSPropertyExpression resolvedName in resolvedNames)
                 {
                     Hashtable ht = CreateAuxPropertyHT(label, alignment, width);
-                    if (resolvedName.Script != null)
+                    if (resolvedName.Script is not null)
                     {
                         // The argument is a calculated property whose value is calculated by a script block.
                         ht.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, resolvedName.Script);
@@ -397,17 +397,17 @@ namespace Microsoft.PowerShell.Commands
             string width)
         {
             Hashtable ht = new Hashtable();
-            if (label != null)
+            if (label is not null)
             {
                 ht.Add(ConvertHTMLParameterDefinitionKeys.LabelEntryKey, label);
             }
 
-            if (alignment != null)
+            if (alignment is not null)
             {
                 ht.Add(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey, alignment);
             }
 
-            if (width != null)
+            if (width is not null)
             {
                 ht.Add(ConvertHTMLParameterDefinitionKeys.WidthEntryKey, width);
             }
@@ -508,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
                                     WarningRecord record = new WarningRecord(Message);
                                     InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
-                                    if (invocationInfo != null)
+                                    if (invocationInfo is not null)
                                     {
                                         record.SetInvocationInfo(invocationInfo);
                                     }
@@ -530,13 +530,13 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 WriteObject("</head><body>");
-                if (_body != null)
+                if (_body is not null)
                 {
                     WriteObject(_body, true);
                 }
             }
 
-            if (_preContent != null)
+            if (_preContent is not null)
             {
                 WriteObject(_preContent, true);
             }
@@ -558,7 +558,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 COLTag.Append("<col");
                 string width = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
-                if (width != null)
+                if (width is not null)
                 {
                     COLTag.Append(" width = \"");
                     COLTag.Append(width);
@@ -566,7 +566,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 string alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
-                if (alignment != null)
+                if (alignment is not null)
                 {
                     COLTag.Append(" align = \"");
                     COLTag.Append(alignment);
@@ -613,7 +613,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // for writing the property name
             string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
-            if (label != null)
+            if (label is not null)
             {
                 Listtag.Append(label);
             }
@@ -636,7 +636,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (PSPropertyExpressionResult result in resultList)
             {
                 // create comma sep list for multiple results
-                if (result.Result != null)
+                if (result.Result is not null)
                 {
                     string htmlEncodedResult = WebUtility.HtmlEncode(SafeToString(result.Result));
                     Listtag.Append(htmlEncodedResult);
@@ -744,7 +744,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // if fragment,end with table
             WriteObject("</table>");
-            if (_postContent != null)
+            if (_postContent is not null)
                 WriteObject(_postContent, true);
 
             // if not fragment end with body and html also

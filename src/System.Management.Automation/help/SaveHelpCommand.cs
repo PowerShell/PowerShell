@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Module and FullyQualifiedModule should not be specified at the same time.
                 // Throw out terminating error if this is the case.
-                if (Module != null && FullyQualifiedModule != null)
+                if (Module is not null && FullyQualifiedModule is not null)
                 {
                     string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "Module", "FullyQualifiedModule");
                     ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
                 List<string> moduleNames = null;
                 List<PSModuleInfo> moduleInfos = null;
 
-                if (Module != null)
+                if (Module is not null)
                 {
                     moduleNames = new List<string>();
                     moduleInfos = new List<PSModuleInfo>();
@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Commands
 
                     string destPath = path;
 
-                    if (_credential != null)
+                    if (_credential is not null)
                     {
                         if (path.Contains("*"))
                         {
@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 finally
                 {
-                    if (helpInfoDrive != null)
+                    if (helpInfoDrive is not null)
                     {
                         helpInfoDrive.Dispose();
                     }
@@ -288,7 +288,7 @@ namespace Microsoft.PowerShell.Commands
                                                                           SessionState.Path.Combine(path, module.GetHelpInfoName()),
                                                                           _credential);
 
-                if (xml != null)
+                if (xml is not null)
                 {
                     // constructing the helpinfo object from previous update help log xml..
                     // no need to resolve the uri's in this case.
@@ -331,7 +331,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        Debug.Assert(helpInfoUri != null, "If we are here, helpInfoUri must not be null");
+                        Debug.Assert(helpInfoUri is not null, "If we are here, helpInfoUri must not be null");
 
                         string helpContentUri = contentUri.ResolvedUri;
                         string helpContentName = module.GetHelpContentName(contentUri.Culture);
@@ -349,7 +349,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 // Remote
 
-                                if (_credential != null)
+                                if (_credential is not null)
                                 {
                                     try
                                     {
@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
 
-                            if (_credential != null)
+                            if (_credential is not null)
                             {
                                 _helpSystem.GenerateHelpInfo(module.ModuleName, module.ModuleGuid, newHelpInfo.UnresolvedUri, contentUri.Culture.Name, newHelpInfo.GetCultureVersion(contentUri.Culture), tempPath,
                                     module.GetHelpInfoName(), _force);
@@ -407,7 +407,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         finally
                         {
-                            if (helpContentDrive != null)
+                            if (helpContentDrive is not null)
                             {
                                 helpContentDrive.Dispose();
                             }
@@ -432,14 +432,14 @@ namespace Microsoft.PowerShell.Commands
 
             // deal with scalar string argument
             var strArg = argument as string;
-            if (strArg != null)
+            if (strArg is not null)
             {
                 return new PSModuleInfo(name: strArg, path: null, context: null, sessionState: null);
             }
 
             // deal with IList argument
             IList iListArg = ParameterBinderBase.GetIList(argument);
-            if (iListArg != null && iListArg.Count > 0)
+            if (iListArg is not null && iListArg.Count > 0)
             {
                 int elementCount = iListArg.Count;
                 int targetIndex = 0;

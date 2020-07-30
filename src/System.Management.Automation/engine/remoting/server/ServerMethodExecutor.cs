@@ -52,7 +52,7 @@ namespace System.Management.Automation.Remoting
         {
             _clientRunspacePoolId = clientRunspacePoolId;
             _clientPowerShellId = clientPowerShellId;
-            Dbg.Assert(transportManager != null, "Expected transportManager != null");
+            Dbg.Assert(transportManager is not null, "Expected transportManager is not null");
             _transportManager = transportManager;
             _remoteHostCallDataType =
                 clientPowerShellId == Guid.Empty ? RemotingDataType.RemoteHostCallUsingRunspaceHost : RemotingDataType.RemoteHostCallUsingPowerShellHost;
@@ -64,7 +64,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void HandleRemoteHostResponseFromClient(RemoteHostResponse remoteHostResponse)
         {
-            Dbg.Assert(remoteHostResponse != null, "Expected remoteHostResponse != null");
+            Dbg.Assert(remoteHostResponse is not null, "Expected remoteHostResponse is not null");
             _serverDispatchTable.SetResponse(remoteHostResponse.CallId, remoteHostResponse);
         }
 
@@ -89,7 +89,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void ExecuteVoidMethod(RemoteHostMethodId methodId, object[] parameters)
         {
-            Dbg.Assert(parameters != null, "Expected parameters != null");
+            Dbg.Assert(parameters is not null, "Expected parameters is not null");
 
             // Use void call ID so that the call is known to not have a return value.
             long callId = ServerDispatchTable.VoidCallId;
@@ -120,7 +120,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal T ExecuteMethod<T>(RemoteHostMethodId methodId, object[] parameters)
         {
-            Dbg.Assert(parameters != null, "Expected parameters != null");
+            Dbg.Assert(parameters is not null, "Expected parameters is not null");
 
             // Create the method call object.
             long callId = _serverDispatchTable.CreateNewCallId();

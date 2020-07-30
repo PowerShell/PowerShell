@@ -66,7 +66,7 @@ namespace System.Management.Automation
 
         internal static MinishellStream ToMinishellStream(string stream)
         {
-            Dbg.Assert(stream != null, "caller should validate the parameter");
+            Dbg.Assert(stream is not null, "caller should validate the parameter");
 
             MinishellStream ms = MinishellStream.Unknown;
             if (OutputStream.Equals(stream, StringComparison.OrdinalIgnoreCase))
@@ -193,7 +193,7 @@ namespace System.Management.Automation
             get
             {
                 NativeCommand command = this.Command as NativeCommand;
-                Diagnostics.Assert(command != null, "this.Command is created in the constructor.");
+                Diagnostics.Assert(command is not null, "this.Command is created in the constructor.");
                 return command;
             }
         }
@@ -583,7 +583,7 @@ namespace System.Management.Automation
 
             // An exception was thrown while attempting to run the program
             // so wrap and rethrow it here...
-            if (exceptionToRethrow != null)
+            if (exceptionToRethrow is not null)
             {
                 // It's a system exception so wrap it in one of ours and re-throw.
                 string message = StringUtil.Format(ParserStrings.ProgramFailedToExecute,
@@ -658,7 +658,7 @@ namespace System.Management.Automation
                 if (_nativeProcess.StartInfo.RedirectStandardOutput || _nativeProcess.StartInfo.RedirectStandardError)
                 {
                     ProcessOutputObject record;
-                    while ((record = DequeueProcessOutput(blocking)) != null)
+                    while ((record = DequeueProcessOutput(blocking)) is not null)
                     {
                         if (this.Command.Context.CurrentPipelineStopping)
                         {
@@ -749,7 +749,7 @@ namespace System.Management.Automation
 
             // An exception was thrown while attempting to run the program
             // so wrap and rethrow it here...
-            if (exceptionToRethrow != null)
+            if (exceptionToRethrow is not null)
             {
                 // It's a system exception so wrap it in one of ours and re-throw.
                 string message = StringUtil.Format(ParserStrings.ProgramFailedToExecute,
@@ -860,7 +860,7 @@ namespace System.Management.Automation
                     _parentId = -1;
 
                     Process parentProcess = PsUtils.GetParentProcess(OriginalProcessInstance);
-                    if (parentProcess != null)
+                    if (parentProcess is not null)
                     {
                         _parentId = parentProcess.Id;
                     }
@@ -987,7 +987,7 @@ namespace System.Management.Automation
                 _stopped = true;
             }
 
-            if (_nativeProcess != null)
+            if (_nativeProcess is not null)
             {
                 if (!_runStandAlone)
                 {
@@ -1015,7 +1015,7 @@ namespace System.Management.Automation
             try
             {
                 // Dispose the process if it's already created
-                if (_nativeProcess != null)
+                if (_nativeProcess is not null)
                 {
                     _nativeProcess.Dispose();
                 }
@@ -1027,12 +1027,12 @@ namespace System.Management.Automation
 
         private void ProcessOutputRecord(ProcessOutputObject outputValue)
         {
-            Dbg.Assert(outputValue != null, "only object of type ProcessOutputObject expected");
+            Dbg.Assert(outputValue is not null, "only object of type ProcessOutputObject expected");
 
             if (outputValue.Stream == MinishellStream.Error)
             {
                 ErrorRecord record = outputValue.Data as ErrorRecord;
-                Dbg.Assert(record != null, "ProcessReader should ensure that data is ErrorRecord");
+                Dbg.Assert(record is not null, "ProcessReader should ensure that data is ErrorRecord");
                 record.SetInvocationInfo(this.Command.MyInvocation);
                 this.commandRuntime._WriteErrorSkipAllowCheck(record, isNativeError: true);
             }
@@ -1043,41 +1043,41 @@ namespace System.Management.Automation
             else if (outputValue.Stream == MinishellStream.Debug)
             {
                 string temp = outputValue.Data as string;
-                Dbg.Assert(temp != null, "ProcessReader should ensure that data is string");
+                Dbg.Assert(temp is not null, "ProcessReader should ensure that data is string");
                 this.Command.PSHostInternal.UI.WriteDebugLine(temp);
             }
             else if (outputValue.Stream == MinishellStream.Verbose)
             {
                 string temp = outputValue.Data as string;
-                Dbg.Assert(temp != null, "ProcessReader should ensure that data is string");
+                Dbg.Assert(temp is not null, "ProcessReader should ensure that data is string");
                 this.Command.PSHostInternal.UI.WriteVerboseLine(temp);
             }
             else if (outputValue.Stream == MinishellStream.Warning)
             {
                 string temp = outputValue.Data as string;
-                Dbg.Assert(temp != null, "ProcessReader should ensure that data is string");
+                Dbg.Assert(temp is not null, "ProcessReader should ensure that data is string");
                 this.Command.PSHostInternal.UI.WriteWarningLine(temp);
             }
             else if (outputValue.Stream == MinishellStream.Progress)
             {
                 PSObject temp = outputValue.Data as PSObject;
-                if (temp != null)
+                if (temp is not null)
                 {
                     long sourceId = 0;
                     PSMemberInfo info = temp.Properties["SourceId"];
-                    if (info != null)
+                    if (info is not null)
                     {
                         sourceId = (long)info.Value;
                     }
 
                     info = temp.Properties["Record"];
                     ProgressRecord rec = null;
-                    if (info != null)
+                    if (info is not null)
                     {
                         rec = info.Value as ProgressRecord;
                     }
 
-                    if (rec != null)
+                    if (rec is not null)
                     {
                         this.Command.PSHostInternal.UI.WriteProgress(sourceId, rec);
                     }
@@ -1086,7 +1086,7 @@ namespace System.Management.Automation
             else if (outputValue.Stream == MinishellStream.Information)
             {
                 InformationRecord record = outputValue.Data as InformationRecord;
-                Dbg.Assert(record != null, "ProcessReader should ensure that data is InformationRecord");
+                Dbg.Assert(record is not null, "ProcessReader should ensure that data is InformationRecord");
                 this.commandRuntime.WriteInformation(record);
             }
         }
@@ -1167,11 +1167,11 @@ namespace System.Management.Automation
 
         private bool IsDownstreamOutDefault(Pipe downstreamPipe)
         {
-            Diagnostics.Assert(downstreamPipe != null, "Caller makes sure the passed-in parameter is not null.");
+            Diagnostics.Assert(downstreamPipe is not null, "Caller makes sure the passed-in parameter is not null.");
 
             // Check if the downstream cmdlet is Out-Default, which is the default outputter.
             CommandProcessorBase outputProcessor = downstreamPipe.DownstreamCmdlet;
-            if (outputProcessor != null)
+            if (outputProcessor is not null)
             {
                 // We have the test 'utscript\Engine\TestOutDefaultRedirection.ps1' to check that a user defined
                 // Out-Default function should not cause a native command to be redirected. So here we should only
@@ -1511,7 +1511,7 @@ namespace System.Management.Automation
 
         private void OutputHandler(object sender, DataReceivedEventArgs outputReceived)
         {
-            if (outputReceived.Data != null)
+            if (outputReceived.Data is not null)
             {
                 if (_isFirstOutput)
                 {
@@ -1543,7 +1543,7 @@ namespace System.Management.Automation
 
         private void ErrorHandler(object sender, DataReceivedEventArgs errorReceived)
         {
-            if (errorReceived.Data != null)
+            if (errorReceived.Data is not null)
             {
                 if (string.Equals(errorReceived.Data, XmlCliTag, StringComparison.Ordinal))
                 {
@@ -1598,7 +1598,7 @@ namespace System.Management.Automation
 
                         // Decide the stream to which data belongs
                         MinishellStream stream = MinishellStream.Unknown;
-                        if (streamName != null)
+                        if (streamName is not null)
                         {
                             stream = StringToMinishellStreamConverter.ToMinishellStream(streamName);
                         }
@@ -1714,7 +1714,7 @@ namespace System.Management.Automation
         /// </summary>
         internal ProcessInputWriter(InternalCommand command)
         {
-            Dbg.Assert(command != null, "Caller should validate the parameter");
+            Dbg.Assert(command is not null, "Caller should validate the parameter");
             _command = command;
         }
 
@@ -1807,7 +1807,7 @@ namespace System.Management.Automation
         /// </param>
         internal void Start(Process process, NativeCommandIOFormat inputFormat)
         {
-            Dbg.Assert(process != null, "caller should validate the paramter");
+            Dbg.Assert(process is not null, "caller should validate the paramter");
 
             // Get the encoding for writing to native command. Note we get the Encoding
             // from the current scope so a script or function can use a different encoding
@@ -1850,19 +1850,19 @@ namespace System.Management.Automation
             // and once from Done() code path.
             // Even though Dispose() could be called multiple times,
             // the calls are on the same thread, so there is no race condition
-            if (_pipeline != null)
+            if (_pipeline is not null)
             {
                 _pipeline.Dispose();
                 _pipeline = null;
             }
 
-            if (_xmlSerializer != null)
+            if (_xmlSerializer is not null)
             {
                 _xmlSerializer = null;
             }
 
             // streamWriter can be null if we didn't call Start method
-            if (_streamWriter != null)
+            if (_streamWriter is not null)
             {
                 try
                 {
@@ -1883,7 +1883,7 @@ namespace System.Management.Automation
         {
             if (_inputFormat == NativeCommandIOFormat.Xml)
             {
-                if (_xmlSerializer != null)
+                if (_xmlSerializer is not null)
                 {
                     _xmlSerializer.Done();
                 }
@@ -1892,7 +1892,7 @@ namespace System.Management.Automation
             {
                 // if _pipeline is null, we already called Dispose(),
                 // for example, because downstream process finished
-                if (_pipeline != null)
+                if (_pipeline is not null)
                 {
                     var finalResults = _pipeline.End();
                     AddTextInputFromFormattedArray(finalResults);
@@ -2190,7 +2190,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_remoteErrorRecord != null)
+                if (_remoteErrorRecord is not null)
                     return _remoteErrorRecord;
 
                 return base.ErrorRecord;

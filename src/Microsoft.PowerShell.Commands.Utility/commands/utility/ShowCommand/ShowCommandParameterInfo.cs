@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
             this.Position = other.Position;
 
             var validateSetAttribute = other.Attributes.Where(x => typeof(ValidateSetAttribute).IsAssignableFrom(x.GetType())).Cast<ValidateSetAttribute>().LastOrDefault();
-            if (validateSetAttribute != null)
+            if (validateSetAttribute is not null)
             {
                 this.HasParameterSet = true;
                 this.ValidParamSetValues = validateSetAttribute.ValidValues;

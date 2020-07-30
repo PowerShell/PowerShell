@@ -118,7 +118,7 @@ namespace System.Management.Automation
             SetErrorCategory(errorCategory);
             SetErrorId(errorIdAndResourceId);
 
-            if ((errorPosition is null) && (invocationInfo != null))
+            if ((errorPosition is null) && (invocationInfo is not null))
             {
                 errorPosition = invocationInfo.ScriptPosition;
             }
@@ -216,7 +216,7 @@ namespace System.Management.Automation
         internal void SetTargetObject(object targetObject)
         {
             _targetObject = targetObject;
-            if (_errorRecord != null)
+            if (_errorRecord is not null)
                 _errorRecord.SetTargetObject(targetObject);
         }
         #endregion ErrorRecord
@@ -271,10 +271,10 @@ namespace System.Management.Automation
             set
             {
                 _thrownByThrowStatement = value;
-                if (_errorRecord != null)
+                if (_errorRecord is not null)
                 {
                     RuntimeException exception = _errorRecord.Exception as RuntimeException;
-                    if (exception != null)
+                    if (exception is not null)
                     {
                         exception.WasThrownFromThrowStatement = value;
                     }

@@ -122,7 +122,7 @@ namespace System.Management.Automation.Runspaces
             Category category)
         {
             Collection<string> errors = new Collection<string>();
-            if (independentErrors != null)
+            if (independentErrors is not null)
             {
                 foreach (string error in independentErrors)
                 {

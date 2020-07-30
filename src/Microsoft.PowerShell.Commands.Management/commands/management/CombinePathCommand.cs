@@ -62,13 +62,13 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             Dbg.Diagnostics.Assert(
-                Path != null,
+                Path is not null,
                 "Since Path is a mandatory parameter, paths should never be null");
 
             string combinedChildPath = ChildPath;
 
             // join the ChildPath elements
-            if (AdditionalChildPath != null)
+            if (AdditionalChildPath is not null)
             {
                 foreach (string childPath in AdditionalChildPath)
                 {
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         try
                         {
-                            if (resolvedPaths[index] != null)
+                            if (resolvedPaths[index] is not null)
                             {
                                 WriteObject(resolvedPaths[index].Path);
                             }
@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    if (joinedPath != null)
+                    if (joinedPath is not null)
                     {
                         WriteObject(joinedPath);
                     }

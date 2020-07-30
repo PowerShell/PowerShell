@@ -157,7 +157,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (((bool)_forward) && (_action != null))
+            if (((bool)_forward) && (_action is not null))
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 if (
-                    ((inputObject != null) || (eventName != null)) &&
+                    ((inputObject is not null) || (eventName is not null)) &&
                     (Events.GetEventSubscribers(_sourceIdentifier).GetEnumerator().MoveNext())
                     )
                 {
@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.Commands
                             eventName,
                             _sourceIdentifier, _messageData, _action, (bool)_supportEvent, (bool)_forward, _maxTriggerCount);
 
-                    if ((_action != null) && (!(bool)_supportEvent))
+                    if ((_action is not null) && (!(bool)_supportEvent))
                         WriteObject(_newSubscriber.Action);
                 }
             }

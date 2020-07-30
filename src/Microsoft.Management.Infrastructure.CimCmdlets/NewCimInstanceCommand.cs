@@ -339,16 +339,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             if (this.ClientOnly)
             {
                 string conflictParameterName = null;
-                if (this.ComputerName != null)
+                if (this.ComputerName is not null)
                 {
                     conflictParameterName = @"ComputerName";
                 }
-                else if (this.CimSession != null)
+                else if (this.CimSession is not null)
                 {
                     conflictParameterName = @"CimSession";
                 }
 
-                if (conflictParameterName != null)
+                if (conflictParameterName is not null)
                 {
                     ThrowConflictParameterWasSet(@"New-CimInstance", conflictParameterName, @"ClientOnly");
                     return;
@@ -367,7 +367,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void EndProcessing()
         {
             CimNewCimInstance cimNewCimInstance = this.GetOperationAgent();
-            if (cimNewCimInstance != null)
+            if (cimNewCimInstance is not null)
             {
                 cimNewCimInstance.ProcessRemainActions(this.CmdletOperation);
             }

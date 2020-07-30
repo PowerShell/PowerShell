@@ -796,7 +796,7 @@ namespace Microsoft.PowerShell.Commands
         // Creates and fills a send buffer. This follows the ping.exe and CoreFX model.
         private byte[] GetSendBuffer(int bufferSize)
         {
-            if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer != null)
+            if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer is not null)
             {
                 return s_DefaultSendBuffer;
             }

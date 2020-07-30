@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         {
             get
             {
-                return (_job != null) ?
+                return (_job is not null) ?
                     _job.HasMoreData
                     :
                     (Output.Count > 0 ||
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         {
             lock (SyncRoot)
             {
-                if (_job != null && !IsFinishedState(_job.JobStateInfo.State))
+                if (_job is not null && !IsFinishedState(_job.JobStateInfo.State))
                 {
                     string msg = StringUtil.Format(ScheduledJobErrorStrings.JobAlreadyRunning, _jobDefinition.Name);
                     throw new PSInvalidOperationException(msg);
@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 Location,
                 Command,
                 StatusMessage,
-                (_job != null) ? _job.JobStateInfo.State : JobStateInfo.State,
+                (_job is not null) ? _job.JobStateInfo.State : JobStateInfo.State,
                 HasMoreData,
                 PSBeginTime,
                 PSEndTime,
@@ -449,11 +449,11 @@ namespace Microsoft.PowerShell.ScheduledJob
             Collection<DebugRecord> debug = new Collection<DebugRecord>();
             Collection<InformationRecord> information = new Collection<InformationRecord>();
 
-            if (_job != null)
+            if (_job is not null)
             {
                 // Collect data from "live" job.
 
-                if (JobStateInfo.Reason != null)
+                if (JobStateInfo.Reason is not null)
                 {
                     error.Add(new ErrorRecord(JobStateInfo.Reason, "ScheduledJobFailedState", ErrorCategory.InvalidResult, null));
                 }
@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
                 foreach (Job childJob in ChildJobs)
                 {
-                    if (childJob.JobStateInfo.Reason != null)
+                    if (childJob.JobStateInfo.Reason is not null)
                     {
                         error.Add(new ErrorRecord(childJob.JobStateInfo.Reason, "ScheduledJobFailedState", ErrorCategory.InvalidResult, null));
                     }
@@ -609,7 +609,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         internal void Update(ScheduledJob fromJob)
         {
             // We do not update "live" jobs.
-            if (_job != null || fromJob == null)
+            if (_job is not null || fromJob == null)
             {
                 return;
             }
@@ -711,7 +711,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             // Start the job.
             Collection<PSObject> rtn = powerShell.Invoke();
-            if (rtn != null && rtn.Count == 1)
+            if (rtn is not null && rtn.Count == 1)
             {
                 job = rtn[0].BaseObject as Job;
             }
@@ -732,7 +732,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 Runspace disposeRunspace = null;
                 lock (SyncRoot)
                 {
-                    if (_job != null &&
+                    if (_job is not null &&
                         IsFinishedState(_job.JobStateInfo.State))
                     {
                         disposePowerShell = _powerShell;
@@ -742,12 +742,12 @@ namespace Microsoft.PowerShell.ScheduledJob
                     }
                 }
 
-                if (disposePowerShell != null)
+                if (disposePowerShell is not null)
                 {
                     disposePowerShell.Dispose();
                 }
 
-                if (disposeRunspace != null)
+                if (disposeRunspace is not null)
                 {
                     disposeRunspace.Dispose();
                 }
@@ -776,12 +776,12 @@ namespace Microsoft.PowerShell.ScheduledJob
                 StatusInfo statusInfo;
                 lock (SyncRoot)
                 {
-                    if (_statusInfo != null)
+                    if (_statusInfo is not null)
                     {
                         // Pass back static status.
                         statusInfo = _statusInfo;
                     }
-                    else if (_job != null)
+                    else if (_job is not null)
                     {
                         // Create current job status.
                         statusInfo = new StatusInfo(
@@ -822,7 +822,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private void CopyOutput(ICollection<PSObject> fromOutput)
         {
             PSDataCollection<PSObject> output = CopyResults<PSObject>(fromOutput);
-            if (output != null)
+            if (output is not null)
             {
                 try
                 {
@@ -835,7 +835,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private void CopyError(ICollection<ErrorRecord> fromError)
         {
             PSDataCollection<ErrorRecord> error = CopyResults<ErrorRecord>(fromError);
-            if (error != null)
+            if (error is not null)
             {
                 try
                 {
@@ -848,7 +848,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private void CopyWarning(ICollection<WarningRecord> fromWarning)
         {
             PSDataCollection<WarningRecord> warning = CopyResults<WarningRecord>(fromWarning);
-            if (warning != null)
+            if (warning is not null)
             {
                 try
                 {
@@ -861,7 +861,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private void CopyVerbose(ICollection<VerboseRecord> fromVerbose)
         {
             PSDataCollection<VerboseRecord> verbose = CopyResults<VerboseRecord>(fromVerbose);
-            if (verbose != null)
+            if (verbose is not null)
             {
                 try
                 {
@@ -874,7 +874,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private void CopyProgress(ICollection<ProgressRecord> fromProgress)
         {
             PSDataCollection<ProgressRecord> progress = CopyResults<ProgressRecord>(fromProgress);
-            if (progress != null)
+            if (progress is not null)
             {
                 try
                 {
@@ -887,7 +887,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private void CopyDebug(ICollection<DebugRecord> fromDebug)
         {
             PSDataCollection<DebugRecord> debug = CopyResults<DebugRecord>(fromDebug);
-            if (debug != null)
+            if (debug is not null)
             {
                 try
                 {
@@ -900,7 +900,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private void CopyInformation(ICollection<InformationRecord> fromInformation)
         {
             PSDataCollection<InformationRecord> information = CopyResults<InformationRecord>(fromInformation);
-            if (information != null)
+            if (information is not null)
             {
                 try
                 {
@@ -912,7 +912,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private PSDataCollection<T> CopyResults<T>(ICollection<T> fromResults)
         {
-            if (fromResults != null && fromResults.Count > 0)
+            if (fromResults is not null && fromResults.Count > 0)
             {
                 PSDataCollection<T> returnResults = new PSDataCollection<T>();
                 foreach (var item in fromResults)
@@ -931,7 +931,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             if (!_allowSetShouldExit || _host == null) { return; }
 
             PSObject hostPrivateData = _host.PrivateData as PSObject;
-            if (hostPrivateData != null)
+            if (hostPrivateData is not null)
             {
                 // Adds or replaces.
                 hostPrivateData.Properties.Add(new PSNoteProperty(AllowHostSetShouldExit, true));
@@ -943,7 +943,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             if (!_allowSetShouldExit || _host == null) { return; }
 
             PSObject hostPrivateData = _host.PrivateData as PSObject;
-            if (hostPrivateData != null)
+            if (hostPrivateData is not null)
             {
                 // Removes if exists.
                 hostPrivateData.Properties.Remove(AllowHostSetShouldExit);
@@ -1267,7 +1267,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             info.AddValue("Status_MoreData", _hasMoreData);
             info.AddValue("Status_Definition", _definition);
 
-            if (_startTime != null)
+            if (_startTime is not null)
             {
                 info.AddValue("Status_StartTime", _startTime);
             }
@@ -1276,7 +1276,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 info.AddValue("Status_StartTime", DateTime.MinValue);
             }
 
-            if (_stopTime != null)
+            if (_stopTime is not null)
             {
                 info.AddValue("Status_StopTime", _stopTime);
             }

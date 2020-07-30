@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
 
             MshCommandRuntime mrt = this.CommandRuntime as MshCommandRuntime;
 
-            if (mrt != null)
+            if (mrt is not null)
             {
                 mrt.MergeUnclaimedPreviousErrorResults = true;
             }
@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
             // doesn't actually write pipeline objects.
             base.BeginProcessing();
 
-            if (Context.CurrentCommandProcessor.CommandRuntime.OutVarList != null)
+            if (Context.CurrentCommandProcessor.CommandRuntime.OutVarList is not null)
             {
                 _outVarResults = new List<PSObject>();
             }
@@ -104,13 +104,13 @@ namespace Microsoft.PowerShell.Commands
 
             // This needs to be done directly through the command runtime, as Out-Default
             // doesn't actually write pipeline objects.
-            if (_outVarResults != null)
+            if (_outVarResults is not null)
             {
                 object inputObjectBase = PSObject.Base(InputObject);
 
                 // Ignore errors and formatting records, as those can't be captured
                 if (
-                    (inputObjectBase != null) &&
+                    (inputObjectBase is not null) &&
                     (!(inputObjectBase is ErrorRecord)) &&
                     (!inputObjectBase.GetType().FullName.StartsWith(
                         "Microsoft.PowerShell.Commands.Internal.Format", StringComparison.OrdinalIgnoreCase)))
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // This needs to be done directly through the command runtime, as Out-Default
             // doesn't actually write pipeline objects.
-            if ((_outVarResults != null) && (_outVarResults.Count > 0))
+            if ((_outVarResults is not null) && (_outVarResults.Count > 0))
             {
                 Context.CurrentCommandProcessor.CommandRuntime.OutVarList.Clear();
                 foreach (object item in _outVarResults)
@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (_transcribeOnlyCookie != null)
+                if (_transcribeOnlyCookie is not null)
                 {
                     _transcribeOnlyCookie.Dispose();
                     _transcribeOnlyCookie = null;

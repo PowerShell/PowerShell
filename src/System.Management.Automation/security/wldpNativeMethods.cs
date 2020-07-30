@@ -121,7 +121,7 @@ namespace System.Management.Automation.Security
             // If path is NULL, see if we have the cached system-wide lockdown policy.
             if (string.IsNullOrEmpty(path))
             {
-                if ((s_cachedWldpSystemPolicy != null) && (!InternalTestHooks.BypassAppLockerPolicyCaching))
+                if ((s_cachedWldpSystemPolicy is not null) && (!InternalTestHooks.BypassAppLockerPolicyCaching))
                 {
                     return s_cachedWldpSystemPolicy.Value;
                 }
@@ -137,7 +137,7 @@ namespace System.Management.Automation.Security
                 {
                     hostInformation.szSource = path;
 
-                    if (handle != null)
+                    if (handle is not null)
                     {
                         IntPtr fileHandle = IntPtr.Zero;
                         fileHandle = handle.DangerousGetHandle();
@@ -187,7 +187,7 @@ namespace System.Management.Automation.Security
             // no AppLocker script policy.
             if (string.IsNullOrEmpty(path))
             {
-                if ((s_cachedSaferSystemPolicy != null) && (!InternalTestHooks.BypassAppLockerPolicyCaching))
+                if ((s_cachedSaferSystemPolicy is not null) && (!InternalTestHooks.BypassAppLockerPolicyCaching))
                 {
                     result = s_cachedSaferSystemPolicy.Value;
                 }
@@ -348,7 +348,7 @@ namespace System.Management.Automation.Security
             s_allowDebugOverridePolicy = true;
 
             // Support fall-back debug hook for path exclusions on non-WOA platforms
-            if (path != null)
+            if (path is not null)
             {
                 // Assume everything under SYSTEM32 is trusted, with a purposefully sloppy
                 // check so that we can actually put it in the filename during testing.
@@ -361,14 +361,14 @@ namespace System.Management.Automation.Security
                 {
                     using (RegistryKey wldpPolicy = hklm.OpenSubKey("SYSTEM\\CurrentControlSet\\Control\\CI\\TRSData"))
                     {
-                        if (wldpPolicy != null)
+                        if (wldpPolicy is not null)
                         {
                             object exclusionPathsKey = wldpPolicy.GetValue("TestPath");
 
                             wldpPolicy.Close();
                             hklm.Close();
 
-                            if (exclusionPathsKey != null)
+                            if (exclusionPathsKey is not null)
                             {
                                 string[] exclusionPaths = (string[])exclusionPathsKey;
                                 foreach (string exclusionPath in exclusionPaths)
@@ -391,7 +391,7 @@ namespace System.Management.Automation.Security
             // Support fall-back debug hook for system-wide policy on non-WOA platforms
             uint pdwLockdownState = 0;
             object result = Environment.GetEnvironmentVariable("__PSLockdownPolicy", EnvironmentVariableTarget.Machine);
-            if (result != null)
+            if (result is not null)
             {
                 pdwLockdownState = LanguagePrimitives.ConvertTo<uint>(result);
                 return GetLockdownPolicyForResult(pdwLockdownState);

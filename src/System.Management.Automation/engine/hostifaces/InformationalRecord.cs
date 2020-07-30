@@ -100,7 +100,7 @@ namespace System.Management.Automation
             //
             // Copy a snapshot of the PipelineIterationInfo from the InvocationInfo to this InformationalRecord
             //
-            if (invocationInfo.PipelineIterationInfo != null)
+            if (invocationInfo.PipelineIterationInfo is not null)
             {
                 int[] snapshot = (int[])invocationInfo.PipelineIterationInfo.Clone();
 

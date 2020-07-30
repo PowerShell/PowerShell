@@ -70,7 +70,7 @@ namespace System.Management.Automation.Remoting
             AsyncObject<T> responseAsyncObject = null;
             Dbg.Assert(_responseAsyncObjects.ContainsKey(callId), "Expected _responseAsyncObjects.ContainsKey(callId)");
             responseAsyncObject = _responseAsyncObjects[callId];
-            Dbg.Assert(responseAsyncObject != null, "Expected responseAsyncObject != null");
+            Dbg.Assert(responseAsyncObject is not null, "Expected responseAsyncObject is not null");
             return responseAsyncObject;
         }
 
@@ -117,7 +117,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void SetResponse(long callId, T remoteHostResponse)
         {
-            Dbg.Assert(remoteHostResponse != null, "Expected remoteHostResponse != null");
+            Dbg.Assert(remoteHostResponse is not null, "Expected remoteHostResponse is not null");
             lock (_responseAsyncObjects)
             {
                 // The response-async-object might not exist if the call was aborted by Ctrl-C or if

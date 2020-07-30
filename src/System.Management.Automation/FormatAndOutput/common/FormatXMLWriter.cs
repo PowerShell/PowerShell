@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
                 _writer.WriteEndElement(/*</ViewSelectedBy>*/);
 
                 var groupBy = formatdef.Control.GroupBy;
-                if (groupBy != null)
+                if (groupBy is not null)
                 {
                     _writer.WriteStartElement("GroupBy");
                     WriteDisplayEntry(groupBy.Expression);
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
                         _writer.WriteElementString("Label", groupBy.Label);
                     }
 
-                    if (groupBy.CustomControl != null)
+                    if (groupBy.CustomControl is not null)
                     {
                         WriteCustomControl(groupBy.CustomControl);
                     }
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands
                     _writer.WriteEndElement(/*</Wrap>*/);
                 }
 
-                if (row.SelectedBy != null)
+                if (row.SelectedBy is not null)
                 {
                     WriteEntrySelectedBy(row.SelectedBy);
                 }
@@ -255,7 +255,7 @@ namespace Microsoft.PowerShell.Commands
                             _writer.WriteElementString("FormatString", item.FormatString);
                         }
 
-                        if (item.ItemSelectionCondition != null)
+                        if (item.ItemSelectionCondition is not null)
                         {
                             _writer.WriteStartElement("ItemSelectionCondition");
                             WriteDisplayEntry(item.ItemSelectionCondition);
@@ -280,13 +280,13 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteEntrySelectedBy(EntrySelectedBy entrySelectedBy)
         {
-            if (entrySelectedBy != null &&
-                ((entrySelectedBy.TypeNames != null && entrySelectedBy.TypeNames.Count > 0) ||
-                 (entrySelectedBy.SelectionCondition != null && entrySelectedBy.SelectionCondition.Count > 0)))
+            if (entrySelectedBy is not null &&
+                ((entrySelectedBy.TypeNames is not null && entrySelectedBy.TypeNames.Count > 0) ||
+                 (entrySelectedBy.SelectionCondition is not null && entrySelectedBy.SelectionCondition.Count > 0)))
             {
                 _writer.WriteStartElement("EntrySelectedBy");
 
-                if (entrySelectedBy.TypeNames != null)
+                if (entrySelectedBy.TypeNames is not null)
                 {
                     foreach (string typename in entrySelectedBy.TypeNames)
                     {
@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (entrySelectedBy.SelectionCondition != null)
+                if (entrySelectedBy.SelectionCondition is not null)
                 {
                     foreach (var condition in entrySelectedBy.SelectionCondition)
                     {
@@ -386,7 +386,7 @@ namespace Microsoft.PowerShell.Commands
         internal void WriteCustomItem(CustomItemBase item)
         {
             var newline = item as CustomItemNewline;
-            if (newline != null)
+            if (newline is not null)
             {
                 for (int i = 0; i < newline.Count; i++)
                 {
@@ -397,14 +397,14 @@ namespace Microsoft.PowerShell.Commands
             }
 
             var text = item as CustomItemText;
-            if (text != null)
+            if (text is not null)
             {
                 _writer.WriteElementString("Text", text.Text);
                 return;
             }
 
             var expr = item as CustomItemExpression;
-            if (expr != null)
+            if (expr is not null)
             {
                 _writer.WriteStartElement("ExpressionBinding");
                 if (expr.EnumerateCollection)
@@ -412,19 +412,19 @@ namespace Microsoft.PowerShell.Commands
                     _writer.WriteElementString("EnumerateCollection", string.Empty);
                 }
 
-                if (expr.ItemSelectionCondition != null)
+                if (expr.ItemSelectionCondition is not null)
                 {
                     _writer.WriteStartElement("ItemSelectionCondition");
                     WriteDisplayEntry(expr.ItemSelectionCondition);
                     _writer.WriteEndElement(/*</ItemSelectionCondition>*/);
                 }
 
-                if (expr.Expression != null)
+                if (expr.Expression is not null)
                 {
                     WriteDisplayEntry(expr.Expression);
                 }
 
-                if (expr.CustomControl != null)
+                if (expr.CustomControl is not null)
                 {
                     WriteCustomControl(expr.CustomControl);
                 }

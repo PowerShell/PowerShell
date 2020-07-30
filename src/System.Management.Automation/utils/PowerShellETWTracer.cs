@@ -854,7 +854,7 @@ namespace System.Management.Automation.Tracing
              * Not using locks because the _provider is thread safe itself.
              **/
 
-            if (args != null)
+            if (args is not null)
             {
                 for (int i = 0; i < args.Length; i++)
                 {
@@ -1000,11 +1000,11 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public bool TraceErrorRecord(ErrorRecord errorRecord)
         {
-            if (errorRecord != null)
+            if (errorRecord is not null)
             {
                 Exception exception = errorRecord.Exception;
                 string innerException = "None";
-                if (exception.InnerException != null)
+                if (exception.InnerException is not null)
                 {
                     innerException = exception.InnerException.Message;
                 }
@@ -1012,7 +1012,7 @@ namespace System.Management.Automation.Tracing
                 ErrorCategoryInfo cinfo = errorRecord.CategoryInfo;
                 string message = "None";
 
-                if (errorRecord.ErrorDetails != null)
+                if (errorRecord.ErrorDetails is not null)
                 {
                     message = errorRecord.ErrorDetails.Message;
                 }
@@ -1037,10 +1037,10 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public bool TraceException(Exception exception)
         {
-            if (exception != null)
+            if (exception is not null)
             {
                 string innerException = "None";
-                if (exception.InnerException != null)
+                if (exception.InnerException is not null)
                 {
                     innerException = exception.InnerException.Message;
                 }
@@ -1071,7 +1071,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public bool TraceJob(Job job)
         {
-            if (job != null)
+            if (job is not null)
             {
                 return DebugChannel.TraceDebug(PowerShellTraceEvent.Job,
                                                PowerShellTraceOperationCode.Method, PowerShellTraceTask.None,
@@ -1156,7 +1156,7 @@ namespace System.Management.Automation.Tracing
         {
             StringBuilder sb = new StringBuilder();
 
-            if (job != null)
+            if (job is not null)
             {
                 try
                 {

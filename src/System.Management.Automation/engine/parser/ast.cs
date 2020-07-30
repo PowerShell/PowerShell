@@ -199,7 +199,7 @@ namespace System.Management.Automation.Language
             try
             {
                 ExecutionContext context = null;
-                if (System.Management.Automation.Runspaces.Runspace.DefaultRunspace != null)
+                if (System.Management.Automation.Runspaces.Runspace.DefaultRunspace is not null)
                 {
                     context = System.Management.Automation.Runspaces.Runspace.DefaultRunspace.ExecutionContext;
                 }
@@ -271,7 +271,7 @@ namespace System.Management.Automation.Language
         // Should be protected AND internal, but C# doesn't support that.
         internal void SetParent(Ast child)
         {
-            if (child.Parent != null)
+            if (child.Parent is not null)
             {
                 throw new InvalidOperationException(ParserStrings.AstIsReused);
             }
@@ -298,14 +298,14 @@ namespace System.Management.Automation.Language
             Ast current = this;
             bool stopScanning = false;
 
-            while (current != null && !stopScanning)
+            while (current is not null && !stopScanning)
             {
                 ScriptBlockAst scriptBlock = current as ScriptBlockAst;
-                if (scriptBlock != null)
+                if (scriptBlock is not null)
                 {
                     // See if this uses the workflow keyword
                     FunctionDefinitionAst functionDefinition = scriptBlock.Parent as FunctionDefinitionAst;
-                    if ((functionDefinition != null))
+                    if ((functionDefinition is not null))
                     {
                         stopScanning = true;
                         if (functionDefinition.IsWorkflow) { return true; }
@@ -313,7 +313,7 @@ namespace System.Management.Automation.Language
                 }
 
                 CommandAst commandAst = current as CommandAst;
-                if (commandAst != null &&
+                if (commandAst is not null &&
                     string.Equals(TokenKind.InlineScript.Text(), commandAst.GetCommandName(), StringComparison.OrdinalIgnoreCase) &&
                     this != commandAst)
                 {
@@ -336,7 +336,7 @@ namespace System.Management.Automation.Language
         {
             ConfigurationDefinitionAst configAst = null;
             keywordAst = GetAncestorAst<DynamicKeywordStatementAst>(ast);
-            configAst = (keywordAst != null) ? GetAncestorAst<ConfigurationDefinitionAst>(keywordAst) : GetAncestorAst<ConfigurationDefinitionAst>(ast);
+            configAst = (keywordAst is not null) ? GetAncestorAst<ConfigurationDefinitionAst>(keywordAst) : GetAncestorAst<ConfigurationDefinitionAst>(ast);
             return configAst;
         }
 
@@ -344,10 +344,10 @@ namespace System.Management.Automation.Language
         {
             HashtableAst hashtableAst = null;
             lastChildOfHashtable = null;
-            while (ast != null)
+            while (ast is not null)
             {
                 hashtableAst = ast as HashtableAst;
-                if (hashtableAst != null)
+                if (hashtableAst is not null)
                     break;
                 lastChildOfHashtable = ast;
                 ast = ast.Parent;
@@ -360,16 +360,16 @@ namespace System.Management.Automation.Language
         {
             TypeDefinitionAst typeDefinitionAst = null;
 
-            while (ast != null)
+            while (ast is not null)
             {
                 typeDefinitionAst = ast as TypeDefinitionAst;
-                if (typeDefinitionAst != null)
+                if (typeDefinitionAst is not null)
                     break;
 
                 // Nested function isn't really a member of the type so stop looking
                 // Anonymous script blocks are though
                 var functionDefinitionAst = ast as FunctionDefinitionAst;
-                if (functionDefinitionAst != null && !(functionDefinitionAst.Parent is FunctionMemberAst))
+                if (functionDefinitionAst is not null && !(functionDefinitionAst.Parent is FunctionMemberAst))
                     break;
                 ast = ast.Parent;
             }
@@ -386,10 +386,10 @@ namespace System.Management.Automation.Language
         {
             T targetAst = null;
             var parent = ast;
-            while (parent != null)
+            while (parent is not null)
             {
                 targetAst = parent as T;
-                if (targetAst != null)
+                if (targetAst is not null)
                     break;
                 parent = parent.Parent;
             }
@@ -439,7 +439,7 @@ namespace System.Management.Automation.Language
         internal ErrorStatementAst(IScriptExtent extent, IEnumerable<Ast> nestedAsts = null)
             : base(extent)
         {
-            if (nestedAsts != null && nestedAsts.Any())
+            if (nestedAsts is not null && nestedAsts.Any())
             {
                 NestedAst = new ReadOnlyCollection<Ast>(nestedAsts.ToArray());
                 SetParents(NestedAst);
@@ -455,7 +455,7 @@ namespace System.Management.Automation.Language
             }
 
             Kind = kind;
-            if (nestedAsts != null && nestedAsts.Any())
+            if (nestedAsts is not null && nestedAsts.Any())
             {
                 NestedAst = new ReadOnlyCollection<Ast>(nestedAsts.ToArray());
                 SetParents(NestedAst);
@@ -471,7 +471,7 @@ namespace System.Management.Automation.Language
             }
 
             Kind = kind;
-            if (flags != null && flags.Any())
+            if (flags is not null && flags.Any())
             {
                 Flags = new Dictionary<string, Tuple<Token, Ast>>(StringComparer.OrdinalIgnoreCase);
                 foreach (KeyValuePair<string, Tuple<Token, Ast>> entry in flags)
@@ -480,20 +480,20 @@ namespace System.Management.Automation.Language
                         continue;
 
                     Flags.Add(entry.Key, entry.Value);
-                    if (entry.Value.Item2 != null)
+                    if (entry.Value.Item2 is not null)
                     {
                         SetParent(entry.Value.Item2);
                     }
                 }
             }
 
-            if (conditions != null && conditions.Any())
+            if (conditions is not null && conditions.Any())
             {
                 Conditions = new ReadOnlyCollection<Ast>(conditions.ToArray());
                 SetParents(Conditions);
             }
 
-            if (bodies != null && bodies.Any())
+            if (bodies is not null && bodies.Any())
             {
                 Bodies = new ReadOnlyCollection<Ast>(bodies.ToArray());
                 SetParents(Bodies);
@@ -543,13 +543,13 @@ namespace System.Management.Automation.Language
                 var newNestedAst = CopyElements(this.NestedAst);
                 return new ErrorStatementAst(this.Extent, newNestedAst);
             }
-            else if (Flags != null || Conditions != null || Bodies != null)
+            else if (Flags is not null || Conditions is not null || Bodies is not null)
             {
                 var newConditions = CopyElements(this.Conditions);
                 var newBodies = CopyElements(this.Bodies);
                 Dictionary<string, Tuple<Token, Ast>> newFlags = null;
 
-                if (this.Flags != null)
+                if (this.Flags is not null)
                 {
                     newFlags = new Dictionary<string, Tuple<Token, Ast>>(StringComparer.OrdinalIgnoreCase);
                     foreach (KeyValuePair<string, Tuple<Token, Ast>> entry in this.Flags)
@@ -580,7 +580,7 @@ namespace System.Management.Automation.Language
             var action = visitor.VisitErrorStatement(this);
             if (action == AstVisitAction.SkipChildren)
                 return visitor.CheckForPostAction(this, AstVisitAction.Continue);
-            if (action == AstVisitAction.Continue && NestedAst != null)
+            if (action == AstVisitAction.Continue && NestedAst is not null)
             {
                 for (int index = 0; index < NestedAst.Count; index++)
                 {
@@ -590,7 +590,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (action == AstVisitAction.Continue && Flags != null)
+            if (action == AstVisitAction.Continue && Flags is not null)
             {
                 foreach (var tuple in Flags.Values)
                 {
@@ -602,7 +602,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (action == AstVisitAction.Continue && Conditions != null)
+            if (action == AstVisitAction.Continue && Conditions is not null)
             {
                 for (int index = 0; index < Conditions.Count; index++)
                 {
@@ -612,7 +612,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (action == AstVisitAction.Continue && Bodies != null)
+            if (action == AstVisitAction.Continue && Bodies is not null)
             {
                 for (int index = 0; index < Bodies.Count; index++)
                 {
@@ -636,7 +636,7 @@ namespace System.Management.Automation.Language
         internal ErrorExpressionAst(IScriptExtent extent, IEnumerable<Ast> nestedAsts = null)
             : base(extent)
         {
-            if (nestedAsts != null && nestedAsts.Any())
+            if (nestedAsts is not null && nestedAsts.Any())
             {
                 NestedAst = new ReadOnlyCollection<Ast>(nestedAsts.ToArray());
                 SetParents(NestedAst);
@@ -671,7 +671,7 @@ namespace System.Management.Automation.Language
             var action = visitor.VisitErrorExpression(this);
             if (action == AstVisitAction.SkipChildren)
                 return visitor.CheckForPostAction(this, AstVisitAction.Continue);
-            if (action == AstVisitAction.Continue && NestedAst != null)
+            if (action == AstVisitAction.Continue && NestedAst is not null)
             {
                 for (int index = 0; index < NestedAst.Count; index++)
                 {
@@ -801,7 +801,7 @@ namespace System.Management.Automation.Language
         {
             SetUsingStatements(usingStatements);
 
-            if (attributes != null)
+            if (attributes is not null)
             {
                 this.Attributes = new ReadOnlyCollection<AttributeAst>(attributes.ToArray());
                 SetParents(Attributes);
@@ -811,31 +811,31 @@ namespace System.Management.Automation.Language
                 this.Attributes = s_emptyAttributeList;
             }
 
-            if (paramBlock != null)
+            if (paramBlock is not null)
             {
                 this.ParamBlock = paramBlock;
                 SetParent(paramBlock);
             }
 
-            if (beginBlock != null)
+            if (beginBlock is not null)
             {
                 this.BeginBlock = beginBlock;
                 SetParent(beginBlock);
             }
 
-            if (processBlock != null)
+            if (processBlock is not null)
             {
                 this.ProcessBlock = processBlock;
                 SetParent(processBlock);
             }
 
-            if (endBlock != null)
+            if (endBlock is not null)
             {
                 this.EndBlock = endBlock;
                 SetParent(endBlock);
             }
 
-            if (dynamicParamBlock != null)
+            if (dynamicParamBlock is not null)
             {
                 this.DynamicParamBlock = dynamicParamBlock;
                 SetParent(dynamicParamBlock);
@@ -1013,7 +1013,7 @@ namespace System.Management.Automation.Language
         {
             SetUsingStatements(usingStatements);
 
-            if (attributes != null)
+            if (attributes is not null)
             {
                 this.Attributes = new ReadOnlyCollection<AttributeAst>(attributes.ToArray());
                 SetParents(Attributes);
@@ -1028,7 +1028,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentNullException(nameof(statements));
             }
 
-            if (paramBlock != null)
+            if (paramBlock is not null)
             {
                 this.ParamBlock = paramBlock;
                 SetParent(paramBlock);
@@ -1049,7 +1049,7 @@ namespace System.Management.Automation.Language
 
         private void SetUsingStatements(IEnumerable<UsingStatementAst> usingStatements)
         {
-            if (usingStatements != null)
+            if (usingStatements is not null)
             {
                 this.UsingStatements = new ReadOnlyCollection<UsingStatementAst>(usingStatements.ToArray());
                 SetParents(UsingStatements);
@@ -1113,7 +1113,7 @@ namespace System.Management.Automation.Language
         {
             Dictionary<Ast, Token[]> scriptBlockTokenCache = new Dictionary<Ast, Token[]>();
             var commentTokens = HelpCommentsParser.GetHelpCommentTokens(this, scriptBlockTokenCache);
-            if (commentTokens != null)
+            if (commentTokens is not null)
             {
                 return HelpCommentsParser.GetHelpContents(commentTokens.Item1, commentTokens.Item2);
             }
@@ -1156,7 +1156,7 @@ namespace System.Management.Automation.Language
         {
             ScriptBlockAst rootScriptBlockAst = this;
             ScriptBlockAst parent;
-            while ((parent = Ast.GetAncestorAst<ScriptBlockAst>(rootScriptBlockAst.Parent)) != null)
+            while ((parent = Ast.GetAncestorAst<ScriptBlockAst>(rootScriptBlockAst.Parent)) is not null)
             {
                 rootScriptBlockAst = parent;
             }
@@ -1189,7 +1189,7 @@ namespace System.Management.Automation.Language
         internal string ToStringForSerialization()
         {
             string result = this.ToString();
-            if (Parent != null)
+            if (Parent is not null)
             {
                 // Parent is FunctionDefinitionAst or ScriptBlockExpressionAst
                 // The extent includes curlies which we want to exclude.
@@ -1203,7 +1203,7 @@ namespace System.Management.Automation.Language
 
         internal string ToStringForSerialization(Tuple<List<VariableExpressionAst>, string> usingVariablesTuple, int initialStartOffset, int initialEndOffset)
         {
-            Diagnostics.Assert(usingVariablesTuple.Item1 != null && usingVariablesTuple.Item1.Count > 0 && !string.IsNullOrEmpty(usingVariablesTuple.Item2),
+            Diagnostics.Assert(usingVariablesTuple.Item1 is not null && usingVariablesTuple.Item1.Count > 0 && !string.IsNullOrEmpty(usingVariablesTuple.Item2),
                                "Caller makes sure the value passed in is not null or empty");
             Diagnostics.Assert(initialStartOffset < initialEndOffset && initialStartOffset >= this.Extent.StartOffset && initialEndOffset <= this.Extent.EndOffset,
                                "Caller makes sure the section is within the ScriptBlockAst");
@@ -1215,7 +1215,7 @@ namespace System.Management.Automation.Language
             //  -- UsingVariable
             //  -- ParamBlockAst
             var astElements = new List<Ast>(usingVars);
-            if (ParamBlock != null)
+            if (ParamBlock is not null)
             {
                 astElements.Add(ParamBlock);
             }
@@ -1238,7 +1238,7 @@ namespace System.Management.Automation.Language
                 if (astStartOffset >= endOffset) { break; }
 
                 var varAst = ast as VariableExpressionAst;
-                if (varAst != null)
+                if (varAst is not null)
                 {
                     string varName = varAst.VariablePath.UserPath;
                     string varSign = varAst.Splatted ? "@" : "$";
@@ -1251,7 +1251,7 @@ namespace System.Management.Automation.Language
                 else
                 {
                     var paramAst = ast as ParamBlockAst;
-                    Diagnostics.Assert(paramAst != null, "The elements in astElements are either ParamBlockAst or VariableExpressionAst");
+                    Diagnostics.Assert(paramAst is not null, "The elements in astElements are either ParamBlockAst or VariableExpressionAst");
 
                     int currentOffset;
                     if (paramAst.Parameters.Count == 0)
@@ -1274,7 +1274,7 @@ namespace System.Management.Automation.Language
             newScript.Append(script.AsSpan(startOffset, endOffset - startOffset));
             string result = newScript.ToString();
 
-            if (Parent != null && initialStartOffset == this.Extent.StartOffset && initialEndOffset == this.Extent.EndOffset)
+            if (Parent is not null && initialStartOffset == this.Extent.StartOffset && initialEndOffset == this.Extent.EndOffset)
             {
                 // Parent is FunctionDefinitionAst or ScriptBlockExpressionAst
                 // The extent includes curlies which we want to exclude.
@@ -1318,7 +1318,7 @@ namespace System.Management.Automation.Language
                 return visitor.CheckForPostAction(this, AstVisitAction.Continue);
 
             var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor2 is not null)
             {
                 if (action == AstVisitAction.Continue)
                 {
@@ -1345,15 +1345,15 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (action == AstVisitAction.Continue && ParamBlock != null)
+            if (action == AstVisitAction.Continue && ParamBlock is not null)
                 action = ParamBlock.InternalVisit(visitor);
-            if (action == AstVisitAction.Continue && DynamicParamBlock != null)
+            if (action == AstVisitAction.Continue && DynamicParamBlock is not null)
                 action = DynamicParamBlock.InternalVisit(visitor);
-            if (action == AstVisitAction.Continue && BeginBlock != null)
+            if (action == AstVisitAction.Continue && BeginBlock is not null)
                 action = BeginBlock.InternalVisit(visitor);
-            if (action == AstVisitAction.Continue && ProcessBlock != null)
+            if (action == AstVisitAction.Continue && ProcessBlock is not null)
                 action = ProcessBlock.InternalVisit(visitor);
-            if (action == AstVisitAction.Continue && EndBlock != null)
+            if (action == AstVisitAction.Continue && EndBlock is not null)
                 action = EndBlock.InternalVisit(visitor);
             return visitor.CheckForPostAction(this, action);
         }
@@ -1364,12 +1364,12 @@ namespace System.Management.Automation.Language
 
         bool IParameterMetadataProvider.HasAnyScriptBlockAttributes()
         {
-            return Attributes.Count > 0 || ParamBlock != null && ParamBlock.Attributes.Count > 0;
+            return Attributes.Count > 0 || ParamBlock is not null && ParamBlock.Attributes.Count > 0;
         }
 
         RuntimeDefinedParameterDictionary IParameterMetadataProvider.GetParameterMetadata(bool automaticPositions, ref bool usesCmdletBinding)
         {
-            if (ParamBlock != null)
+            if (ParamBlock is not null)
             {
                 return Compiler.GetParameterMetaData(ParamBlock.Parameters, automaticPositions, ref usesCmdletBinding);
             }
@@ -1385,7 +1385,7 @@ namespace System.Management.Automation.Language
                 yield return Compiler.GetAttribute(attributeAst);
             }
 
-            if (ParamBlock != null)
+            if (ParamBlock is not null)
             {
                 for (int index = 0; index < ParamBlock.Attributes.Count; index++)
                 {
@@ -1401,16 +1401,16 @@ namespace System.Management.Automation.Language
             {
                 AttributeAst attributeAst = Attributes[index];
                 ExperimentalAttribute expAttr = GetExpAttributeHelper(attributeAst);
-                if (expAttr != null) { yield return expAttr; }
+                if (expAttr is not null) { yield return expAttr; }
             }
 
-            if (ParamBlock != null)
+            if (ParamBlock is not null)
             {
                 for (int index = 0; index < ParamBlock.Attributes.Count; index++)
                 {
                     var attributeAst = ParamBlock.Attributes[index];
                     var expAttr = GetExpAttributeHelper(attributeAst);
-                    if (expAttr != null) { yield return expAttr; }
+                    if (expAttr is not null) { yield return expAttr; }
                 }
             }
 
@@ -1437,7 +1437,7 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                if (potentialExpAttr != null)
+                if (potentialExpAttr is not null)
                 {
                     try
                     {
@@ -1455,7 +1455,7 @@ namespace System.Management.Automation.Language
 
         ReadOnlyCollection<ParameterAst> IParameterMetadataProvider.Parameters
         {
-            get { return (ParamBlock != null) ? this.ParamBlock.Parameters : null; }
+            get { return (ParamBlock is not null) ? this.ParamBlock.Parameters : null; }
         }
 
         ScriptBlockAst IParameterMetadataProvider.Body { get { return this; } }
@@ -1520,7 +1520,7 @@ namespace System.Management.Automation.Language
 
             // all checks above failed - change script into "$input | <original script>"
             var sb = new StringBuilder();
-            if (ParamBlock != null)
+            if (ParamBlock is not null)
             {
                 string paramText = (usingVariablesTuple is null)
                     ? ParamBlock.ToString()
@@ -1543,7 +1543,7 @@ namespace System.Management.Automation.Language
         {
             bool usesCmdletBinding = false;
 
-            if (ParamBlock != null)
+            if (ParamBlock is not null)
             {
                 usesCmdletBinding = this.ParamBlock.Attributes.Any(attribute => typeof(CmdletBindingAttribute) == attribute.TypeName.GetReflectionAttributeType());
                 if (!usesCmdletBinding)
@@ -1559,7 +1559,7 @@ namespace System.Management.Automation.Language
 
         internal PipelineAst GetSimplePipeline(bool allowMultiplePipelines, out string errorId, out string errorMsg)
         {
-            if (BeginBlock != null || ProcessBlock != null || DynamicParamBlock != null)
+            if (BeginBlock is not null || ProcessBlock is not null || DynamicParamBlock is not null)
             {
                 errorId = "CanConvertOneClauseOnly";
                 errorMsg = AutomationExceptions.CanConvertOneClauseOnly;
@@ -1573,7 +1573,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            if (EndBlock.Traps != null && EndBlock.Traps.Count > 0)
+            if (EndBlock.Traps is not null && EndBlock.Traps.Count > 0)
             {
                 errorId = "CantConvertScriptBlockWithTrap";
                 errorMsg = AutomationExceptions.CantConvertScriptBlockWithTrap;
@@ -1625,7 +1625,7 @@ namespace System.Management.Automation.Language
         public ParamBlockAst(IScriptExtent extent, IEnumerable<AttributeAst> attributes, IEnumerable<ParameterAst> parameters)
             : base(extent)
         {
-            if (attributes != null)
+            if (attributes is not null)
             {
                 this.Attributes = new ReadOnlyCollection<AttributeAst>(attributes.ToArray());
                 SetParents(Attributes);
@@ -1635,7 +1635,7 @@ namespace System.Management.Automation.Language
                 this.Attributes = s_emptyAttributeList;
             }
 
-            if (parameters != null)
+            if (parameters is not null)
             {
                 this.Parameters = new ReadOnlyCollection<ParameterAst>(parameters.ToArray());
                 SetParents(Parameters);
@@ -1708,7 +1708,7 @@ namespace System.Management.Automation.Language
             bool usesCmdletBinding = false;
             foreach (var parameter in parameters)
             {
-                usesCmdletBinding = parameter.Attributes.Any(attribute => (attribute.TypeName.GetReflectionAttributeType() != null) &&
+                usesCmdletBinding = parameter.Attributes.Any(attribute => (attribute.TypeName.GetReflectionAttributeType() is not null) &&
                                                                           attribute.TypeName.GetReflectionAttributeType() == typeof(ParameterAttribute));
                 if (usesCmdletBinding)
                 {
@@ -1781,7 +1781,7 @@ namespace System.Management.Automation.Language
             SetParents(statements);
 
             var traps = statementBlock.Traps;
-            if (traps != null && traps.Count > 0)
+            if (traps is not null && traps.Count > 0)
             {
                 this.Traps = traps;
                 for (int index = 0; index < traps.Count; index++)
@@ -1796,7 +1796,7 @@ namespace System.Management.Automation.Language
             if (!unnamed)
             {
                 var statementsExtent = statementBlock.Extent as InternalScriptExtent;
-                if (statementsExtent != null)
+                if (statementsExtent is not null)
                 {
                     this.OpenCurlyExtent = new InternalScriptExtent(statementsExtent.PositionHelper, statementsExtent.StartOffset, statementsExtent.StartOffset + 1);
                     this.CloseCurlyExtent = new InternalScriptExtent(statementsExtent.PositionHelper, statementsExtent.EndOffset - 1, statementsExtent.EndOffset);
@@ -1841,7 +1841,7 @@ namespace System.Management.Automation.Language
             var newStatements = CopyElements(this.Statements);
             var statementBlockExtent = this.Extent;
 
-            if (this.OpenCurlyExtent != null && this.CloseCurlyExtent != null)
+            if (this.OpenCurlyExtent is not null && this.CloseCurlyExtent is not null)
             {
                 // For explicitly named block, the Extent of the StatementBlockAst is not
                 // the same as the Extent of the NamedBlockAst. In this case, reconstruct
@@ -2027,7 +2027,7 @@ namespace System.Management.Automation.Language
                             IEnumerable<NamedAttributeArgumentAst> namedArguments)
             : base(extent, typeName)
         {
-            if (positionalArguments != null)
+            if (positionalArguments is not null)
             {
                 this.PositionalArguments = new ReadOnlyCollection<ExpressionAst>(positionalArguments.ToArray());
                 SetParents(PositionalArguments);
@@ -2037,7 +2037,7 @@ namespace System.Management.Automation.Language
                 this.PositionalArguments = s_emptyPositionalArguments;
             }
 
-            if (namedArguments != null)
+            if (namedArguments is not null)
             {
                 this.NamedArguments = new ReadOnlyCollection<NamedAttributeArgumentAst>(namedArguments.ToArray());
                 SetParents(NamedArguments);
@@ -2201,7 +2201,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
-            if (attributes != null)
+            if (attributes is not null)
             {
                 this.Attributes = new ReadOnlyCollection<AttributeBaseAst>(attributes.ToArray());
                 SetParents(Attributes);
@@ -2213,7 +2213,7 @@ namespace System.Management.Automation.Language
 
             this.Name = name;
             SetParent(name);
-            if (defaultValue != null)
+            if (defaultValue is not null)
             {
                 this.DefaultValue = defaultValue;
                 SetParent(defaultValue);
@@ -2245,7 +2245,7 @@ namespace System.Management.Automation.Language
             {
                 Type type = null;
                 var typeConstraint = Attributes.OfType<TypeConstraintAst>().FirstOrDefault();
-                if (typeConstraint != null)
+                if (typeConstraint is not null)
                 {
                     type = typeConstraint.TypeName.GetReflectionType();
                 }
@@ -2268,7 +2268,7 @@ namespace System.Management.Automation.Language
         internal string GetTooltip()
         {
             var typeConstraint = Attributes.OfType<TypeConstraintAst>().FirstOrDefault();
-            var type = typeConstraint != null ? typeConstraint.TypeName.FullName : "object";
+            var type = typeConstraint is not null ? typeConstraint.TypeName.FullName : "object";
             return type + " " + Name.VariablePath.UserPath;
         }
 
@@ -2354,7 +2354,7 @@ namespace System.Management.Automation.Language
                 action = Name.InternalVisit(visitor);
             }
 
-            if (action == AstVisitAction.Continue && DefaultValue != null)
+            if (action == AstVisitAction.Continue && DefaultValue is not null)
             {
                 action = DefaultValue.InternalVisit(visitor);
             }
@@ -2391,7 +2391,7 @@ namespace System.Management.Automation.Language
         public StatementBlockAst(IScriptExtent extent, IEnumerable<StatementAst> statements, IEnumerable<TrapStatementAst> traps)
             : base(extent)
         {
-            if (statements != null)
+            if (statements is not null)
             {
                 this.Statements = new ReadOnlyCollection<StatementAst>(statements.ToArray());
                 SetParents(Statements);
@@ -2401,7 +2401,7 @@ namespace System.Management.Automation.Language
                 this.Statements = s_emptyStatementCollection;
             }
 
-            if (traps != null && traps.Any())
+            if (traps is not null && traps.Any())
             {
                 this.Traps = new ReadOnlyCollection<TrapStatementAst>(traps.ToArray());
                 SetParents(Traps);
@@ -2451,7 +2451,7 @@ namespace System.Management.Automation.Language
             if (action == AstVisitAction.SkipChildren)
                 return AstVisitAction.Continue;
 
-            if (action == AstVisitAction.Continue && traps != null)
+            if (action == AstVisitAction.Continue && traps is not null)
             {
                 for (int index = 0; index < traps.Count; index++)
                 {
@@ -2461,7 +2461,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (action == AstVisitAction.Continue && statements != null)
+            if (action == AstVisitAction.Continue && statements is not null)
             {
                 for (int index = 0; index < statements.Count; index++)
                 {
@@ -2546,7 +2546,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
-            if (attributes != null && attributes.Any())
+            if (attributes is not null && attributes.Any())
             {
                 Attributes = new ReadOnlyCollection<AttributeAst>(attributes.ToArray());
                 SetParents(Attributes);
@@ -2556,7 +2556,7 @@ namespace System.Management.Automation.Language
                 Attributes = s_emptyAttributeList;
             }
 
-            if (members != null && members.Any())
+            if (members is not null && members.Any())
             {
                 Members = new ReadOnlyCollection<MemberAst>(members.ToArray());
                 SetParents(Members);
@@ -2566,7 +2566,7 @@ namespace System.Management.Automation.Language
                 Members = s_emptyMembersCollection;
             }
 
-            if (baseTypes != null && baseTypes.Any())
+            if (baseTypes is not null && baseTypes.Any())
             {
                 BaseTypes = new ReadOnlyCollection<TypeConstraintAst>(baseTypes.ToArray());
                 SetParents(BaseTypes);
@@ -2656,14 +2656,14 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitTypeDefinition(this) : null;
+            return visitor2 is not null ? visitor2.VisitTypeDefinition(this) : null;
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
             var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor2 is not null)
             {
                 action = visitor2.VisitTypeDefinition(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -2673,7 +2673,7 @@ namespace System.Management.Automation.Language
             // REVIEW: should old visitors completely skip the attributes and
             // bodies of methods, or should they get a chance to see them.  If
             // we want to skip them, the code below needs to move up into the
-            // above test 'visitor2 != null'.
+            // above test 'visitor2 is not null'.
             if (action == AstVisitAction.Continue)
             {
                 for (int index = 0; index < Attributes.Count; index++)
@@ -2891,7 +2891,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public override Ast Copy()
         {
-            var copy = Alias != null
+            var copy = Alias is not null
                 ? new UsingStatementAst(Extent, UsingStatementKind, Name, Alias)
                 : new UsingStatementAst(Extent, UsingStatementKind, Name);
             copy.ModuleInfo = ModuleInfo;
@@ -2904,33 +2904,33 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitUsingStatement(this) : null;
+            return visitor2 is not null ? visitor2.VisitUsingStatement(this) : null;
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
             var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor2 is not null)
             {
                 action = visitor2.VisitUsingStatement(this);
                 if (action != AstVisitAction.Continue)
                     return visitor.CheckForPostAction(this, action);
             }
 
-            if (Name != null)
+            if (Name is not null)
                 action = Name.InternalVisit(visitor);
 
             if (action != AstVisitAction.Continue)
                 return visitor.CheckForPostAction(this, action);
 
-            if (ModuleSpecification != null)
+            if (ModuleSpecification is not null)
                 action = ModuleSpecification.InternalVisit(visitor);
 
             if (action != AstVisitAction.Continue)
                 return visitor.CheckForPostAction(this, action);
 
-            if (Alias != null)
+            if (Alias is not null)
                 action = Alias.InternalVisit(visitor);
 
             return visitor.CheckForPostAction(this, action);
@@ -3038,13 +3038,13 @@ namespace System.Management.Automation.Language
             }
 
             Name = name;
-            if (propertyType != null)
+            if (propertyType is not null)
             {
                 PropertyType = propertyType;
                 SetParent(PropertyType);
             }
 
-            if (attributes != null)
+            if (attributes is not null)
             {
                 this.Attributes = new ReadOnlyCollection<AttributeAst>(attributes.ToArray());
                 SetParents(Attributes);
@@ -3057,7 +3057,7 @@ namespace System.Management.Automation.Language
             PropertyAttributes = propertyAttributes;
             InitialValue = initialValue;
 
-            if (InitialValue != null)
+            if (InitialValue is not null)
             {
                 SetParent(InitialValue);
             }
@@ -3121,7 +3121,7 @@ namespace System.Management.Automation.Language
 
         internal override string GetTooltip()
         {
-            var type = PropertyType != null ? PropertyType.TypeName.FullName : "object";
+            var type = PropertyType is not null ? PropertyType.TypeName.FullName : "object";
             return IsStatic
                 ? "static " + type + " " + Name
                 : type + " " + Name;
@@ -3132,20 +3132,20 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitPropertyMember(this) : null;
+            return visitor2 is not null ? visitor2.VisitPropertyMember(this) : null;
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
             var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor2 is not null)
             {
                 action = visitor2.VisitPropertyMember(this);
                 if (action == AstVisitAction.SkipChildren)
                     return visitor.CheckForPostAction(this, AstVisitAction.Continue);
 
-                if (action == AstVisitAction.Continue && PropertyType != null)
+                if (action == AstVisitAction.Continue && PropertyType is not null)
                     action = PropertyType.InternalVisit(visitor);
 
                 if (action == AstVisitAction.Continue)
@@ -3158,7 +3158,7 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                if (action == AstVisitAction.Continue && InitialValue != null)
+                if (action == AstVisitAction.Continue && InitialValue is not null)
                     action = InitialValue.InternalVisit(visitor);
             }
 
@@ -3225,13 +3225,13 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentException(nameof(methodAttributes));
             }
 
-            if (returnType != null)
+            if (returnType is not null)
             {
                 ReturnType = returnType;
                 SetParent(returnType);
             }
 
-            if (attributes != null)
+            if (attributes is not null)
             {
                 this.Attributes = new ReadOnlyCollection<AttributeAst>(attributes.ToArray());
                 SetParents(Attributes);
@@ -3352,14 +3352,14 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitFunctionMember(this) : null;
+            return visitor2 is not null ? visitor2.VisitFunctionMember(this) : null;
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
             var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor2 is not null)
             {
                 action = visitor2.VisitFunctionMember(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -3374,7 +3374,7 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                if (action == AstVisitAction.Continue && ReturnType != null)
+                if (action == AstVisitAction.Continue && ReturnType is not null)
                     action = ReturnType.InternalVisit(visitor);
 
                 if (action == AstVisitAction.Continue)
@@ -3610,7 +3610,7 @@ namespace System.Management.Automation.Language
             this.IsWorkflow = isWorkflow;
 
             this.Name = name;
-            if (parameters != null && parameters.Any())
+            if (parameters is not null && parameters.Any())
             {
                 this.Parameters = new ReadOnlyCollection<ParameterAst>(parameters.ToArray());
                 SetParents(Parameters);
@@ -3676,7 +3676,7 @@ namespace System.Management.Automation.Language
         {
             Dictionary<Ast, Token[]> scriptBlockTokenCache = new Dictionary<Ast, Token[]>();
             var commentTokens = HelpCommentsParser.GetHelpCommentTokens(this, scriptBlockTokenCache);
-            if (commentTokens != null)
+            if (commentTokens is not null)
             {
                 return HelpCommentsParser.GetHelpContents(commentTokens.Item1, commentTokens.Item2);
             }
@@ -3702,7 +3702,7 @@ namespace System.Management.Automation.Language
             }
 
             var commentTokens = HelpCommentsParser.GetHelpCommentTokens(this, scriptBlockTokenCache);
-            if (commentTokens != null)
+            if (commentTokens is not null)
             {
                 return HelpCommentsParser.GetHelpContents(commentTokens.Item1, commentTokens.Item2);
             }
@@ -3723,14 +3723,14 @@ namespace System.Management.Automation.Language
 
         internal string GetParamTextFromParameterList(Tuple<List<VariableExpressionAst>, string> usingVariablesTuple = null)
         {
-            Diagnostics.Assert(Parameters != null, "Caller makes sure that Parameters is not null before calling this method.");
+            Diagnostics.Assert(Parameters is not null, "Caller makes sure that Parameters is not null before calling this method.");
 
             string additionalNewUsingParams = null;
             IEnumerator<VariableExpressionAst> orderedUsingVars = null;
-            if (usingVariablesTuple != null)
+            if (usingVariablesTuple is not null)
             {
                 Diagnostics.Assert(
-                    usingVariablesTuple.Item1 != null && usingVariablesTuple.Item1.Count > 0 && !string.IsNullOrEmpty(usingVariablesTuple.Item2),
+                    usingVariablesTuple.Item1 is not null && usingVariablesTuple.Item1.Count > 0 && !string.IsNullOrEmpty(usingVariablesTuple.Item2),
                     "Caller makes sure the value passed in is not null or empty.");
                 orderedUsingVars = usingVariablesTuple.Item1.OrderBy(varAst => varAst.Extent.StartOffset).GetEnumerator();
                 additionalNewUsingParams = usingVariablesTuple.Item2;
@@ -3739,7 +3739,7 @@ namespace System.Management.Automation.Language
             var sb = new StringBuilder("param(");
             string separator = string.Empty;
 
-            if (additionalNewUsingParams != null)
+            if (additionalNewUsingParams is not null)
             {
                 // Add the $using variable parameters if necessary
                 sb.Append(additionalNewUsingParams);
@@ -3750,7 +3750,7 @@ namespace System.Management.Automation.Language
             {
                 var param = Parameters[i];
                 sb.Append(separator);
-                sb.Append(orderedUsingVars != null
+                sb.Append(orderedUsingVars is not null
                               ? param.GetParamTextWithDollarUsingHandling(orderedUsingVars)
                               : param.ToString());
                 separator = ", ";
@@ -3776,7 +3776,7 @@ namespace System.Management.Automation.Language
                 return visitor.CheckForPostAction(this, AstVisitAction.Continue);
             if (action == AstVisitAction.Continue)
             {
-                if (Parameters != null)
+                if (Parameters is not null)
                 {
                     for (int index = 0; index < Parameters.Count; index++)
                     {
@@ -3804,12 +3804,12 @@ namespace System.Management.Automation.Language
 
         RuntimeDefinedParameterDictionary IParameterMetadataProvider.GetParameterMetadata(bool automaticPositions, ref bool usesCmdletBinding)
         {
-            if (Parameters != null)
+            if (Parameters is not null)
             {
                 return Compiler.GetParameterMetaData(Parameters, automaticPositions, ref usesCmdletBinding);
             }
 
-            if (Body.ParamBlock != null)
+            if (Body.ParamBlock is not null)
             {
                 return Compiler.GetParameterMetaData(Body.ParamBlock.Parameters, automaticPositions, ref usesCmdletBinding);
             }
@@ -3829,7 +3829,7 @@ namespace System.Management.Automation.Language
 
         ReadOnlyCollection<ParameterAst> IParameterMetadataProvider.Parameters
         {
-            get { return Parameters ?? (Body.ParamBlock != null ? Body.ParamBlock.Parameters : null); }
+            get { return Parameters ?? (Body.ParamBlock is not null ? Body.ParamBlock.Parameters : null); }
         }
 
         PowerShell IParameterMetadataProvider.GetPowerShell(ExecutionContext context, Dictionary<string, object> variables, bool isTrustedInput,
@@ -3863,11 +3863,11 @@ namespace System.Management.Automation.Language
         bool IParameterMetadataProvider.UsesCmdletBinding()
         {
             bool usesCmdletBinding = false;
-            if (Parameters != null)
+            if (Parameters is not null)
             {
                 usesCmdletBinding = ParamBlockAst.UsesCmdletBinding(Parameters);
             }
-            else if (Body.ParamBlock != null)
+            else if (Body.ParamBlock is not null)
             {
                 usesCmdletBinding = ((IParameterMetadataProvider)Body).UsesCmdletBinding();
             }
@@ -3907,7 +3907,7 @@ namespace System.Management.Automation.Language
             this.Clauses = new ReadOnlyCollection<IfClause>(clauses.ToArray());
             SetParents(Clauses);
 
-            if (elseClause != null)
+            if (elseClause is not null)
             {
                 this.ElseClause = elseClause;
                 SetParent(elseClause);
@@ -3970,7 +3970,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (action == AstVisitAction.Continue && ElseClause != null)
+            if (action == AstVisitAction.Continue && ElseClause is not null)
             {
                 action = ElseClause.InternalVisit(visitor);
             }
@@ -4015,7 +4015,7 @@ namespace System.Management.Automation.Language
             }
 
             this.Variable = variableName;
-            if (commandsAllowed != null && commandsAllowed.Any())
+            if (commandsAllowed is not null && commandsAllowed.Any())
             {
                 this.CommandsAllowed = new ReadOnlyCollection<ExpressionAst>(commandsAllowed.ToArray());
                 SetParents(CommandsAllowed);
@@ -4108,7 +4108,7 @@ namespace System.Management.Automation.Language
             }
 
             this.Label = label;
-            if (condition != null)
+            if (condition is not null)
             {
                 this.Condition = condition;
                 SetParent(condition);
@@ -4244,7 +4244,7 @@ namespace System.Management.Automation.Language
             : this(extent, label, flags, variable, expression, body)
         {
             this.ThrottleLimit = throttleLimit;
-            if (throttleLimit != null)
+            if (throttleLimit is not null)
             {
                 SetParent(throttleLimit);
             }
@@ -4274,7 +4274,7 @@ namespace System.Management.Automation.Language
             var newExpression = CopyElement(this.Condition);
             var newBody = CopyElement(this.Body);
 
-            if (this.ThrottleLimit != null)
+            if (this.ThrottleLimit is not null)
             {
                 var newThrottleLimit = CopyElement(this.ThrottleLimit);
                 return new ForEachStatementAst(this.Extent, this.Label, this.Flags, newThrottleLimit,
@@ -4333,13 +4333,13 @@ namespace System.Management.Automation.Language
                                StatementBlockAst body)
             : base(extent, label, condition, body)
         {
-            if (initializer != null)
+            if (initializer is not null)
             {
                 this.Initializer = initializer;
                 SetParent(initializer);
             }
 
-            if (iterator != null)
+            if (iterator is not null)
             {
                 this.Iterator = iterator;
                 SetParent(iterator);
@@ -4381,11 +4381,11 @@ namespace System.Management.Automation.Language
             var action = visitor.VisitForStatement(this);
             if (action == AstVisitAction.SkipChildren)
                 return visitor.CheckForPostAction(this, AstVisitAction.Continue);
-            if (action == AstVisitAction.Continue && Initializer != null)
+            if (action == AstVisitAction.Continue && Initializer is not null)
                 action = Initializer.InternalVisit(visitor);
-            if (action == AstVisitAction.Continue && Condition != null)
+            if (action == AstVisitAction.Continue && Condition is not null)
                 action = Condition.InternalVisit(visitor);
-            if (action == AstVisitAction.Continue && Iterator != null)
+            if (action == AstVisitAction.Continue && Iterator is not null)
                 action = Iterator.InternalVisit(visitor);
             if (action == AstVisitAction.Continue)
                 action = Body.InternalVisit(visitor);
@@ -4652,9 +4652,9 @@ namespace System.Management.Automation.Language
 
             this.Flags = flags;
             this.Clauses = new ReadOnlyCollection<SwitchClause>(
-                (clauses != null && clauses.Any()) ? clauses.ToArray() : s_emptyClauseArray);
+                (clauses is not null && clauses.Any()) ? clauses.ToArray() : s_emptyClauseArray);
             SetParents(Clauses);
-            if (@default != null)
+            if (@default is not null)
             {
                 this.Default = @default;
                 SetParent(@default);
@@ -4729,7 +4729,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (action == AstVisitAction.Continue && Default != null)
+            if (action == AstVisitAction.Continue && Default is not null)
                 action = Default.InternalVisit(visitor);
             return visitor.CheckForPostAction(this, action);
         }
@@ -4766,7 +4766,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentNullException(nameof(body));
             }
 
-            if (catchTypes != null)
+            if (catchTypes is not null)
             {
                 this.CatchTypes = new ReadOnlyCollection<TypeConstraintAst>(catchTypes.ToArray());
                 SetParents(CatchTypes);
@@ -4877,7 +4877,7 @@ namespace System.Management.Automation.Language
 
             this.Body = body;
             SetParent(body);
-            if (catchClauses != null)
+            if (catchClauses is not null)
             {
                 this.CatchClauses = new ReadOnlyCollection<CatchClauseAst>(catchClauses.ToArray());
                 SetParents(CatchClauses);
@@ -4887,7 +4887,7 @@ namespace System.Management.Automation.Language
                 this.CatchClauses = s_emptyCatchClauses;
             }
 
-            if (@finally != null)
+            if (@finally is not null)
             {
                 this.Finally = @finally;
                 SetParent(@finally);
@@ -4946,7 +4946,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (action == AstVisitAction.Continue && Finally != null)
+            if (action == AstVisitAction.Continue && Finally is not null)
                 action = Finally.InternalVisit(visitor);
             return visitor.CheckForPostAction(this, action);
         }
@@ -4978,7 +4978,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentNullException(nameof(body));
             }
 
-            if (trapType != null)
+            if (trapType is not null)
             {
                 this.TrapType = trapType;
                 SetParent(trapType);
@@ -5020,7 +5020,7 @@ namespace System.Management.Automation.Language
             var action = visitor.VisitTrap(this);
             if (action == AstVisitAction.SkipChildren)
                 return visitor.CheckForPostAction(this, AstVisitAction.Continue);
-            if (action == AstVisitAction.Continue && TrapType != null)
+            if (action == AstVisitAction.Continue && TrapType is not null)
                 action = TrapType.InternalVisit(visitor);
             if (action == AstVisitAction.Continue)
                 action = Body.InternalVisit(visitor);
@@ -5050,7 +5050,7 @@ namespace System.Management.Automation.Language
         public BreakStatementAst(IScriptExtent extent, ExpressionAst label)
             : base(extent)
         {
-            if (label != null)
+            if (label is not null)
             {
                 this.Label = label;
                 SetParent(label);
@@ -5083,7 +5083,7 @@ namespace System.Management.Automation.Language
             var action = visitor.VisitBreakStatement(this);
             if (action == AstVisitAction.SkipChildren)
                 return visitor.CheckForPostAction(this, AstVisitAction.Continue);
-            if (action == AstVisitAction.Continue && Label != null)
+            if (action == AstVisitAction.Continue && Label is not null)
                 action = Label.InternalVisit(visitor);
             return visitor.CheckForPostAction(this, action);
         }
@@ -5107,7 +5107,7 @@ namespace System.Management.Automation.Language
         public ContinueStatementAst(IScriptExtent extent, ExpressionAst label)
             : base(extent)
         {
-            if (label != null)
+            if (label is not null)
             {
                 this.Label = label;
                 SetParent(label);
@@ -5140,7 +5140,7 @@ namespace System.Management.Automation.Language
             var action = visitor.VisitContinueStatement(this);
             if (action == AstVisitAction.SkipChildren)
                 return visitor.CheckForPostAction(this, AstVisitAction.Continue);
-            if (action == AstVisitAction.Continue && Label != null)
+            if (action == AstVisitAction.Continue && Label is not null)
                 action = Label.InternalVisit(visitor);
             return visitor.CheckForPostAction(this, action);
         }
@@ -5164,7 +5164,7 @@ namespace System.Management.Automation.Language
         public ReturnStatementAst(IScriptExtent extent, PipelineBaseAst pipeline)
             : base(extent)
         {
-            if (pipeline != null)
+            if (pipeline is not null)
             {
                 this.Pipeline = pipeline;
                 SetParent(pipeline);
@@ -5197,7 +5197,7 @@ namespace System.Management.Automation.Language
             var action = visitor.VisitReturnStatement(this);
             if (action == AstVisitAction.SkipChildren)
                 return visitor.CheckForPostAction(this, AstVisitAction.Continue);
-            if (action == AstVisitAction.Continue && Pipeline != null)
+            if (action == AstVisitAction.Continue && Pipeline is not null)
                 action = Pipeline.InternalVisit(visitor);
             return visitor.CheckForPostAction(this, action);
         }
@@ -5221,7 +5221,7 @@ namespace System.Management.Automation.Language
         public ExitStatementAst(IScriptExtent extent, PipelineBaseAst pipeline)
             : base(extent)
         {
-            if (pipeline != null)
+            if (pipeline is not null)
             {
                 this.Pipeline = pipeline;
                 SetParent(pipeline);
@@ -5254,7 +5254,7 @@ namespace System.Management.Automation.Language
             var action = visitor.VisitExitStatement(this);
             if (action == AstVisitAction.SkipChildren)
                 return visitor.CheckForPostAction(this, AstVisitAction.Continue);
-            if (action == AstVisitAction.Continue && Pipeline != null)
+            if (action == AstVisitAction.Continue && Pipeline is not null)
                 action = Pipeline.InternalVisit(visitor);
             return visitor.CheckForPostAction(this, action);
         }
@@ -5278,7 +5278,7 @@ namespace System.Management.Automation.Language
         public ThrowStatementAst(IScriptExtent extent, PipelineBaseAst pipeline)
             : base(extent)
         {
-            if (pipeline != null)
+            if (pipeline is not null)
             {
                 this.Pipeline = pipeline;
                 SetParent(pipeline);
@@ -5306,11 +5306,11 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                if (Pipeline != null)
+                if (Pipeline is not null)
                     return false;
 
                 var parent = Parent;
-                while (parent != null)
+                while (parent is not null)
                 {
                     if (parent is CatchClauseAst)
                     {
@@ -5345,7 +5345,7 @@ namespace System.Management.Automation.Language
             var action = visitor.VisitThrowStatement(this);
             if (action == AstVisitAction.SkipChildren)
                 return visitor.CheckForPostAction(this, AstVisitAction.Continue);
-            if (action == AstVisitAction.Continue && Pipeline != null)
+            if (action == AstVisitAction.Continue && Pipeline is not null)
                 action = Pipeline.InternalVisit(visitor);
             return visitor.CheckForPostAction(this, action);
         }
@@ -5609,7 +5609,7 @@ namespace System.Management.Automation.Language
             }
 
             CommandExpressionAst expr = PipelineElements[0] as CommandExpressionAst;
-            if (expr != null && expr.Redirections.Count == 0)
+            if (expr is not null && expr.Redirections.Count == 0)
             {
                 return expr.Expression;
             }
@@ -5715,7 +5715,7 @@ namespace System.Management.Automation.Language
             }
 
             this.ParameterName = parameterName;
-            if (argument != null)
+            if (argument is not null)
             {
                 this.Argument = argument;
                 SetParent(argument);
@@ -5763,7 +5763,7 @@ namespace System.Management.Automation.Language
             var action = visitor.VisitCommandParameter(this);
             if (action == AstVisitAction.SkipChildren)
                 return visitor.CheckForPostAction(this, AstVisitAction.Continue);
-            if (Argument != null && action == AstVisitAction.Continue)
+            if (Argument is not null && action == AstVisitAction.Continue)
             {
                 action = Argument.InternalVisit(visitor);
             }
@@ -5795,7 +5795,7 @@ namespace System.Management.Automation.Language
         protected CommandBaseAst(IScriptExtent extent, IEnumerable<RedirectionAst> redirections)
             : base(extent)
         {
-            if (redirections != null)
+            if (redirections is not null)
             {
                 this.Redirections = new ReadOnlyCollection<RedirectionAst>(redirections.ToArray());
                 SetParents(Redirections);
@@ -5879,7 +5879,7 @@ namespace System.Management.Automation.Language
         public string GetCommandName()
         {
             var name = CommandElements[0] as StringConstantExpressionAst;
-            return name != null ? name.Value : null;
+            return name is not null ? name.Value : null;
         }
 
         /// <summary>
@@ -6237,13 +6237,13 @@ namespace System.Management.Automation.Language
             // If the assignment is just an expression and the expression is not backgrounded then
             // remove the pipeline wrapping the expression.
             var pipelineAst = right as PipelineAst;
-            if (pipelineAst != null && !pipelineAst.Background)
+            if (pipelineAst is not null && !pipelineAst.Background)
             {
                 if (pipelineAst.PipelineElements.Count == 1)
                 {
                     var commandExpressionAst = pipelineAst.PipelineElements[0] as CommandExpressionAst;
 
-                    if (commandExpressionAst != null)
+                    if (commandExpressionAst is not null)
                     {
                         right = commandExpressionAst;
                         right.ClearParent();
@@ -6298,7 +6298,7 @@ namespace System.Management.Automation.Language
         public IEnumerable<ExpressionAst> GetAssignmentTargets()
         {
             var arrayExpression = Left as ArrayLiteralAst;
-            if (arrayExpression != null)
+            if (arrayExpression is not null)
             {
                 foreach (var element in arrayExpression.Elements)
                 {
@@ -6431,14 +6431,14 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitConfigurationDefinition(this) : null;
+            return visitor2 is not null ? visitor2.VisitConfigurationDefinition(this) : null;
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
             var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor2 is not null)
             {
                 action = visitor2.VisitConfigurationDefinition(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -6565,7 +6565,7 @@ namespace System.Management.Automation.Language
             //         $toBody.Remove(""ConfigurationData"")
             //         $ConfigurationData = $psboundparameters[""ConfigurationData""]
             //         $Outputpath = $psboundparameters[""Outputpath""]
-            if (Body.ScriptBlock.ParamBlock != null)
+            if (Body.ScriptBlock.ParamBlock is not null)
             {
                 paramAsts.AddRange(Body.ScriptBlock.ParamBlock.Parameters.Select(parameterAst => (ParameterAst)parameterAst.Copy()));
             }
@@ -6674,21 +6674,21 @@ namespace System.Management.Automation.Language
             ModuleSpecification[] moduleNamesTyped = null;
             Version moduleVersionTyped = null;
 
-            if (resourceNames != null)
+            if (resourceNames is not null)
             {
                 object resourceNameEvaluated;
                 IsConstantValueVisitor.IsConstant(resourceNames.Value, out resourceNameEvaluated, true, true);
                 resourceNamesTyped = LanguagePrimitives.ConvertTo<string[]>(resourceNameEvaluated);
             }
 
-            if (moduleNames != null)
+            if (moduleNames is not null)
             {
                 object moduleNameEvaluated;
                 IsConstantValueVisitor.IsConstant(moduleNames.Value, out moduleNameEvaluated, true, true);
                 moduleNamesTyped = LanguagePrimitives.ConvertTo<ModuleSpecification[]>(moduleNameEvaluated);
             }
 
-            if (moduleVersion != null)
+            if (moduleVersion is not null)
             {
                 object moduleVersionEvaluated;
                 IsConstantValueVisitor.IsConstant(moduleVersion.Value, out moduleVersionEvaluated, true, true);
@@ -6704,7 +6704,7 @@ namespace System.Management.Automation.Language
 
                 // Use -ModuleVersion <Version> only in the case, if -ModuleName specified.
                 // Override ModuleName versions.
-                if (moduleNamesTyped != null && moduleNamesTyped.Length == 1)
+                if (moduleNamesTyped is not null && moduleNamesTyped.Length == 1)
                 {
                     for (int i = 0; i < moduleNamesTyped.Length; i++)
                     {
@@ -6748,7 +6748,7 @@ namespace System.Management.Automation.Language
                     Token[] tokens;
                     ParseError[] errors;
                     var sba = Parser.ParseInput(ConfigurationBuildInParametersStr, out tokens, out errors);
-                    if (sba != null)
+                    if (sba is not null)
                     {
                         foreach (var parameterAst in sba.ParamBlock.Parameters)
                         {
@@ -6774,7 +6774,7 @@ namespace System.Management.Automation.Language
                     Token[] tokens;
                     ParseError[] errors;
                     var sba = Parser.ParseInput(ConfigurationBuildInParametersStr, out tokens, out errors);
-                    if (sba != null)
+                    if (sba is not null)
                     {
                         if (s_configurationBuildInParameters is null)
                         {
@@ -6816,7 +6816,7 @@ namespace System.Management.Automation.Language
                         $toBody.Remove(""ConfigurationData"")
                         $ConfigurationData = $psboundparameters[""ConfigurationData""]
                         $Outputpath = $psboundparameters[""Outputpath""]", out tokens, out errors);
-                    if (sba != null)
+                    if (sba is not null)
                     {
                         foreach (var statementAst in sba.EndBlock.Statements)
                         {
@@ -6898,14 +6898,14 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitDynamicKeywordStatement(this) : null;
+            return visitor2 is not null ? visitor2.VisitDynamicKeywordStatement(this) : null;
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
             var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor2 is not null)
             {
                 action = visitor2.VisitDynamicKeywordStatement(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -6955,7 +6955,7 @@ namespace System.Management.Automation.Language
 
         internal PipelineAst GenerateCommandCallPipelineAst()
         {
-            if (_commandCallPipelineAst != null)
+            if (_commandCallPipelineAst is not null)
                 return _commandCallPipelineAst;
 
             /////////////////////////////////////////////////////////////////////////
@@ -7021,7 +7021,7 @@ namespace System.Management.Automation.Language
                 // in the hash literal expression and map them to parameters.
                 // We've already checked to make sure that they're all valid names.
                 //
-                if (hashtable != null)
+                if (hashtable is not null)
                 {
                     bool isHashtableValid = true;
                     //
@@ -7226,7 +7226,7 @@ namespace System.Management.Automation.Language
             }
 
             var parenExpressionAst = pipelineAst.Parent as ParenExpressionAst;
-            if (parenExpressionAst != null)
+            if (parenExpressionAst is not null)
             {
                 return parenExpressionAst.ShouldPreserveOutputInCaseOfException();
             }
@@ -7687,7 +7687,7 @@ namespace System.Management.Automation.Language
         {
             ExpressionAst child = this;
             var childAttributeAst = child as AttributedExpressionAst;
-            while (childAttributeAst != null)
+            while (childAttributeAst is not null)
             {
                 child = childAttributeAst.Child;
                 childAttributeAst = child as AttributedExpressionAst;
@@ -7701,7 +7701,7 @@ namespace System.Management.Automation.Language
         {
             var attributes = new List<AttributeBaseAst>();
             var childAttributeAst = this;
-            while (childAttributeAst != null)
+            while (childAttributeAst is not null)
             {
                 attributes.Add(childAttributeAst.Attribute);
                 childAttributeAst = childAttributeAst.Child as AttributedExpressionAst;
@@ -7810,7 +7810,7 @@ namespace System.Management.Automation.Language
         IAssignableValue ISupportsAssignment.GetAssignableValue()
         {
             var varExpr = Child as VariableExpressionAst;
-            if (varExpr != null && varExpr.TupleIndex >= 0)
+            if (varExpr is not null && varExpr.TupleIndex >= 0)
             {
                 // In the common case of a single cast on the lhs of an assignment, we may have saved the type of the
                 // variable in the mutable tuple, so conversions will get generated elsewhere, and we can just use
@@ -7966,7 +7966,7 @@ namespace System.Management.Automation.Language
         public InvokeMemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst method, IEnumerable<ExpressionAst> arguments, bool @static)
             : base(extent, expression, method, @static)
         {
-            if (arguments != null && arguments.Any())
+            if (arguments is not null && arguments.Any())
             {
                 this.Arguments = new ReadOnlyCollection<ExpressionAst>(arguments.ToArray());
                 SetParents(Arguments);
@@ -8034,7 +8034,7 @@ namespace System.Management.Automation.Language
             var action = Expression.InternalVisit(visitor);
             if (action == AstVisitAction.Continue)
                 action = Member.InternalVisit(visitor);
-            if (action == AstVisitAction.Continue && Arguments != null)
+            if (action == AstVisitAction.Continue && Arguments is not null)
             {
                 for (int index = 0; index < Arguments.Count; index++)
                 {
@@ -8090,7 +8090,7 @@ namespace System.Management.Automation.Language
         {
             AstVisitAction action = AstVisitAction.Continue;
             var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor2 is not null)
             {
                 action = visitor2.VisitBaseCtorInvokeMemberExpression(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -8105,7 +8105,7 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitBaseCtorInvokeMemberExpression(this) : null;
+            return visitor2 is not null ? visitor2.VisitBaseCtorInvokeMemberExpression(this) : null;
         }
     }
 
@@ -8232,7 +8232,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Returns the full name of the type.
         /// </summary>
-        public string FullName { get { return AssemblyName != null ? _name + "," + AssemblyName : _name; } }
+        public string FullName { get { return AssemblyName is not null ? _name + "," + AssemblyName : _name; } }
 
         /// <summary>
         /// Returns the name of the type, w/o any assembly name if one was specified.
@@ -8277,7 +8277,7 @@ namespace System.Management.Automation.Language
             foreach (var member in _typeDefinitionAst.Members)
             {
                 var function = member as FunctionMemberAst;
-                if (function != null)
+                if (function is not null)
                 {
                     if (function.IsConstructor)
                     {
@@ -8307,8 +8307,8 @@ namespace System.Management.Automation.Language
             if (_type is null)
             {
                 Exception e;
-                Type type = _typeDefinitionAst != null ? _typeDefinitionAst.Type : TypeResolver.ResolveTypeName(this, out e);
-                if (type != null)
+                Type type = _typeDefinitionAst is not null ? _typeDefinitionAst.Type : TypeResolver.ResolveTypeName(this, out e);
+                if (type is not null)
                 {
                     try
                     {
@@ -8318,7 +8318,7 @@ namespace System.Management.Automation.Language
                     {
                         // If the value of 'type' comes from typeBuilder.AsType(), then the value of 'type.GetTypeInfo()'
                         // is actually the TypeBuilder instance itself. This is the same on both FullCLR and CoreCLR.
-                        Diagnostics.Assert(_typeDefinitionAst != null, "_typeDefinitionAst can never be null");
+                        Diagnostics.Assert(_typeDefinitionAst is not null, "_typeDefinitionAst can never be null");
                         return type;
                     }
 
@@ -8344,7 +8344,7 @@ namespace System.Management.Automation.Language
             {
                 var attrTypeName = new TypeName(_extent, FullName + "Attribute");
                 result = attrTypeName.GetReflectionType();
-                if (result != null && !typeof(Attribute).IsAssignableFrom(result))
+                if (result is not null && !typeof(Attribute).IsAssignableFrom(result))
                 {
                     result = null;
                 }
@@ -8503,7 +8503,7 @@ namespace System.Management.Automation.Language
 
                     sb.Append(']');
                     var assemblyName = TypeName.AssemblyName;
-                    if (assemblyName != null)
+                    if (assemblyName is not null)
                     {
                         sb.Append(',');
                         sb.Append(assemblyName);
@@ -8583,7 +8583,7 @@ namespace System.Management.Automation.Language
             {
                 Type generic = GetGenericType(TypeName.GetReflectionType());
 
-                if (generic != null && generic.ContainsGenericParameters)
+                if (generic is not null && generic.ContainsGenericParameters)
                 {
                     var argumentList = new List<Type>();
                     foreach (var arg in GenericArguments)
@@ -8669,7 +8669,7 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                if (generic != null && generic.ContainsGenericParameters)
+                if (generic is not null && generic.ContainsGenericParameters)
                 {
                     type = generic.MakeGenericType((from arg in GenericArguments select arg.GetReflectionType()).ToArray());
                     Interlocked.CompareExchange(ref _cachedType, type, null);
@@ -8786,7 +8786,7 @@ namespace System.Management.Automation.Language
                 if (includeAssemblyName)
                 {
                     var assemblyName = ElementType.AssemblyName;
-                    if (assemblyName != null)
+                    if (assemblyName is not null)
                     {
                         sb.Append(',');
                         sb.Append(assemblyName);
@@ -8866,7 +8866,7 @@ namespace System.Management.Automation.Language
                 if (_cachedType is null)
                 {
                     Type elementType = ElementType.GetReflectionType();
-                    if (elementType != null)
+                    if (elementType is not null)
                     {
                         Type type = Rank == 1 ? elementType.MakeArrayType() : elementType.MakeArrayType(Rank);
                         try
@@ -9203,7 +9203,7 @@ namespace System.Management.Automation.Language
             if (this.VariablePath.IsAnyLocal())
             {
                 var varName = this.VariablePath.UnqualifiedPath;
-                if (((validVariables != null) && validVariables.Contains(varName)) ||
+                if (((validVariables is not null) && validVariables.Contains(varName)) ||
                     varName.Equals(SpecialVariables.Args, StringComparison.OrdinalIgnoreCase))
                 {
                     ok = true;
@@ -9366,7 +9366,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public override Type StaticType
         {
-            get { return Value != null ? Value.GetType() : typeof(object); }
+            get { return Value is not null ? Value.GetType() : typeof(object); }
         }
 
         #region Visitors
@@ -9554,7 +9554,7 @@ namespace System.Management.Automation.Language
 
             var ast = Language.Parser.ScanString(value);
             var expandableStringAst = ast as ExpandableStringExpressionAst;
-            if (expandableStringAst != null)
+            if (expandableStringAst is not null)
             {
                 this.FormatExpression = expandableStringAst.FormatExpression;
                 this.NestedExpressions = expandableStringAst.NestedExpressions;
@@ -9596,7 +9596,7 @@ namespace System.Management.Automation.Language
                                               StringConstantType type, IEnumerable<ExpressionAst> nestedExpressions)
             : base(extent)
         {
-            Diagnostics.Assert(nestedExpressions != null && nestedExpressions.Any(), "Must specify non-empty expressions.");
+            Diagnostics.Assert(nestedExpressions is not null && nestedExpressions.Any(), "Must specify non-empty expressions.");
 
             this.FormatExpression = formatString;
             this.Value = value;
@@ -9656,7 +9656,7 @@ namespace System.Management.Automation.Language
             var action = visitor.VisitExpandableStringExpression(this);
             if (action == AstVisitAction.SkipChildren)
                 return visitor.CheckForPostAction(this, AstVisitAction.Continue);
-            if (action == AstVisitAction.Continue && NestedExpressions != null)
+            if (action == AstVisitAction.Continue && NestedExpressions is not null)
             {
                 for (int index = 0; index < NestedExpressions.Count; index++)
                 {
@@ -9840,7 +9840,7 @@ namespace System.Management.Automation.Language
         public HashtableAst(IScriptExtent extent, IEnumerable<KeyValuePair> keyValuePairs)
             : base(extent)
         {
-            if (keyValuePairs != null)
+            if (keyValuePairs is not null)
             {
                 this.KeyValuePairs = new ReadOnlyCollection<KeyValuePair>(keyValuePairs.ToArray());
                 SetParents(KeyValuePairs);
@@ -10193,10 +10193,10 @@ namespace System.Management.Automation.Language
             var usingExpr = expression as UsingExpressionAst;
             VariableExpressionAst variableExpr;
 
-            if (usingExpr != null)
+            if (usingExpr is not null)
             {
                 variableExpr = usingExpr.SubExpression as VariableExpressionAst;
-                if (variableExpr != null)
+                if (variableExpr is not null)
                 {
                     return variableExpr;
                 }
@@ -10205,10 +10205,10 @@ namespace System.Management.Automation.Language
             }
 
             var indexExpr = expression as IndexExpressionAst;
-            if (indexExpr != null)
+            if (indexExpr is not null)
             {
                 variableExpr = indexExpr.Target as VariableExpressionAst;
-                if (variableExpr != null)
+                if (variableExpr is not null)
                 {
                     return variableExpr;
                 }
@@ -10217,10 +10217,10 @@ namespace System.Management.Automation.Language
             }
 
             var memberExpr = expression as MemberExpressionAst;
-            if (memberExpr != null)
+            if (memberExpr is not null)
             {
                 variableExpr = memberExpr.Expression as VariableExpressionAst;
-                if (variableExpr != null)
+                if (variableExpr is not null)
                 {
                     return variableExpr;
                 }

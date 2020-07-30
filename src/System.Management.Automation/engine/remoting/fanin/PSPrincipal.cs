@@ -219,7 +219,7 @@ namespace System.Management.Automation.Remoting
         /// </returns>
         public bool IsInRole(string role)
         {
-            if (WindowsIdentity != null)
+            if (WindowsIdentity is not null)
             {
                 // Get Windows Principal for this identity
                 WindowsPrincipal windowsPrincipal = new WindowsPrincipal(WindowsIdentity);
@@ -236,7 +236,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal bool IsInRole(WindowsBuiltInRole role)
         {
-            if (WindowsIdentity != null)
+            if (WindowsIdentity is not null)
             {
                 // Get Windows Principal for this identity
                 WindowsPrincipal windowsPrincipal = new WindowsPrincipal(WindowsIdentity);

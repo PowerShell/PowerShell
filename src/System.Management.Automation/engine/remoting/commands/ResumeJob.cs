@@ -175,13 +175,13 @@ namespace Microsoft.PowerShell.Commands
         {
             Job job = sender as Job;
 
-            if (eventArgs.Error != null && eventArgs.Error is InvalidJobStateException)
+            if (eventArgs.Error is not null && eventArgs.Error is InvalidJobStateException)
             {
                 _warnInvalidState = true;
             }
 
             var parentJob = job as ContainerParentJob;
-            if (parentJob != null && parentJob.ExecutionError.Count > 0)
+            if (parentJob is not null && parentJob.ExecutionError.Count > 0)
             {
                 foreach (
                     var e in

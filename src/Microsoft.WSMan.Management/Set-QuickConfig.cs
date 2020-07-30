@@ -158,7 +158,7 @@ namespace Microsoft.WSMan.Management
                 string enabled = resultopxml.SelectSingleNode(xpathEnabled, nsmgr).InnerText;
                 XmlNode sourceAttribute = resultopxml.SelectSingleNode(xpathEnabled, nsmgr).Attributes.GetNamedItem("Source");
                 string source = null;
-                if (sourceAttribute != null)
+                if (sourceAttribute is not null)
                 {
                     source = sourceAttribute.Value;
                 }
@@ -191,7 +191,7 @@ namespace Microsoft.WSMan.Management
                 }
 
                 string resultAction = resultopxml.SelectSingleNode(xpathText, nsmgr).InnerText;
-                if (source != null && source.Equals("GPO"))
+                if (source is not null && source.Equals("GPO"))
                 {
                     string Info_Msg = WSManResourceLoader.GetResourceString("L_QuickConfig_RemotingDisabledbyGP_00_ErrorMessage");
                     Info_Msg += " " + resultAction;
@@ -258,7 +258,7 @@ namespace Microsoft.WSMan.Management
                     helper.AssertError(m_SessionObj.Error, true, null);
                 }
 
-                if (m_SessionObj != null)
+                if (m_SessionObj is not null)
                     Dispose(m_SessionObj);
             }
         }

@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             var exception = ModuleSpecificationInitHelper(this, moduleSpecification);
-            if (exception != null)
+            if (exception is not null)
             {
                 throw exception;
             }
@@ -155,13 +155,13 @@ namespace Microsoft.PowerShell.Commands
                 return new MissingMemberException(message);
             }
 
-            if (moduleSpecification.RequiredVersion != null && moduleSpecification.Version != null)
+            if (moduleSpecification.RequiredVersion is not null && moduleSpecification.Version is not null)
             {
                 message = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "ModuleVersion", "RequiredVersion");
                 return new ArgumentException(message);
             }
 
-            if (moduleSpecification.RequiredVersion != null && moduleSpecification.MaximumVersion != null)
+            if (moduleSpecification.RequiredVersion is not null && moduleSpecification.MaximumVersion is not null)
             {
                 message = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "MaximumVersion", "RequiredVersion");
                 return new ArgumentException(message);
@@ -199,23 +199,23 @@ namespace Microsoft.PowerShell.Commands
 
             moduleSpecBuilder.Append("@{ ModuleName = '").Append(Name).Append("'");
 
-            if (Guid != null)
+            if (Guid is not null)
             {
                 moduleSpecBuilder.Append("; Guid = '{").Append(Guid).Append("}' ");
             }
 
-            if (RequiredVersion != null)
+            if (RequiredVersion is not null)
             {
                 moduleSpecBuilder.Append("; RequiredVersion = '").Append(RequiredVersion).Append("'");
             }
             else
             {
-                if (Version != null)
+                if (Version is not null)
                 {
                     moduleSpecBuilder.Append("; ModuleVersion = '").Append(Version).Append("'");
                 }
 
-                if (MaximumVersion != null)
+                if (MaximumVersion is not null)
                 {
                     moduleSpecBuilder.Append("; MaximumVersion = '").Append(MaximumVersion).Append("'");
                 }
@@ -321,7 +321,7 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
 
-            return x != null && y != null
+            return x is not null && y is not null
                 && string.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase)
                 && Guid.Equals(x.Guid, y.Guid)
                 && Version.Equals(x.RequiredVersion, y.RequiredVersion)

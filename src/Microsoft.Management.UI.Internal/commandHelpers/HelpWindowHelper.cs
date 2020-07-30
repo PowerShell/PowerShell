@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         private static void ShowHelpWindow(PSObject helpObj, PSCmdlet cmdlet)
         {
             Window ownerWindow = ShowCommandHelper.GetHostWindow(cmdlet);
-            if (ownerWindow != null)
+            if (ownerWindow is not null)
             {
                 ownerWindow.Dispatcher.Invoke(
                     new SendOrPostCallback(

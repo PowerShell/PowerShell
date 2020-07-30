@@ -144,7 +144,7 @@ namespace System.Management.Automation
             {
                 result = scope.GetAlias(aliasName);
 
-                if (result != null)
+                if (result is not null)
                 {
                     // Now check the visibility of the variable...
                     SessionState.ThrowIfNotVisible(origin, result);
@@ -217,7 +217,7 @@ namespace System.Management.Automation
             // Make sure the alias isn't private or if it is that the current
             // scope is the same scope the alias was retrieved from.
 
-            if (result != null &&
+            if (result is not null &&
                 (result.Options & ScopedItemOptions.Private) != 0 &&
                  scope != _currentScope)
             {
@@ -539,7 +539,7 @@ namespace System.Management.Automation
                 AliasInfo alias =
                     scope.GetAlias(aliasName);
 
-                if (alias != null)
+                if (alias is not null)
                 {
                     // Make sure the alias isn't private or if it is that the current
                     // scope is the same scope the alias was retrieved from.

@@ -14,7 +14,7 @@ namespace System.Management.Automation
     {
         private PSSnapinQualifiedName(string[] splitName)
         {
-            Dbg.Assert(splitName != null, "splitName should not be null");
+            Dbg.Assert(splitName is not null, "splitName should not be null");
             Dbg.Assert(splitName.Length == 1 || splitName.Length == 2, "splitName should contain 1 or 2 elements");
 
             if (splitName.Length == 1)

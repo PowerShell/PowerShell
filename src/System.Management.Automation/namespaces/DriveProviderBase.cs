@@ -46,7 +46,7 @@ namespace System.Management.Automation.Provider
             // Make sure the provider supports credentials if they were passed
             // in the drive.
 
-            if (drive.Credential != null &&
+            if (drive.Credential is not null &&
                 drive.Credential != PSCredential.Empty &&
                 !CmdletProviderManagementIntrinsics.CheckProviderCapabilities(ProviderCapabilities.Credentials, ProviderInfo))
             {

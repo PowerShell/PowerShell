@@ -78,7 +78,7 @@ namespace System.Management.Automation
                     return result;
                 }
 
-                if (_fullName != null && ModuleName.Equals(_cachedModuleName, StringComparison.Ordinal))
+                if (_fullName is not null && ModuleName.Equals(_cachedModuleName, StringComparison.Ordinal))
                 {
                     return _fullName;
                 }
@@ -101,7 +101,7 @@ namespace System.Management.Automation
             get
             {
                 string result = null;
-                if (PSSnapIn != null)
+                if (PSSnapIn is not null)
                 {
                     result = PSSnapIn.Name;
                 }
@@ -135,9 +135,9 @@ namespace System.Management.Automation
         {
             get
             {
-                if (PSSnapIn != null)
+                if (PSSnapIn is not null)
                     return PSSnapIn.Name;
-                if (Module != null)
+                if (Module is not null)
                     return Module.Name;
                 return string.Empty;
             }
@@ -452,7 +452,7 @@ namespace System.Management.Automation
             PSSnapinQualifiedName qualifiedProviderName = PSSnapinQualifiedName.GetInstance(providerName);
 
             bool result = false;
-            if (qualifiedProviderName != null)
+            if (qualifiedProviderName is not null)
             {
                 // If the pssnapin name and provider name are specified, then both must match
                 do // false loop
@@ -485,7 +485,7 @@ namespace System.Management.Automation
 
             WildcardPattern namePattern = null;
 
-            if (psSnapinQualifiedName != null && WildcardPattern.ContainsWildcardCharacters(psSnapinQualifiedName.ShortName))
+            if (psSnapinQualifiedName is not null && WildcardPattern.ContainsWildcardCharacters(psSnapinQualifiedName.ShortName))
             {
                 namePattern = WildcardPattern.Get(psSnapinQualifiedName.ShortName, WildcardOptions.IgnoreCase);
             }
@@ -602,7 +602,7 @@ namespace System.Management.Automation
             {
                 ProviderNotFoundException e = null;
 
-                if (invocationException != null)
+                if (invocationException is not null)
                 {
                     e =
                         new ProviderNotFoundException(
@@ -630,7 +630,7 @@ namespace System.Management.Automation
             AltItemSeparator = result.AltItemSeparator;
 
             Dbg.Diagnostics.Assert(
-                result != null,
+                result is not null,
                 "DiscoverProvider should verify that the class is derived from CmdletProvider so this is just validation of that");
 
             result.SetProviderInformation(this);

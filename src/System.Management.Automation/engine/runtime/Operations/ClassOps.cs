@@ -85,7 +85,7 @@ namespace System.Management.Automation.Internal
             // a PowerShell class by using reflection on a thread without DefaultRunspace.
             // Make sure we call 'TryGetValue' with a non-null key, otherwise ArgumentNullException will be thrown.
             Runspace defaultRunspace = Runspace.DefaultRunspace;
-            if (defaultRunspace != null)
+            if (defaultRunspace is not null)
             {
                 _stateMap.TryGetValue(defaultRunspace, out ss);
             }
@@ -195,7 +195,7 @@ namespace System.Management.Automation.Internal
         private void PrepareScriptBlockToInvoke(object instance, object sessionStateInternal)
         {
             SessionStateInternal sessionStateToUse = null;
-            if (instance != null)
+            if (instance is not null)
             {
                 // Use the SessionState passed in, which is the one associated with the instance.
                 sessionStateToUse = (SessionStateInternal)sessionStateInternal;

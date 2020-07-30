@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         {
             List<Job> jobList = FindJobs();
 
-            jobList.Sort((x, y) => x != null ? x.Id.CompareTo(y != null ? y.Id : 1) : -1);
+            jobList.Sort((x, y) => x is not null ? x.Id.CompareTo(y is not null ? y.Id : 1) : -1);
             WriteObject(jobList, true);
         }
 
@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
 
                 case SessionIdParameterSet:
                     {
-                        if (Id != null)
+                        if (Id is not null)
                         {
                             jobList.AddRange(FindJobsMatchingBySessionId(true, false, true, false));
                         }
@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (Job job in jobList)
                 {
-                    if (job.ChildJobs != null && job.ChildJobs.Count > 0)
+                    if (job.ChildJobs is not null && job.ChildJobs.Count > 0)
                     {
                         matches.AddRange(job.ChildJobs);
                     }

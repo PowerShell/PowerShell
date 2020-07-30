@@ -312,7 +312,7 @@ namespace System.Management.Automation.Interpreter
                 _maxStackDepth,
                 _maxContinuationDepth,
                 _instructions.ToArray(),
-                (_objects != null) ? _objects.ToArray() : null,
+                (_objects is not null) ? _objects.ToArray() : null,
                 BuildRuntimeLabels(),
                 _debugCookies
             );
@@ -421,10 +421,10 @@ namespace System.Management.Automation.Interpreter
         {
             var instruction = _instructions[instructionIndex] as IBoxableInstruction;
 
-            if (instruction != null)
+            if (instruction is not null)
             {
                 var newInstruction = instruction.BoxIfIndexMatches(index);
-                if (newInstruction != null)
+                if (newInstruction is not null)
                 {
                     _instructions[instructionIndex] = newInstruction;
                 }
@@ -624,7 +624,7 @@ namespace System.Management.Automation.Interpreter
         public void EmitInitializeLocal(int index, Type type)
         {
             object value = ScriptingRuntimeHelpers.GetPrimitiveDefaultValue(type);
-            if (value != null)
+            if (value is not null)
             {
                 Emit(new InitializeLocalInstruction.ImmutableValue(index, value));
             }

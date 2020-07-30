@@ -260,7 +260,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void EndProcessing()
         {
             CimGetAssociatedInstance operation = this.GetOperationAgent();
-            if (operation != null)
+            if (operation is not null)
                 operation.ProcessRemainActions(this.CmdletOperation);
         }
 

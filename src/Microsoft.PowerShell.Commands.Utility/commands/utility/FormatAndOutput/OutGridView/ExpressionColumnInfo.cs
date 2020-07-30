@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Only first element is used.
             PSPropertyExpressionResult result = resList[0];
-            if (result.Exception != null)
+            if (result.Exception is not null)
             {
                 return null;
             }

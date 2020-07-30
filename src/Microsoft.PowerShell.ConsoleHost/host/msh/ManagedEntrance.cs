@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell
             }
             catch (HostException e)
             {
-                if (e.InnerException != null && e.InnerException.GetType() == typeof(Win32Exception))
+                if (e.InnerException is not null && e.InnerException.GetType() == typeof(Win32Exception))
                 {
                     Win32Exception win32e = e.InnerException as Win32Exception;
 

@@ -17,10 +17,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal string GetTextTokenString(TextToken tt)
         {
-            if (tt.resource != null)
+            if (tt.resource is not null)
             {
                 string resString = this.GetString(tt.resource);
-                if (resString != null)
+                if (resString is not null)
                     return resString;
             }
 
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // NOTE: we cache the result (both for success and failure)
 
                 // Porting note: this won't be hit in normal usage, but can be hit with bad build setup
-                Diagnostics.Assert(retVal != null, "AssemblyName resolution failed, a resource file might be broken");
+                Diagnostics.Assert(retVal is not null, "AssemblyName resolution failed, a resource file might be broken");
 
                 _assemblyReferences.Add(assemblyName, retVal);
                 return retVal;
@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 ExecutionContext context = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
 
-                if (context != null)
+                if (context is not null)
                 {
                     context.AssemblyCache.GetAtKey(assemblyName, out result);
                 }

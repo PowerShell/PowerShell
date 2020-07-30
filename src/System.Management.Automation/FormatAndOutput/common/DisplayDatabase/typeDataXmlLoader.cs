@@ -434,7 +434,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             foreach (FormatViewDefinition formatView in typeDefinition.FormatViewDefinition)
             {
                 ViewDefinition view = LoadViewFromObjectModel(typeDefinition.TypeNames, formatView, viewIndex++);
-                if (view != null)
+                if (view is not null)
                 {
                     ReportTrace(string.Format(CultureInfo.InvariantCulture,
                         "{0} view {1} is loaded from the 'FormatViewDefinition' at index {2} in 'ExtendedTypeDefinition' with type name {3}",
@@ -502,7 +502,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             view.outOfBand = control.OutOfBand;
 
-            if (control.GroupBy != null)
+            if (control.GroupBy is not null)
             {
                 view.groupBy = new GroupBy
                 {
@@ -511,12 +511,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         expression = LoadExpressionFromObjectModel(control.GroupBy.Expression, viewIndex, firstTypeName)
                     }
                 };
-                if (control.GroupBy.Label != null)
+                if (control.GroupBy.Label is not null)
                 {
                     view.groupBy.startGroup.labelTextToken = new TextToken { text = control.GroupBy.Label };
                 }
 
-                if (control.GroupBy.CustomControl != null)
+                if (control.GroupBy.CustomControl is not null)
                 {
                     view.groupBy.startGroup.control = LoadCustomControlFromObjectModel(control.GroupBy.CustomControl, viewIndex, firstTypeName);
                 }
@@ -636,7 +636,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-                if (row.SelectedBy != null)
+                if (row.SelectedBy is not null)
                 {
                     trd.appliesTo = LoadAppliesToSectionFromObjectModel(row.SelectedBy.TypeNames, row.SelectedBy.SelectionCondition);
                     tableBody.optionalDefinitionList.Add(trd);
@@ -672,7 +672,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // Contain:
                 //   DisplayEntry --- Expression cardinality: 0..1
                 //   Alignment    --- Alignment  cardinality: 0..1
-                if (column.DisplayEntry != null)
+                if (column.DisplayEntry is not null)
                 {
                     ExpressionToken expression = LoadExpressionFromObjectModel(column.DisplayEntry, viewIndex, typeName);
                     if (expression is null)
@@ -750,7 +750,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             AppliesTo appliesTo = new AppliesTo();
 
-            if (selectedBy != null)
+            if (selectedBy is not null)
             {
                 foreach (string type in selectedBy)
                 {
@@ -761,7 +761,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            if (condition != null)
+            if (condition is not null)
             {
                 foreach (var cond in condition)
                 {
@@ -853,7 +853,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // Contains:
             //   SelectedBy ---  EntrySelectedBy(TypeName)  cardinality 0..1
             //   Items      ---  ListItems                  cardinality 1
-            if (listEntry.EntrySelectedBy != null)
+            if (listEntry.EntrySelectedBy is not null)
             {
                 lved.appliesTo = LoadAppliesToSectionFromObjectModel(listEntry.EntrySelectedBy.TypeNames, listEntry.EntrySelectedBy.SelectionCondition);
             }
@@ -883,7 +883,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // Contains:
                 //   DisplayEntry --- Expression  cardinality 0..1
                 //   Label        --- Label       cardinality 0..1
-                if (listItem.DisplayEntry != null)
+                if (listItem.DisplayEntry is not null)
                 {
                     ExpressionToken expression = LoadExpressionFromObjectModel(listItem.DisplayEntry, viewIndex, typeName);
                     if (expression is null)
@@ -1016,7 +1016,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             //   SelectedBy   --- EntrySelectedBy (TypeName)  cardinality 0..1
             //   DisplayEntry --- WideItem (Expression)       cardinality 1
             // process selectedBy property
-            if (wideItem.EntrySelectedBy != null)
+            if (wideItem.EntrySelectedBy is not null)
             {
                 wved.appliesTo = LoadAppliesToSectionFromObjectModel(wideItem.EntrySelectedBy.TypeNames, wideItem.EntrySelectedBy.SelectionCondition);
             }
@@ -1042,7 +1042,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private ComplexControlBody LoadCustomControlFromObjectModel(CustomControl custom, int viewIndex, string typeName)
         {
-            if (custom._cachedBody != null)
+            if (custom._cachedBody is not null)
                 return custom._cachedBody;
 
             var ccb = new ComplexControlBody();
@@ -1067,7 +1067,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private ComplexControlEntryDefinition LoadComplexControlEntryDefinitionFromObjectModel(CustomControlEntry entry, int viewIndex, string typeName)
         {
             var cced = new ComplexControlEntryDefinition();
-            if (entry.SelectedBy != null)
+            if (entry.SelectedBy is not null)
             {
                 cced.appliesTo = LoadAppliesToSectionFromObjectModel(entry.SelectedBy.TypeNames, entry.SelectedBy.SelectionCondition);
             }
@@ -1083,33 +1083,33 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private FormatToken LoadFormatTokenFromObjectModel(CustomItemBase item, int viewIndex, string typeName)
         {
             var newline = item as CustomItemNewline;
-            if (newline != null)
+            if (newline is not null)
             {
                 return new NewLineToken { count = newline.Count };
             }
 
             var text = item as CustomItemText;
-            if (text != null)
+            if (text is not null)
             {
                 return new TextToken { text = text.Text };
             }
 
             var expr = item as CustomItemExpression;
-            if (expr != null)
+            if (expr is not null)
             {
                 var cpt = new CompoundPropertyToken { enumerateCollection = expr.EnumerateCollection };
 
-                if (expr.ItemSelectionCondition != null)
+                if (expr.ItemSelectionCondition is not null)
                 {
                     cpt.conditionToken = LoadExpressionFromObjectModel(expr.ItemSelectionCondition, viewIndex, typeName);
                 }
 
-                if (expr.Expression != null)
+                if (expr.Expression is not null)
                 {
                     cpt.expression = LoadExpressionFromObjectModel(expr.Expression, viewIndex, typeName);
                 }
 
-                if (expr.CustomControl != null)
+                if (expr.CustomControl is not null)
                 {
                     cpt.control = LoadCustomControlFromObjectModel(expr.CustomControl, viewIndex, typeName);
                 }
@@ -1430,7 +1430,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (MatchNodeName(n, XmlTags.SelectionSetNameNode))
                         {
                             TypeGroupReference tgr = LoadTypeGroupReference(n);
-                            if (tgr != null)
+                            if (tgr is not null)
                             {
                                 appliesTo.referenceList.Add(tgr);
                             }
@@ -1442,7 +1442,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         else if (MatchNodeName(n, XmlTags.TypeNameNode))
                         {
                             TypeReference tr = LoadTypeReference(n);
-                            if (tr != null)
+                            if (tr is not null)
                             {
                                 appliesTo.referenceList.Add(tr);
                             }
@@ -1454,7 +1454,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         else if (allowSelectionCondition && MatchNodeName(n, XmlTags.SelectionConditionNode))
                         {
                             TypeOrGroupReference tgr = LoadSelectionConditionNode(n);
-                            if (tgr != null)
+                            if (tgr is not null)
                             {
                                 appliesTo.referenceList.Add(tgr);
                             }
@@ -1486,7 +1486,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             string val = GetMandatoryInnerText(n);
 
-            if (val != null)
+            if (val is not null)
             {
                 TypeReference tr = new TypeReference();
                 tr.name = val;
@@ -1500,7 +1500,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             string val = GetMandatoryInnerText(n);
 
-            if (val != null)
+            if (val is not null)
             {
                 TypeGroupReference tgr = new TypeGroupReference();
                 tgr.name = val;
@@ -1536,7 +1536,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         typeGroupFound = true;
                         TypeGroupReference tgr = LoadTypeGroupReference(n);
-                        if (tgr != null)
+                        if (tgr is not null)
                         {
                             retVal = tgr;
                         }
@@ -1555,7 +1555,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         typeFound = true;
                         TypeReference tr = LoadTypeReference(n);
-                        if (tr != null)
+                        if (tr is not null)
                         {
                             retVal = tr;
                         }
@@ -1744,7 +1744,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return null;
             }
 
-            if (tt.resource != null)
+            if (tt.resource is not null)
             {
                 // inner text is optional
                 tt.text = n.InnerText;
@@ -1782,7 +1782,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             resource = LoadResourceAttributes(e.Attributes);
 
             // we committed to having resources, if not obtained, it's an error
-            return resource != null;
+            return resource is not null;
         }
 
         private StringResourceReference LoadResourceAttributes(XmlAttributeCollection attributes)
@@ -1960,7 +1960,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 if (_loader.MatchNodeName(n, XmlTags.PropertyNameNode))
                 {
-                    if (_token != null)
+                    if (_token is not null)
                     {
                         if (_token.isScriptBlock)
                             _loader.ProcessDuplicateAlternateNode(n, XmlTags.PropertyNameNode, XmlTags.ScriptBlockNode);
@@ -1983,7 +1983,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else if (_loader.MatchNodeName(n, XmlTags.ScriptBlockNode))
                 {
-                    if (_token != null)
+                    if (_token is not null)
                     {
                         if (!_token.isScriptBlock)
                             _loader.ProcessDuplicateAlternateNode(n, XmlTags.PropertyNameNode, XmlTags.ScriptBlockNode);

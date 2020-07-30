@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     objectToDelete.ToString(),
                     methodInvocationInfo)
         {
-            Dbg.Assert(objectToDelete != null, "Caller should verify objectToDelete != null");
+            Dbg.Assert(objectToDelete is not null, "Caller should verify objectToDelete is not null");
             _objectToDelete = objectToDelete;
         }
 

@@ -24,17 +24,17 @@ namespace System.Management.Automation.ComInterop
 
         internal SplatCallSite(object callable)
         {
-            Debug.Assert(callable != null);
+            Debug.Assert(callable is not null);
             _callable = callable;
         }
 
         internal object Invoke(object[] args)
         {
-            Debug.Assert(args != null);
+            Debug.Assert(args is not null);
 
             // If it is a delegate, just let DynamicInvoke do the binding.
             var d = _callable as Delegate;
-            if (d != null)
+            if (d is not null)
             {
                 return d.DynamicInvoke(args);
             }

@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
 
-            if (baseObject != null && inComingbaseObjectPropertyValue != null)
+            if (baseObject is not null && inComingbaseObjectPropertyValue is not null)
             {
                 return baseObject.ToString().Equals(inComingbaseObjectPropertyValue.ToString(), StringComparison.OrdinalIgnoreCase);
             }

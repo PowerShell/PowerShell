@@ -70,7 +70,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal RemoteHostCall(long callId, RemoteHostMethodId methodId, object[] parameters)
         {
-            Dbg.Assert(parameters != null, "Expected parameters != null");
+            Dbg.Assert(parameters is not null, "Expected parameters is not null");
             _callId = callId;
             MethodId = methodId;
             Parameters = parameters;
@@ -135,7 +135,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal static RemoteHostCall Decode(PSObject data)
         {
-            Dbg.Assert(data != null, "Expected data != null");
+            Dbg.Assert(data is not null, "Expected data is not null");
 
             // Extract all the fields from data.
             long callId = RemotingDecoder.GetPropertyValue<long>(data, RemoteDataNameStrings.CallId);
@@ -188,7 +188,7 @@ namespace System.Management.Automation.Remoting
             }
             finally
             {
-                if (remoteRunspaceToClose != null)
+                if (remoteRunspaceToClose is not null)
                 {
                     remoteRunspaceToClose.Close();
                 }
@@ -380,7 +380,7 @@ namespace System.Management.Automation.Remoting
                         fieldDesc.IsFromRemoteHost = true;
 
                         Type fieldType = InternalHostUserInterface.GetFieldType(fieldDesc);
-                        if (fieldType != null)
+                        if (fieldType is not null)
                         {
                             if (fieldType == typeof(PSCredential))
                             {
@@ -574,7 +574,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal object SimulateExecution()
         {
-            if (_exception != null)
+            if (_exception is not null)
             {
                 throw _exception;
             }
@@ -643,7 +643,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal static RemoteHostResponse Decode(PSObject data)
         {
-            Dbg.Assert(data != null, "Expected data != null");
+            Dbg.Assert(data is not null, "Expected data is not null");
 
             // Extract all the fields from data.
             long callId = RemotingDecoder.GetPropertyValue<long>(data, RemoteDataNameStrings.CallId);
@@ -719,7 +719,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal static Exception NewRemoteHostDataEncodingNotSupportedException(Type type)
         {
-            Dbg.Assert(type != null, "Expected type != null");
+            Dbg.Assert(type is not null, "Expected type is not null");
             return new PSRemotingDataStructureException(
                 RemotingErrorIdStrings.RemoteHostDataEncodingNotSupported,
                 type.ToString());
@@ -730,7 +730,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal static Exception NewRemoteHostDataDecodingNotSupportedException(Type type)
         {
-            Dbg.Assert(type != null, "Expected type != null");
+            Dbg.Assert(type is not null, "Expected type is not null");
             return new PSRemotingDataStructureException(
                 RemotingErrorIdStrings.RemoteHostDataDecodingNotSupported,
                 type.ToString());
@@ -741,7 +741,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal static Exception NewUnknownTargetClassException(string className)
         {
-            Dbg.Assert(className != null, "Expected className != null");
+            Dbg.Assert(className is not null, "Expected className is not null");
             return new PSRemotingDataStructureException(RemotingErrorIdStrings.UnknownTargetClass, className);
         }
 

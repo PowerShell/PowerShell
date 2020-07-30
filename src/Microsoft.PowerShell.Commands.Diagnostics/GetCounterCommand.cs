@@ -339,7 +339,7 @@ namespace Microsoft.PowerShell.Commands
                 bool bMatched = false;
                 string normalizedPattern = pattern;
 
-                if (characterReplacementList != null)
+                if (characterReplacementList is not null)
                 {
                     foreach (Tuple<char, char> pair in characterReplacementList)
                     {
@@ -460,7 +460,7 @@ namespace Microsoft.PowerShell.Commands
                         localizedPath = path;
                     }
                 }
-                else if (characterReplacementList != null)
+                else if (characterReplacementList is not null)
                 {
                     foreach (Tuple<char, char> pair in characterReplacementList)
                     {

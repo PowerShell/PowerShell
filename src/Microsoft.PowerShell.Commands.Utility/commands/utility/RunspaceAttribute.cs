@@ -43,7 +43,7 @@ namespace System.Management.Automation.Runspaces
 
             // Try to coerce the input as a runspace
             Runspace runspace = LanguagePrimitives.FromObjectAs<Runspace>(inputData);
-            if (runspace != null)
+            if (runspace is not null)
             {
                 return runspace;
             }

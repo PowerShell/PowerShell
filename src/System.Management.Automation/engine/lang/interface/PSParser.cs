@@ -179,7 +179,7 @@ namespace System.Management.Automation
             StringBuilder sb = new StringBuilder();
             foreach (object obj in script)
             {
-                if (obj != null)
+                if (obj is not null)
                 {
                     sb.AppendLine(obj.ToString());
                 }

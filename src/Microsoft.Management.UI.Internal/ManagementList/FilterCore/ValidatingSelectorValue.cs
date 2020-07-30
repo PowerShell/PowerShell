@@ -130,7 +130,7 @@ namespace Microsoft.Management.UI.Internal
 
             set
             {
-                if (value != null && !value.GetType().IsSerializable)
+                if (value is not null && !value.GetType().IsSerializable)
                 {
                     throw new ArgumentException("The DisplayNameConverter must be serializable.", "value");
                 }
@@ -216,7 +216,7 @@ namespace Microsoft.Management.UI.Internal
         {
             EventHandler<PropertyChangedEventArgs<T>> eh = this.SelectedValueChanged;
 
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this, new PropertyChangedEventArgs<T>(oldValue, newValue));
             }

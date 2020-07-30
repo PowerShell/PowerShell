@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             get
             {
-                if (this.CmdletInvocationContext.CmdletDefinitionContext.ResourceUri != null)
+                if (this.CmdletInvocationContext.CmdletDefinitionContext.ResourceUri is not null)
                 {
                     return null;
                 }

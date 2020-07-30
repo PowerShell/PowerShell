@@ -127,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public int Width
         {
-            get { return (_width != null) ? _width.Value : 0; }
+            get { return (_width is not null) ? _width.Value : 0; }
 
             set { _width = value; }
         }
@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
             // compute the # of columns available
             int computedWidth = int.MaxValue;
 
-            if (_width != null)
+            if (_width is not null)
             {
                 // use the value from the command line
                 computedWidth = _width.Value;
@@ -279,14 +279,14 @@ namespace Microsoft.PowerShell.Commands
 
         private void CleanUp()
         {
-            if (_fs != null)
+            if (_fs is not null)
             {
                 _fs.Dispose();
                 _fs = null;
             }
 
             // reset the read-only attribute
-            if (_readOnlyFileInfo != null)
+            if (_readOnlyFileInfo is not null)
             {
                 _readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
                 _readOnlyFileInfo = null;

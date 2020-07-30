@@ -167,14 +167,14 @@ namespace Microsoft.PowerShell.Commands
                 // Media types registered with Windows as having a perceived type of text, are text
                 using (RegistryKey contentTypeKey = Registry.ClassesRoot.OpenSubKey(@"MIME\Database\Content Type\" + contentType))
                 {
-                    if (contentTypeKey != null)
+                    if (contentTypeKey is not null)
                     {
                         string extension = contentTypeKey.GetValue("Extension") as string;
-                        if (extension != null)
+                        if (extension is not null)
                         {
                             using (RegistryKey extensionKey = Registry.ClassesRoot.OpenSubKey(extension))
                             {
-                                if (extensionKey != null)
+                                if (extensionKey is not null)
                                 {
                                     string perceivedType = extensionKey.GetValue("PerceivedType") as string;
                                     isText = (perceivedType == "text");

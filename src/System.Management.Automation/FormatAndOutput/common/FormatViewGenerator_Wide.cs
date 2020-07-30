@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             get
             {
                 // check command line first
-                if (parameters != null && parameters.shapeParameters != null)
+                if (parameters is not null && parameters.shapeParameters is not null)
                 {
                     WideSpecificParameters wp = (WideSpecificParameters)parameters.shapeParameters;
                     if (wp.columns.HasValue)
@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // check if the view has info
-                if (this.dataBaseInfo.view != null && this.dataBaseInfo.view.mainControl != null)
+                if (this.dataBaseInfo.view is not null && this.dataBaseInfo.view.mainControl is not null)
                 {
                     WideControlBody wideControl = (WideControlBody)this.dataBaseInfo.view.mainControl;
                     return wideControl.columns;
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             FormatEntryData fed = new FormatEntryData();
 
-            if (this.dataBaseInfo.view != null)
+            if (this.dataBaseInfo.view is not null)
                 fed.formatEntryInfo = GenerateWideViewEntryFromDataBaseInfo(so, enumerationLimit);
             else
                 fed.formatEntryInfo = GenerateWideViewEntryFromProperties(so, enumerationLimit);
@@ -99,14 +99,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            if (match.BestMatch != null)
+            if (match.BestMatch is not null)
             {
                 return match.BestMatch as WideControlEntryDefinition;
             }
             else
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (typesWithoutPrefix != null)
+                if (typesWithoutPrefix is not null)
                 {
                     match = new TypeMatch(expressionFactory, this.dataBaseInfo.db, typesWithoutPrefix);
                     foreach (WideControlEntryDefinition x in wideBody.optionalEntryList)
@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                     }
 
-                    if (match.BestMatch != null)
+                    if (match.BestMatch is not null)
                     {
                         return match.BestMatch as WideControlEntryDefinition;
                     }
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // get the first one
                 MshResolvedExpressionParameterAssociation a = this.activeAssociationList[0];
                 FieldFormattingDirective directive = null;
-                if (a.OriginatingParameter != null)
+                if (a.OriginatingParameter is not null)
                 {
                     directive = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
                 }
@@ -161,11 +161,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             List<MshParameter> rawMshParameterList = null;
 
-            if (this.inputParameters != null)
+            if (this.inputParameters is not null)
                 rawMshParameterList = this.inputParameters.mshParameterList;
 
             // check if we received properties from the command line
-            if (rawMshParameterList != null && rawMshParameterList.Count > 0)
+            if (rawMshParameterList is not null && rawMshParameterList.Count > 0)
             {
                 this.activeAssociationList = AssociationManager.ExpandParameters(rawMshParameterList, so);
                 return;
@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we did not get any properties:
             // try to get the display property of the object
             PSPropertyExpression displayNameExpression = PSObjectHelper.GetDisplayNameExpression(so, this.expressionFactory);
-            if (displayNameExpression != null)
+            if (displayNameExpression is not null)
             {
                 this.activeAssociationList = new List<MshResolvedExpressionParameterAssociation>();
                 this.activeAssociationList.Add(new MshResolvedExpressionParameterAssociation(null, displayNameExpression));

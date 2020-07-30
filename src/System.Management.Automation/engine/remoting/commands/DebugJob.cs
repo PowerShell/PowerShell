@@ -197,14 +197,14 @@ namespace Microsoft.PowerShell.Commands
         {
             // Cancel job debugging.
             Debugger debugger = _debugger;
-            if ((debugger != null) && (_job != null))
+            if ((debugger is not null) && (_job is not null))
             {
                 debugger.StopDebugJob(_job);
             }
 
             // Unblock the data collection.
             PSDataCollection<PSStreamObject> debugCollection = _debugCollection;
-            if (debugCollection != null)
+            if (debugCollection is not null)
             {
                 debugCollection.Complete();
             }
@@ -261,7 +261,7 @@ namespace Microsoft.PowerShell.Commands
                 // or this command is cancelled.
                 foreach (var streamItem in _debugCollection)
                 {
-                    if (streamItem != null)
+                    if (streamItem is not null)
                     {
                         streamItem.WriteStreamObject(this);
                     }
@@ -298,7 +298,7 @@ namespace Microsoft.PowerShell.Commands
             if (_debugCollection.IsOpen)
             {
                 PSStreamObject streamObject = dataAddingArgs.ItemAdded as PSStreamObject;
-                if (streamObject != null)
+                if (streamObject is not null)
                 {
                     try
                     {
@@ -431,7 +431,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             if ((jobs1.Count > 1) ||
-                (jobs1.Count == 1) && (job2 != null))
+                (jobs1.Count == 1) && (job2 is not null))
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
@@ -460,7 +460,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Search jobs in job manager.
             Job2 job2 = JobManager.GetJobByInstanceId(instanceId, this, false, false, false);
-            if (job2 != null)
+            if (job2 is not null)
             {
                 return job2;
             }

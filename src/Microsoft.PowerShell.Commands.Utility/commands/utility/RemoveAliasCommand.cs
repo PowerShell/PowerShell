@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
                     existingAlias = SessionState.Internal.GetAliasAtScope(aliasName, Scope);
                 }
 
-                if (existingAlias != null)
+                if (existingAlias is not null)
                 {
                     SessionState.Internal.RemoveAlias(aliasName, Force);
                 }

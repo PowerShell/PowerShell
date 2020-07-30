@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 var instances = session.QueryInstances(nameSpace, CIMHelper.WqlQueryAll(wmiClassName));
 
-                if (instances != null)
+                if (instances is not null)
                 {
                     var type = typeof(T);
                     var binding = BindingFlags.Public | BindingFlags.Instance;
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
 
             var pi = type.GetProperty(cimProperty.Name, binding);
 
-            if (pi != null && pi.CanWrite)
+            if (pi is not null && pi.CanWrite)
             {
                 pi.SetValue(obj, cimProperty.Value, null);
             }
@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 var fi = type.GetField(cimProperty.Name, binding);
 
-                if (fi != null && !fi.IsInitOnly)
+                if (fi is not null && !fi.IsInitOnly)
                 {
                     fi.SetValue(obj, cimProperty.Value);
                 }

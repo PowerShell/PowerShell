@@ -61,7 +61,7 @@ namespace Microsoft.Management.UI.Internal
         protected virtual void NotifyFilterExpressionChanged()
         {
             EventHandler eh = this.FilterExpressionChanged;
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this, new EventArgs());
             }

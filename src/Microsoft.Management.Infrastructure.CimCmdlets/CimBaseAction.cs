@@ -181,7 +181,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 if (disposing)
                 {
                     // Dispose managed resources.
-                    if (this.completeEvent != null)
+                    if (this.completeEvent is not null)
                     {
                         this.completeEvent.Dispose();
                     }

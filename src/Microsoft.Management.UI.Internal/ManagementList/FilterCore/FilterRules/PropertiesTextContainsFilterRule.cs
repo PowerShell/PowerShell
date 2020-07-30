@@ -64,7 +64,7 @@ namespace Microsoft.Management.UI.Internal
                     continue;
                 }
 
-                if (propertyValue != null)
+                if (propertyValue is not null)
                 {
                     string data = propertyValue.ToString();
 

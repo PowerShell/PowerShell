@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 {
                     bool newValue = false;
                     string queryLanguage;
-                    if (_privateData != null &&
+                    if (_privateData is not null &&
                         _privateData.TryGetValue(QueryLanguageKey, out queryLanguage) &&
                         queryLanguage.Equals("None", StringComparison.OrdinalIgnoreCase))
                     {
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 {
                     string newResourceUriString;
                     Uri newResourceUri;
-                    if (_privateData != null &&
+                    if (_privateData is not null &&
                         _privateData.TryGetValue("ResourceUri", out newResourceUriString) &&
                         Uri.TryCreate(newResourceUriString, UriKind.RelativeOrAbsolute, out newResourceUri))
                     {
@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     CimOperationFlags newSchemaConformanceLevel = 0;
 
                     string schemaConformanceFromCdxml;
-                    if (_privateData != null &&
+                    if (_privateData is not null &&
                         _privateData.TryGetValue("TypeInformation", out schemaConformanceFromCdxml))
                     {
                         if (schemaConformanceFromCdxml.Equals("Basic", StringComparison.OrdinalIgnoreCase))

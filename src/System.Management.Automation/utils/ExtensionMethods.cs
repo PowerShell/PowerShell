@@ -12,7 +12,7 @@ namespace System.Management.Automation
     {
         public static void SafeInvoke(this EventHandler eventHandler, object sender, EventArgs eventArgs)
         {
-            if (eventHandler != null)
+            if (eventHandler is not null)
             {
                 eventHandler(sender, eventArgs);
             }
@@ -20,7 +20,7 @@ namespace System.Management.Automation
 
         public static void SafeInvoke<T>(this EventHandler<T> eventHandler, object sender, T eventArgs) where T : EventArgs
         {
-            if (eventHandler != null)
+            if (eventHandler is not null)
             {
                 eventHandler(sender, eventArgs);
             }
@@ -50,7 +50,7 @@ namespace System.Management.Automation
                 foreach (T x in xs)
                 {
                     hash = hash * 59; // 59 is a random prime number
-                    if (x != null)
+                    if (x is not null)
                     {
                         hash = hash + x.GetHashCode();
                     }
@@ -78,7 +78,7 @@ namespace System.Management.Automation
         internal static bool HasDefaultCtor(this Type type)
         {
             var ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
-            if (ctor != null)
+            if (ctor is not null)
             {
                 if (ctor.IsPublic || ctor.IsFamily || ctor.IsFamilyOrAssembly)
                 {
@@ -135,7 +135,7 @@ namespace System.Management.Automation
         {
             var t = weakReference.Target;
             target = t as T;
-            return (target != null);
+            return (target is not null);
         }
     }
 }

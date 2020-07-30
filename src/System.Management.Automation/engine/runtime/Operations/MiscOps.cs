@@ -33,7 +33,7 @@ namespace System.Management.Automation
                                                        ExecutionContext context)
         {
             var commandAst = commandBaseAst as CommandAst;
-            var invocationToken = commandAst != null ? commandAst.InvocationOperator : TokenKind.Unknown;
+            var invocationToken = commandAst is not null ? commandAst.InvocationOperator : TokenKind.Unknown;
             bool dotSource = invocationToken == TokenKind.Dot;
             SessionStateInternal commandSessionState = null;
             int commandIndex = 0;
@@ -41,7 +41,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(commandElements[0].ArgumentSpecified && !commandElements[0].ParameterNameSpecified,
                 "Compiler will pass first parameter as an argument.");
             var mi = PSObject.Base(commandElements[0].ArgumentValue) as PSModuleInfo;
-            if (mi != null)
+            if (mi is not null)
             {
                 if (mi.ModuleType == ModuleType.Binary && mi.SessionState is null)
                 {
@@ -90,14 +90,14 @@ namespace System.Management.Automation
             string invocationName = (dotSource) ? "." : invocationToken == TokenKind.Ampersand ? "&" : null;
             CommandProcessorBase commandProcessor;
             var scriptBlock = command as ScriptBlock;
-            if (scriptBlock != null)
+            if (scriptBlock is not null)
             {
                 commandProcessor = CommandDiscovery.CreateCommandProcessorForScript(scriptBlock, context, !dotSource, commandSessionState);
             }
             else
             {
                 var commandInfo = command as CommandInfo;
-                if (commandInfo != null)
+                if (commandInfo is not null)
                 {
                     commandProcessor = context.CommandDiscovery.LookupCommandProcessor(commandInfo, context.EngineSessionState.CurrentScope.ScopeOrigin, !dotSource, commandSessionState);
                 }
@@ -122,7 +122,7 @@ namespace System.Management.Automation
                         // See if we need to resolve the command in a different session state
                         // as will be the case with modules...
                         // BUGBUG - this can be cleaned up by fixing the overload on execution context (but not easily.)
-                        if (commandSessionState != null)
+                        if (commandSessionState is not null)
                         {
                             SessionStateInternal oldSessionState = context.EngineSessionState;
                             try
@@ -205,7 +205,7 @@ namespace System.Management.Automation
             bool redirectedVerbose = false;
             bool redirectedDebug = false;
             bool redirectedInformation = false;
-            if (redirections != null)
+            if (redirections is not null)
             {
                 foreach (var redirection in redirections)
                 {
@@ -246,7 +246,7 @@ namespace System.Management.Automation
             // Pipe redirection can also be specified via the ExecutionContext pipes.
             if (!redirectedError)
             {
-                if (context.ShellFunctionErrorOutputPipe != null)
+                if (context.ShellFunctionErrorOutputPipe is not null)
                 {
                     commandProcessor.CommandRuntime.ErrorOutputPipe = context.ShellFunctionErrorOutputPipe;
                 }
@@ -256,53 +256,53 @@ namespace System.Management.Automation
                 }
             }
 
-            if (!redirectedWarning && (context.ExpressionWarningOutputPipe != null))
+            if (!redirectedWarning && (context.ExpressionWarningOutputPipe is not null))
             {
                 commandProcessor.CommandRuntime.WarningOutputPipe = context.ExpressionWarningOutputPipe;
                 redirectedWarning = true;
             }
 
-            if (!redirectedVerbose && (context.ExpressionVerboseOutputPipe != null))
+            if (!redirectedVerbose && (context.ExpressionVerboseOutputPipe is not null))
             {
                 commandProcessor.CommandRuntime.VerboseOutputPipe = context.ExpressionVerboseOutputPipe;
                 redirectedVerbose = true;
             }
 
-            if (!redirectedDebug && (context.ExpressionDebugOutputPipe != null))
+            if (!redirectedDebug && (context.ExpressionDebugOutputPipe is not null))
             {
                 commandProcessor.CommandRuntime.DebugOutputPipe = context.ExpressionDebugOutputPipe;
                 redirectedDebug = true;
             }
 
-            if (!redirectedInformation && (context.ExpressionInformationOutputPipe != null))
+            if (!redirectedInformation && (context.ExpressionInformationOutputPipe is not null))
             {
                 commandProcessor.CommandRuntime.InformationOutputPipe = context.ExpressionInformationOutputPipe;
                 redirectedInformation = true;
             }
 
             // Warning, Verbose, Debug should pick up any redirection information from its parent command runtime object.
-            if (context.CurrentCommandProcessor != null && context.CurrentCommandProcessor.CommandRuntime != null)
+            if (context.CurrentCommandProcessor is not null && context.CurrentCommandProcessor.CommandRuntime is not null)
             {
                 if (!redirectedWarning &&
-                    context.CurrentCommandProcessor.CommandRuntime.WarningOutputPipe != null)
+                    context.CurrentCommandProcessor.CommandRuntime.WarningOutputPipe is not null)
                 {
                     commandProcessor.CommandRuntime.WarningOutputPipe = context.CurrentCommandProcessor.CommandRuntime.WarningOutputPipe;
                 }
 
                 if (!redirectedVerbose &&
-                    context.CurrentCommandProcessor.CommandRuntime.VerboseOutputPipe != null)
+                    context.CurrentCommandProcessor.CommandRuntime.VerboseOutputPipe is not null)
                 {
                     commandProcessor.CommandRuntime.VerboseOutputPipe = context.CurrentCommandProcessor.CommandRuntime.VerboseOutputPipe;
                 }
 
                 if (!redirectedDebug &&
-                    context.CurrentCommandProcessor.CommandRuntime.DebugOutputPipe != null)
+                    context.CurrentCommandProcessor.CommandRuntime.DebugOutputPipe is not null)
                 {
                     commandProcessor.CommandRuntime.DebugOutputPipe = context.CurrentCommandProcessor.CommandRuntime.DebugOutputPipe;
                 }
 
                 if (!redirectedInformation &&
-                    context.CurrentCommandProcessor.CommandRuntime.InformationOutputPipe != null)
+                    context.CurrentCommandProcessor.CommandRuntime.InformationOutputPipe is not null)
                 {
                     commandProcessor.CommandRuntime.InformationOutputPipe = context.CurrentCommandProcessor.CommandRuntime.InformationOutputPipe;
                 }
@@ -324,7 +324,7 @@ namespace System.Management.Automation
             }
 
             IDictionary splattedTable = splattedValue as IDictionary;
-            if (splattedTable != null)
+            if (splattedTable is not null)
             {
                 foreach (DictionaryEntry de in splattedTable)
                 {
@@ -345,7 +345,7 @@ namespace System.Management.Automation
             else
             {
                 IEnumerable enumerableValue = splattedValue as IEnumerable;
-                if (enumerableValue != null)
+                if (enumerableValue is not null)
                 {
                     foreach (object obj in enumerableValue)
                     {
@@ -367,11 +367,11 @@ namespace System.Management.Automation
         private static CommandParameterInternal SplatEnumerableElement(object splattedArgument, Ast splatAst)
         {
             var psObject = splattedArgument as PSObject;
-            if (psObject != null)
+            if (psObject is not null)
             {
                 var prop = psObject.Properties[ScriptParameterBinderController.NotePropertyNameForSplattingParametersInArgs];
                 var baseObj = psObject.BaseObject;
-                if (prop != null && prop.Value is string && baseObj is string)
+                if (prop is not null && prop.Value is string && baseObj is string)
                 {
                     return CommandParameterInternal.CreateParameter((string)prop.Value, (string)baseObj, splatAst);
                 }
@@ -382,7 +382,7 @@ namespace System.Management.Automation
 
         private static string GetParameterText(string parameterName)
         {
-            Diagnostics.Assert(parameterName != null, "caller makes sure the parameterName is not null");
+            Diagnostics.Assert(parameterName is not null, "caller makes sure the parameterName is not null");
             int endPosition = parameterName.Length;
             while ((endPosition > 0) && char.IsWhiteSpace(parameterName[endPosition - 1]))
             {
@@ -421,7 +421,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (context.Events != null)
+                if (context.Events is not null)
                 {
                     context.Events.ProcessPendingActions();
                 }
@@ -444,7 +444,7 @@ namespace System.Management.Automation
 
                 for (int i = 0; i < pipeElements.Length; i++)
                 {
-                    commandRedirection = commandRedirections != null ? commandRedirections[i] : null;
+                    commandRedirection = commandRedirections is not null ? commandRedirections[i] : null;
                     commandProcessor = AddCommand(pipelineProcessor, pipeElements[i], pipeElementAsts[i],
                                                   commandRedirection, context);
                 }
@@ -470,12 +470,12 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (commandProcessor != null && !commandProcessor.CommandRuntime.OutputPipe.IsRedirected)
+                if (commandProcessor is not null && !commandProcessor.CommandRuntime.OutputPipe.IsRedirected)
                 {
                     pipelineProcessor.LinkPipelineSuccessOutput(outputPipe ?? new Pipe(new List<object>()));
 
                     // Fix up merge redirection bindings on last command processor.
-                    if (commandRedirection != null)
+                    if (commandRedirection is not null)
                     {
                         foreach (CommandRedirection redirection in commandRedirection)
                         {
@@ -514,7 +514,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (context.Events != null)
+                if (context.Events is not null)
                 {
                     context.Events.ProcessPendingActions();
                 }
@@ -609,12 +609,12 @@ namespace System.Management.Automation
             }
 
             var objAsArray = obj as object[];
-            return objAsArray != null ? CheckAutomationNullInCommandArgumentArray(objAsArray) : obj;
+            return objAsArray is not null ? CheckAutomationNullInCommandArgumentArray(objAsArray) : obj;
         }
 
         internal static object[] CheckAutomationNullInCommandArgumentArray(object[] objArray)
         {
-            if (objArray != null)
+            if (objArray is not null)
             {
                 for (int i = 0; i < objArray.Length; ++i)
                 {
@@ -652,7 +652,7 @@ namespace System.Management.Automation
             //   * Arguments are provided
             //   * The ScriptBlock has parameters
             // If the script block has no parameter, RuntimeDefinedParameters.Data will be set to RuntimeDefinedParameterDictionary.EmptyParameterArray
-            bool useParameter = (args != null && args.Length > 0) &&
+            bool useParameter = (args is not null && args.Length > 0) &&
                                 scriptBlock.RuntimeDefinedParameters.Data !=
                                 RuntimeDefinedParameterDictionary.EmptyParameterArray;
             try
@@ -686,7 +686,7 @@ namespace System.Management.Automation
                     foreach (var commandElement in commandAst.CommandElements)
                     {
                         var commandParameterAst = commandElement as CommandParameterAst;
-                        if (commandParameterAst != null)
+                        if (commandParameterAst is not null)
                         {
                             commandParameters.Add(GetCommandParameter(commandParameterAst, isTrusted, context));
                             continue;
@@ -734,7 +734,7 @@ namespace System.Management.Automation
                     if (callStack.Length > 1)
                     {
                         var displayPosition = callStack[1].Position;
-                        if (displayPosition != null && displayPosition != PositionUtilities.EmptyExtent)
+                        if (displayPosition is not null && displayPosition != PositionUtilities.EmptyExtent)
                         {
                             myInvocation.DisplayScriptPosition = displayPosition;
                         }
@@ -742,7 +742,7 @@ namespace System.Management.Automation
                 }
 
                 // Set the data stream merge properties based on ExecutionContext.
-                if (context.CurrentCommandProcessor != null && context.CurrentCommandProcessor.CommandRuntime != null)
+                if (context.CurrentCommandProcessor is not null && context.CurrentCommandProcessor.CommandRuntime is not null)
                 {
                     commandProcessor.CommandRuntime.SetMergeFromRuntime(context.CurrentCommandProcessor.CommandRuntime);
                 }
@@ -772,7 +772,7 @@ namespace System.Management.Automation
         private static CommandRedirection GetCommandRedirection(RedirectionAst redirectionAst, bool isTrusted, ExecutionContext context)
         {
             var fileRedirection = redirectionAst as FileRedirectionAst;
-            if (fileRedirection != null)
+            if (fileRedirection is not null)
             {
                 object fileName = Compiler.GetExpressionValue(fileRedirection.Location, isTrusted, context);
                 return new FileRedirection(fileRedirection.FromStream, fileRedirection.Append, fileName.ToString());
@@ -829,7 +829,7 @@ namespace System.Management.Automation
 
         internal static void CheckForInterrupts(ExecutionContext context)
         {
-            if (context.Events != null)
+            if (context.Events is not null)
             {
                 context.Events.ProcessPendingActions();
             }
@@ -1053,7 +1053,7 @@ namespace System.Management.Automation
                     // Normally, context.CurrentCommandProcessor will not be null. But in legacy DRTs from ParserTest.cs,
                     // a scriptblock may be invoked through 'DoInvokeReturnAsIs' using .NET reflection. In that case,
                     // context.CurrentCommandProcessor will be null. We don't try passing along variable lists in such case.
-                    if (context.CurrentCommandProcessor != null)
+                    if (context.CurrentCommandProcessor is not null)
                     {
                         context.CurrentCommandProcessor.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
                     }
@@ -1067,7 +1067,7 @@ namespace System.Management.Automation
                     break;
                 case RedirectionStream.Output:
                     // Since a temp output pipe is going to be used, we should pass along the error and warning variable list.
-                    if (context.CurrentCommandProcessor != null)
+                    if (context.CurrentCommandProcessor is not null)
                     {
                         context.CurrentCommandProcessor.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
                     }
@@ -1160,7 +1160,7 @@ namespace System.Management.Automation
             }
 
             CommandProcessorBase commandProcessor = context.CreateCommand("out-file", false);
-            Diagnostics.Assert(commandProcessor != null, "CreateCommand returned null");
+            Diagnostics.Assert(commandProcessor is not null, "CreateCommand returned null");
 
             // Previously, we mandated Unicode encoding here
             // Now, We can take what ever has been set if PSDefaultParameterValues
@@ -1202,7 +1202,7 @@ namespace System.Management.Automation
                 throw;
             }
 
-            if (parentPipelineProcessor != null)
+            if (parentPipelineProcessor is not null)
             {
                 // I think this is only necessary for calling Dispose on the commands in the redirection pipe.
                 parentPipelineProcessor.AddRedirectionPipe(PipelineProcessor);
@@ -1222,7 +1222,7 @@ namespace System.Management.Automation
         internal void CallDoCompleteForExpression()
         {
             // The pipe returned from 'GetRedirectionPipe' could be a NullPipe
-            if (PipelineProcessor != null)
+            if (PipelineProcessor is not null)
             {
                 PipelineProcessor.DoComplete();
             }
@@ -1243,7 +1243,7 @@ namespace System.Management.Automation
 
             if (disposing)
             {
-                if (PipelineProcessor != null)
+                if (PipelineProcessor is not null)
                 {
                     PipelineProcessor.Dispose();
                 }
@@ -1439,7 +1439,7 @@ namespace System.Management.Automation
                                                   Exception exception,
                                                   ErrorRecord errorRecord)
         {
-            Diagnostics.Assert(current != null, "Caller makes sure 'current' is not null.");
+            Diagnostics.Assert(current is not null, "Caller makes sure 'current' is not null.");
             int handler = FindMatchingHandlerByType(exception.GetType(), types);
 
             // If no handler was found, return without changing the current result.
@@ -1483,7 +1483,7 @@ namespace System.Management.Automation
                 ErrorRecord errorRecordToPass = rte.ErrorRecord;
 
                 Exception inner = rte.InnerException;
-                if (inner != null)
+                if (inner is not null)
                 {
                     FindAndProcessHandler(types, ranks, current, inner, errorRecordToPass);
                 }
@@ -1504,24 +1504,24 @@ namespace System.Management.Automation
                 if (current.Rank > 0)
                 {
                     var apse = rte as ActionPreferenceStopException;
-                    if (apse != null)
+                    if (apse is not null)
                     {
                         var exceptionToPass = apse.ErrorRecord.Exception;
 
                         // If it's again a RuntimeException, we repeat the search using it
                         rte = exceptionToPass as RuntimeException;
-                        if (rte != null)
+                        if (rte is not null)
                         {
                             continueToSearch = true;
                         }
-                        else if (exceptionToPass != null)
+                        else if (exceptionToPass is not null)
                         {
                             FindAndProcessHandler(types, ranks, current, exceptionToPass, errorRecordToPass);
                         }
                     }
-                    else if (rte is CmdletInvocationException && inner != null)
+                    else if (rte is CmdletInvocationException && inner is not null)
                     {
-                        if (inner.InnerException != null)
+                        if (inner.InnerException is not null)
                         {
                             FindAndProcessHandler(types, ranks, current, inner.InnerException, errorRecordToPass);
                         }
@@ -1575,7 +1575,7 @@ namespace System.Management.Automation
         internal static bool SuspendStoppingPipeline(ExecutionContext context)
         {
             LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            if (lpl != null)
+            if (lpl is not null)
             {
                 bool oldIsStopping = lpl.Stopper.IsStopping;
                 lpl.Stopper.IsStopping = false;
@@ -1588,7 +1588,7 @@ namespace System.Management.Automation
         internal static void RestoreStoppingPipeline(ExecutionContext context, bool oldIsStopping)
         {
             LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            if (lpl != null)
+            if (lpl is not null)
             {
                 lpl.Stopper.IsStopping = oldIsStopping;
             }
@@ -1637,7 +1637,7 @@ namespace System.Management.Automation
             // A null action script is only used to indicate when exceptions
             // should be thrown up to a higher level, and doesn't count as an
             // actual trap handler in the function context.
-            bool anyTrapHandlers = funcContext._traps.Count > 0 && funcContext._traps[funcContext._traps.Count - 1].Item2 != null;
+            bool anyTrapHandlers = funcContext._traps.Count > 0 && funcContext._traps[funcContext._traps.Count - 1].Item2 is not null;
 
             if (anyTrapHandlers)
             {
@@ -1692,7 +1692,7 @@ namespace System.Management.Automation
             var types = funcContext._traps.Last().Item1;
             var handlers = funcContext._traps.Last().Item2;
 
-            if (inner != null)
+            if (inner is not null)
             {
                 handler = FindMatchingHandlerByType(inner.GetType(), types);
                 exception = inner;
@@ -1713,7 +1713,7 @@ namespace System.Management.Automation
 
             if (handler != -1)
             {
-                Diagnostics.Assert(exception != null, "Exception object can't be null.");
+                Diagnostics.Assert(exception is not null, "Exception object can't be null.");
 
                 var context = funcContext._executionContext;
 
@@ -1722,7 +1722,7 @@ namespace System.Management.Automation
                     ErrorRecord err = rte.ErrorRecord;
                     // CurrentCommandProcessor is normally not null, but it is null
                     // when executing some unit tests through reflection.
-                    if (context.CurrentCommandProcessor != null)
+                    if (context.CurrentCommandProcessor is not null)
                     {
                         context.CurrentCommandProcessor.ForgetScriptException();
                     }
@@ -1901,7 +1901,7 @@ namespace System.Management.Automation
             Exception e = rte;
 
             int i = 0;
-            while (e != null && i++ < 10)
+            while (e is not null && i++ < 10)
             {
                 if (!string.IsNullOrEmpty(e.StackTrace))
                 {
@@ -1913,13 +1913,13 @@ namespace System.Management.Automation
 
             context.SetVariable(SpecialVariables.StackTraceVarPath, stack);
 
-            Diagnostics.Assert(rte.ErrorRecord != null, "The runtime exception's error record was null");
+            Diagnostics.Assert(rte.ErrorRecord is not null, "The runtime exception's error record was null");
             InterpreterError.UpdateExceptionErrorRecordPosition(rte, extent);
             ErrorRecord errRec = rte.ErrorRecord.WrapException(rte);
 
             if (!(rte is PipelineStoppedException))
             {
-                if (outputPipe != null)
+                if (outputPipe is not null)
                 {
                     outputPipe.AppendVariableList(VariableStreamKind.Error, errRec);
                 }
@@ -1949,9 +1949,9 @@ namespace System.Management.Automation
             if (context.ShellFunctionErrorOutputPipe is null)
                 return false;
 
-            Diagnostics.Assert(rte.ErrorRecord != null, "The runtime exception's error record was null");
+            Diagnostics.Assert(rte.ErrorRecord is not null, "The runtime exception's error record was null");
 
-            if (rte.ErrorRecord.InvocationInfo is null && extent != null && extent != PositionUtilities.EmptyExtent)
+            if (rte.ErrorRecord.InvocationInfo is null && extent is not null && extent != PositionUtilities.EmptyExtent)
                 rte.ErrorRecord.SetInvocationInfo(new InvocationInfo(null, extent, context));
             PSObject errorWrap = PSObject.AsPSObject(new ErrorRecord(rte.ErrorRecord, rte));
 
@@ -1977,7 +1977,7 @@ namespace System.Management.Automation
             result = PSObject.Base(result);
 
             RuntimeException runtimeException = result as RuntimeException;
-            if (runtimeException != null)
+            if (runtimeException is not null)
             {
                 InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
                 runtimeException.WasThrownFromThrowStatement = true;
@@ -1986,7 +1986,7 @@ namespace System.Management.Automation
             }
 
             ErrorRecord er = result as ErrorRecord;
-            if (er != null)
+            if (er is not null)
             {
                 runtimeException = new RuntimeException(er.ToString(), er.Exception, er) { WasThrownFromThrowStatement = true, WasRethrown = rethrow };
                 InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
@@ -1995,7 +1995,7 @@ namespace System.Management.Automation
             }
 
             Exception exception = result as Exception;
-            if (exception != null)
+            if (exception is not null)
             {
                 er = new ErrorRecord(exception, exception.Message, ErrorCategory.OperationStopped, null);
                 runtimeException = new RuntimeException(exception.Message, exception, er) { WasThrownFromThrowStatement = true, WasRethrown = rethrow };
@@ -2022,7 +2022,7 @@ namespace System.Management.Automation
             if (runtimeException is null)
             {
                 var icer = exception as IContainsErrorRecord;
-                var er = icer != null
+                var er = icer is not null
                              ? icer.ErrorRecord
                              : new ErrorRecord(exception, exception.GetType().FullName, ErrorCategory.OperationStopped, null);
                 runtimeException = new RuntimeException(exception.Message, exception, er);
@@ -2106,10 +2106,10 @@ namespace System.Management.Automation
 
             if (result is null)
             {
-                if (exception != null)
+                if (exception is not null)
                 {
                     if (exception is InvalidCastException &&
-                        exception.InnerException != null &&
+                        exception.InnerException is not null &&
                         exception.InnerException is TypeResolver.AmbiguousTypeException)
                     {
                         throw exception;
@@ -2126,14 +2126,14 @@ namespace System.Management.Automation
                 // then we just throw on the top level typeName.
 
                 var genericTypeName = typeName as GenericTypeName;
-                if (genericTypeName != null)
+                if (genericTypeName is not null)
                 {
                     var generic = genericTypeName.GetGenericType(ResolveTypeName(genericTypeName.TypeName, errorPos));
                     var typeArgs = (from arg in genericTypeName.GenericArguments select ResolveTypeName(arg, errorPos)).ToArray();
 
                     try
                     {
-                        if (generic != null && generic.ContainsGenericParameters)
+                        if (generic is not null && generic.ContainsGenericParameters)
                             generic.MakeGenericType(typeArgs);
                     }
                     catch (Exception e)
@@ -2147,7 +2147,7 @@ namespace System.Management.Automation
 
                 var arrayTypeName = typeName as ArrayTypeName;
 
-                if (arrayTypeName != null)
+                if (arrayTypeName is not null)
                 {
                     ResolveTypeName(arrayTypeName.ElementType, errorPos);
                 }
@@ -2279,7 +2279,7 @@ namespace System.Management.Automation
 
             foreach (var t in types)
             {
-                Diagnostics.Assert(t.Value.Type != null, "TypeDefinitionAst.Type cannot be null");
+                Diagnostics.Assert(t.Value.Type is not null, "TypeDefinitionAst.Type cannot be null");
                 context.EngineSessionState.CurrentScope.AddType(t.Key, t.Value.Type);
             }
 
@@ -2294,18 +2294,18 @@ namespace System.Management.Automation
         {
             foreach (var t in types)
             {
-                Diagnostics.Assert(t.Type != null, "TypeDefinitionAst.Type cannot be null");
+                Diagnostics.Assert(t.Type is not null, "TypeDefinitionAst.Type cannot be null");
                 if (t.IsClass)
                 {
                     var helperType =
                         t.Type.Assembly.GetType(t.Type.FullName + "_<staticHelpers>");
-                    Diagnostics.Assert(helperType != null, "no corresponding " + t.Type.FullName + "_<staticHelpers> type found");
+                    Diagnostics.Assert(helperType is not null, "no corresponding " + t.Type.FullName + "_<staticHelpers> type found");
                     foreach (var p in helperType.GetFields(BindingFlags.Static | BindingFlags.NonPublic))
                     {
                         var field = p.GetValue(null);
                         // field can be one of two types: SessionStateKeeper or ScriptBlockMemberMethodWrapper
                         var methodWrapper = field as ScriptBlockMemberMethodWrapper;
-                        if (methodWrapper != null)
+                        if (methodWrapper is not null)
                         {
                             methodWrapper.InitAtRuntime();
                         }
@@ -2337,7 +2337,7 @@ namespace System.Management.Automation
                                                         ExecutionContext context)
         {
             WildcardPattern wildcard = condition as WildcardPattern;
-            if (wildcard != null)
+            if (wildcard is not null)
             {
                 // If case sensitivity doesn't agree between the existing wildcard pattern and the switch mode,
                 // make a new wildcard pattern that agrees with the switch.
@@ -2373,7 +2373,7 @@ namespace System.Management.Automation
                 Regex regex = condition as Regex;
                 // Check if the regex agrees with the switch w.r.t. case sensitivity, if not,
                 // we must build a new regex.
-                if (regex != null && (((regex.Options & RegexOptions.IgnoreCase) != 0) != caseSensitive))
+                if (regex is not null && (((regex.Options & RegexOptions.IgnoreCase) != 0) != caseSensitive))
                 {
                     m = regex.Match(str);
                 }
@@ -2397,7 +2397,7 @@ namespace System.Management.Automation
 
                     if (groups.Count > 0)
                     {
-                        Diagnostics.Assert(regex != null, "Logic above ensures regex is not null.");
+                        Diagnostics.Assert(regex is not null, "Logic above ensures regex is not null.");
 
                         Hashtable h = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
 
@@ -2435,7 +2435,7 @@ namespace System.Management.Automation
             try
             {
                 FileInfo file = obj as FileInfo;
-                string filePath = file != null ? file.FullName : PSObject.ToStringParser(context, obj);
+                string filePath = file is not null ? file.FullName : PSObject.ToStringParser(context, obj);
 
                 if (string.IsNullOrEmpty(filePath))
                 {
@@ -2478,7 +2478,7 @@ namespace System.Management.Automation
             catch (RuntimeException rte)
             {
                 // Add the invocation info to this command...
-                if (rte.ErrorRecord != null && rte.ErrorRecord.InvocationInfo is null)
+                if (rte.ErrorRecord is not null && rte.ErrorRecord.InvocationInfo is null)
                     rte.ErrorRecord.SetInvocationInfo(new InvocationInfo(null, errorExtent, context));
                 throw;
             }
@@ -2534,7 +2534,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static object Where(IEnumerator enumerator, ScriptBlock expressionSB, WhereOperatorSelectionMode selectionMode, int numberToReturn)
         {
-            Diagnostics.Assert(enumerator != null, "The Where() operator should never receive a null enumerator value from the runtime.");
+            Diagnostics.Assert(enumerator is not null, "The Where() operator should never receive a null enumerator value from the runtime.");
 
             if (numberToReturn < 0)
             {
@@ -2767,8 +2767,8 @@ namespace System.Management.Automation
         /// <returns>An object array containing the results of the expression evaluation.</returns>
         internal static object ForEach(IEnumerator enumerator, object expression, object[] arguments)
         {
-            Diagnostics.Assert(enumerator != null, "The ForEach() operator should never receive a null enumerator value from the runtime.");
-            Diagnostics.Assert(arguments != null, "The ForEach() operator should never receive a null value for the 'arguments' parameter from the runtime.");
+            Diagnostics.Assert(enumerator is not null, "The ForEach() operator should never receive a null enumerator value from the runtime.");
+            Diagnostics.Assert(arguments is not null, "The ForEach() operator should never receive a null value for the 'arguments' parameter from the runtime.");
             if (expression is null)
             {
                 throw new ArgumentNullException(nameof(expression));
@@ -2780,11 +2780,11 @@ namespace System.Management.Automation
             // if the target type is a collection or array, then the result will be a collection of exactly
             // that type. If the target type is not a collection type then return a generic collection of that type.
             Type targetType = expression as Type;
-            if (targetType != null)
+            if (targetType is not null)
             {
                 dynamic resultCollection = null;
 
-                if (targetType.GetInterface("System.Collections.ICollection") != null)
+                if (targetType.GetInterface("System.Collections.ICollection") is not null)
                 {
                     // If the target type is an array, accumulate all the elements
                     // then use the PowerShell type converter to turn it into an array
@@ -2849,7 +2849,7 @@ namespace System.Management.Automation
             // once on each element.
             var result = new Collection<PSObject>();
             ScriptBlock sb = expression as ScriptBlock;
-            if (sb != null)
+            if (sb is not null)
             {
                 Pipe outputPipe = new Pipe(result);
                 if (sb.HasBeginBlock)
@@ -2886,7 +2886,7 @@ namespace System.Management.Automation
                     object current = Current(enumerator);
                     object basedCurrent = PSObject.Base(current);
                     Hashtable ht = basedCurrent as Hashtable;
-                    if (ht != null)
+                    if (ht is not null)
                     {
                         // special case hashtables since we don't want to hit a method name
                         switch (numArgs)
@@ -2894,7 +2894,7 @@ namespace System.Management.Automation
                             case 0:
                                 // No args so do a set
                                 object element = ht[name];
-                                result.Add(element != null ? PSObject.AsPSObject(element) : null);
+                                result.Add(element is not null ? PSObject.AsPSObject(element) : null);
                                 break;
 
                             case 1:
@@ -2959,7 +2959,7 @@ namespace System.Management.Automation
                             }
 
                             var method = member as PSMethodInfo;
-                            if (method != null)
+                            if (method is not null)
                             {
                                 // It's a method so check language modes to see if it's allowed.
 
@@ -3015,7 +3015,7 @@ namespace System.Management.Automation
         internal static object SlicingIndex(object target, IEnumerator indexes, Func<object, object, object> indexer)
         {
             var fakeEnumerator = indexes as NonEnumerableObjectEnumerator;
-            if (fakeEnumerator != null)
+            if (fakeEnumerator is not null)
             {
                 // We have a non-enumerable object, we're trying to slice index with it.  It really should have
                 // been a single index, so we don't want to return an array, we just want to return the indexed value.
@@ -3038,7 +3038,7 @@ namespace System.Management.Automation
         private static void FlattenResults(object o, List<object> result)
         {
             var e = LanguagePrimitives.GetEnumerator(o);
-            if (e != null)
+            if (e is not null)
             {
                 while (e.MoveNext())
                 {
@@ -3073,7 +3073,7 @@ namespace System.Management.Automation
                 {
                     // Recurse through collections if current didn't have the property.
                     var nestedEnumerator = LanguagePrimitives.GetEnumerator(current);
-                    if (nestedEnumerator != null)
+                    if (nestedEnumerator is not null)
                     {
                         PropertyGetterWorker(getMemberBinderSite, nestedEnumerator, context, result);
                     }
@@ -3147,10 +3147,10 @@ namespace System.Management.Automation
                 {
                     // If we tried to invoke a method that didn't exist, then we'll try enumerating the object and call the method on it's members.
                     RuntimeException rte = tie.InnerException as RuntimeException;
-                    if (rte != null && rte.ErrorRecord.FullyQualifiedErrorId.Equals(ParserOps.MethodNotFoundErrorId, StringComparison.Ordinal))
+                    if (rte is not null && rte.ErrorRecord.FullyQualifiedErrorId.Equals(ParserOps.MethodNotFoundErrorId, StringComparison.Ordinal))
                     {
                         var nestedEnumerator = LanguagePrimitives.GetEnumerator(current);
-                        if (nestedEnumerator != null)
+                        if (nestedEnumerator is not null)
                         {
                             MethodInvokerWorker(invokeMemberSite, nestedEnumerator, args, context, result, ref foundMethod);
                             continue;
@@ -3206,7 +3206,7 @@ namespace System.Management.Automation
         internal static object Multiply(IEnumerator enumerator, uint times)
         {
             var fakeEnumerator = enumerator as NonEnumerableObjectEnumerator;
-            if (fakeEnumerator != null)
+            if (fakeEnumerator is not null)
             {
                 // We have a non-enumerable object, we're trying to multiply something to it.  Generate an error
                 // (or on the off chance that there is an implicit op, call that).
@@ -3302,7 +3302,7 @@ namespace System.Management.Automation
             try
             {
                 var enumerator = (targetValue as IEnumerable)?.GetEnumerator();
-                if (enumerator != null)
+                if (enumerator is not null)
                 {
                     return enumerator;
                 }
@@ -3348,7 +3348,7 @@ namespace System.Management.Automation
             try
             {
                 // Check to see if we're stopping...
-                if (context != null && context.CurrentPipelineStopping)
+                if (context is not null && context.CurrentPipelineStopping)
                     throw new PipelineStoppedException();
 
                 return enumerator.MoveNext();
@@ -3408,14 +3408,14 @@ namespace System.Management.Automation
             // (or on the off chance that there is an implicit op, call that).
             var fakeEnumerator2 = rhs as NonEnumerableObjectEnumerator;
             return ParserOps.ImplicitOp(fakeEnumerator.GetNonEnumerableObject(),
-                                        fakeEnumerator2 != null ? fakeEnumerator2.GetNonEnumerableObject() : rhs,
+                                        fakeEnumerator2 is not null ? fakeEnumerator2.GetNonEnumerableObject() : rhs,
                                         "op_Addition", null, "+");
         }
 
         internal static object AddEnumerable(ExecutionContext context, IEnumerator lhs, IEnumerator rhs)
         {
             var fakeEnumerator = lhs as NonEnumerableObjectEnumerator;
-            if (fakeEnumerator != null)
+            if (fakeEnumerator is not null)
             {
                 return AddFakeEnumerable(fakeEnumerator, rhs);
             }
@@ -3438,7 +3438,7 @@ namespace System.Management.Automation
         internal static object AddObject(ExecutionContext context, IEnumerator lhs, object rhs)
         {
             var fakeEnumerator = lhs as NonEnumerableObjectEnumerator;
-            if (fakeEnumerator != null)
+            if (fakeEnumerator is not null)
             {
                 return AddFakeEnumerable(fakeEnumerator, rhs);
             }
@@ -3458,7 +3458,7 @@ namespace System.Management.Automation
         internal static object Compare(IEnumerator enumerator, object valueToCompareTo, Func<object, object, bool> compareDelegate)
         {
             var fakeEnumerator = enumerator as NonEnumerableObjectEnumerator;
-            if (fakeEnumerator != null)
+            if (fakeEnumerator is not null)
             {
                 return compareDelegate(fakeEnumerator.GetNonEnumerableObject(), valueToCompareTo) ? Boxed.True : Boxed.False;
             }
@@ -3490,7 +3490,7 @@ namespace System.Management.Automation
                 if (dispose)
                 {
                     var disposable = enumerator as IDisposable;
-                    if (disposable != null)
+                    if (disposable is not null)
                     {
                         disposable.Dispose();
                     }

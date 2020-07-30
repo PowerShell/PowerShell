@@ -398,10 +398,10 @@ namespace System.Management.Automation
             IDictionary<string, MergedCompiledCommandParameter> dict)
         {
             MergedCompiledCommandParameter mergedParam = dict[key];
-            if (mergedParam != null)
+            if (mergedParam is not null)
             {
                 CompiledCommandParameter compiledParam = mergedParam.Parameter;
-                if (compiledParam != null)
+                if (compiledParam is not null)
                 {
                     if (!string.IsNullOrEmpty(compiledParam.Name))
                         return compiledParam.Name;
@@ -649,7 +649,7 @@ namespace System.Management.Automation
                 CompiledCommandParameter parameter,
                 ParameterBinderAssociation binderAssociation)
         {
-            Diagnostics.Assert(parameter != null, "caller to verify parameter is not null");
+            Diagnostics.Assert(parameter is not null, "caller to verify parameter is not null");
             this.Parameter = parameter;
             this.BinderAssociation = binderAssociation;
         }

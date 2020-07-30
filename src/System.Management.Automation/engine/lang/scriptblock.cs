@@ -90,7 +90,7 @@ namespace System.Management.Automation
         internal static ScriptBlock Create(ExecutionContext context, string script)
         {
             ScriptBlock sb = Create(context.Engine.EngineParser, null, script);
-            if (context.EngineSessionState != null && context.EngineSessionState.Module != null)
+            if (context.EngineSessionState is not null && context.EngineSessionState.Module is not null)
             {
                 sb.SessionStateInternal = context.EngineSessionState;
             }
@@ -230,7 +230,7 @@ namespace System.Management.Automation
             ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
             Dictionary<string, object> suppliedVariables = null;
 
-            if (variables != null)
+            if (variables is not null)
             {
                 suppliedVariables = new Dictionary<string, object>(variables, StringComparer.OrdinalIgnoreCase);
                 context = null;
@@ -324,7 +324,7 @@ namespace System.Management.Automation
             ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
             Dictionary<string, object> suppliedVariables = null;
 
-            if (variables != null)
+            if (variables is not null)
             {
                 suppliedVariables = new Dictionary<string, object>(variables, StringComparer.OrdinalIgnoreCase);
                 context = null;
@@ -415,7 +415,7 @@ namespace System.Management.Automation
             params object[] args)
         {
             Dictionary<string, ScriptBlock> functionsToDefineDictionary = null;
-            if (functionsToDefine != null)
+            if (functionsToDefine is not null)
             {
                 functionsToDefineDictionary = new Dictionary<string, ScriptBlock>();
                 foreach (DictionaryEntry pair in functionsToDefine)
@@ -460,12 +460,12 @@ namespace System.Management.Automation
             object dollarUnder = AutomationNull.Value;
             object scriptThis = AutomationNull.Value;
 
-            if (variablesToDefine != null)
+            if (variablesToDefine is not null)
             {
                 // Extract the special variables "this", "input" and "_"
                 PSVariable located = variablesToDefine.Find(
                     v => string.Equals(v.Name, "this", StringComparison.OrdinalIgnoreCase));
-                if (located != null)
+                if (located is not null)
                 {
                     scriptThis = located.Value;
                     variablesToDefine.Remove(located);
@@ -473,7 +473,7 @@ namespace System.Management.Automation
 
                 located = variablesToDefine.Find(
                     v => string.Equals(v.Name, "_", StringComparison.Ordinal));
-                if (located != null)
+                if (located is not null)
                 {
                     dollarUnder = located.Value;
                     variablesToDefine.Remove(located);
@@ -481,7 +481,7 @@ namespace System.Management.Automation
 
                 located = variablesToDefine.Find(
                     v => string.Equals(v.Name, "input", StringComparison.OrdinalIgnoreCase));
-                if (located != null)
+                if (located is not null)
                 {
                     input = located.Value;
                     variablesToDefine.Remove(located);
@@ -596,7 +596,7 @@ namespace System.Management.Automation
         /// Get the PSModuleInfo object for the module that defined this
         /// scriptblock.
         /// </summary>
-        public PSModuleInfo Module { get => SessionStateInternal != null ? SessionStateInternal.Module : null; }
+        public PSModuleInfo Module { get => SessionStateInternal is not null ? SessionStateInternal.Module : null; }
 
         /// <summary>
         /// Return the PSToken object for this function definition...
@@ -630,7 +630,7 @@ namespace System.Management.Automation
                 foreach (Attribute attribute in Attributes)
                 {
                     OutputTypeAttribute outputType = attribute as OutputTypeAttribute;
-                    if (outputType != null)
+                    if (outputType is not null)
                     {
                         result.AddRange(outputType.Type);
                     }
@@ -669,7 +669,7 @@ namespace System.Management.Automation
             object scriptThis,
             object[] args)
         {
-            Diagnostics.Assert(contextCmdlet != null, "caller to verify contextCmdlet parameter");
+            Diagnostics.Assert(contextCmdlet is not null, "caller to verify contextCmdlet parameter");
 
             Pipe outputPipe = ((MshCommandRuntime)contextCmdlet.CommandRuntime).OutputPipe;
             ExecutionContext context = GetContextFromTLS();
@@ -703,13 +703,13 @@ namespace System.Management.Automation
                 if (SessionStateInternal is null)
                 {
                     ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
-                    if (context != null)
+                    if (context is not null)
                     {
                         SessionStateInternal = context.EngineSessionState.PublicSessionState.Internal;
                     }
                 }
 
-                return SessionStateInternal != null ? SessionStateInternal.PublicSessionState : null;
+                return SessionStateInternal is not null ? SessionStateInternal.PublicSessionState : null;
             }
 
             set
@@ -954,7 +954,7 @@ namespace System.Management.Automation
             bool oldPropagateExceptions = false;
             ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
 
-            if (SessionStateInternal != null && SessionStateInternal.ExecutionContext != context)
+            if (SessionStateInternal is not null && SessionStateInternal.ExecutionContext != context)
             {
                 context = SessionStateInternal.ExecutionContext;
                 shouldGenerateEvent = true;
@@ -1035,7 +1035,7 @@ namespace System.Management.Automation
                     processInCurrentThread: true,
                     waitForCompletionInCurrentThread: true);
 
-                if (scriptBlockInvocationEventArgs.Exception != null)
+                if (scriptBlockInvocationEventArgs.Exception is not null)
                 {
                     scriptBlockInvocationEventArgs.Exception.Throw();
                 }
@@ -1048,7 +1048,7 @@ namespace System.Management.Automation
         private static void OnScriptBlockInvokeEventHandler(object sender, PSEventArgs args)
         {
             var eventArgs = (object)args.SourceEventArgs as ScriptBlockInvocationEventArgs;
-            Diagnostics.Assert(eventArgs != null,
+            Diagnostics.Assert(eventArgs is not null,
                 "Event Arguments to OnScriptBlockInvokeEventHandler should not be null");
 
             try
@@ -1170,14 +1170,14 @@ namespace System.Management.Automation
                 // not expecting input (as indicated by it's position in the pipeline
                 // then neither should we.
                 MshCommandRuntime crt = commandRuntime as MshCommandRuntime;
-                if (crt != null)
+                if (crt is not null)
                 {
-                    if (crt.OutputPipe != null)
+                    if (crt.OutputPipe is not null)
                     {
                         _pipeline.LinkPipelineSuccessOutput(crt.OutputPipe);
                     }
 
-                    if (crt.ErrorOutputPipe != null)
+                    if (crt.ErrorOutputPipe is not null)
                     {
                         _pipeline.LinkPipelineErrorOutput(crt.ErrorOutputPipe);
                     }

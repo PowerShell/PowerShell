@@ -424,7 +424,7 @@ namespace Microsoft.PowerShell.Commands
             System.Management.Automation.Diagnostics.Assert(query.Contains("from"),
                                                             "Only get called when ErrorCode is InvalidClass, which means the query string contains 'from' and the class name");
 
-            if (Class != null)
+            if (Class is not null)
             {
                 return Class;
             }

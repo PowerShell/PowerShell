@@ -15,7 +15,7 @@ namespace Microsoft.Management.UI.Internal
         internal static void ExecuteCommand(ICommand command, object parameter, IInputElement target)
         {
             RoutedCommand command2 = command as RoutedCommand;
-            if (command2 != null)
+            if (command2 is not null)
             {
                 if (command2.CanExecute(parameter, target))
                 {
@@ -37,7 +37,7 @@ namespace Microsoft.Management.UI.Internal
 
             RoutedCommand command2 = command as RoutedCommand;
 
-            if (command2 != null)
+            if (command2 is not null)
             {
                 return command2.CanExecute(parameter, target);
             }

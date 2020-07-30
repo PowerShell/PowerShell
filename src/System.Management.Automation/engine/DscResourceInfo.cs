@@ -104,7 +104,7 @@ namespace System.Management.Automation
         /// <param name="properties">Updated properties.</param>
         public void UpdateProperties(IList<DscResourcePropertyInfo> properties)
         {
-            if (properties != null)
+            if (properties is not null)
                 this.Properties = new ReadOnlyCollection<DscResourcePropertyInfo>(properties);
         }
 
@@ -156,7 +156,7 @@ namespace System.Management.Automation
 
         internal void UpdateValues(IList<string> values)
         {
-            if (values != null)
+            if (values is not null)
                 this.Values = new ReadOnlyCollection<string>(values);
         }
     }

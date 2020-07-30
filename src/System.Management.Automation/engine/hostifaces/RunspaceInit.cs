@@ -20,7 +20,7 @@ namespace System.Management.Automation.Runspaces
         private void InitializeDefaults()
         {
             SessionStateInternal ss = _engine.Context.EngineSessionState;
-            Dbg.Assert(ss != null, "SessionState should not be null");
+            Dbg.Assert(ss is not null, "SessionState should not be null");
 
             // Add the variables that must always be there...
             ss.InitializeFixedVariables();

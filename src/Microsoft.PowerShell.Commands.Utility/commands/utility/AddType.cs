@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _sourceCode = string.Empty;
 
-                if (value != null)
+                if (value is not null)
                 {
                     _sourceCode = string.Join("\n", value);
                 }
@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value != null) { _referencedAssemblies = value; }
+                if (value is not null) { _referencedAssemblies = value; }
             }
         }
 
@@ -321,7 +321,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _outputAssembly = value;
 
-                if (_outputAssembly != null)
+                if (_outputAssembly is not null)
                 {
                     _outputAssembly = _outputAssembly.Trim();
 
@@ -792,7 +792,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!assembly.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
                 {
                     Assembly result = LoadAssemblyHelper(assembly);
-                    if (result != null)
+                    if (result is not null)
                     {
                         return result.Location;
                     }
@@ -963,7 +963,7 @@ namespace Microsoft.PowerShell.Commands
             CompilationOptions compilationOptions = null;
             EmitOptions emitOptions = null;
 
-            if (CompilerOptions != null)
+            if (CompilerOptions is not null)
             {
                 var arguments = ParseCompilerOption(CompilerOptions);
 

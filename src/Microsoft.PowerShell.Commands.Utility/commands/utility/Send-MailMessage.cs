@@ -233,19 +233,19 @@ namespace Microsoft.PowerShell.Commands
             AddAddressesToMailMessage(To, "to");
 
             // Set the BCC address of the mail message
-            if (Bcc != null)
+            if (Bcc is not null)
             {
                 AddAddressesToMailMessage(Bcc, "bcc");
             }
 
             // Set the CC address of the mail message
-            if (Cc != null)
+            if (Cc is not null)
             {
                 AddAddressesToMailMessage(Cc, "cc");
             }
 
             // Set the Reply-To address of the mail message
-            if (ReplyTo != null)
+            if (ReplyTo is not null)
             {
                 AddAddressesToMailMessage(ReplyTo, "replyTo");
             }
@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell.Commands
             // globalEmailServer might be null if it is deleted by: PS> del variable:PSEmailServer
             PSVariable globalEmailServer = SessionState.Internal.GetVariable(SpecialVariables.PSEmailServer);
 
-            if (SmtpServer is null && globalEmailServer != null)
+            if (SmtpServer is null && globalEmailServer is not null)
             {
                 SmtpServer = Convert.ToString(globalEmailServer.Value, CultureInfo.InvariantCulture);
             }
@@ -298,7 +298,7 @@ namespace Microsoft.PowerShell.Commands
                 _mSmtpClient.EnableSsl = true;
             }
 
-            if (Credential != null)
+            if (Credential is not null)
             {
                 _mSmtpClient.UseDefaultCredentials = false;
                 _mSmtpClient.Credentials = Credential.GetNetworkCredential();
@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             // Add the attachments
-            if (Attachments != null)
+            if (Attachments is not null)
             {
                 string filepath = string.Empty;
                 foreach (string attachFile in Attachments)
@@ -353,7 +353,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (SmtpException ex)
             {
-                if (ex.InnerException != null)
+                if (ex.InnerException is not null)
                 {
                     ErrorRecord er = new ErrorRecord(new SmtpException(ex.InnerException.Message), "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
                     WriteError(er);

@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
             // If there is a script, resolve its path
             Collection<string> scripts = new Collection<string>();
 
-            if (Script != null)
+            if (Script is not null)
             {
                 foreach (string script in Script)
                 {

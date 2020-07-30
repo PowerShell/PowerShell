@@ -101,7 +101,7 @@ namespace Microsoft.Management.UI.Internal
         {
             NotifyCollectionChangedEventHandler eh = this.CollectionChanged;
 
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this, args);
             }
@@ -111,7 +111,7 @@ namespace Microsoft.Management.UI.Internal
         {
             PropertyChangedEventHandler eh = this.PropertyChanged;
 
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this, args);
             }

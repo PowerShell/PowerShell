@@ -296,14 +296,14 @@ namespace Microsoft.PowerShell.Commands
             // Get DACL
             AuthorizationRuleCollection dacl;
             CommonObjectSecurity cos = sd as CommonObjectSecurity;
-            if (cos != null)
+            if (cos is not null)
             {
                 dacl = cos.GetAccessRules(true, true, typeof(NTAccount));
             }
             else
             {
                 DirectoryObjectSecurity dos = sd as DirectoryObjectSecurity;
-                Dbg.Diagnostics.Assert(dos != null, "Acl should be of type CommonObjectSecurity or DirectoryObjectSecurity");
+                Dbg.Diagnostics.Assert(dos is not null, "Acl should be of type CommonObjectSecurity or DirectoryObjectSecurity");
                 dacl = dos.GetAccessRules(true, true, typeof(NTAccount));
             }
 
@@ -334,14 +334,14 @@ namespace Microsoft.PowerShell.Commands
 
             AuthorizationRuleCollection sacl;
             CommonObjectSecurity cos = sd as CommonObjectSecurity;
-            if (cos != null)
+            if (cos is not null)
             {
                 sacl = cos.GetAuditRules(true, true, typeof(NTAccount));
             }
             else
             {
                 DirectoryObjectSecurity dos = sd as DirectoryObjectSecurity;
-                Dbg.Diagnostics.Assert(dos != null, "Acl should be of type CommonObjectSecurity or DirectoryObjectSecurity");
+                Dbg.Diagnostics.Assert(dos is not null, "Acl should be of type CommonObjectSecurity or DirectoryObjectSecurity");
                 sacl = dos.GetAuditRules(true, true, typeof(NTAccount));
             }
 
@@ -771,11 +771,11 @@ namespace Microsoft.PowerShell.Commands
                 sections |= AccessControlSections.Audit;
             }
 
-            if (_inputObject != null)
+            if (_inputObject is not null)
             {
                 PSMethodInfo methodInfo = _inputObject.Methods["GetSecurityDescriptor"];
 
-                if (methodInfo != null)
+                if (methodInfo is not null)
                 {
                     object customDescriptor = null;
 
@@ -859,7 +859,7 @@ namespace Microsoft.PowerShell.Commands
                             InvokeProvider.SecurityDescriptor.Get(rp, sections, context);
 
                             sd = context.GetAccumulatedObjects();
-                            if (sd != null)
+                            if (sd is not null)
                             {
                                 AddBrokeredProperties(
                                     sd,
@@ -1334,20 +1334,20 @@ namespace Microsoft.PowerShell.Commands
         {
             ObjectSecurity aclObjectSecurity = _securityDescriptor as ObjectSecurity;
 
-            if (_inputObject != null)
+            if (_inputObject is not null)
             {
                 PSMethodInfo methodInfo = _inputObject.Methods["SetSecurityDescriptor"];
 
-                if (methodInfo != null)
+                if (methodInfo is not null)
                 {
                     CommonSecurityDescriptor aclCommonSD = _securityDescriptor as CommonSecurityDescriptor;
                     string sddl;
 
-                    if (aclObjectSecurity != null)
+                    if (aclObjectSecurity is not null)
                     {
                         sddl = aclObjectSecurity.GetSecurityDescriptorSddlForm(AccessControlSections.All);
                     }
-                    else if (aclCommonSD != null)
+                    else if (aclCommonSD is not null)
                     {
                         sddl = aclCommonSD.GetSddlForm(AccessControlSections.All);
                     }
@@ -1414,7 +1414,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                if (CentralAccessPolicy != null || ClearCentralAccessPolicy)
+                if (CentralAccessPolicy is not null || ClearCentralAccessPolicy)
                 {
                     if (!DownLevelHelper.IsWin8AndAbove())
                     {
@@ -1428,7 +1428,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (CentralAccessPolicy != null && ClearCentralAccessPolicy)
+                if (CentralAccessPolicy is not null && ClearCentralAccessPolicy)
                 {
                     Exception e = new ArgumentException(UtilsStrings.InvalidCentralAccessPolicyParameters);
                     ErrorRecord er =
@@ -1445,7 +1445,7 @@ namespace Microsoft.PowerShell.Commands
                 NativeMethods.TOKEN_PRIVILEGE previousState = new NativeMethods.TOKEN_PRIVILEGE();
                 try
                 {
-                    if (CentralAccessPolicy != null)
+                    if (CentralAccessPolicy is not null)
                     {
                         pSacl = GetSaclWithCapId(CentralAccessPolicy);
                         if (pSacl == IntPtr.Zero)
@@ -1503,7 +1503,7 @@ namespace Microsoft.PowerShell.Commands
                                                                           aclObjectSecurity,
                                                                           context);
 
-                                    if (CentralAccessPolicy != null || ClearCentralAccessPolicy)
+                                    if (CentralAccessPolicy is not null || ClearCentralAccessPolicy)
                                     {
                                         if (!pathInfo.Provider.NameEquals(Context.ProviderNames.FileSystem))
                                         {

@@ -198,7 +198,7 @@ namespace System.Management.Automation.Runspaces
                         RunspaceStrings.ConcurrentInvokeNotAllowed);
             }
 
-            if (invalidOperation != null)
+            if (invalidOperation is not null)
             {
                 invalidOperation.Source = "ResetRunspaceState";
                 throw invalidOperation;
@@ -401,7 +401,7 @@ namespace System.Management.Automation.Runspaces
                 Hashtable debugPreferenceCache = null;
 
                 string[] appDomainNames = null;
-                if (appDomainName != null)
+                if (appDomainName is not null)
                 {
                     appDomainNames = appDomainName.ToArray();
                 }
@@ -419,7 +419,7 @@ namespace System.Management.Automation.Runspaces
                 else
                 {
                     debugPreferenceCache = GetDebugPreferenceCache(null);
-                    if (debugPreferenceCache != null)
+                    if (debugPreferenceCache is not null)
                     {
                         if (enable)
                         {
@@ -440,10 +440,10 @@ namespace System.Management.Automation.Runspaces
                                 // processDebugPreference would point to null if debug preference is enabled for all app domains.
                                 // If processDebugPreference is not null then it means that user has selected specific
                                 // appdomins for which the debug preference has to be enabled.
-                                if (processDebugPreference != null)
+                                if (processDebugPreference is not null)
                                 {
                                     List<string> cachedAppDomainNames = null;
-                                    if (processDebugPreference.AppDomainNames != null && processDebugPreference.AppDomainNames.Length > 0)
+                                    if (processDebugPreference.AppDomainNames is not null && processDebugPreference.AppDomainNames.Length > 0)
                                     {
                                         cachedAppDomainNames = new List<string>(processDebugPreference.AppDomainNames);
 
@@ -482,10 +482,10 @@ namespace System.Management.Automation.Runspaces
                                     // processDebugPreference would point to null if debug preference is enabled for all app domains.
                                     // If processDebugPreference is not null then it means that user has selected specific
                                     // appdomins for which the debug preference has to be enabled.
-                                    if (processDebugPreference != null)
+                                    if (processDebugPreference is not null)
                                     {
                                         List<string> cachedAppDomainNames = null;
-                                        if (processDebugPreference.AppDomainNames != null && processDebugPreference.AppDomainNames.Length > 0)
+                                        if (processDebugPreference.AppDomainNames is not null && processDebugPreference.AppDomainNames.Length > 0)
                                         {
                                             cachedAppDomainNames = new List<string>(processDebugPreference.AppDomainNames);
 
@@ -546,7 +546,7 @@ namespace System.Management.Automation.Runspaces
             Hashtable debugPreferenceCache = null;
             using (PowerShell ps = PowerShell.Create())
             {
-                if (runspace != null)
+                if (runspace is not null)
                 {
                     ps.Runspace = runspace;
                 }
@@ -554,7 +554,7 @@ namespace System.Management.Automation.Runspaces
                 ps.AddCommand("Import-Clixml").AddParameter("Path", LocalRunspace.s_debugPreferenceCachePath);
                 Collection<PSObject> psObjects = ps.Invoke();
 
-                if (psObjects != null && psObjects.Count == 1)
+                if (psObjects is not null && psObjects.Count == 1)
                 {
                     debugPreferenceCache = psObjects[0].BaseObject as Hashtable;
                 }
@@ -571,10 +571,10 @@ namespace System.Management.Automation.Runspaces
         private static DebugPreference GetProcessSpecificDebugPreference(object debugPreference)
         {
             DebugPreference processDebugPreference = null;
-            if (debugPreference != null)
+            if (debugPreference is not null)
             {
                 PSObject debugPreferencePsObject = debugPreference as PSObject;
-                if (debugPreferencePsObject != null)
+                if (debugPreferencePsObject is not null)
                 {
                     processDebugPreference = LanguagePrimitives.ConvertTo<DebugPreference>(debugPreferencePsObject);
                 }
@@ -630,7 +630,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void DoOpenHelper()
         {
-            Dbg.Assert(InitialSessionState != null, "InitialSessionState should not be null");
+            Dbg.Assert(InitialSessionState is not null, "InitialSessionState should not be null");
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
             if (_disposed)
             {
@@ -671,7 +671,7 @@ namespace System.Management.Automation.Runspaces
                 // Log engine for end of engine life
                 if (startLifeCycleEventWritten)
                 {
-                    Dbg.Assert(_engine.Context != null, "if startLifeCycleEventWritten is true, ExecutionContext must be present");
+                    Dbg.Assert(_engine.Context is not null, "if startLifeCycleEventWritten is true, ExecutionContext must be present");
                     MshLog.LogEngineLifecycleEvent(_engine.Context, EngineState.Stopped);
                 }
 
@@ -696,13 +696,13 @@ namespace System.Management.Automation.Runspaces
 
             // Now do initial state configuration that requires an active runspace
             Exception initError = InitialSessionState.BindRunspace(this, s_runspaceInitTracer);
-            if (initError != null)
+            if (initError is not null)
             {
                 // Log engine health event
                 LogEngineHealthEvent(initError);
 
                 // Log engine for end of engine life
-                Debug.Assert(_engine.Context != null,
+                Debug.Assert(_engine.Context is not null,
                             "if startLifeCycleEventWritten is true, ExecutionContext must be present");
                 MshLog.LogEngineLifecycleEvent(_engine.Context, EngineState.Stopped);
 
@@ -743,7 +743,7 @@ namespace System.Management.Automation.Runspaces
                              int id,
                              Dictionary<string, string> additionalInfo)
         {
-            Dbg.Assert(exception != null, "Caller should validate the parameter");
+            Dbg.Assert(exception is not null, "Caller should validate the parameter");
 
             LogContext logContext = new LogContext();
             logContext.EngineVersion = Version.ToString();
@@ -837,10 +837,10 @@ namespace System.Management.Automation.Runspaces
             if (!haveOpenRunspaces)
             {
                 ExecutionContext executionContext = this.GetExecutionContext;
-                if (executionContext != null)
+                if (executionContext is not null)
                 {
                     PSHostUserInterface hostUI = executionContext.EngineHostInterface.UI;
-                    if (hostUI != null)
+                    if (hostUI is not null)
                     {
                         hostUI.StopAllTranscribing();
                     }
@@ -850,7 +850,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Generate the shutdown event
-            if (Events != null)
+            if (Events is not null)
                 Events.GenerateEvent(PSEngineEvent.Exiting, null, new object[] { }, null, true, false);
 
             // Stop all running pipelines
@@ -922,7 +922,7 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 var localRunspace = r as LocalRunspace;
-                if (localRunspace != null && localRunspace.Host is IHostProvidesTelemetryData)
+                if (localRunspace is not null && localRunspace.Host is IHostProvidesTelemetryData)
                 {
                     hostProvidesExitTelemetry = true;
                     break;
@@ -1003,7 +1003,7 @@ namespace System.Management.Automation.Runspaces
                         // Otherwise add disconnectable runspaces to list so that
                         // they can be disconnected.
                         IEnumerable<RemoteRunspace> jobRunspaces = job.GetRunspaces();
-                        if (jobRunspaces != null)
+                        if (jobRunspaces is not null)
                         {
                             disconnectRunspaces.AddRange(jobRunspaces);
                         }
@@ -1025,7 +1025,7 @@ namespace System.Management.Automation.Runspaces
         internal void ReleaseDebugger()
         {
             Debugger debugger = Debugger;
-            if (debugger != null)
+            if (debugger is not null)
             {
                 try
                 {
@@ -1245,7 +1245,7 @@ namespace System.Management.Automation.Runspaces
                     _jobManager = null;
                     _jobRepository = null;
                     _runspaceRepository = null;
-                    if (RunspaceOpening != null)
+                    if (RunspaceOpening is not null)
                     {
                         RunspaceOpening.Dispose();
                         RunspaceOpening = null;
@@ -1254,7 +1254,7 @@ namespace System.Management.Automation.Runspaces
                     Platform.RemoveTemporaryDirectory();
 
                     // Dispose the event manager
-                    if (this.ExecutionContext != null && this.ExecutionContext.Events != null)
+                    if (this.ExecutionContext is not null && this.ExecutionContext.Events is not null)
                     {
                         try
                         {
@@ -1283,7 +1283,7 @@ namespace System.Management.Automation.Runspaces
 
             base.Close(); // call base.Close() first to make it stop the pipeline
 
-            if (_pipelineThread != null)
+            if (_pipelineThread is not null)
             {
                 _pipelineThread.Close();
             }
@@ -1465,7 +1465,7 @@ namespace System.Management.Automation.Runspaces
                 // If the runspace supports disconnect semantics and is running a command,
                 // then disconnect it rather than closing it.
                 if (_remoteRunspace.CanDisconnect &&
-                    _remoteRunspace.GetCurrentlyRunningPipeline() != null)
+                    _remoteRunspace.GetCurrentlyRunningPipeline() is not null)
                 {
                     _remoteRunspace.DisconnectAsync();
                 }
@@ -1552,7 +1552,7 @@ namespace System.Management.Automation.Runspaces
             string moduleName,
             PSDataCollection<ErrorRecord> errors)
             : base(StringUtil.Format(RunspaceStrings.ErrorLoadingModulesOnRunspaceOpen, moduleName,
-                (errors != null && errors.Count > 0 && errors[0] != null) ? errors[0].ToString() : string.Empty), null)
+                (errors is not null && errors.Count > 0 && errors[0] is not null) ? errors[0].ToString() : string.Empty), null)
         {
             _errors = errors;
             this.SetErrorId("ErrorLoadingModulesOnRunspaceOpen");

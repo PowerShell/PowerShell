@@ -251,7 +251,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     break;
             }
 
-            if (definition != null)
+            if (definition is not null)
             {
                 // Set the MaxCount value if available.
                 if (MyInvocation.BoundParameters.ContainsKey(nameof(MaxResultCount)))
@@ -292,21 +292,21 @@ namespace Microsoft.PowerShell.ScheduledJob
                 catch (ScheduledJobException e)
                 {
                     // Check for access denied error.
-                    if (e.InnerException != null && e.InnerException is System.UnauthorizedAccessException)
+                    if (e.InnerException is not null && e.InnerException is System.UnauthorizedAccessException)
                     {
                         string msg = StringUtil.Format(ScheduledJobErrorStrings.UnauthorizedAccessError, definition.Name);
                         Exception reason = new RuntimeException(msg, e);
                         ErrorRecord errorRecord = new ErrorRecord(reason, "UnauthorizedAccessToRegisterScheduledJobDefinition", ErrorCategory.PermissionDenied, definition);
                         WriteError(errorRecord);
                     }
-                    else if (e.InnerException != null && e.InnerException is System.IO.DirectoryNotFoundException)
+                    else if (e.InnerException is not null && e.InnerException is System.IO.DirectoryNotFoundException)
                     {
                         string msg = StringUtil.Format(ScheduledJobErrorStrings.DirectoryNotFoundError, definition.Name);
                         Exception reason = new RuntimeException(msg, e);
                         ErrorRecord errorRecord = new ErrorRecord(reason, "DirectoryNotFoundWhenRegisteringScheduledJobDefinition", ErrorCategory.ObjectNotFound, definition);
                         WriteError(errorRecord);
                     }
-                    else if (e.InnerException != null && e.InnerException is System.Runtime.Serialization.InvalidDataContractException)
+                    else if (e.InnerException is not null && e.InnerException is System.Runtime.Serialization.InvalidDataContractException)
                     {
                         string innerMsg = (!string.IsNullOrEmpty(e.InnerException.Message)) ? e.InnerException.Message : string.Empty;
                         string msg = StringUtil.Format(ScheduledJobErrorStrings.CannotSerializeData, definition.Name, innerMsg);
@@ -390,12 +390,12 @@ namespace Microsoft.PowerShell.ScheduledJob
             parameterCollection.Add(ScheduledJobInvocationInfo.RunAs32Parameter, RunAs32.ToBool());
             parameterCollection.Add(ScheduledJobInvocationInfo.AuthenticationParameter, Authentication);
 
-            if (InitializationScript != null)
+            if (InitializationScript is not null)
             {
                 parameterCollection.Add(ScheduledJobInvocationInfo.InitializationScriptParameter, InitializationScript);
             }
 
-            if (ArgumentList != null)
+            if (ArgumentList is not null)
             {
                 parameterCollection.Add(ScheduledJobInvocationInfo.ArgumentListParameter, ArgumentList);
             }

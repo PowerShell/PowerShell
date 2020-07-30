@@ -69,7 +69,7 @@ namespace System.Management.Automation
         public Collection<ProviderInfo> Get(string name)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -100,7 +100,7 @@ namespace System.Management.Automation
         public ProviderInfo GetOne(string name)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -114,7 +114,7 @@ namespace System.Management.Automation
         public IEnumerable<ProviderInfo> GetAll()
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             return _sessionState.ProviderList;

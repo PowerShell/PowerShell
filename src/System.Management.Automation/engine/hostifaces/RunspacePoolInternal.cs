@@ -725,7 +725,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             // throw the exception that occurred while
             // processing the async operation
-            if (asyncResult.Exception != null)
+            if (asyncResult.Exception is not null)
             {
                 throw asyncResult.Exception;
             }
@@ -1246,7 +1246,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         protected Runspace CreateRunspace()
         {
-            Dbg.Assert(_initialSessionState != null, "_initialSessionState should not be null");
+            Dbg.Assert(_initialSessionState is not null, "_initialSessionState should not be null");
             // TODO: exceptions thrown here need to be documented
             // runspace.Open() did not document all the exceptions.
             Runspace result = RunspaceFactory.CreateRunspaceFromSessionStateNoClone(host, _initialSessionState);
@@ -1289,7 +1289,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </param>
         protected void DestroyRunspace(Runspace runspace)
         {
-            Dbg.Assert(runspace != null, "Runspace cannot be null");
+            Dbg.Assert(runspace is not null, "Runspace cannot be null");
             runspace.Events.ForwardEvent -= OnRunspaceForwardEvent; // this must be done after open since open initializes the ExecutionContext
             runspace.Close();
             runspace.Dispose();
@@ -1440,7 +1440,7 @@ namespace System.Management.Automation.Runspaces.Internal
             bool shouldStartServicingInSameThread = false;
             lock (runspaceRequestQueue)
             {
-                if (requestToEnqueue != null)
+                if (requestToEnqueue is not null)
                 {
                     runspaceRequestQueue.Enqueue(requestToEnqueue);
                 }
@@ -1604,7 +1604,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 }
             }
 
-            if ((useCallingThread) && (runspaceRequester != null))
+            if ((useCallingThread) && (runspaceRequester is not null))
             {
                 // call DoComplete outside of the lock and finally..as the
                 // DoComplete handler may handle the runspace in the same
@@ -1642,7 +1642,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             EventHandler<PSEventArgs> eh = this.ForwardEvent;
 
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this, e);
             }

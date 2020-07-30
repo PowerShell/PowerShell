@@ -286,7 +286,7 @@ namespace System.Management.Automation
                 //           - if matching, check if the ZoneId is valid. Then return the corresponding SecurityZone if valid, or 'NoZone' if invalid.
                 //           - if not matching, then continue to do step #3 with the next line.
                 //    4. Reach EOF, then return 'NoZone'.
-                while ((line = zoneDataReader.ReadLine()) != null)
+                while ((line = zoneDataReader.ReadLine()) is not null)
                 {
                     line = line.Trim();
                     if (!zoneTransferMatched)

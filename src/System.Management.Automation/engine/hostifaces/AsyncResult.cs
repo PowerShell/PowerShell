@@ -152,7 +152,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // call the user supplied callback
-            if (Callback != null)
+            if (Callback is not null)
             {
                 Callback(this);
             }
@@ -181,7 +181,7 @@ namespace System.Management.Automation.Runspaces
         {
             lock (SyncObject)
             {
-                if (_completedWaitHandle != null)
+                if (_completedWaitHandle is not null)
                 {
                     _completedWaitHandle.Set();
                 }
@@ -226,7 +226,7 @@ namespace System.Management.Automation.Runspaces
             _invokeOnThreadEvent = null;  // Allow early GC
 
             // Operation is done: if an exception occured, throw it
-            if (Exception != null)
+            if (Exception is not null)
             {
                 throw Exception;
             }
@@ -248,7 +248,7 @@ namespace System.Management.Automation.Runspaces
             _invokeCallbackState = state;
 
             // Signal thread to run callback.
-            if (_invokeOnThreadEvent != null)
+            if (_invokeOnThreadEvent is not null)
             {
                 _invokeOnThreadEvent.Set();
                 return true;

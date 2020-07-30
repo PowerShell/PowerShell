@@ -251,7 +251,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx();
 
             CimSessionOptions options = null;
-            if (this.SessionOption != null)
+            if (this.SessionOption is not null)
             {
                 // clone the sessionOption object
                 if (this.SessionOption is WSManSessionOptions)
@@ -266,14 +266,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             outputOptions = null;
             outputCredential = null;
-            if (options != null)
+            if (options is not null)
             {
                 DComSessionOptions dcomOptions = (options as DComSessionOptions);
-                if (dcomOptions != null)
+                if (dcomOptions is not null)
                 {
                     bool conflict = false;
                     string parameterName = string.Empty;
-                    if (this.CertificateThumbprint != null)
+                    if (this.CertificateThumbprint is not null)
                     {
                         conflict = true;
                         parameterName = @"CertificateThumbprint";
@@ -293,7 +293,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            if (portSet || (this.CertificateThumbprint != null))
+            if (portSet || (this.CertificateThumbprint is not null))
             {
                 WSManSessionOptions wsmanOptions = (options is null) ? new WSManSessionOptions() : options as WSManSessionOptions;
                 if (portSet)
@@ -302,7 +302,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     portSet = false;
                 }
 
-                if (this.CertificateThumbprint != null)
+                if (this.CertificateThumbprint is not null)
                 {
                     CimCredential credentials = new CimCredential(CertificateAuthenticationMechanism.Default, this.CertificateThumbprint);
                     wsmanOptions.AddDestinationCredentials(credentials);
@@ -313,13 +313,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             if (this.operationTimeoutSet)
             {
-                if (options != null)
+                if (options is not null)
                 {
                     options.Timeout = TimeSpan.FromSeconds((double)this.OperationTimeoutSec);
                 }
             }
 
-            if (this.authenticationSet || (this.credential != null))
+            if (this.authenticationSet || (this.credential is not null))
             {
                 PasswordAuthenticationMechanism authentication = this.authenticationSet ? this.Authentication : PasswordAuthenticationMechanism.Default;
                 if (this.authenticationSet)
@@ -335,7 +335,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 DebugHelper.WriteLog("Credentials: {0}", 1, credentials);
                 outputCredential = credentials;
-                if (options != null)
+                if (options is not null)
                 {
                     DebugHelper.WriteLog("Add credentials to option: {0}", 1, options);
                     options.AddDestinationCredentials(credentials);
@@ -368,7 +368,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             base.DisposeInternal();
 
             // Dispose managed resources.
-            if (this.cimNewSession != null)
+            if (this.cimNewSession is not null)
             {
                 this.cimNewSession.Dispose();
             }

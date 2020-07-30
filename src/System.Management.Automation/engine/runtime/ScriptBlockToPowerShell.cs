@@ -175,7 +175,7 @@ namespace System.Management.Automation
     {
         internal static IEnumerable<Ast> FindAllUsingExpressionExceptForWorkflow(Ast ast)
         {
-            Diagnostics.Assert(ast != null, "caller to verify arguments");
+            Diagnostics.Assert(ast is not null, "caller to verify arguments");
 
             var searcher = new UsingExpressionAstSearcher(astParam => astParam is UsingExpressionAst, stopOnFirst: false, searchNestedScriptBlocks: true);
             ast.InternalVisit(searcher);
@@ -239,13 +239,13 @@ namespace System.Management.Automation
             string errorId;
             string errorMsg;
             body.GetSimplePipeline(true, out errorId, out errorMsg);
-            if (errorId != null)
+            if (errorId is not null)
             {
                 throw new ScriptBlockToPowerShellNotSupportedException(errorId, null, errorMsg);
             }
 
             var checker = new ScriptBlockToPowerShellChecker { ScriptBeingConverted = body };
-            if (functionParameters != null)
+            if (functionParameters is not null)
             {
                 foreach (var parameter in functionParameters)
                 {
@@ -286,7 +286,7 @@ namespace System.Management.Automation
                     // If 'functionParameters' is not null, then the ScriptBlockAst is actually the body of a FunctionDefinitionAst, and it doesn't have a ParamBlock.
                     // If 'functionParameters' is null, then the ScriptBlockAst may have parameters defined in its ParamBlock.
                     bool usesCmdletBinding = false;
-                    var parameters = functionParameters != null
+                    var parameters = functionParameters is not null
                                          ? Compiler.GetParameterMetaData(functionParameters, true, ref usesCmdletBinding)
                                          : ((IParameterMetadataProvider)body).GetParameterMetadata(true, ref usesCmdletBinding);
                     object[] remainingArgs = ScriptBlock.BindArgumentsForScriptblockInvoke(
@@ -344,12 +344,12 @@ namespace System.Management.Automation
         /// </returns>
         private static Tuple<Dictionary<string, object>, object[]> GetUsingValues(Ast body, bool isTrustedInput, ExecutionContext context, Dictionary<string, object> variables, bool filterNonUsingVariables)
         {
-            Diagnostics.Assert(context != null || variables != null, "can't retrieve variables with no context and no variables");
+            Diagnostics.Assert(context is not null || variables is not null, "can't retrieve variables with no context and no variables");
 
             var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressionExceptForWorkflow(body).ToList();
             var usingValueArray = new object[usingAsts.Count];
             var usingValueMap = new Dictionary<string, object>(usingAsts.Count);
-            HashSet<string> usingVarNames = (variables != null && filterNonUsingVariables) ? new HashSet<string>() : null;
+            HashSet<string> usingVarNames = (variables is not null && filterNonUsingVariables) ? new HashSet<string>() : null;
 
             // Used to check if the PSv3/PSv4 way of handling UsingExpression can continue to be used.
             bool hasUsingExprInDifferentScope = false;
@@ -359,7 +359,7 @@ namespace System.Management.Automation
             Version oldStrictVersion = null;
             try
             {
-                if (context != null)
+                if (context is not null)
                 {
                     oldStrictVersion = context.EngineSessionState.CurrentScope.StrictModeVersion;
                     context.EngineSessionState.CurrentScope.StrictModeVersion = PSVersionInfo.PSVersion;
@@ -384,7 +384,7 @@ namespace System.Management.Automation
                         hasUsingExprInDifferentScope = true;
                     }
 
-                    if (variables != null)
+                    if (variables is not null)
                     {
                         var variableAst = usingAst.SubExpression as VariableExpressionAst;
                         if (variableAst is null)
@@ -394,7 +394,7 @@ namespace System.Management.Automation
                         }
 
                         string varName = variableAst.VariablePath.UserPath;
-                        if (varName != null && variables.TryGetValue(varName, out value) && usingVarNames != null)
+                        if (varName is not null && variables.TryGetValue(varName, out value) && usingVarNames is not null)
                         {
                             usingVarNames.Add(varName);
                         }
@@ -426,13 +426,13 @@ namespace System.Management.Automation
             }
             finally
             {
-                if (context != null)
+                if (context is not null)
                 {
                     context.EngineSessionState.CurrentScope.StrictModeVersion = oldStrictVersion;
                 }
             }
 
-            if (usingVarNames != null)
+            if (usingVarNames is not null)
             {
                 string[] keys = variables.Keys.ToArray();
                 foreach (string key in keys)
@@ -474,7 +474,7 @@ namespace System.Management.Automation
                 current = current.Parent;
 
                 var sbAst = current as ScriptBlockAst;
-                if (sbAst != null)
+                if (sbAst is not null)
                 {
                     // We find the closest parent ScriptBlockAst of the current UsingExpression, which represents the scope
                     // that the current UsingExpression is in.
@@ -497,7 +497,7 @@ namespace System.Management.Automation
                 }
 
                 var funcAst = current as FunctionDefinitionAst;
-                if (funcAst != null)
+                if (funcAst is not null)
                 {
                     // The parent chain of the current UsingExpression reaches a FunctionDefinitionAst, then the UsingExpression
                     // must be in 'Parameters' property of this FunctionDefinitionAst.
@@ -590,21 +590,21 @@ namespace System.Management.Automation
             foreach (var ast in commandAst.CommandElements.Skip(1))
             {
                 var exprAst = ast as ExpressionAst;
-                if (exprAst != null)
+                if (exprAst is not null)
                 {
                     VariableExpressionAst variableAst = null;
 
                     var usingExprAst = ast as UsingExpressionAst;
-                    if (usingExprAst != null)
+                    if (usingExprAst is not null)
                     {
                         string usingAstKey = PsUtils.GetUsingExpressionKey(usingExprAst);
                         object usingValue = _usingValueMap[usingAstKey];
                         variableAst = usingExprAst.SubExpression as VariableExpressionAst;
-                        if (variableAst != null && variableAst.Splatted)
+                        if (variableAst is not null && variableAst.Splatted)
                         {
                             // Support the splatting of a dictionary
                             var parameters = usingValue as System.Collections.IDictionary;
-                            if (parameters != null)
+                            if (parameters is not null)
                             {
                                 _powershell.AddParameters(parameters);
                             }
@@ -612,7 +612,7 @@ namespace System.Management.Automation
                             {
                                 // Support the splatting of an array
                                 var arguments = usingValue as System.Collections.IEnumerable;
-                                if (arguments != null)
+                                if (arguments is not null)
                                 {
                                     foreach (object argument in arguments)
                                     {
@@ -635,7 +635,7 @@ namespace System.Management.Automation
                     }
 
                     variableAst = ast as VariableExpressionAst;
-                    if (variableAst != null && variableAst.Splatted)
+                    if (variableAst is not null && variableAst.Splatted)
                     {
                         GetSplattedVariable(variableAst);
                     }
@@ -643,7 +643,7 @@ namespace System.Management.Automation
                     {
                         var constantExprAst = ast as ConstantExpressionAst;
                         object argument;
-                        if (constantExprAst != null
+                        if (constantExprAst is not null
                             && (LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constantExprAst.StaticType))
                             || constantExprAst.StaticType == typeof(System.Numerics.BigInteger)))
                         {
@@ -694,7 +694,7 @@ namespace System.Management.Automation
         {
             var exprAst = commandNameAst as ExpressionAst;
             string commandName;
-            if (exprAst != null)
+            if (exprAst is not null)
             {
                 var value = GetExpressionValue(exprAst, isTrustedInput);
                 if (value is null)
@@ -774,7 +774,7 @@ namespace System.Management.Automation
         {
             string nameSuffix;
             object argument;
-            if (commandParameterAst.Argument != null)
+            if (commandParameterAst.Argument is not null)
             {
                 var arg = commandParameterAst.Argument;
                 var errorPos = commandParameterAst.ErrorPosition;

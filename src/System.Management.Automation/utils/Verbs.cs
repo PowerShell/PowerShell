@@ -1104,7 +1104,7 @@ namespace System.Management.Automation
         public static string GetVerbAliasPrefix(string verb)
         {
             FieldInfo aliasField = typeof(VerbAliasPrefixes).GetField(verb);
-            if (aliasField != null)
+            if (aliasField is not null)
             {
                 return (string)aliasField.GetValue(null);
             }

@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
                 // null is returned only if the pipeline is stopping (e.g. ctrl+c is signaled).
                 // in that case, we shouldn't write the null to the output pipe.
                 string output = JsonObject.ConvertToJson(objectToProcess, in context);
-                if (output != null)
+                if (output is not null)
                 {
                     WriteObject(output);
                 }

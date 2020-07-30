@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 }
 
                 this.commandNameFilter = value;
-                if (this.selectedModule != null)
+                if (this.selectedModule is not null)
                 {
                     this.selectedModule.RefreshFilteredCommands(this.CommandNameFilter);
                     this.selectedModule.SelectedCommand = null;
@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                     return;
                 }
 
-                if (this.selectedModule != null)
+                if (this.selectedModule is not null)
                 {
                     this.selectedModule.SelectedCommandNeedsImportModule -= this.SelectedModule_SelectedCommandNeedsImportModule;
                     this.selectedModule.SelectedCommandNeedsHelp -= this.SelectedModule_SelectedCommandNeedsHelp;
@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 this.SetCanRun();
                 this.SetCanCopy();
 
-                if (this.selectedModule != null)
+                if (this.selectedModule is not null)
                 {
                     this.selectedModule.RefreshFilteredCommands(this.CommandNameFilter);
                     this.selectedModule.SelectedCommandNeedsImportModule += this.SelectedModule_SelectedCommandNeedsImportModule;
@@ -401,7 +401,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         internal void OnRefresh()
         {
             EventHandler<EventArgs> handler = this.Refresh;
-            if (handler != null)
+            if (handler is not null)
             {
                 handler(this, new EventArgs());
             }
@@ -445,7 +445,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         private void SetCanRun()
         {
-            bool newValue = this.selectedModule != null && this.MainGridDisplayed &&
+            bool newValue = this.selectedModule is not null && this.MainGridDisplayed &&
                 this.selectedModule.IsThereASelectedImportedCommandWhereAllMandatoryParametersHaveValues;
 
             if (this.canRun == newValue)
@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         private void SetCanCopy()
         {
-            bool newValue = this.selectedModule != null && this.MainGridDisplayed && this.selectedModule.IsThereASelectedCommand;
+            bool newValue = this.selectedModule is not null && this.MainGridDisplayed && this.selectedModule.IsThereASelectedCommand;
 
             if (this.canCopy == newValue)
             {
@@ -600,7 +600,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         private void OnSelectedCommandInSelectedModuleNeedsHelp(HelpNeededEventArgs e)
         {
             EventHandler<HelpNeededEventArgs> handler = this.SelectedCommandInSelectedModuleNeedsHelp;
-            if (handler != null)
+            if (handler is not null)
             {
                 handler(this, e);
             }
@@ -613,7 +613,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         private void OnSelectedCommandInSelectedModuleNeedsImportModule(ImportModuleEventArgs e)
         {
             EventHandler<ImportModuleEventArgs> handler = this.SelectedCommandInSelectedModuleNeedsImportModule;
-            if (handler != null)
+            if (handler is not null)
             {
                 handler(this, e);
             }
@@ -636,7 +636,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         private void OnRunSelectedCommandInSelectedModule(CommandEventArgs e)
         {
             EventHandler<CommandEventArgs> handler = this.RunSelectedCommandInSelectedModule;
-            if (handler != null)
+            if (handler is not null)
             {
                 handler(this, e);
             }
@@ -649,7 +649,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         private void OnNotifyPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;
-            if (handler != null)
+            if (handler is not null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }

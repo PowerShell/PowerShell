@@ -373,14 +373,14 @@ namespace System.Management.Automation.Runspaces
         void
         SetMergeSettingsOnCommandProcessor(CommandProcessorBase commandProcessor)
         {
-            Dbg.Assert(commandProcessor != null, "caller should validate the parameter");
+            Dbg.Assert(commandProcessor is not null, "caller should validate the parameter");
 
             MshCommandRuntime mcr = commandProcessor.Command.commandRuntime as MshCommandRuntime;
 
             if (_mergeUnclaimedPreviousCommandResults != PipelineResultTypes.None)
             {
                 // Currently only merging previous unclaimed error and output is supported.
-                if (mcr != null)
+                if (mcr is not null)
                 {
                     mcr.MergeUnclaimedPreviousErrorResults = true;
                 }
@@ -454,7 +454,7 @@ namespace System.Management.Automation.Runspaces
             CommandOrigin origin
         )
         {
-            Dbg.Assert(executionContext != null, "Caller should verify the parameters");
+            Dbg.Assert(executionContext is not null, "Caller should verify the parameters");
 
             CommandProcessorBase commandProcessorBase;
 
@@ -532,7 +532,7 @@ namespace System.Management.Automation.Runspaces
 
             CommandParameterCollection parameters = Parameters;
 
-            if (parameters != null)
+            if (parameters is not null)
             {
                 bool isNativeCommand = commandProcessorBase is NativeCommandProcessor;
                 foreach (CommandParameter publicParameter in parameters)
@@ -608,27 +608,27 @@ namespace System.Management.Automation.Runspaces
             command.MergeUnclaimedPreviousCommandResults = RemotingDecoder.GetPropertyValue<PipelineResultTypes>(commandAsPSObject, RemoteDataNameStrings.MergeUnclaimedPreviousCommandResults);
 
             // V3 merge instructions will not be returned by V2 server and this is expected.
-            if (commandAsPSObject.Properties[RemoteDataNameStrings.MergeError] != null)
+            if (commandAsPSObject.Properties[RemoteDataNameStrings.MergeError] is not null)
             {
                 command.MergeInstructions[(int)MergeType.Error] = RemotingDecoder.GetPropertyValue<PipelineResultTypes>(commandAsPSObject, RemoteDataNameStrings.MergeError);
             }
 
-            if (commandAsPSObject.Properties[RemoteDataNameStrings.MergeWarning] != null)
+            if (commandAsPSObject.Properties[RemoteDataNameStrings.MergeWarning] is not null)
             {
                 command.MergeInstructions[(int)MergeType.Warning] = RemotingDecoder.GetPropertyValue<PipelineResultTypes>(commandAsPSObject, RemoteDataNameStrings.MergeWarning);
             }
 
-            if (commandAsPSObject.Properties[RemoteDataNameStrings.MergeVerbose] != null)
+            if (commandAsPSObject.Properties[RemoteDataNameStrings.MergeVerbose] is not null)
             {
                 command.MergeInstructions[(int)MergeType.Verbose] = RemotingDecoder.GetPropertyValue<PipelineResultTypes>(commandAsPSObject, RemoteDataNameStrings.MergeVerbose);
             }
 
-            if (commandAsPSObject.Properties[RemoteDataNameStrings.MergeDebug] != null)
+            if (commandAsPSObject.Properties[RemoteDataNameStrings.MergeDebug] is not null)
             {
                 command.MergeInstructions[(int)MergeType.Debug] = RemotingDecoder.GetPropertyValue<PipelineResultTypes>(commandAsPSObject, RemoteDataNameStrings.MergeDebug);
             }
 
-            if (commandAsPSObject.Properties[RemoteDataNameStrings.MergeInformation] != null)
+            if (commandAsPSObject.Properties[RemoteDataNameStrings.MergeInformation] is not null)
             {
                 command.MergeInstructions[(int)MergeType.Information] = RemotingDecoder.GetPropertyValue<PipelineResultTypes>(commandAsPSObject, RemoteDataNameStrings.MergeInformation);
             }
@@ -661,7 +661,7 @@ namespace System.Management.Automation.Runspaces
 
             commandAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MergeUnclaimedPreviousCommandResults, this.MergeUnclaimedPreviousCommandResults));
 
-            if (psRPVersion != null &&
+            if (psRPVersion is not null &&
                 psRPVersion >= RemotingConstants.ProtocolVersionWin10RTM)
             {
                 // V5 merge instructions
@@ -671,7 +671,7 @@ namespace System.Management.Automation.Runspaces
                 commandAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MergeDebug, MergeInstructions[(int)MergeType.Debug]));
                 commandAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MergeInformation, MergeInstructions[(int)MergeType.Information]));
             }
-            else if (psRPVersion != null &&
+            else if (psRPVersion is not null &&
                 psRPVersion >= RemotingConstants.ProtocolVersionWin8RTM)
             {
                 // V3 merge instructions.
@@ -749,7 +749,7 @@ namespace System.Management.Automation.Runspaces
                                                                                   Microsoft.Management.Infrastructure.CimType.Boolean);
             c.CimInstanceProperties.Add(isScriptProperty);
 
-            if (this.Parameters != null && this.Parameters.Count > 0)
+            if (this.Parameters is not null && this.Parameters.Count > 0)
             {
                 List<CimInstance> parameterInstances = new List<CimInstance>();
                 foreach (var p in this.Parameters)

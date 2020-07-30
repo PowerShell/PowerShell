@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (PSObject candidate in this)
             {
                 var namePropInfo = candidate.Properties[(findById ? "id" : "name")];
-                if (namePropInfo != null && (string)namePropInfo.Value == nameOrId)
+                if (namePropInfo is not null && (string)namePropInfo.Value == nameOrId)
                 {
                     return candidate;
                 }

@@ -109,7 +109,7 @@ namespace System.Management.Automation
 
             ParameterBinderBase parameterBinder;
             IScriptCommandInfo scriptCommandInfo = CommandInfo as IScriptCommandInfo;
-            if (scriptCommandInfo != null)
+            if (scriptCommandInfo is not null)
             {
                 parameterBinder = new ScriptParameterBinder(scriptCommandInfo.ScriptBlock, cmdlet.MyInvocation, this._context, cmdlet, CommandScope);
             }
@@ -167,7 +167,7 @@ namespace System.Management.Automation
             using (commandRuntime.AllowThisCommandToWrite(false))
             {
                 Diagnostics.Assert(
-                    this.CmdletParameterBinderController != null,
+                    this.CmdletParameterBinderController is not null,
                     "A parameter binder controller should always be available");
 
                 // Always set the hash table on MyInvocation so it's available for both interpreted cmdlets
@@ -210,7 +210,7 @@ namespace System.Management.Automation
             this.CmdletParameterBinderController.DefaultParameterValues = psDefaultParameterValues;
 
             Diagnostics.Assert(
-                this.Command != null,
+                this.Command is not null,
                 "CommandProcessor did not initialize Command\n" + this.CommandInfo.Name);
 
             PSLanguageMode? oldLanguageMode = null;
@@ -218,7 +218,7 @@ namespace System.Management.Automation
             try
             {
                 var scriptCmdletInfo = this.CommandInfo as IScriptCommandInfo;
-                if (scriptCmdletInfo != null &&
+                if (scriptCmdletInfo is not null &&
                     scriptCmdletInfo.ScriptBlock.LanguageMode.HasValue &&
                     scriptCmdletInfo.ScriptBlock.LanguageMode != Context.LanguageMode)
                 {
@@ -258,7 +258,7 @@ namespace System.Management.Automation
             // When dotting a script cmdlet, push the locals of automatic variables to
             // the 'DottedScopes' of the current scope.
             PSScriptCmdlet scriptCmdlet = this.Command as PSScriptCmdlet;
-            if (scriptCmdlet != null && !UseLocalScope)
+            if (scriptCmdlet is not null && !UseLocalScope)
             {
                 scriptCmdlet.PushDottedScope(CommandSessionState.CurrentScope);
             }
@@ -269,7 +269,7 @@ namespace System.Management.Automation
             // When dotting a script cmdlet, pop the locals of automatic variables from
             // the 'DottedScopes' of the current scope.
             PSScriptCmdlet scriptCmdlet = this.Command as PSScriptCmdlet;
-            if (scriptCmdlet != null && !UseLocalScope)
+            if (scriptCmdlet is not null && !UseLocalScope)
             {
                 scriptCmdlet.PopDottedScope(CommandSessionState.CurrentScope);
             }
@@ -280,7 +280,7 @@ namespace System.Management.Automation
         /// </summary>
         internal override void DoBegin()
         {
-            if (!RanBeginAlready && CmdletParameterBinderController.ObsoleteParameterWarningList != null)
+            if (!RanBeginAlready && CmdletParameterBinderController.ObsoleteParameterWarningList is not null)
             {
                 using (CommandRuntime.AllowThisCommandToWrite(false))
                 {
@@ -337,7 +337,7 @@ namespace System.Management.Automation
                 }
             }
 
-            Debug.Assert(this.Command.MyInvocation.PipelineIterationInfo != null); // this should have been allocated when the pipeline was started
+            Debug.Assert(this.Command.MyInvocation.PipelineIterationInfo is not null); // this should have been allocated when the pipeline was started
 
             while (Read())
             {
@@ -360,7 +360,7 @@ namespace System.Management.Automation
                     // The RedirectShellErrorOutputPipe flag is used by the V2 hosting API to force the
                     // redirection.
                     //
-                    if (this.RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe != null)
+                    if (this.RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe is not null)
                     {
                         _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
                     }
@@ -368,7 +368,7 @@ namespace System.Management.Automation
                     // NOTICE-2004/06/08-JonN 959638
                     using (commandRuntime.AllowThisCommandToWrite(true))
                     {
-                        if (CmdletParameterBinderController.ObsoleteParameterWarningList != null &&
+                        if (CmdletParameterBinderController.ObsoleteParameterWarningList is not null &&
                             CmdletParameterBinderController.ObsoleteParameterWarningList.Count > 0)
                         {
                             // Write out warning messages for the pipeline-value-bound obsolete parameters.
@@ -416,7 +416,7 @@ namespace System.Management.Automation
                     _context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
                 }
 
-                if (exceptionToThrow != null)
+                if (exceptionToThrow is not null)
                 {
                     // This cmdlet threw an exception, so
                     // wrap it and bubble it up.
@@ -656,7 +656,7 @@ namespace System.Management.Automation
             // turn it into a shell object if it isn't one already...
             // we depend on PSObject.AsPSObject() being idempotent - if
             // it's already a shell object, don't encapsulate it again.
-            if (inputObject != null)
+            if (inputObject is not null)
             {
                 inputToOperateOn = PSObject.AsPSObject(inputObject);
             }
@@ -700,7 +700,7 @@ namespace System.Management.Automation
         /// </exception>
         private void Init(CmdletInfo cmdletInformation)
         {
-            Diagnostics.Assert(cmdletInformation != null, "Constructor should throw exception if LookupCommand returned null.");
+            Diagnostics.Assert(cmdletInformation is not null, "Constructor should throw exception if LookupCommand returned null.");
 
             Cmdlet newCmdlet = null;
             Exception initError = null;
@@ -742,7 +742,7 @@ namespace System.Management.Automation
                 throw commandException;
             }
 
-            if (initError != null)
+            if (initError is not null)
             {
                 // Log a command health event
                 MshLog.LogCommandHealthEvent(
@@ -828,18 +828,18 @@ namespace System.Management.Automation
         /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
         internal override bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
-            if (this.arguments != null)
+            if (this.arguments is not null)
             {
                 foreach (CommandParameterInternal parameter in this.arguments)
                 {
-                    Dbg.Assert(parameter != null, "CommandProcessor.arguments shouldn't have any null arguments");
+                    Dbg.Assert(parameter is not null, "CommandProcessor.arguments shouldn't have any null arguments");
                     if (parameter.IsDashQuestion())
                     {
                         helpCategory = HelpCategory.All;
                         // using InvocationName mainly to avoid bogus this.CommandInfo.Name
                         // (when CmdletInfo.Name is initialized from "cmdlet" declaration
                         //  of a scriptblock and when "cmdlet" declaration doesn't specify any name)
-                        if ((this.Command != null) && (this.Command.MyInvocation != null) &&
+                        if ((this.Command is not null) && (this.Command.MyInvocation is not null) &&
                             (!string.IsNullOrEmpty(this.Command.MyInvocation.InvocationName)))
                         {
                             helpTarget = this.Command.MyInvocation.InvocationName;

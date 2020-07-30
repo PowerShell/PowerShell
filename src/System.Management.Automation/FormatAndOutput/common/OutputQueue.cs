@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal List<PacketInfoData> Add(PacketInfoData o)
         {
             FormatStartData fsd = o as FormatStartData;
-            if (fsd != null)
+            if (fsd is not null)
             {
                 // just cache the reference (used during the notification call)
                 _formatStartData = fsd;
@@ -72,13 +72,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (_processingGroup &&
                 ((o is GroupEndData) ||
                 (_objectCount > 0) && (_currentObjectCount >= _objectCount)) ||
-                ((_groupingTimer != null) && (_groupingTimer.Elapsed > _groupingDuration))
+                ((_groupingTimer is not null) && (_groupingTimer.Elapsed > _groupingDuration))
                 )
             {
                 // reset the object count
                 _currentObjectCount = 0;
 
-                if (_groupingTimer != null)
+                if (_groupingTimer is not null)
                 {
                     _groupingTimer.Stop();
                     _groupingTimer = null;
@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             foreach (PacketInfoData x in _queue)
             {
                 FormatEntryData fed = x as FormatEntryData;
-                if (fed != null && fed.outOfBand)
+                if (fed is not null && fed.outOfBand)
                     continue;
 
                 validObjects.Add(x);
@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="objectCount">Max number of objects to be cached.</param>
         internal void EnableGroupCaching(ProcessCachedGroupNotification callBack, int objectCount)
         {
-            if (callBack != null)
+            if (callBack is not null)
                 _groupQueue = new OutputGroupQueue(callBack, objectCount);
         }
 
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="groupingDuration">Max amount of time to cache of objects.</param>
         internal void EnableGroupCaching(ProcessCachedGroupNotification callBack, TimeSpan groupingDuration)
         {
-            if (callBack != null)
+            if (callBack is not null)
                 _groupQueue = new OutputGroupQueue(callBack, groupingDuration);
         }
 
@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // if front present, add to front
-            if (_frontEndQueue != null)
+            if (_frontEndQueue is not null)
             {
                 _frontEndQueue.Enqueue(o);
                 return null;
@@ -288,7 +288,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             List<PacketInfoData> retVal = new List<PacketInfoData>();
 
-            if (_frontEndQueue != null)
+            if (_frontEndQueue is not null)
             {
                 if (_groupQueue is null)
                 {
@@ -304,7 +304,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     List<PacketInfoData> groupQueueOut = _groupQueue.Add(_frontEndQueue.Dequeue());
 
-                    if (groupQueueOut != null)
+                    if (groupQueueOut is not null)
                         foreach (PacketInfoData x in groupQueueOut)
                             retVal.Add(x);
                 }

@@ -279,12 +279,12 @@ namespace Microsoft.PowerShell.Commands
                 // Check to see if the type was specified by the user
 
                 bool valueSet = false;
-                if (DynamicParameters != null)
+                if (DynamicParameters is not null)
                 {
                     RegistryProviderSetItemDynamicParameter dynParams =
                         DynamicParameters as RegistryProviderSetItemDynamicParameter;
 
-                    if (dynParams != null)
+                    if (dynParams is not null)
                     {
                         try
                         {
@@ -569,7 +569,7 @@ namespace Microsoft.PowerShell.Commands
                     string[] keyNames = key.GetSubKeyNames();
                     key.Close();
 
-                    if (keyNames != null)
+                    if (keyNames is not null)
                     {
                         foreach (string subkeyName in keyNames)
                         {
@@ -596,7 +596,7 @@ namespace Microsoft.PowerShell.Commands
 
                                         IRegistryWrapper resultKey = GetRegkeyForPath(keypath, false);
 
-                                        if (resultKey != null)
+                                        if (resultKey is not null)
                                         {
                                             WriteRegistryItemObject(resultKey, keypath);
                                         }
@@ -781,7 +781,7 @@ namespace Microsoft.PowerShell.Commands
                 System.Globalization.StringInfo.GetTextElementEnumerator(path);
 
             Dbg.Diagnostics.Assert(
-                textEnumerator != null,
+                textEnumerator is not null,
                 string.Format(CultureInfo.CurrentCulture, "Cannot get a text enumerator for name {0}", path));
 
             while (textEnumerator.MoveNext())
@@ -830,7 +830,7 @@ namespace Microsoft.PowerShell.Commands
                 System.Globalization.StringInfo.GetTextElementEnumerator(name);
 
             Dbg.Diagnostics.Assert(
-                textEnumerator != null,
+                textEnumerator is not null,
                 string.Format(CultureInfo.CurrentCulture, "Cannot get a text enumerator for name {0}", name));
 
             while (textEnumerator.MoveNext())
@@ -960,7 +960,7 @@ namespace Microsoft.PowerShell.Commands
                 // Check to see if the key already exists
                 IRegistryWrapper resultKey = GetRegkeyForPath(path, false);
 
-                if (resultKey != null)
+                if (resultKey is not null)
                 {
                     if (!Force)
                     {
@@ -1014,7 +1014,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // Set the default key value if the value and type were specified
 
-                        if (newItem != null)
+                        if (newItem is not null)
                         {
                             RegistryValueKind kind;
                             if (!ParseKind(type, out kind))
@@ -1201,7 +1201,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     IRegistryWrapper key = GetRegkeyForPath(path, false);
 
-                    if (key != null)
+                    if (key is not null)
                     {
                         result = true;
                         key.Close();
@@ -1255,7 +1255,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     IRegistryWrapper key = GetRegkeyForPath(path, false);
 
-                    if (key != null)
+                    if (key is not null)
                     {
                         result = key.SubKeyCount > 0;
                         key.Close();
@@ -1367,7 +1367,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             Dbg.Diagnostics.Assert(
-                key != null,
+                key is not null,
                 "The key should have been validated by the caller");
 
             Dbg.Diagnostics.Assert(
@@ -1433,7 +1433,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(new ErrorRecord(e, e.GetType().FullName, ErrorCategory.InvalidOperation, destinationName));
                 }
 
-                if (newKey != null)
+                if (newKey is not null)
                 {
                     // Now copy all the properties from the source to the destination
 
@@ -1601,7 +1601,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     IRegistryWrapper key = GetRegkeyForPath(path, false);
 
-                    if (key != null)
+                    if (key is not null)
                     {
                         // All registry keys can be containers. Values are considered
                         // properties
@@ -1877,12 +1877,12 @@ namespace Microsoft.PowerShell.Commands
 
             // Get the kind of the value using the dynamic parameters
 
-            if (DynamicParameters != null)
+            if (DynamicParameters is not null)
             {
                 RegistryProviderSetItemDynamicParameter dynParams =
                     DynamicParameters as RegistryProviderSetItemDynamicParameter;
 
-                if (dynParams != null)
+                if (dynParams is not null)
                 {
                     kind = dynParams.Type;
                 }
@@ -3365,7 +3365,7 @@ namespace Microsoft.PowerShell.Commands
                 // Create new subkey..and close
                 IRegistryWrapper subKey = rootKey.CreateSubKey(remainingPath);
 
-                if (subKey != null)
+                if (subKey is not null)
                 {
                     subKey.Close();
                 }
@@ -3704,7 +3704,7 @@ namespace Microsoft.PowerShell.Commands
             bool writeResult)
         {
             Dbg.Diagnostics.Assert(
-                key != null,
+                key is not null,
                 "Caller should have verified key");
 
             string propertyNameToSet = GetPropertyName(propertyName);
@@ -3743,7 +3743,7 @@ namespace Microsoft.PowerShell.Commands
                 if (kind == RegistryValueKind.Unknown)
                 {
                     // set the kind based on value
-                    if (value != null)
+                    if (value is not null)
                     {
                         kind = GetValueKindFromObject(value);
                     }
@@ -3808,7 +3808,7 @@ namespace Microsoft.PowerShell.Commands
             switch (kind)
             {
                 case RegistryValueKind.Binary:
-                    value = (value != null)
+                    value = (value is not null)
                         ? (byte[])LanguagePrimitives.ConvertTo(
                             value,
                             typeof(byte[]),
@@ -3818,7 +3818,7 @@ namespace Microsoft.PowerShell.Commands
 
                 case RegistryValueKind.DWord:
                     {
-                        if (value != null)
+                        if (value is not null)
                         {
                             try
                             {
@@ -3836,7 +3836,7 @@ namespace Microsoft.PowerShell.Commands
                     } break;
 
                 case RegistryValueKind.ExpandString:
-                    value = (value != null)
+                    value = (value is not null)
                         ? (string)LanguagePrimitives.ConvertTo(
                             value,
                             typeof(string),
@@ -3845,7 +3845,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 case RegistryValueKind.MultiString:
-                    value = (value != null)
+                    value = (value is not null)
                         ? (string[])LanguagePrimitives.ConvertTo(
                             value,
                             typeof(string[]),
@@ -3855,7 +3855,7 @@ namespace Microsoft.PowerShell.Commands
 
                 case RegistryValueKind.QWord:
                     {
-                        if (value != null)
+                        if (value is not null)
                         {
                             try
                             {
@@ -3873,7 +3873,7 @@ namespace Microsoft.PowerShell.Commands
                     } break;
 
                 case RegistryValueKind.String:
-                    value = (value != null)
+                    value = (value is not null)
                         ? (string)LanguagePrimitives.ConvertTo(
                             value,
                             typeof(string),
@@ -4007,7 +4007,7 @@ namespace Microsoft.PowerShell.Commands
             if (key is null)
             {
                 Dbg.Diagnostics.Assert(
-                    key != null,
+                    key is not null,
                     "The RegistryProvider should never attempt to write out a null value");
 
                 // Don't error, but don't write out anything either.
@@ -4075,7 +4075,7 @@ namespace Microsoft.PowerShell.Commands
                 innerException = argException;
             }
 
-            if (innerException != null)
+            if (innerException is not null)
             {
                 success = false;
 

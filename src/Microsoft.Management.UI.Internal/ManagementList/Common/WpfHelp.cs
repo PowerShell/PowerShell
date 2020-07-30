@@ -166,7 +166,7 @@ namespace Microsoft.Management.UI.Internal
 
             ContentControl parentContentControl = element.Parent as ContentControl;
 
-            if (parentContentControl != null)
+            if (parentContentControl is not null)
             {
                 parentContentControl.Content = null;
                 return;
@@ -174,7 +174,7 @@ namespace Microsoft.Management.UI.Internal
 
             var parentDecorator = element.Parent as Decorator;
 
-            if (parentDecorator != null)
+            if (parentDecorator is not null)
             {
                 parentDecorator.Child = null;
                 return;
@@ -182,7 +182,7 @@ namespace Microsoft.Management.UI.Internal
 
             ItemsControl parentItemsControl = element.Parent as ItemsControl;
 
-            if (parentItemsControl != null)
+            if (parentItemsControl is not null)
             {
                 parentItemsControl.Items.Remove(element);
                 return;
@@ -190,7 +190,7 @@ namespace Microsoft.Management.UI.Internal
 
             Panel parentPanel = element.Parent as Panel;
 
-            if (parentPanel != null)
+            if (parentPanel is not null)
             {
                 parentPanel.Children.Remove(element);
                 return;
@@ -198,7 +198,7 @@ namespace Microsoft.Management.UI.Internal
 
             var parentAdorner = element.Parent as UIElementAdorner;
 
-            if (parentAdorner != null)
+            if (parentAdorner is not null)
             {
                 parentAdorner.Child = null;
                 return;
@@ -227,7 +227,7 @@ namespace Microsoft.Management.UI.Internal
 
             ContentControl parentContentControl = parent as ContentControl;
 
-            if (parentContentControl != null)
+            if (parentContentControl is not null)
             {
                 parentContentControl.Content = element;
                 return;
@@ -235,7 +235,7 @@ namespace Microsoft.Management.UI.Internal
 
             var parentDecorator = parent as Decorator;
 
-            if (parentDecorator != null)
+            if (parentDecorator is not null)
             {
                 parentDecorator.Child = element;
                 return;
@@ -243,7 +243,7 @@ namespace Microsoft.Management.UI.Internal
 
             ItemsControl parentItemsControl = parent as ItemsControl;
 
-            if (parentItemsControl != null)
+            if (parentItemsControl is not null)
             {
                 parentItemsControl.Items.Add(element);
                 return;
@@ -251,7 +251,7 @@ namespace Microsoft.Management.UI.Internal
 
             Panel parentPanel = parent as Panel;
 
-            if (parentPanel != null)
+            if (parentPanel is not null)
             {
                 parentPanel.Children.Add(element);
                 return;
@@ -284,7 +284,7 @@ namespace Microsoft.Management.UI.Internal
                 var element = elementQueue.Dequeue();
 
                 T item = element as T;
-                if (item != null)
+                if (item is not null)
                 {
                     return item;
                 }
@@ -309,7 +309,7 @@ namespace Microsoft.Management.UI.Internal
         public static List<T> FindVisualChildren<T>(DependencyObject obj)
             where T : DependencyObject
         {
-            Debug.Assert(obj != null, "obj is null");
+            Debug.Assert(obj is not null, "obj is null");
             if (obj == null)
             {
                 throw new ArgumentNullException("obj");
@@ -323,7 +323,7 @@ namespace Microsoft.Management.UI.Internal
                 DependencyObject childObj = VisualTreeHelper.GetChild(obj, i);
                 T child = childObj as T;
 
-                if (child != null)
+                if (child is not null)
                 {
                     childrenOfType.Add(child);
                 }
@@ -355,11 +355,11 @@ namespace Microsoft.Management.UI.Internal
 
             FrameworkElement parent = obj.FindVisualAncestor<FrameworkElement>();
 
-            if (parent != null)
+            if (parent is not null)
             {
                 T data = parent.DataContext as T;
 
-                if (data != null)
+                if (data is not null)
                 {
                     return data;
                 }
@@ -388,11 +388,11 @@ namespace Microsoft.Management.UI.Internal
 
             DependencyObject parent = VisualTreeHelper.GetParent(@object);
 
-            if (parent != null)
+            if (parent is not null)
             {
                 T parentObj = parent as T;
 
-                if (parentObj != null)
+                if (parentObj is not null)
                 {
                     return parentObj;
                 }
@@ -450,7 +450,7 @@ namespace Microsoft.Management.UI.Internal
             object templatePart = templateParent.Template.FindName(childName, templateParent);
             T item = templatePart as T;
 
-            if (item == null && templatePart != null)
+            if (item == null && templatePart is not null)
             {
                 HandleWrongTemplatePartType<T>(childName);
             }

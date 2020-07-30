@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public override string ToString()
         {
-            if (Script != null)
+            if (Script is not null)
                 return Script.ToString();
 
             return _stringValue;
@@ -127,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (Script != null)
+                if (Script is not null)
                     return false;
                 return WildcardPattern.ContainsWildcardCharacters(_stringValue);
             }
@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
                 return retVal;
             }
 
-            if (Script != null)
+            if (Script is not null)
             {
                 // script block, just add it to the list and be done
                 PSPropertyExpression ex = new PSPropertyExpression(Script);
@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 List<PSMemberInfo> temp = new List<PSMemberInfo>();
-                if (x != null)
+                if (x is not null)
                 {
                     temp.Add(x);
                 }
@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // it can be a property set
                 PSPropertySet propertySet = member as PSPropertySet;
-                if (propertySet != null)
+                if (propertySet is not null)
                 {
                     if (expand)
                     {
@@ -287,7 +287,7 @@ namespace Microsoft.PowerShell.Commands
             List<PSPropertyExpressionResult> retVal = new List<PSPropertyExpressionResult>();
 
             // process the script case
-            if (Script != null)
+            if (Script is not null)
             {
                 PSPropertyExpression scriptExpression = new PSPropertyExpression(Script);
                 PSPropertyExpressionResult r = scriptExpression.GetValue(target, eatExceptions);
@@ -314,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 object result = null;
 
-                if (Script != null)
+                if (Script is not null)
                 {
                     result = Script.DoInvokeReturnAsIs(
                         useLocalScope: true,

@@ -393,12 +393,12 @@ namespace Microsoft.PowerShell.Commands
             result.MaximumReceivedDataSizePerCommand = _maxRecvdDataSizePerCommand;
             result.MaximumReceivedObjectSize = _maxRecvdObjectSize;
 
-            if (this.Culture != null)
+            if (this.Culture is not null)
             {
                 result.Culture = this.Culture;
             }
 
-            if (this.UICulture != null)
+            if (this.UICulture is not null)
             {
                 result.UICulture = this.UICulture;
             }
@@ -422,7 +422,7 @@ namespace Microsoft.PowerShell.Commands
 
             result.MaxConnectionRetryCount = MaxConnectionRetryCount;
 
-            if (this.ApplicationArguments != null)
+            if (this.ApplicationArguments is not null)
             {
                 result.ApplicationArguments = this.ApplicationArguments;
             }

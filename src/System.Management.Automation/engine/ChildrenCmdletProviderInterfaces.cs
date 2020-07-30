@@ -105,7 +105,7 @@ namespace System.Management.Automation
         public Collection<PSObject> Get(string path, bool recurse)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -161,7 +161,7 @@ namespace System.Management.Automation
         public Collection<PSObject> Get(string[] path, bool recurse, uint depth, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -214,7 +214,7 @@ namespace System.Management.Automation
         public Collection<PSObject> Get(string[] path, bool recurse, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -270,7 +270,7 @@ namespace System.Management.Automation
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -319,7 +319,7 @@ namespace System.Management.Automation
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -378,7 +378,7 @@ namespace System.Management.Automation
             bool recurse)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -441,7 +441,7 @@ namespace System.Management.Automation
             bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             return _sessionState.GetChildNames(path, returnContainers, recurse, uint.MaxValue, force, literalPath);
@@ -506,7 +506,7 @@ namespace System.Management.Automation
             bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             return _sessionState.GetChildNames(path, returnContainers, recurse, depth, force, literalPath);
@@ -566,7 +566,7 @@ namespace System.Management.Automation
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -609,7 +609,7 @@ namespace System.Management.Automation
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -654,7 +654,7 @@ namespace System.Management.Automation
         public bool HasChild(string path)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -701,7 +701,7 @@ namespace System.Management.Automation
         public bool HasChild(string path, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -747,7 +747,7 @@ namespace System.Management.Automation
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object

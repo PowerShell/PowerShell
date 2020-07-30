@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
                 // search all jobs in JobManager
                 List<Job2> jobs2 = JobManager.GetJobsByName(name, this, false, writeobject, recurse, null);
 
-                bool job2Found = (jobs2 != null) && (jobs2.Count > 0);
+                bool job2Found = (jobs2 is not null) && (jobs2.Count > 0);
 
                 if (job2Found)
                 {
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // check if the job is available in any of the childjobs
-                if (job.ChildJobs != null && job.ChildJobs.Count > 0 && recurse)
+                if (job.ChildJobs is not null && job.ChildJobs.Count > 0 && recurse)
                 {
                     bool jobFoundinChildJobs = FindJobsMatchingByNameHelper(matches, job.ChildJobs, name,
                                                     duplicateDetector, recurse, writeobject, checkIfJobCanBeRemoved);
@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands
                 // search all jobs in JobManager
                 Job2 job2 = JobManager.GetJobByInstanceId(id, this, false, writeobject, recurse);
 
-                bool job2Found = job2 != null;
+                bool job2Found = job2 is not null;
 
                 if (job2Found)
                 {
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (Job job in jobsToSearch)
                 {
-                    if (job.ChildJobs != null && job.ChildJobs.Count > 0)
+                    if (job.ChildJobs is not null && job.ChildJobs.Count > 0)
                     {
                         jobFound = FindJobsMatchingByInstanceIdHelper(matches, job.ChildJobs, instanceId,
                                         duplicateDetector, recurse, writeobject, checkIfJobCanBeRemoved);
@@ -318,7 +318,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // check jobs in job manager
                 Job2 job2 = JobManager.GetJobById(id, this, false, writeobject, recurse);
-                bool job2Found = job2 != null;
+                bool job2Found = job2 is not null;
 
                 if (job2Found)
                 {
@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (Job job in jobsToSearch)
                 {
-                    if (job.ChildJobs != null && job.ChildJobs.Count > 0)
+                    if (job.ChildJobs is not null && job.ChildJobs.Count > 0)
                     {
                         jobFound = FindJobsMatchingBySessionIdHelper(matches, job.ChildJobs, sessionId,
                                         duplicateDetector, recurse, writeobject, checkIfJobCanBeRemoved);
@@ -418,7 +418,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 List<Job2> jobs2 = JobManager.GetJobsByCommand(command, this, false, false, false, null);
 
-                if (jobs2 != null)
+                if (jobs2 is not null)
                 {
                     foreach (Job2 job2 in jobs2)
                     {
@@ -466,7 +466,7 @@ namespace Microsoft.PowerShell.Commands
 
             List<Job2> jobs2 = JobManager.GetJobsByState(_jobstate, this, false, false, false, null);
 
-            if (jobs2 != null)
+            if (jobs2 is not null)
             {
                 foreach (Job2 job2 in jobs2)
                 {
@@ -511,7 +511,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             List<Job2> jobs2 = JobManager.GetJobsByFilter(filterDictionary, this, false, false, true);
-            if (jobs2 != null)
+            if (jobs2 is not null)
             {
                 foreach (Job2 job2 in jobs2)
                 {
@@ -900,7 +900,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // if it is a Job2, then async is supported
                     // stop the job asynchronously
-                    if (job2 != null)
+                    if (job2 is not null)
                     {
                         _cleanUpActions.Add(job2, HandleStopJobCompleted);
                         job2.StopJobCompleted += HandleStopJobCompleted;
@@ -924,7 +924,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    RemoveJobAndDispose(job, job2 != null);
+                    RemoveJobAndDispose(job, job2 is not null);
                 }
             }
         }

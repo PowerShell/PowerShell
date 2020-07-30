@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
             // as strings and it is used to detect this situation and use the actual field value.
             bool fileSystemObject = typeof(FileSystemInfo).IsInstanceOfType(input.BaseObject);
 
-            if (tableBody != null) // If the tableBody is null, the TableControlBody info was not put into the database.
+            if (tableBody is not null) // If the tableBody is null, the TableControlBody info was not put into the database.
             {
                 // Generate HeaderInfo from the type information database.
                 List<TableRowItemDefinition> activeRowItemDefinitionList = GetActiveTableRowDefinition(tableBody, input);
@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
                     if (col < tableBody.header.columnHeaderDefinitionList.Count)
                         colHeader = tableBody.header.columnHeaderDefinitionList[col];
 
-                    if (colHeader != null && colHeader.label != null)
+                    if (colHeader is not null && colHeader.label is not null)
                     {
                         displayName = _typeInfoDatabase.displayResourceManagerCache.GetTextTokenString(colHeader.label);
                     }
@@ -67,10 +67,10 @@ namespace Microsoft.PowerShell.Commands
                         token = rowItem.formatTokenList[0];
                     }
 
-                    if (token != null)
+                    if (token is not null)
                     {
                         FieldPropertyToken fpt = token as FieldPropertyToken;
-                        if (fpt != null)
+                        if (fpt is not null)
                         {
                             if (displayName is null)
                             {
@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
                         else
                         {
                             TextToken tt = token as TextToken;
-                            if (tt != null)
+                            if (tt is not null)
                             {
                                 displayName = _typeInfoDatabase.displayResourceManagerCache.GetTextTokenString(tt);
                                 columnInfo = new OriginalColumnInfo(tt.text, displayName, tt.text, parentCmdlet);
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (columnInfo != null)
+                    if (columnInfo is not null)
                     {
                         headerInfo.AddColumn(columnInfo);
                     }
@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
                 MshResolvedExpressionParameterAssociation association = activeAssociationList[k];
 
                 // set the label of the column
-                if (association.OriginatingParameter != null)
+                if (association.OriginatingParameter is not null)
                 {
                     object key = association.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.LabelEntryKey);
                     if (key != AutomationNull.Value)
@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands
             if (matchingRowDefinition is null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (typesWithoutPrefix != null)
+                if (typesWithoutPrefix is not null)
                 {
                     match = new TypeMatch(_expressionFactory, _typeInfoDatabase, typesWithoutPrefix);
 

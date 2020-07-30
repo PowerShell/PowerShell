@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             bool is32Bit = !Environment.Is64BitProcess;
             var psversion = PSVersionInfo.PSVersion.ToString();
             var hostName = Process.GetCurrentProcess().ProcessName;
-            if (ihptd != null)
+            if (ihptd is not null)
             {
                 TelemetryWrapper.TraceMessage("PSHostStart", new
                 {
@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         {
             TelemetryWrapper.TraceMessage("PSHostStop", new
             {
-                InteractiveCommandCount = ihptd != null ? ihptd.InteractiveCommandCount : 0,
+                InteractiveCommandCount = ihptd is not null ? ihptd.InteractiveCommandCount : 0,
                 TabCompletionTimes = s_tabCompletionTimes,
                 TabCompletionCounts = s_tabCompletionCounts,
                 TabCompletionResultCounts = s_tabCompletionResultCounts,
@@ -162,11 +162,11 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             var modulePath = foundModule.Path;
             var companyName = foundModule.CompanyName;
             bool couldBeMicrosoftModule =
-                (modulePath != null &&
+                (modulePath is not null &&
                  (modulePath.StartsWith(Utils.DefaultPowerShellAppBase, StringComparison.OrdinalIgnoreCase) ||
                   // The following covers both 64 and 32 bit Program Files by assuming 32bit is just ...\Program Files + " (x86)"
                   modulePath.StartsWith(Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles), StringComparison.OrdinalIgnoreCase))) ||
-                (companyName != null &&
+                (companyName is not null &&
                  foundModule.CompanyName.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase));
             if (couldBeMicrosoftModule)
             {
@@ -185,8 +185,8 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             System.Management.Automation.Runspaces.InitialSessionState iss,
             System.Management.Automation.Host.TranscriptionData transcriptionData)
         {
-            bool isConstrained = (iss != null) && (iss.DefaultCommandVisibility != SessionStateEntryVisibility.Public) && (iss.LanguageMode != PSLanguageMode.FullLanguage);
-            bool isTranscripting = (transcriptionData != null) && (transcriptionData.SystemTranscript != null);
+            bool isConstrained = (iss is not null) && (iss.DefaultCommandVisibility != SessionStateEntryVisibility.Public) && (iss.LanguageMode != PSLanguageMode.FullLanguage);
+            bool isTranscripting = (transcriptionData is not null) && (transcriptionData.SystemTranscript is not null);
 
             TelemetryWrapper.TraceMessage("PSNewLocalSession", new
             {
@@ -229,7 +229,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             else
             {
                 System.Management.Automation.Runspaces.WSManConnectionInfo wsManConnectionInfo = connectionInfo as System.Management.Automation.Runspaces.WSManConnectionInfo;
-                if (wsManConnectionInfo != null)
+                if (wsManConnectionInfo is not null)
                 {
                     sessionType = RemoteSessionType.WinRMRemote;
 
@@ -251,7 +251,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
                 else
                 {
                     System.Management.Automation.Runspaces.VMConnectionInfo vmConnectionInfo = connectionInfo as System.Management.Automation.Runspaces.VMConnectionInfo;
-                    if (vmConnectionInfo != null)
+                    if (vmConnectionInfo is not null)
                     {
                         sessionType = RemoteSessionType.HyperVRemote;
                         configurationType = GetConfigurationTypefromName(vmConnectionInfo.ConfigurationName);
@@ -259,11 +259,11 @@ namespace Microsoft.PowerShell.Telemetry.Internal
                     else
                     {
                         System.Management.Automation.Runspaces.ContainerConnectionInfo containerConnectionInfo = connectionInfo as System.Management.Automation.Runspaces.ContainerConnectionInfo;
-                        if (containerConnectionInfo != null)
+                        if (containerConnectionInfo is not null)
                         {
                             sessionType = RemoteSessionType.ContainerRemote;
                             configurationType = GetConfigurationTypefromName(
-                                (containerConnectionInfo.ContainerProc != null) ? containerConnectionInfo.ContainerProc.ConfigurationName : string.Empty);
+                                (containerConnectionInfo.ContainerProc is not null) ? containerConnectionInfo.ContainerProc.ConfigurationName : string.Empty);
                         }
                     }
                 }
@@ -278,7 +278,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
 
         private static RemoteConfigurationType GetConfigurationTypefromName(string name)
         {
-            string configName = (name != null) ? name.Trim() : string.Empty;
+            string configName = (name is not null) ? name.Trim() : string.Empty;
 
             if (string.IsNullOrEmpty(configName) ||
                 configName.Equals("microsoft.powershell", StringComparison.OrdinalIgnoreCase) ||
@@ -316,7 +316,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         /// </summary>
         internal static void ReportScriptTelemetry(Ast ast, bool dotSourced, long compileTimeInMS)
         {
-            if (ast.Parent != null || !TelemetryWrapper.IsEnabled)
+            if (ast.Parent is not null || !TelemetryWrapper.IsEnabled)
                 return;
 
             Task.Run(() =>
@@ -336,7 +336,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
 
                 var scriptFileType = ScriptFileType.None;
                 var fileName = extent.File;
-                if (fileName != null)
+                if (fileName is not null)
                 {
                     var ext = System.IO.Path.GetExtension(fileName);
                     if (".ps1".Equals(ext, StringComparison.OrdinalIgnoreCase))
@@ -404,7 +404,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         {
             CountOfCommands++;
             var commandName = commandAst.GetCommandName();
-            if (commandName != null)
+            if (commandName is not null)
             {
                 int commandCount;
                 CommandsCalled.TryGetValue(commandName, out commandCount);

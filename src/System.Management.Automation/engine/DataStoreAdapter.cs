@@ -346,7 +346,7 @@ namespace System.Management.Automation
             _root = root;
             Description = description;
 
-            if (credential != null)
+            if (credential is not null)
             {
                 Credential = credential;
             }
@@ -357,7 +357,7 @@ namespace System.Management.Automation
             _currentWorkingDirectory = string.Empty;
 
             Dbg.Diagnostics.Assert(
-                _currentWorkingDirectory != null,
+                _currentWorkingDirectory is not null,
                 "The currentWorkingDirectory cannot be null");
 
             // Trace out the fields
@@ -548,35 +548,35 @@ namespace System.Management.Automation
             s_tracer.WriteLine(
                 "A drive was found:");
 
-            if (Name != null)
+            if (Name is not null)
             {
                 s_tracer.WriteLine(
                     "\tName: {0}",
                     Name);
             }
 
-            if (Provider != null)
+            if (Provider is not null)
             {
                 s_tracer.WriteLine(
                     "\tProvider: {0}",
                     Provider);
             }
 
-            if (Root != null)
+            if (Root is not null)
             {
                 s_tracer.WriteLine(
                     "\tRoot: {0}",
                     Root);
             }
 
-            if (CurrentLocation != null)
+            if (CurrentLocation is not null)
             {
                 s_tracer.WriteLine(
                     "\tCWD: {0}",
                     CurrentLocation);
             }
 
-            if (Description != null)
+            if (Description is not null)
             {
                 s_tracer.WriteLine(
                     "\tDescription: {0}",
@@ -695,7 +695,7 @@ namespace System.Management.Automation
 
             if ((drive1Object is null) == (drive2Object is null))
             {
-                if (drive1Object != null)
+                if (drive1Object is not null)
                 {
                     return drive1.Equals(drive2);
                 }
@@ -747,7 +747,7 @@ namespace System.Management.Automation
 
             if (drive1Object is null)
             {
-                return (drive2Object != null);
+                return (drive2Object is not null);
             }
             else
             {

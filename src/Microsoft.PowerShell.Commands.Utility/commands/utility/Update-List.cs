@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (Property != null)
+            if (Property is not null)
             {
                 if (InputObject is null)
                 {
@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     PSMemberInfo memberInfo = InputObject.Members[Property];
-                    if (memberInfo != null)
+                    if (memberInfo is not null)
                     {
                         try
                         {
@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (Property is null)
             {
-                if (InputObject != null)
+                if (InputObject is not null)
                 {
                     ThrowTerminatingError(NewError("MissingPropertyParameter", "MissingPropertyParameter", null));
                 }
@@ -130,17 +130,17 @@ namespace Microsoft.PowerShell.Commands
         private Hashtable CreateHashtable()
         {
             Hashtable hash = new Hashtable(2);
-            if (Add != null)
+            if (Add is not null)
             {
                 hash.Add("Add", Add);
             }
 
-            if (Remove != null)
+            if (Remove is not null)
             {
                 hash.Add("Remove", Remove);
             }
 
-            if (Replace != null)
+            if (Replace is not null)
             {
                 hash.Add("Replace", Replace);
             }
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
         private PSListModifier CreatePSListModifier()
         {
             PSListModifier listModifier = new PSListModifier();
-            if (Add != null)
+            if (Add is not null)
             {
                 foreach (object obj in Add)
                 {
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (Remove != null)
+            if (Remove is not null)
             {
                 foreach (object obj in Remove)
                 {
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (Replace != null)
+            if (Replace is not null)
             {
                 foreach (object obj in Replace)
                 {

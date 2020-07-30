@@ -43,13 +43,13 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The next highlight starting at the <paramref name="caretPosition"/>.</returns>
         internal Run MoveAndHighlightNextNextMatch(bool forward, TextPointer caretPosition)
         {
-            Debug.Assert(caretPosition != null, "a caret position is allways valid");
-            Debug.Assert(caretPosition.Parent != null && caretPosition.Parent is Run, "a caret PArent is allways a valid Run");
+            Debug.Assert(caretPosition is not null, "a caret position is allways valid");
+            Debug.Assert(caretPosition.Parent is not null && caretPosition.Parent is Run, "a caret PArent is allways a valid Run");
             Run caretRun = (Run)caretPosition.Parent;
 
             Run currentRun;
 
-            if (this.currentHighlightedMatch != null)
+            if (this.currentHighlightedMatch is not null)
             {
                 // restore the curent highlighted background to plain highlighted
                 this.currentHighlightedMatch.Background = ParagraphSearcher.HighlightBrush;
@@ -84,7 +84,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             this.currentHighlightedMatch = currentRun;
-            if (this.currentHighlightedMatch != null)
+            if (this.currentHighlightedMatch is not null)
             {
                 // restore the curent highligthed background to current highlighted
                 this.currentHighlightedMatch.Background = ParagraphSearcher.CurrentHighlightBrush;
@@ -114,7 +114,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             SolidColorBrush background = run.Background as SolidColorBrush;
-            if (background != null && background == ParagraphSearcher.HighlightBrush)
+            if (background is not null && background == ParagraphSearcher.HighlightBrush)
             {
                 return true;
             }
@@ -136,11 +136,11 @@ namespace Microsoft.Management.UI.Internal
 
             if (forward)
             {
-                nextInline = parentBold != null ? ((Inline)parentBold).NextInline : currentRun.NextInline;
+                nextInline = parentBold is not null ? ((Inline)parentBold).NextInline : currentRun.NextInline;
             }
             else
             {
-                nextInline = parentBold != null ? ((Inline)parentBold).PreviousInline : currentRun.PreviousInline;
+                nextInline = parentBold is not null ? ((Inline)parentBold).PreviousInline : currentRun.PreviousInline;
             }
 
             return GetRun(nextInline);
@@ -155,7 +155,7 @@ namespace Microsoft.Management.UI.Internal
         private static Run GetRun(Inline inline)
         {
             Bold inlineBold = inline as Bold;
-            if (inlineBold != null)
+            if (inlineBold is not null)
             {
                 return (Run)inlineBold.Inlines.FirstInline;
             }
@@ -175,7 +175,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         private static Run GetNextMatch(Run currentRun, bool forward)
         {
-            while (currentRun != null)
+            while (currentRun is not null)
             {
                 if (ParagraphSearcher.Ishighlighted(currentRun))
                 {
@@ -196,8 +196,8 @@ namespace Microsoft.Management.UI.Internal
         private static Paragraph GetParagraph(Run run)
         {
             Bold parentBold = run.Parent as Bold;
-            Paragraph parentParagraph = (parentBold != null ? parentBold.Parent : run.Parent) as Paragraph;
-            Debug.Assert(parentParagraph != null, "the documents we are saerching are built with ParagraphBuilder, which builds the document like this");
+            Paragraph parentParagraph = (parentBold is not null ? parentBold.Parent : run.Parent) as Paragraph;
+            Debug.Assert(parentParagraph is not null, "the documents we are saerching are built with ParagraphBuilder, which builds the document like this");
             return parentParagraph;
         }
 
@@ -221,7 +221,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The first or last run in the paragraph containing <paramref name="caretRun"/>.</returns>
         private static Run GetFirstOrLastRun(Run caretRun, bool forward)
         {
-            Debug.Assert(caretRun != null, "a caret run is allways valid");
+            Debug.Assert(caretRun is not null, "a caret run is allways valid");
 
             Paragraph paragraph = GetParagraph(caretRun);
 

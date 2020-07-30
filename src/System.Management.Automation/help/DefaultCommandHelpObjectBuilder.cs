@@ -28,7 +28,7 @@ namespace System.Management.Automation.Help
             CommandParameterInfo a = x as CommandParameterInfo;
             CommandParameterInfo b = y as CommandParameterInfo;
 
-            Debug.Assert(a != null && b != null);
+            Debug.Assert(a is not null && b is not null);
 
             return (a.Position - b.Position);
         }
@@ -66,7 +66,7 @@ namespace System.Management.Automation.Help
             if (commandInfo is CmdletInfo cmdletInfo)
             {
                 bool common = false;
-                if (cmdletInfo.Parameters != null)
+                if (cmdletInfo.Parameters is not null)
                 {
                     common = HasCommonParameters(cmdletInfo.Parameters);
                 }
@@ -287,14 +287,14 @@ namespace System.Management.Automation.Help
                 }
                 else
                 {
-                    if (parameter.ParameterType.IsEnum && (Enum.GetNames(parameter.ParameterType) != null))
+                    if (parameter.ParameterType.IsEnum && (Enum.GetNames(parameter.ParameterType) is not null))
                     {
                         AddParameterValueGroupProperties(mshObject, Enum.GetNames(parameter.ParameterType));
                     }
                     else if (parameter.ParameterType.IsArray)
                     {
                         if (parameter.ParameterType.GetElementType().IsEnum &&
-                            Enum.GetNames(parameter.ParameterType.GetElementType()) != null)
+                            Enum.GetNames(parameter.ParameterType.GetElementType()) is not null)
                         {
                             AddParameterValueGroupProperties(mshObject, Enum.GetNames(parameter.ParameterType.GetElementType()));
                         }
@@ -307,14 +307,14 @@ namespace System.Management.Automation.Help
                         {
                             Type type = types[0];
 
-                            if (type.IsEnum && (Enum.GetNames(type) != null))
+                            if (type.IsEnum && (Enum.GetNames(type) is not null))
                             {
                                 AddParameterValueGroupProperties(mshObject, Enum.GetNames(type));
                             }
                             else if (type.IsArray)
                             {
                                 if (type.GetElementType().IsEnum &&
-                                    Enum.GetNames(type.GetElementType()) != null)
+                                    Enum.GetNames(type.GetElementType()) is not null)
                                 {
                                     AddParameterValueGroupProperties(mshObject, Enum.GetNames(type.GetElementType()));
                                 }
@@ -365,7 +365,7 @@ namespace System.Management.Automation.Help
 
             ArrayList sortedParameters = new ArrayList();
 
-            if (parameters != null)
+            if (parameters is not null)
             {
                 foreach (KeyValuePair<string, ParameterMetadata> parameter in parameters)
                 {
@@ -464,7 +464,7 @@ namespace System.Management.Automation.Help
                     obj.Properties.Add(new PSNoteProperty("parameterSetName", sb.ToString()));
                 }
 
-                if (paramAttribute.HelpMessage != null)
+                if (paramAttribute.HelpMessage is not null)
                 {
                     StringBuilder sb = new StringBuilder();
 
@@ -546,7 +546,7 @@ namespace System.Management.Automation.Help
         {
             PSObject mshObject;
 
-            if (parameterType != null)
+            if (parameterType is not null)
             {
                 Type type = Nullable.GetUnderlyingType(parameterType) ?? parameterType;
                 var parameterTypeString = CommandParameterSetInfo.GetParameterTypeString(parameterType, attributes);
@@ -574,7 +574,7 @@ namespace System.Management.Automation.Help
         {
             Collection<string> inputs = new Collection<string>();
 
-            if (parameters != null)
+            if (parameters is not null)
             {
                 foreach (KeyValuePair<string, ParameterMetadata> parameter in parameters)
                 {
@@ -683,7 +683,7 @@ namespace System.Management.Automation.Help
 
             bool found = false;
 
-            if (context != null)
+            if (context is not null)
             {
                 foreach (string alias in context.SessionState.Internal.GetAliasesByCommandName(name))
                 {
@@ -738,21 +738,21 @@ namespace System.Management.Automation.Help
 
                 // check if obj already has relatedLinks property
                 PSNoteProperty relatedLinksPO = obj.Properties["relatedLinks"] as PSNoteProperty;
-                if ((relatedLinksPO != null) && (relatedLinksPO.Value != null))
+                if ((relatedLinksPO is not null) && (relatedLinksPO.Value is not null))
                 {
                     PSObject relatedLinksValue = PSObject.AsPSObject(relatedLinksPO.Value);
                     PSNoteProperty navigationLinkPO = relatedLinksValue.Properties["navigationLink"] as PSNoteProperty;
-                    if ((navigationLinkPO != null) && (navigationLinkPO.Value != null))
+                    if ((navigationLinkPO is not null) && (navigationLinkPO.Value is not null))
                     {
                         PSObject navigationLinkValue = navigationLinkPO.Value as PSObject;
-                        if (navigationLinkValue != null)
+                        if (navigationLinkValue is not null)
                         {
                             navigationLinkValues.Add(navigationLinkValue);
                         }
                         else
                         {
                             PSObject[] navigationLinkValueArray = navigationLinkPO.Value as PSObject[];
-                            if (navigationLinkValueArray != null)
+                            if (navigationLinkValueArray is not null)
                             {
                                 foreach (var psObject in navigationLinkValueArray)
                                 {
@@ -786,7 +786,7 @@ namespace System.Management.Automation.Help
             {
                 ParameterAttribute paramAttribute = (object)attribute as ParameterAttribute;
 
-                if (paramAttribute != null)
+                if (paramAttribute is not null)
                 {
                     paramAttributes.Add(paramAttribute);
                 }
@@ -808,7 +808,7 @@ namespace System.Management.Automation.Help
             {
                 ValidateSetAttribute validateSetAttribute = (object)attribute as ValidateSetAttribute;
 
-                if (validateSetAttribute != null)
+                if (validateSetAttribute is not null)
                 {
                     validateSetAttributes.Add(validateSetAttribute);
                 }
@@ -824,7 +824,7 @@ namespace System.Management.Automation.Help
         /// <returns>Pipeline input type.</returns>
         private static string GetPipelineInputString(ParameterAttribute paramAttrib)
         {
-            Debug.Assert(paramAttrib != null);
+            Debug.Assert(paramAttrib is not null);
 
             ArrayList values = new ArrayList();
 

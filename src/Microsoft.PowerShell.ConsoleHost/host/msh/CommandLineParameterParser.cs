@@ -486,7 +486,7 @@ namespace Microsoft.PowerShell
         {
             if (settingFileArgIndex >= args.Length)
             {
-                if (parser != null)
+                if (parser is not null)
                 {
                     parser.WriteCommandLineError(
                         CommandLineParameterParserStrings.MissingSettingsFileArgument);
@@ -502,7 +502,7 @@ namespace Microsoft.PowerShell
             }
             catch (Exception ex)
             {
-                if (parser != null)
+                if (parser is not null)
                 {
                     string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidSettingsFileArgument, args[settingFileArgIndex], ex.Message);
                     parser.WriteCommandLineError(error);
@@ -513,7 +513,7 @@ namespace Microsoft.PowerShell
 
             if (!System.IO.File.Exists(configFile))
             {
-                if (parser != null)
+                if (parser is not null)
                 {
                     string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.SettingsFileNotExists, configFile);
                     parser.WriteCommandLineError(error);
@@ -546,7 +546,7 @@ namespace Microsoft.PowerShell
         {
             if (args is null)
             {
-                Dbg.Assert(args != null, "Argument 'args' to EarlyParseHelper should never be null");
+                Dbg.Assert(args is not null, "Argument 'args' to EarlyParseHelper should never be null");
                 return;
             }
 
@@ -604,7 +604,7 @@ namespace Microsoft.PowerShell
             if (!CharExtensions.IsDash(switchKey[0]) && switchKey[0] != '/')
             {
                 // then its a file
-                if (parser != null)
+                if (parser is not null)
                 {
                     --argIndex;
                     parser.ParseFile(args, ref argIndex, noexitSeen);
@@ -637,7 +637,7 @@ namespace Microsoft.PowerShell
 
         private static bool MatchSwitch(string switchKey, string match, string smallestUnambiguousMatch)
         {
-            Dbg.Assert(switchKey != null, "need a value");
+            Dbg.Assert(switchKey is not null, "need a value");
             Dbg.Assert(!string.IsNullOrEmpty(match), "need a value");
             Dbg.Assert(match.Trim().ToLowerInvariant() == match, "match should be normalized to lowercase w/ no outside whitespace");
             Dbg.Assert(smallestUnambiguousMatch.Trim().ToLowerInvariant() == smallestUnambiguousMatch, "match should be normalized to lowercase w/ no outside whitespace");
@@ -651,7 +651,7 @@ namespace Microsoft.PowerShell
 
         private void ShowHelp()
         {
-            Dbg.Assert(_helpText != null, "_helpText should not be null");
+            Dbg.Assert(_helpText is not null, "_helpText should not be null");
             _hostUI.WriteLine(string.Empty);
             _hostUI.Write(_helpText);
             if (_showExtendedHelp)
@@ -717,7 +717,7 @@ namespace Microsoft.PowerShell
 
         private void ParseHelper(string[] args)
         {
-            Dbg.Assert(args != null, "Argument 'args' to ParseHelper should never be null");
+            Dbg.Assert(args is not null, "Argument 'args' to ParseHelper should never be null");
             bool noexitSeen = false;
 
             for (int i = 0; i < args.Length; ++i)
@@ -1188,7 +1188,7 @@ namespace Microsoft.PowerShell
                     exceptionMessage = e.Message;
                 }
 
-                if (exceptionMessage != null)
+                if (exceptionMessage is not null)
                 {
                     WriteCommandLineError(
                         string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidFileArgument, args[i], exceptionMessage),
@@ -1238,7 +1238,7 @@ namespace Microsoft.PowerShell
 
                     // If there was a pending parameter, add a named parameter
                     // using the pending parameter and current argument
-                    if (pendingParameter != null)
+                    if (pendingParameter is not null)
                     {
                         _collectedArgs.Add(new CommandParameter(pendingParameter, arg));
                         pendingParameter = null;
@@ -1285,7 +1285,7 @@ namespace Microsoft.PowerShell
 
         private bool ParseCommand(string[] args, ref int i, bool noexitSeen, bool isEncoded)
         {
-            if (_commandLineCommand != null)
+            if (_commandLineCommand is not null)
             {
                 // we've already set the command, so squawk
 
@@ -1406,7 +1406,7 @@ namespace Microsoft.PowerShell
             try
             {
                 object[] a = StringToBase64Converter.Base64ToArgsConverter(args[i]);
-                if (a != null)
+                if (a is not null)
                 {
                     foreach (object obj in a)
                     {

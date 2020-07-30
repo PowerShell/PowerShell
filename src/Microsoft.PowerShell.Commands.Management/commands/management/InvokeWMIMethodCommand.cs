@@ -100,14 +100,14 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (_inputObject != null)
+            if (_inputObject is not null)
             {
                 object result = null;
                 ManagementBaseObject inputParameters = null;
                 try
                 {
                     inputParameters = _inputObject.GetMethodParameters(_methodName);
-                    if (_argumentList != null)
+                    if (_argumentList is not null)
                     {
                         int inParamCount = _argumentList.Length;
                         foreach (PropertyData property in inputParameters.Properties)
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(errorRecord);
                 }
 
-                if (result != null)
+                if (result is not null)
                 {
                     WriteObject(result);
                 }
@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
                 ManagementPath mPath = null;
                 object result = null;
                 ManagementObject mObject = null;
-                if (_path != null)
+                if (_path is not null)
                 {
                     mPath = new ManagementPath(_path);
                     if (string.IsNullOrEmpty(mPath.NamespacePath))
@@ -193,7 +193,7 @@ namespace Microsoft.PowerShell.Commands
                     result = null;
                     try
                     {
-                        if (_path != null)
+                        if (_path is not null)
                         {
                             mPath.Server = name;
                             if (mPath.IsClass)
@@ -219,7 +219,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         ManagementBaseObject inputParameters = mObject.GetMethodParameters(_methodName);
-                        if (_argumentList != null)
+                        if (_argumentList is not null)
                         {
                             int inParamCount = _argumentList.Length;
                             foreach (PropertyData property in inputParameters.Properties)
@@ -262,7 +262,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(errorRecord);
                     }
 
-                    if (result != null)
+                    if (result is not null)
                     {
                         WriteObject(result);
                     }
@@ -302,7 +302,7 @@ namespace Microsoft.PowerShell.Commands
                 int index = 0;
                 foreach (object argElement in listArgument)
                 {
-                    copiedArgument[index++] = argElement != null ? PSObject.Base(argElement) : null;
+                    copiedArgument[index++] = argElement is not null ? PSObject.Base(argElement) : null;
                 }
 
                 return copiedArgument;

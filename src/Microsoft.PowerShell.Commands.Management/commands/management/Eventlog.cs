@@ -422,7 +422,7 @@ namespace Microsoft.PowerShell.Commands
                     throw;
                 }
 
-                if ((entry != null) &&
+                if ((entry is not null) &&
                 ((lastindex == Int32.MinValue
                   || lastindex - entry.Index == 1)))
                 {
@@ -462,7 +462,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool FiltersMatch(EventLogEntry entry)
         {
-            if (_indexes != null)
+            if (_indexes is not null)
             {
                 if (!((IList)_indexes).Contains(entry.Index))
                 {
@@ -470,7 +470,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (_instanceIds != null)
+            if (_instanceIds is not null)
             {
                 if (!((IList)_instanceIds).Contains(entry.InstanceId))
                 {
@@ -478,7 +478,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (_entryTypes != null)
+            if (_entryTypes is not null)
             {
                 bool entrymatch = false;
                 foreach (string type in _entryTypes)
@@ -493,7 +493,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!entrymatch) return entrymatch;
             }
 
-            if (_sources != null)
+            if (_sources is not null)
             {
                 bool sourcematch = false;
                 foreach (string source in _sources)
@@ -514,7 +514,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!sourcematch) return sourcematch;
             }
 
-            if (_message != null)
+            if (_message is not null)
             {
                 if (WildcardPattern.ContainsWildcardCharacters(_message))
                 {
@@ -528,13 +528,13 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (_username != null)
+            if (_username is not null)
             {
                 bool usernamematch = false;
                 foreach (string user in _username)
                 {
                     _isThrowError = false;
-                    if (entry.UserName != null)
+                    if (entry.UserName is not null)
                     {
                         WildcardPattern wildcardpattern = WildcardPattern.Get(user, WildcardOptions.IgnoreCase);
                         if (wildcardpattern.IsMatch(entry.UserName))

@@ -86,7 +86,7 @@ namespace System.Management.Automation
 
         private void GetModulePaths(CommandInfo commandInfo, out string moduleName, out string moduleDir, out string nestedModulePath)
         {
-            Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
+            Dbg.Assert(commandInfo is not null, "Caller should verify that commandInfo is not null");
 
             CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
             IScriptCommandInfo scriptCommandInfo = commandInfo as IScriptCommandInfo;
@@ -98,7 +98,7 @@ namespace System.Management.Automation
             moduleDir = null;
             nestedModulePath = null;
 
-            if (commandInfo.Module != null)
+            if (commandInfo.Module is not null)
             {
                 moduleName = commandInfo.Module.Name;
                 moduleDir = commandInfo.Module.ModuleBase;
@@ -109,18 +109,18 @@ namespace System.Management.Automation
                     cmdNameWithoutPrefix = Microsoft.PowerShell.Commands.ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix);
                 }
 
-                if (commandInfo.Module.NestedModules != null)
+                if (commandInfo.Module.NestedModules is not null)
                 {
                     foreach (PSModuleInfo nestedModule in commandInfo.Module.NestedModules)
                     {
-                        if (cmdletInfo != null &&
+                        if (cmdletInfo is not null &&
                              (nestedModule.ExportedCmdlets.ContainsKey(commandInfo.Name) ||
                                (testWithoutPrefix && nestedModule.ExportedCmdlets.ContainsKey(cmdNameWithoutPrefix))))
                         {
                             nestedModulePath = nestedModule.Path;
                             break;
                         }
-                        else if (scriptCommandInfo != null &&
+                        else if (scriptCommandInfo is not null &&
                                   (nestedModule.ExportedFunctions.ContainsKey(commandInfo.Name) ||
                                     (testWithoutPrefix && nestedModule.ExportedFunctions.ContainsKey(cmdNameWithoutPrefix))))
                         {
@@ -134,11 +134,11 @@ namespace System.Management.Automation
 
         private string GetHelpName(CommandInfo commandInfo)
         {
-            Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
+            Dbg.Assert(commandInfo is not null, "Caller should verify that commandInfo is not null");
 
             CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
 
-            if (cmdletInfo != null)
+            if (cmdletInfo is not null)
             {
                 return cmdletInfo.FullName;
             }
@@ -148,8 +148,8 @@ namespace System.Management.Automation
 
         private HelpInfo GetHelpInfoFromHelpFile(CommandInfo commandInfo, string helpFileToFind, Collection<string> searchPaths, bool reportErrors, out string helpFile)
         {
-            Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
-            Dbg.Assert(helpFileToFind != null, "Caller should verify that helpFileToFind != null");
+            Dbg.Assert(commandInfo is not null, "Caller should verify that commandInfo is not null");
+            Dbg.Assert(helpFileToFind is not null, "Caller should verify that helpFileToFind is not null");
 
             CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
             IScriptCommandInfo scriptCommandInfo = commandInfo as IScriptCommandInfo;
@@ -162,21 +162,21 @@ namespace System.Management.Automation
             {
                 if (!_helpFiles.Contains(helpFile))
                 {
-                    if (cmdletInfo != null)
+                    if (cmdletInfo is not null)
                     {
                         LoadHelpFile(helpFile, cmdletInfo.ModuleName, cmdletInfo.Name, reportErrors);
                     }
-                    else if (scriptCommandInfo != null)
+                    else if (scriptCommandInfo is not null)
                     {
                         LoadHelpFile(helpFile, helpFile, commandInfo.Name, reportErrors);
                     }
                 }
 
-                if (cmdletInfo != null)
+                if (cmdletInfo is not null)
                 {
                     result = GetFromCommandCacheOrCmdletInfo(cmdletInfo);
                 }
-                else if (scriptCommandInfo != null)
+                else if (scriptCommandInfo is not null)
                 {
                     result = GetFromCommandCache(helpFile, commandInfo);
                 }
@@ -188,7 +188,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", Justification = "TestUri is created only to check for source helpUriFromDotLink errors.")]
         private HelpInfo GetHelpInfo(CommandInfo commandInfo, bool reportErrors, bool searchOnlyContent)
         {
-            Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
+            Dbg.Assert(commandInfo is not null, "Caller should verify that commandInfo is not null");
 
             HelpInfo result = null; // The help result
             string helpFile = null; // The file that contains the help info
@@ -198,9 +198,9 @@ namespace System.Management.Automation
             CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
             IScriptCommandInfo scriptCommandInfo = commandInfo as IScriptCommandInfo;
             FunctionInfo functionInfo = commandInfo as FunctionInfo;
-            bool isCmdlet = cmdletInfo != null;
-            bool isScriptCommand = scriptCommandInfo != null;
-            bool isFunction = functionInfo != null;
+            bool isCmdlet = cmdletInfo is not null;
+            bool isScriptCommand = scriptCommandInfo is not null;
+            bool isFunction = functionInfo is not null;
 
             string moduleName = null;
             string moduleDir = null;
@@ -262,7 +262,7 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                if (sb != null)
+                if (sb is not null)
                 {
                     helpFile = null;
                     // searchOnlyContent == true means get-help is looking into the content, in this case we dont
@@ -285,11 +285,11 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (result != null)
+                    if (result is not null)
                     {
                         Uri uri = result.GetUriForOnlineHelp();
 
-                        if (uri != null)
+                        if (uri is not null)
                         {
                             helpUri = uri.ToString();
                         }
@@ -348,7 +348,7 @@ namespace System.Management.Automation
             }
 
             // Set the HelpFile property to the file that contains the help content
-            if (result != null && !string.IsNullOrEmpty(helpFile))
+            if (result is not null && !string.IsNullOrEmpty(helpFile))
             {
                 if (isCmdlet)
                 {
@@ -381,7 +381,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (result != null)
+            if (result is not null)
             {
                 if (isScriptCommand && result.GetUriForOnlineHelp() is null)
                 {
@@ -445,7 +445,7 @@ namespace System.Management.Automation
                 HelpInfo helpInfo = GetHelpInfo(current, true, false);
                 string helpName = GetHelpName(current);
 
-                if (helpInfo != null && !string.IsNullOrEmpty(helpName))
+                if (helpInfo is not null && !string.IsNullOrEmpty(helpName))
                 {
                     if (helpInfo.ForwardHelpCategory == helpRequest.HelpCategory &&
                         helpInfo.ForwardTarget.Equals(helpRequest.Target, StringComparison.OrdinalIgnoreCase))
@@ -509,7 +509,7 @@ namespace System.Management.Automation
             {
                 helpFileToLoad = Path.GetFileName(helpFileToLoad);
 
-                if (mshSnapInInfo != null)
+                if (mshSnapInInfo is not null)
                 {
                     Diagnostics.Assert(!string.IsNullOrEmpty(mshSnapInInfo.ApplicationBase),
                         "Application Base is null or empty.");
@@ -521,7 +521,7 @@ namespace System.Management.Automation
                     searchPaths.Add(HelpUtils.GetUserHomeHelpSearchPath());
                     searchPaths.Add(mshSnapInInfo.ApplicationBase);
                 }
-                else if (cmdletInfo.Module != null && !string.IsNullOrEmpty(cmdletInfo.Module.Path) && !string.IsNullOrEmpty(cmdletInfo.Module.ModuleBase))
+                else if (cmdletInfo.Module is not null && !string.IsNullOrEmpty(cmdletInfo.Module.Path) && !string.IsNullOrEmpty(cmdletInfo.Module.ModuleBase))
                 {
                     searchPaths.Add(HelpUtils.GetModuleBaseForUserHelp(cmdletInfo.Module.ModuleBase, cmdletInfo.Module.Name));
                     searchPaths.Add(cmdletInfo.Module.ModuleBase);
@@ -574,7 +574,7 @@ namespace System.Management.Automation
 
             if (string.IsNullOrEmpty(helpFile))
             {
-                if (cmdletInfo.Module != null)
+                if (cmdletInfo.Module is not null)
                 {
                     if (InitialSessionState.IsEngineModule(cmdletInfo.Module.Name))
                     {
@@ -663,7 +663,7 @@ namespace System.Management.Automation
                 e = invalidOperationException;
             }
 
-            if (reportErrors && (e != null))
+            if (reportErrors && (e is not null))
             {
                 ReportHelpFileError(e, commandName, helpFile);
             }
@@ -728,7 +728,7 @@ namespace System.Management.Automation
                                 helpInfo = MamlCommandHelpInfo.Load(node, HelpCategory.Cmdlet);
                             }
 
-                            if (helpInfo != null)
+                            if (helpInfo is not null)
                             {
                                 this.HelpSystem.TraceErrors(helpInfo.Errors);
                                 AddToCommandCache(helpFileIdentifier, helpInfo.Name, helpInfo);
@@ -795,7 +795,7 @@ namespace System.Management.Automation
             HelpInfo result = GetCache(key);
 
             // Win8: Win8:477680: When Function/Workflow Use External Help, Category Property is "Cmdlet"
-            if ((result != null) && (result.HelpCategory != helpCategory))
+            if ((result is not null) && (result.HelpCategory != helpCategory))
             {
                 MamlCommandHelpInfo original = (MamlCommandHelpInfo)result;
                 result = original.Copy(helpCategory);
@@ -812,15 +812,15 @@ namespace System.Management.Automation
         /// <returns>HelpInfo object.</returns>
         private HelpInfo GetFromCommandCache(string helpFileIdentifier, CommandInfo commandInfo)
         {
-            Debug.Assert(commandInfo != null, "commandInfo cannot be null");
+            Debug.Assert(commandInfo is not null, "commandInfo cannot be null");
             HelpInfo result = GetFromCommandCache(helpFileIdentifier, commandInfo.Name, commandInfo.HelpCategory);
             if (result is null)
             {
                 // check if the command is prefixed and try retrieving help by removing the prefix
-                if ((commandInfo.Module != null) && (!string.IsNullOrEmpty(commandInfo.Prefix)))
+                if ((commandInfo.Module is not null) && (!string.IsNullOrEmpty(commandInfo.Prefix)))
                 {
                     MamlCommandHelpInfo newMamlHelpInfo = GetFromCommandCacheByRemovingPrefix(helpFileIdentifier, commandInfo);
-                    if (newMamlHelpInfo != null)
+                    if (newMamlHelpInfo is not null)
                     {
                         // caching the changed help content under the prefixed name for faster
                         // retrieval later.
@@ -842,24 +842,24 @@ namespace System.Management.Automation
         /// </returns>
         private HelpInfo GetFromCommandCacheOrCmdletInfo(CmdletInfo cmdletInfo)
         {
-            Debug.Assert(cmdletInfo != null, "cmdletInfo cannot be null");
+            Debug.Assert(cmdletInfo is not null, "cmdletInfo cannot be null");
             HelpInfo result = GetFromCommandCache(cmdletInfo.ModuleName, cmdletInfo.Name, cmdletInfo.HelpCategory);
             if (result is null)
             {
                 // check if the command is prefixed and try retrieving help by removing the prefix
-                if ((cmdletInfo.Module != null) && (!string.IsNullOrEmpty(cmdletInfo.Prefix)))
+                if ((cmdletInfo.Module is not null) && (!string.IsNullOrEmpty(cmdletInfo.Prefix)))
                 {
                     MamlCommandHelpInfo newMamlHelpInfo = GetFromCommandCacheByRemovingPrefix(cmdletInfo.ModuleName, cmdletInfo);
 
-                    if (newMamlHelpInfo != null)
+                    if (newMamlHelpInfo is not null)
                     {
                         // Noun exists only for cmdlets...since prefix will change the Noun, updating
                         // the help content accordingly
-                        if (newMamlHelpInfo.FullHelp.Properties["Details"] != null &&
-                            newMamlHelpInfo.FullHelp.Properties["Details"].Value != null)
+                        if (newMamlHelpInfo.FullHelp.Properties["Details"] is not null &&
+                            newMamlHelpInfo.FullHelp.Properties["Details"].Value is not null)
                         {
                             PSObject commandDetails = PSObject.AsPSObject(newMamlHelpInfo.FullHelp.Properties["Details"].Value);
-                            if (commandDetails.Properties["Noun"] != null)
+                            if (commandDetails.Properties["Noun"] is not null)
                             {
                                 commandDetails.Properties.Remove("Noun");
                             }
@@ -894,35 +894,35 @@ namespace System.Management.Automation
         /// </returns>
         private MamlCommandHelpInfo GetFromCommandCacheByRemovingPrefix(string helpIdentifier, CommandInfo cmdInfo)
         {
-            Dbg.Assert(cmdInfo != null, "cmdInfo cannot be null");
+            Dbg.Assert(cmdInfo is not null, "cmdInfo cannot be null");
 
             MamlCommandHelpInfo result = null;
             MamlCommandHelpInfo originalHelpInfo = GetFromCommandCache(helpIdentifier,
                         Microsoft.PowerShell.Commands.ModuleCmdletBase.RemovePrefixFromCommandName(cmdInfo.Name, cmdInfo.Prefix),
                         cmdInfo.HelpCategory) as MamlCommandHelpInfo;
 
-            if (originalHelpInfo != null)
+            if (originalHelpInfo is not null)
             {
                 result = originalHelpInfo.Copy();
                 // command's name can be changed using -Prefix while importing module.To give better user experience for
                 // get-help (on par with get-command), it was decided to use the prefixed command name
                 // for the help content.
-                if (result.FullHelp.Properties["Name"] != null)
+                if (result.FullHelp.Properties["Name"] is not null)
                 {
                     result.FullHelp.Properties.Remove("Name");
                 }
 
                 result.FullHelp.Properties.Add(new PSNoteProperty("Name", cmdInfo.Name));
 
-                if (result.FullHelp.Properties["Details"] != null &&
-                    result.FullHelp.Properties["Details"].Value != null)
+                if (result.FullHelp.Properties["Details"] is not null &&
+                    result.FullHelp.Properties["Details"].Value is not null)
                 {
                     // Note we are making a copy of the original instance and updating
                     // it..This is to protect the help content of the original object.
                     PSObject commandDetails = PSObject.AsPSObject(
                         result.FullHelp.Properties["Details"].Value).Copy();
 
-                    if (commandDetails.Properties["Name"] != null)
+                    if (commandDetails.Properties["Name"] is not null)
                     {
                         commandDetails.Properties.Remove("Name");
                     }
@@ -1071,7 +1071,7 @@ namespace System.Management.Automation
                     HelpInfo helpInfo = GetHelpInfo(current, !decoratedSearch, searchOnlyContent);
                     string helpName = GetHelpName(current);
 
-                    if (helpInfo != null && !string.IsNullOrEmpty(helpName))
+                    if (helpInfo is not null && !string.IsNullOrEmpty(helpName))
                     {
                         if (!SessionState.IsVisible(helpRequest.CommandOrigin, current))
                         {
@@ -1128,7 +1128,7 @@ namespace System.Management.Automation
                         HelpInfo helpInfo = GetHelpInfo(current, !decoratedSearch, searchOnlyContent);
                         string helpName = GetHelpName(current);
 
-                        if (helpInfo != null && !string.IsNullOrEmpty(helpName))
+                        if (helpInfo is not null && !string.IsNullOrEmpty(helpName))
                         {
                             if (set.Contains(helpName))
                                 continue;

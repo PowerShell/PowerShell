@@ -202,7 +202,7 @@ namespace System.Management.Automation
         internal void BindCommandLineParametersNoValidation(Collection<CommandParameterInternal> arguments)
         {
             var psCompiledScriptCmdlet = this.Command as PSScriptCmdlet;
-            if (psCompiledScriptCmdlet != null)
+            if (psCompiledScriptCmdlet is not null)
             {
                 psCompiledScriptCmdlet.PrepareForBinding(this.CommandLineParameters);
             }
@@ -368,7 +368,7 @@ namespace System.Management.Automation
             }
 
             Dictionary<MergedCompiledCommandParameter, object> qualifiedParameterValuePairs = GetQualifiedParameterValuePairs(_currentParameterSetFlag, _allDefaultParameterValuePairs);
-            if (qualifiedParameterValuePairs != null)
+            if (qualifiedParameterValuePairs is not null)
             {
                 bool isSuccess = false;
                 using (ParameterBinderBase.bindingTracer.TraceScope(
@@ -409,7 +409,7 @@ namespace System.Management.Automation
                 try
                 {
                     ScriptBlock scriptBlockArg = argumentValue as ScriptBlock;
-                    if (scriptBlockArg != null)
+                    if (scriptBlockArg is not null)
                     {
                         // Get the current binding state, and pass it to the ScriptBlock as the argument
                         // The 'arg' includes HashSet properties 'BoundParameters', 'BoundPositionalParameters',
@@ -660,7 +660,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                Diagnostics.Assert(cmdletName != null && parameterName != null, "The cmdletName and parameterName should be set in CheckKeyIsValid");
+                Diagnostics.Assert(cmdletName is not null && parameterName is not null, "The cmdletName and parameterName should be set in CheckKeyIsValid");
 
                 if (WildcardPattern.ContainsWildcardCharacters(key))
                 {
@@ -875,7 +875,7 @@ namespace System.Management.Automation
 
                 Type specifiedType = null;
                 object argumentValue = parameter.ArgumentValue;
-                if (argumentValue != null && argumentValue != UnboundParameter.Value)
+                if (argumentValue is not null && argumentValue != UnboundParameter.Value)
                 {
                     specifiedType = argumentValue.GetType();
                 }
@@ -897,7 +897,7 @@ namespace System.Management.Automation
                 {
                     // If this was a positional parameter, and we have the original exception,
                     // report on the original error
-                    if (originalBindingException != null)
+                    if (originalBindingException is not null)
                     {
                         bindingException = originalBindingException;
                     }
@@ -905,7 +905,7 @@ namespace System.Management.Automation
                     else
                     {
                         string argument = StringLiterals.DollarNull;
-                        if (parameter.ArgumentValue != null)
+                        if (parameter.ArgumentValue is not null)
                         {
                             try
                             {
@@ -1052,7 +1052,7 @@ namespace System.Management.Automation
                         _commandMetadata.ImplementsDynamicParameters,
                         "The metadata for the dynamic parameters should only be available if the command supports IDynamicParameters");
 
-                    if (_dynamicParameterBinder != null)
+                    if (_dynamicParameterBinder is not null)
                     {
                         _dynamicParameterBinder.BindParameter(argumentToBind.ParameterName, argumentToBind.ArgumentValue, parameter.Parameter);
                     }
@@ -1112,7 +1112,7 @@ namespace System.Management.Automation
                 // If the parameter is not in the specified parameter set,
                 // throw a binding exception
 
-                if (parameter != null)
+                if (parameter is not null)
                 {
                     // Now check to make sure it hasn't already been
                     // bound by looking in the boundParameters collection
@@ -1397,7 +1397,7 @@ namespace System.Management.Automation
                         // Attributes are used to do type coercion and result in various exceptions.
                         // We assume that if we aren't trying to do type coercion, we should avoid
                         // propagating type conversion exceptions.
-                        while (e != null)
+                        while (e is not null)
                         {
                             if (e is PSInvalidCastException)
                             {
@@ -1502,7 +1502,7 @@ namespace System.Management.Automation
                         _commandMetadata.ImplementsDynamicParameters,
                         "The metadata for the dynamic parameters should only be available if the command supports IDynamicParameters");
 
-                    if (_dynamicParameterBinder != null)
+                    if (_dynamicParameterBinder is not null)
                     {
                         result =
                             _dynamicParameterBinder.BindParameter(
@@ -1535,7 +1535,7 @@ namespace System.Management.Automation
                     BoundArguments.Add(parameter.Parameter.Name, argument);
                 }
 
-                if (parameter.Parameter.ObsoleteAttribute != null &&
+                if (parameter.Parameter.ObsoleteAttribute is not null &&
                     (flags & ParameterBindingFlags.IsDefaultValue) == 0 &&
                     !BoundObsoleteParameterNames.Contains(parameter.Parameter.Name))
                 {
@@ -1586,7 +1586,7 @@ namespace System.Management.Automation
 
                     if (parameterSetData.ValueFromRemainingArguments)
                     {
-                        if (varargsParameter != null)
+                        if (varargsParameter is not null)
                         {
                             ParameterBindingException bindingException =
                                 new ParameterBindingException(
@@ -1614,7 +1614,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (varargsParameter != null)
+                if (varargsParameter is not null)
                 {
                     using (ParameterBinderBase.bindingTracer.TraceScope(
                         "BIND REMAININGARGUMENTS cmd line args to param: [{0}]",
@@ -1709,7 +1709,7 @@ namespace System.Management.Automation
 
                     IDynamicParameters dynamicParameterCmdlet = this.Command as IDynamicParameters;
 
-                    if (dynamicParameterCmdlet != null)
+                    if (dynamicParameterCmdlet is not null)
                     {
                         if (_dynamicParameterBinder is null)
                         {
@@ -1744,7 +1744,7 @@ namespace System.Management.Automation
                                 throw bindingException;
                             }
 
-                            if (dynamicParamBindableObject != null)
+                            if (dynamicParamBindableObject is not null)
                             {
                                 ParameterBinderBase.bindingTracer.WriteLine(
                                     "DYNAMIC parameter object: [{0}]",
@@ -1755,7 +1755,7 @@ namespace System.Management.Automation
                                 InternalParameterMetadata dynamicParameterMetadata;
 
                                 RuntimeDefinedParameterDictionary runtimeParamDictionary = dynamicParamBindableObject as RuntimeDefinedParameterDictionary;
-                                if (runtimeParamDictionary != null)
+                                if (runtimeParamDictionary is not null)
                                 {
                                     // Generate the type metadata for the runtime-defined parameters
                                     dynamicParameterMetadata =
@@ -2783,7 +2783,7 @@ namespace System.Management.Automation
             {
                 _currentParameterSetFlag = remainingParameterSetsWithNoMandatoryUnboundParameters;
 
-                if (command != null)
+                if (command is not null)
                 {
                     string currentParameterSetName = bindableParameters.GetParameterSetName(_currentParameterSetFlag);
                     command.SetParameterSetName(currentParameterSetName);
@@ -2937,7 +2937,7 @@ namespace System.Management.Automation
                     if ((Context.EngineHostInterface is null) || (!promptForMandatory))
                     {
                         Diagnostics.Assert(
-                            Context.EngineHostInterface != null,
+                            Context.EngineHostInterface is not null,
                             "The EngineHostInterface should never be null");
 
                         ParameterBinderBase.bindingTracer.WriteLine(
@@ -3036,7 +3036,7 @@ namespace System.Management.Automation
                 error = invalidOperation;
             }
 
-            if (error != null)
+            if (error is not null)
             {
                 ParameterBinderBase.bindingTracer.WriteLine(
                     "ERROR: host does not support prompting for missing mandatory parameters");
@@ -3362,7 +3362,7 @@ namespace System.Management.Automation
                     "PIPELINE object TYPE = [{0}]",
                     inputToOperateOn is null || inputToOperateOn == AutomationNull.Value
                         ? "null"
-                        : ((dontuseInternalTypeNames = inputToOperateOn.InternalTypeNames).Count > 0 && dontuseInternalTypeNames[0] != null)
+                        : ((dontuseInternalTypeNames = inputToOperateOn.InternalTypeNames).Count > 0 && dontuseInternalTypeNames[0] is not null)
                               ? dontuseInternalTypeNames[0]
                               : inputToOperateOn.BaseObject.GetType().FullName);
 
@@ -3546,7 +3546,7 @@ namespace System.Management.Automation
                     // the property name
                     else if (currentlyBinding == CurrentlyBinding.ValueFromPipelineByPropertyNameNoCoercion &&
                         parameterSetMetadata.ValueFromPipelineByPropertyName &&
-                        inputToOperateOn != null)
+                        inputToOperateOn is not null)
                     {
                         bindResult = BindValueFromPipelineByPropertyName(inputToOperateOn, parameter, ParameterBindingFlags.None);
                     }
@@ -3561,7 +3561,7 @@ namespace System.Management.Automation
                     // the property name
                     else if (currentlyBinding == CurrentlyBinding.ValueFromPipelineByPropertyNameWithCoercion &&
                         parameterSetMetadata.ValueFromPipelineByPropertyName &&
-                        inputToOperateOn != null)
+                        inputToOperateOn is not null)
                     {
                         bindResult = BindValueFromPipelineByPropertyName(inputToOperateOn, parameter, ParameterBindingFlags.ShouldCoerceType);
                     }
@@ -3631,7 +3631,7 @@ namespace System.Management.Automation
                 bindResult = false;
             }
 
-            if (parameterBindingException != null)
+            if (parameterBindingException is not null)
             {
                 if (!DefaultParameterBindingInUse)
                 {
@@ -3670,14 +3670,14 @@ namespace System.Management.Automation
                 {
                     member = inputToOperateOn.Properties[alias];
 
-                    if (member != null)
+                    if (member is not null)
                     {
                         break;
                     }
                 }
             }
 
-            if (member != null)
+            if (member is not null)
             {
                 ParameterBindingException parameterBindingException = null;
                 try
@@ -3706,7 +3706,7 @@ namespace System.Management.Automation
                     bindResult = false;
                 }
 
-                if (parameterBindingException != null)
+                if (parameterBindingException is not null)
                 {
                     if (!DefaultParameterBindingInUse)
                     {
@@ -3779,7 +3779,7 @@ namespace System.Management.Automation
                 ScriptBlock script = argument.ArgumentValue as ScriptBlock;
 
                 Diagnostics.Assert(
-                    script != null,
+                    script is not null,
                     "An argument should only be put in the delayBindScriptBlocks collection if it is a ScriptBlock");
 
                 Collection<PSObject> output = null;
@@ -3806,7 +3806,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (error != null)
+                if (error is not null)
                 {
                     ParameterBindingException bindingException =
                         new ParameterBindingException(
@@ -3941,7 +3941,7 @@ namespace System.Management.Automation
                         break;
 
                     case ParameterBinderAssociation.DynamicParameters:
-                        if (_dynamicParameterBinder != null)
+                        if (_dynamicParameterBinder is not null)
                         {
                             result = _dynamicParameterBinder.GetDefaultParameterValue(name);
                         }
@@ -4317,7 +4317,7 @@ namespace System.Management.Automation
                         error = setValueException;
                     }
 
-                    if (error != null)
+                    if (error is not null)
                     {
                         Type specifiedType = (argumentToBind.ArgumentValue is null) ? null : argumentToBind.ArgumentValue.GetType();
                         ParameterBindingException bindingException =
@@ -4418,7 +4418,7 @@ namespace System.Management.Automation
             foreach (DictionaryEntry entry in dictionary)
             {
                 var entryKey = entry.Key as string;
-                if (entryKey != null)
+                if (entryKey is not null)
                 {
                     string key = entryKey.Trim();
                     string cmdletName = null;
@@ -4436,7 +4436,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    Diagnostics.Assert(isSpecialKey || (cmdletName != null && parameterName != null), "The cmdletName and parameterName should be set in CheckKeyIsValid");
+                    Diagnostics.Assert(isSpecialKey || (cmdletName is not null && parameterName is not null), "The cmdletName and parameterName should be set in CheckKeyIsValid");
                     if (keysInBadFormat.Count == 0 && !base.ContainsKey(key))
                     {
                         base.Add(key, entry.Value);

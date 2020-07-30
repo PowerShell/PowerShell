@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Tuple object.</returns>
         private static object ArrayToTuple<T>(IList<T> inputObjects, int startIndex)
         {
-            Diagnostics.Assert(inputObjects != null, "inputObjects is null");
+            Diagnostics.Assert(inputObjects is not null, "inputObjects is null");
             Diagnostics.Assert(inputObjects.Count > 0, "inputObjects is empty");
 
             switch (inputObjects.Count - startIndex)
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (ObjectCommandPropertyValue propValue in propValues)
             {
                 var propValuePropertyValue = propValue?.PropertyValue;
-                if (propValuePropertyValue != null)
+                if (propValuePropertyValue is not null)
                 {
                     if (propValuePropertyValue is ICollection propertyValueItems)
                     {
@@ -278,7 +278,7 @@ namespace Microsoft.PowerShell.Commands
             OrderByPropertyComparer orderByPropertyComparer)
         {
             var currentObjectOrderValues = currentObjectEntry.orderValues;
-            if (currentObjectOrderValues != null && currentObjectOrderValues.Count > 0)
+            if (currentObjectOrderValues is not null && currentObjectOrderValues.Count > 0)
             {
                 object currentTupleObject = PSTuple.ArrayToTuple(currentObjectOrderValues);
 
@@ -332,7 +332,7 @@ namespace Microsoft.PowerShell.Commands
             OrderByPropertyComparer orderByPropertyComparer)
         {
             var currentObjectOrderValues = currentObjectEntry.orderValues;
-            if (currentObjectOrderValues != null && currentObjectOrderValues.Count > 0)
+            if (currentObjectOrderValues is not null && currentObjectOrderValues.Count > 0)
             {
                 object currentTupleObject = PSTuple.ArrayToTuple(currentObjectOrderValues);
 
@@ -387,7 +387,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (InputObject != null && InputObject != AutomationNull.Value)
+            if (InputObject is not null && InputObject != AutomationNull.Value)
             {
                 OrderByPropertyEntry currentEntry;
 
@@ -407,7 +407,7 @@ namespace Microsoft.PowerShell.Commands
                         ThrowTerminatingError(er);
                     }
 
-                    if (AsHashTable && !AsString && (Property != null && (Property.Length > 1 || _orderByProperty.MshParameterList.Count > 1)))
+                    if (AsHashTable && !AsString && (Property is not null && (Property.Length > 1 || _orderByProperty.MshParameterList.Count > 1)))
                     {
                         ArgumentException ex = new ArgumentException(UtilityCommonStrings.GroupObjectSingleProperty);
                         ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, Property);

@@ -32,7 +32,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal RunspaceRef(Runspace runspace)
         {
-            Dbg.Assert(runspace != null, "Expected runspace != null");
+            Dbg.Assert(runspace is not null, "Expected runspace is not null");
             _runspaceRef = new ObjectRef<Runspace>(runspace);
             _stopInvoke = false;
             _localSyncObject = new object();
@@ -93,7 +93,7 @@ namespace System.Management.Automation.Remoting
                 // and if we are not in a loopback configuration mode, in which case we always force remote script commands
                 // to be parsed and evaluated on the remote session (not in the current local session).
                 RemoteRunspace remoteRunspace = _runspaceRef.Value as RemoteRunspace;
-                bool isConfiguredLoopback = (remoteRunspace != null) ? remoteRunspace.IsConfiguredLoopBack : false;
+                bool isConfiguredLoopback = (remoteRunspace is not null) ? remoteRunspace.IsConfiguredLoopBack : false;
                 bool isTrustedInput = !isConfiguredLoopback && (localRunspace.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage);
 
                 // Create PowerShell from ScriptBlock.
@@ -192,7 +192,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 PSCommand psCommand = ParsePsCommandUsingScriptBlock(line, null);
-                if (psCommand != null)
+                if (psCommand is not null)
                 {
                     pipeline = useNestedPipelines ?
                         _runspaceRef.Value.CreateNestedPipeline(psCommand.Commands[0].CommandText, addToHistory) :
@@ -217,10 +217,10 @@ namespace System.Management.Automation.Remoting
 
             // Add robust connection callback if this is a pushed runspace.
             RemotePipeline remotePipeline = pipeline as RemotePipeline;
-            if (this.IsRunspaceOverridden && remotePipeline != null)
+            if (this.IsRunspaceOverridden && remotePipeline is not null)
             {
                 PowerShell shell = remotePipeline.PowerShell;
-                if (shell.RemotePowerShell != null)
+                if (shell.RemotePowerShell is not null)
                 {
                     shell.RemotePowerShell.RCConnectionNotification += HandleRCConnectionNotification;
                 }
@@ -230,8 +230,8 @@ namespace System.Management.Automation.Remoting
                 {
                     RemoteRunspace remoteRunspace = _runspaceRef.Value as RemoteRunspace;
                     PSDataCollection<ErrorRecord> erBuffer = sender as PSDataCollection<ErrorRecord>;
-                    if (remoteRunspace != null && erBuffer != null &&
-                        remoteRunspace.RunspacePool.RemoteRunspacePoolInternal.Host != null)
+                    if (remoteRunspace is not null && erBuffer is not null &&
+                        remoteRunspace.RunspacePool.RemoteRunspacePoolInternal.Host is not null)
                     {
                         Collection<ErrorRecord> erRecords = erBuffer.ReadAll();
                         foreach (var er in erRecords)
@@ -287,7 +287,7 @@ namespace System.Management.Automation.Remoting
 
             try
             {
-                if (syncObject != null)
+                if (syncObject is not null)
                 {
                     lock (syncObject)
                     {
@@ -301,7 +301,7 @@ namespace System.Management.Automation.Remoting
                     isRunspacePushed = true;
                 }
 
-                if ((remoteRunspace.GetCurrentlyRunningPipeline() != null))
+                if ((remoteRunspace.GetCurrentlyRunningPipeline() is not null))
                 {
                     // Don't execute command if pushed runspace is already running one.
                     return;
@@ -382,8 +382,8 @@ namespace System.Management.Automation.Remoting
         private void WriteRCFailedError()
         {
             RemoteRunspace remoteRunspace = _runspaceRef.Value as RemoteRunspace;
-            if (remoteRunspace != null &&
-                remoteRunspace.RunspacePool.RemoteRunspacePoolInternal.Host != null)
+            if (remoteRunspace is not null &&
+                remoteRunspace.RunspacePool.RemoteRunspacePoolInternal.Host is not null)
             {
                 remoteRunspace.RunspacePool.RemoteRunspacePoolInternal.Host.UI.WriteErrorLine(
                     StringUtil.Format(RemotingErrorIdStrings.RCAutoDisconnectingError,
@@ -397,7 +397,7 @@ namespace System.Management.Automation.Remoting
             int totalSeconds)
         {
             RemoteRunspace remoteRunspace = _runspaceRef.Value as RemoteRunspace;
-            if (remoteRunspace != null)
+            if (remoteRunspace is not null)
             {
                 s_RCProgress.StartProgress(
                     sourceId,

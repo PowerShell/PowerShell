@@ -20,8 +20,8 @@ namespace System.Management.Automation
         /// </summary>
         internal ProviderCommandHelpInfo(HelpInfo genericHelpInfo, ProviderContext providerContext)
         {
-            Dbg.Assert(genericHelpInfo != null, "Expected genericHelpInfo != null");
-            Dbg.Assert(providerContext != null, "Expected providerContext != null");
+            Dbg.Assert(genericHelpInfo is not null, "Expected genericHelpInfo is not null");
+            Dbg.Assert(providerContext is not null, "Expected providerContext is not null");
 
             // This should be set to None to prevent infinite forwarding.
             this.ForwardHelpCategory = HelpCategory.None;

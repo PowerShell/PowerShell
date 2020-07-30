@@ -135,13 +135,13 @@ namespace System.Management.Automation
 
             RegisterPipelineOutputEventHandlers(_localPowerShellOutput);
 
-            if (LocalPowerShell != null)
+            if (LocalPowerShell is not null)
             {
                 RegisterPowerShellEventHandlers(LocalPowerShell);
                 _datasent[0] = false;
             }
 
-            if (extraPowerShell != null)
+            if (extraPowerShell is not null)
             {
                 RegisterPowerShellEventHandlers(extraPowerShell);
                 _datasent[1] = false;
@@ -150,10 +150,10 @@ namespace System.Management.Automation
             RegisterDataStructureHandlerEventHandlers(DataStructureHandler);
 
             // set the runspace pool and invoke this powershell
-            if (rsToUse != null)
+            if (rsToUse is not null)
             {
                 LocalPowerShell.Runspace = rsToUse;
-                if (extraPowerShell != null)
+                if (extraPowerShell is not null)
                 {
                     extraPowerShell.Runspace = rsToUse;
                 }
@@ -161,13 +161,13 @@ namespace System.Management.Automation
             else
             {
                 LocalPowerShell.RunspacePool = runspacePoolDriver.RunspacePool;
-                if (extraPowerShell != null)
+                if (extraPowerShell is not null)
                 {
                     extraPowerShell.RunspacePool = runspacePoolDriver.RunspacePool;
                 }
             }
 
-            if (output != null)
+            if (output is not null)
             {
                 output.DataAdded += (sender, args) =>
                     {
@@ -293,7 +293,7 @@ namespace System.Management.Automation
         /// <param name="output">The output from preprocessing that we want to send to the client.</param>
         internal void RunNoOpCommand(IReadOnlyCollection<object> output)
         {
-            if (LocalPowerShell != null)
+            if (LocalPowerShell is not null)
             {
                 System.Threading.ThreadPool.QueueUserWorkItem(
                     (state) =>
@@ -304,7 +304,7 @@ namespace System.Management.Automation
 
                             foreach (var item in output)
                             {
-                                if (item != null)
+                                if (item is not null)
                                 {
                                     _localPowerShellOutput.Add(PSObject.AsPSObject(item));
                                 }
@@ -334,7 +334,7 @@ namespace System.Management.Automation
                 ex = e;
             }
 
-            if (ex != null)
+            if (ex is not null)
             {
                 // Since this is being invoked asynchronously on a single pipeline thread
                 // any invoke failures (such as possible debugger failures) need to be
@@ -444,7 +444,7 @@ namespace System.Management.Automation
                         SendRemainingData();
 
                         if (state == PSInvocationState.Completed &&
-                            (_extraPowerShell != null) &&
+                            (_extraPowerShell is not null) &&
                             !_extraPowerShellAlreadyScheduled)
                         {
                             _extraPowerShellAlreadyScheduled = true;
@@ -459,7 +459,7 @@ namespace System.Management.Automation
                                 eventArgs.InvocationStateInfo);
 
                             UnregisterPowerShellEventHandlers(LocalPowerShell);
-                            if (_extraPowerShell != null)
+                            if (_extraPowerShell is not null)
                             {
                                 UnregisterPowerShellEventHandlers(_extraPowerShell);
                             }
@@ -733,7 +733,7 @@ namespace System.Management.Automation
                     // Ensure that the local PowerShell command is not stopped in debug mode.
                     bool handledByDebugger = false;
                     if (!LocalPowerShell.IsNested &&
-                        _psDriverInvoker != null)
+                        _psDriverInvoker is not null)
                     {
                         handledByDebugger = _psDriverInvoker.HandleStopSignal();
                     }
@@ -745,7 +745,7 @@ namespace System.Management.Automation
                 }
             } while (false);
 
-            if (_extraPowerShell != null)
+            if (_extraPowerShell is not null)
             {
                 do // false loop
                 {
@@ -773,7 +773,7 @@ namespace System.Management.Automation
         {
             // This can be called in pushed runspace scenarios for error reporting (pipeline stopped).
             // Ignore for noInput.
-            if (!_noInput && (InputCollection != null))
+            if (!_noInput && (InputCollection is not null))
             {
                 InputCollection.Add(eventArgs.Data);
             }
@@ -788,7 +788,7 @@ namespace System.Management.Automation
         {
             // This can be called in pushed runspace scenarios for error reporting (pipeline stopped).
             // Ignore for noInput.
-            if (!_noInput && (InputCollection != null))
+            if (!_noInput && (InputCollection is not null))
             {
                 InputCollection.Complete();
             }
@@ -798,7 +798,7 @@ namespace System.Management.Automation
         {
             // Close input if its active. no need to synchronize as input stream would have already been processed
             // when connect call came into PS plugin
-            if (InputCollection != null)
+            if (InputCollection is not null)
             {
                 // TODO: Post an ETW event
                 InputCollection.Complete();
@@ -823,11 +823,11 @@ namespace System.Management.Automation
         private void HandleIdleEvent(object sender, EventArgs args)
         {
             Runspace rs = DataStructureHandler.RunspaceUsedToInvokePowerShell;
-            if (rs != null)
+            if (rs is not null)
             {
                 PSLocalEventManager events = (object)rs.Events as PSLocalEventManager;
 
-                if (events != null)
+                if (events is not null)
                 {
                     foreach (PSEventSubscriber subscriber in events.Subscribers)
                     {

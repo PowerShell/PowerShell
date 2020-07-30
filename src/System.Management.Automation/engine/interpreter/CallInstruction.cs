@@ -52,7 +52,7 @@ namespace System.Management.Automation.Interpreter
 
             // A workaround for CLR bug #796414 (Unable to create delegates for Array.Get/Set):
             // T[]::Address - not supported by ETs due to T& return value
-            if (info.DeclaringType != null && info.DeclaringType.IsArray && (info.Name == "Get" || info.Name == "Set"))
+            if (info.DeclaringType is not null && info.DeclaringType.IsArray && (info.Name == "Get" || info.Name == "Set"))
             {
                 return GetArrayAccessor(info, argumentCount);
             }

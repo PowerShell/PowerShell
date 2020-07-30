@@ -785,7 +785,7 @@ namespace System.Management.Automation.Language
 
         internal IScriptExtent CurrentPosition
         {
-            get { return _sequencePoints != null ? _sequencePoints[_currentSequencePointIndex] : PositionUtilities.EmptyExtent; }
+            get { return _sequencePoints is not null ? _sequencePoints[_currentSequencePointIndex] : PositionUtilities.EmptyExtent; }
         }
 
         internal void PushTrapHandlers(Type[] type, Action<FunctionContext>[] handler, Type[] tupleType)
@@ -1182,7 +1182,7 @@ namespace System.Management.Automation.Language
         {
             var typeName = typeConstraint.TypeName;
             var toType = typeName.GetReflectionType();
-            if (toType != null)
+            if (toType is not null)
             {
                 if (toType == typeof(void))
                 {
@@ -1208,7 +1208,7 @@ namespace System.Management.Automation.Language
             for (int index = 0; index < conversions.Count; index++)
             {
                 var typeConstraint = conversions[index] as TypeConstraintAst;
-                if (typeConstraint != null)
+                if (typeConstraint is not null)
                 {
                     expr = ConvertValue(typeConstraint, expr);
                 }
@@ -1230,7 +1230,7 @@ namespace System.Management.Automation.Language
             {
                 var param = parameters[index];
                 var rdp = GetRuntimeDefinedParameter(param, ref customParameterSet, ref usesCmdletBinding);
-                if (rdp != null)
+                if (rdp is not null)
                 {
                     runtimeDefinedParamList.Add(rdp);
                     runtimeDefinedParamDict.Add(param.Name.VariablePath.UserPath, rdp);
@@ -1519,7 +1519,7 @@ namespace System.Management.Automation.Language
             else if (ast.PositionalArguments.Count == 1)
             {
                 var typeArg = ast.PositionalArguments[0] as TypeExpressionAst;
-                if (typeArg != null)
+                if (typeArg is not null)
                 {
                     var type = TypeOps.ResolveTypeName(typeArg.TypeName, typeArg.Extent);
                     result = new OutputTypeAttribute(type);
@@ -1537,7 +1537,7 @@ namespace System.Management.Automation.Language
                 {
                     var positionalArgument = ast.PositionalArguments[i];
                     var typeArg = positionalArgument as TypeExpressionAst;
-                    args[i] = typeArg != null
+                    args[i] = typeArg is not null
                         ? TypeOps.ResolveTypeName(typeArg.TypeName, typeArg.Extent)
                         : positionalArgument.Accept(s_cvv);
                 }
@@ -1604,7 +1604,7 @@ namespace System.Management.Automation.Language
             if (ast.PositionalArguments.Count == 1 && ast.PositionalArguments[0] is TypeExpressionAst generatorTypeAst)
             {
                 var generatorType = TypeResolver.ResolveITypeName(generatorTypeAst.TypeName, out Exception exception);
-                if (generatorType != null)
+                if (generatorType is not null)
                 {
                     result = new ValidateSetAttribute(generatorType);
                 }
@@ -1756,7 +1756,7 @@ namespace System.Management.Automation.Language
         {
             Type type = null;
             var ihct = typeConstraintAst.TypeName as ISupportsTypeCaching;
-            if (ihct != null)
+            if (ihct is not null)
             {
                 type = ihct.CachedType;
             }
@@ -1764,7 +1764,7 @@ namespace System.Management.Automation.Language
             if (type is null)
             {
                 type = TypeOps.ResolveTypeName(typeConstraintAst.TypeName, typeConstraintAst.Extent);
-                if (ihct != null)
+                if (ihct is not null)
                 {
                     ihct.CachedType = type;
                 }
@@ -1835,7 +1835,7 @@ namespace System.Management.Automation.Language
             var result = new RuntimeDefinedParameter(parameterAst.Name.VariablePath.UserPath, parameterAst.StaticType,
                                                      new Collection<Attribute>(attributes));
 
-            if (parameterAst.DefaultValue != null)
+            if (parameterAst.DefaultValue is not null)
             {
                 object constantValue;
                 if (IsConstantValueVisitor.IsConstant(parameterAst.DefaultValue, out constantValue))
@@ -1852,7 +1852,7 @@ namespace System.Management.Automation.Language
             else
             {
                 object defaultValue;
-                if (TryGetDefaultParameterValue(parameterAst.StaticType, out defaultValue) && defaultValue != null)
+                if (TryGetDefaultParameterValue(parameterAst.StaticType, out defaultValue) && defaultValue is not null)
                 {
                     // Skip setting the value when defaultValue is null because if we do call the setter,
                     // we'll try converting null to the parameter, which we might not want, e.g. if the parameter is [ref].
@@ -1940,7 +1940,7 @@ namespace System.Management.Automation.Language
             _compilingScriptCmdlet = scriptBlock.UsesCmdletBinding;
 
             var fileName = ast.Extent.File;
-            if (fileName != null)
+            if (fileName is not null)
             {
                 _debugSymbolDocument = Expression.SymbolDocument(fileName);
             }
@@ -1962,7 +1962,7 @@ namespace System.Management.Automation.Language
             LocalVariablesParameter = Expression.Variable(LocalVariablesTupleType, "locals");
 
             var functionMemberAst = ast as FunctionMemberAst;
-            if (functionMemberAst != null)
+            if (functionMemberAst is not null)
             {
                 CompilingMemberFunction = true;
                 MemberFunctionReturnType = functionMemberAst.GetReturnType();
@@ -1983,7 +1983,7 @@ namespace System.Management.Automation.Language
             else
             {
                 var generatedMemberFunctionAst = ast as CompilerGeneratedMemberFunctionAst;
-                if (generatedMemberFunctionAst != null)
+                if (generatedMemberFunctionAst is not null)
                 {
                     CompilingMemberFunction = true;
                     SpecialMemberFunctionType = generatedMemberFunctionAst.Type;
@@ -2092,7 +2092,7 @@ namespace System.Management.Automation.Language
             // Can't be exposed to untrusted input - exposing private variable names / etc. could be
             // information disclosure.
             var variableAst = expressionAst as VariableExpressionAst;
-            if (variableAst != null)
+            if (variableAst is not null)
             {
                 // We can avoid creating a lambda for the common case of a simple variable expression.
                 return VariableOps.GetVariableValue(variableAst.VariablePath, context, variableAst);
@@ -2108,7 +2108,7 @@ namespace System.Management.Automation.Language
             SessionStateInternal oldSessionState = context.EngineSessionState;
             try
             {
-                if (sessionStateInternal != null && context.EngineSessionState != sessionStateInternal)
+                if (sessionStateInternal is not null && context.EngineSessionState != sessionStateInternal)
                 {
                     // If we're running a function from a module, we need to evaluate the initializers in the
                     // module context, not the callers context...
@@ -2127,7 +2127,7 @@ namespace System.Management.Automation.Language
                         _outputPipe = pipe,
                         _localsTuple = MutableTuple.MakeTuple(localsTupleType, DottedLocalsNameIndexMap)
                     };
-                    if (usingValues != null)
+                    if (usingValues is not null)
                     {
                         var boundParameters = new PSBoundParametersDictionary { ImplicitUsingParameters = usingValues };
                         functionContext._localsTuple.SetAutomaticVariable(AutomaticVariable.PSBoundParameters, boundParameters, context);
@@ -2254,7 +2254,7 @@ namespace System.Management.Automation.Language
             exprs.Add(Expression.Assign(resultList, Expression.New(CachedReflectionInfo.ObjectList_ctor)));
             exprs.Add(Expression.Assign(s_getCurrentPipe, Expression.New(CachedReflectionInfo.Pipe_ctor, resultList)));
             exprs.Add(Expression.Call(oldPipe, CachedReflectionInfo.Pipe_SetVariableListForTemporaryPipe, s_getCurrentPipe));
-            if (generateRedirectExprs != null)
+            if (generateRedirectExprs is not null)
             {
                 // Add merge redirection expressions if delegate is provided.
                 generateRedirectExprs(exprs, finallyExprs);
@@ -2322,7 +2322,7 @@ namespace System.Management.Automation.Language
             MergeRedirectExprs generateRedirectExprs)
         {
             var commandExpressionAst = stmt as CommandExpressionAst;
-            if (commandExpressionAst != null)
+            if (commandExpressionAst is not null)
             {
                 if (commandExpressionAst.Redirections.Count > 0)
                 {
@@ -2333,7 +2333,7 @@ namespace System.Management.Automation.Language
             }
 
             var assignmentStatementAst = stmt as AssignmentStatementAst;
-            if (assignmentStatementAst != null)
+            if (assignmentStatementAst is not null)
             {
                 var expr = Compile(assignmentStatementAst);
                 if (stmt.Parent is StatementBlockAst)
@@ -2346,10 +2346,10 @@ namespace System.Management.Automation.Language
 
             var pipelineAst = stmt as PipelineAst;
             // If it's a pipeline that isn't being backgrounded, try to optimize expression
-            if (pipelineAst != null && !pipelineAst.Background)
+            if (pipelineAst is not null && !pipelineAst.Background)
             {
                 var expr = pipelineAst.GetPureExpression();
-                if (expr != null)
+                if (expr is not null)
                 {
                     return Compile(expr);
                 }
@@ -2374,7 +2374,7 @@ namespace System.Management.Automation.Language
             // We do this after evaluating the condition so that you could do something like:
             //    if ((dir file1,file2 -ea SilentlyContinue) -and $?) { <# files both exist, otherwise $? would be $false if 0 or 1 files existed #> }
             //
-            if (context == CaptureAstContext.Condition && AstSearcher.FindFirst(stmt, ast => ast is CommandAst, searchNestedScriptBlocks: false) != null)
+            if (context == CaptureAstContext.Condition && AstSearcher.FindFirst(stmt, ast => ast is CommandAst, searchNestedScriptBlocks: false) is not null)
             {
                 var tmp = NewTemp(result.Type, "condTmp");
                 result = Expression.Block(
@@ -2412,26 +2412,26 @@ namespace System.Management.Automation.Language
         public object VisitScriptBlock(ScriptBlockAst scriptBlockAst)
         {
             var funcDefn = scriptBlockAst.Parent as FunctionDefinitionAst;
-            var funcName = (funcDefn != null) ? funcDefn.Name : "<ScriptBlock>";
+            var funcName = (funcDefn is not null) ? funcDefn.Name : "<ScriptBlock>";
 
-            var rootForDefiningTypesAndUsings = scriptBlockAst.Find(ast => ast is TypeDefinitionAst || ast is UsingStatementAst, true) != null
+            var rootForDefiningTypesAndUsings = scriptBlockAst.Find(ast => ast is TypeDefinitionAst || ast is UsingStatementAst, true) is not null
                 ? scriptBlockAst
                 : null;
 
-            if (scriptBlockAst.DynamicParamBlock != null)
+            if (scriptBlockAst.DynamicParamBlock is not null)
             {
                 _dynamicParamBlockLambda = CompileNamedBlock(scriptBlockAst.DynamicParamBlock, funcName + "<DynamicParam>", rootForDefiningTypesAndUsings);
                 rootForDefiningTypesAndUsings = null;
             }
 
             // Skip param block - nothing to generate, defaults get generated when generating parameter metadata.
-            if (scriptBlockAst.BeginBlock != null)
+            if (scriptBlockAst.BeginBlock is not null)
             {
                 _beginBlockLambda = CompileNamedBlock(scriptBlockAst.BeginBlock, funcName + "<Begin>", rootForDefiningTypesAndUsings);
                 rootForDefiningTypesAndUsings = null;
             }
 
-            if (scriptBlockAst.ProcessBlock != null)
+            if (scriptBlockAst.ProcessBlock is not null)
             {
                 var processFuncName = funcName;
                 if (!scriptBlockAst.ProcessBlock.Unnamed)
@@ -2443,7 +2443,7 @@ namespace System.Management.Automation.Language
                 rootForDefiningTypesAndUsings = null;
             }
 
-            if (scriptBlockAst.EndBlock != null)
+            if (scriptBlockAst.EndBlock is not null)
             {
                 if (!scriptBlockAst.EndBlock.Unnamed)
                 {
@@ -2464,7 +2464,7 @@ namespace System.Management.Automation.Language
             {
                 // Get extent from the function or scriptblock expression parent, if any.
                 var scriptBlock = (ScriptBlockAst)namedBlockAst.Parent;
-                if (scriptBlock.Parent != null && scriptBlock.Extent is InternalScriptExtent)
+                if (scriptBlock.Parent is not null && scriptBlock.Extent is InternalScriptExtent)
                 {
                     // We must have curlies at the start/end.
                     var scriptExtent = (InternalScriptExtent)scriptBlock.Extent;
@@ -2485,7 +2485,7 @@ namespace System.Management.Automation.Language
         {
             var compiler = new Compiler(_sequencePoints, _sequencePointIndexMap) { _compilingTrap = true };
             string funcName = _currentFunctionName + "<trap>";
-            if (trap.TrapType != null)
+            if (trap.TrapType is not null)
             {
                 funcName += "<" + trap.TrapType.TypeName.Name + ">";
             }
@@ -2522,7 +2522,7 @@ namespace System.Management.Automation.Language
 
             GenerateFunctionProlog(exprs, temps, entryExtent);
 
-            if (rootForDefiningTypesAndUsings != null)
+            if (rootForDefiningTypesAndUsings is not null)
             {
                 GenerateTypesAndUsings(rootForDefiningTypesAndUsings, exprs);
             }
@@ -2553,7 +2553,7 @@ namespace System.Management.Automation.Language
             // body of regular begin/process/end blocks with a try/catch so a return from the trap returns
             // to the right place.  We can avoid also avoid generating the catch if we know there aren't any traps.
             if (!_compilingTrap &&
-                ((traps != null && traps.Count > 0)
+                ((traps is not null && traps.Count > 0)
                 || statements.Any(stmt => AstSearcher.Contains(stmt, ast => ast is TrapStatementAst, searchNestedScriptBlocks: false))))
             {
                 body = Expression.Block(
@@ -2654,7 +2654,7 @@ namespace System.Management.Automation.Language
             exprs.Add(Expression.Call(
                 CachedReflectionInfo.TypeOps_SetCurrentTypeResolutionState,
                 Expression.Constant(trs), s_executionContextParameter));
-            if (typesToAdd != null && typesToAdd.Count > 0)
+            if (typesToAdd is not null && typesToAdd.Count > 0)
             {
                 exprs.Add(Expression.Call(
                     CachedReflectionInfo.TypeOps_AddPowerShellTypesToTheScope,
@@ -2674,7 +2674,7 @@ namespace System.Management.Automation.Language
             // TODO(sevoroby): this Diagnostic is conceptually right.
             // BUT It triggers, when we define type in an InitialSessionState and use it later in two different PowerShell instances.
             // Diagnostics.Assert(typeAsts[0].Type is null, "We must not call DefinePowerShellTypes twice for the same TypeDefinitionAsts");
-            if (typeAsts[0].Type != null)
+            if (typeAsts[0].Type is not null)
             {
                 // We treat Type as a mutable buffer field and wipe it here to start definitions from scratch.
 
@@ -2720,9 +2720,9 @@ namespace System.Management.Automation.Language
                         break;
                     case UsingStatementKind.Module:
                         var module = LoadModule(usingStmt.ModuleInfo);
-                        if (module != null)
+                        if (module is not null)
                         {
-                            if (module.ImplementingAssembly != null)
+                            if (module.ImplementingAssembly is not null)
                             {
                                 asms.Add(module.ImplementingAssembly);
                             }
@@ -2878,7 +2878,7 @@ namespace System.Management.Automation.Language
                     Expression.Field(s_functionContext, CachedReflectionInfo.FunctionContext__functionName),
                     Expression.Constant(_currentFunctionName)));
 
-                if (entryExtent != null)
+                if (entryExtent is not null)
                 {
                     int index = AddSequencePoint(entryExtent);
                     exprs.Add(new UpdatePositionExpr(entryExtent, index, _debugSymbolDocument, checkBreakpoints: false));
@@ -2899,7 +2899,7 @@ namespace System.Management.Automation.Language
                 exprs.Add(Expression.Assign(s_returnPipe, s_getCurrentPipe));
                 exprs.Add(Expression.Assign(s_getCurrentPipe, ExpressionCache.NullPipe));
 
-                Diagnostics.Assert(_memberFunctionType.Type != null, "Member function type should not be null");
+                Diagnostics.Assert(_memberFunctionType.Type is not null, "Member function type should not be null");
                 var ourThis = NewTemp(_memberFunctionType.Type, "this");
                 temps.Add(ourThis);
                 exprs.Add(
@@ -2947,7 +2947,7 @@ namespace System.Management.Automation.Language
 
         private void GenerateFunctionEpilog(List<Expression> exprs, IScriptExtent exitExtent)
         {
-            if (exitExtent != null)
+            if (exitExtent is not null)
             {
                 exprs.Add(UpdatePosition(new SequencePointAst(exitExtent)));
             }
@@ -3021,7 +3021,7 @@ namespace System.Management.Automation.Language
             Expression handlerInScope;
             ParameterExpression oldActiveHandler;
             ParameterExpression trapHandlersPushed;
-            if (traps != null)
+            if (traps is not null)
             {
                 // If the statement block has any traps, we'll generate code like:
                 //     try {
@@ -3060,7 +3060,7 @@ namespace System.Management.Automation.Language
                 for (int index = 0; index < traps.Count; index++)
                 {
                     var trap = traps[index];
-                    trapTypes.Add(trap.TrapType != null
+                    trapTypes.Add(trap.TrapType is not null
                                       ? CompileTypeName(trap.TrapType.TypeName, trap.TrapType.Extent)
                                       : ExpressionCache.CatchAllType);
                     var tuple = CompileTrap(trap);
@@ -3208,7 +3208,7 @@ namespace System.Management.Automation.Language
             {
                 var parameterExprs = new List<ParameterExpression>();
                 var finallyBlockExprs = new List<Expression>();
-                if (oldActiveHandler != null)
+                if (oldActiveHandler is not null)
                 {
                     parameterExprs.Add(oldActiveHandler);
                     finallyBlockExprs.Add(Expression.Assign(handlerInScope, oldActiveHandler));
@@ -3222,7 +3222,7 @@ namespace System.Management.Automation.Language
                     Expression.Block(parameterExprs, Expression.TryFinally(Expression.Block(exprs), Expression.Block(finallyBlockExprs))));
             }
 
-            if (traps != null)
+            if (traps is not null)
             {
                 _trapNestingCount -= 1;
             }
@@ -3344,7 +3344,7 @@ namespace System.Management.Automation.Language
                         case 1:
                             // Single expressions with a trap are handled as statements
                             // For example: @(trap { continue } "Value")
-                            if (arrayExpressionAst.SubExpression.Traps != null)
+                            if (arrayExpressionAst.SubExpression.Traps is not null)
                             {
                                 return false;
                             }
@@ -3435,7 +3435,7 @@ namespace System.Management.Automation.Language
             }
 
             Expression elseExpr = null;
-            if (ifStmtAst.ElseClause != null)
+            if (ifStmtAst.ElseClause is not null)
             {
                 elseExpr = Compile(ifStmtAst.ElseClause);
             }
@@ -3445,7 +3445,7 @@ namespace System.Management.Automation.Language
             {
                 var cond = exprs[i].Item1;
                 var body = exprs[i].Item2;
-                if (elseExpr != null)
+                if (elseExpr is not null)
                 {
                     result = elseExpr = Expression.IfThenElse(cond, body, elseExpr);
                 }
@@ -3475,7 +3475,7 @@ namespace System.Management.Automation.Language
         {
             var arrayLHS = assignmentStatementAst.Left as ArrayLiteralAst;
             var parenExpressionAst = assignmentStatementAst.Left as ParenExpressionAst;
-            if (parenExpressionAst != null)
+            if (parenExpressionAst is not null)
             {
                 arrayLHS = parenExpressionAst.Pipeline.GetPureExpression() as ArrayLiteralAst;
             }
@@ -3486,10 +3486,10 @@ namespace System.Management.Automation.Language
             // We should not preserve the partial output if exception is thrown when evaluating right-hand-side expression.
             Expression rightExpr = CaptureStatementResults(
                 assignmentStatementAst.Right,
-                arrayLHS != null ? CaptureAstContext.Enumerable : CaptureAstContext.AssignmentWithoutResultPreservation,
+                arrayLHS is not null ? CaptureAstContext.Enumerable : CaptureAstContext.AssignmentWithoutResultPreservation,
                 generateRedirectExprs);
 
-            if (arrayLHS != null)
+            if (arrayLHS is not null)
             {
                 rightExpr = DynamicExpression.Dynamic(PSArrayAssignmentRHSBinder.Get(arrayLHS.Elements.Count), typeof(IList), rightExpr);
             }
@@ -3622,7 +3622,7 @@ namespace System.Management.Automation.Language
 
                 currentChain = currentChain.Parent as PipelineChainAst;
             }
-            while (currentChain != null);
+            while (currentChain is not null);
 
             // Add empty expression to make the block value void
             tryBodyExprs.Add(ExpressionCache.Empty);
@@ -3702,7 +3702,7 @@ namespace System.Management.Automation.Language
                 var pipeElements = pipelineAst.PipelineElements;
                 var firstCommandExpr = pipeElements[0] as CommandExpressionAst;
 
-                if (firstCommandExpr != null && pipeElements.Count == 1)
+                if (firstCommandExpr is not null && pipeElements.Count == 1)
                 {
                     if (firstCommandExpr.Redirections.Count > 0)
                     {
@@ -3718,7 +3718,7 @@ namespace System.Management.Automation.Language
                     Expression input;
                     int i, commandsInPipe;
 
-                    if (firstCommandExpr != null)
+                    if (firstCommandExpr is not null)
                     {
                         if (firstCommandExpr.Redirections.Count > 0)
                         {
@@ -3775,7 +3775,7 @@ namespace System.Management.Automation.Language
                                 typeof(CommandRedirection[]),
                                 commandRedirections.Select(r => (r as Expression) ?? Expression.Constant(r, typeof(CommandRedirection[]))));
                     }
-                    else if (commandRedirections.Any(r => r != null))
+                    else if (commandRedirections.Any(r => r is not null))
                     {
                         // There were redirections, but all were compile time constant, so build the array at compile time.
                         redirectionExpr =
@@ -3787,7 +3787,7 @@ namespace System.Management.Automation.Language
                         redirectionExpr = ExpressionCache.NullCommandRedirections;
                     }
 
-                    if (firstCommandExpr != null)
+                    if (firstCommandExpr is not null)
                     {
                         var inputTemp = Expression.Variable(input.Type);
                         temps.Add(inputTemp);
@@ -3798,7 +3798,7 @@ namespace System.Management.Automation.Language
                     Expression invokePipe = Expression.Call(
                         CachedReflectionInfo.PipelineOps_InvokePipeline,
                         input.Cast(typeof(object)),
-                        firstCommandExpr != null ? ExpressionCache.FalseConstant : ExpressionCache.TrueConstant,
+                        firstCommandExpr is not null ? ExpressionCache.FalseConstant : ExpressionCache.TrueConstant,
                         Expression.NewArrayInit(typeof(CommandParameterInternal[]), pipelineExprs),
                         Expression.Constant(pipeElementAsts),
                         redirectionExpr,
@@ -3876,7 +3876,7 @@ namespace System.Management.Automation.Language
             ParameterExpression resultList = null;
             ParameterExpression oldPipe = null;
             var subExpr = commandExpr.Expression as SubExpressionAst;
-            if (subExpr != null && captureForInput)
+            if (subExpr is not null && captureForInput)
             {
                 oldPipe = NewTemp(typeof(Pipe), "oldPipe");
                 resultList = NewTemp(typeof(List<object>), "resultList");
@@ -3952,12 +3952,12 @@ namespace System.Management.Automation.Language
 
             Expression result = null;
             var parenExpr = commandExpr.Expression as ParenExpressionAst;
-            if (parenExpr != null)
+            if (parenExpr is not null)
             {
                 // Special processing for paren expressions that capture output.
                 // Insert any merge redirect expressions during paren expression compilation.
                 var assignmentStatementAst = parenExpr.Pipeline as AssignmentStatementAst;
-                if (assignmentStatementAst != null)
+                if (assignmentStatementAst is not null)
                 {
                     result = CompileAssignment(
                         assignmentStatementAst,
@@ -3974,13 +3974,13 @@ namespace System.Management.Automation.Language
                         (mergeExprs, mergeFinallyExprs) => AddMergeRedirectionExpressions(commandExpr.Redirections, temps, mergeExprs, mergeFinallyExprs));
                 }
             }
-            else if (subExpr != null)
+            else if (subExpr is not null)
             {
                 // Include any redirection merging.
                 AddMergeRedirectionExpressions(commandExpr.Redirections, temps, exprs, finallyExprs);
 
                 exprs.Add(Compile(subExpr.SubExpression));
-                if (resultList != null)
+                if (resultList is not null)
                 {
                     // If there is no resultList, we wrote our results of the subexpression directly to the pipe
                     // instead of being collected to be written here.
@@ -3995,7 +3995,7 @@ namespace System.Management.Automation.Language
                 result = Compile(commandExpr.Expression);
             }
 
-            if (result != null)
+            if (result is not null)
             {
                 if (!outputRedirected && captureForInput)
                 {
@@ -4013,7 +4013,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (extraFileRedirectExprs != null)
+            if (extraFileRedirectExprs is not null)
             {
                 // Now that the redirection is done, we need to call 'DoComplete' on the file redirection pipeline processors.
                 // Exception may be thrown when running 'DoComplete', but we don't want the exception to affect the cleanup
@@ -4032,7 +4032,7 @@ namespace System.Management.Automation.Language
                 exprs.Add(wrapExpr);
             }
 
-            if (oldPipe != null)
+            if (oldPipe is not null)
             {
                 // If a temporary pipe was created at the beginning, we should restore the original pipe in the
                 // very end of the finally block. Otherwise, s_getCurrentPipe may be messed up by the following
@@ -4098,7 +4098,7 @@ namespace System.Management.Automation.Language
         {
             Expression fileNameExpr;
             var strConst = fileRedirectionAst.Location as StringConstantExpressionAst;
-            if (strConst != null)
+            if (strConst is not null)
             {
                 // When the filename is a constant, we still must generate a new FileRedirection
                 // at runtime because we can't keep a cached object in the closure because the object
@@ -4140,13 +4140,13 @@ namespace System.Management.Automation.Language
                     bool splatted = false;
 
                     UsingExpressionAst usingExpression = element as UsingExpressionAst;
-                    if (usingExpression != null)
+                    if (usingExpression is not null)
                     {
                         splatTest = usingExpression.SubExpression;
                     }
 
                     VariableExpressionAst variableExpression = splatTest as VariableExpressionAst;
-                    if (variableExpression != null)
+                    if (variableExpression is not null)
                     {
                         splatted = variableExpression.Splatted;
                     }
@@ -4187,7 +4187,7 @@ namespace System.Management.Automation.Language
         private Expression GetCommandArgumentExpression(CommandElementAst element)
         {
             var constElement = element as ConstantExpressionAst;
-            if (constElement != null
+            if (constElement is not null
                 && (LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constElement.StaticType))
                 || constElement.StaticType == typeof(System.Numerics.BigInteger)))
             {
@@ -4218,7 +4218,7 @@ namespace System.Management.Automation.Language
             var child = commandExpressionAst.Expression;
             var expr = Compile(child);
             var unary = child as UnaryExpressionAst;
-            if ((unary != null && unary.TokenKind.HasTrait(TokenFlags.PrefixOrPostfixOperator)) || expr.Type == typeof(void))
+            if ((unary is not null && unary.TokenKind.HasTrait(TokenFlags.PrefixOrPostfixOperator)) || expr.Type == typeof(void))
             {
                 return expr;
             }
@@ -4230,7 +4230,7 @@ namespace System.Management.Automation.Language
         {
             var arg = commandParameterAst.Argument;
             var errorPos = commandParameterAst.ErrorPosition;
-            if (arg != null)
+            if (arg is not null)
             {
                 bool spaceAfterParameter = errorPos.EndLineNumber != arg.Extent.StartLineNumber ||
                                            errorPos.EndColumnNumber != arg.Extent.StartColumnNumber;
@@ -4263,7 +4263,7 @@ namespace System.Management.Automation.Language
 
         internal static Expression ThrowRuntimeError(Type exceptionType, string errorID, string resourceString, Type throwResultType, params Expression[] exceptionArgs)
         {
-            var exceptionArgArray = exceptionArgs != null
+            var exceptionArgArray = exceptionArgs is not null
                                         ? Expression.NewArrayInit(typeof(object), exceptionArgs.Select(e => e.Cast(typeof(object))))
                                         : ExpressionCache.NullConstant;
             Expression[] argExprs = new Expression[]
@@ -4297,7 +4297,7 @@ namespace System.Management.Automation.Language
             Type throwResultType,
             params Expression[] exceptionArgs)
         {
-            var exceptionArgArray = exceptionArgs != null
+            var exceptionArgArray = exceptionArgs is not null
                                         ? Expression.NewArrayInit(typeof(object), exceptionArgs)
                                         : ExpressionCache.NullConstant;
             Expression[] argExprs = new Expression[]
@@ -4341,12 +4341,12 @@ namespace System.Management.Automation.Language
         internal static Expression CreateThrow(Type resultType, Type exception, params object[] exceptionArgs)
         {
             Type[] argTypes = Type.EmptyTypes;
-            if (exceptionArgs != null)
+            if (exceptionArgs is not null)
             {
                 argTypes = new Type[exceptionArgs.Length];
                 for (int i = 0; i < exceptionArgs.Length; i++)
                 {
-                    Diagnostics.Assert(exceptionArgs[i] != null, "Can't deduce argument type from null");
+                    Diagnostics.Assert(exceptionArgs[i] is not null, "Can't deduce argument type from null");
                     argTypes[i] = exceptionArgs[i].GetType();
                 }
             }
@@ -4359,7 +4359,7 @@ namespace System.Management.Automation.Language
             var avs = new AutomaticVarSaver(this, SpecialVariables.UnderbarVarPath, (int)AutomaticVariable.Underbar);
             var temps = new List<ParameterExpression>();
             ParameterExpression skipDefault = null;
-            if (switchStatementAst.Default != null)
+            if (switchStatementAst.Default is not null)
             {
                 skipDefault = NewTemp(typeof(bool), "skipDefault");
                 temps.Add(skipDefault);
@@ -4377,7 +4377,7 @@ namespace System.Management.Automation.Language
                 //    {
                 //        sr = new StreamReader(path);
                 //        string line;
-                //        while ((line = sr.ReadLine()) != null)
+                //        while ((line = sr.ReadLine()) is not null)
                 //        {
                 //            $_ = line
                 //            test clauses
@@ -4393,7 +4393,7 @@ namespace System.Management.Automation.Language
                 //    }
                 //    finally
                 //    {
-                //        if (sr != null) sr.Dispose();
+                //        if (sr is not null) sr.Dispose();
                 //    }
                 var exprs = new List<Expression>();
 
@@ -4495,7 +4495,7 @@ namespace System.Management.Automation.Language
                        var clauseEvalBinder = PSSwitchClauseEvalBinder.Get(switchStatementAst.Flags);
                        exprs.Add(avs.SetNewValue(newValue));
 
-                       if (skipDefault != null)
+                       if (skipDefault is not null)
                        {
                            exprs.Add(Expression.Assign(skipDefault, ExpressionCache.Constant(false)));
                        }
@@ -4522,7 +4522,7 @@ namespace System.Management.Automation.Language
                                /*args=*/                  ExpressionCache.NullObjectArray);
                                test = DynamicExpression.Dynamic(PSConvertBinder.Get(typeof(bool)), typeof(bool), call);
                            }
-                           else if (constValue != null)
+                           else if (constValue is not null)
                            {
                                SwitchFlags flags = switchStatementAst.Flags;
                                Expression conditionExpr = constValue is Regex || constValue is WildcardPattern
@@ -4573,7 +4573,7 @@ namespace System.Management.Automation.Language
                            }
 
                            exprs.Add(UpdatePosition(clause.Item1));
-                           if (skipDefault != null)
+                           if (skipDefault is not null)
                            {
                                exprs.Add(Expression.IfThen(
                                    test,
@@ -4586,7 +4586,7 @@ namespace System.Management.Automation.Language
                            }
                        }
 
-                       if (skipDefault != null)
+                       if (skipDefault is not null)
                        {
                            exprs.Add(Expression.IfThen(Expression.Not(skipDefault), Compile(switchStatementAst.Default)));
                        }
@@ -4656,7 +4656,7 @@ namespace System.Management.Automation.Language
 
             // If we'll be assigning directly, we need to capture the value, otherwise just write to the current output pipe.
             // We should not preserve the partial output if exception is thrown when evaluating the body expr.
-            var dataExpr = dataStatementAst.Variable != null
+            var dataExpr = dataStatementAst.Variable is not null
                                ? CaptureAstResults(dataStatementAst.Body, CaptureAstContext.AssignmentWithoutResultPreservation).Cast(typeof(object))
                                : Compile(dataStatementAst.Body);
             exprs.Add(dataExpr);
@@ -4665,7 +4665,7 @@ namespace System.Management.Automation.Language
                 new[] { oldLanguageMode },
                 Expression.TryFinally(Expression.Block(exprs), Expression.Assign(languageModePropertyExpr, oldLanguageMode)));
 
-            if (dataStatementAst.Variable != null)
+            if (dataStatementAst.Variable is not null)
             {
                 return dataStatementAst.TupleIndex < 0
                     ? CallSetVariable(Expression.Constant(new VariablePath("local:" + dataStatementAst.Variable)), block)
@@ -4755,7 +4755,7 @@ namespace System.Management.Automation.Language
             var breakLabel = Expression.Label(!string.IsNullOrEmpty(loopLabel) ? loopLabel + "Break" : "break");
             var enterLoop = new EnterLoopExpression();
 
-            var loopTop = (continueAst != null)
+            var loopTop = (continueAst is not null)
                               ? Expression.Label(!string.IsNullOrEmpty(loopLabel) ? loopLabel + "LoopTop" : "looptop")
                               : continueLabel;
 
@@ -4778,12 +4778,12 @@ namespace System.Management.Automation.Language
 
             Expression loopBody =
                 Expression.TryCatch(Expression.Block(loopBodyExprs), GenerateLoopBreakContinueCatchBlocks(loopLabel, breakLabel, continueLabel));
-            if (continueAst != null)
+            if (continueAst is not null)
             {
                 var x = new List<Expression>();
                 x.Add(loopBody);
                 x.Add(Expression.Label(continueLabel));
-                if (continueAst.GetPureExpression() != null)
+                if (continueAst.GetPureExpression() is not null)
                 {
                     // Assignments generate the code to update the position automatically,
                     // but pre/post increments don't, so we add it here explicitly.
@@ -4796,7 +4796,7 @@ namespace System.Management.Automation.Language
                 loopBody = Expression.Block(x);
             }
 
-            if (generateCondition != null)
+            if (generateCondition is not null)
             {
                 exprs.Add(Expression.IfThen(generateCondition().Convert(typeof(bool)), loopBody));
             }
@@ -5036,10 +5036,10 @@ namespace System.Management.Automation.Language
 
         private Expression GetRangeEnumerator(ExpressionAst condExpr)
         {
-            if (condExpr != null)
+            if (condExpr is not null)
             {
                 var binaryExpr = condExpr as BinaryExpressionAst;
-                if (binaryExpr != null && binaryExpr.Operator == TokenKind.DotDot)
+                if (binaryExpr is not null && binaryExpr.Operator == TokenKind.DotDot)
                 {
                     Expression lhs = Compile(binaryExpr.Left);
                     Expression rhs = Compile(binaryExpr.Right);
@@ -5056,7 +5056,7 @@ namespace System.Management.Automation.Language
 
         private Expression UpdatePositionForInitializerOrCondition(PipelineBaseAst pipelineBaseAst, Expression initializerOrCondition)
         {
-            if (pipelineBaseAst is PipelineAst pipelineAst && !pipelineAst.Background && pipelineAst.GetPureExpression() != null)
+            if (pipelineBaseAst is PipelineAst pipelineAst && !pipelineAst.Background && pipelineAst.GetPureExpression() is not null)
             {
                 // If the initializer or condition is a pure expression (CommandExpressionAst without redirection),
                 // then we need to add a sequence point. If it's an AssignmentStatementAst, we don't need to add
@@ -5082,14 +5082,14 @@ namespace System.Management.Automation.Language
             // We should not preserve the partial output if exception is thrown when evaluating the initializer.
             Expression init = null;
             PipelineBaseAst initializer = forStatementAst.Initializer;
-            if (initializer != null)
+            if (initializer is not null)
             {
                 init = CaptureStatementResults(initializer, CaptureAstContext.AssignmentWithoutResultPreservation);
                 init = UpdatePositionForInitializerOrCondition(initializer, init);
             }
 
             PipelineBaseAst condition = forStatementAst.Condition;
-            var generateCondition = condition != null
+            var generateCondition = condition is not null
                 ? () => UpdatePositionForInitializerOrCondition(condition, CaptureStatementResults(condition, CaptureAstContext.Condition))
                 : (Func<Expression>)null;
 
@@ -5099,7 +5099,7 @@ namespace System.Management.Automation.Language
                 (loopBody, breakTarget, continueTarget) => loopBody.Add(Compile(forStatementAst.Body)),
                 forStatementAst.Iterator);
 
-            if (init != null)
+            if (init is not null)
             {
                 return Expression.Block(init, loop);
             }
@@ -5157,7 +5157,7 @@ namespace System.Management.Automation.Language
 
             internal IEnumerable<ParameterExpression> GetTemps()
             {
-                Diagnostics.Assert(_oldValue != null, "caller to only call GetTemps after calling SaveAutomaticVar");
+                Diagnostics.Assert(_oldValue is not null, "caller to only call GetTemps after calling SaveAutomaticVar");
                 yield return _oldValue;
             }
 
@@ -5398,7 +5398,7 @@ namespace System.Management.Automation.Language
                 catches.Add(Expression.Catch(exception, Expression.Block(avs.GetTemps().Append(oldexception).ToArray(), tf)));
             }
 
-            if (tryStatementAst.Finally != null)
+            if (tryStatementAst.Finally is not null)
             {
                 // Generate:
                 //     oldIsStopping = ExceptionHandlingOps.SuspendStoppingPipeline(executionContext);
@@ -5464,13 +5464,13 @@ namespace System.Management.Automation.Language
         {
             LabelTarget labelTarget = null;
             Expression labelExpr = null;
-            if (label != null)
+            if (label is not null)
             {
                 labelExpr = Compile(label);
                 if (_loopTargets.Count > 0)
                 {
                     var labelStrAst = label as StringConstantExpressionAst;
-                    if (labelStrAst != null)
+                    if (labelStrAst is not null)
                     {
                         labelTarget = (from t in _loopTargets
                                        where t.Label.Equals(labelStrAst.Value, StringComparison.OrdinalIgnoreCase)
@@ -5484,7 +5484,7 @@ namespace System.Management.Automation.Language
             }
 
             Expression result;
-            if (labelTarget != null)
+            if (labelTarget is not null)
             {
                 result = exprGenerator(labelTarget);
             }
@@ -5534,7 +5534,7 @@ namespace System.Management.Automation.Language
                                                    : ExpressionCache.Empty);
             }
 
-            if (returnStatementAst.Pipeline != null)
+            if (returnStatementAst.Pipeline is not null)
             {
                 var pipe = returnStatementAst.Pipeline;
                 var assignmentStatementAst = pipe as AssignmentStatementAst;
@@ -5561,7 +5561,7 @@ namespace System.Management.Automation.Language
                                             returnExpr);
                 }
 
-                returnValue = assignmentStatementAst != null
+                returnValue = assignmentStatementAst is not null
                     ? CallAddPipe(CompileAssignment(assignmentStatementAst), s_getCurrentPipe)
                     : Compile(pipe);
 
@@ -5574,7 +5574,7 @@ namespace System.Management.Automation.Language
         public object VisitExitStatement(ExitStatementAst exitStatementAst)
         {
             // We should not preserve the partial output if exception is thrown when evaluating exitStmt.pipeline.
-            Expression exitCode = exitStatementAst.Pipeline != null
+            Expression exitCode = exitStatementAst.Pipeline is not null
                                       ? CaptureStatementResults(exitStatementAst.Pipeline, CaptureAstContext.AssignmentWithoutResultPreservation)
                                       : ExpressionCache.Constant(0);
 
@@ -6057,7 +6057,7 @@ namespace System.Management.Automation.Language
             var typeName = convertExpressionAst.Type.TypeName;
             var hashTableAst = convertExpressionAst.Child as HashtableAst;
             Expression childExpr = null;
-            if (hashTableAst != null)
+            if (hashTableAst is not null)
             {
                 var temp = NewTemp(typeof(OrderedDictionary), "orderedDictionary");
                 if (typeName.FullName.Equals(LanguagePrimitives.OrderedAttribute, StringComparison.OrdinalIgnoreCase))
@@ -6082,7 +6082,7 @@ namespace System.Management.Automation.Language
             if (convertExpressionAst.IsRef())
             {
                 var varExpr = convertExpressionAst.Child as VariableExpressionAst;
-                if (varExpr != null && varExpr.VariablePath.IsVariable && !varExpr.IsConstantVariable())
+                if (varExpr is not null && varExpr.VariablePath.IsVariable && !varExpr.IsConstantVariable())
                 {
                     // We'll wrap the variable in a PSReference, but not the constant variables ($true, $false, $null) because those
                     // can't be changed.
@@ -6093,7 +6093,7 @@ namespace System.Management.Automation.Language
                         CachedReflectionInfo.VariableOps_GetVariableAsRef,
                         Expression.Constant(varExpr.VariablePath),
                         s_executionContextParameter,
-                        varType != null && varType != typeof(object)
+                        varType is not null && varType != typeof(object)
                             ? Expression.Constant(varType, typeof(Type))
                             : ExpressionCache.NullType);
                 }
@@ -6214,7 +6214,7 @@ namespace System.Management.Automation.Language
                 type = null;
             }
 
-            if (type != null)
+            if (type is not null)
             {
                 return Expression.Constant(type, typeof(Type));
             }
@@ -6238,10 +6238,10 @@ namespace System.Management.Automation.Language
             if (memberExpressionAst.Static && (memberExpressionAst.Expression is TypeExpressionAst))
             {
                 var type = ((TypeExpressionAst)memberExpressionAst.Expression).TypeName.GetReflectionType();
-                if (type != null && !type.IsGenericTypeDefinition)
+                if (type is not null && !type.IsGenericTypeDefinition)
                 {
                     var member = memberExpressionAst.Member as StringConstantExpressionAst;
-                    if (member != null)
+                    if (member is not null)
                     {
                         // We skip Methods because the adapter wraps them in a PSMethod and it's not a common scenario.
                         var memberInfo = type.GetMember(
@@ -6251,7 +6251,7 @@ namespace System.Management.Automation.Language
                         if (memberInfo.Length == 1)
                         {
                             var propertyInfo = memberInfo[0] as PropertyInfo;
-                            if (propertyInfo != null)
+                            if (propertyInfo is not null)
                             {
                                 if (propertyInfo.PropertyType.IsByRefLike)
                                 {
@@ -6290,7 +6290,7 @@ namespace System.Management.Automation.Language
 
             // If the ?. operator is used for null conditional check, add the null conditional expression.
             var memberNameAst = memberExpressionAst.Member as StringConstantExpressionAst;
-            Expression memberAccessExpr = memberNameAst != null
+            Expression memberAccessExpr = memberNameAst is not null
                 ? DynamicExpression.Dynamic(PSGetMemberBinder.Get(memberNameAst.Value, _memberFunctionType, memberExpressionAst.Static), typeof(object), target)
                 : DynamicExpression.Dynamic(PSGetDynamicMemberBinder.Get(_memberFunctionType, memberExpressionAst.Static), typeof(object), target, Compile(memberExpressionAst.Member));
 
@@ -6303,7 +6303,7 @@ namespace System.Management.Automation.Language
             var targetTypeConstraint = GetTypeConstraintForMethodResolution(invokeMemberExpressionAst.Expression);
             return CombineTypeConstraintForMethodResolution(
                     targetTypeConstraint,
-                    arguments != null ? arguments.Select(Compiler.GetTypeConstraintForMethodResolution).ToArray() : null);
+                    arguments is not null ? arguments.Select(Compiler.GetTypeConstraintForMethodResolution).ToArray() : null);
         }
 
         internal static PSMethodInvocationConstraints GetInvokeMemberConstraints(BaseCtorInvokeMemberExpressionAst invokeMemberExpressionAst)
@@ -6311,7 +6311,7 @@ namespace System.Management.Automation.Language
             Type targetTypeConstraint = null;
             var arguments = invokeMemberExpressionAst.Arguments;
             TypeDefinitionAst typeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(invokeMemberExpressionAst);
-            if (typeDefinitionAst != null)
+            if (typeDefinitionAst is not null)
             {
                 targetTypeConstraint = (typeDefinitionAst as TypeDefinitionAst).Type.BaseType;
             }
@@ -6322,7 +6322,7 @@ namespace System.Management.Automation.Language
 
             return CombineTypeConstraintForMethodResolution(
                     targetTypeConstraint,
-                    arguments != null ? arguments.Select(Compiler.GetTypeConstraintForMethodResolution).ToArray() : null);
+                    arguments is not null ? arguments.Select(Compiler.GetTypeConstraintForMethodResolution).ToArray() : null);
         }
 
         internal Expression InvokeMember(
@@ -6335,7 +6335,7 @@ namespace System.Management.Automation.Language
             bool nullConditional = false)
         {
             var callInfo = new CallInfo(args.Count());
-            var classScope = _memberFunctionType != null ? _memberFunctionType.Type : null;
+            var classScope = _memberFunctionType is not null ? _memberFunctionType.Type : null;
             var binder = name.Equals("new", StringComparison.OrdinalIgnoreCase) && @static
                 ? (CallSiteBinder)PSCreateInstanceBinder.Get(callInfo, constraints, publicTypeOnly: true)
                 : PSInvokeMemberBinder.Get(name, callInfo, @static, propertySet, constraints, classScope);
@@ -6375,7 +6375,7 @@ namespace System.Management.Automation.Language
             var args = CompileInvocationArguments(invokeMemberExpressionAst.Arguments);
 
             var memberNameAst = invokeMemberExpressionAst.Member as StringConstantExpressionAst;
-            if (memberNameAst != null)
+            if (memberNameAst is not null)
             {
                 return InvokeMember(
                     memberNameAst.Value,
@@ -6402,10 +6402,10 @@ namespace System.Management.Automation.Language
                 if (subExpr.Statements.Count == 1)
                 {
                     var pipelineBase = subExpr.Statements[0] as PipelineBaseAst;
-                    if (pipelineBase != null)
+                    if (pipelineBase is not null)
                     {
                         pureExprAst = pipelineBase.GetPureExpression();
-                        if (pureExprAst != null)
+                        if (pureExprAst is not null)
                         {
                             values = Compile(pureExprAst);
                         }
@@ -6504,7 +6504,7 @@ namespace System.Management.Automation.Language
             var pipe = parenExpressionAst.Pipeline;
             var assignmentStatementAst = pipe as AssignmentStatementAst;
 
-            if (assignmentStatementAst != null)
+            if (assignmentStatementAst is not null)
             {
                 return CompileAssignment(assignmentStatementAst);
             }
@@ -6548,7 +6548,7 @@ namespace System.Management.Automation.Language
             // In the former case, the user is requesting an array slice.  In the latter case, they index expression is likely
             // an array (dynamically determined) and they don't want an array slice, they want to use the array as the index
             // expression.
-            Expression indexingExpr = arrayLiteral != null && arrayLiteral.Elements.Count > 1
+            Expression indexingExpr = arrayLiteral is not null && arrayLiteral.Elements.Count > 1
                 ? DynamicExpression.Dynamic(
                     PSGetIndexBinder.Get(arrayLiteral.Elements.Count, constraints),
                     typeof(object),
@@ -6609,7 +6609,7 @@ namespace System.Management.Automation.Language
             CachedTarget = targetTemp;
             exprs.Add(Expression.Assign(targetTemp, target));
             var memberNameAst = MemberExpression.Member as StringConstantExpressionAst;
-            if (memberNameAst != null)
+            if (memberNameAst is not null)
             {
                 string name = memberNameAst.Value;
                 return DynamicExpression.Dynamic(PSGetMemberBinder.Get(name, compiler._memberFunctionType, MemberExpression.Static), typeof(object), targetTemp);
@@ -6626,7 +6626,7 @@ namespace System.Management.Automation.Language
         public Expression SetValue(Compiler compiler, Expression rhs)
         {
             var memberNameAst = MemberExpression.Member as StringConstantExpressionAst;
-            if (memberNameAst != null)
+            if (memberNameAst is not null)
             {
                 string name = memberNameAst.Value;
                 return DynamicExpression.Dynamic(
@@ -6663,7 +6663,7 @@ namespace System.Management.Automation.Language
 
         private IEnumerable<Expression> GetArgumentExprs(Compiler compiler)
         {
-            if (_argExprTemps != null)
+            if (_argExprTemps is not null)
             {
                 return _argExprTemps;
             }
@@ -6691,7 +6691,7 @@ namespace System.Management.Automation.Language
             temps.AddRange(_argExprTemps);
 
             var memberNameAst = InvokeMemberExpressionAst.Member as StringConstantExpressionAst;
-            if (memberNameAst != null)
+            if (memberNameAst is not null)
             {
                 return compiler.InvokeMember(memberNameAst.Value, constraints, _targetExprTemp, _argExprTemps, @static: false, propertySet: false);
             }
@@ -6712,7 +6712,7 @@ namespace System.Management.Automation.Language
             var memberNameAst = InvokeMemberExpressionAst.Member as StringConstantExpressionAst;
             var target = GetTargetExpr(compiler);
             var args = GetArgumentExprs(compiler);
-            if (memberNameAst != null)
+            if (memberNameAst is not null)
             {
                 return compiler.InvokeMember(memberNameAst.Value, constraints, target, args.Append(rhs), @static: false, propertySet: true);
             }
@@ -6757,7 +6757,7 @@ namespace System.Management.Automation.Language
             var arrayLiteral = index as ArrayLiteralAst;
             var constraints = GetInvocationConstraints();
             Expression result;
-            if (arrayLiteral != null)
+            if (arrayLiteral is not null)
             {
                 // If assignment to slices were allowed, we'd need to save the elements in temps
                 // like we do when doing normal assignment (below).  But it's not allowed, so it
@@ -6791,7 +6791,7 @@ namespace System.Management.Automation.Language
             var constraints = GetInvocationConstraints();
             var targetExpr = GetTargetExpr(compiler);
             Expression setExpr;
-            if (arrayLiteral != null)
+            if (arrayLiteral is not null)
             {
                 setExpr = DynamicExpression.Dynamic(
                                                 PSSetIndexBinder.Get(arrayLiteral.Elements.Count, constraints),
@@ -6836,12 +6836,12 @@ namespace System.Management.Automation.Language
                 var lhsElement = ArrayLiteral.Elements[i];
                 var nestedArrayLHS = lhsElement as ArrayLiteralAst;
                 var parenExpressionAst = lhsElement as ParenExpressionAst;
-                if (parenExpressionAst != null)
+                if (parenExpressionAst is not null)
                 {
                     nestedArrayLHS = parenExpressionAst.Pipeline.GetPureExpression() as ArrayLiteralAst;
                 }
 
-                if (nestedArrayLHS != null)
+                if (nestedArrayLHS is not null)
                 {
                     // Need to turn the rhs into an IList
                     indexedRHS = DynamicExpression.Dynamic(PSArrayAssignmentRHSBinder.Get(nestedArrayLHS.Elements.Count), typeof(IList), indexedRHS);
@@ -6887,7 +6887,7 @@ namespace System.Management.Automation.Language
             {
                 compiler.CompileAsVoid(expr);
                 var enterLoopExpression = expr as EnterLoopExpression;
-                if (enterLoopExpression != null)
+                if (enterLoopExpression is not null)
                 {
                     enterLoop = enterLoopExpression.EnterLoopInstruction;
                 }
@@ -6896,7 +6896,7 @@ namespace System.Management.Automation.Language
             compiler.PopLabelBlock(LabelScopeKind.Statement);
 
             // If enterLoop is null, we will never JIT compile the loop.
-            if (enterLoop != null)
+            if (enterLoop is not null)
             {
                 enterLoop.FinishLoop(compiler.Instructions.Count);
             }
@@ -6961,7 +6961,7 @@ namespace System.Management.Automation.Language
         public override Expression Reduce()
         {
             var exprs = new List<Expression>();
-            if (_debugSymbolDocument != null)
+            if (_debugSymbolDocument is not null)
             {
                 exprs.Add(Expression.DebugInfo(_debugSymbolDocument, _extent.StartLineNumber, _extent.StartColumnNumber, _extent.EndLineNumber, _extent.EndColumnNumber));
             }

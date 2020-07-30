@@ -455,7 +455,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 ex = e;
             }
 
-            if (ex != null)
+            if (ex is not null)
             {
                 WriteErrorLoadingDefinition(definition.Name, ex);
             }

@@ -72,7 +72,7 @@ namespace System.Management.Automation
         internal CustomControl(ComplexControlBody body, ViewDefinition viewDefinition)
         {
             // viewDefinition can be null for nested controls
-            if (viewDefinition != null)
+            if (viewDefinition is not null)
             {
                 OutOfBand = viewDefinition.outOfBand;
                 GroupBy = PSControlGroupBy.Get(viewDefinition.groupBy);
@@ -134,7 +134,7 @@ namespace System.Management.Automation
 
         internal CustomControlEntry(ComplexControlEntryDefinition entry)
         {
-            if (entry.appliesTo != null)
+            if (entry.appliesTo is not null)
             {
                 SelectedBy = EntrySelectedBy.Get(entry.appliesTo.referenceList);
             }
@@ -180,13 +180,13 @@ namespace System.Management.Automation
             }
 
             var textToken = token as TextToken;
-            if (textToken != null)
+            if (textToken is not null)
             {
                 return new CustomItemText { Text = textToken.text };
             }
 
             var frameToken = token as FrameToken;
-            if (frameToken != null)
+            if (frameToken is not null)
             {
                 var frame = new CustomItemFrame
                 {
@@ -212,21 +212,21 @@ namespace System.Management.Automation
             }
 
             var cpt = token as CompoundPropertyToken;
-            if (cpt != null)
+            if (cpt is not null)
             {
                 var cie = new CustomItemExpression { EnumerateCollection = cpt.enumerateCollection };
 
-                if (cpt.conditionToken != null)
+                if (cpt.conditionToken is not null)
                 {
                     cie.ItemSelectionCondition = new DisplayEntry(cpt.conditionToken);
                 }
 
-                if (cpt.expression.expressionValue != null)
+                if (cpt.expression.expressionValue is not null)
                 {
                     cie.Expression = new DisplayEntry(cpt.expression);
                 }
 
-                if (cpt.control != null)
+                if (cpt.control is not null)
                 {
                     cie.CustomControl = new CustomControl((ComplexControlBody)cpt.control, null);
                 }
@@ -235,7 +235,7 @@ namespace System.Management.Automation
             }
 
             var fpt = token as FieldPropertyToken;
-            if (fpt != null)
+            if (fpt is not null)
             {
             }
 
@@ -358,9 +358,9 @@ namespace System.Management.Automation
         {
             _entryStack.Peek().Add(new CustomItemExpression()
             {
-                ItemSelectionCondition = selectedByScript != null
+                ItemSelectionCondition = selectedByScript is not null
                     ? new DisplayEntry(selectedByScript, DisplayEntryValueType.ScriptBlock)
-                    : selectedByType != null
+                    : selectedByType is not null
                         ? new DisplayEntry(selectedByType, DisplayEntryValueType.Property)
                         : null,
                 EnumerateCollection = enumerateCollection,
@@ -402,9 +402,9 @@ namespace System.Management.Automation
         {
             _entryStack.Peek().Add(new CustomItemExpression()
             {
-                ItemSelectionCondition = selectedByScript != null
+                ItemSelectionCondition = selectedByScript is not null
                     ? new DisplayEntry(selectedByScript, DisplayEntryValueType.ScriptBlock)
-                    : selectedByType != null
+                    : selectedByType is not null
                         ? new DisplayEntry(selectedByType, DisplayEntryValueType.Property)
                         : null,
                 EnumerateCollection = enumerateCollection,

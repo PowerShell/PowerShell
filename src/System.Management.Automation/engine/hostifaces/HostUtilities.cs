@@ -345,7 +345,7 @@ namespace System.Management.Automation
 
                 // If we got information about the error invocation,
                 // we can be more careful with the errors we pass along
-                if ((lastErrorRecord != null) && (lastErrorRecord.InvocationInfo != null))
+                if ((lastErrorRecord is not null) && (lastErrorRecord.InvocationInfo is not null))
                 {
                     if (lastErrorRecord.InvocationInfo.HistoryId == lastHistory.Id)
                         lastError = lastErrorRecord;
@@ -462,10 +462,10 @@ namespace System.Management.Automation
                     }
                     else if (matchType == SuggestionMatchType.Error)
                     {
-                        if (lastError != null)
+                        if (lastError is not null)
                         {
                             Exception lastException = lastError as Exception;
-                            if (lastException != null)
+                            if (lastException is not null)
                             {
                                 matchText = lastException.Message;
                             }
@@ -477,7 +477,7 @@ namespace System.Management.Automation
                     }
                     else if (matchType == SuggestionMatchType.ErrorId)
                     {
-                        if (lastError != null && lastError is ErrorRecord errorRecord)
+                        if (lastError is not null && lastError is ErrorRecord errorRecord)
                         {
                             matchText = errorRecord.FullyQualifiedErrorId;
                         }
@@ -693,7 +693,7 @@ namespace System.Management.Automation
             SSHConnectionInfo sshConnectionInfo = runspace.ConnectionInfo as SSHConnectionInfo;
 
             // Usernames are case-sensitive on Unix systems
-            if (sshConnectionInfo != null &&
+            if (sshConnectionInfo is not null &&
                 !string.IsNullOrEmpty(sshConnectionInfo.UserName) &&
                 !System.Environment.UserName.Equals(sshConnectionInfo.UserName, StringComparison.Ordinal))
             {
@@ -808,7 +808,7 @@ namespace System.Management.Automation
                 throw new PSArgumentNullException(nameof(runspace));
             }
 
-            if ((runspace.Debugger != null) && runspace.Debugger.InBreakpoint)
+            if ((runspace.Debugger is not null) && runspace.Debugger.InBreakpoint)
             {
                 // Use the Debugger API to run the command when a runspace is stopped in the debugger.
                 PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
@@ -826,7 +826,7 @@ namespace System.Management.Automation
             if (runspace.ConnectionInfo is null)
             {
                 // Local runspace.  Make a nested PowerShell object as needed.
-                ps.SetIsNested(runspace.GetCurrentlyRunningPipeline() != null);
+                ps.SetIsNested(runspace.GetCurrentlyRunningPipeline() is not null);
             }
 
             using (ps)

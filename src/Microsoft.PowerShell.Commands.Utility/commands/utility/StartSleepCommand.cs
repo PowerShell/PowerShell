@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_disposed == false)
             {
-                if (_waitHandle != null)
+                if (_waitHandle is not null)
                 {
                     _waitHandle.Dispose();
                     _waitHandle = null;
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (_waitHandle != null)
+            if (_waitHandle is not null)
             {
                 _waitHandle.WaitOne(milliSecondsToSleep, true);
             }
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
             lock (_syncObject)
             {
                 _stopping = true;
-                if (_waitHandle != null)
+                if (_waitHandle is not null)
                 {
                     _waitHandle.Set();
                 }

@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 if (wildcardsEnabled)
                 {
                     var propertyValueAsString = propertyValue as string;
-                    if ((propertyValueAsString != null) && (WildcardPattern.ContainsWildcardCharacters(propertyValueAsString)))
+                    if ((propertyValueAsString is not null) && (WildcardPattern.ContainsWildcardCharacters(propertyValueAsString)))
                     {
                         this.ErrorMessageGenerator =
                             (queryDescription, className) => GetErrorMessageForNotFound_ForWildcard(this.PropertyName, this.PropertyValue, className);
@@ -467,7 +467,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 else
                 {
                     string expectedPropertyValueAsString = cimTypedExpectedPropertyValue as string;
-                    if (expectedPropertyValueAsString != null && WildcardPattern.ContainsWildcardCharacters(expectedPropertyValueAsString))
+                    if (expectedPropertyValueAsString is not null && WildcardPattern.ContainsWildcardCharacters(expectedPropertyValueAsString))
                     {
                         return BehaviorOnNoMatch.SilentlyContinue;
                     }
@@ -505,7 +505,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
 
                 var expectedPropertyValueAsString = expectedPropertyValue as string;
-                if (expectedPropertyValueAsString != null)
+                if (expectedPropertyValueAsString is not null)
                 {
                     var actualPropertyValueAsString = (string)actualPropertyValue;
                     return actualPropertyValueAsString.Equals(expectedPropertyValueAsString, StringComparison.OrdinalIgnoreCase);
@@ -667,7 +667,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
 
             CimInstanceFilterBase filter = _filters.SingleOrDefault();
-            if (filter != null)
+            if (filter is not null)
             {
                 return filter.GetNotFoundErrors_IfThisIsTheOnlyFilter();
             }

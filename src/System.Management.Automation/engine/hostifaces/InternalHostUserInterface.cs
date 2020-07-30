@@ -24,7 +24,7 @@ namespace System.Management.Automation.Internal.Host
 
             // parent may not be null, however
 
-            Dbg.Assert(parentHost != null, "parent may not be null");
+            Dbg.Assert(parentHost is not null, "parent may not be null");
             if (parentHost is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(parentHost));
@@ -34,7 +34,7 @@ namespace System.Management.Automation.Internal.Host
 
             PSHostRawUserInterface rawui = null;
 
-            if (externalUI != null)
+            if (externalUI is not null)
             {
                 rawui = externalUI.RawUI;
             }
@@ -80,7 +80,7 @@ namespace System.Management.Automation.Internal.Host
 
         public override bool SupportsVirtualTerminal
         {
-            get { return (_externalUI != null) ? _externalUI.SupportsVirtualTerminal : false; }
+            get { return (_externalUI is not null) ? _externalUI.SupportsVirtualTerminal : false; }
         }
 
         /// <summary>
@@ -390,7 +390,7 @@ namespace System.Management.Automation.Internal.Host
         /// <param name="record">DebugRecord.</param>
         internal void WriteDebugInfoBuffers(DebugRecord record)
         {
-            if (_informationalBuffers != null)
+            if (_informationalBuffers is not null)
             {
                 _informationalBuffers.AddDebug(record);
             }
@@ -591,7 +591,7 @@ namespace System.Management.Automation.Internal.Host
             }
 
             // Write to Information Buffers
-            if (_informationalBuffers != null)
+            if (_informationalBuffers is not null)
             {
                 _informationalBuffers.AddProgress(record);
             }
@@ -644,7 +644,7 @@ namespace System.Management.Automation.Internal.Host
         /// <param name="record">VerboseRecord.</param>
         internal void WriteVerboseInfoBuffers(VerboseRecord record)
         {
-            if (_informationalBuffers != null)
+            if (_informationalBuffers is not null)
             {
                 _informationalBuffers.AddVerbose(record);
             }
@@ -688,7 +688,7 @@ namespace System.Management.Automation.Internal.Host
         /// <param name="record">WarningRecord.</param>
         internal void WriteWarningInfoBuffers(WarningRecord record)
         {
-            if (_informationalBuffers != null)
+            if (_informationalBuffers is not null)
             {
                 _informationalBuffers.AddWarning(record);
             }
@@ -714,7 +714,7 @@ namespace System.Management.Automation.Internal.Host
         /// <param name="record">WarningRecord.</param>
         internal void WriteInformationInfoBuffers(InformationRecord record)
         {
-            if (_informationalBuffers != null)
+            if (_informationalBuffers is not null)
             {
                 _informationalBuffers.AddInformation(record);
             }
@@ -935,7 +935,7 @@ namespace System.Management.Automation.Internal.Host
             Collection<ChoiceDescription> choices,
             IEnumerable<int> defaultChoices)
         {
-            Dbg.Assert(_externalUI != null, "externalUI cannot be null.");
+            Dbg.Assert(_externalUI is not null, "externalUI cannot be null.");
 
             if (choices is null)
             {
@@ -949,7 +949,7 @@ namespace System.Management.Automation.Internal.Host
             }
 
             Dictionary<int, bool> defaultChoiceKeys = new Dictionary<int, bool>();
-            if (defaultChoices != null)
+            if (defaultChoices is not null)
             {
                 foreach (int defaultChoice in defaultChoices)
                 {

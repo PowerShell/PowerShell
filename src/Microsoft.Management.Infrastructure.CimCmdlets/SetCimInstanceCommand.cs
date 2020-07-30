@@ -324,7 +324,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void EndProcessing()
         {
             CimSetCimInstance cimSetCimInstance = this.GetOperationAgent();
-            if (cimSetCimInstance != null)
+            if (cimSetCimInstance is not null)
             {
                 cimSetCimInstance.ProcessRemainActions(this.CmdletOperation);
             }

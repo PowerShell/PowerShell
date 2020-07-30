@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void SetEndProcessingAction(Action endProcessingAction)
         {
-            Dbg.Assert(endProcessingAction != null, "Caller should verify endProcessingAction != null");
+            Dbg.Assert(endProcessingAction is not null, "Caller should verify endProcessingAction is not null");
             lock (_endProcessingActionLock)
             {
                 if (_endProcessingAction is null)
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Invoke action outside lock.
-            if (endProcessingAction != null)
+            if (endProcessingAction is not null)
             {
                 endProcessingAction();
             }
@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
         private void HandleJobStateChangedEvent(object source, JobStateEventArgs eventArgs)
         {
             Dbg.Assert(source is Job, "Caller should verify source is Job");
-            Dbg.Assert(eventArgs != null, "Caller should verify eventArgs != null");
+            Dbg.Assert(eventArgs is not null, "Caller should verify eventArgs is not null");
 
             var job = (Job)source;
             lock (_jobTrackingLock)
@@ -195,7 +195,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void AddJobsThatNeedJobChangesTracking(IEnumerable<Job> jobsToAdd)
         {
-            Dbg.Assert(jobsToAdd != null, "Caller should verify jobs != null");
+            Dbg.Assert(jobsToAdd is not null, "Caller should verify jobs is not null");
 
             lock (_jobTrackingLock)
             {
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
         {
             lock (_timerLock)
             {
-                if (_timer != null)
+                if (_timer is not null)
                 {
                     _timer.Dispose();
                     _timer = null;
@@ -359,7 +359,7 @@ namespace Microsoft.PowerShell.Commands
         private void EndProcessingOutputSingleFinishedJob()
         {
             Job finishedJob = this.GetFinishedJobs().FirstOrDefault();
-            if (finishedJob != null)
+            if (finishedJob is not null)
             {
                 this.WriteObject(finishedJob);
             }

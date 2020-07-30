@@ -56,7 +56,7 @@ namespace System.Management.Automation
             get
             {
                 Dbg.Diagnostics.Assert(
-                    _host != null,
+                    _host is not null,
                     "The only constructor for this class should always set the host field");
 
                 return _host;

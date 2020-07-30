@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
         protected void SetDebugPreferenceHelper(string processName, string[] appDomainName, bool enable, string fullyQualifiedErrorId)
         {
             List<string> appDomainNames = null;
-            if (appDomainName != null)
+            if (appDomainName is not null)
             {
                 foreach (string currentAppDomainName in appDomainName)
                 {
@@ -498,7 +498,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (var runspace in results)
             {
                 System.Management.Automation.Debugger debugger = GetDebuggerFromRunspace(runspace);
-                if (debugger != null)
+                if (debugger is not null)
                 {
                     WriteObject(
                         new PSRunspaceDebug((debugger.UnhandledBreakpointMode == UnhandledBreakpointProcessingMode.Wait),
@@ -533,7 +533,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Runspace currentRunspace = this.Context.CurrentRunspace;
 
-            if (currentRunspace != null && currentRunspace.Debugger != null)
+            if (currentRunspace is not null && currentRunspace.Debugger is not null)
             {
                 WriteVerbose(string.Format(CultureInfo.InvariantCulture, Debugger.DebugBreakMessage, MyInvocation.ScriptLineNumber, MyInvocation.ScriptName));
 

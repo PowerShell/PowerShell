@@ -230,14 +230,14 @@ namespace Microsoft.PowerShell.Commands
 
             // Cancel runspace debugging.
             System.Management.Automation.Debugger debugger = _debugger;
-            if ((debugger != null) && (_runspace != null))
+            if ((debugger is not null) && (_runspace is not null))
             {
                 debugger.StopDebugRunspace(_runspace);
             }
 
             // Unblock the data collection.
             PSDataCollection<PSStreamObject> debugCollection = _debugBlockingCollection;
-            if (debugCollection != null)
+            if (debugCollection is not null)
             {
                 debugCollection.Complete();
             }
@@ -315,11 +315,11 @@ namespace Microsoft.PowerShell.Commands
 
         private void HostWriteLine(string line)
         {
-            if ((this.Host != null) && (this.Host.UI != null))
+            if ((this.Host is not null) && (this.Host.UI is not null))
             {
                 try
                 {
-                    if (this.Host.UI.RawUI != null)
+                    if (this.Host.UI.RawUI is not null)
                     {
                         this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, line);
                     }
@@ -335,23 +335,23 @@ namespace Microsoft.PowerShell.Commands
         private void AddDataEventHandlers()
         {
             // Create new collection objects.
-            if (_debugBlockingCollection != null) { _debugBlockingCollection.Dispose(); }
+            if (_debugBlockingCollection is not null) { _debugBlockingCollection.Dispose(); }
 
-            if (_debugAccumulateCollection != null) { _debugAccumulateCollection.Dispose(); }
+            if (_debugAccumulateCollection is not null) { _debugAccumulateCollection.Dispose(); }
 
             _debugBlockingCollection = new PSDataCollection<PSStreamObject>();
             _debugBlockingCollection.BlockingEnumerator = true;
             _debugAccumulateCollection = new PSDataCollection<PSStreamObject>();
 
             _runningPowerShell = _runspace.GetCurrentBasePowerShell();
-            if (_runningPowerShell != null)
+            if (_runningPowerShell is not null)
             {
-                if (_runningPowerShell.OutputBuffer != null)
+                if (_runningPowerShell.OutputBuffer is not null)
                 {
                     _runningPowerShell.OutputBuffer.DataAdding += HandlePowerShellOutputBufferDataAdding;
                 }
 
-                if (_runningPowerShell.ErrorBuffer != null)
+                if (_runningPowerShell.ErrorBuffer is not null)
                 {
                     _runningPowerShell.ErrorBuffer.DataAdding += HandlePowerShellErrorBufferDataAdding;
                 }
@@ -359,14 +359,14 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 _runningPipeline = _runspace.GetCurrentlyRunningPipeline();
-                if (_runningPipeline != null)
+                if (_runningPipeline is not null)
                 {
-                    if (_runningPipeline.Output != null)
+                    if (_runningPipeline.Output is not null)
                     {
                         _runningPipeline.Output.DataReady += HandlePipelineOutputDataReady;
                     }
 
-                    if (_runningPipeline.Error != null)
+                    if (_runningPipeline.Error is not null)
                     {
                         _runningPipeline.Error.DataReady += HandlePipelineErrorDataReady;
                     }
@@ -376,28 +376,28 @@ namespace Microsoft.PowerShell.Commands
 
         private void RemoveDataEventHandlers()
         {
-            if (_runningPowerShell != null)
+            if (_runningPowerShell is not null)
             {
-                if (_runningPowerShell.OutputBuffer != null)
+                if (_runningPowerShell.OutputBuffer is not null)
                 {
                     _runningPowerShell.OutputBuffer.DataAdding -= HandlePowerShellOutputBufferDataAdding;
                 }
 
-                if (_runningPowerShell.ErrorBuffer != null)
+                if (_runningPowerShell.ErrorBuffer is not null)
                 {
                     _runningPowerShell.ErrorBuffer.DataAdding -= HandlePowerShellErrorBufferDataAdding;
                 }
 
                 _runningPowerShell = null;
             }
-            else if (_runningPipeline != null)
+            else if (_runningPipeline is not null)
             {
-                if (_runningPipeline.Output != null)
+                if (_runningPipeline.Output is not null)
                 {
                     _runningPipeline.Output.DataReady -= HandlePipelineOutputDataReady;
                 }
 
-                if (_runningPipeline.Error != null)
+                if (_runningPipeline.Error is not null)
                 {
                     _runningPipeline.Error.DataReady -= HandlePipelineErrorDataReady;
                 }
@@ -410,10 +410,10 @@ namespace Microsoft.PowerShell.Commands
         {
             // Ignore nested commands.
             LocalRunspace localRunspace = sender as LocalRunspace;
-            if (localRunspace != null)
+            if (localRunspace is not null)
             {
                 var basePowerShell = localRunspace.GetCurrentBasePowerShell();
-                if ((basePowerShell != null) && (basePowerShell.IsNested))
+                if ((basePowerShell is not null) && (basePowerShell.IsNested))
                 {
                     return;
                 }
@@ -441,7 +441,7 @@ namespace Microsoft.PowerShell.Commands
         private void HandlePipelineOutputDataReady(object sender, EventArgs e)
         {
             PipelineReader<PSObject> reader = sender as PipelineReader<PSObject>;
-            if (reader != null && reader.IsOpen)
+            if (reader is not null && reader.IsOpen)
             {
                 WritePipelineCollection(reader.NonBlockingRead(), PSStreamObjectType.Output);
             }
@@ -450,7 +450,7 @@ namespace Microsoft.PowerShell.Commands
         private void HandlePipelineErrorDataReady(object sender, EventArgs e)
         {
             PipelineReader<object> reader = sender as PipelineReader<object>;
-            if (reader != null && reader.IsOpen)
+            if (reader is not null && reader.IsOpen)
             {
                 WritePipelineCollection(reader.NonBlockingRead(), PSStreamObjectType.Error);
             }
@@ -460,7 +460,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (var item in collection)
             {
-                if (item != null)
+                if (item is not null)
                 {
                     AddToDebugBlockingCollection(new PSStreamObject(psStreamType, item));
                 }
@@ -469,7 +469,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void HandlePowerShellOutputBufferDataAdding(object sender, DataAddingEventArgs e)
         {
-            if (e.ItemAdded != null)
+            if (e.ItemAdded is not null)
             {
                 HandlePowerShellPStreamItem(new PSStreamObject(PSStreamObjectType.Output, e.ItemAdded));
             }
@@ -477,7 +477,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void HandlePowerShellErrorBufferDataAdding(object sender, DataAddingEventArgs e)
         {
-            if (e.ItemAdded != null)
+            if (e.ItemAdded is not null)
             {
                 HandlePowerShellPStreamItem(new PSStreamObject(PSStreamObjectType.Error, e.ItemAdded));
             }
@@ -494,7 +494,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Handle new item.
-                if ((_debugBlockingCollection != null) && (_debugBlockingCollection.IsOpen))
+                if ((_debugBlockingCollection is not null) && (_debugBlockingCollection.IsOpen))
                 {
                     AddToDebugBlockingCollection(streamItem);
                 }
@@ -510,7 +510,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!_debugBlockingCollection.IsOpen) { return; }
 
-            if (streamItem != null)
+            if (streamItem is not null)
             {
                 try
                 {
@@ -538,7 +538,7 @@ namespace Microsoft.PowerShell.Commands
             if (_debugger is ServerRemoteDebugger)
             {
                 LocalRunspace localRunspace = runspace as LocalRunspace;
-                if ((localRunspace != null) && (localRunspace.ExecutionContext != null) && (localRunspace.ExecutionContext.EngineHostInterface != null))
+                if ((localRunspace is not null) && (localRunspace.ExecutionContext is not null) && (localRunspace.ExecutionContext.EngineHostInterface is not null))
                 {
                     try
                     {
@@ -552,7 +552,7 @@ namespace Microsoft.PowerShell.Commands
         private void SetLocalMode(System.Management.Automation.Debugger debugger, bool localMode)
         {
             ServerRemoteDebugger remoteDebugger = debugger as ServerRemoteDebugger;
-            if (remoteDebugger != null)
+            if (remoteDebugger is not null)
             {
                 remoteDebugger.LocalDebugMode = localMode;
             }

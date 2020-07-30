@@ -25,7 +25,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>Returns true if value is not null, false otherwise.</returns>
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return value != null;
+            return value is not null;
         }
 
         /// <summary>

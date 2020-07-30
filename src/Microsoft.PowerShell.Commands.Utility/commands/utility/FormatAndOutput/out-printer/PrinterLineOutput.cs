@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             finally
             {
                 // make sure we do not leak the font
-                if (_printFont != null)
+                if (_printFont is not null)
                 {
                     _printFont.Dispose();
                     _printFont = null;
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="g">GDI+ graphics object needed for verification.</param>
         private void CreateFont(Graphics g)
         {
-            if (_printFont != null)
+            if (_printFont is not null)
                 return;
 
             // create the font

@@ -29,8 +29,8 @@ namespace System.Management.Automation
         protected ScriptCommandProcessorBase(IScriptCommandInfo commandInfo, ExecutionContext context, bool useLocalScope, SessionStateInternal sessionState)
             : base((CommandInfo)commandInfo)
         {
-            Diagnostics.Assert(commandInfo != null, "commandInfo cannot be null");
-            Diagnostics.Assert(commandInfo.ScriptBlock != null, "scriptblock cannot be null");
+            Diagnostics.Assert(commandInfo is not null, "commandInfo cannot be null");
+            Diagnostics.Assert(commandInfo.ScriptBlock is not null, "scriptblock cannot be null");
 
             this._fromScriptFile = (this.CommandInfo is ExternalScriptInfo || this.CommandInfo is ScriptInfo);
             this._dontUseScopeCommandOrigin = true;
@@ -91,8 +91,8 @@ namespace System.Management.Automation
         /// </summary>
         protected void CommonInitialization(ScriptBlock scriptBlock, ExecutionContext context, bool useLocalScope, CommandOrigin origin, SessionStateInternal sessionState)
         {
-            Diagnostics.Assert(context != null, "execution context cannot be null");
-            Diagnostics.Assert(context.Engine != null, "context.engine cannot be null");
+            Diagnostics.Assert(context is not null, "execution context cannot be null");
+            Diagnostics.Assert(context.Engine is not null, "context.engine cannot be null");
 
             this.CommandSessionState = sessionState;
             this._context = context;
@@ -134,11 +134,11 @@ namespace System.Management.Automation
         /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
         internal override bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
-            if (arguments != null && CommandInfo != null && !string.IsNullOrEmpty(CommandInfo.Name) && _scriptBlock != null)
+            if (arguments is not null && CommandInfo is not null && !string.IsNullOrEmpty(CommandInfo.Name) && _scriptBlock is not null)
             {
                 foreach (CommandParameterInternal parameter in this.arguments)
                 {
-                    Dbg.Assert(parameter != null, "CommandProcessor.arguments shouldn't have any null arguments");
+                    Dbg.Assert(parameter is not null, "CommandProcessor.arguments shouldn't have any null arguments");
                     if (parameter.IsDashQuestion())
                     {
                         Dictionary<Ast, Token[]> scriptBlockTokenCache = new Dictionary<Ast, Token[]>();
@@ -380,7 +380,7 @@ namespace System.Management.Automation
             else if (IsPipelineInputExpected())
             {
                 // accumulate the input when working in "synchronous" mode
-                Debug.Assert(this.Command.MyInvocation.PipelineIterationInfo != null); // this should have been allocated when the pipe was started
+                Debug.Assert(this.Command.MyInvocation.PipelineIterationInfo is not null); // this should have been allocated when the pipe was started
                 if (this.CommandRuntime.InputPipe.ExternalReader is null)
                 {
                     while (Read())
@@ -440,7 +440,7 @@ namespace System.Management.Automation
         private void DoProcessRecordWithInput()
         {
             // block for input and execute "process" block for all input objects
-            Debug.Assert(this.Command.MyInvocation.PipelineIterationInfo != null); // this should have been allocated when the pipe was started
+            Debug.Assert(this.Command.MyInvocation.PipelineIterationInfo is not null); // this should have been allocated when the pipe was started
             var processBlock = _runOptimizedCode ? _scriptBlock.ProcessBlock : _scriptBlock.UnoptimizedProcessBlock;
             while (Read())
             {
@@ -536,7 +536,7 @@ namespace System.Management.Automation
                         else
                         {
                             IList list = inputToProcess as IList;
-                            inputToProcess = (list != null)
+                            inputToProcess = (list is not null)
                                                  ? list.GetEnumerator()
                                                  : LanguagePrimitives.GetEnumerator(inputToProcess);
                         }

@@ -402,7 +402,7 @@ Function PSGetSerializedShowCommandInfo
         {
             get
             {
-                return this.hostWindow != null;
+                return this.hostWindow is not null;
             }
         }
         #endregion properties called using reflection
@@ -542,7 +542,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 ShowCommandModuleInfo wrappedModule = null;
                 PSModuleInfo module = rawModule.BaseObject as PSModuleInfo;
-                if (module != null)
+                if (module is not null)
                 {
                     wrappedModule = new ShowCommandModuleInfo(module);
                 }
@@ -573,14 +573,14 @@ Function PSGetSerializedShowCommandInfo
             foreach (PSObject rawCommand in commandObjects)
             {
                 CommandInfo command = rawCommand.BaseObject as CommandInfo;
-                if (command != null)
+                if (command is not null)
                 {
                     returnValue.Add(new ShowCommandCommandInfo(command));
                 }
                 else
                 {
                     PSObject obj = rawCommand as PSObject;
-                    if (obj != null)
+                    if (obj is not null)
                     {
                         returnValue.Add(new ShowCommandCommandInfo(obj));
                     }
@@ -620,7 +620,7 @@ Function PSGetSerializedShowCommandInfo
         {
             string oldFilter = null;
 
-            if (oldViewModel.SelectedModule != null)
+            if (oldViewModel.SelectedModule is not null)
             {
                 // this will allow the old view model to stop listening for events before we
                 // replace it with a new view model
@@ -996,7 +996,7 @@ Function PSGetSerializedShowCommandInfo
         private void ImportModuleDone(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands)
         {
             this.allModulesViewModel.WaitMessageDisplayed = false;
-            if (this.window != null)
+            if (this.window is not null)
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
@@ -1023,7 +1023,7 @@ Function PSGetSerializedShowCommandInfo
         private void ImportModuleFailed(Exception reason)
         {
             this.allModulesViewModel.WaitMessageDisplayed = false;
-            if (this.window != null)
+            if (this.window is not null)
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
@@ -1046,7 +1046,7 @@ Function PSGetSerializedShowCommandInfo
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
         private void DisplayHelp(Collection<PSObject> getHelpResults)
         {
-            if (this.window != null && getHelpResults != null && getHelpResults.Count > 0)
+            if (this.window is not null && getHelpResults is not null && getHelpResults.Count > 0)
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
@@ -1066,7 +1066,7 @@ Function PSGetSerializedShowCommandInfo
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
         private void ActivateWindow()
         {
-            if (this.window != null)
+            if (this.window is not null)
             {
                 ShowCommandHelper.ActivateWindow(this.window);
             }
@@ -1133,7 +1133,7 @@ Function PSGetSerializedShowCommandInfo
         /// <param name="e">Event arguments.</param>
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (this.hostWindow != null)
+            if (this.hostWindow is not null)
             {
                 this.hostWindow.Focus();
             }
@@ -1233,7 +1233,7 @@ Function PSGetSerializedShowCommandInfo
             this.window.Dispatcher.Invoke(new ThreadStart(delegate
             {
                 // This can happen if ISE is closed while show-command is up
-                if (this.window != null)
+                if (this.window is not null)
                 {
                     this.window.Close();
                 }
@@ -1246,7 +1246,7 @@ Function PSGetSerializedShowCommandInfo
         /// <param name="errorString">Error message.</param>
         private void ShowErrorString(string errorString)
         {
-            if (errorString != null && errorString.Trim().Length > 0)
+            if (errorString is not null && errorString.Trim().Length > 0)
             {
                 MessageBox.Show(
                     string.Format(
@@ -1265,7 +1265,7 @@ Function PSGetSerializedShowCommandInfo
         /// <returns>The script to execute.</returns>
         private string InternalGetScript()
         {
-            if (this.allModulesViewModel != null)
+            if (this.allModulesViewModel is not null)
             {
                 return this.allModulesViewModel.GetScript();
             }

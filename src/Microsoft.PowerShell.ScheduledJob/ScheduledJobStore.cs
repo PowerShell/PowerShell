@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             // Directory names are identical to the corresponding scheduled job definition names.
             string directoryPath = GetDirectoryPath();
             IEnumerable<string> definitions = Directory.EnumerateDirectories(directoryPath);
-            return (definitions != null) ? definitions : new Collection<string>() as IEnumerable<string>;
+            return (definitions is not null) ? definitions : new Collection<string>() as IEnumerable<string>;
         }
 
         /// <summary>
@@ -242,7 +242,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             Collection<DateTime> jobRunInfos = new Collection<DateTime>();
             IEnumerable<string> jobRuns = Directory.EnumerateDirectories(definitionOutputPath);
-            if (jobRuns != null)
+            if (jobRuns is not null)
             {
                 // Job run directory names are the date/times that the job was started.
                 foreach (string jobRun in jobRuns)

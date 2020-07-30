@@ -30,12 +30,12 @@ namespace mvc.Controllers
             if (TryGetRangeHeader(out rangeHeader))
             {
                 var range = GetRange(rangeHeader);
-                if(range.From != null)
+                if(range.From is not null)
                 {
                     from = (int)range.From;
                 }
 
-                if(range.To != null)
+                if(range.To is not null)
                 {
                     to = (int)range.To;
                 }

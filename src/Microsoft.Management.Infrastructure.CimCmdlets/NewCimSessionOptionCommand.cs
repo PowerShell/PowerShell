@@ -490,14 +490,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     return;
             }
 
-            if (options != null)
+            if (options is not null)
             {
-                if (this.Culture != null)
+                if (this.Culture is not null)
                 {
                     options.Culture = this.Culture;
                 }
 
-                if (this.UICulture != null)
+                if (this.UICulture is not null)
                 {
                     options.UICulture = this.UICulture;
                 }
@@ -622,7 +622,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 wsmanoptions.PacketEncoding = PacketEncoding.Utf8;
             }
 
-            if (this.HttpPrefix != null)
+            if (this.HttpPrefix is not null)
             {
                 wsmanoptions.HttpUrlPrefix = this.HttpPrefix;
             }
@@ -647,7 +647,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 this.proxyauthenticationSet = false;
                 DebugHelper.WriteLogEx("create credential", 1);
                 CimCredential credentials = CreateCimCredentials(this.ProxyCredential, this.ProxyAuthentication, @"New-CimSessionOption", @"ProxyAuthentication");
-                if (credentials != null)
+                if (credentials is not null)
                 {
                     try
                     {

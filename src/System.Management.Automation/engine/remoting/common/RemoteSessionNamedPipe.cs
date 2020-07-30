@@ -492,7 +492,7 @@ namespace System.Management.Automation.Remoting
             // Create optional security attributes based on provided PipeSecurity.
             NamedPipeNative.SECURITY_ATTRIBUTES securityAttributes = null;
             GCHandle? securityDescHandle = null;
-            if (securityDesc != null)
+            if (securityDesc is not null)
             {
                 byte[] securityDescBuffer = new byte[securityDesc.BinaryLength];
                 securityDesc.GetBinaryForm(securityDescBuffer, 0);
@@ -512,7 +512,7 @@ namespace System.Management.Automation.Remoting
                 securityAttributes);
 
             int lastError = Marshal.GetLastWin32Error();
-            if (securityDescHandle != null)
+            if (securityDescHandle is not null)
             {
                 securityDescHandle.Value.Free();
             }
@@ -578,7 +578,7 @@ namespace System.Management.Automation.Remoting
                 IsDisposed = true;
             }
 
-            if (TextReader != null)
+            if (TextReader is not null)
             {
                 try { TextReader.Dispose(); }
                 catch (ObjectDisposedException) { }
@@ -586,7 +586,7 @@ namespace System.Management.Automation.Remoting
                 TextReader = null;
             }
 
-            if (TextWriter != null)
+            if (TextWriter is not null)
             {
                 try { TextWriter.Dispose(); }
                 catch (ObjectDisposedException) { }
@@ -594,7 +594,7 @@ namespace System.Management.Automation.Remoting
                 TextWriter = null;
             }
 
-            if (Stream != null)
+            if (Stream is not null)
             {
                 try { Stream.Dispose(); }
                 catch (ObjectDisposedException) { }
@@ -613,7 +613,7 @@ namespace System.Management.Automation.Remoting
         {
             lock (s_syncObject)
             {
-                if (_customNamedPipeServer != null && !_customNamedPipeServer.IsDisposed)
+                if (_customNamedPipeServer is not null && !_customNamedPipeServer.IsDisposed)
                 {
                     if (pipeName == _customNamedPipeServer.PipeName)
                     {
@@ -801,7 +801,7 @@ namespace System.Management.Automation.Remoting
                 ex = e;
             }
 
-            if (ex != null)
+            if (ex is not null)
             {
                 // Error during connection handling.  Don't try to restart listening thread.
                 string errorMessage = !string.IsNullOrEmpty(ex.Message) ? ex.Message : string.Empty;
@@ -820,7 +820,7 @@ namespace System.Management.Automation.Remoting
             try
             {
                 Action<RemoteSessionNamedPipeServer> clientConnectCallback = state as Action<RemoteSessionNamedPipeServer>;
-                Dbg.Assert(clientConnectCallback != null, "Client callback should never be null.");
+                Dbg.Assert(clientConnectCallback is not null, "Client callback should never be null.");
 
                 // Handle a new client connect by making the callback.
                 // The callback must handle all exceptions except
@@ -964,7 +964,7 @@ namespace System.Management.Automation.Remoting
             {
                 IPCNamedPipeServerEnabled = false;
                 RemoteSessionNamedPipeServer namedPipeServer = IPCNamedPipeServer;
-                if (namedPipeServer != null)
+                if (namedPipeServer is not null)
                 {
                     try
                     {
@@ -1060,7 +1060,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public void Dispose()
         {
-            if (TextReader != null)
+            if (TextReader is not null)
             {
                 try { TextReader.Dispose(); }
                 catch (ObjectDisposedException) { }
@@ -1068,7 +1068,7 @@ namespace System.Management.Automation.Remoting
                 TextReader = null;
             }
 
-            if (TextWriter != null)
+            if (TextWriter is not null)
             {
                 try { TextWriter.Dispose(); }
                 catch (ObjectDisposedException) { }
@@ -1076,7 +1076,7 @@ namespace System.Management.Automation.Remoting
                 TextWriter = null;
             }
 
-            if (_clientPipeStream != null)
+            if (_clientPipeStream is not null)
             {
                 try { _clientPipeStream.Dispose(); }
                 catch (ObjectDisposedException) { }
@@ -1112,7 +1112,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public void Close()
         {
-            if (_clientPipeStream != null)
+            if (_clientPipeStream is not null)
             {
                 _clientPipeStream.Dispose();
             }

@@ -665,7 +665,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         ProcessModule mainModule = PsUtils.GetMainModule(process);
-                        if (mainModule != null)
+                        if (mainModule is not null)
                         {
                             WriteObject(mainModule.FileVersionInfo, true);
                         }
@@ -926,7 +926,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_disposed == false)
             {
-                if (_waitHandle != null)
+                if (_waitHandle is not null)
                 {
                     _waitHandle.Dispose();
                     _waitHandle = null;
@@ -944,7 +944,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (0 == System.Threading.Interlocked.Decrement(ref _numberOfProcessesToWaitFor))
             {
-                if (_waitHandle != null)
+                if (_waitHandle is not null)
                 {
                     _waitHandle.Set();
                 }
@@ -1048,7 +1048,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void StopProcessing()
         {
-            if (_waitHandle != null)
+            if (_waitHandle is not null)
             {
                 _waitHandle.Set();
             }
@@ -1412,7 +1412,7 @@ namespace Microsoft.PowerShell.Commands
                 exception = e;
             }
 
-            if (exception != null)
+            if (exception is not null)
             {
                 if (!TryHasExited(process))
                 {
@@ -1874,12 +1874,12 @@ namespace Microsoft.PowerShell.Commands
 #endif
             }
 
-            if (ArgumentList != null)
+            if (ArgumentList is not null)
             {
                 startInfo.Arguments = string.Join(' ', ArgumentList);
             }
 
-            if (WorkingDirectory != null)
+            if (WorkingDirectory is not null)
             {
                 // WorkingDirectory -> Not Exist -> Throw Error
                 WorkingDirectory = ResolveFilePath(WorkingDirectory);
@@ -1922,7 +1922,7 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
                 startInfo.LoadUserProfile = _loaduserprofile;
 #endif
-                if (_credential != null)
+                if (_credential is not null)
                 {
                     NetworkCredential nwcredential = _credential.GetNetworkCredential();
                     startInfo.UserName = nwcredential.UserName;
@@ -1939,7 +1939,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // RedirectionInput File Check -> Not Exist -> Throw Error
-                if (_redirectstandardinput != null)
+                if (_redirectstandardinput is not null)
                 {
                     _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
                     if (!File.Exists(_redirectstandardinput))
@@ -1952,7 +1952,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // RedirectionInput == RedirectionOutput -> Throw Error
-                if (_redirectstandardinput != null && _redirectstandardoutput != null)
+                if (_redirectstandardinput is not null && _redirectstandardoutput is not null)
                 {
                     _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
                     _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
@@ -1966,7 +1966,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // RedirectionInput == RedirectionError -> Throw Error
-                if (_redirectstandardinput != null && _redirectstandarderror != null)
+                if (_redirectstandardinput is not null && _redirectstandarderror is not null)
                 {
                     _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
                     _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
@@ -1980,7 +1980,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // RedirectionOutput == RedirectionError -> Throw Error
-                if (_redirectstandardoutput != null && _redirectstandarderror != null)
+                if (_redirectstandardoutput is not null && _redirectstandarderror is not null)
                 {
                     _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
                     _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
@@ -1995,7 +1995,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (ParameterSetName.Equals("UseShellExecute"))
             {
-                if (Verb != null) { startInfo.Verb = Verb; }
+                if (Verb is not null) { startInfo.Verb = Verb; }
 
                 startInfo.WindowStyle = _windowstyle;
             }
@@ -2007,7 +2007,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (PassThru.IsPresent)
             {
-                if (process != null)
+                if (process is not null)
                 {
                     WriteObject(process);
                 }
@@ -2021,7 +2021,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (Wait.IsPresent)
             {
-                if (process != null)
+                if (process is not null)
                 {
                     if (!process.HasExited)
                     {
@@ -2060,7 +2060,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void StopProcessing()
         {
-            if (_waithandle != null)
+            if (_waithandle is not null)
             {
                 _waithandle.Set();
             }
@@ -2081,7 +2081,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void Dispose(bool isDisposing)
         {
-            if (_waithandle != null)
+            if (_waithandle is not null)
             {
                 _waithandle.Dispose();
                 _waithandle = null;
@@ -2097,7 +2097,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void myProcess_Exited(object sender, System.EventArgs e)
         {
-            if (_waithandle != null)
+            if (_waithandle is not null)
             {
                 _waithandle.Set();
             }
@@ -2200,12 +2200,12 @@ namespace Microsoft.PowerShell.Commands
         {
             Thread.Sleep(1000);
 
-            if (_outputWriter != null)
+            if (_outputWriter is not null)
             {
                 _outputWriter.Dispose();
             }
 
-            if (_errorWriter != null)
+            if (_errorWriter is not null)
             {
                 _errorWriter.Dispose();
             }
@@ -2213,7 +2213,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void SetupInputOutputRedirection(Process p)
         {
-            if (_redirectstandardinput != null)
+            if (_redirectstandardinput is not null)
             {
                 p.StartInfo.RedirectStandardInput = true;
                 _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
@@ -2223,7 +2223,7 @@ namespace Microsoft.PowerShell.Commands
                 p.StartInfo.RedirectStandardInput = false;
             }
 
-            if (_redirectstandardoutput != null)
+            if (_redirectstandardoutput is not null)
             {
                 p.StartInfo.RedirectStandardOutput = true;
                 _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
@@ -2238,7 +2238,7 @@ namespace Microsoft.PowerShell.Commands
                 _outputWriter = null;
             }
 
-            if (_redirectstandarderror != null)
+            if (_redirectstandarderror is not null)
             {
                 p.StartInfo.RedirectStandardError = true;
                 _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
@@ -2351,7 +2351,7 @@ namespace Microsoft.PowerShell.Commands
         private void SetStartupInfo(ProcessStartInfo startinfo, ref ProcessNativeMethods.STARTUPINFO lpStartupInfo, ref int creationFlags)
         {
                 // RedirectionStandardInput
-                if (_redirectstandardinput != null)
+                if (_redirectstandardinput is not null)
                 {
                     startinfo.RedirectStandardInput = true;
                     _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
@@ -2363,7 +2363,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // RedirectionStandardOutput
-                if (_redirectstandardoutput != null)
+                if (_redirectstandardoutput is not null)
                 {
                     startinfo.RedirectStandardOutput = true;
                     _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
@@ -2375,7 +2375,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // RedirectionStandardError
-                if (_redirectstandarderror != null)
+                if (_redirectstandarderror is not null)
                 {
                     startinfo.RedirectStandardError = true;
                     _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
@@ -2456,7 +2456,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!UseNewEnvironment)
                 {
                     var environmentVars = startinfo.EnvironmentVariables;
-                    if (environmentVars != null)
+                    if (environmentVars is not null)
                     {
                         // All Windows Operating Systems that we support are Windows NT systems, so we use Unicode for environment.
                         creationFlags |= 0x400;
@@ -2468,7 +2468,7 @@ namespace Microsoft.PowerShell.Commands
 
                 bool flag;
 
-                if (_credential != null)
+                if (_credential is not null)
                 {
                     // Run process as another user.
                     ProcessNativeMethods.LogonFlags logonFlags = 0;
@@ -2847,19 +2847,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (disposing)
                 {
-                    if ((this.hStdInput != null) && !this.hStdInput.IsInvalid)
+                    if ((this.hStdInput is not null) && !this.hStdInput.IsInvalid)
                     {
                         this.hStdInput.Dispose();
                         this.hStdInput = null;
                     }
 
-                    if ((this.hStdOutput != null) && !this.hStdOutput.IsInvalid)
+                    if ((this.hStdOutput is not null) && !this.hStdOutput.IsInvalid)
                     {
                         this.hStdOutput.Dispose();
                         this.hStdOutput = null;
                     }
 
-                    if ((this.hStdError != null) && !this.hStdError.IsInvalid)
+                    if ((this.hStdError is not null) && !this.hStdError.IsInvalid)
                     {
                         this.hStdError.Dispose();
                         this.hStdError = null;

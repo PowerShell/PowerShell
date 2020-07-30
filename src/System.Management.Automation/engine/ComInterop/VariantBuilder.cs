@@ -116,22 +116,22 @@ namespace System.Management.Automation.ComInterop
             {
                 if (_argBuilder is StringArgBuilder)
                 {
-                    Debug.Assert(TempVariable != null);
+                    Debug.Assert(TempVariable is not null);
                     return Expression.Call(typeof(Marshal).GetMethod("FreeBSTR"), TempVariable);
                 }
                 else if (_argBuilder is DispatchArgBuilder)
                 {
-                    Debug.Assert(TempVariable != null);
+                    Debug.Assert(TempVariable is not null);
                     return Release(TempVariable);
                 }
                 else if (_argBuilder is UnknownArgBuilder)
                 {
-                    Debug.Assert(TempVariable != null);
+                    Debug.Assert(TempVariable is not null);
                     return Release(TempVariable);
                 }
                 else if (_argBuilder is VariantArgBuilder)
                 {
-                    Debug.Assert(TempVariable != null);
+                    Debug.Assert(TempVariable is not null);
                     return Expression.Call(TempVariable, typeof(Variant).GetMethod("Clear"));
                 }
 

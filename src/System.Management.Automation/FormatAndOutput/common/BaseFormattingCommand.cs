@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             try
             {
                 // Win8: 192504
-                if (LocalPipeline.GetExecutionContextFromTLS() != null)
+                if (LocalPipeline.GetExecutionContextFromTLS() is not null)
                 {
                     enumLimitVal = LocalPipeline.GetExecutionContextFromTLS()
                         .SessionState.PSVariable
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private EnumerableExpansion GetExpansionState(PSObject so)
         {
             // if the command line swtich has been specified, use this as an override
-            if (_parameters != null && _parameters.expansion.HasValue)
+            if (_parameters is not null && _parameters.expansion.HasValue)
             {
                 return _parameters.expansion.Value;
             }
@@ -194,7 +194,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void SendCommentOutOfBand(string msg)
         {
             FormatEntryData fed = OutOfBandFormatViewManager.GenerateOutOfBandObjectAsToString(PSObjectHelper.AsPSObject(msg));
-            if (fed != null)
+            if (fed is not null)
             {
                 this.WriteObject(fed);
             }
@@ -323,7 +323,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _typeInfoDataBase, so, _enumerationLimit, false, out errors);
             WriteErrorRecords(errors);
 
-            if (fed != null)
+            if (fed is not null)
             {
                 this.WriteObject(fed);
                 return true;
@@ -356,7 +356,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (!isProcessingError)
                 WriteErrorRecords(errors);
 
-            if (fed != null)
+            if (fed is not null)
             {
                 this.WriteObject(fed);
                 return true;
@@ -433,7 +433,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal void SetCommandLineParameters(FormattingCommandLineParameters commandLineParameters)
         {
-            Diagnostics.Assert(commandLineParameters != null, "the caller has to pass a valid instance");
+            Diagnostics.Assert(commandLineParameters is not null, "the caller has to pass a valid instance");
             _parameters = commandLineParameters;
         }
 
@@ -481,7 +481,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="so">Object to process.</param>
         private void WritePayloadObject(PSObject so)
         {
-            Diagnostics.Assert(so != null, "object so cannot be null");
+            Diagnostics.Assert(so is not null, "object so cannot be null");
             FormatEntryData fed = _viewManager.ViewGenerator.GeneratePayload(so, _enumerationLimit);
             fed.writeStream = so.WriteStream;
             this.WriteObject(fed);
@@ -649,7 +649,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal MshParameter ProcessGroupByParameter()
         {
-            if (GroupBy != null)
+            if (GroupBy is not null)
             {
                 TerminatingErrorContext invocationContext =
                         new TerminatingErrorContext(this);
@@ -745,7 +745,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal void GetCommandLineProperties(FormattingCommandLineParameters parameters, bool isTable)
         {
-            if (Property != null)
+            if (Property is not null)
             {
                 CommandParameterDefinition def;
 

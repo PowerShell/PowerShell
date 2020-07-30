@@ -235,7 +235,7 @@ namespace Microsoft.CodeAnalysis
                 return null;
             }
 
-            Debug.Assert(displayName != null);
+            Debug.Assert(displayName is not null);
             IAssemblyName result;
             int hr = CreateAssemblyNameObject(out result, displayName, CANOF.PARSE_DISPLAY_NAME, IntPtr.Zero);
             if (hr != 0)
@@ -243,7 +243,7 @@ namespace Microsoft.CodeAnalysis
                 return null;
             }
 
-            Debug.Assert(result != null);
+            Debug.Assert(result is not null);
             return result;
         }
 
@@ -258,29 +258,29 @@ namespace Microsoft.CodeAnalysis
             string bestCulture = null;
             foreach (var candidate in candidates)
             {
-                if (bestCandidate != null)
+                if (bestCandidate is not null)
                 {
                     Version candidateVersion = GetVersion(candidate);
-                    Debug.Assert(candidateVersion != null);
+                    Debug.Assert(candidateVersion is not null);
 
                     if (bestVersion is null)
                     {
                         bestVersion = GetVersion(bestCandidate);
-                        Debug.Assert(bestVersion != null);
+                        Debug.Assert(bestVersion is not null);
                     }
 
                     int cmp = bestVersion.CompareTo(candidateVersion);
                     if (cmp == 0)
                     {
-                        if (preferredCultureOpt != null)
+                        if (preferredCultureOpt is not null)
                         {
                             string candidateCulture = GetCulture(candidate);
-                            Debug.Assert(candidateCulture != null);
+                            Debug.Assert(candidateCulture is not null);
 
                             if (bestCulture is null)
                             {
                                 bestCulture = GetCulture(candidate);
-                                Debug.Assert(bestCulture != null);
+                                Debug.Assert(bestCulture is not null);
                             }
 
                             // we have exactly the preferred culture or

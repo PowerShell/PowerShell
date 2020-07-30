@@ -124,17 +124,17 @@ namespace System.Management.Automation.Internal
 
             returnValue._graphicalHostHelperType = returnValue._graphicalHostAssembly.GetType(graphicalHostHelperTypeName);
 
-            Diagnostics.Assert(returnValue._graphicalHostHelperType != null, "the type exists in Microsoft.PowerShell.GraphicalHost");
+            Diagnostics.Assert(returnValue._graphicalHostHelperType is not null, "the type exists in Microsoft.PowerShell.GraphicalHost");
             ConstructorInfo constructor = returnValue._graphicalHostHelperType.GetConstructor(
                 BindingFlags.NonPublic | BindingFlags.Instance,
                 null,
                 new Type[] { },
                 null);
 
-            if (constructor != null)
+            if (constructor is not null)
             {
                 returnValue._graphicalHostHelperObject = constructor.Invoke(new object[] { });
-                Diagnostics.Assert(returnValue._graphicalHostHelperObject != null, "the constructor does not throw anything");
+                Diagnostics.Assert(returnValue._graphicalHostHelperObject is not null, "the constructor does not throw anything");
             }
 
             return returnValue;
@@ -158,9 +158,9 @@ namespace System.Management.Automation.Internal
         /// <returns>The method return value.</returns>
         internal object CallMethod(string methodName, params object[] arguments)
         {
-            Diagnostics.Assert(_graphicalHostHelperObject != null, "there should be a constructor in order to call an instance method");
+            Diagnostics.Assert(_graphicalHostHelperObject is not null, "there should be a constructor in order to call an instance method");
             MethodInfo method = _graphicalHostHelperType.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
-            Diagnostics.Assert(method != null, "method " + methodName + " exists in graphicalHostHelperType is verified by caller");
+            Diagnostics.Assert(method is not null, "method " + methodName + " exists in graphicalHostHelperType is verified by caller");
             return method.Invoke(_graphicalHostHelperObject, arguments);
         }
 
@@ -173,7 +173,7 @@ namespace System.Management.Automation.Internal
         internal object CallStaticMethod(string methodName, params object[] arguments)
         {
             MethodInfo method = _graphicalHostHelperType.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static);
-            Diagnostics.Assert(method != null, "method " + methodName + " exists in graphicalHostHelperType is verified by caller");
+            Diagnostics.Assert(method is not null, "method " + methodName + " exists in graphicalHostHelperType is verified by caller");
             return method.Invoke(null, arguments);
         }
 
@@ -184,9 +184,9 @@ namespace System.Management.Automation.Internal
         /// <returns>The value of an instance property with name <paramref name="propertyName"/></returns>
         internal object GetPropertyValue(string propertyName)
         {
-            Diagnostics.Assert(_graphicalHostHelperObject != null, "there should be a constructor in order to get an instance property value");
+            Diagnostics.Assert(_graphicalHostHelperObject is not null, "there should be a constructor in order to get an instance property value");
             PropertyInfo property = _graphicalHostHelperType.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Instance);
-            Diagnostics.Assert(property != null, "property " + propertyName + " exists in graphicalHostHelperType is verified by caller");
+            Diagnostics.Assert(property is not null, "property " + propertyName + " exists in graphicalHostHelperType is verified by caller");
             return property.GetValue(_graphicalHostHelperObject, new object[] { });
         }
 
@@ -198,7 +198,7 @@ namespace System.Management.Automation.Internal
         internal object GetStaticPropertyValue(string propertyName)
         {
             PropertyInfo property = _graphicalHostHelperType.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Static);
-            Diagnostics.Assert(property != null, "property " + propertyName + " exists in graphicalHostHelperType is verified by caller");
+            Diagnostics.Assert(property is not null, "property " + propertyName + " exists in graphicalHostHelperType is verified by caller");
             return property.GetValue(null, new object[] { });
         }
 
@@ -209,10 +209,10 @@ namespace System.Management.Automation.Internal
         /// <returns>True if the <paramref name="parentCmdlet"/> is being run remotely.</returns>
         private static bool IsInputFromRemoting(PSCmdlet parentCmdlet)
         {
-            Diagnostics.Assert(parentCmdlet.SessionState != null, "SessionState should always be available.");
+            Diagnostics.Assert(parentCmdlet.SessionState is not null, "SessionState should always be available.");
 
             PSVariable senderInfo = parentCmdlet.SessionState.PSVariable.Get("PSSenderInfo");
-            return senderInfo != null;
+            return senderInfo is not null;
         }
     }
 }

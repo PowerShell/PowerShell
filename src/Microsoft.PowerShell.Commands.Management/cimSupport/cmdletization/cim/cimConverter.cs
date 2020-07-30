@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Cim
             if (dotNetType.IsArray)
             {
                 Type dotNetElementType = CimValueConverter.GetElementType(dotNetType);
-                if (dotNetElementType != null)
+                if (dotNetElementType is not null)
                 {
                     var dotNetArray = (Array)psObject.BaseObject;
                     Type cimElementType = GetCimType(dotNetElementType);
@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.Cim
             if (dotNetType.IsArray)
             {
                 Type dotNetElementType = GetElementType(dotNetType);
-                if (dotNetElementType != null)
+                if (dotNetElementType is not null)
                 {
                     var dotNetArray = (Array)psObject.BaseObject;
                     Type cimElementType = CimValueConverter.GetCimType(dotNetElementType);
@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell.Cim
             }
 
             Type convertibleCimType = GetConvertibleCimType(dotNetType);
-            if (convertibleCimType != null)
+            if (convertibleCimType is not null)
             {
                 object cimIntrinsicValue = LanguagePrimitives.ConvertTo(dotNetObject, convertibleCimType, CultureInfo.InvariantCulture);
                 return cimIntrinsicValue;
@@ -377,7 +377,7 @@ namespace Microsoft.PowerShell.Cim
             if (expectedDotNetType.IsArray)
             {
                 Type dotNetElementType = GetElementType(expectedDotNetType);
-                if (dotNetElementType != null)
+                if (dotNetElementType is not null)
                 {
                     var cimArray = (Array)LanguagePrimitives.ConvertTo(cimObject, typeof(Array), CultureInfo.InvariantCulture);
                     Array dotNetArray = Array.CreateInstance(dotNetElementType, cimArray.Length);
@@ -392,7 +392,7 @@ namespace Microsoft.PowerShell.Cim
             }
 
             Type convertibleCimType = GetConvertibleCimType(expectedDotNetType);
-            if (convertibleCimType != null)
+            if (convertibleCimType is not null)
             {
                 object cimIntrinsicValue = LanguagePrimitives.ConvertTo(cimObject, convertibleCimType, CultureInfo.InvariantCulture);
                 object dotNetObject = LanguagePrimitives.ConvertTo(cimIntrinsicValue, expectedDotNetType, CultureInfo.InvariantCulture);
@@ -490,7 +490,7 @@ namespace Microsoft.PowerShell.Cim
 
         internal static CimType GetCimTypeEnum(Type dotNetType)
         {
-            Dbg.Assert(dotNetType != null, "Caller should make sure that dotNetType != null");
+            Dbg.Assert(dotNetType is not null, "Caller should make sure that dotNetType is not null");
 
             if (typeof(PSReference).IsAssignableFrom(dotNetType))
             {
@@ -535,7 +535,7 @@ namespace Microsoft.PowerShell.Cim
             }
 
             Type result = CimValueConverter.GetConvertibleCimType(dotNetType);
-            if (result != null)
+            if (result is not null)
             {
                 return result;
             }
@@ -619,7 +619,7 @@ namespace Microsoft.PowerShell.Cim
 
         internal static Type GetElementType(Type arrayType)
         {
-            Dbg.Assert(arrayType != null, "Caller should verify arrayType != null");
+            Dbg.Assert(arrayType is not null, "Caller should verify arrayType is not null");
             Dbg.Assert(arrayType.IsArray, "Caller should verify arrayType.IsArray");
 
             // MOF syntax from Appendix A of DSP0004 doesn't allow expressing
@@ -647,7 +647,7 @@ namespace Microsoft.PowerShell.Cim
             string descriptionOfTargetType)
         {
             Dbg.Assert(!string.IsNullOrEmpty(errorId), "Caller should verify !string.IsNullOrEmpty(errorId)");
-            Dbg.Assert(sourceValue != null, "Caller should verify sourceValue != null");
+            Dbg.Assert(sourceValue is not null, "Caller should verify sourceValue is not null");
             Dbg.Assert(!string.IsNullOrEmpty(descriptionOfTargetType), "Caller should verify !string.IsNullOrEmpty(descriptionOfTargetType)");
 
             throw new PSInvalidCastException(
@@ -662,7 +662,7 @@ namespace Microsoft.PowerShell.Cim
         [Conditional("DEBUG")]
         internal static void AssertIntrinsicCimValue(object value)
         {
-            Dbg.Assert(value != null, "Caller should verify value != null");
+            Dbg.Assert(value is not null, "Caller should verify value is not null");
             Type type = value.GetType();
             AssertIntrinsicCimType(type);
             Dbg.Assert(!typeof(PSReference).IsAssignableFrom(type) && typeof(PSReference[]) != type,
@@ -672,7 +672,7 @@ namespace Microsoft.PowerShell.Cim
         [Conditional("DEBUG")]
         internal static void AssertIntrinsicCimType(Type type)
         {
-            Dbg.Assert(type != null, "Caller should verify type != null");
+            Dbg.Assert(type is not null, "Caller should verify type is not null");
             Dbg.Assert(
                 LanguagePrimitives.IsCimIntrinsicScalarType(type) ||
                 (type.IsArray && LanguagePrimitives.IsCimIntrinsicScalarType(type.GetElementType())) ||

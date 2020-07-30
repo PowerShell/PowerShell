@@ -242,7 +242,7 @@ namespace System.Management.Automation.Remoting
                     // add items to the queue
                     foreach (IThrottleOperation operation in operations)
                     {
-                        Dbg.Assert(operation != null,
+                        Dbg.Assert(operation is not null,
                             "Operation submitComplete to throttle manager cannot be null");
                         _operationsQueue.Add(operation);
                     }
@@ -270,7 +270,7 @@ namespace System.Management.Automation.Remoting
                 // is not set to true (happens when EndSubmitOperations is called)
                 if (!_submitComplete)
                 {
-                    Dbg.Assert(operation != null,
+                    Dbg.Assert(operation is not null,
                         "Operation submitComplete to throttle manager cannot be null");
 
                     _operationsQueue.Add(operation);
@@ -466,7 +466,7 @@ namespace System.Management.Automation.Remoting
             {
                 IThrottleOperation operation = source as IThrottleOperation;
 
-                Dbg.Assert(operation != null, "Source of event should not be null");
+                Dbg.Assert(operation is not null, "Source of event should not be null");
 
                 int index = -1;
 
@@ -532,7 +532,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            if (operation != null)
+            if (operation is not null)
             {
                 operation.StartOperation();
             }

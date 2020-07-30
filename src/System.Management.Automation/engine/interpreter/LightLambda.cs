@@ -184,7 +184,7 @@ namespace System.Management.Automation.Interpreter
         internal Delegate MakeDelegate(Type delegateType)
         {
             Func<LightLambda, Delegate> fastCtor = GetRunDelegateCtor(delegateType);
-            if (fastCtor != null)
+            if (fastCtor is not null)
             {
                 return fastCtor(this);
             }
@@ -203,7 +203,7 @@ namespace System.Management.Automation.Interpreter
 
                 // Send it to anyone who's interested.
                 var compileEvent = Compile;
-                if (compileEvent != null && _delegateCreator.SameDelegateType)
+                if (compileEvent is not null && _delegateCreator.SameDelegateType)
                 {
                     compileEvent(this, new LightLambdaCompileEventArgs(_compiled));
                 }
@@ -252,7 +252,7 @@ namespace System.Management.Automation.Interpreter
 
         internal void RunVoidRef2<T0, T1>(ref T0 arg0, ref T1 arg1)
         {
-            // if (_compiled != null || TryGetCompiled()) {
+            // if (_compiled is not null || TryGetCompiled()) {
             //    ((ActionRef<T0, T1>)_compiled)(ref arg0, ref arg1);
             //    return;
             // }
@@ -276,7 +276,7 @@ namespace System.Management.Automation.Interpreter
 
         public object Run(params object[] arguments)
         {
-            if (_compiled != null || TryGetCompiled())
+            if (_compiled is not null || TryGetCompiled())
             {
                 return _compiled.DynamicInvoke(arguments);
             }

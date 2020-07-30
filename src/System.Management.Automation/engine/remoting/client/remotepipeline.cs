@@ -115,7 +115,7 @@ namespace System.Management.Automation
         internal RemotePipeline(RemoteRunspace runspace, string command, bool addToHistory, bool isNested)
             : this(runspace, addToHistory, isNested)
         {
-            if (command != null)
+            if (command is not null)
             {
                 _commands.Add(new Command(command, true));
             }
@@ -487,7 +487,7 @@ namespace System.Management.Automation
             // collect output in.  Check to see if the output was collected in a member variable.
             if (results.Count == 0)
             {
-                if (_outputCollection != null && _outputCollection.Count > 0)
+                if (_outputCollection is not null && _outputCollection.Count > 0)
                 {
                     results = new Collection<PSObject>(_outputCollection);
                 }
@@ -533,7 +533,7 @@ namespace System.Management.Automation
             if (CanStopPipeline(out isAlreadyStopping))
             {
                 // A pipeline can be stopped before it is started.so protecting against that
-                if (_powershell != null)
+                if (_powershell is not null)
                 {
                     IAsyncResult asyncresult = null;
                     try
@@ -663,7 +663,7 @@ namespace System.Management.Automation
                     Stop();
                     // _pipelineFinishedEvent.Close();
 
-                    if (_powershell != null)
+                    if (_powershell is not null)
                     {
                         _powershell.Dispose();
                         _powershell = null;
@@ -777,7 +777,7 @@ namespace System.Management.Automation
                 // to change pipeline state.
                 RunspaceAvailability previousAvailability = _runspace.RunspaceAvailability;
 
-                Guid? cmdInstanceId = (_powershell != null) ? _powershell.InstanceId : (Guid?)null;
+                Guid? cmdInstanceId = (_powershell is not null) ? _powershell.InstanceId : (Guid?)null;
                 _runspace.UpdateRunspaceAvailability(_pipelineStateInfo.State, false, cmdInstanceId);
 
                 _executionEventQueue.Enqueue(
@@ -814,7 +814,7 @@ namespace System.Management.Automation
                 stateChanged = this.StateChanged;
                 runspaceHasAvailabilityChangedSubscribers = _runspace.HasAvailabilityChangedSubscribers;
 
-                if (stateChanged != null || runspaceHasAvailabilityChangedSubscribers)
+                if (stateChanged is not null || runspaceHasAvailabilityChangedSubscribers)
                 {
                     tempEventQueue = _executionEventQueue;
                     _executionEventQueue = new Queue<ExecutionEventQueueItem>();
@@ -828,7 +828,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (tempEventQueue != null)
+            if (tempEventQueue is not null)
             {
                 while (tempEventQueue.Count > 0)
                 {
@@ -841,7 +841,7 @@ namespace System.Management.Automation
 
                     // Exception raised in the eventhandler are not error in pipeline.
                     // silently ignore them.
-                    if (stateChanged != null)
+                    if (stateChanged is not null)
                     {
                         try
                         {
@@ -1060,8 +1060,8 @@ namespace System.Management.Automation
                 }
 
                 if (currentPipeline is null &&
-                    ((RemoteRunspace)_runspace).RemoteCommand != null &&
-                    _connectCmdInfo != null &&
+                    ((RemoteRunspace)_runspace).RemoteCommand is not null &&
+                    _connectCmdInfo is not null &&
                     Guid.Equals(((RemoteRunspace)_runspace).RemoteCommand.CommandId, _connectCmdInfo.CommandId))
                 {
                     // Connect case.  We can add a pipeline to a busy runspace when
@@ -1070,7 +1070,7 @@ namespace System.Management.Automation
                     return;
                 }
 
-                if (currentPipeline != null &&
+                if (currentPipeline is not null &&
                          ReferenceEquals(currentPipeline, this))
                 {
                     // Reconnect case.  We can add a pipeline to a busy runspace when the

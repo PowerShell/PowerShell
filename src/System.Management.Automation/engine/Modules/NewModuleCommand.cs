@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void EndProcessing()
         {
             // Create a module from a scriptblock...
-            if (_scriptBlock != null)
+            if (_scriptBlock is not null)
             {
                 // Check ScriptBlock language mode.  If it is different than the context language mode
                 // then throw error since private trusted script functions may be exposed.
@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // If the module was created successfully, then process the result...
-                    if (localModule != null)
+                    if (localModule is not null)
                     {
                         if (_returnResult)
                         {

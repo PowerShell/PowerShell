@@ -217,7 +217,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         private void RaisePropertyChangedEvent<T>(EventHandler<PropertyChangedEventArgs<T>> eh, PropertyChangedEventArgs<T> e)
         {
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this,e);
             }

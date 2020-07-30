@@ -23,7 +23,7 @@ namespace System.Management.Automation.ComInterop
 
         internal ComTypeDesc(ITypeInfo typeInfo, ComType memberType, ComTypeLibDesc typeLibDesc) : base(memberType)
         {
-            if (typeInfo != null)
+            if (typeInfo is not null)
             {
                 ComRuntimeHelpers.GetInfoFromType(typeInfo, out _typeName, out _documentation);
             }
@@ -188,7 +188,7 @@ namespace System.Management.Automation.ComInterop
                     }
                 }
 
-                if (Events != null && Events.Count > 0)
+                if (Events is not null && Events.Count > 0)
                 {
                     foreach (string name in Events.Keys)
                     {

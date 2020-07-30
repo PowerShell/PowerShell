@@ -192,7 +192,7 @@ namespace System.Management.Automation
                     IntPtr.Zero);
 #pragma warning restore 56523
 
-                if (si.pSignExtInfo != null)
+                if (si.pSignExtInfo is not null)
                 {
                     Marshal.DestroyStructure<NativeMethods.CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO>(si.pSignExtInfo);
                     Marshal.FreeCoTaskMem(si.pSignExtInfo);
@@ -337,7 +337,7 @@ namespace System.Management.Automation
 
                                 // Get the time stamper certificate if available
                                 TryGetProviderSigner(phStateData, out IntPtr pProvSigner, out X509Certificate2 timestamperCert);
-                                if (timestamperCert != null)
+                                if (timestamperCert is not null)
                                 {
                                     signature = new Signature(filename, error, cert, timestamperCert);
                                 }
@@ -376,7 +376,7 @@ namespace System.Management.Automation
                                         // ProductFile has to be Catalog signed. Hence validating
                                         // to see if the Catalog API is functional using the ProductFile.
                                         Signature productFileSignature = GetSignatureFromCatalog(productFile);
-                                        Signature.CatalogApiAvailable = (productFileSignature != null && productFileSignature.Status == SignatureStatus.Valid);
+                                        Signature.CatalogApiAvailable = (productFileSignature is not null && productFileSignature.Status == SignatureStatus.Valid);
                                     }
                                 }
                             }
@@ -567,9 +567,9 @@ namespace System.Management.Automation
                 //
                 X509Certificate2 signerCert = GetCertFromChain(pProvSigner);
 
-                if (signerCert != null)
+                if (signerCert is not null)
                 {
-                    if (timestamperCert != null)
+                    if (timestamperCert is not null)
                     {
                         signature = new Signature(filePath,
                                                   error,
@@ -587,7 +587,7 @@ namespace System.Management.Automation
                 }
             }
 
-            Diagnostics.Assert(error != 0 || signature != null, "GetSignatureFromWintrustData: general crypto failure");
+            Diagnostics.Assert(error != 0 || signature is not null, "GetSignatureFromWintrustData: general crypto failure");
 
             if ((signature is null) && (error != 0))
             {

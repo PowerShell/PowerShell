@@ -236,7 +236,7 @@ namespace System.Management.Automation
         private object DealWithGetValueException(ExtendedTypeSystemException e, out bool shouldThrow)
         {
             GettingValueExceptionEventArgs eventArgs = new GettingValueExceptionEventArgs(e);
-            if (GettingValueException != null)
+            if (GettingValueException is not null)
             {
                 GettingValueException.SafeInvoke(this, eventArgs);
                 PSObjectTypeDescriptor.typeDescriptor.WriteLine(
@@ -312,7 +312,7 @@ namespace System.Management.Automation
         private void DealWithSetValueException(ExtendedTypeSystemException e, out bool shouldThrow)
         {
             SettingValueExceptionEventArgs eventArgs = new SettingValueExceptionEventArgs(e);
-            if (SettingValueException != null)
+            if (SettingValueException is not null)
             {
                 SettingValueException.SafeInvoke(this, eventArgs);
                 PSObjectTypeDescriptor.typeDescriptor.WriteLine(
@@ -378,10 +378,10 @@ namespace System.Management.Automation
 
                 AttributeCollection propertyAttributes = null;
                 Type propertyType = typeof(object);
-                if (attributes != null && attributes.Length != 0)
+                if (attributes is not null && attributes.Length != 0)
                 {
                     PSProperty property = propertyInfo as PSProperty;
-                    if (property != null)
+                    if (property is not null)
                     {
                         DotNetAdapter.PropertyCacheEntry propertyEntry = property.adapterData as DotNetAdapter.PropertyCacheEntry;
                         if (propertyEntry is null)
@@ -508,10 +508,10 @@ namespace System.Management.Automation
 
             string defaultProperty = null;
             PSMemberSet standardMembers = this.Instance.PSStandardMembers;
-            if (standardMembers != null)
+            if (standardMembers is not null)
             {
                 PSNoteProperty note = standardMembers.Properties[TypeTable.DefaultDisplayProperty] as PSNoteProperty;
-                if (note != null)
+                if (note is not null)
                 {
                     defaultProperty = note.Value as string;
                 }
@@ -523,7 +523,7 @@ namespace System.Management.Automation
                 if (defaultPropertyAttributes.Length == 1)
                 {
                     DefaultPropertyAttribute defaultPropertyAttribute = defaultPropertyAttributes[0] as DefaultPropertyAttribute;
-                    if (defaultPropertyAttribute != null)
+                    if (defaultPropertyAttribute is not null)
                     {
                         defaultProperty = defaultPropertyAttribute.Name;
                     }
@@ -532,7 +532,7 @@ namespace System.Management.Automation
 
             PropertyDescriptorCollection properties = this.GetProperties();
 
-            if (defaultProperty != null)
+            if (defaultProperty is not null)
             {
                 // There is a defaultProperty, but let's check if it is actually one of the properties we are
                 // returning in GetProperties

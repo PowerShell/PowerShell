@@ -110,7 +110,7 @@ namespace Microsoft.CodeAnalysis
                     yield break;
                 }
 
-                if (e != null)
+                if (e is not null)
                 {
                     throw e;
                 }
@@ -134,7 +134,7 @@ namespace Microsoft.CodeAnalysis
                     break;
                 }
 
-                if (architectureFilter != null)
+                if (architectureFilter is not null)
                 {
                     var assemblyArchitecture = FusionAssemblyIdentity.GetProcessorArchitecture(nameObject);
                     if (!architectureFilter.Contains(assemblyArchitecture))
@@ -175,7 +175,7 @@ namespace Microsoft.CodeAnalysis
             }
 
             var candidates = GetAssemblyObjects(nameObject, architectureFilter);
-            string cultureName = (preferredCulture != null && !preferredCulture.IsNeutralCulture) ? preferredCulture.Name : null;
+            string cultureName = (preferredCulture is not null && !preferredCulture.IsNeutralCulture) ? preferredCulture.Name : null;
 
             var bestMatch = FusionAssemblyIdentity.GetBestMatch(candidates, cultureName);
             if (bestMatch is null)
@@ -197,7 +197,7 @@ namespace Microsoft.CodeAnalysis
                 IAssemblyCache assemblyCacheObject;
                 CreateAssemblyCache(out assemblyCacheObject, 0);
                 assemblyCacheObject.QueryAssemblyInfo(0, fullName, ref info);
-                Debug.Assert(info.pszCurrentAssemblyPathBuf != null);
+                Debug.Assert(info.pszCurrentAssemblyPathBuf is not null);
                 Debug.Assert(info.pszCurrentAssemblyPathBuf[info.cchBuf - 1] == '\0');
 
                 var result = Marshal.PtrToStringUni((IntPtr)info.pszCurrentAssemblyPathBuf, (int)info.cchBuf - 1);

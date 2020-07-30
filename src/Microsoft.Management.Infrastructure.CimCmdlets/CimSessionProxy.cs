@@ -70,7 +70,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="proxy"></param>
         internal InvocationContext(CimSessionProxy proxy)
         {
-            if (proxy != null)
+            if (proxy is not null)
             {
                 this.ComputerName = proxy.CimSession.ComputerName;
                 this.TargetCimInstance = proxy.TargetCimInstance;
@@ -230,7 +230,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="session">CimSession to be added.</param>
         internal static void AddCimSessionToTemporaryCache(CimSession session)
         {
-            if (session != null)
+            if (session is not null)
             {
                 lock (temporarySessionCacheLock)
                 {
@@ -256,7 +256,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private static void RemoveCimSessionFromTemporaryCache(CimSession session,
             bool dispose)
         {
-            if (session != null)
+            if (session is not null)
             {
                 bool removed = false;
                 lock (temporarySessionCacheLock)
@@ -402,14 +402,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return;
             }
 
-            Debug.Assert(cimInstance != null, "Caller should verify cimInstance != null");
+            Debug.Assert(cimInstance is not null, "Caller should verify cimInstance is not null");
 
             // computerName is null, fallback to create session from cimInstance
             CimSessionState state = CimSessionBase.GetCimSessionState();
-            if (state != null)
+            if (state is not null)
             {
                 CimSession session = state.QuerySession(cimInstance.GetCimSessionInstanceId());
-                if (session != null)
+                if (session is not null)
                 {
                     DebugHelper.WriteLogEx("Found the session from cache with InstanceID={0}.", 0, cimInstance.GetCimSessionInstanceId());
                     CreateSetSession(null, session, null, null, false);
@@ -494,14 +494,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.protocol = ProtocolType.Wsman;
             this.isTemporaryCimSession = temporaryCimSession;
 
-            if (cimSession != null)
+            if (cimSession is not null)
             {
                 this.session = cimSession;
                 CimSessionState state = CimSessionBase.GetCimSessionState();
-                if (state != null)
+                if (state is not null)
                 {
                     CimSessionWrapper wrapper = state.QuerySession(cimSession);
-                    if (wrapper != null)
+                    if (wrapper is not null)
                     {
                         this.protocol = wrapper.GetProtocolType();
                     }
@@ -509,7 +509,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
             else
             {
-                if (sessionOptions != null)
+                if (sessionOptions is not null)
                 {
                     if (sessionOptions is DComSessionOptions)
                     {
@@ -666,7 +666,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            if (operOptions != null)
+            if (operOptions is not null)
             {
                 this.options = new CimOperationOptions(operOptions);
             }
@@ -730,12 +730,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 this.DisposeCancelOperation();
 
-                if (this.operation != null)
+                if (this.operation is not null)
                 {
                     this.operation = null;
                 }
 
-                if (this.session != null && this.ContextObject is null)
+                if (this.session is not null && this.ContextObject is null)
                 {
                     DebugHelper.WriteLog("Dispose this proxy object @ RemoveOperation");
                     this.Dispose();
@@ -760,7 +760,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             NewCmdletActionHandler temp = this.OnNewCmdletAction;
-            if (temp != null)
+            if (temp is not null)
             {
                 temp(this.session, actionArgs);
             }
@@ -788,7 +788,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             OperationEventArgs args = new OperationEventArgs(
                 cancelOperation, operation, false);
             OperationEventHandler temp = this.OnOperationCreated;
-            if (temp != null)
+            if (temp is not null)
             {
                 temp(this.session, args);
             }
@@ -812,7 +812,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 null, operation, success);
             PreOperationDeleteEvent(args);
             OperationEventHandler temp = this.OnOperationDeleted;
-            if (temp != null)
+            if (temp is not null)
             {
                 temp(this.session, args);
             }
@@ -858,7 +858,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
             StringBuilder parameters = new StringBuilder();
-            if (parameterList != null)
+            if (parameterList is not null)
             {
                 foreach (string key in parameterList.Keys)
                 {
@@ -1024,7 +1024,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             AddShowComputerNameMarker(resultObject);
                         }
 
-                        if (this.ObjectPreProcess != null)
+                        if (this.ObjectPreProcess is not null)
                         {
                             resultObject = this.ObjectPreProcess.Process(resultObject);
                         }
@@ -1100,7 +1100,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="instance"></param>
         public void CreateInstanceAsync(string namespaceName, CimInstance instance)
         {
-            Debug.Assert(instance != null, "Caller should verify that instance != NULL.");
+            Debug.Assert(instance is not null, "Caller should verify that instance is not null.");
             DebugHelper.WriteLogEx("EnableMethodResultStreaming = {0}", 0, this.options.EnableMethodResultStreaming);
             this.CheckAvailability();
             this.targetCimInstance = instance;
@@ -1120,7 +1120,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="instance"></param>
         public void DeleteInstanceAsync(string namespaceName, CimInstance instance)
         {
-            Debug.Assert(instance != null, "Caller should verify that instance != NULL.");
+            Debug.Assert(instance is not null, "Caller should verify that instance is not null.");
             DebugHelper.WriteLogEx("namespace = {0}; classname = {1};", 0, namespaceName, instance.CimSystemProperties.ClassName);
             this.CheckAvailability();
             this.targetCimInstance = instance;
@@ -1140,7 +1140,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="instanceId"></param>
         public void GetInstanceAsync(string namespaceName, CimInstance instance)
         {
-            Debug.Assert(instance != null, "Caller should verify that instance != NULL.");
+            Debug.Assert(instance is not null, "Caller should verify that instance is not null.");
             DebugHelper.WriteLogEx("namespace = {0}; classname = {1}; keyonly = {2}", 0, namespaceName, instance.CimSystemProperties.ClassName, this.options.KeysOnly);
             this.CheckAvailability();
             this.targetCimInstance = instance;
@@ -1160,7 +1160,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="instance"></param>
         public void ModifyInstanceAsync(string namespaceName, CimInstance instance)
         {
-            Debug.Assert(instance != null, "Caller should verify that instance != NULL.");
+            Debug.Assert(instance is not null, "Caller should verify that instance is not null.");
             DebugHelper.WriteLogEx("namespace = {0}; classname = {1}", 0, namespaceName, instance.CimSystemProperties.ClassName);
             this.CheckAvailability();
             this.targetCimInstance = instance;
@@ -1191,7 +1191,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string sourceRole,
             string resultRole)
         {
-            Debug.Assert(sourceInstance != null, "Caller should verify that sourceInstance != NULL.");
+            Debug.Assert(sourceInstance is not null, "Caller should verify that sourceInstance is not null.");
             DebugHelper.WriteLogEx("Instance class {0}, association class {1}", 0, sourceInstance.CimSystemProperties.ClassName, associationClassName);
             this.CheckAvailability();
             this.targetCimInstance = sourceInstance;
@@ -1343,7 +1343,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string methodName,
             CimMethodParametersCollection methodParameters)
         {
-            Debug.Assert(instance != null, "Caller should verify that instance != NULL.");
+            Debug.Assert(instance is not null, "Caller should verify that instance is not null.");
             DebugHelper.WriteLogEx("EnableMethodResultStreaming = {0}", 0, this.options.EnableMethodResultStreaming);
             this.CheckAvailability();
             this.targetCimInstance = instance;
@@ -1589,7 +1589,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("CancelOperation Disposed = {0}", 0, this._cancelOperationDisposed);
             if (Interlocked.CompareExchange(ref this._cancelOperationDisposed, 1, 0) == 0)
             {
-                if (this._cancelOperation != null)
+                if (this._cancelOperation is not null)
                 {
                     DebugHelper.WriteLog("CimSessionProxy::Dispose async operation.", 4);
                     this._cancelOperation.Dispose();
@@ -1720,7 +1720,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     // Dispose managed resources.
                     this.DisposeCancelOperation();
 
-                    if (this.options != null)
+                    if (this.options is not null)
                     {
                         this.options.Dispose();
                         this.options = null;
@@ -1746,7 +1746,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         private void DisposeTemporaryCimSession()
         {
-            if (this.isTemporaryCimSession && this.session != null)
+            if (this.isTemporaryCimSession && this.session is not null)
             {
                 // remove the cimsession from temporary cache
                 RemoveCimSessionFromTemporaryCache(this.session);
@@ -1981,7 +1981,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 option.Timeout = TimeSpan.FromSeconds((double)timeout);
             }
 
-            if (credential != null)
+            if (credential is not null)
             {
                 option.AddDestinationCredentials(credential);
             }
@@ -2102,7 +2102,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLog("class name = {0}", 1, cimClass.CimSystemProperties.ClassName);
 
             CimGetCimClassContext context = this.ContextObject as CimGetCimClassContext;
-            Debug.Assert(context != null, "Caller should verify that CimGetCimClassContext != NULL.");
+            Debug.Assert(context is not null, "Caller should verify that CimGetCimClassContext is not null.");
 
             WildcardPattern pattern;
             if (WildcardPattern.ContainsWildcardCharacters(context.ClassName))
@@ -2114,10 +2114,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            if (context.PropertyName != null)
+            if (context.PropertyName is not null)
             {
                 bool match = false;
-                if (cimClass.CimClassProperties != null)
+                if (cimClass.CimClassProperties is not null)
                 {
                     pattern = new WildcardPattern(context.PropertyName, WildcardOptions.IgnoreCase);
                     foreach (CimPropertyDeclaration decl in cimClass.CimClassProperties)
@@ -2138,10 +2138,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            if (context.MethodName != null)
+            if (context.MethodName is not null)
             {
                 bool match = false;
-                if (cimClass.CimClassMethods != null)
+                if (cimClass.CimClassMethods is not null)
                 {
                     pattern = new WildcardPattern(context.MethodName, WildcardOptions.IgnoreCase);
                     foreach (CimMethodDeclaration decl in cimClass.CimClassMethods)
@@ -2162,10 +2162,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            if (context.QualifierName != null)
+            if (context.QualifierName is not null)
             {
                 bool match = false;
-                if (cimClass.CimClassQualifiers != null)
+                if (cimClass.CimClassQualifiers is not null)
                 {
                     pattern = new WildcardPattern(context.QualifierName, WildcardOptions.IgnoreCase);
                     foreach (CimQualifier qualifier in cimClass.CimClassQualifiers)

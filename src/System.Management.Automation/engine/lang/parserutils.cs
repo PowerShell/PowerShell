@@ -378,8 +378,8 @@ namespace System.Management.Automation
             lval = PSObject.Base(lval);
             rval = PSObject.Base(rval);
 
-            Type lvalType = lval != null ? lval.GetType() : null;
-            Type rvalType = rval != null ? rval.GetType() : null;
+            Type lvalType = lval is not null ? lval.GetType() : null;
+            Type rvalType = rval is not null ? rval.GetType() : null;
             Type opType;
             if (lvalType is null || (lvalType.IsPrimitive))
             {
@@ -432,7 +432,7 @@ namespace System.Management.Automation
             List<object> result = new List<object>();
 
             IEnumerator enumerator = LanguagePrimitives.GetEnumerator(tuple);
-            if (enumerator != null)
+            if (enumerator is not null)
             {
                 while (ParserOps.MoveNext(context, errorPosition, enumerator))
                 {
@@ -544,13 +544,13 @@ namespace System.Management.Automation
 
             if (args.Length >= 2)
                 limit = FixNum(args[1], errorPosition);
-            if (args.Length >= 3 && args[2] != null)
+            if (args.Length >= 3 && args[2] is not null)
             {
                 string args2asString = args[2] as string;
                 if (args2asString is null || !string.IsNullOrEmpty(args2asString))
                 {
                     options = ConvertTo<SplitOptions>(args[2], errorPosition);
-                    if (predicate != null)
+                    if (predicate is not null)
                     {
                         throw InterpreterError.NewInterpreterException(null, typeof(ParseException),
                             errorPosition, "InvalidSplitOptionWithPredicate", ParserStrings.InvalidSplitOptionWithPredicate);
@@ -810,7 +810,7 @@ namespace System.Management.Automation
             // PSObject already has join functionality; just expose it
             // as an operator.
             IEnumerable enumerable = LanguagePrimitives.GetEnumerable(lval);
-            if (enumerable != null)
+            if (enumerable is not null)
             {
                 return PSObject.ToStringEnumerable(context, enumerable, separator, null, null);
             }
@@ -921,7 +921,7 @@ namespace System.Management.Automation
 
             rval = PSObject.Base(rval);
             IList rList = rval as IList;
-            if (rList != null)
+            if (rList is not null)
             {
                 if (rList.Count > 2)
                 {
@@ -1241,7 +1241,7 @@ namespace System.Management.Automation
                         if (check++ > 1000)
                         {
                             // Check to see if we're stopping every one in a while...
-                            if (context != null && context.CurrentPipelineStopping)
+                            if (context is not null && context.CurrentPipelineStopping)
                                 throw new PipelineStoppedException();
                             check = 0;
                         }
@@ -1399,7 +1399,7 @@ namespace System.Management.Automation
             try
             {
                 // Check to see if we're stopping...
-                if (context != null && context.CurrentPipelineStopping)
+                if (context is not null && context.CurrentPipelineStopping)
                     throw new PipelineStoppedException();
 
                 return enumerator.MoveNext();
@@ -1503,7 +1503,7 @@ namespace System.Management.Automation
             bool callStatic,
             object valueToSet)
         {
-            Dbg.Assert(methodName != null, "methodName was null");
+            Dbg.Assert(methodName is not null, "methodName was null");
 
             PSMethodInfo targetMethod = null;
             object targetBase = null;
@@ -1585,7 +1585,7 @@ namespace System.Management.Automation
                 else
                 {
                     PSMethod adaptedMethod = targetMethod as PSMethod;
-                    if (adaptedMethod != null)
+                    if (adaptedMethod is not null)
                     {
                         return adaptedMethod.Invoke(invocationConstraints, paramArray);
                     }
@@ -1907,7 +1907,7 @@ namespace System.Management.Automation
             }
 
             // Don't trash the existing InvocationInfo.
-            if (errorPosition != null)
+            if (errorPosition is not null)
                 e.ErrorRecord.SetInvocationInfo(new InvocationInfo(null, errorPosition));
             return e;
         }
@@ -1941,7 +1941,7 @@ namespace System.Management.Automation
             }
 
             var icer = exception as IContainsErrorRecord;
-            if (icer != null)
+            if (icer is not null)
             {
                 var errorRecord = icer.ErrorRecord;
                 var invocationInfo = errorRecord.InvocationInfo;

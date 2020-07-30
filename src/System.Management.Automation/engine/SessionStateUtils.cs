@@ -118,7 +118,7 @@ namespace System.Management.Automation
         internal static Collection<T> ConvertArrayToCollection<T>(T[] array)
         {
             Collection<T> result = new Collection<T>();
-            if (array != null)
+            if (array is not null)
             {
                 foreach (T element in array)
                 {
@@ -160,7 +160,7 @@ namespace System.Management.Automation
 
             foreach (object item in collection)
             {
-                if (comparer != null)
+                if (comparer is not null)
                 {
                     if (comparer.Compare(item, value) == 0)
                     {
@@ -201,7 +201,7 @@ namespace System.Management.Automation
         {
             Collection<WildcardPattern> result = new Collection<WildcardPattern>();
 
-            if (globPatterns != null)
+            if (globPatterns is not null)
             {
                 // Loop through the patterns and construct a wildcard pattern for each one
 
@@ -245,7 +245,7 @@ namespace System.Management.Automation
             bool result = false;
             bool patternsNonEmpty = false;
 
-            if (patterns != null)
+            if (patterns is not null)
             {
                 // Loop through each of the patterns until a match is found
                 foreach (WildcardPattern pattern in patterns)

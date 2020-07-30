@@ -232,7 +232,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void EndProcessing()
         {
             CimGetCimClass cimGetCimClass = this.GetOperationAgent();
-            if (cimGetCimClass != null)
+            if (cimGetCimClass is not null)
             {
                 cimGetCimClass.ProcessRemainActions(this.CmdletOperation);
             }

@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Write the alias to the pipeline if PassThru was specified
 
-                if (PassThru && result != null)
+                if (PassThru && result is not null)
                 {
                     WriteObject(result);
                 }

@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                if (_label != null)
+                if (_label is not null)
                     return _label;
                 return _groupingKeyDisplayName;
             }

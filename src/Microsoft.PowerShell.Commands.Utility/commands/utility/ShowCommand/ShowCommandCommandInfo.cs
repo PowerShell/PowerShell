@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
                 this.ParameterSets = new List<ShowCommandParameterSetInfo>().AsReadOnly();
             }
 
-            if (other.Module != null)
+            if (other.Module is not null)
             {
                 this.Module = new ShowCommandModuleInfo(other.Module);
             }
@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
             this.ModuleName = other.Members["ModuleName"].Value as string;
             this.Definition = other.Members["Definition"].Value as string;
             this.ParameterSets = other.Members["ParameterSets"].Value as ICollection<ShowCommandParameterSetInfo>;
-            if (this.ParameterSets != null)
+            if (this.ParameterSets is not null)
             {
                 // Simple case - the objects are still live because they came from in-proc. Just cast them back
                 this.CommandType = (CommandTypes)(other.Members["CommandType"].Value);
@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
                 var parameterSets = (other.Members["ParameterSets"].Value as PSObject).BaseObject as System.Collections.ArrayList;
                 this.ParameterSets = GetObjectEnumerable(parameterSets).Cast<PSObject>().Select(x => new ShowCommandParameterSetInfo(x)).ToList().AsReadOnly();
 
-                if (other.Members["Module"] != null && other.Members["Module"].Value as PSObject != null)
+                if (other.Members["Module"] is not null && other.Members["Module"].Value as PSObject is not null)
                 {
                     this.Module = new ShowCommandModuleInfo(other.Members["Module"].Value as PSObject);
                 }

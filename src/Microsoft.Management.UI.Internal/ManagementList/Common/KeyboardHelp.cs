@@ -27,7 +27,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The logical direction.</returns>
         public static LogicalDirection GetLogicalDirection(DependencyObject element, Key key)
         {
-            Debug.Assert(element != null, "element not null");
+            Debug.Assert(element is not null, "element not null");
 
             bool rightToLeft = IsElementRightToLeft(element);
 
@@ -66,7 +66,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The focus direction.</returns>
         public static FocusNavigationDirection GetNavigationDirection(DependencyObject element, Key key)
         {
-            Debug.Assert(element != null, "element not null");
+            Debug.Assert(element is not null, "element not null");
             Debug.Assert(IsFlowDirectionKey(key));
 
             bool rightToLeft = IsElementRightToLeft(element);

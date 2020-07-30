@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="helpCategory">The name of help category that is invalid.</param>
         /// <param name="innerException">The inner exception of this exception.</param>
         public HelpCategoryInvalidException(string helpCategory, Exception innerException) :
-                base((innerException != null) ? innerException.Message : string.Empty, innerException)
+                base((innerException is not null) ? innerException.Message : string.Empty, innerException)
         {
             _helpCategory = helpCategory;
             CreateErrorRecord();
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (_errorRecord != null)
+                if (_errorRecord is not null)
                 {
                     return _errorRecord.ToString();
                 }

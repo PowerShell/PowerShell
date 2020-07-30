@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         protected override void BeginProcessing()
         {
-            Diagnostics.Assert(this.implementation != null, "this.implementation is null");
+            Diagnostics.Assert(this.implementation is not null, "this.implementation is null");
             this.implementation.OuterCmdletCall = new ImplementationCommandBase.OuterCmdletCallback(this.OuterCmdletCall);
             this.implementation.InputObjectCall = new ImplementationCommandBase.InputObjectCallback(this.InputObjectCall);
             this.implementation.WriteObjectCall = new ImplementationCommandBase.WriteObjectCallback(this.WriteObjectCall);
@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal virtual PSObject ReadObject()
         {
             // delegate to the front end object
-            System.Diagnostics.Debug.Assert(this.InputObjectCall != null, "this.InputObjectCall is null");
+            System.Diagnostics.Debug.Assert(this.InputObjectCall is not null, "this.InputObjectCall is null");
             return this.InputObjectCall();
         }
 
@@ -319,7 +319,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal virtual void WriteObject(object o)
         {
             // delegate to the front end object
-            System.Diagnostics.Debug.Assert(this.WriteObjectCall != null, "this.WriteObjectCall is null");
+            System.Diagnostics.Debug.Assert(this.WriteObjectCall is not null, "this.WriteObjectCall is null");
             this.WriteObjectCall(o);
         }
 
@@ -331,7 +331,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal virtual PSCmdlet OuterCmdlet()
         {
             // delegate to the front end object
-            System.Diagnostics.Debug.Assert(this.OuterCmdletCall != null, "this.OuterCmdletCall is null");
+            System.Diagnostics.Debug.Assert(this.OuterCmdletCall is not null, "this.OuterCmdletCall is null");
             return this.OuterCmdletCall();
         }
 

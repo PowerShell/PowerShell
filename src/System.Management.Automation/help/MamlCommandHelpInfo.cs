@@ -30,17 +30,17 @@ namespace System.Management.Automation
 
             this.AddCommonHelpProperties();
             // set user defined data
-            if (helpObject.Properties["Component"] != null)
+            if (helpObject.Properties["Component"] is not null)
             {
                 _component = helpObject.Properties["Component"].Value as string;
             }
 
-            if (helpObject.Properties["Role"] != null)
+            if (helpObject.Properties["Role"] is not null)
             {
                 _role = helpObject.Properties["Role"].Value as string;
             }
 
-            if (helpObject.Properties["Functionality"] != null)
+            if (helpObject.Properties["Functionality"] is not null)
             {
                 _functionality = helpObject.Properties["Functionality"].Value as string;
             }
@@ -293,10 +293,10 @@ namespace System.Management.Automation
             // to avoid _fullHelpObject being get terminated.
             result._fullHelpObject = this._fullHelpObject.Copy();
 
-            if (cmdletHelp != null)
+            if (cmdletHelp is not null)
                 result._fullHelpObject.Properties.Add(new PSNoteProperty("PS_Cmdlet", cmdletHelp));
 
-            if (dynamicParameterHelp != null)
+            if (dynamicParameterHelp is not null)
                 result._fullHelpObject.Properties.Add(new PSNoteProperty("PS_DynamicParameters", dynamicParameterHelp));
 
             return result;
@@ -397,7 +397,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal override bool MatchPatternInContent(WildcardPattern pattern)
         {
-            System.Management.Automation.Diagnostics.Assert(pattern != null, "pattern cannot be null");
+            System.Management.Automation.Diagnostics.Assert(pattern is not null, "pattern cannot be null");
 
             string synopsis = Synopsis;
             if ((!string.IsNullOrEmpty(synopsis)) && (pattern.IsMatch(synopsis)))

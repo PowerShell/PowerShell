@@ -395,11 +395,11 @@ namespace System.Management.Automation
 
             script = scope.GetFunction(_name);
 
-            if (script != null)
+            if (script is not null)
             {
                 bool isPrivate;
                 FilterInfo filterInfo = script as FilterInfo;
-                if (filterInfo != null)
+                if (filterInfo is not null)
                 {
                     isPrivate = (filterInfo.Options & ScopedItemOptions.Private) != 0;
                 }

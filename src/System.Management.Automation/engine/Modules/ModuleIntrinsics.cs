@@ -171,7 +171,7 @@ namespace System.Management.Automation
                 // Build the scriptblock at this point so the references to the module
                 // context are correct...
                 ExternalScriptInfo scriptInfo = moduleCode as ExternalScriptInfo;
-                if (scriptInfo != null)
+                if (scriptInfo is not null)
                 {
                     sb = scriptInfo.ScriptBlock;
 
@@ -180,7 +180,7 @@ namespace System.Management.Automation
                 else
                 {
                     sb = moduleCode as ScriptBlock;
-                    if (sb != null)
+                    if (sb is not null)
                     {
                         PSLanguageMode? moduleLanguageMode = sb.LanguageMode;
                         sb = sb.Clone();
@@ -191,7 +191,7 @@ namespace System.Management.Automation
                     else
                     {
                         var sbText = moduleCode as string;
-                        if (sbText != null)
+                        if (sbText is not null)
                             sb = ScriptBlock.Create(_context, sbText);
                     }
                 }
@@ -207,7 +207,7 @@ namespace System.Management.Automation
                 // Save the module string
                 module._definitionExtent = sb.Ast.Extent;
                 var ast = sb.Ast;
-                while (ast.Parent != null)
+                while (ast.Parent is not null)
                 {
                     ast = ast.Parent;
                 }
@@ -601,7 +601,7 @@ namespace System.Management.Automation
         {
             // If a name is required, check that it matches.
             // A required module name may also be an absolute path, so check it against the given module's path as well.
-            if (requiredName != null
+            if (requiredName is not null
                 && !requiredName.Equals(moduleName, StringComparison.OrdinalIgnoreCase)
                 && !MatchesModulePath(modulePath, requiredName))
             {
@@ -610,7 +610,7 @@ namespace System.Management.Automation
             }
 
             // If a GUID is required, check it matches
-            if (requiredGuid != null && !requiredGuid.Equals(moduleGuid))
+            if (requiredGuid is not null && !requiredGuid.Equals(moduleGuid))
             {
                 matchFailureReason = ModuleMatchFailure.Guid;
                 return false;
@@ -659,24 +659,24 @@ namespace System.Management.Automation
             Version minimumVersion = null,
             Version maximumVersion = null)
         {
-            Dbg.Assert(version != null, $"Caller to verify that {nameof(version)} is not null");
+            Dbg.Assert(version is not null, $"Caller to verify that {nameof(version)} is not null");
 
             // If a RequiredVersion is given it overrides other version settings
-            if (requiredVersion != null)
+            if (requiredVersion is not null)
             {
                 matchFailureReason = ModuleMatchFailure.RequiredVersion;
                 return requiredVersion.Equals(version);
             }
 
             // Check the version is at least the minimum version
-            if (minimumVersion != null && version < minimumVersion)
+            if (minimumVersion is not null && version < minimumVersion)
             {
                 matchFailureReason = ModuleMatchFailure.MinimumVersion;
                 return false;
             }
 
             // Check the version is at most the maximum version
-            if (maximumVersion != null && version > maximumVersion)
+            if (maximumVersion is not null && version > maximumVersion)
             {
                 matchFailureReason = ModuleMatchFailure.MaximumVersion;
                 return false;
@@ -695,7 +695,7 @@ namespace System.Management.Automation
         /// <returns>True if the module path matches the required path, false otherwise.</returns>
         internal static bool MatchesModulePath(string modulePath, string requiredPath)
         {
-            Dbg.Assert(requiredPath != null, $"Caller to verify that {nameof(requiredPath)} is not null");
+            Dbg.Assert(requiredPath is not null, $"Caller to verify that {nameof(requiredPath)} is not null");
 
             if (modulePath is null)
             {
@@ -814,7 +814,7 @@ namespace System.Management.Automation
                         PsUtils.ManifestModuleVersionPropertyName);
 
                 object versionValue = dataFileSetting["ModuleVersion"];
-                if (versionValue != null)
+                if (versionValue is not null)
                 {
                     Version moduleVersion;
                     if (LanguagePrimitives.TryConvertTo(versionValue, out moduleVersion))
@@ -838,7 +838,7 @@ namespace System.Management.Automation
                         PsUtils.ManifestGuidPropertyName);
 
                 object guidValue = dataFileSetting["GUID"];
-                if (guidValue != null)
+                if (guidValue is not null)
                 {
                     Guid guidID;
                     if (LanguagePrimitives.TryConvertTo(guidValue, out guidID))
@@ -865,7 +865,7 @@ namespace System.Management.Automation
                 if (privateData is Hashtable hashData && hashData["PSData"] is Hashtable psData)
                 {
                     object expFeatureValue = psData["ExperimentalFeatures"];
-                    if (expFeatureValue != null &&
+                    if (expFeatureValue is not null &&
                         LanguagePrimitives.TryConvertTo(expFeatureValue, out Hashtable[] features) &&
                         features.Length > 0)
                     {
@@ -977,7 +977,7 @@ namespace System.Management.Automation
         /// <returns>The PSHome module path.</returns>
         internal static string GetPSHomeModulePath()
         {
-            if (s_psHomeModulePath != null)
+            if (s_psHomeModulePath is not null)
             {
                 return s_psHomeModulePath;
             }
@@ -1093,8 +1093,8 @@ namespace System.Management.Automation
         private static int PathContainsSubstring(string pathToScan, string pathToLookFor)
         {
             // we don't support if any of the args are null - parent function should ensure this; empty values are ok
-            Diagnostics.Assert(pathToScan != null, "pathToScan should not be null according to contract of the function");
-            Diagnostics.Assert(pathToLookFor != null, "pathToLookFor should not be null according to contract of the function");
+            Diagnostics.Assert(pathToScan is not null, "pathToScan should not be null according to contract of the function");
+            Diagnostics.Assert(pathToLookFor is not null, "pathToLookFor should not be null according to contract of the function");
 
             int pos = 0; // position of the current substring in pathToScan
             string[] substrings = pathToScan.Split(Utils.Separators.PathSeparator, StringSplitOptions.None); // we want to process empty entries
@@ -1129,8 +1129,8 @@ namespace System.Management.Automation
         private static string AddToPath(string basePath, string pathToAdd, int insertPosition)
         {
             // we don't support if any of the args are null - parent function should ensure this; empty values are ok
-            Diagnostics.Assert(basePath != null, "basePath should not be null according to contract of the function");
-            Diagnostics.Assert(pathToAdd != null, "pathToAdd should not be null according to contract of the function");
+            Diagnostics.Assert(basePath is not null, "basePath should not be null according to contract of the function");
+            Diagnostics.Assert(pathToAdd is not null, "pathToAdd should not be null according to contract of the function");
 
             StringBuilder result = new StringBuilder(basePath);
 
@@ -1339,7 +1339,7 @@ namespace System.Management.Automation
                 foreach (string envPath in modulePathString.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
                 {
                     var processedPath = ProcessOneModulePath(context, envPath, processedPathSet);
-                    if (processedPath != null)
+                    if (processedPath is not null)
                         yield return processedPath;
                 }
             }
@@ -1347,7 +1347,7 @@ namespace System.Management.Automation
             if (includeSystemModulePath)
             {
                 var processedPath = ProcessOneModulePath(context, GetPSHomeModulePath(), processedPathSet);
-                if (processedPath != null)
+                if (processedPath is not null)
                     yield return processedPath;
             }
         }
@@ -1405,7 +1405,7 @@ namespace System.Management.Automation
                     // volume identifier (for example, "c:\" is Supported but not "c:\temp\Z:\invalidPath")
                 }
 
-                if (provider != null && resolvedPaths != null && provider.NameEquals(context.ProviderNames.FileSystem))
+                if (provider is not null && resolvedPaths is not null && provider.NameEquals(context.ProviderNames.FileSystem))
                 {
                     var result = resolvedPaths.FirstOrDefault();
                     if (processedPathSet.Add(result))
@@ -1447,7 +1447,7 @@ namespace System.Management.Automation
 
         private static void SortAndRemoveDuplicates<T>(List<T> input, Func<T, string> keyGetter)
         {
-            Dbg.Assert(input != null, "Caller should verify that input != null");
+            Dbg.Assert(input is not null, "Caller should verify that input is not null");
 
             input.Sort(
                 delegate (T x, T y)
@@ -1501,7 +1501,7 @@ namespace System.Management.Automation
 
             sessionState.UseExportList = true;
 
-            if (functionPatterns != null)
+            if (functionPatterns is not null)
             {
                 sessionState.FunctionsExported = true;
                 if (PatternContainsWildcard(functionPatterns))
@@ -1530,7 +1530,7 @@ namespace System.Management.Automation
                 SortAndRemoveDuplicates(sessionState.ExportedFunctions, delegate (FunctionInfo ci) { return ci.Name; });
             }
 
-            if (cmdletPatterns != null)
+            if (cmdletPatterns is not null)
             {
                 IDictionary<string, List<CmdletInfo>> ft = sessionState.ModuleScope.CmdletTable;
 
@@ -1554,7 +1554,7 @@ namespace System.Management.Automation
                                 CmdletInfo exportedCmdlet = new CmdletInfo(element.Name, element.ImplementingType,
                                     element.HelpFile, null, element.Context)
                                 { Module = sessionState.Module };
-                                Dbg.Assert(sessionState.Module != null, "sessionState.Module should not be null by the time we're exporting cmdlets");
+                                Dbg.Assert(sessionState.Module is not null, "sessionState.Module should not be null by the time we're exporting cmdlets");
                                 sessionState.Module.CompiledExports.Add(exportedCmdlet);
                             }
                         }
@@ -1576,7 +1576,7 @@ namespace System.Management.Automation
                             CmdletInfo exportedCmdlet = new CmdletInfo(cmdletToImport.Name, cmdletToImport.ImplementingType,
                                 cmdletToImport.HelpFile, null, cmdletToImport.Context)
                             { Module = sessionState.Module };
-                            Dbg.Assert(sessionState.Module != null, "sessionState.Module should not be null by the time we're exporting cmdlets");
+                            Dbg.Assert(sessionState.Module is not null, "sessionState.Module should not be null by the time we're exporting cmdlets");
                             sessionState.Module.CompiledExports.Add(exportedCmdlet);
                         }
                     }
@@ -1585,7 +1585,7 @@ namespace System.Management.Automation
                 SortAndRemoveDuplicates(sessionState.Module.CompiledExports, delegate (CmdletInfo ci) { return ci.Name; });
             }
 
-            if (variablePatterns != null)
+            if (variablePatterns is not null)
             {
                 IDictionary<string, PSVariable> vt = sessionState.ModuleScope.Variables;
 
@@ -1608,7 +1608,7 @@ namespace System.Management.Automation
                 SortAndRemoveDuplicates(sessionState.ExportedVariables, delegate (PSVariable v) { return v.Name; });
             }
 
-            if (aliasPatterns != null)
+            if (aliasPatterns is not null)
             {
                 IEnumerable<AliasInfo> mai = sessionState.ModuleScope.AliasTable;
 
@@ -1656,7 +1656,7 @@ namespace System.Management.Automation
         /// <returns>True if pattern contains '*'.</returns>
         internal static bool PatternContainsWildcard(List<WildcardPattern> list)
         {
-            if (list != null)
+            if (list is not null)
             {
                 foreach (var item in list)
                 {
@@ -1672,9 +1672,9 @@ namespace System.Management.Automation
 
         private static AliasInfo NewAliasInfo(AliasInfo alias, SessionStateInternal sessionState)
         {
-            Dbg.Assert(alias != null, "alias should not be null");
-            Dbg.Assert(sessionState != null, "sessionState should not be null");
-            Dbg.Assert(sessionState.Module != null, "sessionState.Module should not be null by the time we're exporting aliases");
+            Dbg.Assert(alias is not null, "alias should not be null");
+            Dbg.Assert(sessionState is not null, "sessionState should not be null");
+            Dbg.Assert(sessionState.Module is not null, "sessionState.Module should not be null by the time we're exporting aliases");
 
             // Copy the alias info, changing the module association to be the current module...
             var aliasCopy = new AliasInfo(alias.Name, alias.Definition, alias.Context, alias.Options)

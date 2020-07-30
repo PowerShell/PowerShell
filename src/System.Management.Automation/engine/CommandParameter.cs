@@ -32,9 +32,9 @@ namespace System.Management.Automation
 
         internal bool SpaceAfterParameter { get { return _spaceAfterParameter; } }
 
-        internal bool ParameterNameSpecified { get { return _parameter != null; } }
+        internal bool ParameterNameSpecified { get { return _parameter is not null; } }
 
-        internal bool ArgumentSpecified { get { return _argument != null; } }
+        internal bool ArgumentSpecified { get { return _argument is not null; } }
 
         internal bool ParameterAndArgumentSpecified { get { return ParameterNameSpecified && ArgumentSpecified; } }
 
@@ -105,7 +105,7 @@ namespace System.Management.Automation
         /// </summary>
         internal object ArgumentValue
         {
-            get { return _argument != null ? _argument.value : UnboundParameter.Value; }
+            get { return _argument is not null ? _argument.value : UnboundParameter.Value; }
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace System.Management.Automation
         /// </summary>
         internal bool ArgumentSplatted
         {
-            get { return _argument != null ? _argument.splatted : false; }
+            get { return _argument is not null ? _argument.splatted : false; }
         }
 
         /// <summary>

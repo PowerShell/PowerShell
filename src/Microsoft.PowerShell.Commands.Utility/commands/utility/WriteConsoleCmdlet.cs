@@ -50,11 +50,11 @@ namespace Microsoft.PowerShell.Commands
         //
         private string ProcessObject(object o)
         {
-            if (o != null)
+            if (o is not null)
             {
                 string s = o as string;
                 IEnumerable enumerable = null;
-                if (s != null)
+                if (s is not null)
                 {
                     // strings are IEnumerable, so we special case them
                     if (s.Length > 0)
@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
                         return s;
                     }
                 }
-                else if ((enumerable = o as IEnumerable) != null)
+                else if ((enumerable = o as IEnumerable) is not null)
                 {
                     // unroll enumerables, including arrays.
 
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (object element in enumerable)
                     {
-                        if (printSeparator && Separator != null)
+                        if (printSeparator && Separator is not null)
                         {
                             result.Append(Separator.ToString());
                         }

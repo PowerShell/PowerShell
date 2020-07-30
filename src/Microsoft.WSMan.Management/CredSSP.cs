@@ -171,7 +171,7 @@ namespace Microsoft.WSMan.Management
                     helper.AssertError(m_SessionObj.Error, true, null);
                 }
 
-                if (m_SessionObj != null)
+                if (m_SessionObj is not null)
                     Dispose(m_SessionObj);
             }
         }
@@ -220,7 +220,7 @@ namespace Microsoft.WSMan.Management
                     helper.AssertError(m_SessionObj.Error, true, null);
                 }
 
-                if (m_SessionObj != null)
+                if (m_SessionObj is not null)
                 {
                     Dispose(m_SessionObj);
                 }
@@ -258,7 +258,7 @@ namespace Microsoft.WSMan.Management
             {
                 string Registry_Path_Credentials_Delegation = Registry_Path + @"\CredentialsDelegation";
                 RegistryKey Allow_Fresh_Credential_Key = rootKey.OpenSubKey(Registry_Path_Credentials_Delegation + @"\" + helper.Key_Allow_Fresh_Credentials, true);
-                if (Allow_Fresh_Credential_Key != null)
+                if (Allow_Fresh_Credential_Key is not null)
                 {
                     string[] valuenames = Allow_Fresh_Credential_Key.GetValueNames();
                     if (valuenames.Length > 0)
@@ -267,7 +267,7 @@ namespace Microsoft.WSMan.Management
                         foreach (string value in valuenames)
                         {
                             object keyvalue = Allow_Fresh_Credential_Key.GetValue(value);
-                            if (keyvalue != null)
+                            if (keyvalue is not null)
                             {
                                 if (!keyvalue.ToString().StartsWith(applicationname, StringComparison.OrdinalIgnoreCase))
                                 {
@@ -290,21 +290,21 @@ namespace Microsoft.WSMan.Management
                 if (!otherkeys)
                 {
                     rKey = rootKey.OpenSubKey(Registry_Path_Credentials_Delegation, true);
-                    if (rKey != null)
+                    if (rKey is not null)
                     {
                         object regval1 = rKey.GetValue(helper.Key_Allow_Fresh_Credentials);
-                        if (regval1 != null)
+                        if (regval1 is not null)
                         {
                             rKey.DeleteValue(helper.Key_Allow_Fresh_Credentials, false);
                         }
 
                         object regval2 = rKey.GetValue(helper.Key_Concatenate_Defaults_AllowFresh);
-                        if (regval2 != null)
+                        if (regval2 is not null)
                         {
                             rKey.DeleteValue(helper.Key_Concatenate_Defaults_AllowFresh, false);
                         }
 
-                        if (rKey.OpenSubKey(helper.Key_Allow_Fresh_Credentials) != null)
+                        if (rKey.OpenSubKey(helper.Key_Allow_Fresh_Credentials) is not null)
                         {
                             rKey.DeleteSubKeyTree(helper.Key_Allow_Fresh_Credentials);
                         }
@@ -447,7 +447,7 @@ namespace Microsoft.WSMan.Management
             helper = new WSManHelper(this);
 
             // DelegateComputer cannot be specified when Role is other than client
-            if ((delegatecomputer != null) && !Role.Equals(Client, StringComparison.OrdinalIgnoreCase))
+            if ((delegatecomputer is not null) && !Role.Equals(Client, StringComparison.OrdinalIgnoreCase))
             {
                 string message = helper.FormatResourceMsgFromResourcetext("CredSSPRoleAndDelegateCannotBeSpecified",
                     "DelegateComputer",
@@ -557,7 +557,7 @@ namespace Microsoft.WSMan.Management
                     helper.AssertError(m_SessionObj.Error, true, delegatecomputer);
                 }
 
-                if (m_SessionObj != null)
+                if (m_SessionObj is not null)
                 {
                     Dispose(m_SessionObj);
                 }
@@ -617,7 +617,7 @@ namespace Microsoft.WSMan.Management
                     helper.AssertError(m_SessionObj.Error, true, delegatecomputer);
                 }
 
-                if (m_SessionObj != null)
+                if (m_SessionObj is not null)
                 {
                     Dispose(m_SessionObj);
                 }
@@ -672,7 +672,7 @@ namespace Microsoft.WSMan.Management
                 // add the delegate value
                 Allow_Fresh_Credential_Key = rootKey.OpenSubKey(Registry_Path_Credentials_Delegation + @"\" + helper.Key_Allow_Fresh_Credentials, true) ?? rootKey.CreateSubKey(Registry_Path_Credentials_Delegation + @"\" + helper.Key_Allow_Fresh_Credentials, RegistryKeyPermissionCheck.ReadWriteSubTree);
 
-                if (Allow_Fresh_Credential_Key != null)
+                if (Allow_Fresh_Credential_Key is not null)
                 {
                     i = Allow_Fresh_Credential_Key.ValueCount;
                     foreach (string del in delegatestring)
@@ -760,10 +760,10 @@ namespace Microsoft.WSMan.Management
             {
                 string Reg_key = helper.Registry_Path_Credentials_Delegation + @"\CredentialsDelegation";
                 rKey = rootKey.OpenSubKey(Reg_key);
-                if (rKey != null)
+                if (rKey is not null)
                 {
                     rKey = rKey.OpenSubKey(helper.Key_Allow_Fresh_Credentials);
-                    if (rKey != null)
+                    if (rKey is not null)
                     {
                         valuenames = rKey.GetValueNames();
                         if (valuenames.Length > 0)
@@ -772,7 +772,7 @@ namespace Microsoft.WSMan.Management
                             foreach (string value in valuenames)
                             {
                                 object keyvalue = rKey.GetValue(value);
-                                if (keyvalue != null)
+                                if (keyvalue is not null)
                                 {
                                     if (keyvalue.ToString().StartsWith(applicationname, StringComparison.OrdinalIgnoreCase))
                                     {
@@ -892,7 +892,7 @@ namespace Microsoft.WSMan.Management
                     helper.AssertError(m_SessionObj.Error, true, null);
                 }
 
-                if (m_SessionObj != null)
+                if (m_SessionObj is not null)
                 {
                     Dispose(m_SessionObj);
                 }

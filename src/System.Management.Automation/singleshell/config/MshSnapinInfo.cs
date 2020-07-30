@@ -367,7 +367,7 @@ namespace System.Management.Automation
             else
             {
                 RegistryKey mshsnapinKey = MshSnapinKey;
-                if (mshsnapinKey != null)
+                if (mshsnapinKey is not null)
                 {
                     _description =
                         resourceReader.GetResourceStringIndirect(
@@ -528,7 +528,7 @@ namespace System.Management.Automation
                 {
                 }
 
-                if (oneVersionMshSnapins != null)
+                if (oneVersionMshSnapins is not null)
                 {
                     foreach (PSSnapInInfo info in oneVersionMshSnapins)
                     {
@@ -599,7 +599,7 @@ namespace System.Management.Automation
         /// </exception>
         private static Collection<PSSnapInInfo> ReadAll(RegistryKey monadRootKey, string psVersion)
         {
-            Dbg.Assert(monadRootKey != null, "caller should validate the information");
+            Dbg.Assert(monadRootKey is not null, "caller should validate the information");
             Dbg.Assert(!string.IsNullOrEmpty(psVersion), "caller should validate the information");
 
             Collection<PSSnapInInfo> mshsnapins = new Collection<PSSnapInInfo>();
@@ -691,7 +691,7 @@ namespace System.Management.Automation
         private static PSSnapInInfo ReadOne(RegistryKey mshSnapInRoot, string mshsnapinId)
         {
             Dbg.Assert(!string.IsNullOrEmpty(mshsnapinId), "caller should validate the parameter");
-            Dbg.Assert(mshSnapInRoot != null, "caller should validate the parameter");
+            Dbg.Assert(mshSnapInRoot is not null, "caller should validate the parameter");
 
             RegistryKey mshsnapinKey;
             mshsnapinKey = mshSnapInRoot.OpenSubKey(mshsnapinId);
@@ -774,7 +774,7 @@ namespace System.Management.Automation
             {
                 // Check if the value is in string format
                 string singleValue = value as string;
-                if (singleValue != null)
+                if (singleValue is not null)
                 {
                     msv = new string[1];
                     msv[0] = singleValue;
@@ -813,7 +813,7 @@ namespace System.Management.Automation
         internal static string ReadStringValue(RegistryKey mshsnapinKey, string name, bool mandatory)
         {
             Dbg.Assert(!string.IsNullOrEmpty(name), "caller should validate the parameter");
-            Dbg.Assert(mshsnapinKey != null, "Caller should validate the parameter");
+            Dbg.Assert(mshsnapinKey is not null, "Caller should validate the parameter");
 
             object value = mshsnapinKey.GetValue(name);
             if (value is null && mandatory)
@@ -887,7 +887,7 @@ namespace System.Management.Automation
             // Get the PSVersion from Utils..this is hardcoded
             psVersion = PSVersionInfo.PSVersion;
             Dbg.Assert(
-                psVersion != null,
+                psVersion is not null,
                 string.Format(CultureInfo.CurrentCulture, "{0} is null", RegistryStrings.MonadEngine_MonadVersion));
 
             // Get version number in x.x.x.x format
@@ -925,7 +925,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static string ConvertByteArrayToString(byte[] tokens)
         {
-            Dbg.Assert(tokens != null, "Input tokens should never be null");
+            Dbg.Assert(tokens is not null, "Input tokens should never be null");
             StringBuilder tokenBuilder = new StringBuilder(tokens.Length * 2);
             foreach (byte b in tokens)
             {
@@ -1091,7 +1091,7 @@ namespace System.Management.Automation
         /// </summary>
         private static void SetSnapInLoggingInformation(PSSnapInInfo psSnapInInfo, ModuleCmdletBase.ModuleLoggingGroupPolicyStatus status, IEnumerable<string> moduleOrSnapinNames)
         {
-            if (((status & ModuleCmdletBase.ModuleLoggingGroupPolicyStatus.Enabled) != 0) && moduleOrSnapinNames != null)
+            if (((status & ModuleCmdletBase.ModuleLoggingGroupPolicyStatus.Enabled) != 0) && moduleOrSnapinNames is not null)
             {
                 foreach (string currentGPModuleOrSnapinName in moduleOrSnapinNames)
                 {
@@ -1148,11 +1148,11 @@ namespace System.Management.Automation
         {
             RegistryKey rootKey = GetMonadRootKey();
             // root key wont be null
-            Dbg.Assert(rootKey != null, "Root Key of Monad installation is not present");
+            Dbg.Assert(rootKey is not null, "Root Key of Monad installation is not present");
 
             RegistryKey versionRootKey = GetVersionRootKey(rootKey, psVersion);
             // version root key wont be null
-            Dbg.Assert(versionRootKey != null, "Version Rootkey of Monad installation is not present");
+            Dbg.Assert(versionRootKey is not null, "Version Rootkey of Monad installation is not present");
 
             RegistryKey psEngineParentKey = rootKey.OpenSubKey(psVersion);
             if (psEngineParentKey is null)
@@ -1186,7 +1186,7 @@ namespace System.Management.Automation
         GetVersionRootKey(RegistryKey rootKey, string psVersion)
         {
             Dbg.Assert(!string.IsNullOrEmpty(psVersion), "caller should validate the parameter");
-            Dbg.Assert(rootKey != null, "caller should validate the parameter");
+            Dbg.Assert(rootKey is not null, "caller should validate the parameter");
 
             string versionKey = PSVersionInfo.GetRegistryVersionKeyForSnapinDiscovery(psVersion);
             RegistryKey versionRoot = rootKey.OpenSubKey(versionKey);
@@ -1214,7 +1214,7 @@ namespace System.Management.Automation
         RegistryKey
         GetMshSnapinRootKey(RegistryKey versionRootKey, string psVersion)
         {
-            Dbg.Assert(versionRootKey != null, "caller should validate the parameter");
+            Dbg.Assert(versionRootKey is not null, "caller should validate the parameter");
 
             RegistryKey mshsnapinRoot = versionRootKey.OpenSubKey(RegistryStrings.MshSnapinKey);
             if (mshsnapinRoot is null)

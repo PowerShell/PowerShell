@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             string verbName = Enabled ? VerbsLifecycle.Enable : VerbsLifecycle.Disable;
 
-            if (definition != null &&
+            if (definition is not null &&
                 ShouldProcess(definition.Name, verbName))
             {
                 try

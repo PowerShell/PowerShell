@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
                 StringBuilder queryString = new StringBuilder();
                 ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), _connectionOptions);
                 scope.Connect();
-                if (Id != null)
+                if (Id is not null)
                 {
                     queryString.Append("Select * from Win32_QuickFixEngineering where (");
                     for (int i = 0; i <= Id.Length - 1; i++)
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
                 _searchProcess = new ManagementObjectSearcher(scope, new ObjectQuery(queryString.ToString()));
                 foreach (ManagementObject obj in _searchProcess.Get())
                 {
-                    if (Description != null)
+                    if (Description is not null)
                     {
                         if (!FilterMatch(obj))
                         {
@@ -157,7 +157,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(new ErrorRecord(ex, "GetHotFixNoEntriesFound", ErrorCategory.ObjectNotFound, null));
                 }
 
-                if (_searchProcess != null)
+                if (_searchProcess is not null)
                 {
                     this.Dispose();
                 }
@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void StopProcessing()
         {
-            if (_searchProcess != null)
+            if (_searchProcess is not null)
             {
                 _searchProcess.Dispose();
             }
@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (disposing)
             {
-                if (_searchProcess != null)
+                if (_searchProcess is not null)
                 {
                     _searchProcess.Dispose();
                 }

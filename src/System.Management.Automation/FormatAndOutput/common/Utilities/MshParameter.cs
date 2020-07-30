@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return true;
             }
 
-            if (this.SecondaryNames != null)
+            if (this.SecondaryNames is not null)
             {
                 foreach (string secondaryKey in this.SecondaryNames)
                 {
@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            if (matchingEntry != null)
+            if (matchingEntry is not null)
             {
                 // we found an unambiguous match
                 return matchingEntry;
@@ -270,7 +270,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     originalParameterWasHashTable = true;
                     currParam.hash = VerifyHashTable((IDictionary)actualObject, invocationContext);
                 }
-                else if ((actualObject != null) && MatchesAllowedTypes(actualObject.GetType(), _paramDef.hashEntries[0].AllowedTypes))
+                else if ((actualObject is not null) && MatchesAllowedTypes(actualObject.GetType(), _paramDef.hashEntries[0].AllowedTypes))
                 {
                     // a simple type was specified, build a hash with one entry
                     currParam.hash = _paramDef.hashEntries[0].CreateHashtableFromSingleType(actualObject);
@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     object val = parameter.hash[_paramDef.hashEntries[k].KeyName];
                     object newVal = _paramDef.hashEntries[k].Verify(val, invocationContext, originalParameterWasHashTable);
 
-                    if (newVal != null)
+                    if (newVal is not null)
                     {
                         // if a new value is provided, we need to update the hash entry
                         parameter.hash[_paramDef.hashEntries[k].KeyName] = newVal;
@@ -413,7 +413,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             string allowedTypesList = CatenateTypeArray(allowedTypes);
             string msg;
 
-            if (actualObject != null)
+            if (actualObject is not null)
             {
                 msg = StringUtil.Format(FormatAndOut_MshParameter.UnknownParameterTypeError,
                     actualObject.GetType().FullName, allowedTypesList);

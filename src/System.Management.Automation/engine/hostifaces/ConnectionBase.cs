@@ -626,7 +626,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal override bool HasAvailabilityChangedSubscribers
         {
-            get { return this.AvailabilityChanged != null; }
+            get { return this.AvailabilityChanged is not null; }
         }
 
         /// <summary>
@@ -636,7 +636,7 @@ namespace System.Management.Automation.Runspaces
         {
             EventHandler<RunspaceAvailabilityEventArgs> eh = this.AvailabilityChanged;
 
-            if (eh != null)
+            if (eh is not null)
             {
                 try
                 {
@@ -749,7 +749,7 @@ namespace System.Management.Automation.Runspaces
                 stateChanged = this.StateChanged;
                 hasAvailabilityChangedSubscribers = this.HasAvailabilityChangedSubscribers;
 
-                if (stateChanged != null || hasAvailabilityChangedSubscribers)
+                if (stateChanged is not null || hasAvailabilityChangedSubscribers)
                 {
                     tempEventQueue = _runspaceEventQueue;
                     _runspaceEventQueue = new Queue<RunspaceEventQueueItem>();
@@ -763,7 +763,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if (tempEventQueue != null)
+            if (tempEventQueue is not null)
             {
                 while (tempEventQueue.Count > 0)
                 {
@@ -777,7 +777,7 @@ namespace System.Management.Automation.Runspaces
 #pragma warning disable 56500
                     // Exception raised by events are not error condition for runspace
                     // object.
-                    if (stateChanged != null)
+                    if (stateChanged is not null)
                     {
                         try
                         {
@@ -825,7 +825,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         internal void AddToRunningPipelineList(PipelineBase pipeline)
         {
-            Dbg.Assert(pipeline != null, "caller should validate the parameter");
+            Dbg.Assert(pipeline is not null, "caller should validate the parameter");
 
             lock (_pipelineListLock)
             {
@@ -859,7 +859,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         internal void RemoveFromRunningPipelineList(PipelineBase pipeline)
         {
-            Dbg.Assert(pipeline != null, "caller should validate the parameter");
+            Dbg.Assert(pipeline is not null, "caller should validate the parameter");
 
             lock (_pipelineListLock)
             {
@@ -1157,12 +1157,12 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 Pipeline runningPipeline = GetCurrentlyRunningPipeline();
-                if (runningPipeline != null)
+                if (runningPipeline is not null)
                 {
                     // Detect if we're running an engine pulse, or we're running a nested pipeline
                     // from an engine pulse
                     if (runningPipeline == PulsePipeline ||
-                        (runningPipeline.IsNested && PulsePipeline != null))
+                        (runningPipeline.IsNested && PulsePipeline is not null))
                     {
                         // If so, wait and try again
                         // Release the lock before we wait for the pulse pipelines

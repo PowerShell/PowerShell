@@ -568,7 +568,7 @@ namespace Microsoft.PowerShell
                                                    PSHost host,
                                                    out Exception reason)
         {
-            Dbg.Diagnostics.Assert(commandInfo != null, "caller should validate the parameter");
+            Dbg.Diagnostics.Assert(commandInfo is not null, "caller should validate the parameter");
 
             bool allowRun = false;
             reason = null;

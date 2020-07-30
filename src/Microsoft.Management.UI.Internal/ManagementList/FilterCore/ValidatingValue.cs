@@ -192,7 +192,7 @@ namespace Microsoft.Management.UI.Internal
 
         private bool TryGetEnumValue(object rawValue, out T castValue)
         {
-            Debug.Assert(rawValue != null, "rawValue not null");
+            Debug.Assert(rawValue is not null, "rawValue not null");
             Debug.Assert(typeof(T).IsEnum, "is enum");
 
             castValue = default(T);

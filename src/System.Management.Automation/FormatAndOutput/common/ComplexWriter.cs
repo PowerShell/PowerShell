@@ -69,11 +69,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             foreach (object obj in fe.formatValueList)
             {
                 FormatEntry feChild = obj as FormatEntry;
-                if (feChild != null)
+                if (feChild is not null)
                 {
                     if (currentDepth < maxRecursionDepth)
                     {
-                        if (feChild.frameInfo != null)
+                        if (feChild.frameInfo is not null)
                         {
                             // if we have frame information, we need to push it on the
                             // indentation stack
@@ -99,14 +99,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 FormatTextField ftf = obj as FormatTextField;
-                if (ftf != null)
+                if (ftf is not null)
                 {
                     this.AddToBuffer(ftf.text);
                     continue;
                 }
 
                 FormatPropertyField fpf = obj as FormatPropertyField;
-                if (fpf != null)
+                if (fpf is not null)
                 {
                     this.AddToBuffer(fpf.propertyValue);
                 }
@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             public void Dispose()
             {
-                if (_mgr != null)
+                if (_mgr is not null)
                 {
                     _mgr.RemoveStackFrame();
                 }

@@ -43,14 +43,14 @@ namespace Microsoft.PowerShell.Cmdletization
             _privateData = privateData;
 
             var compiledScript = this.Cmdlet as PSScriptCmdlet;
-            if (compiledScript != null)
+            if (compiledScript is not null)
             {
                 compiledScript.StoppingEvent += delegate { this.StopProcessing(); };
                 compiledScript.DisposingEvent +=
                         delegate
                         {
                             var disposable = this as IDisposable;
-                            if (disposable != null)
+                            if (disposable is not null)
                             {
                                 disposable.Dispose();
                             }

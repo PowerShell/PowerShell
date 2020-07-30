@@ -94,7 +94,7 @@ namespace System.Management.Automation.Remoting
             _transportManager.RobustConnectionNotification += HandleRobustConnectionNotification;
 
             WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (wsmanConnectionInfo != null)
+            if (wsmanConnectionInfo is not null)
             {
                 // only WSMan transport supports redirection
 
@@ -182,7 +182,7 @@ namespace System.Management.Automation.Remoting
                     break;
             }
 
-            if (eventArgument != null)
+            if (eventArgument is not null)
             {
                 StateMachine.RaiseEvent(eventArgument);
             }
@@ -301,7 +301,7 @@ namespace System.Management.Automation.Remoting
             if (arg.SessionStateInfo.State == RemoteSessionState.Established)
             {
                 WSManClientSessionTransportManager tm = _transportManager as WSManClientSessionTransportManager;
-                if (tm != null)
+                if (tm is not null)
                 {
                     tm.AdjustForProtocolVariations(_session.ServerProtocolVersion);
                     tm.StartReceivingData();
@@ -434,7 +434,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="newURI"></param>
         private void PerformURIRedirectionStep2(System.Uri newURI)
         {
-            Dbg.Assert(newURI != null, "Uri cannot be null");
+            Dbg.Assert(newURI is not null, "Uri cannot be null");
             lock (_syncObject)
             {
                 // if connection is closed by the user..no need to redirect
@@ -444,7 +444,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 // raise warning to report the redirection
-                if (_uriRedirectionHandler != null)
+                if (_uriRedirectionHandler is not null)
                 {
                     _uriRedirectionHandler(newURI);
                 }
@@ -465,10 +465,10 @@ namespace System.Management.Automation.Remoting
         /// <param name="e"></param>
         internal void HandleTransportError(object sender, TransportErrorOccuredEventArgs e)
         {
-            Dbg.Assert(e != null, "HandleTransportError expects non-null eventargs");
+            Dbg.Assert(e is not null, "HandleTransportError expects non-null eventargs");
             // handle uri redirections
             PSRemotingTransportRedirectException redirectException = e.Exception as PSRemotingTransportRedirectException;
-            if ((redirectException != null) && (_maxUriRedirectionCount > 0))
+            if ((redirectException is not null) && (_maxUriRedirectionCount > 0))
             {
                 Exception exception = null;
 
@@ -488,7 +488,7 @@ namespace System.Management.Automation.Remoting
                     exception = uriFormatException;
                 }
                 // if we are here, there must be an exception constructing a uri
-                if (exception != null)
+                if (exception is not null)
                 {
                     PSRemotingTransportException newException =
                         new PSRemotingTransportException(PSRemotingErrorId.RedirectedURINotWellFormatted, RemotingErrorIdStrings.RedirectedURINotWellFormatted,
@@ -705,7 +705,7 @@ namespace System.Management.Automation.Remoting
                     clientRunspacePoolId = rcvdData.RunspacePoolId;
                     runspacePool = _session.GetRunspacePool(clientRunspacePoolId);
 
-                    if (runspacePool != null)
+                    if (runspacePool is not null)
                     {
                         // GETBACK
                         runspacePool.DataStructureHandler.ProcessReceivedData(rcvdData);

@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell
         /// </param>
         internal Executor(ConsoleHost parent, bool useNestedPipelines, bool isPromptFunctionExecutor)
         {
-            Dbg.Assert(parent != null, "parent should not be null");
+            Dbg.Assert(parent is not null, "parent should not be null");
 
             _parent = parent;
             this.useNestedPipelines = useNestedPipelines;
@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell
         {
             ErrorRecord er = null;
             IContainsErrorRecord cer = ex as IContainsErrorRecord;
-            if (cer != null)
+            if (cer is not null)
             {
                 er = cer.ErrorRecord;
                 // Exception inside the error record is ParentContainsErrorRecordException which
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell
                 pipelineWaiter.Wait();
 
                 // report error if pipeline failed
-                if (tempPipeline.PipelineStateInfo.State == PipelineState.Failed && tempPipeline.PipelineStateInfo.Reason != null)
+                if (tempPipeline.PipelineStateInfo.State == PipelineState.Failed && tempPipeline.PipelineStateInfo.Reason is not null)
                 {
                     if (_parent.OutputFormat == Serialization.DataFormat.Text)
                     {
@@ -331,7 +331,7 @@ namespace Microsoft.PowerShell
                 var addOutputter = ((options & ExecutionOptions.AddOutputter) > 0);
                 if (addOutputter &&
                     !_parent.RunspaceRef.IsRunspaceOverridden &&
-                    _parent.RunspaceRef.Runspace.ExecutionContext.Modules != null &&
+                    _parent.RunspaceRef.Runspace.ExecutionContext.Modules is not null &&
                     _parent.RunspaceRef.Runspace.ExecutionContext.Modules.IsImplicitRemotingModuleLoaded &&
                     Utils.TryRunAsImplicitBatch(command, _parent.RunspaceRef.Runspace))
                 {
@@ -358,7 +358,7 @@ namespace Microsoft.PowerShell
 
         internal Collection<PSObject> ExecuteCommandHelper(Pipeline tempPipeline, out Exception exceptionThrown, ExecutionOptions options)
         {
-            Dbg.Assert(tempPipeline != null, "command should have a value");
+            Dbg.Assert(tempPipeline is not null, "command should have a value");
 
             exceptionThrown = null;
 
@@ -394,7 +394,7 @@ namespace Microsoft.PowerShell
                     }
 
                     var lastCmd = executeCommands.Last();
-                    if (!((lastCmd.CommandText != null) &&
+                    if (!((lastCmd.CommandText is not null) &&
                           (lastCmd.CommandText.Equals("Out-Default", StringComparison.OrdinalIgnoreCase)))
                        )
                     {
@@ -449,7 +449,7 @@ namespace Microsoft.PowerShell
             do
             {
                 result = ExecuteCommand(command, out e, ExecutionOptions.None);
-                if (e != null)
+                if (e is not null)
                 {
                     break;
                 }
@@ -488,7 +488,7 @@ namespace Microsoft.PowerShell
             {
                 Collection<PSObject> streamResults = ExecuteCommand(command, out exceptionThrown, ExecutionOptions.None);
 
-                if (exceptionThrown != null)
+                if (exceptionThrown is not null)
                 {
                     break;
                 }
@@ -506,7 +506,7 @@ namespace Microsoft.PowerShell
                 // ToString() on the PSObject because there is no default runspace
                 // available.
                 PSObject msho = streamResults[0] as PSObject;
-                if (msho != null)
+                if (msho is not null)
                     result = msho.BaseObject.ToString();
                 else
                     result = streamResults[0].ToString();
@@ -564,7 +564,7 @@ namespace Microsoft.PowerShell
             {
                 Collection<PSObject> streamResults = ExecuteCommand(command, out exceptionThrown, ExecutionOptions.None);
 
-                if (exceptionThrown != null)
+                if (exceptionThrown is not null)
                 {
                     break;
                 }
@@ -593,7 +593,7 @@ namespace Microsoft.PowerShell
 
             lock (_instanceStateLock)
             {
-                if (_pipeline != null && !_cancelled)
+                if (_pipeline is not null && !_cancelled)
                 {
                     _cancelled = true;
 
@@ -610,7 +610,7 @@ namespace Microsoft.PowerShell
         internal void BlockCommandOutput()
         {
             RemotePipeline remotePipeline = _pipeline as RemotePipeline;
-            if (remotePipeline != null)
+            if (remotePipeline is not null)
             {
                 // Waits until queued data is handled.
                 remotePipeline.DrainIncomingData();
@@ -623,7 +623,7 @@ namespace Microsoft.PowerShell
         internal void ResumeCommandOutput()
         {
             RemotePipeline remotePipeline = _pipeline as RemotePipeline;
-            if (remotePipeline != null)
+            if (remotePipeline is not null)
             {
                 // Resumes data flow.
                 remotePipeline.ResumeIncomingData();
@@ -721,7 +721,7 @@ namespace Microsoft.PowerShell
                 temp = s_currentExecutor;
             }
 
-            if (temp != null)
+            if (temp is not null)
             {
                 temp.Cancel();
             }

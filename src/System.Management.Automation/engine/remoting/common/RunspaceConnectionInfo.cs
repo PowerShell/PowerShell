@@ -284,12 +284,12 @@ namespace System.Management.Automation.Runspaces
                 throw new ArgumentNullException(nameof(options));
             }
 
-            if (options.Culture != null)
+            if (options.Culture is not null)
             {
                 this.Culture = options.Culture;
             }
 
-            if (options.UICulture != null)
+            if (options.UICulture is not null)
             {
                 this.UICulture = options.UICulture;
             }
@@ -978,7 +978,7 @@ namespace System.Management.Automation.Runspaces
                 throw new ArgumentNullException(nameof(options));
             }
 
-            if ((options.ProxyAccessType == ProxyAccessType.None) && (options.ProxyCredential != null))
+            if ((options.ProxyAccessType == ProxyAccessType.None) && (options.ProxyCredential is not null))
             {
                 string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ProxyCredentialWithoutAccess,
                             ProxyAccessType.None);
@@ -1135,7 +1135,7 @@ namespace System.Management.Automation.Runspaces
 
         internal void SetConnectionUri(Uri newUri)
         {
-            Dbg.Assert(newUri != null, "newUri cannot be null.");
+            Dbg.Assert(newUri is not null, "newUri cannot be null.");
             _connectionUri = newUri;
         }
 
@@ -1271,7 +1271,7 @@ namespace System.Management.Automation.Runspaces
         private void ValidateSpecifiedAuthentication()
         {
             if ((WSManAuthenticationMechanism != WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION)
-                && (_thumbPrint != null))
+                && (_thumbPrint is not null))
             {
                 throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.NewRunspaceAmbiguousAuthentication,
                       "CertificateThumbPrint", this.AuthenticationMechanism.ToString());
@@ -2056,10 +2056,10 @@ namespace System.Management.Automation.Runspaces
             string sshCommand = "ssh.exe";
 #endif
             var context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-            if (context != null)
+            if (context is not null)
             {
                 var cmdInfo = context.CommandDiscovery.LookupCommandInfo(sshCommand, CommandOrigin.Internal) as ApplicationInfo;
-                if (cmdInfo != null)
+                if (cmdInfo is not null)
                 {
                     filePath = cmdInfo.Path;
                 }
@@ -2362,7 +2362,7 @@ namespace System.Management.Automation.Runspaces
             // Allocate the unmanaged array to hold each string pointer.
             // It needs to have an extra element to null terminate the array.
             arrPtr = (byte**)Marshal.AllocHGlobal(sizeof(IntPtr) * arrLength);
-            System.Diagnostics.Debug.Assert(arrPtr != null, "Invalid array ptr");
+            System.Diagnostics.Debug.Assert(arrPtr is not null, "Invalid array ptr");
 
             // Zero the memory so that if any of the individual string allocations fails,
             // we can loop through the array to free any that succeeded.
@@ -2379,7 +2379,7 @@ namespace System.Management.Automation.Runspaces
                 byte[] byteArr = System.Text.Encoding.UTF8.GetBytes(arr[i]);
 
                 arrPtr[i] = (byte*)Marshal.AllocHGlobal(byteArr.Length + 1); // +1 for null termination
-                System.Diagnostics.Debug.Assert(arrPtr[i] != null, "Invalid array ptr");
+                System.Diagnostics.Debug.Assert(arrPtr[i] is not null, "Invalid array ptr");
 
                 Marshal.Copy(byteArr, 0, (IntPtr)arrPtr[i], byteArr.Length); // copy over the data from the managed byte array
                 arrPtr[i][byteArr.Length] = (byte)'\0'; // null terminate
@@ -2388,12 +2388,12 @@ namespace System.Management.Automation.Runspaces
 
         private static unsafe void FreeArray(byte** arr, int length)
         {
-            if (arr != null)
+            if (arr is not null)
             {
                 // Free each element of the array
                 for (int i = 0; i < length; i++)
                 {
-                    if (arr[i] != null)
+                    if (arr[i] is not null)
                     {
                         Marshal.FreeHGlobal((IntPtr)arr[i]);
                         arr[i] = null;
@@ -2452,12 +2452,12 @@ namespace System.Management.Automation.Runspaces
             catch (FileNotFoundException e) { ex = e; }
             catch (System.ComponentModel.Win32Exception e) { ex = e; }
 
-            if ((ex != null) ||
+            if ((ex is not null) ||
                 (sshProcess is null) ||
                 (sshProcess.HasExited))
             {
                 throw new InvalidOperationException(
-                    StringUtil.Format(RemotingErrorIdStrings.CannotStartSSHClient, (ex != null) ? ex.Message : string.Empty),
+                    StringUtil.Format(RemotingErrorIdStrings.CannotStartSSHClient, (ex is not null) ? ex.Message : string.Empty),
                     ex);
             }
 
@@ -2473,11 +2473,11 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception)
             {
-                if (stdInWriterVar != null) { stdInWriterVar.Dispose(); } else { stdInPipeServer.Dispose(); }
+                if (stdInWriterVar is not null) { stdInWriterVar.Dispose(); } else { stdInPipeServer.Dispose(); }
 
-                if (stdOutReaderVar != null) { stdInWriterVar.Dispose(); } else { stdOutPipeServer.Dispose(); }
+                if (stdOutReaderVar is not null) { stdInWriterVar.Dispose(); } else { stdOutPipeServer.Dispose(); }
 
-                if (stdErrReaderVar != null) { stdInWriterVar.Dispose(); } else { stdErrPipeServer.Dispose(); }
+                if (stdErrReaderVar is not null) { stdInWriterVar.Dispose(); } else { stdErrPipeServer.Dispose(); }
 
                 throw;
             }
@@ -2528,17 +2528,17 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception)
             {
-                if (stdInPipeServer != null) { stdInPipeServer.Dispose(); }
+                if (stdInPipeServer is not null) { stdInPipeServer.Dispose(); }
 
-                if (stdInPipeClient != null) { stdInPipeClient.Dispose(); }
+                if (stdInPipeClient is not null) { stdInPipeClient.Dispose(); }
 
-                if (stdOutPipeServer != null) { stdOutPipeServer.Dispose(); }
+                if (stdOutPipeServer is not null) { stdOutPipeServer.Dispose(); }
 
-                if (stdOutPipeClient != null) { stdOutPipeClient.Dispose(); }
+                if (stdOutPipeClient is not null) { stdOutPipeClient.Dispose(); }
 
-                if (stdErrPipeServer != null) { stdErrPipeServer.Dispose(); }
+                if (stdErrPipeServer is not null) { stdErrPipeServer.Dispose(); }
 
-                if (stdErrPipeClient != null) { stdErrPipeClient.Dispose(); }
+                if (stdErrPipeClient is not null) { stdErrPipeClient.Dispose(); }
 
                 throw;
             }
@@ -2604,17 +2604,17 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception)
             {
-                if (stdInPipeServer != null) { stdInPipeServer.Dispose(); }
+                if (stdInPipeServer is not null) { stdInPipeServer.Dispose(); }
 
-                if (stdInPipeClient != null) { stdInPipeClient.Dispose(); }
+                if (stdInPipeClient is not null) { stdInPipeClient.Dispose(); }
 
-                if (stdOutPipeServer != null) { stdOutPipeServer.Dispose(); }
+                if (stdOutPipeServer is not null) { stdOutPipeServer.Dispose(); }
 
-                if (stdOutPipeClient != null) { stdOutPipeClient.Dispose(); }
+                if (stdOutPipeClient is not null) { stdOutPipeClient.Dispose(); }
 
-                if (stdErrPipeServer != null) { stdErrPipeServer.Dispose(); }
+                if (stdErrPipeServer is not null) { stdErrPipeServer.Dispose(); }
 
-                if (stdErrPipeClient != null) { stdErrPipeClient.Dispose(); }
+                if (stdErrPipeClient is not null) { stdErrPipeClient.Dispose(); }
 
                 throw;
             }
@@ -2658,7 +2658,7 @@ namespace System.Management.Automation.Runspaces
             // Create optional security attributes based on provided PipeSecurity.
             NamedPipeNative.SECURITY_ATTRIBUTES securityAttributes = null;
             GCHandle? securityDescHandle = null;
-            if (securityDesc != null)
+            if (securityDesc is not null)
             {
                 byte[] securityDescBuffer = new byte[securityDesc.BinaryLength];
                 securityDesc.GetBinaryForm(securityDescBuffer, 0);
@@ -2678,7 +2678,7 @@ namespace System.Management.Automation.Runspaces
                 securityAttributes);
 
             int lastError = Marshal.GetLastWin32Error();
-            if (securityDescHandle != null)
+            if (securityDescHandle is not null)
             {
                 securityDescHandle.Value.Free();
             }
@@ -3423,7 +3423,7 @@ namespace System.Management.Automation.Runspaces
                     // Since Hyper-V changed this from a property to a field, we can optimize for newest Windows to see if it's a field,
                     // otherwise we fall back to old code to be compatible with older versions of Windows
                     var fieldInfo = computeSystemPropertiesType.GetField("RuntimeId");
-                    if (fieldInfo != null)
+                    if (fieldInfo is not null)
                     {
                         RuntimeId = (Guid)fieldInfo.GetValue(computeSystemPropertiesHandle);
                     }
@@ -3457,7 +3457,7 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception e)
             {
-                if (e.InnerException != null &&
+                if (e.InnerException is not null &&
                     StringComparer.Ordinal.Equals(
                         e.InnerException.GetType().FullName,
                         "Microsoft.HostCompute.Interop.ObjectNotFoundException"))
@@ -3498,7 +3498,7 @@ namespace System.Management.Automation.Runspaces
         {
             string errorMessage = e.Message;
 
-            if (e.InnerException != null)
+            if (e.InnerException is not null)
             {
                 errorMessage += " " + e.InnerException.Message;
             }

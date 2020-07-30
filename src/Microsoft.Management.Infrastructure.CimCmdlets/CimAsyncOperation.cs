@@ -385,7 +385,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected object GetReferenceOrReferenceArrayObject(object value, ref CimType referenceType)
         {
             PSReference cimReference = value as PSReference;
-            if (cimReference != null)
+            if (cimReference is not null)
             {
                 object baseObject = GetBaseObject(cimReference.Value);
                 CimInstance cimInstance = baseObject as CimInstance;
@@ -516,7 +516,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            if (this.cimSessionProxyCache != null)
+            if (this.cimSessionProxyCache is not null)
             {
                 List<CimSessionProxy> temporaryProxy;
                 lock (this.cimSessionProxyCache)
@@ -534,7 +534,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             this.moreActionEvent.Dispose();
-            if (this.ackedEvent != null)
+            if (this.ackedEvent is not null)
             {
                 this.ackedEvent.Dispose();
             }

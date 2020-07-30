@@ -90,7 +90,7 @@ namespace System.Management.Automation.Language
         internal static BindingRestrictions PSGetMethodArgumentRestriction(this DynamicMetaObject obj)
         {
             var baseValue = PSObject.Base(obj.Value);
-            if (baseValue != null && baseValue.GetType() == typeof(object[]))
+            if (baseValue is not null && baseValue.GetType() == typeof(object[]))
             {
                 var effectiveArgType = Adapter.EffectiveArgumentType(obj.Value);
                 var methodInfo = !(effectiveArgType == typeof(object[]))
@@ -272,7 +272,7 @@ namespace System.Management.Automation.Language
             if (parameterType.IsByRefLike && allowCastingToByRefLikeType)
             {
                 var conversionResult = PSConvertBinder.ConvertToByRefLikeTypeViaCasting(target, parameterType);
-                if (conversionResult != null)
+                if (conversionResult is not null)
                 {
                     return conversionResult;
                 }
@@ -373,7 +373,7 @@ namespace System.Management.Automation.Language
 
         internal static DynamicMetaObject DeferForPSObject(this DynamicMetaObjectBinder binder, DynamicMetaObject[] args, bool targetIsComObject = false)
         {
-            Diagnostics.Assert(args != null && args.Length > 0, "args should not be null or empty");
+            Diagnostics.Assert(args is not null && args.Length > 0, "args should not be null or empty");
             Diagnostics.Assert(args.Any(mo => mo.Value is PSObject), "At least one arg must be a psobject");
 
             Expression[] exprs = new Expression[args.Length];
@@ -615,7 +615,7 @@ namespace System.Management.Automation.Language
                 //
                 //  DataRowCollection rows;
                 //  DataTable table = (DataTable)obj;
-                //  if ((rows = table.Rows) != null)
+                //  if ((rows = table.Rows) is not null)
                 //      return rows.GetEnumerator();
                 //  else
                 //      return null;
@@ -655,7 +655,7 @@ namespace System.Management.Automation.Language
             }
 
             var enumerable = targetValue as IEnumerable;
-            if (enumerable != null)
+            if (enumerable is not null)
             {
                 // Normally it's safe to just call IEnumerable.GetEnumerator, but in some rare cases, the
                 // non-generic implementation throws or returns null, so we'll just avoid that problem and
@@ -680,7 +680,7 @@ namespace System.Management.Automation.Language
             }
 
             var enumerator = targetValue as IEnumerator;
-            if (enumerator != null)
+            if (enumerator is not null)
             {
                 return (new DynamicMetaObject(
                     MaybeDebase(this, e => e.Cast(typeof(IEnumerator)), target),
@@ -748,7 +748,7 @@ namespace System.Management.Automation.Language
         private static IEnumerator PSObjectNotEnumerableRule(CallSite site, object obj)
         {
             var psobj = obj as PSObject;
-            return psobj != null && obj != AutomationNull.Value
+            return psobj is not null && obj != AutomationNull.Value
                 ? NotEnumerableRule(site, PSObject.Base(obj))
                 : ((CallSite<Func<CallSite, object, IEnumerator>>)site).Update(site, obj);
         }
@@ -756,7 +756,7 @@ namespace System.Management.Automation.Language
         private static IEnumerator ArrayRule(CallSite site, object obj)
         {
             var array = obj as Array;
-            if (array != null) return array.GetEnumerator();
+            if (array is not null) return array.GetEnumerator();
             return ((CallSite<Func<CallSite, object, IEnumerator>>)site).Update(site, obj);
         }
 
@@ -768,7 +768,7 @@ namespace System.Management.Automation.Language
         private static IEnumerator PSObjectStringRule(CallSite site, object obj)
         {
             var psobj = obj as PSObject;
-            if (psobj != null && PSObject.Base(psobj) is string) return null;
+            if (psobj is not null && PSObject.Base(psobj) is string) return null;
             return ((CallSite<Func<CallSite, object, IEnumerator>>)site).Update(site, obj);
         }
     }
@@ -971,7 +971,7 @@ namespace System.Management.Automation.Language
             }
 
             var iList = target.Value as IList;
-            if (iList != null)
+            if (iList is not null)
             {
                 // 3 possibilities - too few, exact, or too many elements.
 
@@ -1133,7 +1133,7 @@ namespace System.Management.Automation.Language
             }
 
             IList pipelineResult = target.Value as IList;
-            Diagnostics.Assert(pipelineResult != null, "Pipeline result is always an IList");
+            Diagnostics.Assert(pipelineResult is not null, "Pipeline result is always an IList");
 
             var ilistExpr = target.Expression;
             if (!(typeof(IList) == ilistExpr.Type))
@@ -1198,7 +1198,7 @@ namespace System.Management.Automation.Language
         {
             PSInvokeDynamicMemberBinder result;
 
-            var classScope = classScopeAst != null ? classScopeAst.Type : null;
+            var classScope = classScopeAst is not null ? classScopeAst.Type : null;
             lock (s_binderCache)
             {
                 var key = Tuple.Create(callInfo, constraints, propertySetter, @static, classScope);
@@ -1220,7 +1220,7 @@ namespace System.Management.Automation.Language
 
         private PSInvokeDynamicMemberBinder(CallInfo callInfo, bool @static, bool propertySetter, PSMethodInvocationConstraints constraints, Type classScope)
         {
-            Diagnostics.Assert(callInfo != null, "callers make sure 'callInfo' is not null");
+            Diagnostics.Assert(callInfo is not null, "callers make sure 'callInfo' is not null");
 
             _callInfo = callInfo;
             _static = @static;
@@ -1241,7 +1241,7 @@ namespace System.Management.Automation.Language
 
             Expression bindingStrExpr;
             var memberName = memberNameValue as string;
-            if (memberName != null)
+            if (memberName is not null)
             {
                 if (memberNameArg.Value is PSObject)
                 {
@@ -1292,7 +1292,7 @@ namespace System.Management.Automation.Language
             PSGetDynamicMemberBinder binder;
             lock (s_binderCache)
             {
-                var type = classScope != null ? classScope.Type : null;
+                var type = classScope is not null ? classScope.Type : null;
                 var tuple = Tuple.Create(type, @static);
                 if (!s_binderCache.TryGetValue(tuple, out binder))
                 {
@@ -1327,7 +1327,7 @@ namespace System.Management.Automation.Language
             Expression bindingStrExpr;
             BindingRestrictions restrictions;
             var memberName = memberNameValue as string;
-            if (memberName != null)
+            if (memberName is not null)
             {
                 if (memberNameArg.Value is PSObject)
                 {
@@ -1402,7 +1402,7 @@ namespace System.Management.Automation.Language
             PSSetDynamicMemberBinder binder;
             lock (s_binderCache)
             {
-                var type = classScope != null ? classScope.Type : null;
+                var type = classScope is not null ? classScope.Type : null;
                 var tuple = Tuple.Create(type, @static);
                 if (!s_binderCache.TryGetValue(tuple, out binder))
                 {
@@ -1436,7 +1436,7 @@ namespace System.Management.Automation.Language
 
             Expression bindingStrExpr;
             var memberName = memberNameValue as string;
-            if (memberName != null)
+            if (memberName is not null)
             {
                 if (memberNameArg.Value is PSObject)
                 {
@@ -1683,7 +1683,7 @@ namespace System.Management.Automation.Language
                 // This inconsistent behavior affects OneCore powershell because we are using the extension method here when compiling
                 // against CoreCLR. So we need to add a null check until this is fixed in CLR.
                 var paramArrayAttrs = parameterInfo[argIndex].GetCustomAttributes(typeof(ParamArrayAttribute), true);
-                if (paramArrayAttrs != null && paramArrayAttrs.Length > 0 && expandParamsOnBest)
+                if (paramArrayAttrs is not null && paramArrayAttrs.Length > 0 && expandParamsOnBest)
                 {
                     var elementType = parameterInfo[argIndex].ParameterType.GetElementType();
                     var paramsArray = new List<Expression>();
@@ -1733,7 +1733,7 @@ namespace System.Management.Automation.Language
                     Expression lhs;
                     Type propertyType;
                     var propertyInfo = member as PropertyInfo;
-                    if (propertyInfo != null)
+                    if (propertyInfo is not null)
                     {
                         if (propertyInfo.GetSetMethod() is null)
                         {
@@ -1845,7 +1845,7 @@ namespace System.Management.Automation.Language
             }
 
             var toType = target.Value as Type;
-            Diagnostics.Assert(toType != null, "target must be a type");
+            Diagnostics.Assert(toType is not null, "target must be a type");
 
             var bindingRestrictions = BindingRestrictions.GetInstanceRestriction(target.Expression, toType).Merge(arg.PSGetTypeRestriction());
 
@@ -1893,13 +1893,13 @@ namespace System.Management.Automation.Language
             }
 
             var psobj = value as PSObject;
-            if (psobj != null)
+            if (psobj is not null)
             {
                 var restrictions = BindingRestrictions.GetTypeRestriction(target.Expression, psobj.GetType());
                 var expr = target.Expression;
                 var baseObject = psobj.BaseObject;
                 var baseObjExpr = Expression.Property(expr.Cast(typeof(PSObject)), CachedReflectionInfo.PSObject_BaseObject);
-                if (baseObject != null)
+                if (baseObject is not null)
                 {
                     var baseObjType = baseObject.GetType();
                     restrictions = restrictions.Merge(BindingRestrictions.GetTypeRestriction(baseObjExpr, baseObjType));
@@ -2019,7 +2019,7 @@ namespace System.Management.Automation.Language
         private static object PSObjectStringRule(CallSite site, object obj)
         {
             var psobj = obj as PSObject;
-            if (psobj != null && psobj.BaseObject is string) return obj;
+            if (psobj is not null && psobj.BaseObject is string) return obj;
             return ((CallSite<Func<CallSite, object, object>>)site).Update(site, obj);
         }
 
@@ -2180,7 +2180,7 @@ namespace System.Management.Automation.Language
             {
                 // When adding to an array, we don't want to unwrap the RHS - it's unnecessary,
                 // and in the case of strings, we actually lose instance members on the PSObject.
-                if (!(Operation == ExpressionType.Add && PSEnumerableBinder.IsEnumerable(target) != null))
+                if (!(Operation == ExpressionType.Add && PSEnumerableBinder.IsEnumerable(target) is not null))
                 {
                     // Defer when the object is wrapped, but not for empty objects.
                     return this.DeferForPSObject(target, arg).WriteToDebugLog(this);
@@ -2280,7 +2280,7 @@ namespace System.Management.Automation.Language
             // are trying to generate the expression that calls the override to DynamicObject.TryBinaryOperation.
             // We get called twice for the same target object, once with a null errorSuggestion (in which case we'll have
             // returned the result below), and then a second time with a non-null errorSuggestion, which we return as is.
-            if (errorSuggestion != null && target.Value is DynamicObject)
+            if (errorSuggestion is not null && target.Value is DynamicObject)
             {
                 return errorSuggestion;
             }
@@ -2654,7 +2654,7 @@ namespace System.Management.Automation.Language
             if (target.LimitType.IsNumericOrPrimitive() && !(target.LimitType == typeof(char)))
             {
                 var numericArg = GetArgAsNumericOrPrimitive(arg, target.LimitType);
-                if (numericArg != null)
+                if (numericArg is not null)
                 {
                     return BinaryNumericOp("Add", target, numericArg);
                 }
@@ -2678,7 +2678,7 @@ namespace System.Management.Automation.Language
                                    ExpressionCache.Constant(1));
             }
 
-            if (lhsStringExpr != null)
+            if (lhsStringExpr is not null)
             {
                 // For string concatenation, simply add the 2 strings, possibly converting the rhs first.
                 return new DynamicMetaObject(
@@ -2691,13 +2691,13 @@ namespace System.Management.Automation.Language
             }
 
             var lhsEnumerator = PSEnumerableBinder.IsEnumerable(target);
-            if (lhsEnumerator != null)
+            if (lhsEnumerator is not null)
             {
                 // target is enumerable, so we're creating a new array.
 
                 var rhsEnumerator = PSEnumerableBinder.IsEnumerable(arg);
                 Expression call;
-                if (rhsEnumerator != null)
+                if (rhsEnumerator is not null)
                 {
                     // Adding 2 lists
                     call = Expression.Call(CachedReflectionInfo.EnumerableOps_AddEnumerable,
@@ -2751,7 +2751,7 @@ namespace System.Management.Automation.Language
             if (target.LimitType.IsNumeric())
             {
                 var numericArg = GetArgAsNumericOrPrimitive(arg, target.LimitType);
-                if (numericArg != null)
+                if (numericArg is not null)
                 {
                     return BinaryNumericOp("Multiply", target, numericArg);
                 }
@@ -2776,7 +2776,7 @@ namespace System.Management.Automation.Language
             }
 
             var lhsEnumerator = PSEnumerableBinder.IsEnumerable(target);
-            if (lhsEnumerator != null)
+            if (lhsEnumerator is not null)
             {
                 Expression argExpr = arg.LimitType == typeof(string)
                                          ? ConvertStringToNumber(arg.Expression, typeof(int)).Convert(typeof(uint))
@@ -2828,7 +2828,7 @@ namespace System.Management.Automation.Language
             if (target.LimitType.IsNumericOrPrimitive())
             {
                 var numericArg = GetArgAsNumericOrPrimitive(arg, target.LimitType);
-                if (numericArg != null)
+                if (numericArg is not null)
                 {
                     return BinaryNumericOp(numericOpMethodName, target, numericArg);
                 }
@@ -2995,7 +2995,7 @@ namespace System.Management.Automation.Language
                 // Because we use unsigned for -bnot, to be consistent, we promote to unsigned here too (-band,-bor,-xor)
                 opType = GetBitwiseOpType((int)leftTypeCode >= (int)rightTypeCode ? leftTypeCode : rightTypeCode);
 
-                if (numericTarget != null && numericArg != null)
+                if (numericTarget is not null && numericArg is not null)
                 {
                     var expr = exprGenerator(numericTarget.Expression.Cast(numericTarget.LimitType).Cast(opType),
                                              numericArg.Expression.Cast(numericArg.LimitType).Cast(opType));
@@ -3172,7 +3172,7 @@ namespace System.Management.Automation.Language
                 Expression result =
                       target.LimitType.IsNumeric() ? CompareWithZero(target, Expression.LessThan)
                     : arg.LimitType.IsNumeric() ? CompareWithZero(arg, Expression.GreaterThanOrEqual)
-                    : arg.Value != null ? ExpressionCache.BoxedTrue
+                    : arg.Value is not null ? ExpressionCache.BoxedTrue
                     : ExpressionCache.BoxedFalse;
 
                 return new DynamicMetaObject(result, target.CombineRestrictions(arg));
@@ -3192,7 +3192,7 @@ namespace System.Management.Automation.Language
                 Expression result =
                       target.LimitType.IsNumeric() ? CompareWithZero(target, Expression.LessThan)
                     : arg.LimitType.IsNumeric() ? CompareWithZero(arg, Expression.GreaterThanOrEqual)
-                    : target.Value != null ? ExpressionCache.BoxedFalse
+                    : target.Value is not null ? ExpressionCache.BoxedFalse
                     : ExpressionCache.BoxedTrue;
 
                 return new DynamicMetaObject(result, target.CombineRestrictions(arg));
@@ -3214,7 +3214,7 @@ namespace System.Management.Automation.Language
                 Expression result =
                       target.LimitType.IsNumeric() ? CompareWithZero(target, Expression.GreaterThanOrEqual)
                     : arg.LimitType.IsNumeric() ? CompareWithZero(arg, Expression.LessThan)
-                    : target.Value != null ? ExpressionCache.BoxedTrue
+                    : target.Value is not null ? ExpressionCache.BoxedTrue
                     : ExpressionCache.BoxedFalse;
 
                 return new DynamicMetaObject(result, target.CombineRestrictions(arg));
@@ -3236,7 +3236,7 @@ namespace System.Management.Automation.Language
                 Expression result =
                       target.LimitType.IsNumeric() ? CompareWithZero(target, Expression.GreaterThanOrEqual)
                     : arg.LimitType.IsNumeric() ? CompareWithZero(arg, Expression.LessThan)
-                    : arg.Value != null ? ExpressionCache.BoxedFalse
+                    : arg.Value is not null ? ExpressionCache.BoxedFalse
                     : ExpressionCache.BoxedTrue;
 
                 return new DynamicMetaObject(result, target.CombineRestrictions(arg));
@@ -3356,7 +3356,7 @@ namespace System.Management.Automation.Language
 
         private DynamicMetaObject BinaryComparisonCommon(DynamicMetaObject targetAsEnumerator, DynamicMetaObject target, DynamicMetaObject arg)
         {
-            if (targetAsEnumerator != null && !_scalarCompare)
+            if (targetAsEnumerator is not null && !_scalarCompare)
             {
                 // If the target is enumerable, the we generate an object[] result with elements matching.
                 // The iteration will be done in a pre-compiled method, but the comparison is done with
@@ -3372,7 +3372,7 @@ namespace System.Management.Automation.Language
             if (target.LimitType.IsNumeric())
             {
                 var numericArg = GetArgAsNumericOrPrimitive(arg, target.LimitType);
-                if (numericArg != null)
+                if (numericArg is not null)
                 {
                     string numericMethod = null;
                     switch (Operation)
@@ -3524,7 +3524,7 @@ namespace System.Management.Automation.Language
             // If the type implements the operator, prefer that.
             var method = target.LimitType.GetMethod("op_OnesComplement", BindingFlags.Static | BindingFlags.Public, null,
                                                     new Type[] { target.LimitType }, null);
-            if (method != null)
+            if (method is not null)
             {
                 return new DynamicMetaObject(
                     Expression.OnesComplement(target.Expression.Cast(target.LimitType), method).Cast(typeof(object)),
@@ -3600,7 +3600,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (targetExpr != null)
+            if (targetExpr is not null)
             {
                 Expression result = Expression.OnesComplement(targetExpr);
                 if (target.LimitType.IsEnum)
@@ -3769,7 +3769,7 @@ namespace System.Management.Automation.Language
             // ConstrainedLanguage, then start baking in the language mode to the binding rules.
             var conversion = LanguagePrimitives.FigureConversion(target.Value, resultType, out debase);
 
-            if (errorSuggestion != null && target.Value is DynamicObject)
+            if (errorSuggestion is not null && target.Value is DynamicObject)
             {
                 return errorSuggestion.WriteToDebugLog(this);
             }
@@ -3836,7 +3836,7 @@ namespace System.Management.Automation.Language
             var baseObject = PSObject.Base(argument.Value);
 
             // Source value cannot be null or AutomationNull, and it cannot be a pure PSObject.
-            if (baseObject != null && !(baseObject is PSObject))
+            if (baseObject is not null && !(baseObject is PSObject))
             {
                 Type fromType = baseObject.GetType();
                 ConversionRank rank = ConversionRank.None;
@@ -4023,7 +4023,7 @@ namespace System.Management.Automation.Language
                 if (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))
                 {
                     var result = GetIndexDictionary(target, indexes, i);
-                    if (result != null)
+                    if (result is not null)
                     {
                         return result.WriteToDebugLog(this);
                     }
@@ -4035,14 +4035,14 @@ namespace System.Management.Automation.Language
                 if (defaultMember is null)
                 {
                     defaultMember = i.GetCustomAttributes<DefaultMemberAttribute>(inherit: false).FirstOrDefault();
-                    if (defaultMember != null)
+                    if (defaultMember is not null)
                     {
                         lengthProperty = i.GetProperty("Count") ?? i.GetProperty("Length");
                     }
                 }
             }
 
-            if (defaultMember != null)
+            if (defaultMember is not null)
             {
                 return InvokeIndexer(target, indexes, errorSuggestion, defaultMember.MemberName, lengthProperty).WriteToDebugLog(this);
             }
@@ -4093,7 +4093,7 @@ namespace System.Management.Automation.Language
             }
 
             var tryGetValue = idictionary.GetMethod("TryGetValue");
-            Diagnostics.Assert(tryGetValue != null, "IDictionary<K,V> has TryGetValue");
+            Diagnostics.Assert(tryGetValue is not null, "IDictionary<K,V> has TryGetValue");
 
             var parameters = tryGetValue.GetParameters();
             bool debase;
@@ -4243,7 +4243,7 @@ namespace System.Management.Automation.Language
             }
 
             var slicingResult = CheckForSlicing(target, indexes);
-            if (slicingResult != null)
+            if (slicingResult is not null)
             {
                 return slicingResult;
             }
@@ -4305,7 +4305,7 @@ namespace System.Management.Automation.Language
                     target.CombineRestrictions(indexes));
             }
 
-            var intIndexes = indexes.Select(index => ConvertIndex(index, typeof(int))).Where(i => i != null).ToArray();
+            var intIndexes = indexes.Select(index => ConvertIndex(index, typeof(int))).Where(i => i is not null).ToArray();
             if (intIndexes.Length != indexes.Length)
             {
                 if (!_allowSlicing)
@@ -4354,7 +4354,7 @@ namespace System.Management.Automation.Language
             {
                 // The getter takes a single argument, so first check if we're slicing.
                 var slicingResult = CheckForSlicing(target, indexes);
-                if (slicingResult != null)
+                if (slicingResult is not null)
                 {
                     return slicingResult;
                 }
@@ -4400,7 +4400,7 @@ namespace System.Management.Automation.Language
                                      target.LimitType.GetProperty("Length");
                 }
 
-                if (lengthProperty != null)
+                if (lengthProperty is not null)
                 {
                     return IndexWithNegativeChecks(
                         new DynamicMetaObject(target.Expression.Cast(target.LimitType),
@@ -4448,7 +4448,7 @@ namespace System.Management.Automation.Language
             }
 
             var enumerableIndex = PSEnumerableBinder.IsEnumerable(indexes[0]);
-            if (enumerableIndex != null)
+            if (enumerableIndex is not null)
             {
                 return new DynamicMetaObject(
                     Expression.Call(CachedReflectionInfo.EnumerableOps_SlicingIndex,
@@ -4600,7 +4600,7 @@ namespace System.Management.Automation.Language
             }
 
             var defaultMember = target.LimitType.GetCustomAttributes<DefaultMemberAttribute>(true).FirstOrDefault();
-            if (defaultMember != null)
+            if (defaultMember is not null)
             {
                 return (InvokeIndexer(target, indexes, value, errorSuggestion, defaultMember.MemberName)).WriteToDebugLog(this);
             }
@@ -4682,7 +4682,7 @@ namespace System.Management.Automation.Language
                 PropertyInfo lengthProperty = target.LimitType.GetProperty("Length") ??
                                               target.LimitType.GetProperty("Count");
 
-                if (lengthProperty != null)
+                if (lengthProperty is not null)
                 {
                     return IndexWithNegativeChecks(
                         new DynamicMetaObject(target.Expression.Cast(target.LimitType),
@@ -4935,7 +4935,7 @@ namespace System.Management.Automation.Language
                         break;
                 }
 
-                Diagnostics.Assert(mi != null, "ReservedMemberBinder doesn't support member Name");
+                Diagnostics.Assert(mi is not null, "ReservedMemberBinder doesn't support member Name");
 
                 return new DynamicMetaObject(WrapGetMemberInTry(Expression.Call(mi, targetExpr)), target.PSGetTypeRestriction());
             }
@@ -5064,7 +5064,7 @@ namespace System.Management.Automation.Language
 
         public static PSGetMemberBinder Get(string memberName, TypeDefinitionAst classScope, bool @static)
         {
-            return Get(memberName, classScope != null ? classScope.Type : null, @static, false);
+            return Get(memberName, classScope is not null ? classScope.Type : null, @static, false);
         }
 
         public static PSGetMemberBinder Get(string memberName, Type classScope, bool @static)
@@ -5151,7 +5151,7 @@ namespace System.Management.Automation.Language
             if (target.Value is PSObject && (PSObject.Base(target.Value) != target.Value))
             {
                 object baseObject = PSObject.Base(target.Value);
-                if (baseObject != null && Marshal.IsComObject(baseObject))
+                if (baseObject is not null && Marshal.IsComObject(baseObject))
                 {
                     // We unwrap only if the 'base' is a COM object. It's unnecessary to unwrap in other cases,
                     // especially in the case of strings, we would lose instance members on the PSObject.
@@ -5227,14 +5227,14 @@ namespace System.Management.Automation.Language
                     restrictions).WriteToDebugLog(this);
             }
 
-            if (memberInfo != null)
+            if (memberInfo is not null)
             {
                 Diagnostics.Assert(memberInfo.instance is null, "We shouldn't be here if a member is already bound.");
 
                 // The most common case - we're getting some property.  We can optimize many different kinds
                 // of property accessors, so we special case each possibility.
                 var propertyInfo = memberInfo as PSPropertyInfo;
-                if (propertyInfo != null)
+                if (propertyInfo is not null)
                 {
                     if (!propertyInfo.IsGettable)
                     {
@@ -5242,10 +5242,10 @@ namespace System.Management.Automation.Language
                     }
 
                     var property = propertyInfo as PSProperty;
-                    if (property != null)
+                    if (property is not null)
                     {
                         var adapterData = property.adapterData as DotNetAdapter.PropertyCacheEntry;
-                        Diagnostics.Assert(adapterData != null, "We have an unknown PSProperty that we aren't correctly optimizing.");
+                        Diagnostics.Assert(adapterData is not null, "We have an unknown PSProperty that we aren't correctly optimizing.");
 
                         if (adapterData.member.DeclaringType.IsGenericTypeDefinition || adapterData.propertyType.IsByRefLike)
                         {
@@ -5259,7 +5259,7 @@ namespace System.Management.Automation.Language
                             // because target.Expression is typeof(object) because this is a dynamic site.
                             var targetExpr = _static ? null : GetTargetExpr(target, adapterData.member.DeclaringType);
                             var propertyAccessor = adapterData.member as PropertyInfo;
-                            if (propertyAccessor != null)
+                            if (propertyAccessor is not null)
                             {
                                 if (propertyAccessor.GetMethod.IsFamily &&
                                     (_classScope is null || !_classScope.IsSubclassOf(propertyAccessor.DeclaringType)))
@@ -5279,16 +5279,16 @@ namespace System.Management.Automation.Language
                     }
 
                     var scriptProperty = propertyInfo as PSScriptProperty;
-                    if (scriptProperty != null)
+                    if (scriptProperty is not null)
                     {
                         expr = Expression.Call(Expression.Constant(scriptProperty, typeof(PSScriptProperty)),
                                                CachedReflectionInfo.PSScriptProperty_InvokeGetter, target.Expression.Cast(typeof(object)));
                     }
 
                     var codeProperty = propertyInfo as PSCodeProperty;
-                    if (codeProperty != null)
+                    if (codeProperty is not null)
                     {
-                        Diagnostics.Assert(codeProperty.GetterCodeReference != null, "CodeProperty isn't gettable, should have generated error code above.");
+                        Diagnostics.Assert(codeProperty.GetterCodeReference is not null, "CodeProperty isn't gettable, should have generated error code above.");
                         Diagnostics.Assert(codeProperty.GetterCodeReference.IsStatic, "CodeProperty should be a static method.");
 
                         expr = PSInvokeMemberBinder.InvokeMethod(codeProperty.GetterCodeReference, null, new[] { target },
@@ -5296,15 +5296,15 @@ namespace System.Management.Automation.Language
                     }
 
                     var noteProperty = propertyInfo as PSNoteProperty;
-                    if (noteProperty != null)
+                    if (noteProperty is not null)
                     {
                         Diagnostics.Assert(!noteProperty.IsSettable, "If the note is settable, incorrect code is generated.");
                         expr = Expression.Property(Expression.Constant(propertyInfo, typeof(PSNoteProperty)), CachedReflectionInfo.PSNoteProperty_Value);
                     }
 
-                    Diagnostics.Assert(expr != null, "Unexpected property type encountered");
+                    Diagnostics.Assert(expr is not null, "Unexpected property type encountered");
 
-                    if (aliasConversionType != null)
+                    if (aliasConversionType is not null)
                     {
                         expr = expr.Convert(aliasConversionType);
                     }
@@ -5322,7 +5322,7 @@ namespace System.Management.Automation.Language
                 Type genericTypeArg = null;
                 bool isGeneric = IsGenericDictionary(targetValue, ref genericTypeArg);
 
-                if (!isGeneric || genericTypeArg != null)
+                if (!isGeneric || genericTypeArg is not null)
                 {
                     var temp = Expression.Variable(typeof(object));
                     if (expr is null)
@@ -5344,7 +5344,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            return expr != null
+            return expr is not null
                 ? new DynamicMetaObject(WrapGetMemberInTry(expr), restrictions).WriteToDebugLog(this)
                 : (errorSuggestion ?? PropertyDoesntExist(target, restrictions)).WriteToDebugLog(this);
         }
@@ -5389,20 +5389,20 @@ namespace System.Management.Automation.Language
 
             // If the target value is actually a deserialized PSObject, we should use the original value
             var psobj = value as PSObject;
-            if (psobj != null && psobj != AutomationNull.Value && !psobj.IsDeserialized)
+            if (psobj is not null && psobj != AutomationNull.Value && !psobj.IsDeserialized)
             {
                 expr = Expression.Call(CachedReflectionInfo.PSObject_Base, expr);
                 value = PSObject.Base(value);
             }
 
-            var type = castToType ?? ((value != null) ? value.GetType() : typeof(object));
+            var type = castToType ?? ((value is not null) ? value.GetType() : typeof(object));
 
             // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up
             // the derivation chain to find the first public parent, and use reflection methods on the public parent.
             if (!TypeResolver.IsPublic(type) && DotNetAdapter.DisallowPrivateReflection(type))
             {
                 var publicType = DotNetAdapter.GetFirstPublicParentType(type);
-                if (publicType != null)
+                if (publicType is not null)
                 {
                     type = publicType;
                 }
@@ -5416,7 +5416,7 @@ namespace System.Management.Automation.Language
                 // get the underlying value by default. So "GetTargetExpr(target).Cast(typeof(object))" is actually the same as
                 // "GetTargetExpr(target, typeof(object))".
                 expr = type.IsValueType
-                           ? (Nullable.GetUnderlyingType(expr.Type) != null
+                           ? (Nullable.GetUnderlyingType(expr.Type) is not null
                                   ? (Expression)Expression.Property(expr, "Value")
                                   : Expression.Unbox(expr, type))
                            : expr.Cast(type);
@@ -5445,7 +5445,7 @@ namespace System.Management.Automation.Language
             if (!_nonEnumerating && target.Value != AutomationNull.Value)
             {
                 var enumerable = PSEnumerableBinder.IsEnumerable(target);
-                if (enumerable != null)
+                if (enumerable is not null)
                 {
                     return new DynamicMetaObject(
                         Expression.Call(CachedReflectionInfo.EnumerableOps_PropertyGetter,
@@ -5488,7 +5488,7 @@ namespace System.Management.Automation.Language
         internal static DynamicMetaObject EnsureAllowedInLanguageMode(ExecutionContext context, DynamicMetaObject target, object targetValue,
             string name, bool isStatic, DynamicMetaObject[] args, BindingRestrictions moreTests, string errorID, string resourceString)
         {
-            if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            if (context is not null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
                 if (!IsAllowedInConstrainedLanguage(targetValue, name, isStatic))
                 {
@@ -5554,7 +5554,7 @@ namespace System.Management.Automation.Language
         private PSMemberInfo ResolveAlias(PSAliasProperty alias, DynamicMetaObject target, HashSet<string> aliases,
             List<BindingRestrictions> aliasRestrictions)
         {
-            Diagnostics.Assert(aliasRestrictions != null, "aliasRestrictions cannot be null");
+            Diagnostics.Assert(aliasRestrictions is not null, "aliasRestrictions cannot be null");
             if (aliases is null)
             {
                 aliases = new HashSet<string> { alias.Name };
@@ -5622,15 +5622,15 @@ namespace System.Management.Automation.Language
             PSMemberInfo memberInfo = null;
             ConsolidatedString typenames = null;
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            var typeTable = context != null ? context.TypeTable : null;
+            var typeTable = context is not null ? context.TypeTable : null;
 
             if (hasTypeTableMember)
             {
                 typenames = PSObject.GetTypeNames(target.Value);
-                if (typeTable != null)
+                if (typeTable is not null)
                 {
                     memberInfo = typeTable.GetMembers<PSMemberInfo>(typenames)[Name];
-                    if (memberInfo != null)
+                    if (memberInfo is not null)
                     {
                         canOptimize = true;
                     }
@@ -5653,7 +5653,7 @@ namespace System.Management.Automation.Language
             //
             // - If not, we want to use the base object, so that we might generate optimized code.
             var psobj = target.Value as PSObject;
-            bool isTargetDeserializedObject = (psobj != null) && (psobj.IsDeserialized);
+            bool isTargetDeserializedObject = (psobj is not null) && (psobj.IsDeserialized);
             object value = isTargetDeserializedObject ? target.Value : PSObject.Base(target.Value);
 
             var adapterSet = PSObject.GetMappedAdapter(value, typeTable);
@@ -5667,7 +5667,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (memberInfo is null && canOptimize && adapterSet.DotNetAdapter != null)
+            if (memberInfo is null && canOptimize && adapterSet.DotNetAdapter is not null)
             {
                 memberInfo = adapterSet.DotNetAdapter.BaseGetMember<PSMemberInfo>(value, Name);
             }
@@ -5677,13 +5677,13 @@ namespace System.Management.Automation.Language
             restrictions = versionRestriction;
 
             // When returning aliasRestrictions always include the version restriction
-            if (aliasRestrictions != null)
+            if (aliasRestrictions is not null)
             {
                 aliasRestrictions.Add(versionRestriction);
             }
 
             var alias = memberInfo as PSAliasProperty;
-            if (alias != null)
+            if (alias is not null)
             {
                 aliasConversionType = alias.ConversionType;
                 if (aliasRestrictions is null)
@@ -5706,7 +5706,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (_classScope != null && (target.LimitType == _classScope || target.LimitType.IsSubclassOf(_classScope)) && adapterSet.OriginalAdapter == PSObject.DotNetInstanceAdapter)
+            if (_classScope is not null && (target.LimitType == _classScope || target.LimitType.IsSubclassOf(_classScope)) && adapterSet.OriginalAdapter == PSObject.DotNetInstanceAdapter)
             {
                 List<MethodBase> candidateMethods = null;
                 foreach (var member in _classScope.GetMembers(BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.NonPublic))
@@ -5714,7 +5714,7 @@ namespace System.Management.Automation.Language
                     if (this.Name.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         var propertyInfo = member as PropertyInfo;
-                        if (propertyInfo != null)
+                        if (propertyInfo is not null)
                         {
                             var getMethod = propertyInfo.GetGetMethod(nonPublic: true);
                             var setMethod = propertyInfo.GetSetMethod(nonPublic: true);
@@ -5728,7 +5728,7 @@ namespace System.Management.Automation.Language
                         else
                         {
                             var fieldInfo = member as FieldInfo;
-                            if (fieldInfo != null)
+                            if (fieldInfo is not null)
                             {
                                 if (fieldInfo.IsFamily)
                                 {
@@ -5738,7 +5738,7 @@ namespace System.Management.Automation.Language
                             else
                             {
                                 var methodInfo = member as MethodInfo;
-                                if (methodInfo != null && (methodInfo.IsPublic || methodInfo.IsFamily))
+                                if (methodInfo is not null && (methodInfo.IsPublic || methodInfo.IsFamily))
                                 {
                                     if (candidateMethods is null)
                                     {
@@ -5752,17 +5752,17 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                if (candidateMethods != null && candidateMethods.Count > 0)
+                if (candidateMethods is not null && candidateMethods.Count > 0)
                 {
                     var psMethodInfo = memberInfo as PSMethod;
-                    if (psMethodInfo != null)
+                    if (psMethodInfo is not null)
                     {
                         var cacheEntry = (DotNetAdapter.MethodCacheEntry)psMethodInfo.adapterData;
                         candidateMethods.AddRange(cacheEntry.methodInformationStructures.Select(e => e.method));
                         memberInfo = null;
                     }
 
-                    if (memberInfo != null)
+                    if (memberInfo is not null)
                     {
                         // Ambiguous, it'd be better to report an error other than "can't find member", but I'm lazy.
                         memberInfo = null;
@@ -5825,28 +5825,28 @@ namespace System.Management.Automation.Language
             var context = LocalPipeline.GetExecutionContextFromTLS();
             PSMemberInfo memberInfo = null;
 
-            if ((context != null) && (context.TypeTable != null))
+            if ((context is not null) && (context.TypeTable is not null))
             {
                 ConsolidatedString typenames = PSObject.GetTypeNames(obj);
                 memberInfo = context.TypeTable.GetMembers<PSMemberInfo>(typenames)[member];
-                if (memberInfo != null)
+                if (memberInfo is not null)
                 {
                     memberInfo = CloneMemberInfo(memberInfo, obj);
                 }
             }
 
-            var adapterSet = PSObject.GetMappedAdapter(obj, context != null ? context.TypeTable : null);
+            var adapterSet = PSObject.GetMappedAdapter(obj, context is not null ? context.TypeTable : null);
             if (memberInfo is null)
             {
                 memberInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
             }
 
-            if (memberInfo is null && adapterSet.DotNetAdapter != null)
+            if (memberInfo is null && adapterSet.DotNetAdapter is not null)
             {
                 memberInfo = adapterSet.DotNetAdapter.BaseGetMember<PSMemberInfo>(obj, member);
             }
 
-            if (memberInfo != null)
+            if (memberInfo is not null)
             {
                 return memberInfo.Value;
             }
@@ -5856,7 +5856,7 @@ namespace System.Management.Automation.Language
                 return 1;
             }
 
-            if (context != null && context.IsStrictVersion(2))
+            if (context is not null && context.IsStrictVersion(2))
             {
                 // If the member is undefined and we're in strict mode, throw an exception...
                 throw new PropertyNotFoundException("PropertyNotFoundStrict", null, ParserStrings.PropertyNotFoundStrict,
@@ -5868,13 +5868,13 @@ namespace System.Management.Automation.Language
 
         internal static bool IsTypeNameSame(object value, string typeName)
         {
-            return value != null && string.Equals(PSObject.GetTypeNames(value).Key, typeName, StringComparison.OrdinalIgnoreCase);
+            return value is not null && string.Equals(PSObject.GetTypeNames(value).Key, typeName, StringComparison.OrdinalIgnoreCase);
         }
 
         internal static TypeTable GetTypeTableFromTLS()
         {
             var executionContext = LocalPipeline.GetExecutionContextFromTLS();
-            return executionContext != null ? executionContext.TypeTable : null;
+            return executionContext is not null ? executionContext.TypeTable : null;
         }
 
         internal static bool TryGetInstanceMember(object value, string memberName, out PSMemberInfo memberInfo)
@@ -5882,7 +5882,7 @@ namespace System.Management.Automation.Language
             PSMemberInfoInternalCollection<PSMemberInfo> instanceMembers;
             memberInfo = PSObject.HasInstanceMembers(value, out instanceMembers) ? instanceMembers[memberName] : null;
 
-            return (memberInfo != null);
+            return (memberInfo is not null);
         }
 
         internal static bool TryGetIDictionaryValue(IDictionary hash, string memberName, out object value)
@@ -5957,7 +5957,7 @@ namespace System.Management.Automation.Language
 
         public static PSSetMemberBinder Get(string memberName, TypeDefinitionAst classScopeAst, bool @static)
         {
-            var classScope = classScopeAst != null ? classScopeAst.Type : null;
+            var classScope = classScopeAst is not null ? classScopeAst.Type : null;
             return Get(memberName, classScope, @static);
         }
 
@@ -6035,7 +6035,7 @@ namespace System.Management.Automation.Language
                 (value.Value is PSObject && (PSObject.Base(value.Value) != value.Value)))
             {
                 object baseObject = PSObject.Base(target.Value);
-                if (baseObject != null && Marshal.IsComObject(baseObject))
+                if (baseObject is not null && Marshal.IsComObject(baseObject))
                 {
                     // We unwrap only if the 'base' of 'target' is a COM object. It's unnecessary to unwrap in other cases,
                     // especially in the case that 'target' is a string, we would lose instance members on the PSObject.
@@ -6111,7 +6111,7 @@ namespace System.Management.Automation.Language
                 Type genericTypeArg = null;
                 bool isGeneric = PSGetMemberBinder.IsGenericDictionary(targetValue, ref genericTypeArg);
 
-                if (!isGeneric || genericTypeArg != null)
+                if (!isGeneric || genericTypeArg is not null)
                 {
                     // If it's a generic, we must convert our value to genericTypeArg.
                     var hashType = isGeneric
@@ -6160,7 +6160,7 @@ namespace System.Management.Automation.Language
                 DynamicMetaObject runtimeError = PSGetMemberBinder.EnsureAllowedInLanguageMode(
                     context, target, targetValue, Name, _static, new[] { value }, restrictions,
                     "PropertySetterNotSupportedInConstrainedLanguage", ParserStrings.PropertySetConstrainedLanguage);
-                if (runtimeError != null)
+                if (runtimeError is not null)
                 {
                     return runtimeError.WriteToDebugLog(this);
                 }
@@ -6185,7 +6185,7 @@ namespace System.Management.Automation.Language
             }
 
             var psPropertyInfo = memberInfo as PSPropertyInfo;
-            if (psPropertyInfo != null)
+            if (psPropertyInfo is not null)
             {
                 if (!psPropertyInfo.IsSettable)
                 {
@@ -6193,10 +6193,10 @@ namespace System.Management.Automation.Language
                 }
 
                 var psProperty = psPropertyInfo as PSProperty;
-                if (psProperty != null)
+                if (psProperty is not null)
                 {
                     var data = psProperty.adapterData as DotNetAdapter.PropertyCacheEntry;
-                    if (data != null)
+                    if (data is not null)
                     {
                         Expression expr;
 
@@ -6253,7 +6253,7 @@ namespace System.Management.Automation.Language
                         // For static property access, the target expr must be null.  For non-static, we must convert
                         // because target.Expression is typeof(object) because this is a dynamic site.
                         var targetExpr = _static ? null : PSGetMemberBinder.GetTargetExpr(target, data.member.DeclaringType);
-                        if (propertyInfo != null)
+                        if (propertyInfo is not null)
                         {
                             if (propertyInfo.SetMethod.IsFamily &&
                                 (_classScope is null || !_classScope.IsSubclassOf(propertyInfo.DeclaringType)))
@@ -6274,7 +6274,7 @@ namespace System.Management.Automation.Language
                         }
 
                         var nullableUnderlyingType = Nullable.GetUnderlyingType(lhsType);
-                        if (nullableUnderlyingType != null)
+                        if (nullableUnderlyingType is not null)
                         {
                             if (value.Value is null)
                             {
@@ -6342,7 +6342,7 @@ namespace System.Management.Automation.Language
                 }
 
                 var codeProperty = psPropertyInfo as PSCodeProperty;
-                if (codeProperty != null)
+                if (codeProperty is not null)
                 {
                     var setterMethod = codeProperty.SetterCodeReference;
                     var parameters = setterMethod.GetParameters();
@@ -6381,7 +6381,7 @@ namespace System.Management.Automation.Language
                 }
 
                 var scriptProperty = psPropertyInfo as PSScriptProperty;
-                if (scriptProperty != null)
+                if (scriptProperty is not null)
                 {
                     // Invoke Setter
 
@@ -6395,7 +6395,7 @@ namespace System.Management.Automation.Language
                 Diagnostics.Assert(false, "The property we're trying to set was unexpected.");
             }
 
-            if (errorSuggestion != null)
+            if (errorSuggestion is not null)
             {
                 return errorSuggestion.WriteToDebugLog(this);
             }
@@ -6429,28 +6429,28 @@ namespace System.Management.Automation.Language
                 var context = LocalPipeline.GetExecutionContextFromTLS();
                 PSMemberInfo memberInfo = null;
 
-                if ((context != null) && (context.TypeTable != null))
+                if ((context is not null) && (context.TypeTable is not null))
                 {
                     ConsolidatedString typenames = PSObject.GetTypeNames(obj);
                     memberInfo = context.TypeTable.GetMembers<PSMemberInfo>(typenames)[member];
-                    if (memberInfo != null)
+                    if (memberInfo is not null)
                     {
                         memberInfo = PSGetMemberBinder.CloneMemberInfo(memberInfo, obj);
                     }
                 }
 
-                var adapterSet = PSObject.GetMappedAdapter(obj, context != null ? context.TypeTable : null);
+                var adapterSet = PSObject.GetMappedAdapter(obj, context is not null ? context.TypeTable : null);
                 if (memberInfo is null)
                 {
                     memberInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
                 }
 
-                if (memberInfo is null && adapterSet.DotNetAdapter != null)
+                if (memberInfo is null && adapterSet.DotNetAdapter is not null)
                 {
                     memberInfo = adapterSet.DotNetAdapter.BaseGetMember<PSMemberInfo>(obj, member);
                 }
 
-                if (memberInfo != null)
+                if (memberInfo is not null)
                 {
                     memberInfo.Value = value;
                 }
@@ -6597,7 +6597,7 @@ namespace System.Management.Automation.Language
         {
             return string.Format(CultureInfo.InvariantCulture,
                 "PSInvokeMember: {0}{1}{2} ver:{3} args:{4} constraints:<{5}>", _static ? "static " : string.Empty, _propertySetter ? "propset " : string.Empty,
-                Name, _getMemberBinder._version, CallInfo.ArgumentCount, _invocationConstraints != null ? _invocationConstraints.ToString() : string.Empty);
+                Name, _getMemberBinder._version, CallInfo.ArgumentCount, _invocationConstraints is not null ? _invocationConstraints.ToString() : string.Empty);
         }
 
         public override DynamicMetaObject FallbackInvokeMember(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
@@ -6612,7 +6612,7 @@ namespace System.Management.Automation.Language
                 args.Any(mo => mo.Value is PSObject && (PSObject.Base(mo.Value) != mo.Value)))
             {
                 object baseObject = PSObject.Base(target.Value);
-                if (baseObject != null && Marshal.IsComObject(baseObject))
+                if (baseObject is not null && Marshal.IsComObject(baseObject))
                 {
                     // We unwrap only if the 'base' of 'target' is a COM object. It's unnecessary to unwrap in other cases,
                     // especially in the case that 'target' is a string, we would lose instance members on the PSObject.
@@ -6710,7 +6710,7 @@ namespace System.Management.Automation.Language
                 DynamicMetaObject runtimeError = PSGetMemberBinder.EnsureAllowedInLanguageMode(
                     context, target, targetValue, Name, _static, args, restrictions,
                     "MethodInvocationNotSupportedInConstrainedLanguage", ParserStrings.InvokeMethodConstrainedLanguage);
-                if (runtimeError != null)
+                if (runtimeError is not null)
                 {
                     return runtimeError.WriteToDebugLog(this);
                 }
@@ -6759,7 +6759,7 @@ namespace System.Management.Automation.Language
             if (methodInfo is PSMethod || methodInfo is PSParameterizedProperty)
             {
                 var psObj = target.Value as PSObject;
-                if (psObj != null && (targetValue.GetType() == typeof(Hashtable) || targetValue.GetType() == typeof(ArrayList)))
+                if (psObj is not null && (targetValue.GetType() == typeof(Hashtable) || targetValue.GetType() == typeof(ArrayList)))
                 {
                     // If we get here, then the target value should have 'isDeserialized == false', otherwise we cannot get a .NET methodInfo
                     // from _getMemberBinder.GetPSMemberInfo(). This is because when 'isDeserialized' is true, we use the PSObject to find the
@@ -6773,7 +6773,7 @@ namespace System.Management.Automation.Language
             }
 
             var psMethod = methodInfo as PSMethod;
-            if (psMethod != null)
+            if (psMethod is not null)
             {
                 var data = (DotNetAdapter.MethodCacheEntry)psMethod.adapterData;
 
@@ -6782,7 +6782,7 @@ namespace System.Management.Automation.Language
             }
 
             var scriptMethod = methodInfo as PSScriptMethod;
-            if (scriptMethod != null)
+            if (scriptMethod is not null)
             {
                 return new DynamicMetaObject(
                     Expression.Call(CachedReflectionInfo.PSScriptMethod_InvokeScript,
@@ -6795,7 +6795,7 @@ namespace System.Management.Automation.Language
             }
 
             var codeMethod = methodInfo as PSCodeMethod;
-            if (codeMethod != null)
+            if (codeMethod is not null)
             {
                 Expression expr = InvokeMethod(codeMethod.CodeReference, null, args.Prepend(target).ToArray(), false, MethodInvocationType.Ordinary);
                 if (codeMethod.CodeReference.ReturnType == typeof(void))
@@ -6811,7 +6811,7 @@ namespace System.Management.Automation.Language
             }
 
             var parameterizedProperty = methodInfo as PSParameterizedProperty;
-            if (parameterizedProperty != null)
+            if (parameterizedProperty is not null)
             {
                 var p = (DotNetAdapter.ParameterizedPropertyCacheEntry)parameterizedProperty.adapterData;
                 return InvokeDotNetMethod(CallInfo, Name, _invocationConstraints, _propertySetter ? MethodInvocationType.Setter : MethodInvocationType.Ordinary, target, args, restrictions,
@@ -6819,7 +6819,7 @@ namespace System.Management.Automation.Language
                     _propertySetter ? typeof(SetValueInvocationException) : typeof(GetValueInvocationException)).WriteToDebugLog(this);
             }
 
-            if (errorSuggestion != null)
+            if (errorSuggestion is not null)
             {
                 return errorSuggestion.WriteToDebugLog(this);
             }
@@ -6839,7 +6839,7 @@ namespace System.Management.Automation.Language
                 }
 
                 var enumerableTarget = PSEnumerableBinder.IsEnumerable(target);
-                if (enumerableTarget != null)
+                if (enumerableTarget is not null)
                 {
                     // Try calling the method on each member of the collection.
                     return InvokeMemberOnCollection(enumerableTarget, args, targetValue.GetType(), restrictions).WriteToDebugLog(this);
@@ -6896,7 +6896,7 @@ namespace System.Management.Automation.Language
                 methodInvocationType = MethodInvocationType.NonVirtual;
             }
 
-            if (result != null)
+            if (result is not null)
             {
                 var methodInfo = result.method;
                 var expr = InvokeMethod(methodInfo, target, args, expandParamsOnBest, methodInvocationType);
@@ -6972,7 +6972,7 @@ namespace System.Management.Automation.Language
             MethodInfo result = null;
 
             var psMethod = PSObject.DotNetInstanceAdapter.GetDotNetMethod<PSMethod>(PSObject.Base(target.Value), methodName);
-            if (psMethod != null)
+            if (psMethod is not null)
             {
                 var data = (DotNetAdapter.MethodCacheEntry)psMethod.adapterData;
 
@@ -6991,7 +6991,7 @@ namespace System.Management.Automation.Language
                     out expandParameters,
                     out callNonVirtually);
 
-                if (mi != null)
+                if (mi is not null)
                 {
                     result = (MethodInfo)mi.method;
                 }
@@ -7008,7 +7008,7 @@ namespace System.Management.Automation.Language
 
             ConstructorInfo constructorInfo = null;
             MethodInfo methodInfo = mi as MethodInfo;
-            if (methodInfo != null)
+            if (methodInfo is not null)
             {
                 Type returnType = methodInfo.ReturnType;
                 if (returnType.IsByRefLike)
@@ -7084,7 +7084,7 @@ namespace System.Management.Automation.Language
                 // This inconsistent behavior affects OneCore powershell because we are using the extension method here when compiling
                 // against CoreCLR. So we need to add a null check until this is fixed in CLR.
                 var paramArrayAttrs = parameters[i].GetCustomAttributes(typeof(ParamArrayAttribute), false);
-                if (paramArrayAttrs != null && paramArrayAttrs.Length > 0)
+                if (paramArrayAttrs is not null && paramArrayAttrs.Length > 0)
                 {
                     Diagnostics.Assert(i == parameters.Length - 1, "vararg parameter is not the last");
                     var paramElementType = parameterType.GetElementType();
@@ -7164,7 +7164,7 @@ namespace System.Management.Automation.Language
             }
 
             Expression call;
-            if (constructorInfo != null)
+            if (constructorInfo is not null)
             {
                 if (invocationType == MethodInvocationType.BaseCtor)
                 {
@@ -7355,7 +7355,7 @@ namespace System.Management.Automation.Language
             return args.All(element =>
                             {
                                 var obj = PSObject.Base(element);
-                                return obj != null && obj.GetType().Equals(typeof(T));
+                                return obj is not null && obj.GetType().Equals(typeof(T));
                             });
         }
 
@@ -7394,14 +7394,14 @@ namespace System.Management.Automation.Language
         internal static object InvokeAdaptedMember(object obj, string methodName, object[] args)
         {
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            var adapterSet = PSObject.GetMappedAdapter(obj, context != null ? context.TypeTable : null);
+            var adapterSet = PSObject.GetMappedAdapter(obj, context is not null ? context.TypeTable : null);
             var methodInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, methodName) as PSMethodInfo;
-            if (methodInfo is null && adapterSet.DotNetAdapter != null)
+            if (methodInfo is null && adapterSet.DotNetAdapter is not null)
             {
                 methodInfo = adapterSet.DotNetAdapter.BaseGetMember<PSMemberInfo>(obj, methodName) as PSMethodInfo;
             }
 
-            if (methodInfo != null)
+            if (methodInfo is not null)
             {
                 return methodInfo.Invoke(args);
             }
@@ -7439,14 +7439,14 @@ namespace System.Management.Automation.Language
         internal static object InvokeAdaptedSetMember(object obj, string methodName, object[] args, object valueToSet)
         {
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            var adapterSet = PSObject.GetMappedAdapter(obj, context != null ? context.TypeTable : null);
+            var adapterSet = PSObject.GetMappedAdapter(obj, context is not null ? context.TypeTable : null);
             var methodInfo = adapterSet.OriginalAdapter.BaseGetMember<PSParameterizedProperty>(obj, methodName);
-            if (methodInfo is null && adapterSet.DotNetAdapter != null)
+            if (methodInfo is null && adapterSet.DotNetAdapter is not null)
             {
                 methodInfo = adapterSet.DotNetAdapter.BaseGetMember<PSParameterizedProperty>(obj, methodName);
             }
 
-            if (methodInfo != null)
+            if (methodInfo is not null)
             {
                 methodInfo.InvokeSet(valueToSet, args);
                 return valueToSet;
@@ -7560,7 +7560,7 @@ namespace System.Management.Automation.Language
         public override string ToString()
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "PSCreateInstanceBinder: ver:{0} args:{1} constraints:<{2}>", _version, _callInfo.ArgumentCount, _constraints != null ? _constraints.ToString() : string.Empty);
+                "PSCreateInstanceBinder: ver:{0} args:{1} constraints:<{2}>", _version, _callInfo.ArgumentCount, _constraints is not null ? _constraints.ToString() : string.Empty);
         }
 
         public override DynamicMetaObject FallbackCreateInstance(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
@@ -7624,7 +7624,7 @@ namespace System.Management.Automation.Language
             }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage && !CoreTypes.Contains(instanceType))
+            if (context is not null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage && !CoreTypes.Contains(instanceType))
             {
                 return target.ThrowRuntimeError(restrictions, "CannotCreateTypeConstrainedLanguage", ParserStrings.CannotCreateTypeConstrainedLanguage).WriteToDebugLog(this);
             }
@@ -7665,7 +7665,7 @@ namespace System.Management.Automation.Language
         internal static string GetTargetTypeName(object target)
         {
             var targetValue = PSObject.Base(target);
-            Diagnostics.Assert(targetValue != null, "caller makes sure target is not null");
+            Diagnostics.Assert(targetValue is not null, "caller makes sure target is not null");
 
             var instanceType = targetValue as Type ?? targetValue.GetType();
             return instanceType.FullName;

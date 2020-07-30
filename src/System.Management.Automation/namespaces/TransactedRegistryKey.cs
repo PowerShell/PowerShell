@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
             // We want to take our own clone so we can dispose it when we want and
             // aren't susceptible to the caller disposing it.
-            if (transaction != null)
+            if (transaction is not null)
             {
                 _myTransaction = transaction.Clone();
                 _myTransactionHandle = txHandle;
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             // If myTransaction is not null and is not the same as Transaction.Current
             // this is an invalid operation. The transaction within which the RegistryKey object was created
             // needs to be the same as the transaction being used now.
-            if (_myTransaction != null)
+            if (_myTransaction is not null)
             {
                 if (!_myTransaction.Equals(Transaction.Current))
                 {
@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         private void Dispose(bool disposing)
         {
-            if (_hkey != null)
+            if (_hkey is not null)
             {
                 if (!IsSystemKey())
                 {
@@ -292,7 +292,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 }
             }
 
-            if (_myTransaction != null)
+            if (_myTransaction is not null)
             {
                 // Dispose the transaction because we cloned it.
                 try
@@ -317,7 +317,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         {
             // Require a transaction. This will throw for "Base" keys because they aren't associated with a transaction.
             VerifyTransaction();
-            if (_hkey != null)
+            if (_hkey is not null)
             {
                 if (IsDirty())
                 {
@@ -416,7 +416,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
             // only keys opened under read mode is not writable
             TransactedRegistryKey existingKey = InternalOpenSubKey(subkey, (permissionCheck != RegistryKeyPermissionCheck.ReadSubTree));
-            if (existingKey != null)
+            if (existingKey is not null)
             { // Key already exits
                 CheckSubKeyWritePermission(subkey);
                 CheckSubTreePermission(subkey, permissionCheck);
@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             Win32Native.SECURITY_ATTRIBUTES secAttrs = null;
             TransactedRegistrySecurity registrySecurity = registrySecurityObj as TransactedRegistrySecurity;
             // For ACL's, get the security descriptor from the RegistrySecurity.
-            if (registrySecurity != null)
+            if (registrySecurity is not null)
             {
                 secAttrs = new Win32Native.SECURITY_ATTRIBUTES();
                 secAttrs.nLength = (int)Marshal.SizeOf(secAttrs);
@@ -525,7 +525,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             // explicitly call close to avoid keeping an extra HKEY open.
             //
             TransactedRegistryKey key = InternalOpenSubKey(subkey, false);
-            if (key != null)
+            if (key is not null)
             {
                 try
                 {
@@ -593,7 +593,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             CheckSubTreeWritePermission(subkey);
 
             TransactedRegistryKey key = InternalOpenSubKey(subkey, true);
-            if (key != null)
+            if (key is not null)
             {
                 try
                 {
@@ -633,7 +633,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
             SafeTransactionHandle safeTransactionHandle = GetTransactionHandle();
             TransactedRegistryKey key = InternalOpenSubKey(subkey, true);
-            if (key != null)
+            if (key is not null)
             {
                 try
                 {
@@ -1391,7 +1391,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             if (value == null)
                 throw new ArgumentNullException(RegistryProviderStrings.Arg_Value);
 
-            if (name != null && name.Length > MaxValueNameLength)
+            if (name is not null && name.Length > MaxValueNameLength)
             {
                 throw new ArgumentException(RegistryProviderStrings.Arg_RegValueNameStrLenBug);
             }
@@ -1660,7 +1660,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             switch (errorCode)
             {
                 case Win32Native.ERROR_ACCESS_DENIED:
-                    if (str != null)
+                    if (str is not null)
                     {
                         string resourceTemplate = RegistryProviderStrings.UnauthorizedAccess_RegistryKeyGeneric_Key;
                         string resource = string.Format(CultureInfo.CurrentCulture, resourceTemplate, str);
@@ -1706,7 +1706,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             switch (errorCode)
             {
                 case Win32Native.ERROR_ACCESS_DENIED:
-                    if (str != null)
+                    if (str is not null)
                     {
                         string resourceTemplate = RegistryProviderStrings.UnauthorizedAccess_RegistryKeyGeneric_Key;
                         string resource = string.Format(CultureInfo.CurrentCulture, resourceTemplate, str);
@@ -1722,7 +1722,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         internal static string FixupName(string name)
         {
-            BCLDebug.Assert(name != null, "[FixupName]name!=null");
+            BCLDebug.Assert(name is not null, "[FixupName]name!=null");
             if (name.Contains('\\'))
                 return name;
 

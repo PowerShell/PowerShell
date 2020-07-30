@@ -64,8 +64,8 @@ namespace System.Management.Automation.Remoting
         {
             _clientRunspacePoolId = clientRunspacePoolId;
             _clientPowerShellId = clientPowerShellId;
-            Dbg.Assert(hostInfo != null, "Expected hostInfo != null");
-            Dbg.Assert(transportManager != null, "Expected transportManager != null");
+            Dbg.Assert(hostInfo is not null, "Expected hostInfo is not null");
+            Dbg.Assert(transportManager is not null, "Expected transportManager is not null");
 
             // Set host-info and the transport-manager.
             HostInfo = hostInfo;
@@ -130,7 +130,7 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                if (_serverDriverRemoteHost != null)
+                if (_serverDriverRemoteHost is not null)
                 {
                     return _serverDriverRemoteHost.IsRunspacePushed;
                 }
@@ -233,7 +233,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public virtual void PushRunspace(Runspace runspace)
         {
-            if (_serverDriverRemoteHost != null)
+            if (_serverDriverRemoteHost is not null)
             {
                 _serverDriverRemoteHost.PushRunspace(runspace);
             }
@@ -248,7 +248,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public virtual void PopRunspace()
         {
-            if ((_serverDriverRemoteHost != null) && (_serverDriverRemoteHost.IsRunspacePushed))
+            if ((_serverDriverRemoteHost is not null) && (_serverDriverRemoteHost.IsRunspacePushed))
             {
                 if (_serverDriverRemoteHost.PropagatePop)
                 {
@@ -307,7 +307,7 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                return (_pushedRunspace != null);
+                return (_pushedRunspace is not null);
             }
         }
 
@@ -322,7 +322,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.ServerDriverRemoteHostNoDebuggerToPush);
             }
 
-            if (_pushedRunspace != null)
+            if (_pushedRunspace is not null)
             {
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.ServerDriverRemoteHostAlreadyPushed);
             }
@@ -335,8 +335,8 @@ namespace System.Management.Automation.Remoting
 
             // PSEdit support.  Existence of RemoteSessionOpenFileEvent event indicates host supports PSEdit
             _hostSupportsPSEdit = false;
-            PSEventManager localEventManager = (Runspace != null) ? Runspace.Events : null;
-            _hostSupportsPSEdit = (localEventManager != null) ? localEventManager.GetEventSubscribers(HostUtilities.RemoteSessionOpenFileEvent).GetEnumerator().MoveNext() : false;
+            PSEventManager localEventManager = (Runspace is not null) ? Runspace.Events : null;
+            _hostSupportsPSEdit = (localEventManager is not null) ? localEventManager.GetEventSubscribers(HostUtilities.RemoteSessionOpenFileEvent).GetEnumerator().MoveNext() : false;
             if (_hostSupportsPSEdit)
             {
                 AddPSEditForRunspace(remoteRunspace);
@@ -351,9 +351,9 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void PopRunspace()
         {
-            if (_pushedRunspace != null)
+            if (_pushedRunspace is not null)
             {
-                if (_debugger != null)
+                if (_debugger is not null)
                 {
                     _debugger.PopDebugger();
                 }

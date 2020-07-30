@@ -271,7 +271,7 @@ namespace Microsoft.PowerShell.Commands
                     writer = OpenFile(out readOnlyFileInfo);
                 }
 
-                if (writer != null)
+                if (writer is not null)
                     WriteHeader(writer);
 
                 // Now write out the aliases
@@ -288,7 +288,7 @@ namespace Microsoft.PowerShell.Commands
                         line = GetAliasLine(alias, "set-alias -Name:\"{0}\" -Value:\"{1}\" -Description:\"{2}\" -Option:\"{3}\"");
                     }
 
-                    if (writer != null)
+                    if (writer is not null)
                         writer.WriteLine(line);
 
                     if (PassThru)
@@ -299,10 +299,10 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (writer != null)
+                if (writer is not null)
                     writer.Dispose();
                 // reset the read-only attribute
-                if (readOnlyFileInfo != null)
+                if (readOnlyFileInfo is not null)
                     readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
             }
         }
@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Now write the description if there is one
 
-            if (Description != null)
+            if (Description is not null)
             {
                 // First we need to break up the description on newlines and add a
                 // # for each line.

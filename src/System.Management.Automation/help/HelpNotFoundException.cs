@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="helpTopic">The help topic for which help is not found.</param>
         /// <param name="innerException">The inner exception.</param>
         public HelpNotFoundException(string helpTopic, Exception innerException) :
-                base((innerException != null) ? innerException.Message : string.Empty, innerException)
+                base((innerException is not null) ? innerException.Message : string.Empty, innerException)
         {
             _helpTopic = helpTopic;
             CreateErrorRecord();
@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (_errorRecord != null)
+                if (_errorRecord is not null)
                 {
                     return _errorRecord.ToString();
                 }

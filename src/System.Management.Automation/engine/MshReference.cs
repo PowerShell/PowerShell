@@ -49,7 +49,7 @@ namespace System.Management.Automation
             {
                 PSVariable variable = _value as PSVariable;
 
-                if (variable != null)
+                if (variable is not null)
                 {
                     return variable.Value;
                 }
@@ -61,7 +61,7 @@ namespace System.Management.Automation
             {
                 PSVariable variable = _value as PSVariable;
 
-                if (variable != null)
+                if (variable is not null)
                 {
                     variable.Value = value;
                     return;

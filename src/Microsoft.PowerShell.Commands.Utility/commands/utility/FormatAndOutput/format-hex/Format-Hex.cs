@@ -349,7 +349,7 @@ namespace Microsoft.PowerShell.Commands
                 FlushInputBuffer();
             }
 
-            if (inputBytes != null)
+            if (inputBytes is not null)
             {
                 _inputBuffer.AddRange(inputBytes);
             }
@@ -401,7 +401,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_groupInput)
                 {
-                    if (_lastInputType != null && baseType != _lastInputType)
+                    if (_lastInputType is not null && baseType != _lastInputType)
                     {
                         _groupInput = false;
                         FlushInputBuffer();

@@ -40,7 +40,7 @@ namespace System.Management.Automation
             ExecutionContext executionContext,
             PathIntrinsics pathIntrinsics)
         {
-            Dbg.Assert(executionContext != null, "ExecutionContext cannot be null.");
+            Dbg.Assert(executionContext is not null, "ExecutionContext cannot be null.");
             _requestedPath = requestedPath;
             _executionContext = executionContext;
             _pathIntrinsics = pathIntrinsics;
@@ -117,7 +117,7 @@ namespace System.Management.Automation
             }
 
             bool isJEASession = false;
-            if (this._executionContext.InitialSessionState != null && this._executionContext.InitialSessionState.Providers != null && providerInfo != null)
+            if (this._executionContext.InitialSessionState is not null && this._executionContext.InitialSessionState.Providers is not null && providerInfo is not null)
             {
                 foreach (
                     Runspaces.SessionStateProviderEntry sessionStateProvider in

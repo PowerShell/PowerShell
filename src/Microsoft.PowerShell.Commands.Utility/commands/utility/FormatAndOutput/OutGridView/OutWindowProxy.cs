@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Verify if this is an error loading the System.Core dll.
                 FileNotFoundException fileNotFoundEx = ex.InnerException as FileNotFoundException;
-                if (fileNotFoundEx != null && fileNotFoundEx.FileName.Contains("System.Core"))
+                if (fileNotFoundEx is not null && fileNotFoundEx.FileName.Contains("System.Core"))
                 {
                     _parentCmdlet.ThrowTerminatingError(
                         new ErrorRecord(new InvalidOperationException(
@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void BlockUntillClosed()
         {
-            if (_closedEvent != null)
+            if (_closedEvent is not null)
             {
                 _closedEvent.WaitOne();
             }
@@ -246,7 +246,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (isDisposing)
             {
-                if (_closedEvent != null)
+                if (_closedEvent is not null)
                 {
                     _closedEvent.Dispose();
                     _closedEvent = null;

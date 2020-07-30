@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
                 modulesToRemove.Add(m, new List<PSModuleInfo> { m });
             }
 
-            if (FullyQualifiedName != null)
+            if (FullyQualifiedName is not null)
             {
                 // TODO:
                 // Paths in the module name may fail here because
@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (var entry in modulesToRemove)
             {
                 var module = entry.Key;
-                if (module.NestedModules != null && module.NestedModules.Count > 0)
+                if (module.NestedModules is not null && module.NestedModules.Count > 0)
                 {
                     List<PSModuleInfo> nestedModulesWithNoCircularReference = new List<PSModuleInfo>();
                     GetAllNestedModules(module, ref nestedModulesWithNoCircularReference);
@@ -270,7 +270,7 @@ namespace Microsoft.PowerShell.Commands
                 Dictionary<string, List<ProviderInfo>> providers = Context.TopLevelSessionState.Providers;
                 foreach (KeyValuePair<string, List<ProviderInfo>> pList in providers)
                 {
-                    Dbg.Assert(pList.Value != null, "There should never be a null list of entries in the provider table");
+                    Dbg.Assert(pList.Value is not null, "There should never be a null list of entries in the provider table");
                     foreach (ProviderInfo pInfo in pList.Value)
                     {
                         string implTypeAssemblyLocation = pInfo.ImplementingType.Assembly.Location;
@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
         private void GetAllNestedModules(PSModuleInfo module, ref List<PSModuleInfo> nestedModulesWithNoCircularReference)
         {
             List<PSModuleInfo> nestedModules = new List<PSModuleInfo>();
-            if (module.NestedModules != null && module.NestedModules.Count > 0)
+            if (module.NestedModules is not null && module.NestedModules.Count > 0)
             {
                 foreach (var nestedModule in module.NestedModules)
                 {
@@ -362,12 +362,12 @@ namespace Microsoft.PowerShell.Commands
                         hasWildcards = false;
                 }
 
-                if (FullyQualifiedName != null && (FullyQualifiedName.Any(moduleSpec => !InitialSessionState.IsEngineModule(moduleSpec.Name))))
+                if (FullyQualifiedName is not null && (FullyQualifiedName.Any(moduleSpec => !InitialSessionState.IsEngineModule(moduleSpec.Name))))
                 {
                     isEngineModule = false;
                 }
 
-                if (!isEngineModule && (!hasWildcards || _moduleInfo.Length != 0 || (FullyQualifiedName != null && FullyQualifiedName.Length != 0)))
+                if (!isEngineModule && (!hasWildcards || _moduleInfo.Length != 0 || (FullyQualifiedName is not null && FullyQualifiedName.Length != 0)))
                 {
                     string message = StringUtil.Format(Modules.NoModulesRemoved);
                     InvalidOperationException invalidOp = new InvalidOperationException(message);

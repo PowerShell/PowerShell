@@ -2136,7 +2136,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             if (   properties != UserProperties.None
                 || passwordExpired != PasswordExpiredState.Unchanged
-                || password != null)
+                || password is not null)
             {
                 IntPtr userHandle = IntPtr.Zero;
                 UInt32 status = 0;
@@ -2268,7 +2268,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 if (setFlags.HasFlag(UserProperties.UserMayChangePassword))
                     SetUserMayChangePassword(userHandle, sourceUser.SID, sourceUser.UserMayChangePassword);
 
-                if (password != null)
+                if (password is not null)
                     SetUserPassword(userHandle, password, passwordExpired);
             }
             finally
@@ -2399,7 +2399,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 var sd = new SECURITY_DESCRIPTOR() { Revision = 1 };
                 ipsd = Marshal.AllocHGlobal(Marshal.SizeOf<SECURITY_DESCRIPTOR>());
 
-                if (rawAcl != null && rawAcl.BinaryLength > 0)
+                if (rawAcl is not null && rawAcl.BinaryLength > 0)
                 {
                     Marshal.StructureToPtr<SECURITY_DESCRIPTOR>(sd, ipsd, false);
 
@@ -2466,7 +2466,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             foreach (var a in rawAcl)
             {
                 var ace = a as CommonAce;
-                if (ace != null && ace.AceType == AceType.AccessAllowed)
+                if (ace is not null && ace.AceType == AceType.AccessAllowed)
                 {
                     if (ace.SecurityIdentifier == worldSid ||
                         ace.SecurityIdentifier == userSid)
@@ -2506,12 +2506,12 @@ namespace System.Management.Automation.SecurityAccountsManager
             var changed = false;
             var rawAcl = GetSamDacl(userHandle);
 
-            if (rawAcl != null)
+            if (rawAcl is not null)
             {
                 foreach (var a in rawAcl)
                 {
                     var ace = a as CommonAce;
-                    if (ace != null && ace.AceType == AceType.AccessAllowed)
+                    if (ace is not null && ace.AceType == AceType.AccessAllowed)
                     {
                         if (ace.SecurityIdentifier == worldSid ||
                             ace.SecurityIdentifier == userSid)
@@ -2581,7 +2581,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                      System.Security.SecureString password,
                                      PasswordExpiredState passwordExpired)
         {
-            if (password != null)
+            if (password is not null)
             {
                 USER_SET_PASSWORD_INFORMATION info = new USER_SET_PASSWORD_INFORMATION();
                 IntPtr buffer = IntPtr.Zero;
@@ -2878,7 +2878,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             {
                 var ex = MakeException(ntStatus, context);
 
-                if (ex != null)
+                if (ex is not null)
                     throw ex;
             }
         }
@@ -3167,7 +3167,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             {
                 get
                 {
-                    if (_versionString != null)
+                    if (_versionString is not null)
                     {
                         return _versionString;
                     }

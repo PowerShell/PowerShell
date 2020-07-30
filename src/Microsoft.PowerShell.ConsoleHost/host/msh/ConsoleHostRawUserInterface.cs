@@ -371,7 +371,7 @@ namespace Microsoft.PowerShell
                 catch (HostException e)
                 {
                     Win32Exception win32exception = e.InnerException as Win32Exception;
-                    if (win32exception != null &&
+                    if (win32exception is not null &&
                         win32exception.NativeErrorCode == 0x57)
                     {
                         throw PSTraceSource.NewArgumentOutOfRangeException("value", value,
@@ -821,7 +821,7 @@ namespace Microsoft.PowerShell
                 const int MaxWindowTitleLength = 1023;
                 const int MinWindowTitleLength = 0;
 
-                if (value != null)
+                if (value is not null)
                 {
                     if (
                         value.Length >= MinWindowTitleLength &&

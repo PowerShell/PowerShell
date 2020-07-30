@@ -379,7 +379,7 @@ namespace Microsoft.PowerShell.Commands
                         else
                         {
                             // Update successfully, we add the TypeData into cache
-                            if (Context.InitialSessionState != null)
+                            if (Context.InitialSessionState is not null)
                             {
                                 Context.InitialSessionState.Types.Add(new SessionStateTypeEntry(type, false));
                             }
@@ -415,22 +415,22 @@ namespace Microsoft.PowerShell.Commands
 
             GetMembers(type.Members);
 
-            if (_typeConverter != null)
+            if (_typeConverter is not null)
             {
                 type.TypeConverter = _typeConverter;
             }
 
-            if (_typeAdapter != null)
+            if (_typeAdapter is not null)
             {
                 type.TypeAdapter = _typeAdapter;
             }
 
-            if (_serializationMethod != null)
+            if (_serializationMethod is not null)
             {
                 type.SerializationMethod = _serializationMethod;
             }
 
-            if (_targetTypeForDeserialization != null)
+            if (_targetTypeForDeserialization is not null)
             {
                 type.TargetTypeForDeserialization = _targetTypeForDeserialization;
             }
@@ -440,34 +440,34 @@ namespace Microsoft.PowerShell.Commands
                 type.SerializationDepth = (uint)_serializationDepth;
             }
 
-            if (_defaultDisplayProperty != null)
+            if (_defaultDisplayProperty is not null)
             {
                 type.DefaultDisplayProperty = _defaultDisplayProperty;
             }
 
-            if (_inheritPropertySerializationSet != null)
+            if (_inheritPropertySerializationSet is not null)
             {
                 type.InheritPropertySerializationSet = _inheritPropertySerializationSet.Value;
             }
 
-            if (_stringSerializationSource != null)
+            if (_stringSerializationSource is not null)
             {
                 type.StringSerializationSource = _stringSerializationSource;
             }
 
-            if (_defaultDisplayPropertySet != null)
+            if (_defaultDisplayPropertySet is not null)
             {
                 PropertySetData defaultDisplayPropertySet = new PropertySetData(_defaultDisplayPropertySet);
                 type.DefaultDisplayPropertySet = defaultDisplayPropertySet;
             }
 
-            if (_defaultKeyPropertySet != null)
+            if (_defaultKeyPropertySet is not null)
             {
                 PropertySetData defaultKeyPropertySet = new PropertySetData(_defaultKeyPropertySet);
                 type.DefaultKeyPropertySet = defaultKeyPropertySet;
             }
 
-            if (_propertySerializationSet != null)
+            if (_propertySerializationSet is not null)
             {
                 PropertySetData propertySerializationSet = new PropertySetData(_propertySerializationSet);
                 type.PropertySerializationSet = propertySerializationSet;
@@ -503,7 +503,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // Update successfully, we add the TypeData into cache
-                        if (Context.InitialSessionState != null)
+                        if (Context.InitialSessionState is not null)
                         {
                             Context.InitialSessionState.Types.Add(new SessionStateTypeEntry(type, false));
                         }
@@ -530,7 +530,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // If the MemberType is not specified, the MemberName, Value, and SecondValue parameters
                 // should not be specified either
-                if (_memberName != null || HasBeenSpecified(_value1) || _value2 != null)
+                if (_memberName is not null || HasBeenSpecified(_value1) || _value2 is not null)
                 {
                     ThrowTerminatingError(NewError("MemberTypeIsMissing", UpdateDataStrings.MemberTypeIsMissing, null));
                 }
@@ -611,7 +611,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void EnsureValue2HasNotBeenSpecified()
         {
-            if (_value2 != null)
+            if (_value2 is not null)
             {
                 ThrowTerminatingError(NewError("SecondValueShouldNotBeSpecified", UpdateDataStrings.ShouldNotBeSpecified, null, "SecondValue", _memberType));
             }
@@ -661,7 +661,7 @@ namespace Microsoft.PowerShell.Commands
 
             AliasPropertyData alias;
             string referencedName = GetParameterType<string>(_value1);
-            if (_value2 != null)
+            if (_value2 is not null)
             {
                 Type type = GetParameterType<Type>(_value2);
                 alias = new AliasPropertyData(_memberName, referencedName, type);
@@ -679,13 +679,13 @@ namespace Microsoft.PowerShell.Commands
             EnsureValue1AndValue2AreNotBothNull();
 
             ScriptBlock value1ScriptBlock = null;
-            if (_value1 != null)
+            if (_value1 is not null)
             {
                 value1ScriptBlock = GetParameterType<ScriptBlock>(_value1);
             }
 
             ScriptBlock value2ScriptBlock = null;
-            if (_value2 != null)
+            if (_value2 is not null)
             {
                 value2ScriptBlock = GetParameterType<ScriptBlock>(_value2);
             }
@@ -701,13 +701,13 @@ namespace Microsoft.PowerShell.Commands
             EnsureValue1AndValue2AreNotBothNull();
 
             MethodInfo value1CodeReference = null;
-            if (_value1 != null)
+            if (_value1 is not null)
             {
                 value1CodeReference = GetParameterType<MethodInfo>(_value1);
             }
 
             MethodInfo value2CodeReference = null;
-            if (_value2 != null)
+            if (_value2 is not null)
             {
                 value2CodeReference = GetParameterType<MethodInfo>(_value2);
             }
@@ -776,7 +776,7 @@ namespace Microsoft.PowerShell.Commands
             // filename is available
             string target = UpdateDataStrings.UpdateTarget;
 
-            if (Context.InitialSessionState != null)
+            if (Context.InitialSessionState is not null)
             {
                 // This hashSet is to detect if there are duplicate type files
                 var fullFileNameHash = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
@@ -800,7 +800,7 @@ namespace Microsoft.PowerShell.Commands
                 // Copy everything from context's TypeTable to newTypes
                 foreach (var entry in Context.InitialSessionState.Types)
                 {
-                    if (entry.FileName != null)
+                    if (entry.FileName is not null)
                     {
                         string resolvedPath = ModuleCmdletBase.ResolveRootedFilePath(entry.FileName, Context) ?? entry.FileName;
                         if (!fullFileNameHash.Contains(resolvedPath))
@@ -838,13 +838,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        if (sste.TypeTable != null)
+                        if (sste.TypeTable is not null)
                         {
                             var ex = new PSInvalidOperationException(UpdateDataStrings.CannotUpdateTypeWithTypeTable);
                             this.WriteError(new ErrorRecord(ex, "CannotUpdateTypeWithTypeTable", ErrorCategory.InvalidOperation, null));
                             continue;
                         }
-                        else if (sste.FileName != null)
+                        else if (sste.FileName is not null)
                         {
                             bool unused;
                             Context.TypeTable.Update(sste.FileName, sste.FileName, errors, Context.AuthorizationManager, Context.InitialSessionState.Host, out unused);
@@ -921,7 +921,7 @@ namespace Microsoft.PowerShell.Commands
             // filename is available
             string target = UpdateDataStrings.UpdateTarget;
 
-            if (Context.InitialSessionState != null)
+            if (Context.InitialSessionState is not null)
             {
                 if (Context.InitialSessionState.DisableFormatUpdates)
                 {
@@ -949,7 +949,7 @@ namespace Microsoft.PowerShell.Commands
                 // Always add InitialSessionState.Formats to the new list
                 foreach (SessionStateFormatEntry entry in Context.InitialSessionState.Formats)
                 {
-                    if (entry.FileName != null)
+                    if (entry.FileName is not null)
                     {
                         if (!fullFileNameHash.Contains(entry.FileName))
                         {
@@ -989,18 +989,18 @@ namespace Microsoft.PowerShell.Commands
                     {
                         string name = ssfe.FileName;
                         PSSnapInInfo snapin = ssfe.PSSnapIn;
-                        if (snapin != null && !string.IsNullOrEmpty(snapin.Name))
+                        if (snapin is not null && !string.IsNullOrEmpty(snapin.Name))
                         {
                             name = snapin.Name;
                         }
 
-                        if (ssfe.Formattable != null)
+                        if (ssfe.Formattable is not null)
                         {
                             var ex = new PSInvalidOperationException(UpdateDataStrings.CannotUpdateFormatWithFormatTable);
                             this.WriteError(new ErrorRecord(ex, "CannotUpdateFormatWithFormatTable", ErrorCategory.InvalidOperation, null));
                             continue;
                         }
-                        else if (ssfe.FormatData != null)
+                        else if (ssfe.FormatData is not null)
                         {
                             entries.Add(new PSSnapInTypeAndFormatErrors(name, ssfe.FormatData));
                         }
@@ -1122,7 +1122,7 @@ namespace Microsoft.PowerShell.Commands
                 Dictionary<string, List<int>> fileToIndexMap = new Dictionary<string, List<int>>(StringComparer.OrdinalIgnoreCase);
                 List<int> indicesToRemove = new List<int>();
 
-                if (Context.InitialSessionState != null)
+                if (Context.InitialSessionState is not null)
                 {
                     for (int index = 0; index < Context.InitialSessionState.Types.Count; index++)
                     {
@@ -1158,7 +1158,7 @@ namespace Microsoft.PowerShell.Commands
                     indicesToRemove.Sort();
                     for (int i = indicesToRemove.Count - 1; i >= 0; i--)
                     {
-                        if (Context.InitialSessionState != null)
+                        if (Context.InitialSessionState is not null)
                         {
                             Context.InitialSessionState.Types.RemoveItem(indicesToRemove[i]);
                         }
@@ -1166,7 +1166,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        if (Context.InitialSessionState != null)
+                        if (Context.InitialSessionState is not null)
                         {
                             bool oldRefreshTypeFormatSetting = Context.InitialSessionState.RefreshTypeAndFormatSetting;
                             try
@@ -1230,7 +1230,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // Type is removed successfully, add it into the cache
-                        if (Context.InitialSessionState != null)
+                        if (Context.InitialSessionState is not null)
                         {
                             Context.InitialSessionState.Types.Add(new SessionStateTypeEntry(type, true));
                         }

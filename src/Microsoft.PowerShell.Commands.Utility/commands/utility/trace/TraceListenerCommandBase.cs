@@ -220,7 +220,7 @@ namespace Microsoft.PowerShell.Commands
                 AddListenerToSources(matchingSources, _hostListener);
             }
 
-            if (FileListener != null)
+            if (FileListener is not null)
             {
                 if (_fileListeners is null)
                 {
@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 // remove readonly attributes on the file
                                 System.IO.FileInfo fInfo = new System.IO.FileInfo(resolvedPath);
-                                if (fInfo != null)
+                                if (fInfo is not null)
                                 {
                                     // Save some disk write time by checking whether file is readonly..
                                     if ((fInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
@@ -327,7 +327,7 @@ namespace Microsoft.PowerShell.Commands
                             fileOpenError = unauthorized;
                         }
 
-                        if (fileOpenError != null)
+                        if (fileOpenError is not null)
                         {
                             ErrorRecord errorRecord =
                                 new ErrorRecord(
@@ -352,7 +352,7 @@ namespace Microsoft.PowerShell.Commands
                         error = notSupported;
                     }
 
-                    if (error != null)
+                    if (error is not null)
                     {
                         ErrorRecord errorRecord =
                             new ErrorRecord(

@@ -19,7 +19,7 @@ namespace System.Management.Automation
             {
                 PSDriveInfo result = null;
 
-                if (_drive != null &&
+                if (_drive is not null &&
                     !_drive.Hidden)
                 {
                     result = _drive;

@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _sourceIdentifier = value;
 
-                if (value != null)
+                if (value is not null)
                 {
                     _matchPattern = WildcardPattern.Get(value, WildcardOptions.IgnoreCase);
                 }
@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
                     PSEventArgs currentEvent = currentEvents[eventCounter - 1];
 
                     // If they specified a event identifier and we don't match, continue
-                    if ((_sourceIdentifier != null) &&
+                    if ((_sourceIdentifier is not null) &&
                        (!_matchPattern.IsMatch(currentEvent.SourceIdentifier)))
                     {
                         continue;
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Generate an error if we couldn't find the subscription identifier,
             // and no globbing was done.
-            if ((_sourceIdentifier != null) &&
+            if ((_sourceIdentifier is not null) &&
                (!WildcardPattern.ContainsWildcardCharacters(_sourceIdentifier)) &&
                (!foundMatch))
             {

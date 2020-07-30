@@ -492,7 +492,7 @@ namespace Microsoft.PowerShell.Commands
                         SessionState.PSVariable.GetAtScope(Name, Scope);
                 }
 
-                if (varFound != null)
+                if (varFound is not null)
                 {
                     SessionStateException sessionStateException =
                         new SessionStateException(
@@ -521,12 +521,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 PSVariable newVariable = new PSVariable(Name, Value, Option);
 
-                if (_visibility != null)
+                if (_visibility is not null)
                 {
                     newVariable.Visibility = (SessionStateEntryVisibility)_visibility;
                 }
 
-                if (Description != null)
+                if (Description is not null)
                 {
                     newVariable.Description = Description;
                 }
@@ -714,7 +714,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (Name != null && Name.Length > 0)
+            if (Name is not null && Name.Length > 0)
             {
                 _nameIsFormalParameter = true;
             }
@@ -775,7 +775,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    if (_valueList != null)
+                    if (_valueList is not null)
                     {
                         if (_valueList.Count == 1)
                         {
@@ -858,7 +858,7 @@ namespace Microsoft.PowerShell.Commands
                             newOptions = ScopedItemOptions.Private;
                         }
 
-                        if (_options != null)
+                        if (_options is not null)
                         {
                             newOptions |= (ScopedItemOptions)_options;
                         }
@@ -883,7 +883,7 @@ namespace Microsoft.PowerShell.Commands
                         varToSet.Description = Description;
 
                         // If visibility was specified, set it on the variable
-                        if (_visibility != null)
+                        if (_visibility is not null)
                         {
                             varToSet.Visibility = Visibility;
                         }
@@ -907,7 +907,7 @@ namespace Microsoft.PowerShell.Commands
                                     SessionState.Internal.SetVariableAtScope(varToSet, Scope, Force, origin);
                             }
 
-                            if (_passThru && result != null)
+                            if (_passThru && result is not null)
                             {
                                 WriteObject(result);
                             }
@@ -977,12 +977,12 @@ namespace Microsoft.PowerShell.Commands
                                     }
                                 }
 
-                                if (Description != null)
+                                if (Description is not null)
                                 {
                                     matchingVariable.Description = Description;
                                 }
 
-                                if (_options != null)
+                                if (_options is not null)
                                 {
                                     matchingVariable.Options = (ScopedItemOptions)_options;
                                 }
@@ -995,7 +995,7 @@ namespace Microsoft.PowerShell.Commands
                                 }
 
                                 // If visibility was specified, set it on the variable
-                                if (_visibility != null)
+                                if (_visibility is not null)
                                 {
                                     matchingVariable.Visibility = Visibility;
                                 }
@@ -1019,7 +1019,7 @@ namespace Microsoft.PowerShell.Commands
                                 continue;
                             }
 
-                            if (_passThru && result != null)
+                            if (_passThru && result is not null)
                             {
                                 WriteObject(result);
                             }
@@ -1368,7 +1368,7 @@ namespace Microsoft.PowerShell.Commands
         private PSVariable ClearValue(PSVariable matchingVariable)
         {
             PSVariable result = matchingVariable;
-            if (Scope != null)
+            if (Scope is not null)
             {
                 matchingVariable.Value = null;
             }

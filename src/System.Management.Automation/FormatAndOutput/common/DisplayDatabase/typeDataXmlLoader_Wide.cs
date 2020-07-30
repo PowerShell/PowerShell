@@ -229,7 +229,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 List<FormatToken> formatTokenList = new List<FormatToken>();
 
                 // add either the text token or the PSPropertyExpression with optional format string
-                if (match.TextToken != null)
+                if (match.TextToken is not null)
                 {
                     formatTokenList.Add(match.TextToken);
                 }

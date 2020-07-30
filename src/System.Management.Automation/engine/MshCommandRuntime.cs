@@ -112,7 +112,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         public override string ToString()
         {
-            if (_commandInfo != null)
+            if (_commandInfo is not null)
                 return _commandInfo.ToString();
             return "<NullCommandInfo>"; // does not require localization
         }
@@ -132,7 +132,7 @@ namespace System.Management.Automation
         /// </summary>
         internal bool IsStopping
         {
-            get { return (this.PipelineProcessor != null && this.PipelineProcessor.Stopping); }
+            get { return (this.PipelineProcessor is not null && this.PipelineProcessor.Stopping); }
         }
 
         #region Write
@@ -493,9 +493,9 @@ namespace System.Management.Automation
                     CBhost?.Runspace?.Debugger?.Break(record);
                 }
 
-                if (DebugOutputPipe != null)
+                if (DebugOutputPipe is not null)
                 {
-                    if (CBhost != null && CBhost.InternalUI != null &&
+                    if (CBhost is not null && CBhost.InternalUI is not null &&
                         DebugOutputPipe.NullPipe)
                     {
                         // If redirecting to a null pipe, still write to
@@ -587,9 +587,9 @@ namespace System.Management.Automation
                     CBhost?.Runspace?.Debugger?.Break(record);
                 }
 
-                if (VerboseOutputPipe != null)
+                if (VerboseOutputPipe is not null)
                 {
-                    if (CBhost != null && CBhost.InternalUI != null &&
+                    if (CBhost is not null && CBhost.InternalUI is not null &&
                         VerboseOutputPipe.NullPipe)
                     {
                         // If redirecting to a null pipe, still write to
@@ -681,9 +681,9 @@ namespace System.Management.Automation
                     CBhost?.Runspace?.Debugger?.Break(record);
                 }
 
-                if (WarningOutputPipe != null)
+                if (WarningOutputPipe is not null)
                 {
-                    if (CBhost != null && CBhost.InternalUI != null &&
+                    if (CBhost is not null && CBhost.InternalUI is not null &&
                         WarningOutputPipe.NullPipe)
                     {
                         // If redirecting to a null pipe, still write to
@@ -749,9 +749,9 @@ namespace System.Management.Automation
 
             if (preference != ActionPreference.Ignore)
             {
-                if (InformationOutputPipe != null)
+                if (InformationOutputPipe is not null)
                 {
-                    if (CBhost != null && CBhost.InternalUI != null &&
+                    if (CBhost is not null && CBhost.InternalUI is not null &&
                         InformationOutputPipe.NullPipe)
                     {
                         // If redirecting to a null pipe, still write to
@@ -781,7 +781,7 @@ namespace System.Management.Automation
                         || (preference == ActionPreference.Continue))
                     {
                         HostInformationMessage hostOutput = record.MessageData as HostInformationMessage;
-                        if (hostOutput != null)
+                        if (hostOutput is not null)
                         {
                             string message = hostOutput.Message;
                             ConsoleColor? foregroundColor = null;
@@ -891,19 +891,19 @@ namespace System.Management.Automation
         {
             CmdletInfo cmdletInfo = _commandInfo as CmdletInfo;
 
-            if (cmdletInfo != null)
+            if (cmdletInfo is not null)
             {
                 if (string.Equals("Add-Type", cmdletInfo.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
 
-                if (cmdletInfo.Module is null && cmdletInfo.PSSnapIn != null)
+                if (cmdletInfo.Module is null && cmdletInfo.PSSnapIn is not null)
                 {
                     return cmdletInfo.PSSnapIn.LogPipelineExecutionDetails;
                 }
 
-                if (cmdletInfo.PSSnapIn is null && cmdletInfo.Module != null)
+                if (cmdletInfo.PSSnapIn is null && cmdletInfo.Module is not null)
                 {
                     return cmdletInfo.Module.LogPipelineExecutionDetails;
                 }
@@ -913,7 +913,7 @@ namespace System.Management.Automation
 
             // Logging should be enabled for functions from modules also
             FunctionInfo functionInfo = _commandInfo as FunctionInfo;
-            if (functionInfo != null && functionInfo.Module != null)
+            if (functionInfo is not null && functionInfo.Module is not null)
             {
                 return functionInfo.Module.LogPipelineExecutionDetails;
             }
@@ -2059,8 +2059,8 @@ namespace System.Management.Automation
 
             errorRecord.SetInvocationInfo(MyInvocation);
 
-            if (errorRecord.ErrorDetails != null
-                && errorRecord.ErrorDetails.TextLookupError != null)
+            if (errorRecord.ErrorDetails is not null
+                && errorRecord.ErrorDetails.TextLookupError is not null)
             {
                 Exception textLookupError = errorRecord.ErrorDetails.TextLookupError;
                 errorRecord.ErrorDetails.TextLookupError = null;
@@ -2071,7 +2071,7 @@ namespace System.Management.Automation
             }
 
             // This code forces the stack trace and source fields to be populated
-            if (errorRecord.Exception != null
+            if (errorRecord.Exception is not null
                 && string.IsNullOrEmpty(errorRecord.Exception.StackTrace))
             {
                 try
@@ -2166,22 +2166,22 @@ namespace System.Management.Automation
         {
             this.ErrorMergeTo = fromRuntime.ErrorMergeTo;
 
-            if (fromRuntime.WarningOutputPipe != null)
+            if (fromRuntime.WarningOutputPipe is not null)
             {
                 this.WarningOutputPipe = fromRuntime.WarningOutputPipe;
             }
 
-            if (fromRuntime.VerboseOutputPipe != null)
+            if (fromRuntime.VerboseOutputPipe is not null)
             {
                 this.VerboseOutputPipe = fromRuntime.VerboseOutputPipe;
             }
 
-            if (fromRuntime.DebugOutputPipe != null)
+            if (fromRuntime.DebugOutputPipe is not null)
             {
                 this.DebugOutputPipe = fromRuntime.DebugOutputPipe;
             }
 
-            if (fromRuntime.InformationOutputPipe != null)
+            if (fromRuntime.InformationOutputPipe is not null)
             {
                 this.InformationOutputPipe = fromRuntime.InformationOutputPipe;
             }
@@ -2292,7 +2292,7 @@ namespace System.Management.Automation
             {
                 // Only generate these exceptions if a pipeline has already been declared as the 'writing' pipeline.
                 // Otherwise, these are probably infrastructure messages and can be ignored.
-                if (this.PipelineProcessor?._permittedToWrite != null)
+                if (this.PipelineProcessor?._permittedToWrite is not null)
                 {
                     throw PSTraceSource.NewInvalidOperationException(
                         PipelineStrings.WriteNotPermitted);
@@ -2371,7 +2371,7 @@ namespace System.Management.Automation
             if (e is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(e));
 
-            if (PipelineProcessor != null)
+            if (PipelineProcessor is not null)
             {
                 PipelineProcessor.RecordFailure(e, _thisCommand);
             }
@@ -2546,10 +2546,10 @@ namespace System.Management.Automation
                 {
                     varList = new ArrayList();
 
-                    if (oldValue != null && AutomationNull.Value != oldValue)
+                    if (oldValue is not null && AutomationNull.Value != oldValue)
                     {
                         IEnumerable enumerable = LanguagePrimitives.GetEnumerable(oldValue);
-                        if (enumerable != null)
+                        if (enumerable is not null)
                         {
                             foreach (object o in enumerable)
                             {
@@ -2814,8 +2814,8 @@ namespace System.Management.Automation
         {
             ThrowIfStopping();
 
-            if (errorRecord.ErrorDetails != null
-                && errorRecord.ErrorDetails.TextLookupError != null)
+            if (errorRecord.ErrorDetails is not null
+                && errorRecord.ErrorDetails.TextLookupError is not null)
             {
                 Exception textLookupError = errorRecord.ErrorDetails.TextLookupError;
                 errorRecord.ErrorDetails.TextLookupError = null;
@@ -3702,8 +3702,8 @@ namespace System.Management.Automation
         /// </summary>
         private bool IsSuspendPromptAllowed()
         {
-            Dbg.Assert(this.CBhost != null, "Expected this.CBhost != null");
-            Dbg.Assert(this.CBhost.ExternalHost != null, "Expected this.CBhost.ExternalHost != null");
+            Dbg.Assert(this.CBhost is not null, "Expected this.CBhost is not null");
+            Dbg.Assert(this.CBhost.ExternalHost is not null, "Expected this.CBhost.ExternalHost is not null");
             if (this.CBhost.ExternalHost is ServerRemoteHost)
             {
                 return false;
@@ -3719,27 +3719,27 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(_thisCommand is PSScriptCmdlet, "this is only done for script cmdlets");
 
-            if (_outVarList != null)
+            if (_outVarList is not null)
             {
                 this.OutputPipe.AddVariableList(VariableStreamKind.Output, _outVarList);
             }
 
-            if (_errorVarList != null)
+            if (_errorVarList is not null)
             {
                 this.OutputPipe.AddVariableList(VariableStreamKind.Error, _errorVarList);
             }
 
-            if (_warningVarList != null)
+            if (_warningVarList is not null)
             {
                 this.OutputPipe.AddVariableList(VariableStreamKind.Warning, _warningVarList);
             }
 
-            if (_informationVarList != null)
+            if (_informationVarList is not null)
             {
                 this.OutputPipe.AddVariableList(VariableStreamKind.Information, _informationVarList);
             }
 
-            if (this.PipelineVariable != null)
+            if (this.PipelineVariable is not null)
             {
                 this.OutputPipe.SetPipelineVariable(_pipelineVarReference);
             }
@@ -3749,27 +3749,27 @@ namespace System.Management.Automation
         {
             // Diagnostics.Assert(thisCommand is PSScriptCmdlet, "this is only done for script cmdlets");
 
-            if (_outVarList != null)
+            if (_outVarList is not null)
             {
                 this.OutputPipe.RemoveVariableList(VariableStreamKind.Output, _outVarList);
             }
 
-            if (_errorVarList != null)
+            if (_errorVarList is not null)
             {
                 this.OutputPipe.RemoveVariableList(VariableStreamKind.Error, _errorVarList);
             }
 
-            if (_warningVarList != null)
+            if (_warningVarList is not null)
             {
                 this.OutputPipe.RemoveVariableList(VariableStreamKind.Warning, _warningVarList);
             }
 
-            if (_informationVarList != null)
+            if (_informationVarList is not null)
             {
                 this.OutputPipe.RemoveVariableList(VariableStreamKind.Information, _informationVarList);
             }
 
-            if (this.PipelineVariable != null)
+            if (this.PipelineVariable is not null)
             {
                 this.OutputPipe.RemovePipelineVariable();
                 // '_state' could be null when a 'DynamicParam' block runs because the 'DynamicParam' block runs in 'DoPrepare',

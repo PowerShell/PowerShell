@@ -233,11 +233,11 @@ namespace System.Management.Automation.Runspaces
         public override InitialSessionStateEntry Clone()
         {
             SessionStateTypeEntry entry;
-            if (FileName != null)
+            if (FileName is not null)
             {
                 entry = new SessionStateTypeEntry(FileName);
             }
-            else if (TypeTable != null)
+            else if (TypeTable is not null)
             {
                 entry = new SessionStateTypeEntry(TypeTable);
             }
@@ -339,11 +339,11 @@ namespace System.Management.Automation.Runspaces
         {
             SessionStateFormatEntry entry;
 
-            if (FileName != null)
+            if (FileName is not null)
             {
                 entry = new SessionStateFormatEntry(FileName);
             }
-            else if (Formattable != null)
+            else if (Formattable is not null)
             {
                 entry = new SessionStateFormatEntry(Formattable);
             }
@@ -924,7 +924,7 @@ namespace System.Management.Automation.Runspaces
         {
             // Copy the attribute collection if necessary...
             Collection<Attribute> attrs = null;
-            if (_attributes != null && _attributes.Count > 0)
+            if (_attributes is not null && _attributes.Count > 0)
             {
                 attrs = new Collection<Attribute>(_attributes);
             }
@@ -1160,7 +1160,7 @@ namespace System.Management.Automation.Runspaces
             {
                 Type objType = null;
 
-                if (type != null)
+                if (type is not null)
                 {
                     objType = type as Type ?? type.GetType();
                 }
@@ -1294,7 +1294,7 @@ namespace System.Management.Automation.Runspaces
 
                 // Aliases to allowed commands are OK
                 SessionStateAliasEntry aliasEntry = entry as SessionStateAliasEntry;
-                if (aliasEntry != null)
+                if (aliasEntry is not null)
                 {
                     if (allowedNames.Exists(allowedName => allowedName.Equals(aliasEntry.Definition, StringComparison.OrdinalIgnoreCase)))
                     {
@@ -1425,7 +1425,7 @@ namespace System.Management.Automation.Runspaces
 
                 // make the cmdlet private
                 Collection<SessionStateCommandEntry> originalCmdlet = iss.Commands[commandName];
-                Diagnostics.Assert(originalCmdlet != null, "Proxied cmdlets should be imported at this point");
+                Diagnostics.Assert(originalCmdlet is not null, "Proxied cmdlets should be imported at this point");
                 Diagnostics.Assert(originalCmdlet.Count == 1, "Exactly one cmdlet with a given name");
                 originalCmdlet[0].Visibility = SessionStateEntryVisibility.Private;
 
@@ -1527,7 +1527,7 @@ namespace System.Management.Automation.Runspaces
                 // in debug mode and is not intended to be a feature.
                 // July 31 2008 - brucepay
                 // Only load the core snapins at this point...
-                if (Environment.GetEnvironmentVariable("PowerShellMinimal") != null)
+                if (Environment.GetEnvironmentVariable("PowerShellMinimal") is not null)
                 {
                     if (si.Name.Equals("Microsoft.PowerShell.Host", StringComparison.OrdinalIgnoreCase))
                         break;
@@ -2341,7 +2341,7 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 SessionStateCmdletEntry ssce = cmd as SessionStateCmdletEntry;
-                if (ssce != null)
+                if (ssce is not null)
                 {
                     if (noClobber && ModuleCmdletBase.CommandFound(ssce.Name, ss))
                     {
@@ -2358,21 +2358,21 @@ namespace System.Management.Automation.Runspaces
                 cmd.SetModule(module);
 
                 SessionStateFunctionEntry ssfe = cmd as SessionStateFunctionEntry;
-                if (ssfe != null)
+                if (ssfe is not null)
                 {
                     ss.AddSessionStateEntry(ssfe);
                     continue;
                 }
 
                 SessionStateAliasEntry ssae = cmd as SessionStateAliasEntry;
-                if (ssae != null)
+                if (ssae is not null)
                 {
                     ss.AddSessionStateEntry(ssae, StringLiterals.Local);
                     continue;
                 }
 
                 SessionStateApplicationEntry ssappe = cmd as SessionStateApplicationEntry;
-                if (ssappe != null)
+                if (ssappe is not null)
                 {
                     if (ssappe.Visibility == SessionStateEntryVisibility.Public)
                     {
@@ -2383,7 +2383,7 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 SessionStateScriptEntry ssse = cmd as SessionStateScriptEntry;
-                if (ssse != null)
+                if (ssse is not null)
                 {
                     if (ssse.Visibility == SessionStateEntryVisibility.Public)
                     {
@@ -2420,7 +2420,7 @@ namespace System.Management.Automation.Runspaces
                 Exception error = null;
                 Assembly asm = context.AddAssembly(ssae.Name, ssae.FileName, out error);
 
-                if (asm is null || error != null)
+                if (asm is null || error is not null)
                 {
                     // If no module was found but there was no specific error, then
                     // create a not found error.
@@ -2470,7 +2470,7 @@ namespace System.Management.Automation.Runspaces
             HashSet<CommandInfo> publicCommands = null;
             HashSet<CommandInfo> GetPublicCommands()
             {
-                if (publicCommands != null)
+                if (publicCommands is not null)
                 {
                     return publicCommands;
                 }
@@ -2507,7 +2507,7 @@ namespace System.Management.Automation.Runspaces
             if (ModuleSpecificationsToImport.Count > 0 || unresolvedCmdsToExpose.Count > 0)
             {
                 Exception moduleImportException = ProcessModulesToImport(initializedRunspace, ModuleSpecificationsToImport, string.Empty, GetPublicCommands(), unresolvedCmdsToExpose);
-                if (moduleImportException != null)
+                if (moduleImportException is not null)
                 {
                     runspaceInitTracer.WriteLine(
                         "Runspace open failed while loading module: First error {1}",
@@ -2543,7 +2543,7 @@ namespace System.Management.Automation.Runspaces
             if (UserDriveEnabled)
             {
                 Exception userDriveException = ProcessUserDrive(initializedRunspace);
-                if (userDriveException != null)
+                if (userDriveException is not null)
                 {
                     runspaceInitTracer.WriteLine(
                         "Runspace open failed while processing user drive with error {1}",
@@ -2558,7 +2558,7 @@ namespace System.Management.Automation.Runspaces
             if (StartupScripts.Count > 0)
             {
                 Exception startupScriptException = ProcessStartupScripts(initializedRunspace);
-                if (startupScriptException != null)
+                if (startupScriptException is not null)
                 {
                     runspaceInitTracer.WriteLine(
                         "Runspace open failed while running startup script: First error {1}",
@@ -2576,7 +2576,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     psToInvoke.AddCommand(new Command("Start-Transcript")).AddParameter("OutputDirectory", TranscriptDirectory);
                     Exception exceptionToReturn = ProcessPowerShellCommand(psToInvoke, initializedRunspace);
-                    if (exceptionToReturn != null)
+                    if (exceptionToReturn is not null)
                     {
                         // ThrowOnRunspaceOpenError handling is done by ProcessPowerShellCommand
                         return exceptionToReturn;
@@ -2629,7 +2629,7 @@ namespace System.Management.Automation.Runspaces
                                 string expandedModulePath = IO.Path.GetFullPath(modulePath);
                                 var exportedCommands = AnalysisCache.GetExportedCommands(expandedModulePath, false, context);
 
-                                if (exportedCommands != null && exportedCommands.ContainsKey(unresolvedCommand))
+                                if (exportedCommands is not null && exportedCommands.ContainsKey(unresolvedCommand))
                                 {
                                     modulesToImport.Add(System.IO.Path.GetFileNameWithoutExtension(expandedModulePath));
                                     break;
@@ -2664,7 +2664,7 @@ namespace System.Management.Automation.Runspaces
 
                 // If we are wrapping a function, rename it.
                 FunctionInfo commandAsFunction = existingCommand as FunctionInfo;
-                if (commandAsFunction != null)
+                if (commandAsFunction is not null)
                 {
                     string newCommandName = commandAsFunction.Name + "_" + Guid.NewGuid().ToString("N");
                     commandAsFunction.Rename(newCommandName);
@@ -2760,7 +2760,7 @@ namespace System.Management.Automation.Runspaces
                     string name = variable["Name"].ToString();
                     ScriptBlock sb = variable["Value"] as ScriptBlock;
 
-                    if (!string.IsNullOrEmpty(name) && (sb != null))
+                    if (!string.IsNullOrEmpty(name) && (sb is not null))
                     {
                         sb.SessionStateInternal = initializedRunspace.ExecutionContext.EngineSessionState;
 
@@ -2770,7 +2770,7 @@ namespace System.Management.Automation.Runspaces
                             psToInvoke.AddCommand(new Command("Set-Variable")).AddParameter("Name", name);
 
                             Exception exceptionToReturn = ProcessPowerShellCommand(psToInvoke, initializedRunspace);
-                            if (exceptionToReturn != null)
+                            if (exceptionToReturn is not null)
                             {
                                 // ThrowOnRunspaceOpenError handling is done by ProcessPowerShellCommand
                                 return exceptionToReturn;
@@ -2864,7 +2864,7 @@ namespace System.Management.Automation.Runspaces
                     psToInvoke.AddCommand(new Command(startupScript, false, false));
 
                     Exception exceptionToReturn = ProcessPowerShellCommand(psToInvoke, initializedRunspace);
-                    if (exceptionToReturn != null)
+                    if (exceptionToReturn is not null)
                     {
                         // ThrowOnRunspaceOpenError handling is done by ProcessPowerShellCommand
                         return exceptionToReturn;
@@ -2919,14 +2919,14 @@ namespace System.Management.Automation.Runspaces
                 if (errorList.Count > 0)
                 {
                     ErrorRecord lastErrorRecord = errorList[0] as ErrorRecord;
-                    if (lastErrorRecord != null)
+                    if (lastErrorRecord is not null)
                     {
                         return new Exception(lastErrorRecord.ToString());
                     }
                     else
                     {
                         Exception lastException = errorList[0] as Exception;
-                        if (lastException != null)
+                        if (lastException is not null)
                         {
                             return lastException;
                         }
@@ -2953,14 +2953,14 @@ namespace System.Management.Automation.Runspaces
             foreach (object module in moduleList)
             {
                 string moduleName = module as string;
-                if (moduleName != null)
+                if (moduleName is not null)
                 {
                     exceptionToReturn = ProcessOneModule(initializedRunspace, moduleName, null, path, publicCommands);
                 }
                 else
                 {
                     ModuleSpecification moduleSpecification = module as ModuleSpecification;
-                    if (moduleSpecification != null)
+                    if (moduleSpecification is not null)
                     {
                         if ((moduleSpecification.RequiredVersion is null) && (moduleSpecification.Version is null) && (moduleSpecification.MaximumVersion is null) && (moduleSpecification.Guid is null))
                         {
@@ -2972,7 +2972,7 @@ namespace System.Management.Automation.Runspaces
                         {
                             Collection<PSModuleInfo> moduleInfos = ModuleCmdletBase.GetModuleIfAvailable(moduleSpecification, initializedRunspace);
 
-                            if (moduleInfos != null && moduleInfos.Count > 0)
+                            if (moduleInfos is not null && moduleInfos.Count > 0)
                             {
                                 exceptionToReturn = ProcessOneModule(initializedRunspace, moduleSpecification.Name, moduleInfos[0], path, publicCommands);
                             }
@@ -2980,19 +2980,19 @@ namespace System.Management.Automation.Runspaces
                             {
                                 var version = "0.0.0.0";
 
-                                if (moduleSpecification.RequiredVersion != null)
+                                if (moduleSpecification.RequiredVersion is not null)
                                 {
                                     version = moduleSpecification.RequiredVersion.ToString();
                                 }
-                                else if (moduleSpecification.Version != null)
+                                else if (moduleSpecification.Version is not null)
                                 {
                                     version = moduleSpecification.Version.ToString();
-                                    if (moduleSpecification.MaximumVersion != null)
+                                    if (moduleSpecification.MaximumVersion is not null)
                                     {
                                         version = version + " - " + moduleSpecification.MaximumVersion;
                                     }
                                 }
-                                else if (moduleSpecification.MaximumVersion != null)
+                                else if (moduleSpecification.MaximumVersion is not null)
                                 {
                                     version = moduleSpecification.MaximumVersion;
                                 }
@@ -3134,7 +3134,7 @@ namespace System.Management.Automation.Runspaces
             {
                 CommandInfo c = new CmdletInfo("Import-Module", typeof(ImportModuleCommand), null, null, initializedRunspace.ExecutionContext);
                 Command cmd = new Command(c);
-                if (moduleInfoToLoad != null)
+                if (moduleInfoToLoad is not null)
                 {
                     cmd.Parameters.Add("ModuleInfo", moduleInfoToLoad);
                     name = moduleInfoToLoad.Name;
@@ -3217,7 +3217,7 @@ namespace System.Management.Automation.Runspaces
             if (ThrowOnRunspaceOpenError)
             {
                 RunspaceOpenModuleLoadException rome = null;
-                if (exception != null)
+                if (exception is not null)
                 {
                     rome = exception;
                 }
@@ -3237,7 +3237,7 @@ namespace System.Management.Automation.Runspaces
                     rome = new RunspaceOpenModuleLoadException(moduleName, mergedErrors);
                 }
 
-                if (rome != null)
+                if (rome is not null)
                 {
                     return rome;
                 }
@@ -3326,7 +3326,7 @@ namespace System.Management.Automation.Runspaces
                             ProviderInfo fsProvider = context.EngineSessionState.GetSingleProvider(context.ProviderNames.FileSystem);
 
                             Collection<PSDriveInfo> fsDrives = fsProvider.Drives;
-                            if (fsDrives != null && fsDrives.Count > 0)
+                            if (fsDrives is not null && fsDrives.Count > 0)
                             {
                                 context.EngineSessionState.CurrentDrive = fsDrives[0];
                                 fsDriveSet = true;
@@ -3340,7 +3340,7 @@ namespace System.Management.Automation.Runspaces
                         {
                             Collection<PSDriveInfo> allDrives = context.EngineSessionState.Drives(null);
 
-                            if (allDrives != null && allDrives.Count > 0)
+                            if (allDrives is not null && allDrives.Count > 0)
                             {
                                 context.EngineSessionState.CurrentDrive = allDrives[0];
                             }
@@ -3410,7 +3410,7 @@ namespace System.Management.Automation.Runspaces
                 foreach (SessionStateCommandEntry cmd in Commands)
                 {
                     SessionStateCmdletEntry ssce = cmd as SessionStateCmdletEntry;
-                    if (ssce != null)
+                    if (ssce is not null)
                     {
                         List<CmdletInfo> matches;
                         if (context.TopLevelSessionState.GetCmdletTable().TryGetValue(ssce.Name, out matches))
@@ -3437,7 +3437,7 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 // Remove all of the providers from the top-level provider table.
-                if (_providers != null && _providers.Count > 0)
+                if (_providers is not null && _providers.Count > 0)
                 {
                     Dictionary<string, List<ProviderInfo>> providerTable = context.TopLevelSessionState.Providers;
 
@@ -3446,7 +3446,7 @@ namespace System.Management.Automation.Runspaces
                         List<ProviderInfo> pl;
                         if (providerTable.TryGetValue(sspe.Name, out pl))
                         {
-                            Diagnostics.Assert(pl != null, "There should never be a null list of entries in the provider table");
+                            Diagnostics.Assert(pl is not null, "There should never be a null list of entries in the provider table");
                             // For each provider with the same name...
                             for (int i = pl.Count - 1; i >= 0; i--)
                             {
@@ -3470,13 +3470,13 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 List<string> formatFilesToRemove = new List<string>();
-                if (this.Formats != null)
+                if (this.Formats is not null)
                 {
                     formatFilesToRemove.AddRange(this.Formats.Select(f => f.FileName));
                 }
 
                 List<string> typeFilesToRemove = new List<string>();
-                if (this.Types != null)
+                if (this.Types is not null)
                 {
                     typeFilesToRemove.AddRange(this.Types.Select(t => t.FileName));
                 }
@@ -3490,7 +3490,7 @@ namespace System.Management.Automation.Runspaces
             // The formats and types tables are implemented in such a way that
             // we can't simply remove an entry. We need to edit the list, clear the
             // exiting composed table and then rebuild the entire table.
-            if (formatFilesToRemove != null && formatFilesToRemove.Count > 0)
+            if (formatFilesToRemove is not null && formatFilesToRemove.Count > 0)
             {
                 var newFormats = new InitialSessionStateEntryCollection<SessionStateFormatEntry>();
                 HashSet<string> formatFilesToRemoveSet = new HashSet<string>(formatFilesToRemove, StringComparer.OrdinalIgnoreCase);
@@ -3507,7 +3507,7 @@ namespace System.Management.Automation.Runspaces
                 context.InitialSessionState.UpdateFormats(context, false);
             }
 
-            if (typeFilesToRemove != null && typeFilesToRemove.Count > 0)
+            if (typeFilesToRemove is not null && typeFilesToRemove.Count > 0)
             {
                 // The types table has the same issue as the format table - we need to rebuild the entire table.
                 var newTypes = new InitialSessionStateEntryCollection<SessionStateTypeEntry>();
@@ -3561,7 +3561,7 @@ namespace System.Management.Automation.Runspaces
             if (Types.Count == 1)
             {
                 TypeTable typeTable = Types[0].TypeTable;
-                if (typeTable != null)
+                if (typeTable is not null)
                 {
                     // reuse the TypeTable instance specified in the sste.
                     // this essentially allows for TypeTable sharing across
@@ -3593,12 +3593,12 @@ namespace System.Management.Automation.Runspaces
                 sste =>
             {
                 // foreach (var sste in Types)
-                if (sste.FileName != null)
+                if (sste.FileName is not null)
                 {
                     if (filesProcessed.TryAdd(sste.FileName, null))
                     {
                         string moduleName = string.Empty;
-                        if (sste.PSSnapIn != null && !string.IsNullOrEmpty(sste.PSSnapIn.Name))
+                        if (sste.PSSnapIn is not null && !string.IsNullOrEmpty(sste.PSSnapIn.Name))
                         {
                             moduleName = sste.PSSnapIn.Name;
                         }
@@ -3607,7 +3607,7 @@ namespace System.Management.Automation.Runspaces
                         context.TypeTable.Update(moduleName, sste.FileName, errors, context.AuthorizationManager, context.EngineHostInterface, out unused);
                     }
                 }
-                else if (sste.TypeTable != null)
+                else if (sste.TypeTable is not null)
                 {
                     // We get here only if it's NOT updating the existing type table
                     // because we cannot do the update with a type table instance
@@ -3681,7 +3681,7 @@ namespace System.Management.Automation.Runspaces
 
             // If we're just updating the current runspace, then we'll add our entries
             // to the current list otherwise, we'll build a new list...
-            if (update && context.InitialSessionState != null)
+            if (update && context.InitialSessionState is not null)
             {
                 formatsToLoad = context.InitialSessionState.Formats;
                 formatsToLoad.Add(this.Formats);
@@ -3696,12 +3696,12 @@ namespace System.Management.Automation.Runspaces
             {
                 string name = ssfe.FileName;
                 PSSnapInInfo snapin = ssfe.PSSnapIn;
-                if (snapin != null && !string.IsNullOrEmpty(snapin.Name))
+                if (snapin is not null && !string.IsNullOrEmpty(snapin.Name))
                 {
                     name = snapin.Name;
                 }
 
-                if (ssfe.Formattable != null)
+                if (ssfe.Formattable is not null)
                 {
                     if (formatsToLoad.Count == 1)
                     {
@@ -3714,7 +3714,7 @@ namespace System.Management.Automation.Runspaces
                         throw PSTraceSource.NewInvalidOperationException(FormatAndOutXmlLoadingStrings.FormatTableCannotCoExist);
                     }
                 }
-                else if (ssfe.FormatData != null)
+                else if (ssfe.FormatData is not null)
                 {
                     entries.Add(new PSSnapInTypeAndFormatErrors(name, ssfe.FormatData));
                 }
@@ -3739,7 +3739,7 @@ namespace System.Management.Automation.Runspaces
                 // if this is the case...
                 foreach (PSSnapInTypeAndFormatErrors entry in entries)
                 {
-                    if (entry.Errors != null && entry.Errors.Count > 0)
+                    if (entry.Errors is not null && entry.Errors.Count > 0)
                     {
                         foreach (string error in entry.Errors)
                         {
@@ -3808,7 +3808,7 @@ namespace System.Management.Automation.Runspaces
 
             // Now actually load the snapin...
             PSSnapInInfo snapin = ImportPSSnapIn(newPSSnapIn, out warning);
-            if (snapin != null)
+            if (snapin is not null)
             {
                 ImportedSnapins.Add(snapin.Name, snapin);
             }
@@ -3843,7 +3843,7 @@ namespace System.Management.Automation.Runspaces
             foreach (SessionStateAssemblyEntry ae in this.Assemblies)
             {
                 PSSnapInInfo loadedPSSnapInInfo = ae.PSSnapIn;
-                if (loadedPSSnapInInfo != null)
+                if (loadedPSSnapInInfo is not null)
                 {
                     // See if the assembly-qualified names match and return the existing PSSnapInInfo
                     // if they do.
@@ -3943,7 +3943,7 @@ namespace System.Management.Automation.Runspaces
                 this.Assemblies.Add(assemblyEntry);
             }
 
-            if (cmdlets != null)
+            if (cmdlets is not null)
             {
                 foreach (SessionStateCmdletEntry cmdlet in cmdlets.Values)
                 {
@@ -3954,7 +3954,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if (aliases != null)
+            if (aliases is not null)
             {
                 foreach (var cmdletAliasesEntry in aliases.Values)
                 {
@@ -3966,7 +3966,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if (providers != null)
+            if (providers is not null)
             {
                 foreach (SessionStateProviderEntry provider in providers.Values)
                 {
@@ -4065,7 +4065,7 @@ namespace System.Management.Automation.Runspaces
                 this.Assemblies.Add(assemblyEntry);
             }
 
-            if (cmdlets != null)
+            if (cmdlets is not null)
             {
                 foreach (SessionStateCmdletEntry cmdlet in cmdlets.Values)
                 {
@@ -4073,7 +4073,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if (aliases != null)
+            if (aliases is not null)
             {
                 foreach (var cmdletAliasesEntry in aliases.Values)
                 {
@@ -4084,7 +4084,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if (providers != null)
+            if (providers is not null)
             {
                 foreach (SessionStateProviderEntry provider in providers.Values)
                 {
@@ -4937,7 +4937,7 @@ end {
                 s_PSSnapInTracer.TraceWarning("Not able to load assembly {0}: {1}", psSnapInInfo.AssemblyName, e.Message);
             }
 
-            if (assembly != null)
+            if (assembly is not null)
             {
                 return assembly;
             }
@@ -4980,7 +4980,7 @@ end {
         {
             var attributes = decoratedType.GetCustomAttributes<T>(inherit: false);
             attribute = attributes.FirstOrDefault();
-            return attribute != null;
+            return attribute is not null;
         }
 
         internal static void AnalyzePSSnapInAssembly(
@@ -5015,31 +5015,31 @@ end {
                 {
                     var key = pair.Key;
                     var entry = pair.Value;
-                    if (entry.Item1.PSSnapIn is null && psSnapInInfo != null)
+                    if (entry.Item1.PSSnapIn is null && psSnapInInfo is not null)
                     {
                         entry.Item1.SetPSSnapIn(psSnapInInfo);
                     }
 
                     var newEntry = (SessionStateCmdletEntry)entry.Item1.Clone();
-                    if (newEntry.PSSnapIn != null && psSnapInInfo is null)
+                    if (newEntry.PSSnapIn is not null && psSnapInInfo is null)
                     {
                         newEntry.SetPSSnapIn(null);
                     }
 
                     cmdlets[key] = newEntry;
 
-                    if (entry.Item2 != null)
+                    if (entry.Item2 is not null)
                     {
                         var aliasList = new List<SessionStateAliasEntry>();
                         foreach (var alias in entry.Item2)
                         {
-                            if (alias.PSSnapIn is null && psSnapInInfo != null)
+                            if (alias.PSSnapIn is null && psSnapInInfo is not null)
                             {
                                 alias.SetPSSnapIn(psSnapInInfo);
                             }
 
                             var newAliasEntry = (SessionStateAliasEntry)alias.Clone();
-                            if (newAliasEntry.PSSnapIn != null && psSnapInInfo is null)
+                            if (newAliasEntry.PSSnapIn is not null && psSnapInInfo is null)
                             {
                                 newAliasEntry.SetPSSnapIn(null);
                             }
@@ -5060,13 +5060,13 @@ end {
                 {
                     var key = pair.Key;
                     var entry = pair.Value;
-                    if (entry.PSSnapIn is null && psSnapInInfo != null)
+                    if (entry.PSSnapIn is null && psSnapInInfo is not null)
                     {
                         entry.SetPSSnapIn(psSnapInInfo);
                     }
 
                     var newEntry = (SessionStateProviderEntry)entry.Clone();
-                    if (newEntry.PSSnapIn != null && psSnapInInfo is null)
+                    if (newEntry.PSSnapIn is not null && psSnapInInfo is null)
                     {
                         newEntry.SetPSSnapIn(null);
                     }
@@ -5076,7 +5076,7 @@ end {
             }
 
             string assemblyPath = assembly.Location;
-            if (cmdlets != null || providers != null)
+            if (cmdlets is not null || providers is not null)
             {
                 if (!s_assembliesWithModuleInitializerCache.Value.ContainsKey(assembly))
                 {
@@ -5095,7 +5095,7 @@ end {
             s_PSSnapInTracer.WriteLine("Analyzing assembly {0} for cmdlet and providers", assemblyPath);
             helpFile = GetHelpFile(assemblyPath);
 
-            if (psSnapInInfo != null && psSnapInInfo.Name.Equals(InitialSessionState.CoreSnapin, StringComparison.OrdinalIgnoreCase))
+            if (psSnapInInfo is not null && psSnapInInfo.Name.Equals(InitialSessionState.CoreSnapin, StringComparison.OrdinalIgnoreCase))
             {
                 InitializeCoreCmdletsAndProviders(psSnapInInfo, out cmdlets, out providers, helpFile);
 
@@ -5160,7 +5160,7 @@ end {
             // across runspaces. When these entries are hit in the cache,
             // copies will be returned to ensure that the cache is never tied to a runspace.
 
-            if (cmdlets != null)
+            if (cmdlets is not null)
             {
                 var clone = new Dictionary<string, Tuple<SessionStateCmdletEntry, List<SessionStateAliasEntry>>>(cmdlets.Count, StringComparer.OrdinalIgnoreCase);
                 List<SessionStateAliasEntry> aliasesCloneList = null;
@@ -5168,7 +5168,7 @@ end {
                 foreach (var entry in cmdlets)
                 {
                     List<SessionStateAliasEntry> aliasEntries;
-                    if (aliases != null && aliases.TryGetValue(entry.Key, out aliasEntries))
+                    if (aliases is not null && aliases.TryGetValue(entry.Key, out aliasEntries))
                     {
                         aliasesCloneList = new List<SessionStateAliasEntry>(aliases.Count);
                         foreach (var aliasEntry in aliasEntries)
@@ -5183,7 +5183,7 @@ end {
                 s_cmdletCache.Value[assembly] = clone;
             }
 
-            if (providers != null)
+            if (providers is not null)
             {
                 var clone = new Dictionary<string, SessionStateProviderEntry>(providers.Count, StringComparer.OrdinalIgnoreCase);
                 foreach (var entry in providers)
@@ -5226,7 +5226,7 @@ end {
                     }
 
                     string cmdletName = cmdletAttribute.VerbName + "-" + cmdletAttribute.NounName;
-                    if (cmdlets != null && cmdlets.ContainsKey(cmdletName))
+                    if (cmdlets is not null && cmdlets.ContainsKey(cmdletName))
                     {
                         string message = StringUtil.Format(ConsoleInfoErrorStrings.PSSnapInDuplicateCmdlets, cmdletName, name);
                         s_PSSnapInTracer.TraceError(message);
@@ -5234,12 +5234,12 @@ end {
                     }
 
                     SessionStateCmdletEntry cmdlet = new SessionStateCmdletEntry(cmdletName, type, helpFile);
-                    if (psSnapInInfo != null)
+                    if (psSnapInInfo is not null)
                     {
                         cmdlet.SetPSSnapIn(psSnapInInfo);
                     }
 
-                    if (moduleInfo != null)
+                    if (moduleInfo is not null)
                     {
                         cmdlet.SetModule(moduleInfo);
                     }
@@ -5258,9 +5258,9 @@ end {
                             // the users of the cmdlet, instead of the author, should have control of what options applied to an alias
                             // ('ScopedItemOptions.ReadOnly' and/or 'ScopedItemOptions.AllScopes').
                             var aliasEntry = new SessionStateAliasEntry(alias, cmdletName, description: string.Empty, ScopedItemOptions.None);
-                            if (psSnapInInfo != null) { aliasEntry.SetPSSnapIn(psSnapInInfo); }
+                            if (psSnapInInfo is not null) { aliasEntry.SetPSSnapIn(psSnapInInfo); }
 
-                            if (moduleInfo != null)
+                            if (moduleInfo is not null)
                             {
                                 aliasEntry.SetModule(moduleInfo);
                             }
@@ -5284,7 +5284,7 @@ end {
                     }
 
                     string providerName = providerAttribute.ProviderName;
-                    if (providers != null && providers.ContainsKey(providerName))
+                    if (providers is not null && providers.ContainsKey(providerName))
                     {
                         string message = StringUtil.Format(ConsoleInfoErrorStrings.PSSnapInDuplicateProviders, providerName, psSnapInInfo.Name);
                         s_PSSnapInTracer.TraceError(message);
@@ -5292,12 +5292,12 @@ end {
                     }
 
                     SessionStateProviderEntry provider = new SessionStateProviderEntry(providerName, type, helpFile);
-                    if (psSnapInInfo != null)
+                    if (psSnapInInfo is not null)
                     {
                         provider.SetPSSnapIn(psSnapInInfo);
                     }
 
-                    if (moduleInfo != null)
+                    if (moduleInfo is not null)
                     {
                         provider.SetModule(moduleInfo);
                     }
@@ -5437,7 +5437,7 @@ end {
             catch (ReflectionTypeLoadException e)
             {
                 string message = e.Message + "\nLoader Exceptions: \n";
-                if (e.LoaderExceptions != null)
+                if (e.LoaderExceptions is not null)
                 {
                     foreach (Exception exception in e.LoaderExceptions)
                     {

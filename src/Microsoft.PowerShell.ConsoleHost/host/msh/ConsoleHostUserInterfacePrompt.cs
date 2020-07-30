@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell
         {
             foreach (FieldDescription fd in descriptions)
             {
-                if (fd != null)
+                if (fd is not null)
                 {
                     if (!string.IsNullOrEmpty(fd.HelpMessage))
                     {
@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell
                         fieldType = typeof(string);
                     }
 
-                    if (fieldType.GetInterface(typeof(IList).FullName) != null)
+                    if (fieldType.GetInterface(typeof(IList).FullName) is not null)
                     {
                         // field is a type implementing IList
                         ArrayList inputList = new ArrayList(); // stores all converted user input before
@@ -292,7 +292,7 @@ namespace Microsoft.PowerShell
                 SecureString secureString = ReadLineAsSecureString();
                 convertedObj = secureString;
                 cancelInput = (convertedObj is null);
-                if ((secureString != null) && (secureString.Length == 0) && listInput)
+                if ((secureString is not null) && (secureString.Length == 0) && listInput)
                 {
                     endListInput = true;
                 }
@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell
                         targetName: string.Empty);
                 convertedObj = credential;
                 cancelInput = (convertedObj is null);
-                if ((credential != null) && (credential.Password.Length == 0) && listInput)
+                if ((credential is not null) && (credential.Password.Length == 0) && listInput)
                 {
                     endListInput = true;
                 }
@@ -344,8 +344,8 @@ namespace Microsoft.PowerShell
         private string PromptReadInput(string fieldPrompt, FieldDescription desc, bool fieldEchoOnPrompt,
                         bool listInput, out bool endListInput, out bool cancelled)
         {
-            Dbg.Assert(fieldPrompt != null, "fieldPrompt should never be null when PromptReadInput is called");
-            Dbg.Assert(desc != null, "desc should never be null when PromptReadInput is called");
+            Dbg.Assert(fieldPrompt is not null, "fieldPrompt should never be null when PromptReadInput is called");
+            Dbg.Assert(desc is not null, "desc should never be null when PromptReadInput is called");
 
             string processedInputString = null;
             endListInput = false;
@@ -364,7 +364,7 @@ namespace Microsoft.PowerShell
                 {
                     object userInput = ReadLineSafe(false, null);
                     string userInputString = userInput as string;
-                    System.Management.Automation.Diagnostics.Assert(userInputString != null, "ReadLineSafe did not return a string");
+                    System.Management.Automation.Diagnostics.Assert(userInputString is not null, "ReadLineSafe did not return a string");
                     rawInputString = userInputString;
                 }
 
@@ -406,7 +406,7 @@ namespace Microsoft.PowerShell
         /// <returns>An object of type fieldType that inputString represents.</returns>
         private PromptCommonInputErrors PromptTryConvertTo(Type fieldType, bool isFromRemoteHost, string inputString, out object convertedObj)
         {
-            Dbg.Assert(fieldType != null, "fieldType should never be null when PromptTryConvertTo is called");
+            Dbg.Assert(fieldType is not null, "fieldType should never be null when PromptTryConvertTo is called");
             convertedObj = inputString;
 
             // do not do any type conversion if the prompt request is coming from a remote host
@@ -423,7 +423,7 @@ namespace Microsoft.PowerShell
             catch (PSInvalidCastException e)
             {
                 Exception innerE = e.InnerException;
-                if (innerE != null)
+                if (innerE is not null)
                 {
                     if (innerE is OverflowException)
                     {
@@ -478,9 +478,9 @@ namespace Microsoft.PowerShell
 
         private string PromptCommandMode(string input, FieldDescription desc, out bool inputDone)
         {
-            Dbg.Assert(input != null && input.StartsWith(PromptCommandPrefix, StringComparison.OrdinalIgnoreCase),
+            Dbg.Assert(input is not null && input.StartsWith(PromptCommandPrefix, StringComparison.OrdinalIgnoreCase),
                 string.Format(CultureInfo.InvariantCulture, "input should start with {0}", PromptCommandPrefix));
-            Dbg.Assert(desc != null, "desc should never be null when PromptCommandMode is called");
+            Dbg.Assert(desc is not null, "desc should never be null when PromptCommandMode is called");
             string command = input.Substring(1);
 
             inputDone = true;

@@ -37,7 +37,7 @@ namespace System.Management.Automation.Language
         internal AstVisitAction CheckForPostAction(Ast ast, AstVisitAction action)
         {
             var postActionHandler = this as IAstPostVisitHandler;
-            if (postActionHandler != null)
+            if (postActionHandler is not null)
             {
                 postActionHandler.PostVisit(ast);
             }

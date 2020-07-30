@@ -181,7 +181,7 @@ namespace System.Management.Automation.Internal
         /// <param name="args">Standard event args.</param>
         private void OnWriteReady (object sender, EventArgs args)
         {
-            if (WriteReady != null)
+            if (WriteReady is not null)
             {
                 // call any event handlers on this, replacing the
                 // ObjectStream sender with 'this' since receivers

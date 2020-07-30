@@ -53,18 +53,18 @@ namespace System.Management.Automation
         /// </summary>
         internal void ResetManagers()
         {
-            if (_debugger != null)
+            if (_debugger is not null)
             {
                 _debugger.ResetDebugger();
             }
 
-            if (Events != null)
+            if (Events is not null)
             {
                 Events.Dispose();
             }
 
             Events = new PSLocalEventManager(this);
-            if (this.transactionManager != null)
+            if (this.transactionManager is not null)
             {
                 this.transactionManager.Dispose();
             }
@@ -113,7 +113,7 @@ namespace System.Management.Automation
                 context = LocalPipeline.GetExecutionContextFromTLS();
             }
 
-            return (context != null)
+            return (context is not null)
                        ? context.IsStrictVersion(majorVersion)
                        : false;
         }
@@ -126,10 +126,10 @@ namespace System.Management.Automation
         internal bool IsStrictVersion(int majorVersion)
         {
             SessionStateScope scope = EngineSessionState.CurrentScope;
-            while (scope != null)
+            while (scope is not null)
             {
                 // If StrictModeVersion is null, we haven't seen set-strictmode, so check the parent scope.
-                if (scope.StrictModeVersion != null)
+                if (scope.StrictModeVersion is not null)
                 {
                     // If StrictModeVersion is not null, just check the major version.  A version of 0
                     // is the same as off to make this a simple check.
@@ -219,7 +219,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(_responsibilityForModuleAnalysisAppDomainOwned, "Invalid module analysis app domain state");
 
-            if (AppDomainForModuleAnalysis != null)
+            if (AppDomainForModuleAnalysis is not null)
             {
                 AppDomain.Unload(AppDomainForModuleAnalysis);
                 AppDomainForModuleAnalysis = null;
@@ -407,7 +407,7 @@ namespace System.Management.Automation
         {
             bool result = false;
             var baseValue = PSObject.Base(value);
-            if (baseValue != null && baseValue != NullString.Value)
+            if (baseValue is not null && baseValue != NullString.Value)
             {
                 object unused;
                 result = UntrustedObjects.TryGetValue(baseValue, out unused);
@@ -423,7 +423,7 @@ namespace System.Management.Automation
         {
             // If the value is a PSObject, then we mark its base object untrusted
             var baseValue = PSObject.Base(value);
-            if (baseValue != null && baseValue != NullString.Value)
+            if (baseValue is not null && baseValue != NullString.Value)
             {
                 // It's actually setting a key value pair when the key doesn't exist
                 UntrustedObjects.GetValue(baseValue, key => null);
@@ -435,7 +435,7 @@ namespace System.Management.Automation
                     // marked before making a recursive call. The additional check adds extra overhead for handling PSReference object, but it should
                     // be rare in practice.
                     var psRef = baseValue as PSReference;
-                    if (psRef != null && !IsMarkedAsUntrusted(psRef.Value))
+                    if (psRef is not null && !IsMarkedAsUntrusted(psRef.Value))
                     {
                         MarkObjectAsUntrusted(psRef.Value);
                     }
@@ -455,7 +455,7 @@ namespace System.Management.Automation
         internal static void MarkObjectAsUntrustedForVariableAssignment(PSVariable variable, SessionStateScope scope, SessionStateInternal sessionState)
         {
             if (scope.Parent is null ||  // If it's the global scope, OR
-                (sessionState.Module != null &&  // it's running in a module AND
+                (sessionState.Module is not null &&  // it's running in a module AND
                  scope.ScriptScope == scope && scope.Parent.Parent is null)) // it's the module's script scope (scope.Parent is global scope and scope.ScriptScope points to itself)
             {
                 // We are setting value for either a 'Global:' variable, or a 'Script:' variable within a module in 'ConstrainedLanguage' mode.
@@ -488,7 +488,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return InitialSessionState != null ? InitialSessionState.UseFullLanguageModeInDebugger : false;
+                return InitialSessionState is not null ? InitialSessionState.UseFullLanguageModeInDebugger : false;
             }
         }
 
@@ -587,12 +587,12 @@ namespace System.Management.Automation
             defaultUsed = true;
             T result = defaultPref;
 
-            if (val != null)
+            if (val is not null)
             {
                 try
                 {
                     string valString = val as string;
-                    if (valString != null)
+                    if (valString is not null)
                     {
                         result = (T)Enum.Parse(typeof(T), valString, true);
                         defaultUsed = false;
@@ -693,7 +693,7 @@ namespace System.Management.Automation
             CommandProcessorBase commandProcessor =
                 CommandDiscovery.LookupCommandProcessor(command, commandOrigin, !dotSource);
             // Reset the command origin for script commands... // BUGBUG - dotting can get around command origin checks???
-            if (commandProcessor != null && commandProcessor is ScriptCommandProcessorBase)
+            if (commandProcessor is not null && commandProcessor is ScriptCommandProcessorBase)
             {
                 commandProcessor.Command.CommandOriginInternal = CommandOrigin.Internal;
             }
@@ -899,7 +899,7 @@ namespace System.Management.Automation
                 // otherwise check the exception members of the error records...
                 ErrorRecord er1 = arraylist[0] as ErrorRecord;
 
-                if (er1 != null && objAsErrorRecord != null && er1.Exception == objAsErrorRecord.Exception)
+                if (er1 is not null && objAsErrorRecord is not null && er1.Exception == objAsErrorRecord.Exception)
                     return;
             }
 
@@ -1204,18 +1204,18 @@ namespace System.Management.Automation
         {
             EngineSessionState.RunspaceClosingNotification();
 
-            if (_debugger != null)
+            if (_debugger is not null)
             {
                 _debugger.Dispose();
             }
 
-            if (Events != null)
+            if (Events is not null)
             {
                 Events.Dispose();
             }
 
             Events = null;
-            if (this.transactionManager != null)
+            if (this.transactionManager is not null)
             {
                 this.transactionManager.Dispose();
             }
@@ -1242,7 +1242,7 @@ namespace System.Management.Automation
             set
             {
                 _typeTable = value;
-                _typeTableWeakReference = (value != null) ? new WeakReference<TypeTable>(value) : null;
+                _typeTableWeakReference = (value is not null) ? new WeakReference<TypeTable>(value) : null;
             }
         }
 
@@ -1278,7 +1278,7 @@ namespace System.Management.Automation
                     // create and initialize an empty one.
                     _formatDBManager = new TypeInfoDataBaseManager();
                     _formatDBManager.Update(this.AuthorizationManager, this.EngineHostInterface);
-                    if (this.InitialSessionState != null)
+                    if (this.InitialSessionState is not null)
                     {
                         // Win8:418011: Set DisableFormatTableUpdates only after performing the initial update. Otherwise, formatDBManager will be
                         // in bad state.
@@ -1340,7 +1340,7 @@ namespace System.Management.Automation
         internal void RemoveAssembly(string name)
         {
             Assembly loadedAssembly;
-            if (AssemblyCache.TryGetValue(name, out loadedAssembly) && loadedAssembly != null)
+            if (AssemblyCache.TryGetValue(name, out loadedAssembly) && loadedAssembly is not null)
             {
                 AssemblyCache.Remove(name);
 
@@ -1419,7 +1419,7 @@ namespace System.Management.Automation
             }
 
             // If the assembly is loaded, we ignore error as it may come from the filepath loading.
-            if (loadedAssembly != null)
+            if (loadedAssembly is not null)
             {
                 error = null;
             }
@@ -1502,7 +1502,7 @@ namespace System.Management.Automation
                     ErrorRecord error = null;
                     var rte = e as RuntimeException;
 
-                    error = rte != null
+                    error = rte is not null
                         ? new ErrorRecord(rte.ErrorRecord, rte)
                         : new ErrorRecord(e, errorId, ErrorCategory.OperationStopped, null);
 
@@ -1555,7 +1555,7 @@ namespace System.Management.Automation
             command = null;
             errorId = null;
             bool result = false;
-            if (this.CurrentCommandProcessor != null)
+            if (this.CurrentCommandProcessor is not null)
             {
                 CommandInfo cmdletInfo = this.CurrentCommandProcessor.CommandInfo;
                 if ((string.Equals(cmdletInfo.Name, "Import-Module", StringComparison.OrdinalIgnoreCase) ||
@@ -1654,9 +1654,9 @@ namespace System.Management.Automation
         private static Assembly PowerShellAssemblyResolveHandler(object sender, ResolveEventArgs args)
         {
             ExecutionContext ecFromTLS = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-            if (ecFromTLS != null)
+            if (ecFromTLS is not null)
             {
-                if (ecFromTLS.AssemblyCache != null)
+                if (ecFromTLS.AssemblyCache is not null)
                 {
                     Assembly assembly;
                     ecFromTLS.AssemblyCache.TryGetValue(args.Name, out assembly);

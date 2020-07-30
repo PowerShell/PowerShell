@@ -40,7 +40,7 @@ namespace System.Management.Automation
         {
             lock (s_syncObj)
             {
-                if (Instance != null)
+                if (Instance is not null)
                 {
                     throw new InvalidOperationException(SingletonAlreadyInitialized);
                 }
@@ -315,7 +315,7 @@ namespace System.Management.Automation
                 asmLoaded = asmFilePath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
                                 ? loadContext.LoadFromNativeImagePath(asmFilePath, null)
                                 : loadContext.LoadFromAssemblyPath(asmFilePath);
-                if (asmLoaded != null)
+                if (asmLoaded is not null)
                 {
                     // Add the loaded assembly to the cache
                     s_assemblyCache.TryAdd(assemblyName.Name, asmLoaded);
@@ -464,7 +464,7 @@ namespace System.Management.Automation
             //
 
             // Version of the requested assembly should be the same or before the version of loaded assembly
-            if (requestedAssembly.Version != null && requestedAssembly.Version.CompareTo(loadedAssembly.Version) > 0)
+            if (requestedAssembly.Version is not null && requestedAssembly.Version.CompareTo(loadedAssembly.Version) > 0)
             {
                 return false;
             }
@@ -480,7 +480,7 @@ namespace System.Management.Automation
             byte[] requestedPublicKeyToken = requestedAssembly.GetPublicKeyToken();
             byte[] loadedPublicKeyToken = loadedAssembly.GetPublicKeyToken();
 
-            if (requestedPublicKeyToken != null && requestedPublicKeyToken.Length > 0)
+            if (requestedPublicKeyToken is not null && requestedPublicKeyToken.Length > 0)
             {
                 if (loadedPublicKeyToken is null || requestedPublicKeyToken.Length != loadedPublicKeyToken.Length)
                     return false;

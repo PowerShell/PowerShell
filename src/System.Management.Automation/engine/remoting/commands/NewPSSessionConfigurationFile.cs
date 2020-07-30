@@ -744,7 +744,7 @@ namespace Microsoft.PowerShell.Commands
                 // Run as virtual account groups
                 if (ShouldGenerateConfigurationSnippet("RunAsVirtualAccountGroups"))
                 {
-                    bool haveVirtualAccountGroups = (RunAsVirtualAccountGroups != null) && (RunAsVirtualAccountGroups.Length > 0);
+                    bool haveVirtualAccountGroups = (RunAsVirtualAccountGroups is not null) && (RunAsVirtualAccountGroups.Length > 0);
                     resultData = (haveVirtualAccountGroups) ? SessionConfigurationUtils.CombineStringArray(RunAsVirtualAccountGroups) : "'Remote Desktop Users', 'Remote Management Users'";
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.RunAsVirtualAccountGroups, RemotingErrorIdStrings.DISCRunAsVirtualAccountGroupsComment,
                         resultData, streamWriter, !haveVirtualAccountGroups));
@@ -946,7 +946,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Hashtable[] funcHash = DISCPowerShellConfiguration.TryGetHashtableArray(_functionDefinitions);
 
-                    if (funcHash != null)
+                    if (funcHash is not null)
                     {
                         result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.FunctionDefinitions, RemotingErrorIdStrings.DISCFunctionDefinitionsComment,
                             SessionConfigurationUtils.CombineHashtableArray(funcHash, streamWriter), streamWriter, false));
@@ -1008,7 +1008,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string varString = _variableDefinitions as string;
 
-                    if (varString != null)
+                    if (varString is not null)
                     {
                         result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VariableDefinitions, RemotingErrorIdStrings.DISCVariableDefinitionsComment,
                             varString, streamWriter, false));
@@ -1017,7 +1017,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         Hashtable[] varHash = DISCPowerShellConfiguration.TryGetHashtableArray(_variableDefinitions);
 
-                        if (varHash != null)
+                        if (varHash is not null)
                         {
                             result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VariableDefinitions, RemotingErrorIdStrings.DISCVariableDefinitionsComment,
                                 SessionConfigurationUtils.CombineHashtableArray(varHash, streamWriter), streamWriter, false));
@@ -1693,7 +1693,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Hashtable[] funcHash = DISCPowerShellConfiguration.TryGetHashtableArray(_functionDefinitions);
 
-                    if (funcHash != null)
+                    if (funcHash is not null)
                     {
                         result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.FunctionDefinitions, RemotingErrorIdStrings.DISCFunctionDefinitionsComment,
                             SessionConfigurationUtils.CombineHashtableArray(funcHash, streamWriter), streamWriter, false));
@@ -1752,7 +1752,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string varString = _variableDefinitions as string;
 
-                    if (varString != null)
+                    if (varString is not null)
                     {
                         result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VariableDefinitions, RemotingErrorIdStrings.DISCVariableDefinitionsComment,
                             varString, streamWriter, false));
@@ -1761,7 +1761,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         Hashtable[] varHash = DISCPowerShellConfiguration.TryGetHashtableArray(_variableDefinitions);
 
-                        if (varHash != null)
+                        if (varHash is not null)
                         {
                             result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VariableDefinitions, RemotingErrorIdStrings.DISCVariableDefinitionsComment,
                                 SessionConfigurationUtils.CombineHashtableArray(varHash, streamWriter), streamWriter, false));
@@ -1925,7 +1925,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static string GetVisibilityDefault(object[] values, StreamWriter writer, PSCmdlet caller)
         {
-            if ((values != null) && (values.Length > 0))
+            if ((values is not null) && (values.Length > 0))
             {
                 return CombineHashTableOrStringArray(values, writer, caller);
             }
@@ -1951,28 +1951,28 @@ namespace Microsoft.PowerShell.Commands
                 sb.AppendFormat("{0," + (4 * (indent + 1)) + "}", string.Empty);
                 sb.Append(QuoteName(key));
                 sb.Append(" = ");
-                if ((table[key] as ScriptBlock) != null)
+                if ((table[key] as ScriptBlock) is not null)
                 {
                     sb.Append(WrapScriptBlock(table[key].ToString()));
                     continue;
                 }
 
                 IDictionary tableValue = table[key] as IDictionary;
-                if (tableValue != null)
+                if (tableValue is not null)
                 {
                     sb.Append(CombineHashtable(tableValue, writer, indent + 1));
                     continue;
                 }
 
                 IDictionary[] tableValues = DISCPowerShellConfiguration.TryGetHashtableArray(table[key]);
-                if (tableValues != null)
+                if (tableValues is not null)
                 {
                     sb.Append(CombineHashtableArray(tableValues, writer, indent + 1));
                     continue;
                 }
 
                 string[] stringValues = DISCPowerShellConfiguration.TryGetStringArray(table[key]);
-                if (stringValues != null)
+                if (stringValues is not null)
                 {
                     sb.Append(CombineStringArray(stringValues));
                     continue;
@@ -2013,7 +2013,7 @@ namespace Microsoft.PowerShell.Commands
             sb.Append(" = ");
 
             object[] values = keyObject as object[];
-            if (values != null)
+            if (values is not null)
             {
                 for (int i = 0; i < values.Length;)
                 {
@@ -2038,14 +2038,14 @@ namespace Microsoft.PowerShell.Commands
         private static void WriteRequiredGroup(object value, StringBuilder sb)
         {
             string strValue = value as string;
-            if (strValue != null)
+            if (strValue is not null)
             {
                 sb.Append(QuoteName(strValue));
             }
             else
             {
                 Hashtable subTable = value as Hashtable;
-                if (subTable != null)
+                if (subTable is not null)
                 {
                     sb.Append(CombineRequiredGroupsHash(subTable));
                 }

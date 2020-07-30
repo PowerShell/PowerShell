@@ -350,7 +350,7 @@ namespace System.Management.Automation
 
         internal static DirectoryInfo CreateModuleDirectory(PSCmdlet cmdlet, string moduleNameOrPath, bool force)
         {
-            Dbg.Assert(cmdlet != null, "Caller should verify cmdlet != null");
+            Dbg.Assert(cmdlet is not null, "Caller should verify cmdlet is not null");
             Dbg.Assert(!string.IsNullOrEmpty(moduleNameOrPath), "Caller should verify !string.IsNullOrEmpty(moduleNameOrPath)");
 
             DirectoryInfo directoryInfo = null;

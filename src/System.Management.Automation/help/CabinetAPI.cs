@@ -98,7 +98,7 @@ namespace System.Management.Automation.Internal
         /// <returns>Tracer instance.</returns>
         internal static ICabinetExtractor GetCabinetExtractor()
         {
-            if (s_cabinetLoader != null)
+            if (s_cabinetLoader is not null)
             {
                 return s_cabinetLoader.GetCabinetExtractor();
             }

@@ -56,7 +56,7 @@ namespace System.Management.Automation
             if (maml1.Properties["PSSnapIn"] is null)
             {
                 PSPropertyInfo snapInProperty = maml2.Properties["PSSnapIn"];
-                if (snapInProperty != null)
+                if (snapInProperty is not null)
                 {
                     maml1.Properties.Add(new PSNoteProperty("PSSnapIn", snapInProperty.Value));
                 }
@@ -65,7 +65,7 @@ namespace System.Management.Automation
             if (maml1.Properties["ModuleName"] is null)
             {
                 PSPropertyInfo moduleNameProperty = maml2.Properties["ModuleName"];
-                if (moduleNameProperty != null)
+                if (moduleNameProperty is not null)
                 {
                     maml1.Properties.Add(new PSNoteProperty("ModuleName", moduleNameProperty.Value));
                 }
@@ -103,7 +103,7 @@ namespace System.Management.Automation
             // For maml2: Add as collection or single item. No-op if
             PSPropertyInfo propertyInfo2 = GetPropertyInfo(maml2, parametersPath);
             var array = propertyInfo2.Value as Array;
-            if (array != null)
+            if (array is not null)
             {
                 maml2items.AddRange(array as IEnumerable<object>);
             }
@@ -118,7 +118,7 @@ namespace System.Management.Automation
             PSPropertyInfo propertyInfo1 = GetPropertyInfo(maml1, parametersPath);
             List<object> maml1items = new List<object>();
             array = propertyInfo1.Value as Array;
-            if (array != null)
+            if (array is not null)
             {
                 maml1items.AddRange(array as IEnumerable<object>);
             }
@@ -134,7 +134,7 @@ namespace System.Management.Automation
                 string param2Name = string.Empty;
                 PSPropertyInfo m2propertyInfo = m2paramObj.Properties["Name"];
 
-                if (m2propertyInfo != null)
+                if (m2propertyInfo is not null)
                 {
                     if (!LanguagePrimitives.TryConvertTo<string>(m2propertyInfo.Value, out param2Name))
                     {
@@ -148,7 +148,7 @@ namespace System.Management.Automation
                     string param1Name = string.Empty;
                     PSPropertyInfo m1PropertyInfo = m1ParamObj.Properties["Name"];
 
-                    if (m1PropertyInfo != null)
+                    if (m1PropertyInfo is not null)
                     {
                         if (!LanguagePrimitives.TryConvertTo<string>(m1PropertyInfo.Value, out param1Name))
                         {
@@ -240,10 +240,10 @@ namespace System.Management.Automation
             // For maml2: Add as collection or single item. No-op if
             PSPropertyInfo propertyInfo2 = GetPropertyInfo(maml2, path);
 
-            if (propertyInfo2 != null)
+            if (propertyInfo2 is not null)
             {
                 var array = propertyInfo2.Value as Array;
-                if (array != null)
+                if (array is not null)
                 {
                     items.AddRange(propertyInfo2.Value as IEnumerable<object>);
                 }
@@ -258,12 +258,12 @@ namespace System.Management.Automation
             // For maml1: Add as collection or single item. Do nothing if null or some other type.
             PSPropertyInfo propertyInfo1 = GetPropertyInfo(maml1, path);
 
-            if (propertyInfo1 != null)
+            if (propertyInfo1 is not null)
             {
                 if (!shouldOverride)
                 {
                     var array = propertyInfo1.Value as Array;
-                    if (array != null)
+                    if (array is not null)
                     {
                         items.AddRange(propertyInfo1.Value as IEnumerable<object>);
                     }

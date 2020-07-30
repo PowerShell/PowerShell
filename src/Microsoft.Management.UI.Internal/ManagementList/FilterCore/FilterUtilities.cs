@@ -21,7 +21,7 @@ namespace Microsoft.Management.UI.Internal
                 return false;
             }
 
-            bool shouldCastToString = item != null && typeof(string) == typeof(T);
+            bool shouldCastToString = item is not null && typeof(string) == typeof(T);
             if (shouldCastToString)
             {
                 // NOTE: string => T doesn't compile. We confuse the type system

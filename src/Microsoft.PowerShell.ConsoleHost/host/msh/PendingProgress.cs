@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell
         void
         Update(Int64 sourceId, ProgressRecord record)
         {
-            Dbg.Assert(record != null, "record should not be null");
+            Dbg.Assert(record is not null, "record should not be null");
 
             do
             {
@@ -62,9 +62,9 @@ namespace Microsoft.PowerShell
                 ProgressNode foundNode =
                     FindNodeById(sourceId, record.ActivityId, out listWhereFound, out indexWhereFound);
 
-                if (foundNode != null)
+                if (foundNode is not null)
                 {
-                    Dbg.Assert(listWhereFound != null, "node found, but list not identified");
+                    Dbg.Assert(listWhereFound is not null, "node found, but list not identified");
                     Dbg.Assert(indexWhereFound >= 0, "node found, but index not returned");
 
                     if (record.RecordType == ProgressRecordType.Completed)
@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell
                 if (newNode.ParentActivityId >= 0)
                 {
                     ProgressNode parentNode = FindNodeById(newNode.SourceId, newNode.ParentActivityId);
-                    if (parentNode != null)
+                    if (parentNode is not null)
                     {
                         if (parentNode.Children is null)
                         {
@@ -187,9 +187,9 @@ namespace Microsoft.PowerShell
 #if DEBUG || ASSERTIONS_TRACE
             ProgressNode nodeToRemove = (ProgressNode)nodes[indexToRemove];
 
-            Dbg.Assert(nodes != null, "can't remove nodes from a null list");
+            Dbg.Assert(nodes is not null, "can't remove nodes from a null list");
             Dbg.Assert(indexToRemove < nodes.Count, "index is not in list");
-            Dbg.Assert(nodes[indexToRemove] != null, "no node at specified index");
+            Dbg.Assert(nodes[indexToRemove] is not null, "no node at specified index");
             Dbg.Assert(nodeToRemove.Children is null || nodeToRemove.Children.Count == 0, "can't remove a node with children");
 #endif
 
@@ -207,16 +207,16 @@ namespace Microsoft.PowerShell
         {
             ProgressNode nodeToRemove = (ProgressNode)nodes[indexToRemove];
 
-            Dbg.Assert(nodes != null, "can't remove nodes from a null list");
+            Dbg.Assert(nodes is not null, "can't remove nodes from a null list");
             Dbg.Assert(indexToRemove < nodes.Count, "index is not in list");
-            Dbg.Assert(nodeToRemove != null, "no node at specified index");
+            Dbg.Assert(nodeToRemove is not null, "no node at specified index");
 
             if (nodeToRemove is null)
             {
                 return;
             }
 
-            if (nodeToRemove.Children != null)
+            if (nodeToRemove.Children is not null)
             {
                 // promote the children.
 
@@ -479,7 +479,7 @@ namespace Microsoft.PowerShell
             for (int i = 0; i < nodes.Count; ++i)
             {
                 ProgressNode node = (ProgressNode)nodes[i];
-                Dbg.Assert(node != null, "nodes should not contain null elements");
+                Dbg.Assert(node is not null, "nodes should not contain null elements");
 
                 if (node.Age >= oldestSoFar && node.Style == style)
                 {
@@ -487,11 +487,11 @@ namespace Microsoft.PowerShell
                     oldestSoFar = found.Age;
                 }
 
-                if (node.Children != null)
+                if (node.Children is not null)
                 {
                     ProgressNode child = FindOldestNodeOfGivenStyle(node.Children, oldestSoFar, style);
 
-                    if (child != null)
+                    if (child is not null)
                     {
                         // In this universe, parents can be younger than their children. We found a child older than us.
 
@@ -502,7 +502,7 @@ namespace Microsoft.PowerShell
             }
 
 #if DEBUG || ASSERTIONS_TRACE
-            if (found != null)
+            if (found is not null)
             {
                 Dbg.Assert(found.Style == style, "unexpected style");
                 Dbg.Assert(found.Age >= oldestSoFar, "unexpected age");
@@ -566,7 +566,7 @@ namespace Microsoft.PowerShell
         string[]
         Render(int maxWidth, int maxHeight, PSHostRawUserInterface rawUI)
         {
-            Dbg.Assert(_topLevelNodes != null, "Shouldn't need to render progress if no data exists");
+            Dbg.Assert(_topLevelNodes is not null, "Shouldn't need to render progress if no data exists");
             Dbg.Assert(maxWidth > 0, "maxWidth is too small");
             Dbg.Assert(maxHeight >= 3, "maxHeight is too small");
 
@@ -636,8 +636,8 @@ namespace Microsoft.PowerShell
         void
         RenderHelper(ArrayList strings, ArrayList nodes, int indentation, int maxWidth, PSHostRawUserInterface rawUI)
         {
-            Dbg.Assert(strings != null, "strings should not be null");
-            Dbg.Assert(nodes != null, "nodes should not be null");
+            Dbg.Assert(strings is not null, "strings should not be null");
+            Dbg.Assert(nodes is not null, "nodes should not be null");
 
             if (nodes is null)
             {
@@ -650,7 +650,7 @@ namespace Microsoft.PowerShell
 
                 node.Render(strings, indentation, maxWidth, rawUI);
 
-                if (node.Children != null)
+                if (node.Children is not null)
                 {
                     // indent only if the rendering of node actually added lines to the strings.
 
@@ -737,14 +737,14 @@ namespace Microsoft.PowerShell
             for (int i = 0; i < nodes.Count; ++i)
             {
                 ProgressNode node = (ProgressNode)nodes[i];
-                Dbg.Assert(node != null, "nodes should not contain null elements");
+                Dbg.Assert(node is not null, "nodes should not contain null elements");
 
                 if (node.Style != style)
                 {
                     return false;
                 }
 
-                if (node.Children != null)
+                if (node.Children is not null)
                 {
                     if (!AllNodesHaveGivenStyle(node.Children, style))
                     {
@@ -899,7 +899,7 @@ namespace Microsoft.PowerShell
         int
         CompressToFit(PSHostRawUserInterface rawUi, int maxHeight, int maxWidth)
         {
-            Dbg.Assert(_topLevelNodes != null, "Shouldn't need to compress if no data exists");
+            Dbg.Assert(_topLevelNodes is not null, "Shouldn't need to compress if no data exists");
 
             int nodesCompressed = 0;
 
@@ -1000,14 +1000,14 @@ namespace Microsoft.PowerShell
                 for (int i = 0; i < nodes.Count; ++i)
                 {
                     ProgressNode node = (ProgressNode)nodes[i];
-                    Dbg.Assert(node != null, "nodes should not contain null elements");
+                    Dbg.Assert(node is not null, "nodes should not contain null elements");
 
                     if (!v.Visit(node, nodes, i))
                     {
                         return;
                     }
 
-                    if (node.Children != null)
+                    if (node.Children is not null)
                     {
                         VisitNodes(node.Children, v);
                     }

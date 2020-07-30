@@ -77,10 +77,10 @@ namespace System.Management.Automation
                 _isNanoServer = false;
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels"))
                 {
-                    if (regKey != null)
+                    if (regKey is not null)
                     {
                         object value = regKey.GetValue("NanoServer");
-                        if (value != null && regKey.GetValueKind("NanoServer") == RegistryValueKind.DWord)
+                        if (value is not null && regKey.GetValueKind("NanoServer") == RegistryValueKind.DWord)
                         {
                             _isNanoServer = (int)value == 1;
                         }
@@ -107,10 +107,10 @@ namespace System.Management.Automation
                 _isIoT = false;
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion"))
                 {
-                    if (regKey != null)
+                    if (regKey is not null)
                     {
                         object value = regKey.GetValue("ProductName");
-                        if (value != null && regKey.GetValueKind("ProductName") == RegistryValueKind.String)
+                        if (value is not null && regKey.GetValueKind("ProductName") == RegistryValueKind.String)
                         {
                             _isIoT = string.Equals("IoTUAP", (string)value, StringComparison.OrdinalIgnoreCase);
                         }
@@ -210,7 +210,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static string GetTemporaryDirectory()
         {
-            if (_tempDirectory != null)
+            if (_tempDirectory is not null)
             {
                 return _tempDirectory;
             }

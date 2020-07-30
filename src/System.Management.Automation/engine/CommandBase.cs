@@ -125,7 +125,7 @@ namespace System.Management.Automation.Internal
             get
             {
                 MshCommandRuntime mcr = this.commandRuntime as MshCommandRuntime;
-                return (mcr != null && mcr.IsStopping);
+                return (mcr is not null && mcr.IsStopping);
             }
         }
 
@@ -489,7 +489,7 @@ namespace System.Management.Automation
 
                 PathInfo result = SessionState.Path.CurrentProviderLocation(providerId);
 
-                Diagnostics.Assert(result != null, "DataStoreAdapterCollection.GetNamespaceCurrentLocation() should " + "throw an exception, not return null");
+                Diagnostics.Assert(result is not null, "DataStoreAdapterCollection.GetNamespaceCurrentLocation() should " + "throw an exception, not return null");
                 return result;
             }
         }

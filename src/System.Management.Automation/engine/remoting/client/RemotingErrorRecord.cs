@@ -43,7 +43,7 @@ namespace System.Management.Automation.Runspaces
         private RemotingErrorRecord(ErrorRecord errorRecord, OriginInfo originInfo, Exception replaceParentContainsErrorRecordException) :
             base(errorRecord, replaceParentContainsErrorRecordException)
         {
-            if (errorRecord != null)
+            if (errorRecord is not null)
             {
                 base.SetInvocationInfo(errorRecord.InvocationInfo);
             }
@@ -128,7 +128,7 @@ namespace System.Management.Automation.Runspaces
             base(Validate(progressRecord).ActivityId, Validate(progressRecord).Activity, Validate(progressRecord).StatusDescription)
         {
             _originInfo = originInfo;
-            if (progressRecord != null)
+            if (progressRecord is not null)
             {
                 this.PercentComplete = progressRecord.PercentComplete;
                 this.ParentActivityId = progressRecord.ParentActivityId;

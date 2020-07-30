@@ -255,7 +255,7 @@ namespace System.Management.Automation.Remoting
                 // cause problem when we set up a second PowerShell Direct session. Let's
                 // explicitly close listenSocket here for safe.
                 //
-                if (listenSocket != null)
+                if (listenSocket is not null)
                 {
                     try { listenSocket.Dispose(); }
                     catch (ObjectDisposedException) { }
@@ -266,7 +266,7 @@ namespace System.Management.Automation.Remoting
                 ex = e;
             }
 
-            if (ex != null)
+            if (ex is not null)
             {
                 Dbg.Fail("Unexpected error in RemoteSessionHyperVSocketServer.");
 
@@ -300,7 +300,7 @@ namespace System.Management.Automation.Remoting
                 IsDisposed = true;
             }
 
-            if (TextReader != null)
+            if (TextReader is not null)
             {
                 try { TextReader.Dispose(); }
                 catch (ObjectDisposedException) { }
@@ -308,7 +308,7 @@ namespace System.Management.Automation.Remoting
                 TextReader = null;
             }
 
-            if (TextWriter != null)
+            if (TextWriter is not null)
             {
                 try { TextWriter.Dispose(); }
                 catch (ObjectDisposedException) { }
@@ -316,13 +316,13 @@ namespace System.Management.Automation.Remoting
                 TextWriter = null;
             }
 
-            if (Stream != null)
+            if (Stream is not null)
             {
                 try { Stream.Dispose(); }
                 catch (ObjectDisposedException) { }
             }
 
-            if (HyperVSocket != null)
+            if (HyperVSocket is not null)
             {
                 try { HyperVSocket.Dispose(); }
                 catch (ObjectDisposedException) { }
@@ -450,7 +450,7 @@ namespace System.Management.Automation.Remoting
                 IsDisposed = true;
             }
 
-            if (TextReader != null)
+            if (TextReader is not null)
             {
                 try { TextReader.Dispose(); }
                 catch (ObjectDisposedException) { }
@@ -458,7 +458,7 @@ namespace System.Management.Automation.Remoting
                 TextReader = null;
             }
 
-            if (TextWriter != null)
+            if (TextWriter is not null)
             {
                 try { TextWriter.Dispose(); }
                 catch (ObjectDisposedException) { }
@@ -466,13 +466,13 @@ namespace System.Management.Automation.Remoting
                 TextWriter = null;
             }
 
-            if (Stream != null)
+            if (Stream is not null)
             {
                 try { Stream.Dispose(); }
                 catch (ObjectDisposedException) { }
             }
 
-            if (HyperVSocket != null)
+            if (HyperVSocket is not null)
             {
                 try { HyperVSocket.Dispose(); }
                 catch (ObjectDisposedException) { }

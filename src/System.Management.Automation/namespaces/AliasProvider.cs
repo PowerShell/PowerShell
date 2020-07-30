@@ -150,13 +150,13 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetValueOfItem(object item)
         {
             Dbg.Diagnostics.Assert(
-                item != null,
+                item is not null,
                 "Caller should verify the item parameter");
 
             object value = item;
 
             AliasInfo aliasInfo = item as AliasInfo;
-            if (aliasInfo != null)
+            if (aliasInfo is not null)
             {
                 value = aliasInfo.Definition;
             }
@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
 
             AliasInfo item = null;
 
-            bool dynamicParametersSpecified = dynamicParameters != null && dynamicParameters.OptionsSet;
+            bool dynamicParametersSpecified = dynamicParameters is not null && dynamicParameters.OptionsSet;
 
             if (value is null)
             {
@@ -196,7 +196,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     item = (AliasInfo)GetSessionStateItem(name);
 
-                    if (item != null)
+                    if (item is not null)
                     {
                         item.SetOptions(dynamicParameters.Options, Force);
                     }
@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
                 do // false loop
                 {
                     string stringValue = value as string;
-                    if (stringValue != null)
+                    if (stringValue is not null)
                     {
                         if (dynamicParametersSpecified)
                         {
@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     AliasInfo alias = value as AliasInfo;
-                    if (alias != null)
+                    if (alias is not null)
                     {
                         AliasInfo newAliasInfo =
                             new AliasInfo(
@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
                 } while (false);
             }
 
-            if (writeItem && item != null)
+            if (writeItem && item is not null)
             {
                 WriteItemObject(item, item.Name, false);
             }
@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell.Commands
             bool result = false;
 
             AliasInfo aliasInfo = item as AliasInfo;
-            if (aliasInfo != null)
+            if (aliasInfo is not null)
             {
                 if ((aliasInfo.Options & ScopedItemOptions.Constant) != 0 ||
                     ((aliasInfo.Options & ScopedItemOptions.ReadOnly) != 0 && !Force))

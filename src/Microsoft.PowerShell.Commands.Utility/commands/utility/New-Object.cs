@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
                     // these complications in Exception handling are aim to make error messages better.
                     if (e is InvalidCastException || e is ArgumentException)
                     {
-                        if (e.InnerException != null && e.InnerException is TypeResolver.AmbiguousTypeException)
+                        if (e.InnerException is not null && e.InnerException is TypeResolver.AmbiguousTypeException)
                         {
                             ThrowTerminatingError(
                                 new ErrorRecord(
@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands
                     throw;
                 }
 
-                Diagnostics.Assert(type != null, "LanguagePrimitives.TryConvertTo failed but returned true");
+                Diagnostics.Assert(type is not null, "LanguagePrimitives.TryConvertTo failed but returned true");
 
                 if (type.IsByRefLike)
                 {
@@ -205,10 +205,10 @@ namespace Microsoft.PowerShell.Commands
                 if (ArgumentList is null || ArgumentList.Length == 0)
                 {
                     ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
-                    if (ci != null && ci.IsPublic)
+                    if (ci is not null && ci.IsPublic)
                     {
                         _newObject = CallConstructor(type, new ConstructorInfo[] { ci }, new object[] { });
-                        if (_newObject != null && Property != null)
+                        if (_newObject is not null && Property is not null)
                         {
                             // The method invocation is disabled for "Hashtable to Object conversion" (Win8:649519), but we need to keep it enabled for New-Object for compatibility to PSv2
                             _newObject = LanguagePrimitives.SetObjectProperties(_newObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell.Commands
                         try
                         {
                             _newObject = Activator.CreateInstance(type);
-                            if (_newObject != null && Property != null)
+                            if (_newObject is not null && Property is not null)
                             {
                                 // Win8:649519
                                 _newObject = LanguagePrimitives.SetObjectProperties(_newObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
                     if (ctorInfos.Length != 0)
                     {
                         _newObject = CallConstructor(type, ctorInfos, ArgumentList);
-                        if (_newObject != null && Property != null)
+                        if (_newObject is not null && Property is not null)
                         {
                             // Win8:649519
                             _newObject = LanguagePrimitives.SetObjectProperties(_newObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
@@ -314,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (comObject != null && Property != null)
+                if (comObject is not null && Property is not null)
                 {
                     // Win8:649519
                     comObject = LanguagePrimitives.SetObjectProperties(comObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);

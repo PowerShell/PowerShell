@@ -26,7 +26,7 @@ namespace System.Management.Automation
         {
             try
             {
-                if (_myCommandProcessor != null)
+                if (_myCommandProcessor is not null)
                     _myCommandProcessor.StopProcessing();
             }
             catch (Exception)

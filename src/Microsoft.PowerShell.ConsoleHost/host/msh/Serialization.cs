@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell
             :
             base(dataFormat, streamName)
         {
-            Dbg.Assert(output != null, "output should have a value");
+            Dbg.Assert(output is not null, "output should have a value");
 
             textWriter = output;
             switch (format)
@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell
             :
             base(dataFormat, streamName)
         {
-            Dbg.Assert(input != null, "input should have a value");
+            Dbg.Assert(input is not null, "input should have a value");
 
             // If the data format is none - do nothing...
             if (dataFormat == DataFormat.None)
@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell
                         return null;
                     }
 
-                    if (_firstLine != null)
+                    if (_firstLine is not null)
                     {
                         o = _firstLine;
                         _firstLine = null;

@@ -503,12 +503,12 @@ namespace Microsoft.PowerShell.Commands
                             // Add it to the all module tables
                             AddModuleToModuleTables(this.Context, this.TargetSessionState.Internal, moduleToProcess);
 
-                            if (moduleToProcess.SessionState != null)
+                            if (moduleToProcess.SessionState is not null)
                             {
                                 ImportModuleMembers(moduleToProcess, this.BasePrefix, importModuleOptions);
                             }
 
-                            if (BaseAsCustomObject && moduleToProcess.SessionState != null)
+                            if (BaseAsCustomObject && moduleToProcess.SessionState is not null)
                             {
                                 WriteObject(module.AsCustomObject());
                             }
@@ -534,7 +534,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool moduleLoaded = false;
             // Loop through Module Cache to ensure that the module is not already imported.
-            if (suppliedAssembly != null && Context.Modules.ModuleTable != null)
+            if (suppliedAssembly is not null && Context.Modules.ModuleTable is not null)
             {
                 foreach (KeyValuePair<string, PSModuleInfo> pair in Context.Modules.ModuleTable)
                 {
@@ -579,7 +579,7 @@ namespace Microsoft.PowerShell.Commands
                     ManifestProcessingFlags.LoadElements | ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.NullOnFirstError,
                     this.BasePrefix, false /* loadTypes */ , false /* loadFormats */, out found);
 
-                if (found && module != null)
+                if (found && module is not null)
                 {
                     // Add it to all module tables ...
                     AddModuleToModuleTables(this.Context, this.TargetSessionState.Internal, module);
@@ -594,7 +594,7 @@ namespace Microsoft.PowerShell.Commands
         private PSModuleInfo ImportModule_LocallyViaName_WithTelemetry(ImportModuleOptions importModuleOptions, string name)
         {
             PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, name);
-            if (foundModule != null)
+            if (foundModule is not null)
             {
                 SetModuleBaseForEngineModules(foundModule.Name, this.Context);
 
@@ -743,7 +743,7 @@ namespace Microsoft.PowerShell.Commands
                         PSSnapInInfo snapin = ModuleCmdletBase.GetEngineSnapIn(Context, name);
 
                         // Return the command if we found a module
-                        if (snapin != null)
+                        if (snapin is not null)
                         {
                             // warn that this module already exists as a snapin
                             string warningMessage = string.Format(
@@ -796,24 +796,24 @@ namespace Microsoft.PowerShell.Commands
                 {
                     ErrorRecord er = null;
                     string message = null;
-                    if (BaseRequiredVersion != null)
+                    if (BaseRequiredVersion is not null)
                     {
                         message = StringUtil.Format(Modules.ModuleWithVersionNotFound, name, BaseRequiredVersion);
                     }
-                    else if (BaseMinimumVersion != null && BaseMaximumVersion != null)
+                    else if (BaseMinimumVersion is not null && BaseMaximumVersion is not null)
                     {
                         message = StringUtil.Format(Modules.MinimumVersionAndMaximumVersionNotFound, name, BaseMinimumVersion, BaseMaximumVersion);
                     }
-                    else if (BaseMinimumVersion != null)
+                    else if (BaseMinimumVersion is not null)
                     {
                         message = StringUtil.Format(Modules.ModuleWithVersionNotFound, name, BaseMinimumVersion);
                     }
-                    else if (BaseMaximumVersion != null)
+                    else if (BaseMaximumVersion is not null)
                     {
                         message = StringUtil.Format(Modules.MaximumVersionNotFound, name, BaseMaximumVersion);
                     }
 
-                    if (BaseRequiredVersion != null || BaseMinimumVersion != null || BaseMaximumVersion != null)
+                    if (BaseRequiredVersion is not null || BaseMinimumVersion is not null || BaseMaximumVersion is not null)
                     {
                         FileNotFoundException fnf = new FileNotFoundException(message);
                         er = new ErrorRecord(fnf, "Modules_ModuleWithVersionNotFound",
@@ -850,7 +850,7 @@ namespace Microsoft.PowerShell.Commands
 
             PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, modulespec.Name);
 
-            if (foundModule != null)
+            if (foundModule is not null)
             {
                 ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
                 SetModuleBaseForEngineModules(foundModule.Name, this.Context);
@@ -873,7 +873,7 @@ namespace Microsoft.PowerShell.Commands
             bool usingWinCompat = false)
         {
             var remotelyImportedModules = new List<PSModuleInfo>();
-            if (moduleNames != null)
+            if (moduleNames is not null)
             {
                 foreach (string moduleName in moduleNames)
                 {
@@ -882,7 +882,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (fullyQualifiedNames != null)
+            if (fullyQualifiedNames is not null)
             {
                 foreach (var fullyQualifiedName in fullyQualifiedNames)
                 {
@@ -917,7 +917,7 @@ namespace Microsoft.PowerShell.Commands
                 powerShell.AddParameter("DisableNameChecking", this.DisableNameChecking);
                 powerShell.AddParameter("PassThru", true);
 
-                if (fullyQualifiedName != null)
+                if (fullyQualifiedName is not null)
                 {
                     powerShell.AddParameter("FullyQualifiedName", fullyQualifiedName);
                 }
@@ -925,23 +925,23 @@ namespace Microsoft.PowerShell.Commands
                 {
                     powerShell.AddParameter("Name", moduleName);
 
-                    if (this.MinimumVersion != null)
+                    if (this.MinimumVersion is not null)
                     {
                         powerShell.AddParameter("Version", this.MinimumVersion);
                     }
 
-                    if (this.RequiredVersion != null)
+                    if (this.RequiredVersion is not null)
                     {
                         powerShell.AddParameter("RequiredVersion", this.RequiredVersion);
                     }
 
-                    if (this.MaximumVersion != null)
+                    if (this.MaximumVersion is not null)
                     {
                         powerShell.AddParameter("MaximumVersion", this.MaximumVersion);
                     }
                 }
 
-                if (this.ArgumentList != null)
+                if (this.ArgumentList is not null)
                 {
                     powerShell.AddParameter("ArgumentList", this.ArgumentList);
                 }
@@ -966,7 +966,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (PSObject remotelyImportedModule in remotelyImportedModules)
             {
                 PSPropertyInfo nameProperty = remotelyImportedModule.Properties["Name"];
-                if (nameProperty != null)
+                if (nameProperty is not null)
                 {
                     string remoteModuleName = (string)LanguagePrimitives.ConvertTo(
                         nameProperty.Value,
@@ -975,7 +975,7 @@ namespace Microsoft.PowerShell.Commands
 
                     PSPropertyInfo helpInfoProperty = remotelyImportedModule.Properties["HelpInfoUri"];
                     string remoteHelpInfoUri = null;
-                    if (helpInfoProperty != null)
+                    if (helpInfoProperty is not null)
                     {
                         remoteHelpInfoUri = (string)LanguagePrimitives.ConvertTo(
                             helpInfoProperty.Value,
@@ -985,14 +985,14 @@ namespace Microsoft.PowerShell.Commands
 
                     PSPropertyInfo guidProperty = remotelyImportedModule.Properties["Guid"];
                     Guid remoteModuleGuid = Guid.Empty;
-                    if (guidProperty != null)
+                    if (guidProperty is not null)
                     {
                         LanguagePrimitives.TryConvertTo(guidProperty.Value, out remoteModuleGuid);
                     }
 
                     PSPropertyInfo versionProperty = remotelyImportedModule.Properties["Version"];
                     Version remoteModuleVersion = null;
-                    if (versionProperty != null)
+                    if (versionProperty is not null)
                     {
                         Version tmp;
                         if (LanguagePrimitives.TryConvertTo<Version>(versionProperty.Value, CultureInfo.InvariantCulture, out tmp))
@@ -1009,7 +1009,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Set the HelpInfoUri and Guid as necessary, so that Save-Help can work with this module object
                     // to retrieve help files from the remote site.
-                    if (moduleInfo != null)
+                    if (moduleInfo is not null)
                     {
                         // set the HelpInfoUri if it's needed
                         if (string.IsNullOrEmpty(moduleInfo.HelpInfoUri) && !string.IsNullOrEmpty(remoteHelpInfoUri))
@@ -1051,7 +1051,7 @@ namespace Microsoft.PowerShell.Commands
                 string localPsm1File = Path.Combine(temporaryModulePath, Path.GetFileName(temporaryModulePath) + ".psm1");
                 PSModuleInfo alreadyImportedModule = this.IsModuleImportUnnecessaryBecauseModuleIsAlreadyLoaded(
                     localPsm1File, this.BasePrefix, importModuleOptions);
-                if (alreadyImportedModule != null)
+                if (alreadyImportedModule is not null)
                 {
                     return alreadyImportedModule;
                 }
@@ -1225,14 +1225,14 @@ namespace Microsoft.PowerShell.Commands
             string[] nestedModules = null;
             if (LanguagePrimitives.TryConvertTo(manifestData["NestedModules"], CultureInfo.InvariantCulture, out nestedModules))
             {
-                if (nestedModules != null)
+                if (nestedModules is not null)
                 {
                     numberOfSubmodules += nestedModules.Length;
                 }
             }
 
             object rootModuleValue = manifestData["RootModule"];
-            if (rootModuleValue != null)
+            if (rootModuleValue is not null)
             {
                 string rootModule;
                 if (LanguagePrimitives.TryConvertTo(rootModuleValue, CultureInfo.InvariantCulture, out rootModule))
@@ -1247,7 +1247,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 object moduleToProcessValue = manifestData["ModuleToProcess"];
                 string moduleToProcess;
-                if (moduleToProcessValue != null && LanguagePrimitives.TryConvertTo(moduleToProcessValue, CultureInfo.InvariantCulture, out moduleToProcess))
+                if (moduleToProcessValue is not null && LanguagePrimitives.TryConvertTo(moduleToProcessValue, CultureInfo.InvariantCulture, out moduleToProcess))
                 {
                     if (!string.IsNullOrEmpty(moduleToProcess))
                     {
@@ -1490,7 +1490,7 @@ namespace Microsoft.PowerShell.Commands
                         out throwAwayTokens,
                         out parseErrors);
                     if ((scriptBlockAst is null) ||
-                        (parseErrors != null && parseErrors.Length > 0))
+                        (parseErrors is not null && parseErrors.Length > 0))
                     {
                         throw new ParseException(parseErrors);
                     }
@@ -1533,7 +1533,7 @@ namespace Microsoft.PowerShell.Commands
                 // avoid loading an already loaded module
                 PSModuleInfo alreadyImportedModule = this.IsModuleImportUnnecessaryBecauseModuleIsAlreadyLoaded(
                     temporaryModuleManifestPath, this.BasePrefix, importModuleOptions);
-                if (alreadyImportedModule != null)
+                if (alreadyImportedModule is not null)
                 {
                     return alreadyImportedModule;
                 }
@@ -1624,7 +1624,7 @@ namespace Microsoft.PowerShell.Commands
                     // store the default session
                     //
                     Dbg.Assert(moduleInfo.ModuleType == ModuleType.Manifest, "Remote discovery should always produce a 'manifest' module");
-                    Dbg.Assert(moduleInfo.NestedModules != null, "Remote discovery should always produce a 'manifest' module with nested modules entry");
+                    Dbg.Assert(moduleInfo.NestedModules is not null, "Remote discovery should always produce a 'manifest' module with nested modules entry");
                     Dbg.Assert(moduleInfo.NestedModules.Count > 0, "Remote discovery should always produce a 'manifest' module with some nested modules");
                     foreach (PSModuleInfo nestedModule in moduleInfo.NestedModules)
                     {
@@ -1801,7 +1801,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         protected override void ProcessRecord()
         {
-            if (BaseMaximumVersion != null && BaseMinimumVersion != null && BaseMaximumVersion < BaseMinimumVersion)
+            if (BaseMaximumVersion is not null && BaseMinimumVersion is not null && BaseMaximumVersion < BaseMinimumVersion)
             {
                 string message = StringUtil.Format(Modules.MinimumVersionAndMaximumVersionInvalidRange, BaseMinimumVersion, BaseMaximumVersion);
                 throw new PSArgumentOutOfRangeException(message);
@@ -1846,7 +1846,7 @@ namespace Microsoft.PowerShell.Commands
             else if (this.ParameterSetName.Equals(ParameterSet_Assembly, StringComparison.OrdinalIgnoreCase))
             {
                 // Now load all of the supplied assemblies...
-                if (Assembly != null)
+                if (Assembly is not null)
                 {
                     foreach (Assembly suppliedAssembly in Assembly)
                     {
@@ -1927,7 +1927,7 @@ namespace Microsoft.PowerShell.Commands
         private List<T> FilterModuleCollection<T>(IEnumerable<T> moduleCollection)
         {
             List<T> filteredModuleCollection = null;
-            if (moduleCollection != null)
+            if (moduleCollection is not null)
             {
                 // the ModuleDeny list is cached in PowerShellConfig object
                 string[] moduleDenyList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
@@ -1960,7 +1960,7 @@ namespace Microsoft.PowerShell.Commands
 
             var isModuleToLoadEngineModule = InitialSessionState.IsEngineModule(coreModuleToLoad);
             string[] noClobberModuleList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
-            if (isModuleToLoadEngineModule || ((noClobberModuleList != null) && noClobberModuleList.Contains(coreModuleToLoad, StringComparer.OrdinalIgnoreCase)))
+            if (isModuleToLoadEngineModule || ((noClobberModuleList is not null) && noClobberModuleList.Contains(coreModuleToLoad, StringComparer.OrdinalIgnoreCase)))
             {
                 // if it is one of engine modules - first try to load it from $PSHOME\Modules
                 // otherwise rely on $env:PSModulePath (in which WinPS module location has to go after CorePS module location)
@@ -2022,7 +2022,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // perform necessary preparations if module has to be imported with NoClobber mode
-            if (filteredModuleNames != null)
+            if (filteredModuleNames is not null)
             {
                 foreach(string moduleName in filteredModuleNames)
                 {
@@ -2030,7 +2030,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (filteredModuleFullyQualifiedNames != null)
+            if (filteredModuleFullyQualifiedNames is not null)
             {
                 foreach(var moduleSpec in filteredModuleFullyQualifiedNames)
                 {

@@ -215,7 +215,7 @@ namespace System.Management.Automation
         {
             string relativePath = string.Empty;
 
-            if (dirInfo != null)
+            if (dirInfo is not null)
             {
                 // Relative path of the file is the path inside the containing folder excluding folder Name
                 relativePath = fileToHash.FullName.AsSpan(dirInfo.FullName.Length).TrimStart('\\').ToString();
@@ -310,7 +310,7 @@ namespace System.Management.Automation
                                 }
                             } while (memberAttr != IntPtr.Zero);
                         }
-                    } while (fileName != null);
+                    } while (fileName is not null);
                 }
                 finally
                 {
@@ -610,7 +610,7 @@ namespace System.Management.Automation
             string relativePath = string.Empty;
             string exclude = string.Empty;
 
-            if (dirInfo != null)
+            if (dirInfo is not null)
             {
                 // Relative path of the file is the path inside the containing folder excluding folder Name
                 relativePath = fileToHash.FullName.AsSpan(dirInfo.FullName.Length).TrimStart('\\').ToString();
@@ -774,7 +774,7 @@ namespace System.Management.Automation
         /// <returns>True if match is found else false.</returns>
         internal static bool CheckExcludedCriteria(string filename, WildcardPattern[] excludedPatterns)
         {
-            if (excludedPatterns != null)
+            if (excludedPatterns is not null)
             {
                 foreach (WildcardPattern patternItem in excludedPatterns)
                 {

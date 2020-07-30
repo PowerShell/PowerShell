@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else if (ParameterSetName.Equals(GetRandomCommand.RandomNumberParameterSet, StringComparison.OrdinalIgnoreCase))
                     {
-                        if ((Maximum != null) && (Maximum.GetType().IsArray))
+                        if ((Maximum is not null) && (Maximum.GetType().IsArray))
                         {
                             InputObject = (object[])Maximum;
                             _effectiveParameterSet = MyParameterSet.RandomListItem;
@@ -406,8 +406,8 @@ namespace Microsoft.PowerShell.Commands
 
                 if (IsInt(maxOperand) && IsInt(minOperand))
                 {
-                    int minValue = minOperand != null ? (int)minOperand : 0;
-                    int maxValue = maxOperand != null ? (int)maxOperand : int.MaxValue;
+                    int minValue = minOperand is not null ? (int)minOperand : 0;
+                    int maxValue = maxOperand is not null ? (int)maxOperand : int.MaxValue;
 
                     if (minValue >= maxValue)
                     {
@@ -425,8 +425,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if ((IsInt64(maxOperand) || IsInt(maxOperand)) && (IsInt64(minOperand) || IsInt(minOperand)))
                 {
-                    Int64 minValue = minOperand != null ? ((minOperand is Int64) ? (Int64)minOperand : (int)minOperand) : 0;
-                    Int64 maxValue = maxOperand != null ? ((maxOperand is Int64) ? (Int64)maxOperand : (int)maxOperand) : Int64.MaxValue;
+                    Int64 minValue = minOperand is not null ? ((minOperand is Int64) ? (Int64)minOperand : (int)minOperand) : 0;
+                    Int64 maxValue = maxOperand is not null ? ((maxOperand is Int64) ? (Int64)maxOperand : (int)maxOperand) : Int64.MaxValue;
 
                     if (minValue >= maxValue)
                     {
@@ -686,7 +686,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="buffer">The array to be filled.</param>
         internal void NextBytes(byte[] buffer)
         {
-            if (_cryptographicGenerator != null)
+            if (_cryptographicGenerator is not null)
             {
                 _cryptographicGenerator.GetBytes(buffer);
             }

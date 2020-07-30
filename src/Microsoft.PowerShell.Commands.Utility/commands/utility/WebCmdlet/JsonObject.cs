@@ -261,7 +261,7 @@ namespace Microsoft.PowerShell.Commands
                     case JArray list:
                         {
                             var listResult = PopulateFromJArray(list, out error);
-                            if (error != null)
+                            if (error is not null)
                             {
                                 return null;
                             }
@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Dictionary
                             var dicResult = PopulateFromJDictionary(dic, new DuplicateMemberHashSet(dic.Count), out error);
-                            if (error != null)
+                            if (error is not null)
                             {
                                 return null;
                             }
@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Array
                             var listResult = PopulateFromJArray(subList, out error);
-                            if (error != null)
+                            if (error is not null)
                             {
                                 return null;
                             }
@@ -321,7 +321,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Dictionary
                             var dicResult = PopulateFromJDictionary(dic, new DuplicateMemberHashSet(dic.Count), out error);
-                            if (error != null)
+                            if (error is not null)
                             {
                                 return null;
                             }
@@ -366,7 +366,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Array
                             var listResult = PopulateHashTableFromJArray(list, out error);
-                            if (error != null)
+                            if (error is not null)
                             {
                                 return null;
                             }
@@ -378,7 +378,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Dictionary
                             var dicResult = PopulateHashTableFromJDictionary(dic, out error);
-                            if (error != null)
+                            if (error is not null)
                             {
                                 return null;
                             }
@@ -413,7 +413,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Array
                             var listResult = PopulateHashTableFromJArray(array, out error);
-                            if (error != null)
+                            if (error is not null)
                             {
                                 return null;
                             }
@@ -425,7 +425,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Dictionary
                             var dicResult = PopulateHashTableFromJDictionary(dic, out error);
-                            if (error != null)
+                            if (error is not null)
                             {
                                 return null;
                             }
@@ -504,7 +504,7 @@ namespace Microsoft.PowerShell.Commands
 
             PSObject pso = obj as PSObject;
 
-            if (pso != null)
+            if (pso is not null)
             {
                 obj = pso.BaseObject;
             }
@@ -561,7 +561,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (currentDepth > context.MaxDepth)
                     {
-                        if (pso != null && pso.ImmediateBaseObjectIsEmpty)
+                        if (pso is not null && pso.ImmediateBaseObjectIsEmpty)
                         {
                             // The obj is a pure PSObject, we convert the original PSObject to a string,
                             // instead of its base object in this case
@@ -578,14 +578,14 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         IDictionary dict = obj as IDictionary;
-                        if (dict != null)
+                        if (dict is not null)
                         {
                             rv = ProcessDictionary(dict, currentDepth, in context);
                         }
                         else
                         {
                             IEnumerable enumerable = obj as IEnumerable;
-                            if (enumerable != null)
+                            if (enumerable is not null)
                             {
                                 rv = ProcessEnumerable(enumerable, currentDepth, in context);
                             }
@@ -711,7 +711,7 @@ namespace Microsoft.PowerShell.Commands
                         dict.GetType().FullName);
 
                     var exception = new InvalidOperationException(errorMsg);
-                    if (context.Cmdlet != null)
+                    if (context.Cmdlet is not null)
                     {
                         var errorRecord = new ErrorRecord(exception, "NonStringKeyInDictionary", ErrorCategory.InvalidOperation, dict);
                         context.Cmdlet.ThrowTerminatingError(errorRecord);
@@ -780,7 +780,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!info2.IsDefined(typeof(T), true))
                 {
                     MethodInfo getMethod = info2.GetGetMethod();
-                    if ((getMethod != null) && (getMethod.GetParameters().Length == 0))
+                    if ((getMethod is not null) && (getMethod.GetParameters().Length == 0))
                     {
                         object value;
                         try

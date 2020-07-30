@@ -234,7 +234,7 @@ namespace System.Management.Automation
             get
             {
                 string result = null;
-                if (_PSSnapin != null)
+                if (_PSSnapin is not null)
                 {
                     result = _PSSnapin.Name;
                 }
@@ -252,11 +252,11 @@ namespace System.Management.Automation
             {
                 if (_version is null)
                 {
-                    if (Module != null)
+                    if (Module is not null)
                     {
                         _version = base.Version;
                     }
-                    else if (_PSSnapin != null)
+                    else if (_PSSnapin is not null)
                     {
                         _version = _PSSnapin.Version;
                     }
@@ -290,7 +290,7 @@ namespace System.Management.Automation
             {
                 StringBuilder synopsis = new StringBuilder();
 
-                if (this.ImplementingType != null)
+                if (this.ImplementingType is not null)
                 {
                     foreach (CommandParameterSetInfo parameterSet in ParameterSets)
                     {
@@ -343,7 +343,7 @@ namespace System.Management.Automation
                 {
                     _outputType = new List<PSTypeName>();
 
-                    if (ImplementingType != null)
+                    if (ImplementingType is not null)
                     {
                         foreach (object o in ImplementingType.GetCustomAttributes(typeof(OutputTypeAttribute), false))
                         {
@@ -355,10 +355,10 @@ namespace System.Management.Automation
 
                 List<PSTypeName> providerTypes = new List<PSTypeName>();
 
-                if (Context != null)
+                if (Context is not null)
                 {
                     ProviderInfo provider = null;
-                    if (Arguments != null)
+                    if (Arguments is not null)
                     {
                         // See if we have a path argument - we only consider named arguments -Path and -LiteralPath,
                         // and only if they are fully specified (no prefixes allowed, so we don't need to deal with
@@ -367,12 +367,12 @@ namespace System.Management.Automation
                         for (int i = 0; i < Arguments.Length - 1; i++)
                         {
                             var arg = Arguments[i] as string;
-                            if (arg != null &&
+                            if (arg is not null &&
                                 (arg.Equals("-Path", StringComparison.OrdinalIgnoreCase) ||
                                 (arg.Equals("-LiteralPath", StringComparison.OrdinalIgnoreCase))))
                             {
                                 var path = Arguments[i + 1] as string;
-                                if (path != null)
+                                if (path is not null)
                                 {
                                     Context.SessionState.Path.GetResolvedProviderPathFromPSPath(path, true, out provider);
                                 }
@@ -460,7 +460,7 @@ namespace System.Management.Automation
         /// </summary>
         private static string GetFullName(string moduleName, string cmdletName)
         {
-            System.Diagnostics.Debug.Assert(cmdletName != null, "cmdletName != null");
+            System.Diagnostics.Debug.Assert(cmdletName is not null, "cmdletName is not null");
             string result = cmdletName;
             if (!string.IsNullOrEmpty(moduleName))
             {
@@ -546,9 +546,9 @@ namespace System.Management.Automation
         {
             get
             {
-                if (ImplementingType != null)
+                if (ImplementingType is not null)
                 {
-                    return (ImplementingType.GetInterface(typeof(IDynamicParameters).Name, true) != null);
+                    return (ImplementingType.GetInterface(typeof(IDynamicParameters).Name, true) is not null);
                 }
                 else
                 {

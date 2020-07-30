@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             PacketInfoData formatData = o as PacketInfoData;
             FormatEntryData fed = formatData as FormatEntryData;
-            if (fed != null)
+            if (fed is not null)
             {
                 OutputContext ctx = null;
 
@@ -104,15 +104,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     GroupEndData ged = formatData as GroupEndData;
                     FormatEndData fEndd = formatData as FormatEndData;
-                    if (ged != null || fEndd != null)
+                    if (ged is not null || fEndd is not null)
                     {
                         OutputContext oc = _stack.Peek();
-                        if (fEndd != null)
+                        if (fEndd is not null)
                         {
                             // notify for Fe, passing the Fe info, before a Pop()
                             this.fe(fEndd, oc);
                         }
-                        else if (ged != null)
+                        else if (ged is not null)
                         {
                             // notify for Fe, passing the Fe info, before a Pop()
                             this.ge(ged, oc);

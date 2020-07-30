@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void Initialize(TerminatingErrorContext terminatingErrorContext, PSPropertyExpressionFactory mshExpressionFactory, TypeInfoDataBase db, ViewDefinition view, FormattingCommandLineParameters formatParameters)
         {
             base.Initialize(terminatingErrorContext, mshExpressionFactory, db, view, formatParameters);
-            if ((this.dataBaseInfo != null) && (this.dataBaseInfo.view != null))
+            if ((this.dataBaseInfo is not null) && (this.dataBaseInfo.view is not null))
             {
                 _tableBody = (TableControlBody)this.dataBaseInfo.view.mainControl;
             }
@@ -29,18 +29,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             base.Initialize(errorContext, expressionFactory, so, db, parameters);
 
-            if ((this.dataBaseInfo != null) && (this.dataBaseInfo.view != null))
+            if ((this.dataBaseInfo is not null) && (this.dataBaseInfo.view is not null))
             {
                 _tableBody = (TableControlBody)this.dataBaseInfo.view.mainControl;
             }
 
             List<MshParameter> rawMshParameterList = null;
 
-            if (parameters != null)
+            if (parameters is not null)
                 rawMshParameterList = parameters.mshParameterList;
 
             // check if we received properties from the command line
-            if (rawMshParameterList != null && rawMshParameterList.Count > 0)
+            if (rawMshParameterList is not null && rawMshParameterList.Count > 0)
             {
                 this.activeAssociationList = AssociationManager.ExpandTableParameters(rawMshParameterList, so);
                 return;
@@ -83,13 +83,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="so"></param>
         internal override void PrepareForRemoteObjects(PSObject so)
         {
-            Diagnostics.Assert(so != null, "so cannot be null");
+            Diagnostics.Assert(so is not null, "so cannot be null");
 
             // make sure computername property exists.
-            Diagnostics.Assert(so.Properties[RemotingConstants.ComputerNameNoteProperty] != null,
+            Diagnostics.Assert(so.Properties[RemotingConstants.ComputerNameNoteProperty] is not null,
                 "PrepareForRemoteObjects cannot be called when the object does not contain ComputerName property.");
 
-            if ((dataBaseInfo != null) && (dataBaseInfo.view != null) && (dataBaseInfo.view.mainControl != null))
+            if ((dataBaseInfo is not null) && (dataBaseInfo.view is not null) && (dataBaseInfo.view.mainControl is not null))
             {
                 // dont change the original format definition in the database..just make a copy and work
                 // with the copy
@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             FormatStartData startFormat = base.GenerateStartData(so);
 
-            if (this.dataBaseInfo.view != null)
+            if (this.dataBaseInfo.view is not null)
                 startFormat.shapeInfo = GenerateTableHeaderInfoFromDataBaseInfo(so);
             else
                 startFormat.shapeInfo = GenerateTableHeaderInfoFromProperties(so);
@@ -167,11 +167,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (_tableBody.header.columnHeaderDefinitionList.Count > 0)
                     colHeader = _tableBody.header.columnHeaderDefinitionList[col];
 
-                if (colHeader != null)
+                if (colHeader is not null)
                 {
                     ci.width = colHeader.width;
                     ci.alignment = colHeader.alignment;
-                    if (colHeader.label != null)
+                    if (colHeader.label is not null)
                         ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(colHeader.label);
                 }
 
@@ -185,17 +185,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     FormatToken token = null;
                     if (rowItem.formatTokenList.Count > 0)
                         token = rowItem.formatTokenList[0];
-                    if (token != null)
+                    if (token is not null)
                     {
                         FieldPropertyToken fpt = token as FieldPropertyToken;
-                        if (fpt != null)
+                        if (fpt is not null)
                         {
                             ci.label = fpt.expression.expressionValue;
                         }
                         else
                         {
                             TextToken tt = token as TextToken;
-                            if (tt != null)
+                            if (tt is not null)
                             {
                                 ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
                             }
@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 TableColumnInfo ci = new TableColumnInfo();
 
                 // set the label of the column
-                if (a.OriginatingParameter != null)
+                if (a.OriginatingParameter is not null)
                 {
                     object key = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.LabelEntryKey);
                     if (key != AutomationNull.Value)
@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // set the width of the table
-                if (a.OriginatingParameter != null)
+                if (a.OriginatingParameter is not null)
                 {
                     object key = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.WidthEntryKey);
 
@@ -256,7 +256,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // set the alignment
-                if (a.OriginatingParameter != null)
+                if (a.OriginatingParameter is not null)
                 {
                     object key = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.AlignmentEntryKey);
 
@@ -281,16 +281,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             get
             {
                 // first check command line, it takes the precedence
-                if (this.parameters != null && this.parameters.shapeParameters != null)
+                if (this.parameters is not null && this.parameters.shapeParameters is not null)
                 {
                     TableSpecificParameters tableSpecific = (TableSpecificParameters)this.parameters.shapeParameters;
-                    if (tableSpecific != null && tableSpecific.hideHeaders.HasValue)
+                    if (tableSpecific is not null && tableSpecific.hideHeaders.HasValue)
                     {
                         return tableSpecific.hideHeaders.Value;
                     }
                 }
                 // if we have a view, get the value out of it
-                if (this.dataBaseInfo.view != null)
+                if (this.dataBaseInfo.view is not null)
                 {
                     return _tableBody.header.hideHeader;
                 }
@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                if (this.parameters != null)
+                if (this.parameters is not null)
                 {
                     return this.parameters.repeatHeader;
                 }
@@ -316,7 +316,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             List<PSPropertyExpressionResult> rList = ex.GetValues(so);
 
-            if ((rList.Count == 0) || (rList[0].Exception != null))
+            if ((rList.Count == 0) || (rList[0].Exception is not null))
                 return TextAlignment.Left;
 
             object val = rList[0].Result;
@@ -340,7 +340,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             FormatEntryData fed = new FormatEntryData();
 
             TableRowEntry tre;
-            if (this.dataBaseInfo.view != null)
+            if (this.dataBaseInfo.view is not null)
             {
                 tre = GenerateTableRowEntryFromDataBaseInfo(so, enumerationLimit);
             }
@@ -354,10 +354,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             fed.formatEntryInfo = tre;
 
             // override from command line, if there
-            if (this.parameters != null && this.parameters.shapeParameters != null)
+            if (this.parameters is not null && this.parameters.shapeParameters is not null)
             {
                 TableSpecificParameters tableSpecific = (TableSpecificParameters)this.parameters.shapeParameters;
-                if (tableSpecific != null && tableSpecific.multiLine.HasValue)
+                if (tableSpecific is not null && tableSpecific.multiLine.HasValue)
                 {
                     tre.multiLine = tableSpecific.multiLine.Value;
                 }
@@ -399,7 +399,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (matchingRowDefinition is null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (typesWithoutPrefix != null)
+                if (typesWithoutPrefix is not null)
                 {
                     match = new TypeMatch(expressionFactory, this.dataBaseInfo.db, typesWithoutPrefix);
 
@@ -478,7 +478,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 FormatPropertyField fpf = new FormatPropertyField();
                 FieldFormattingDirective directive = null;
-                if (activeAssociationList[k].OriginatingParameter != null)
+                if (activeAssociationList[k].OriginatingParameter is not null)
                 {
                     directive = activeAssociationList[k].OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
                 }

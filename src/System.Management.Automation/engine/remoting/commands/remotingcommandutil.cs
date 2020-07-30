@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
                 // HKLM\Software\Microsoft\Windows\CurrentVersion\WSMAN\ServiceStackVersion
                 string wsManStackValue = null;
                 RegistryKey wsManKey = Registry.LocalMachine.OpenSubKey(WSManKeyPath);
-                if (wsManKey != null)
+                if (wsManKey is not null)
                 {
                     wsManStackValue = (string)wsManKey.GetValue("ServiceStackVersion");
                 }
@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell.Commands
         internal static void CheckPSVersion(Version version)
         {
             // PSVersion value can only be 2.0, 3.0, 4.0, 5.0, or 5.1
-            if (version != null)
+            if (version is not null)
             {
                 // PSVersion value can only be 2.0, 3.0, 4.0, 5.0, or 5.1
                 if (!(version.Major >= 2 && version.Major <= 4 && version.Minor == 0) &&
@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
         internal static void CheckIfPowerShellVersionIsInstalled(Version version)
         {
             // Check if PowerShell 2.0 is installed
-            if (version != null && version.Major == 2)
+            if (version is not null && version.Major == 2)
             {
 #if CORECLR
                 // PowerShell 2.0 is not available for CoreCLR

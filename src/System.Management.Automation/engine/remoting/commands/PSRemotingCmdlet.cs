@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Resolved computer name.</returns>
         protected string ResolveComputerName(string computerName)
         {
-            Diagnostics.Assert(computerName != null, "Null ComputerName");
+            Diagnostics.Assert(computerName is not null, "Null ComputerName");
 
             if (string.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
             {
@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string message;
 
-            if (args != null)
+            if (args is not null)
             {
                 message = StringUtil.Format(resourceString, args);
             }
@@ -809,7 +809,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         internal static void ValidateSpecifiedAuthentication(PSCredential credential, string thumbprint, AuthenticationMechanism authentication)
         {
-            if ((credential != null) && (thumbprint != null))
+            if ((credential is not null) && (thumbprint is not null))
             {
                 string message = PSRemotingErrorInvariants.FormatResourceString(
                     RemotingErrorIdStrings.NewRunspaceAmbiguousAuthentication,
@@ -818,7 +818,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new InvalidOperationException(message);
             }
 
-            if ((authentication != AuthenticationMechanism.Default) && (thumbprint != null))
+            if ((authentication != AuthenticationMechanism.Default) && (thumbprint is not null))
             {
                 string message = PSRemotingErrorInvariants.FormatResourceString(
                     RemotingErrorIdStrings.NewRunspaceAmbiguousAuthentication,
@@ -828,7 +828,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             if ((authentication == AuthenticationMechanism.NegotiateWithImplicitCredential) &&
-                (credential != null))
+                (credential is not null))
             {
                 string message = PSRemotingErrorInvariants.FormatResourceString(
                     RemotingErrorIdStrings.NewRunspaceAmbiguousAuthentication,
@@ -979,7 +979,7 @@ namespace Microsoft.PowerShell.Commands
         /// the validations fail</remarks>
         protected void ValidateRemoteRunspacesSpecified()
         {
-            Dbg.Assert(Session != null && Session.Length != 0,
+            Dbg.Assert(Session is not null && Session.Length != 0,
                     "Remote Runspaces specified must not be null or empty");
 
             // Check if there are duplicates in the specified PSSession objects
@@ -1015,7 +1015,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="connectionInfo"></param>
         internal void UpdateConnectionInfo(WSManConnectionInfo connectionInfo)
         {
-            Dbg.Assert(connectionInfo != null, "connectionInfo cannot be null.");
+            Dbg.Assert(connectionInfo is not null, "connectionInfo cannot be null.");
 
             connectionInfo.SetSessionOptions(this.SessionOption);
 
@@ -1119,7 +1119,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Validate KeyFilePath parameter.
             if ((ParameterSetName == PSRemotingBaseCmdlet.SSHHostParameterSet) &&
-                (this.KeyFilePath != null))
+                (this.KeyFilePath is not null))
             {
                 // Resolve the key file path when set.
                 this.KeyFilePath = PathResolver.ResolveProviderAndPath(this.KeyFilePath, true, this, false, RemotingErrorIdStrings.FilePathNotFromFileSystemProvider);
@@ -1387,7 +1387,7 @@ namespace Microsoft.PowerShell.Commands
                     connectionInfo.Port = Port;
                     connectionInfo.AppName = ApplicationName;
                     connectionInfo.ShellUri = ConfigurationName;
-                    if (CertificateThumbprint != null)
+                    if (CertificateThumbprint is not null)
                     {
                         connectionInfo.CertificateThumbprint = CertificateThumbprint;
                     }
@@ -1405,7 +1405,7 @@ namespace Microsoft.PowerShell.Commands
                     // Use the provided session name or create one for this remote runspace so that
                     // it can be easily identified if it becomes disconnected and is queried on the server.
                     int rsId = PSSession.GenerateRunspaceId();
-                    string rsName = (DisconnectedSessionName != null && DisconnectedSessionName.Length > i) ?
+                    string rsName = (DisconnectedSessionName is not null && DisconnectedSessionName.Length > i) ?
                         DisconnectedSessionName[i] : PSSession.GenerateRunspaceName(out rsId);
 
                     remoteRunspace = new RemoteRunspace(Utils.GetTypeTableFromExecutionContextTLS(), connectionInfo,
@@ -1525,7 +1525,7 @@ namespace Microsoft.PowerShell.Commands
                     connectionInfo.ConnectionUri = ConnectionUri[i];
                     connectionInfo.ShellUri = ConfigurationName;
 
-                    if (CertificateThumbprint != null)
+                    if (CertificateThumbprint is not null)
                     {
                         connectionInfo.CertificateThumbprint = CertificateThumbprint;
                     }
@@ -1544,7 +1544,7 @@ namespace Microsoft.PowerShell.Commands
                         Utils.GetTypeTableFromExecutionContextTLS(),
                         this.SessionOption.ApplicationArguments);
 
-                    Dbg.Assert(remoteRunspace != null,
+                    Dbg.Assert(remoteRunspace is not null,
                             "RemoteRunspace object created using URI is null");
 
                     remoteRunspace.Events.ReceivedEvents.PSEventReceived += OnRunspacePSEventReceived;
@@ -1909,7 +1909,7 @@ namespace Microsoft.PowerShell.Commands
                     PSVersionInfo.PSVersionTableName,
                     PSVersionInfo.PSVersionName);
 
-                if (serverPsVersion != null)
+                if (serverPsVersion is not null)
                 {
                     return serverPsVersion.Major >= 5 ? PSv5OrLater : PSv3Orv4;
                 }
@@ -1928,7 +1928,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal void OnRunspacePSEventReceived(object sender, PSEventArgs e)
         {
-            if (this.Events != null)
+            if (this.Events is not null)
                 this.Events.AddForwardedEvent(e);
         }
 
@@ -2061,7 +2061,7 @@ namespace Microsoft.PowerShell.Commands
 
             base.BeginProcessing();
 
-            if (_filePath != null)
+            if (_filePath is not null)
             {
                 _scriptBlock = GetScriptBlockFromFile(_filePath, IsLiteralPath);
             }
@@ -2161,11 +2161,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private System.Management.Automation.PowerShell GetPowerShellForPSv2()
         {
-            if (_powershellV2 != null) { return _powershellV2; }
+            if (_powershellV2 is not null) { return _powershellV2; }
 
             // Try to convert the scriptblock to powershell commands.
             _powershellV2 = ConvertToPowerShell();
-            if (_powershellV2 != null)
+            if (_powershellV2 is not null)
             {
                 // Look for EndOfStatement tokens.
                 foreach (var command in _powershellV2.Commands.Commands)
@@ -2178,7 +2178,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (_powershellV2 != null) { return _powershellV2; }
+                if (_powershellV2 is not null) { return _powershellV2; }
             }
 
             List<string> newParameterNames;
@@ -2187,7 +2187,7 @@ namespace Microsoft.PowerShell.Commands
             string scriptTextAdaptedForPSv2 = GetConvertedScript(out newParameterNames, out newParameterValues);
             _powershellV2 = System.Management.Automation.PowerShell.Create().AddScript(scriptTextAdaptedForPSv2);
 
-            if (_args != null)
+            if (_args is not null)
             {
                 foreach (object arg in _args)
                 {
@@ -2195,9 +2195,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (newParameterNames != null)
+            if (newParameterNames is not null)
             {
-                Dbg.Assert(newParameterValues != null && newParameterNames.Count == newParameterValues.Count, "We should get the value for each using variable");
+                Dbg.Assert(newParameterValues is not null && newParameterNames.Count == newParameterValues.Count, "We should get the value for each using variable");
                 for (int i = 0; i < newParameterNames.Count; i++)
                 {
                     _powershellV2.AddParameter(newParameterNames[i], newParameterValues[i]);
@@ -2232,12 +2232,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private System.Management.Automation.PowerShell GetPowerShellForPSv3OrLater(string serverPsVersion)
         {
-            if (_powershellV3 != null) { return _powershellV3; }
+            if (_powershellV3 is not null) { return _powershellV3; }
 
             // Try to convert the scriptblock to powershell commands.
             _powershellV3 = ConvertToPowerShell();
 
-            if (_powershellV3 != null) { return _powershellV3; }
+            if (_powershellV3 is not null) { return _powershellV3; }
 
             // Using expressions can be a variable, as well as property and / or array references. E.g.
             //
@@ -2275,7 +2275,7 @@ namespace Microsoft.PowerShell.Commands
 
             _powershellV3 = System.Management.Automation.PowerShell.Create().AddScript(textOfScriptBlock);
 
-            if (_args != null)
+            if (_args is not null)
             {
                 foreach (object arg in _args)
                 {
@@ -2283,11 +2283,11 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (usingValuesInDict != null && usingValuesInDict.Count > 0)
+            if (usingValuesInDict is not null && usingValuesInDict.Count > 0)
             {
                 _powershellV3.AddParameter(Parser.VERBATIM_ARGUMENT, usingValuesInDict);
             }
-            else if (usingValuesInArray != null && usingValuesInArray.Length > 0)
+            else if (usingValuesInArray is not null && usingValuesInArray.Length > 0)
             {
                 _powershellV3.AddParameter(Parser.VERBATIM_ARGUMENT, usingValuesInArray);
             }
@@ -2986,7 +2986,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // When "-name" is not set, we use "*" that means matching all.
-            if (Name != null)
+            if (Name is not null)
             {
                 sessionNames = Name;
             }
@@ -3092,7 +3092,7 @@ namespace Microsoft.PowerShell.Commands
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
             // When "-name" is not set, we use "*" that means matching all .
-            if (Name != null)
+            if (Name is not null)
             {
                 sessionNames = Name;
             }
@@ -3432,7 +3432,7 @@ namespace Microsoft.PowerShell.Commands
         {
             CleanupRunspaceDebugging(PipelineRunspace);
 
-            if (pipeline != null)
+            if (pipeline is not null)
             {
                 // Dispose the pipeline object and release data and remoting resources.
                 // Pipeline object remains to provide information on final state and any errors incurred.
@@ -3446,7 +3446,7 @@ namespace Microsoft.PowerShell.Commands
                     OperationState.StopComplete;
             operationStateEventArgs.BaseEvent = baseEventArgs;
 
-            if (OperationComplete != null)
+            if (OperationComplete is not null)
             {
                 OperationComplete.SafeInvoke(this, operationStateEventArgs);
             }
@@ -3489,7 +3489,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="invokeAndDisconnect">Indicates if pipeline should be disconnected after invoking command.</param>
         internal ExecutionCmdletHelperComputerName(RemoteRunspace remoteRunspace, Pipeline pipeline, bool invokeAndDisconnect = false)
         {
-            Dbg.Assert(remoteRunspace != null,
+            Dbg.Assert(remoteRunspace is not null,
                     "RemoteRunspace reference cannot be null");
             PipelineRunspace = remoteRunspace;
 
@@ -3498,7 +3498,7 @@ namespace Microsoft.PowerShell.Commands
             RemoteRunspace = remoteRunspace;
             remoteRunspace.StateChanged += HandleRunspaceStateChanged;
 
-            Dbg.Assert(pipeline != null,
+            Dbg.Assert(pipeline is not null,
                     "Pipeline cannot be null or empty");
 
             this.pipeline = pipeline;
@@ -3610,7 +3610,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // raise a OperationComplete event with
                         // StopComplete message
-                        if (stateEventArgs.RunspaceStateInfo.Reason != null)
+                        if (stateEventArgs.RunspaceStateInfo.Reason is not null)
                         {
                             RaiseOperationCompleteEvent(stateEventArgs);
                         }
@@ -3644,7 +3644,7 @@ namespace Microsoft.PowerShell.Commands
                 case PipelineState.Completed:
                 case PipelineState.Stopped:
                 case PipelineState.Failed:
-                    if (RemoteRunspace != null)
+                    if (RemoteRunspace is not null)
                     {
                         RemoteRunspace.CloseAsync();
                     }
@@ -3669,7 +3669,7 @@ namespace Microsoft.PowerShell.Commands
         /// raises this operation complete</param>
         private void RaiseOperationCompleteEvent(EventArgs baseEventArgs)
         {
-            if (pipeline != null)
+            if (pipeline is not null)
             {
                 // Dispose the pipeline object and release data and remoting resources.
                 // Pipeline object remains to provide information on final state and any errors incurred.
@@ -3677,7 +3677,7 @@ namespace Microsoft.PowerShell.Commands
                 pipeline.Dispose();
             }
 
-            if (RemoteRunspace != null)
+            if (RemoteRunspace is not null)
             {
                 // Dispose of the runspace object.
                 RemoteRunspace.Dispose();
@@ -3891,7 +3891,7 @@ namespace Microsoft.PowerShell.Commands
                         // an Invalid Operation (inner) exception if the connectInfo object is invalid, including
                         // invalid computer names.
                         // We don't want to propagate the exception so just write error here.
-                        if (stream.ObjectWriter != null && stream.ObjectWriter.IsOpen)
+                        if (stream.ObjectWriter is not null && stream.ObjectWriter.IsOpen)
                         {
                             int errorCode;
                             string msg = StringUtil.Format(RemotingErrorIdStrings.QueryForRunspacesFailed, connectionInfo.ComputerName, ExtractMessage(e.InnerException, out errorCode));
@@ -3913,7 +3913,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Add all runspaces meeting filter criteria to collection.
-                if (runspaces != null)
+                if (runspaces is not null)
                 {
                     // Convert configuration name into shell Uri for comparison.
                     string shellUri = null;
@@ -3927,11 +3927,11 @@ namespace Microsoft.PowerShell.Commands
                     foreach (Runspace runspace in runspaces)
                     {
                         // Filter returned runspaces by ConfigurationName if provided.
-                        if (shellUri != null)
+                        if (shellUri is not null)
                         {
                             // Compare with returned shell Uri in connection info.
                             WSManConnectionInfo wsmanConnectionInfo = runspace.ConnectionInfo as WSManConnectionInfo;
-                            if (wsmanConnectionInfo != null &&
+                            if (wsmanConnectionInfo is not null &&
                                 !shellUri.Equals(wsmanConnectionInfo.ShellUri, StringComparison.OrdinalIgnoreCase))
                             {
                                 continue;
@@ -3943,12 +3943,12 @@ namespace Microsoft.PowerShell.Commands
                         // local runspace instead of the one returned from the server
                         // query.
                         PSSession existingPSSession = null;
-                        if (runspaceRepository != null)
+                        if (runspaceRepository is not null)
                         {
                             existingPSSession = runspaceRepository.GetItem(runspace.InstanceId);
                         }
 
-                        if (existingPSSession != null &&
+                        if (existingPSSession is not null &&
                             UseExistingRunspace(existingPSSession.Runspace, runspace))
                         {
                             if (TestRunspaceState(existingPSSession.Runspace, filterState))
@@ -3965,7 +3965,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Return only PSSessions that match provided Ids or Names.
-            if ((matchIds != null) && (filteredPSSessions.Count > 0))
+            if ((matchIds is not null) && (filteredPSSessions.Count > 0))
             {
                 Collection<PSSession> matchIdsSessions = new Collection<PSSession>();
                 foreach (Guid id in matchIds)
@@ -3986,7 +3986,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (!matchFound && stream.ObjectWriter != null && stream.ObjectWriter.IsOpen)
+                    if (!matchFound && stream.ObjectWriter is not null && stream.ObjectWriter.IsOpen)
                     {
                         string msg = StringUtil.Format(RemotingErrorIdStrings.SessionIdMatchFailed, id);
                         Exception reason = new RuntimeException(msg);
@@ -3998,7 +3998,7 @@ namespace Microsoft.PowerShell.Commands
                 // Return all found sessions.
                 return matchIdsSessions;
             }
-            else if ((matchNames != null) && (filteredPSSessions.Count > 0))
+            else if ((matchNames is not null) && (filteredPSSessions.Count > 0))
             {
                 Collection<PSSession> matchNamesSessions = new Collection<PSSession>();
                 foreach (string name in matchNames)
@@ -4019,7 +4019,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (!matchFound && stream.ObjectWriter != null && stream.ObjectWriter.IsOpen)
+                    if (!matchFound && stream.ObjectWriter is not null && stream.ObjectWriter.IsOpen)
                     {
                         string msg = StringUtil.Format(RemotingErrorIdStrings.SessionNameMatchFailed, name);
                         Exception reason = new RuntimeException(msg);
@@ -4049,8 +4049,8 @@ namespace Microsoft.PowerShell.Commands
             Runspace existingRunspace,
             Runspace queriedrunspace)
         {
-            Dbg.Assert(existingRunspace != null, "Invalid parameter.");
-            Dbg.Assert(queriedrunspace != null, "Invalid parameter.");
+            Dbg.Assert(existingRunspace is not null, "Invalid parameter.");
+            Dbg.Assert(queriedrunspace is not null, "Invalid parameter.");
 
             if (existingRunspace.RunspaceStateInfo.State == RunspaceState.Broken)
             {
@@ -4111,7 +4111,7 @@ namespace Microsoft.PowerShell.Commands
                             else if (reader.LocalName.Equals("WSManFault", StringComparison.OrdinalIgnoreCase))
                             {
                                 string errorCodeString = reader.GetAttribute("Code");
-                                if (errorCodeString != null)
+                                if (errorCodeString is not null)
                                 {
                                     try
                                     {

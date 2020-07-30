@@ -101,7 +101,7 @@ namespace System.Management.Automation.ComInterop
             ComTypeDesc ctd = _comTypeDesc;
             string typeName = null;
 
-            if (ctd != null)
+            if (ctd is not null)
             {
                 typeName = ctd.TypeName;
             }
@@ -162,7 +162,7 @@ namespace System.Management.Automation.ComInterop
         internal bool TryGetGetItem(out ComMethodDesc value)
         {
             ComMethodDesc methodDesc = _comTypeDesc.GetItem;
-            if (methodDesc != null)
+            if (methodDesc is not null)
             {
                 value = methodDesc;
                 return true;
@@ -193,7 +193,7 @@ namespace System.Management.Automation.ComInterop
         internal bool TryGetSetItem(out ComMethodDesc value)
         {
             ComMethodDesc methodDesc = _comTypeDesc.SetItem;
-            if (methodDesc != null)
+            if (methodDesc is not null)
             {
                 value = methodDesc;
                 return true;
@@ -376,7 +376,7 @@ namespace System.Management.Automation.ComInterop
         {
             // _comTypeDesc.Events is null if we have not yet attempted
             // to scan the object for events.
-            if (_comTypeDesc != null && _comTypeDesc.Events != null)
+            if (_comTypeDesc is not null && _comTypeDesc.Events is not null)
             {
                 return;
             }
@@ -396,7 +396,7 @@ namespace System.Management.Automation.ComInterop
                 lock (s_cacheComTypeDesc)
                 {
                     if (s_cacheComTypeDesc.TryGetValue(typeAttr.guid, out _comTypeDesc) == true &&
-                        _comTypeDesc.Events != null)
+                        _comTypeDesc.Events is not null)
                     {
                         return;
                     }
@@ -515,10 +515,10 @@ namespace System.Management.Automation.ComInterop
 
         private static ComTypes.ITypeInfo GetCoClassTypeInfo(object rcw, ComTypes.ITypeInfo typeInfo)
         {
-            Debug.Assert(typeInfo != null);
+            Debug.Assert(typeInfo is not null);
 
             IProvideClassInfo provideClassInfo = rcw as IProvideClassInfo;
-            if (provideClassInfo != null)
+            if (provideClassInfo is not null)
             {
                 IntPtr typeInfoPtr = IntPtr.Zero;
                 try
@@ -561,7 +561,7 @@ namespace System.Management.Automation.ComInterop
 
         private void EnsureScanDefinedMethods()
         {
-            if (_comTypeDesc != null && _comTypeDesc.Funcs != null)
+            if (_comTypeDesc is not null && _comTypeDesc.Funcs is not null)
             {
                 return;
             }
@@ -580,7 +580,7 @@ namespace System.Management.Automation.ComInterop
                 lock (s_cacheComTypeDesc)
                 {
                     if (s_cacheComTypeDesc.TryGetValue(typeAttr.guid, out _comTypeDesc) == true &&
-                        _comTypeDesc.Funcs != null)
+                        _comTypeDesc.Funcs is not null)
                     {
                         return;
                     }

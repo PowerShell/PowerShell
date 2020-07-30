@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 return InvokeProvider.Property.GetPropertyDynamicParameters(
                     Path[0],
@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            if (Path != null && Path.Length > 0)
+            if (Path is not null && Path.Length > 0)
             {
                 return InvokeProvider.Property.GetPropertyDynamicParameters(
                     Path[0],
@@ -288,17 +288,17 @@ namespace Microsoft.PowerShell.Commands
                         SessionStateUtilities.ConvertArrayToCollection<string>(_property),
                         base.SuppressWildcardExpansion);
 
-                    if (itemProperties != null)
+                    if (itemProperties is not null)
                     {
                         foreach (PSObject currentItem in itemProperties)
                         {
-                            if (this.Name != null)
+                            if (this.Name is not null)
                             {
                                 foreach (string currentPropertyName in this.Name)
                                 {
-                                    if (currentItem.Properties != null &&
-                                        currentItem.Properties[currentPropertyName] != null &&
-                                        currentItem.Properties[currentPropertyName].Value != null)
+                                    if (currentItem.Properties is not null &&
+                                        currentItem.Properties[currentPropertyName] is not null &&
+                                        currentItem.Properties[currentPropertyName].Value is not null)
                                     {
                                         CmdletProviderContext.WriteObject(currentItem.Properties[currentPropertyName].Value);
                                     }

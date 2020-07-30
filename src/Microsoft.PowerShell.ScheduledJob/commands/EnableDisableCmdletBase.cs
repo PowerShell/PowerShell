@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             foreach (ScheduledJobTrigger trigger in _triggers)
             {
                 trigger.Enabled = Enabled;
-                if (trigger.JobDefinition != null)
+                if (trigger.JobDefinition is not null)
                 {
                     trigger.UpdateJobDefinition();
                 }

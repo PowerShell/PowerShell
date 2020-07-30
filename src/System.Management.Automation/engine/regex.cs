@@ -162,7 +162,7 @@ namespace System.Management.Automation
                 return stringComparison;
             }
 
-            if (_isMatch != null)
+            if (_isMatch is not null)
             {
                 return;
             }
@@ -202,7 +202,7 @@ namespace System.Management.Automation
         public bool IsMatch(string input)
         {
             Init();
-            return input != null && _isMatch(input);
+            return input is not null && _isMatch(input);
         }
 
         /// <summary>
@@ -1154,7 +1154,7 @@ namespace System.Management.Automation
 
             public BracketExpressionElement(Regex regex)
             {
-                Dbg.Assert(regex != null, "Caller should verify regex != null");
+                Dbg.Assert(regex is not null, "Caller should verify regex is not null");
                 _regex = regex;
             }
 

@@ -182,7 +182,7 @@ namespace Microsoft.Management.UI.Internal
                    catch (Exception e)
                    {
                        // Store the exception in a local variable that will be checked later.
-                       if (e.InnerException != null)
+                       if (e.InnerException is not null)
                        {
                            this.exception = e.InnerException;
                        }
@@ -216,7 +216,7 @@ namespace Microsoft.Management.UI.Internal
                 this.zoomLevel = this.zoomLevel + ZOOM_INCREMENT;
                 Grid g = this.gridViewWindow.Content as Grid;
 
-                if (g != null)
+                if (g is not null)
                 {
                     g.LayoutTransform = new ScaleTransform(this.zoomLevel, this.zoomLevel, 0, 0);
                 }
@@ -234,7 +234,7 @@ namespace Microsoft.Management.UI.Internal
             {
                 this.zoomLevel = this.zoomLevel - ZOOM_INCREMENT;
                 Grid g = this.gridViewWindow.Content as Grid;
-                if (g != null)
+                if (g is not null)
                 {
                     g.LayoutTransform = new ScaleTransform(this.zoomLevel, this.zoomLevel, 0, 0);
                 }
@@ -400,7 +400,7 @@ namespace Microsoft.Management.UI.Internal
         private void AddColumns(string[] propertyNames, string[] displayNames, Type[] types)
         {
             // Wait for the gridViewWindow thread to signal that loading of Window is done
-            if (this.gridViewWindowLoaded != null)
+            if (this.gridViewWindowLoaded is not null)
             {
                 this.gridViewWindowLoaded.WaitOne();
                 this.gridViewWindowLoaded = null;
@@ -465,7 +465,7 @@ namespace Microsoft.Management.UI.Internal
                         catch (Exception e)
                         {
                             // Store the exception in a local variable that will be checked later.
-                            if (e.InnerException != null)
+                            if (e.InnerException is not null)
                             {
                                 this.exception = e.InnerException;
                             }
@@ -501,7 +501,7 @@ namespace Microsoft.Management.UI.Internal
                         catch (Exception e)
                         {
                             // Store the exception in a local variable that will be checked later.
-                            if (e.InnerException != null)
+                            if (e.InnerException is not null)
                             {
                                 this.exception = e.InnerException;
                             }
@@ -537,7 +537,7 @@ namespace Microsoft.Management.UI.Internal
         {
             Exception local = this.exception;
 
-            if (local != null)
+            if (local is not null)
             {
                 // Clear the caught exception.
                 this.exception = null;
@@ -558,7 +558,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="e">Event Args.</param>
         private void GridViewWindowClosed(object sender, EventArgs e)
         {
-            if (this.closedEvent != null && !this.closedEvent.SafeWaitHandle.IsClosed)
+            if (this.closedEvent is not null && !this.closedEvent.SafeWaitHandle.IsClosed)
             {
                 try
                 {

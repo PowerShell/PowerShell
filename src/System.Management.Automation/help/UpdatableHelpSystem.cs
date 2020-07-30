@@ -292,7 +292,7 @@ namespace System.Management.Automation.Help
         {
             CultureInfo culture = CultureInfo.CurrentUICulture;
 
-            while (culture != null)
+            while (culture is not null)
             {
                 if (string.IsNullOrEmpty(culture.Name))
                 {
@@ -345,7 +345,7 @@ namespace System.Management.Automation.Help
                         client.Timeout = _defaultTimeout;
                         Task<string> responseBody = client.GetStringAsync(uri);
                         xml = responseBody.Result;
-                        if (responseBody.Exception != null)
+                        if (responseBody.Exception is not null)
                         {
                             return null;
                         }
@@ -797,7 +797,7 @@ namespace System.Management.Automation.Help
 
                     if (!responseMsg.IsCanceled)
                     {
-                        if (responseMsg.Exception != null)
+                        if (responseMsg.Exception is not null)
                         {
                             Errors.Add(new UpdatableHelpSystemException("HelpContentNotFound",
                                 StringUtil.Format(HelpDisplayStrings.HelpContentNotFound),
@@ -845,7 +845,7 @@ namespace System.Management.Automation.Help
             {
                 Task copyStreamOp = response.Content.CopyToAsync(downloadedFileStream);
                 copyStreamOp.Wait();
-                if (copyStreamOp.Exception != null)
+                if (copyStreamOp.Exception is not null)
                 {
                     Errors.Add(copyStreamOp.Exception);
                 }
@@ -901,7 +901,7 @@ namespace System.Management.Automation.Help
             UpdatableHelpInfo oldHelpInfo = null;
             string xml = UpdatableHelpSystem.LoadStringFromPath(_cmdlet, destHelpInfo, null);
 
-            if (xml != null)
+            if (xml is not null)
             {
                 // constructing the helpinfo object from previous update help log xml..
                 // no need to resolve the uri's in this case.
@@ -927,7 +927,7 @@ namespace System.Management.Automation.Help
 
                     bool found = false;
 
-                    if (oldHelpInfo != null)
+                    if (oldHelpInfo is not null)
                     {
                         foreach (CultureSpecificUpdatableHelp oldInfo in oldHelpInfo.UpdatableHelpItems)
                         {
@@ -1268,7 +1268,7 @@ namespace System.Management.Automation.Help
 
                         XmlNode helpItemsNode = null;
 
-                        if (contentDocument.DocumentElement != null &&
+                        if (contentDocument.DocumentElement is not null &&
                             contentDocument.DocumentElement.LocalName.Equals("providerHelp", StringComparison.OrdinalIgnoreCase))
                         {
                             helpItemsNode = contentDocument;
@@ -1303,7 +1303,7 @@ namespace System.Management.Automation.Help
                             }
                         }
 
-                        Debug.Assert(helpItemsNode != null, "helpItemsNode must not be null");
+                        Debug.Assert(helpItemsNode is not null, "helpItemsNode must not be null");
 
                         string targetNamespace = "http://schemas.microsoft.com/maml/2004/10";
 
@@ -1416,9 +1416,9 @@ namespace System.Management.Automation.Help
         /// <returns>String loaded.</returns>
         internal static string LoadStringFromPath(PSCmdlet cmdlet, string path, PSCredential credential)
         {
-            Debug.Assert(path != null);
+            Debug.Assert(path is not null);
 
-            if (credential != null)
+            if (credential is not null)
             {
                 // New PSDrive
 
@@ -1523,7 +1523,7 @@ namespace System.Management.Automation.Help
 
             if (!e.Cancelled)
             {
-                if (e.Error != null)
+                if (e.Error is not null)
                 {
                     if (e.Error is WebException)
                     {
@@ -1613,7 +1613,7 @@ namespace System.Management.Automation.Help
 
                 PSDriveInfo mappedDrive = cmdlet.SessionState.Drive.GetAtScope(_driveName, "local");
 
-                if (mappedDrive != null)
+                if (mappedDrive is not null)
                 {
                     if (mappedDrive.Root.Equals(path))
                     {
@@ -1645,7 +1645,7 @@ namespace System.Management.Automation.Help
         {
             PSDriveInfo mappedDrive = _cmdlet.SessionState.Drive.GetAtScope(_driveName, "local");
 
-            if (mappedDrive != null)
+            if (mappedDrive is not null)
             {
                 _cmdlet.SessionState.Drive.Remove(_driveName, true, "local");
             }

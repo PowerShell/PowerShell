@@ -143,14 +143,14 @@ namespace System.Diagnostics.Eventing
                 return;
             }
 
-            if (Filter != null && !Filter.ShouldTrace(eventCache, source, eventType, id, null, null, null, null))
+            if (Filter is not null && !Filter.ShouldTrace(eventCache, source, eventType, id, null, null, null, null))
             {
                 return;
             }
 
             StringBuilder dataString = new StringBuilder(s_defaultPayloadSize);
 
-            if (data != null)
+            if (data is not null)
             {
                 dataString.Append(data.ToString());
             }
@@ -171,7 +171,7 @@ namespace System.Diagnostics.Eventing
                 return;
             }
 
-            if (Filter != null && !Filter.ShouldTrace(eventCache, source, eventType, id, null, null, null, null))
+            if (Filter is not null && !Filter.ShouldTrace(eventCache, source, eventType, id, null, null, null, null))
             {
                 return;
             }
@@ -179,11 +179,11 @@ namespace System.Diagnostics.Eventing
             int index;
             StringBuilder dataString = new StringBuilder(s_defaultPayloadSize);
 
-            if ((data != null) && (data.Length > 0))
+            if ((data is not null) && (data.Length > 0))
             {
                 for (index = 0; index < (data.Length - 1); index++)
                 {
-                    if (data[index] != null)
+                    if (data[index] is not null)
                     {
                         dataString.Append(data[index].ToString());
                         dataString.Append(Delimiter);
@@ -194,7 +194,7 @@ namespace System.Diagnostics.Eventing
                     }
                 }
 
-                if (data[index] != null)
+                if (data[index] is not null)
                 {
                     dataString.Append(data[index].ToString());
                 }
@@ -220,7 +220,7 @@ namespace System.Diagnostics.Eventing
                 return;
             }
 
-            if (Filter != null && !Filter.ShouldTrace(eventCache, source, eventType, id, null, null, null, null))
+            if (Filter is not null && !Filter.ShouldTrace(eventCache, source, eventType, id, null, null, null, null))
             {
                 return;
             }
@@ -237,7 +237,7 @@ namespace System.Diagnostics.Eventing
                 return;
             }
 
-            if (Filter != null && !Filter.ShouldTrace(eventCache, source, eventType, id, null, null, null, null))
+            if (Filter is not null && !Filter.ShouldTrace(eventCache, source, eventType, id, null, null, null, null))
             {
                 return;
             }
@@ -257,7 +257,7 @@ namespace System.Diagnostics.Eventing
                 return;
             }
 
-            if (Filter != null && !Filter.ShouldTrace(eventCache, source, eventType, id, null, null, null, null))
+            if (Filter is not null && !Filter.ShouldTrace(eventCache, source, eventType, id, null, null, null, null))
             {
                 return;
             }
@@ -279,7 +279,7 @@ namespace System.Diagnostics.Eventing
         public override void Fail(string message, string detailMessage)
         {
             StringBuilder failMessage = new StringBuilder(message);
-            if (detailMessage != null)
+            if (detailMessage is not null)
             {
                 failMessage.Append(" ");
                 failMessage.Append(detailMessage);

@@ -75,12 +75,12 @@ namespace Microsoft.PowerShell.Cim
 
             Collection<PSAdaptedProperty> result = new Collection<PSAdaptedProperty>();
 
-            if (cimInstance.CimInstanceProperties != null)
+            if (cimInstance.CimInstanceProperties is not null)
             {
                 foreach (CimProperty property in cimInstance.CimInstanceProperties)
                 {
                     PSAdaptedProperty propertyToAdd = GetCimPropertyAdapter(property, baseObject);
-                    if (propertyToAdd != null)
+                    if (propertyToAdd is not null)
                     {
                         result.Add(propertyToAdd);
                     }
@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Cim
             }
 
             PSAdaptedProperty psComputerNameProperty = GetPSComputerNameAdapter(cimInstance);
-            if (psComputerNameProperty != null)
+            if (psComputerNameProperty is not null)
             {
                 result.Add(psComputerNameProperty);
             }
@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Cim
             }
 
             CimProperty cimProperty = cimInstance.CimInstanceProperties[propertyName];
-            if (cimProperty != null)
+            if (cimProperty is not null)
             {
                 PSAdaptedProperty prop = GetCimPropertyAdapter(cimProperty, baseObject, propertyName);
                 return prop;
@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Cim
 
             foreach (CimProperty cimProperty in cimInstance.CimInstanceProperties)
             {
-                if (cimProperty != null && predicate(cimProperty.Name))
+                if (cimProperty is not null && predicate(cimProperty.Name))
                 {
                     PSAdaptedProperty prop = GetCimPropertyAdapter(cimProperty, baseObject, cimProperty.Name);
                     return prop;
@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.Cim
             }
 
             CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
-            if (cimProperty != null)
+            if (cimProperty is not null)
             {
                 return CimTypeToTypeNameDisplayString(cimProperty.CimType);
             }
@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell.Cim
             }
 
             CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
-            if (cimProperty != null)
+            if (cimProperty is not null)
             {
                 return cimProperty.Value;
             }
@@ -262,8 +262,8 @@ namespace Microsoft.PowerShell.Cim
         {
             List<CimClass> inheritanceChain = new List<CimClass>();
             CimClass cimClass = cimInstance.CimClass;
-            Dbg.Assert(cimClass != null, "CimInstance should always have ClassDecl");
-            while (cimClass != null)
+            Dbg.Assert(cimClass is not null, "CimInstance should always have ClassDecl");
+            while (cimClass is not null)
             {
                 inheritanceChain.Add(cimClass);
                 try
@@ -320,9 +320,9 @@ namespace Microsoft.PowerShell.Cim
             result.AddRange(typeNamesWithNamespace);
             result.AddRange(typeNamesWithoutNamespace);
 
-            if (baseObject != null)
+            if (baseObject is not null)
             {
-                for (Type type = baseObject.GetType(); type != null; type = type.BaseType)
+                for (Type type = baseObject.GetType(); type is not null; type = type.BaseType)
                 {
                     result.Add(type.FullName);
                 }
@@ -394,7 +394,7 @@ namespace Microsoft.PowerShell.Cim
 
             CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
             object valueToSet = value;
-            if (valueToSet != null)
+            if (valueToSet is not null)
             {
                 // Convert only if value is not null
                 Type paramType;
@@ -408,7 +408,7 @@ namespace Microsoft.PowerShell.Cim
                         break;
                     default:
                         paramType = CimConverter.GetDotNetType(cimProperty.CimType);
-                        Dbg.Assert(paramType != null, "'default' case should only be used for well-defined CimType->DotNetType conversions");
+                        Dbg.Assert(paramType is not null, "'default' case should only be used for well-defined CimType->DotNetType conversions");
                         break;
                 }
 

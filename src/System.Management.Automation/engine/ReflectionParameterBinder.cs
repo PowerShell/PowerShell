@@ -123,7 +123,7 @@ namespace System.Management.Automation
 
             try
             {
-                var setter = parameterMetadata != null
+                var setter = parameterMetadata is not null
                     ? (parameterMetadata.Setter ?? (parameterMetadata.Setter = GetSetter(Target.GetType(), name)))
                     : GetSetter(Target.GetType(), name);
                 setter(Target, value);
@@ -269,7 +269,7 @@ namespace System.Management.Automation
             try
             {
                 var propertyInfo = type.GetProperty(name, bindingFlags);
-                if (propertyInfo != null)
+                if (propertyInfo is not null)
                     return Expression.Property(target, propertyInfo);
             }
             catch (AmbiguousMatchException)
@@ -290,7 +290,7 @@ namespace System.Management.Automation
             try
             {
                 var fieldInfo = type.GetField(name, bindingFlags);
-                if (fieldInfo != null)
+                if (fieldInfo is not null)
                     return Expression.Field(target, fieldInfo);
             }
             catch (AmbiguousMatchException)

@@ -72,7 +72,7 @@ namespace Microsoft.Management.UI.Internal
         {
             PropertyChangedEventHandler eh = this.PropertyChanged;
 
-            if (eh != null)
+            if (eh is not null)
             {
                 eh(this, new PropertyChangedEventArgs(propertyName));
             }

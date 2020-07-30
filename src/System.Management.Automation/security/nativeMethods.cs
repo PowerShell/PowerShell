@@ -642,7 +642,7 @@ namespace System.Management.Automation.Security
             siex.psAuthenticatedNotUsed = IntPtr.Zero;
             siex.psUnauthenticatedNotUsed = IntPtr.Zero;
 
-            if (hashAlgorithm != null)
+            if (hashAlgorithm is not null)
             {
                 siex.pszHashAlg = hashAlgorithm;
             }

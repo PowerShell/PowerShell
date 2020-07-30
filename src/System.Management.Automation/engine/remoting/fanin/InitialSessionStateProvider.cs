@@ -159,7 +159,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void AssertValueNotAssigned(string optionName, object originalValue)
         {
-            if (originalValue != null)
+            if (originalValue is not null)
             {
                 throw PSTraceSource.NewArgumentException(optionName,
                     RemotingErrorIdStrings.DuplicateInitializationParameterFound, optionName, INITPARAMETERSTOKEN);
@@ -479,7 +479,7 @@ namespace System.Management.Automation.Remoting
                 configData.ApplicationBase,
                 configData.AssemblyName,
                 configData.EndPointConfigurationTypeName);
-            Dbg.Assert(endPointConfigType != null, "EndPointConfiguration type cannot be null");
+            Dbg.Assert(endPointConfigType is not null, "EndPointConfiguration type cannot be null");
             configData.EndPointConfigurationType = endPointConfigType;
             lock (s_syncObject)
             {
@@ -534,7 +534,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // configuration xml specified an assembly and typetoload.
-            if (assembly != null)
+            if (assembly is not null)
             {
                 try
                 {
@@ -659,7 +659,7 @@ namespace System.Management.Automation.Remoting
                     s_tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
                 }
 
-                if (result != null)
+                if (result is not null)
                 {
                     return result;
                 }
@@ -760,7 +760,7 @@ namespace System.Management.Automation.Remoting
         ReadStringValue(RegistryKey registryKey, string name, bool mandatory)
         {
             Dbg.Assert(!string.IsNullOrEmpty(name), "caller should validate the name parameter");
-            Dbg.Assert(registryKey != null, "Caller should validate the registryKey parameter");
+            Dbg.Assert(registryKey is not null, "Caller should validate the registryKey parameter");
 
             object value = registryKey.GetValue(name);
             if (value is null && mandatory)
@@ -806,7 +806,7 @@ namespace System.Management.Automation.Remoting
         {
             InitialSessionState result = InitialSessionState.CreateDefault2();
             // TODO: Remove this after RDS moved to $using
-            if (senderInfo.ConnectionString != null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8")) { PSSessionConfigurationData.IsServerManager = true; }
+            if (senderInfo.ConnectionString is not null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8")) { PSSessionConfigurationData.IsServerManager = true; }
 
             return result;
         }
@@ -824,12 +824,12 @@ namespace System.Management.Automation.Remoting
 
             InitialSessionState sessionState = InitialSessionState.CreateDefault2();
             // now get all the modules in the specified path and import the same
-            if (sessionConfigurationData != null && sessionConfigurationData.ModulesToImportInternal != null)
+            if (sessionConfigurationData is not null && sessionConfigurationData.ModulesToImportInternal is not null)
             {
                 foreach (var module in sessionConfigurationData.ModulesToImportInternal)
                 {
                     var moduleName = module as string;
-                    if (moduleName != null)
+                    if (moduleName is not null)
                     {
                         moduleName = Environment.ExpandEnvironmentVariables(moduleName);
 
@@ -838,7 +838,7 @@ namespace System.Management.Automation.Remoting
                     else
                     {
                         var moduleSpec = module as ModuleSpecification;
-                        if (moduleSpec != null)
+                        if (moduleSpec is not null)
                         {
                             var modulesToImport = new Collection<ModuleSpecification> { moduleSpec };
                             sessionState.ImportPSModule(modulesToImport);
@@ -848,7 +848,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // TODO: Remove this after RDS moved to $using
-            if (senderInfo.ConnectionString != null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8")) { PSSessionConfigurationData.IsServerManager = true; }
+            if (senderInfo.ConnectionString is not null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8")) { PSSessionConfigurationData.IsServerManager = true; }
 
             return sessionState;
         }
@@ -1797,7 +1797,7 @@ namespace System.Management.Automation.Remoting
             {
                 string[] roleCapabilities = TryGetStringArray(_configHash[ConfigFileConstants.RoleCapabilities]);
 
-                if (roleCapabilities != null)
+                if (roleCapabilities is not null)
                 {
                     foreach (string roleCapability in roleCapabilities)
                     {
@@ -1818,7 +1818,7 @@ namespace System.Management.Automation.Remoting
             if (ConfigHash.ContainsKey(ConfigFileConstants.RoleCapabilityFiles))
             {
                 string[] roleCapabilityFiles = TryGetStringArray(ConfigHash[ConfigFileConstants.RoleCapabilityFiles]);
-                if (roleCapabilityFiles != null)
+                if (roleCapabilityFiles is not null)
                 {
                     foreach (var roleCapabilityFilePath in roleCapabilityFiles)
                     {
@@ -1864,7 +1864,7 @@ namespace System.Management.Automation.Remoting
                 if (_configHash.ContainsKey(customizationString))
                 {
                     IEnumerable existingValueAsCollection = LanguagePrimitives.GetEnumerable(_configHash[customization]);
-                    if (existingValueAsCollection != null)
+                    if (existingValueAsCollection is not null)
                     {
                         foreach (object value in existingValueAsCollection)
                         {
@@ -1879,7 +1879,7 @@ namespace System.Management.Automation.Remoting
 
                 // Then add the current role's values
                 IEnumerable newValueAsCollection = LanguagePrimitives.GetEnumerable(childConfigHash[customization]);
-                if (newValueAsCollection != null)
+                if (newValueAsCollection is not null)
                 {
                     foreach (object value in newValueAsCollection)
                     {
@@ -2002,7 +2002,7 @@ namespace System.Management.Automation.Remoting
             {
                 string[] providers = TryGetStringArray(_configHash[ConfigFileConstants.VisibleProviders]);
 
-                if (providers != null)
+                if (providers is not null)
                 {
                     System.Collections.Generic.HashSet<string> addedProviders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     foreach (string provider in providers)
@@ -2030,7 +2030,7 @@ namespace System.Management.Automation.Remoting
             {
                 string[] assemblies = TryGetStringArray(_configHash[ConfigFileConstants.AssembliesToLoad]);
 
-                if (assemblies != null)
+                if (assemblies is not null)
                 {
                     foreach (string assembly in assemblies)
                     {
@@ -2043,7 +2043,7 @@ namespace System.Management.Automation.Remoting
             {
                 object[] modules = TryGetObjectsOfType<object>(_configHash[ConfigFileConstants.ModulesToImport],
                                                                new Type[] { typeof(string), typeof(Hashtable) });
-                if ((_configHash[ConfigFileConstants.ModulesToImport] != null) && (modules is null))
+                if ((_configHash[ConfigFileConstants.ModulesToImport] is not null) && (modules is null))
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeStringOrHashtableArray,
                         ConfigFileConstants.ModulesToImport);
@@ -2053,7 +2053,7 @@ namespace System.Management.Automation.Remoting
                     throw ioe;
                 }
 
-                if (modules != null)
+                if (modules is not null)
                 {
                     Collection<ModuleSpecification> modulesToImport = new Collection<ModuleSpecification>();
                     foreach (object module in modules)
@@ -2067,14 +2067,14 @@ namespace System.Management.Automation.Remoting
                         else
                         {
                             Hashtable moduleHash = module as Hashtable;
-                            if (moduleHash != null)
+                            if (moduleHash is not null)
                             {
                                 moduleSpec = new ModuleSpecification(moduleHash);
                             }
                         }
 
                         // Now add the moduleSpec to modulesToImport
-                        if (moduleSpec != null)
+                        if (moduleSpec is not null)
                         {
                             if (string.Equals(InitialSessionState.CoreModule, moduleSpec.Name,
                                               StringComparison.OrdinalIgnoreCase))
@@ -2123,17 +2123,17 @@ namespace System.Management.Automation.Remoting
             {
                 Hashtable[] aliases = TryGetHashtableArray(_configHash[ConfigFileConstants.AliasDefinitions]);
 
-                if (aliases != null)
+                if (aliases is not null)
                 {
                     foreach (Hashtable alias in aliases)
                     {
                         SessionStateAliasEntry entry = CreateSessionStateAliasEntry(alias, aliasVisibilityApplied);
 
-                        if (entry != null)
+                        if (entry is not null)
                         {
                             // Indexing iss.Commands with a command that does not exist returns 'null', rather
                             // than some sort of KeyNotFound exception.
-                            if (iss.Commands[entry.Name] != null)
+                            if (iss.Commands[entry.Name] is not null)
                             {
                                 iss.Commands.Remove(entry.Name, typeof(SessionStateAliasEntry));
                             }
@@ -2148,7 +2148,7 @@ namespace System.Management.Automation.Remoting
             {
                 string[] aliases = DISCPowerShellConfiguration.TryGetStringArray(_configHash[ConfigFileConstants.VisibleAliases]);
 
-                if (aliases != null)
+                if (aliases is not null)
                 {
                     foreach (string alias in aliases)
                     {
@@ -2180,13 +2180,13 @@ namespace System.Management.Automation.Remoting
             {
                 Hashtable[] functions = TryGetHashtableArray(_configHash[ConfigFileConstants.FunctionDefinitions]);
 
-                if (functions != null)
+                if (functions is not null)
                 {
                     foreach (Hashtable function in functions)
                     {
                         SessionStateFunctionEntry entry = CreateSessionStateFunctionEntry(function, functionVisibilityApplied);
 
-                        if (entry != null)
+                        if (entry is not null)
                         {
                             iss.Commands.Add(entry);
                         }
@@ -2216,12 +2216,12 @@ namespace System.Management.Automation.Remoting
             {
                 Hashtable[] variables = TryGetHashtableArray(_configHash[ConfigFileConstants.VariableDefinitions]);
 
-                if (variables != null)
+                if (variables is not null)
                 {
                     foreach (Hashtable variable in variables)
                     {
                         if (variable.ContainsKey(ConfigFileConstants.VariableValueToken) &&
-                            ((variable[ConfigFileConstants.VariableValueToken] as ScriptBlock) != null))
+                            ((variable[ConfigFileConstants.VariableValueToken] as ScriptBlock) is not null))
                         {
                             iss.DynamicVariablesToDefine.Add(variable);
                             continue;
@@ -2229,7 +2229,7 @@ namespace System.Management.Automation.Remoting
 
                         SessionStateVariableEntry entry = CreateSessionStateVariableEntry(variable, iss.LanguageMode);
 
-                        if (entry != null)
+                        if (entry is not null)
                         {
                             iss.Variables.Add(entry);
                         }
@@ -2241,7 +2241,7 @@ namespace System.Management.Automation.Remoting
             {
                 Hashtable[] variablesList = TryGetHashtableArray(_configHash[ConfigFileConstants.EnvironmentVariables]);
 
-                if (variablesList != null)
+                if (variablesList is not null)
                 {
                     foreach (Hashtable variables in variablesList)
                     {
@@ -2259,7 +2259,7 @@ namespace System.Management.Automation.Remoting
             {
                 string[] types = DISCPowerShellConfiguration.TryGetStringArray(_configHash[ConfigFileConstants.TypesToProcess]);
 
-                if (types != null)
+                if (types is not null)
                 {
                     foreach (string type in types)
                     {
@@ -2276,7 +2276,7 @@ namespace System.Management.Automation.Remoting
             {
                 string[] formats = DISCPowerShellConfiguration.TryGetStringArray(_configHash[ConfigFileConstants.FormatsToProcess]);
 
-                if (formats != null)
+                if (formats is not null)
                 {
                     foreach (string format in formats)
                     {
@@ -2292,7 +2292,7 @@ namespace System.Management.Automation.Remoting
             if (_configHash.ContainsKey(ConfigFileConstants.VisibleExternalCommands))
             {
                 string[] externalCommands = TryGetStringArray(_configHash[ConfigFileConstants.VisibleExternalCommands]);
-                if (externalCommands != null)
+                if (externalCommands is not null)
                 {
                     foreach (string command in externalCommands)
                     {
@@ -2321,7 +2321,7 @@ namespace System.Management.Automation.Remoting
             {
                 string[] startupScripts = DISCPowerShellConfiguration.TryGetStringArray(_configHash[ConfigFileConstants.ScriptsToProcess]);
 
-                if (startupScripts != null)
+                if (startupScripts is not null)
                 {
                     foreach (string script in startupScripts)
                     {
@@ -2395,7 +2395,7 @@ namespace System.Management.Automation.Remoting
                 if (Convert.ToBoolean(_configHash[ConfigFileConstants.MountUserDrive], CultureInfo.InvariantCulture))
                 {
                     iss.UserDriveEnabled = true;
-                    iss.UserDriveUserName = (senderInfo != null) ? senderInfo.UserInfo.Identity.Name : null;
+                    iss.UserDriveUserName = (senderInfo is not null) ? senderInfo.UserInfo.Identity.Name : null;
 
                     // Set user drive max drive if provided.
                     if (_configHash.ContainsKey(ConfigFileConstants.UserDriveMaxSize))
@@ -2477,7 +2477,7 @@ namespace System.Management.Automation.Remoting
                     // (I.e.: Exposed parameter with ValidateSet and / or ValidatePattern)
                     // Collect these so that we can post-process them.
                     IDictionary commandModification = commandObject as IDictionary;
-                    if (commandModification != null)
+                    if (commandModification is not null)
                     {
                         ProcessCommandModification(commandModifications, commandModification);
                     }
@@ -2501,7 +2501,7 @@ namespace System.Management.Automation.Remoting
             {
                 parameters = TryGetHashtableArray(commandModification["Parameters"]);
 
-                if (parameters != null)
+                if (parameters is not null)
                 {
                     // Validate that the parameter restriction has the right keys
                     foreach (Hashtable parameter in parameters)
@@ -2785,7 +2785,7 @@ namespace System.Management.Automation.Remoting
             // Scalar case
             Hashtable hashtable = hashObj as Hashtable;
 
-            if (hashtable != null)
+            if (hashtable is not null)
             {
                 return new[] { hashtable };
             }
@@ -2798,7 +2798,7 @@ namespace System.Management.Automation.Remoting
                 // 2. Convert from object array
                 object[] objArray = hashObj as object[];
 
-                if (objArray != null)
+                if (objArray is not null)
                 {
                     hashArray = new Hashtable[objArray.Length];
 
@@ -2833,7 +2833,7 @@ namespace System.Management.Automation.Remoting
                 // Scalar case
                 object obj = hashObj as object;
 
-                if (obj != null)
+                if (obj is not null)
                 {
                     return new string[] { obj.ToString() };
                 }
@@ -2860,7 +2860,7 @@ namespace System.Management.Automation.Remoting
             {
                 // Scalar case
                 object obj = hashObj;
-                if (obj != null)
+                if (obj is not null)
                 {
                     foreach (Type type in types)
                     {

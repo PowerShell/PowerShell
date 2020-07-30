@@ -120,14 +120,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 IEnumerable<LocalPrincipal> principals = null;
 
-                if (Group != null)
+                if (Group is not null)
                     principals = ProcessGroup(Group);
-                else if (Name != null)
+                else if (Name is not null)
                     principals = ProcessName(Name);
-                else if (SID != null)
+                else if (SID is not null)
                     principals = ProcessSid(SID);
 
-                if (principals != null)
+                if (principals is not null)
                     WriteObject(principals, true);
             }
             catch (Exception ex)
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (sam != null)
+            if (sam is not null)
             {
                 sam.Dispose();
                 sam = null;
@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     var sid = this.TrySid(Member);
 
-                    if (sid != null)
+                    if (sid is not null)
                     {
                         foreach (var m in membership)
                         {

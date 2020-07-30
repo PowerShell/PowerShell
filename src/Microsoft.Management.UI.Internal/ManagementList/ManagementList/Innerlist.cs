@@ -271,7 +271,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             // If columns are shown, update them to show none are sorted \\
-            if (this.InnerGrid != null)
+            if (this.InnerGrid is not null)
             {
                 this.UpdatePrimarySortColumn();
             }
@@ -294,10 +294,10 @@ namespace Microsoft.Management.UI.Internal
         {
             base.OnItemsSourceChanged(oldValue, newValue);
 
-            this.itemsSourceIsEmpty = this.ItemsSource != null && this.ItemsSource.GetEnumerator().MoveNext() == false;
+            this.itemsSourceIsEmpty = this.ItemsSource is not null && this.ItemsSource.GetEnumerator().MoveNext() == false;
 
             // A view can be created if there is data to auto-generate columns, or columns are added programatically \\
-            bool canCreateView = (this.ItemsSource != null) &&
+            bool canCreateView = (this.ItemsSource is not null) &&
                 (this.itemsSourceIsEmpty == false || this.AutoGenerateColumns == false);
 
             if (canCreateView)
@@ -328,7 +328,7 @@ namespace Microsoft.Management.UI.Internal
         {
             base.OnItemsChanged(e);
 
-            if (e.NewItems != null)
+            if (e.NewItems is not null)
             {
                 // If the items source now has items, select the first item \\
                 if (this.itemsSourceIsEmpty && this.Items.Count > 0)
@@ -361,7 +361,7 @@ namespace Microsoft.Management.UI.Internal
                 // If pressing Left or Right on a column header, move the focus \\
                 GridViewColumnHeader header = e.OriginalSource as GridViewColumnHeader;
 
-                if (header != null)
+                if (header is not null)
                 {
                     header.MoveFocus(new TraversalRequest(KeyboardHelp.GetNavigationDirection(this, e.Key)));
                     e.Handled = true;
@@ -383,7 +383,7 @@ namespace Microsoft.Management.UI.Internal
             InnerList thisList = (InnerList)obj;
             GridView newGrid = e.NewValue as GridView;
             InnerListGridView innerGrid = e.NewValue as InnerListGridView;
-            if (newGrid != null && innerGrid == null)
+            if (newGrid is not null && innerGrid == null)
             {
                 throw new NotSupportedException(string.Format(
                     CultureInfo.InvariantCulture,
@@ -425,7 +425,7 @@ namespace Microsoft.Management.UI.Internal
             else
             {
                 CollectionViewSource newValueViewSource = newValue as CollectionViewSource;
-                if (newValueViewSource != null && newValueViewSource.View != null)
+                if (newValueViewSource is not null && newValueViewSource.View is not null)
                 {
                     this.CollectionView = newValueViewSource.View;
                 }
@@ -442,7 +442,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="value">InnerList object.</param>
         private void UpdateViewAndCollectionView(IEnumerable value)
         {
-            Debug.Assert(value != null, "value should be non-null");
+            Debug.Assert(value is not null, "value should be non-null");
 
             // SetCollectionView deals with a null newEnumerable
             this.SetCollectionView(value);
@@ -450,7 +450,7 @@ namespace Microsoft.Management.UI.Internal
             this.UpdateView(value);
 
             // Generate property changed event.
-            if (this.ItemSourcesPropertyChanged != null)
+            if (this.ItemSourcesPropertyChanged is not null)
             {
                 this.ItemSourcesPropertyChanged(this, new PropertyChangedEventArgs("ItemsSource"));
             }
@@ -482,7 +482,7 @@ namespace Microsoft.Management.UI.Internal
             this.View = this.innerGrid;
             this.SetColumnHeaderActions();
 
-            if (sortedColumn != null && this.Columns.Contains(sortedColumn))
+            if (sortedColumn is not null && this.Columns.Contains(sortedColumn))
             {
                 this.ApplySort(sortedColumn, false);
             }
@@ -493,7 +493,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         private void ReleaseInnerGridReferences()
         {
-            if (this.innerGrid != null)
+            if (this.innerGrid is not null)
             {
                 // Tell the inner grid to release its references \\
                 this.innerGrid.ReleaseReferences();
@@ -503,7 +503,7 @@ namespace Microsoft.Management.UI.Internal
                 {
                     GridViewColumnHeader header = column.Header as GridViewColumnHeader;
 
-                    if (header != null)
+                    if (header is not null)
                     {
                         header.Click -= this.Header_Click;
                         header.PreviewKeyDown -= this.Header_KeyDown;
@@ -531,7 +531,7 @@ namespace Microsoft.Management.UI.Internal
                 // A string header needs an explicit GridViewColumnHeader
                 // so we can hook up our events
                 string headerString = column.Header as string;
-                if (headerString != null)
+                if (headerString is not null)
                 {
                     GridViewColumnHeader columnHeader = new GridViewColumnHeader();
                     columnHeader.Content = headerString;
@@ -540,7 +540,7 @@ namespace Microsoft.Management.UI.Internal
 
                 GridViewColumnHeader header = column.Header as GridViewColumnHeader;
 
-                if (header != null)
+                if (header is not null)
                 {
                     // header Click
                     header.Click += this.Header_Click;

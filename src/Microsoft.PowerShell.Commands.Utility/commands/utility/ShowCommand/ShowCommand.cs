@@ -373,7 +373,7 @@ namespace Microsoft.PowerShell.Commands
         {
             CommandInfo commandInfo;
             this.GetCommandInfoAndModules(out commandInfo, out _importedModules);
-            Diagnostics.Assert(commandInfo != null, "GetCommandInfoAndModules would throw a terminating error/exception");
+            Diagnostics.Assert(commandInfo is not null, "GetCommandInfoAndModules would throw a terminating error/exception");
 
             try
             {
@@ -482,7 +482,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (isDisposing)
             {
-                if (_errors != null)
+                if (_errors is not null)
                 {
                     _errors.Dispose();
                     _errors = null;

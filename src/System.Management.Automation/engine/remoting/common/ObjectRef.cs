@@ -58,7 +58,7 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                return _newValue != null;
+                return _newValue is not null;
             }
         }
 
@@ -67,7 +67,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal ObjectRef(T oldValue)
         {
-            Dbg.Assert(oldValue != null, "Expected oldValue != null");
+            Dbg.Assert(oldValue is not null, "Expected oldValue is not null");
             _oldValue = oldValue;
         }
 
@@ -76,7 +76,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void Override(T newValue)
         {
-            Dbg.Assert(newValue != null, "Expected newValue != null");
+            Dbg.Assert(newValue is not null, "Expected newValue is not null");
             _newValue = newValue;
         }
 

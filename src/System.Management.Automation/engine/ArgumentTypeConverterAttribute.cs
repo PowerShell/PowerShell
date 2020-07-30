@@ -62,7 +62,7 @@ namespace System.Management.Automation
                         {
                             object temp;
                             PSObject mshObject = result as PSObject;
-                            if (mshObject != null)
+                            if (mshObject is not null)
                                 temp = mshObject.BaseObject;
                             else
                                 temp = result;
@@ -79,7 +79,7 @@ namespace System.Management.Automation
                         {
                             object temp;
                             PSObject mshObject = result as PSObject;
-                            if (mshObject != null)
+                            if (mshObject is not null)
                                 temp = mshObject.BaseObject;
                             else
                                 temp = result;
@@ -87,7 +87,7 @@ namespace System.Management.Automation
                             // If a non-ref type is expected but currently passed in is a ref, do an implicit dereference.
                             PSReference reference = temp as PSReference;
 
-                            if (reference != null)
+                            if (reference is not null)
                             {
                                 result = reference.Value;
                             }
@@ -97,7 +97,7 @@ namespace System.Management.Automation
                                 // Don't allow conversion from array to string in script w/ cmdlet binding.  Allow
                                 // the conversion for ordinary script parameter binding for V1 compatibility.
                                 temp = PSObject.Base(result);
-                                if (temp != null && temp.GetType().IsArray)
+                                if (temp is not null && temp.GetType().IsArray)
                                 {
                                     throw new PSInvalidCastException("InvalidCastFromAnyTypeToString", null,
                                         ExtendedTypeSystem.InvalidCastCannotRetrieveString);
@@ -125,7 +125,7 @@ namespace System.Management.Automation
                             && LanguagePrimitives.IsBoolOrSwitchParameterType(collectionTypeInfo.ElementType))
                         {
                             IList currentValueAsIList = ParameterBinderBase.GetIList(result);
-                            if (currentValueAsIList != null)
+                            if (currentValueAsIList is not null)
                             {
                                 foreach (object val in currentValueAsIList)
                                 {
@@ -177,7 +177,7 @@ namespace System.Management.Automation
 
         private static void CheckBoolValue(object value, Type boolType)
         {
-            if (value != null)
+            if (value is not null)
             {
                 Type resultType = value.GetType();
 

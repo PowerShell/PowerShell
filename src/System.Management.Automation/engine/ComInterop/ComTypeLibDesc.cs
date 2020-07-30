@@ -178,7 +178,7 @@ namespace System.Management.Automation.ComInterop
             }
 
             ComTypeEnumDesc enumDesc;
-            if (_enums != null && _enums.TryGetValue(member, out enumDesc) == true)
+            if (_enums is not null && _enums.TryGetValue(member, out enumDesc) == true)
                 return enumDesc;
 
             return null;

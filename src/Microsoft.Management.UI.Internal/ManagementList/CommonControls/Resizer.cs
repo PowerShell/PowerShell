@@ -78,14 +78,14 @@ namespace Microsoft.Management.UI.Internal
 
         partial void PreOnApplyTemplate()
         {
-            if (this.rightGrip != null)
+            if (this.rightGrip is not null)
             {
                 this.rightGrip.DragDelta -= this.OnRightGripDragDelta;
                 this.rightGrip.DragStarted -= this.OnRightGripDragStarted;
                 this.rightGrip.DragCompleted -= this.OnRightGripDragCompleted;
             }
 
-            if (this.leftGrip != null)
+            if (this.leftGrip is not null)
             {
                 this.leftGrip.DragDelta -= this.OnLeftGripDragDelta;
                 this.leftGrip.DragStarted -= this.OnLeftGripDragStarted;

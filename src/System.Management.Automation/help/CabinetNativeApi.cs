@@ -70,7 +70,7 @@ namespace System.Management.Automation.Internal
             }
 
             // Free managed objects within 'if (disposing)' if needed
-            if (fdiContext != null)
+            if (fdiContext is not null)
             {
                 fdiContext.Dispose();
             }
@@ -152,7 +152,7 @@ namespace System.Management.Automation.Internal
         private void CleanUpDelegates()
         {
             // Free GCHandles so that the memory they point to may be unpinned (garbage collected)
-            if (_fdiAllocHandle != null)
+            if (_fdiAllocHandle is not null)
             {
                 _fdiAllocHandle.Free();
                 _fdiFreeHandle.Free();

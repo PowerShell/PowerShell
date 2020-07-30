@@ -80,7 +80,7 @@ namespace System.Management.Automation.Internal
 
         internal static bool IsEnabled
         {
-            get { return s_eventSourceInstance != null && ((EventSource)s_eventSourceInstance.BaseObject).IsEnabled(); }
+            get { return s_eventSourceInstance is not null && ((EventSource)s_eventSourceInstance.BaseObject).IsEnabled(); }
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Internal
 
         public static void TraceMessage<T>(string message, T arguments)
         {
-            if (s_eventSourceOptionsForWrite != null)
+            if (s_eventSourceOptionsForWrite is not null)
             {
                 try
                 {

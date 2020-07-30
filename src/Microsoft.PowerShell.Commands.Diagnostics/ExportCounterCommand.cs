@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
         //
         protected override void ProcessRecord()
         {
-            Debug.Assert(_counterSampleSets.Length != 0 && _counterSampleSets[0] != null);
+            Debug.Assert(_counterSampleSets.Length != 0 && _counterSampleSets[0] is not null);
 
             ResolvePath();
 

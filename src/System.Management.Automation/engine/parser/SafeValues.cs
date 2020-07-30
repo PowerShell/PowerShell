@@ -203,7 +203,7 @@ namespace System.Management.Automation.Language
         public object VisitPipeline(PipelineAst pipelineAst)
         {
             var expr = pipelineAst.GetPureExpression();
-            return expr != null && (bool)expr.Accept(this);
+            return expr is not null && (bool)expr.Accept(this);
         }
 
         public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
@@ -483,7 +483,7 @@ namespace System.Management.Automation.Language
         private object GetSingleValueFromTarget(object target, object index)
         {
             var targetString = target as string;
-            if (targetString != null)
+            if (targetString is not null)
             {
                 var offset = (int)index;
                 if (Math.Abs(offset) >= targetString.Length)
@@ -495,7 +495,7 @@ namespace System.Management.Automation.Language
             }
 
             var targetArray = target as object[];
-            if (targetArray != null)
+            if (targetArray is not null)
             {
                 // this can throw, that just gets percolated back
                 var offset = (int)index;
@@ -508,7 +508,7 @@ namespace System.Management.Automation.Language
             }
 
             var targetHashtable = target as Hashtable;
-            if (targetHashtable != null)
+            if (targetHashtable is not null)
             {
                 return targetHashtable[index];
             }
@@ -520,7 +520,7 @@ namespace System.Management.Automation.Language
         private object GetIndexedValueFromTarget(object target, object index)
         {
             var indexArray = index as object[];
-            return indexArray != null ? ((object[])indexArray).Select(i => GetSingleValueFromTarget(target, i)).ToArray() : GetSingleValueFromTarget(target, index);
+            return indexArray is not null ? ((object[])indexArray).Select(i => GetSingleValueFromTarget(target, i)).ToArray() : GetSingleValueFromTarget(target, index);
         }
 
         public object VisitIndexExpression(IndexExpressionAst indexExpressionAst)
@@ -541,7 +541,7 @@ namespace System.Management.Automation.Language
             object[] safeValues = new object[expandableStringExpressionAst.NestedExpressions.Count];
             // retrieve OFS, and if it doesn't exist set it to space
             string ofs = null;
-            if (t_context != null)
+            if (t_context is not null)
             {
                 ofs = t_context.SessionState.PSVariable.GetValue("OFS") as string;
             }
@@ -578,7 +578,7 @@ namespace System.Management.Automation.Language
                 // Also, this will not call any script implementations of ToString (ala types.clixml)
                 // This *will* result in a different result in those cases. However, to execute some
                 // arbitrary script at this stage would be opening ourselves up to an attack
-                if (resultArray != null)
+                if (resultArray is not null)
                 {
                     object[] subExpressionResult = new object[resultArray.Length];
                     for (int subExpressionOffset = 0;
@@ -587,7 +587,7 @@ namespace System.Management.Automation.Language
                     {
                         // check to see if there is an array in our array,
                         object[] subResult = resultArray[subExpressionOffset] as object[];
-                        if (subResult != null)
+                        if (subResult is not null)
                         {
                             subExpressionResult[subExpressionOffset] = string.Join(ofs, subResult);
                         }
@@ -613,11 +613,11 @@ namespace System.Management.Automation.Language
             ArrayList statementList = new ArrayList();
             foreach (var statement in statementBlockAst.Statements)
             {
-                if (statement != null)
+                if (statement is not null)
                 {
                     var obj = statement.Accept(this);
                     var enumerator = LanguagePrimitives.GetEnumerator(obj);
-                    if (enumerator != null)
+                    if (enumerator is not null)
                     {
                         while (enumerator.MoveNext())
                         {
@@ -641,7 +641,7 @@ namespace System.Management.Automation.Language
         public object VisitPipeline(PipelineAst pipelineAst)
         {
             var expr = pipelineAst.GetPureExpression();
-            if (expr != null)
+            if (expr is not null)
             {
                 return expr.Accept(this);
             }
@@ -737,7 +737,7 @@ namespace System.Management.Automation.Language
                 return Path.GetDirectoryName(scriptFileName);
             }
 
-            if (t_context != null)
+            if (t_context is not null)
             {
                 return VariableOps.GetVariableValue(variableExpressionAst.VariablePath, t_context, variableExpressionAst);
             }

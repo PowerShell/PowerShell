@@ -234,16 +234,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private void NewSubscriptionResultHandler(object src, CimSubscriptionEventArgs args)
         {
             EventHandler<CimIndicationEventArgs> temp = this.CimIndicationArrived;
-            if (temp != null)
+            if (temp is not null)
             {
                 // raise the event
                 CimSubscriptionResultEventArgs resultArgs = args as CimSubscriptionResultEventArgs;
-                if (resultArgs != null)
+                if (resultArgs is not null)
                     temp(this, new CimIndicationEventInstanceEventArgs(resultArgs.Result));
                 else
                 {
                     CimSubscriptionExceptionEventArgs exceptionArgs = args as CimSubscriptionExceptionEventArgs;
-                    if (exceptionArgs != null)
+                    if (exceptionArgs is not null)
                         temp(this, new CimIndicationEventExceptionEventArgs(exceptionArgs.Exception));
                 }
             }
@@ -329,7 +329,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 if (status == Status.Started)
                 {
-                    if (this.cimRegisterCimIndication != null)
+                    if (this.cimRegisterCimIndication is not null)
                     {
                         DebugHelper.WriteLog("Dispose CimRegisterCimIndication object", 4);
                         this.cimRegisterCimIndication.Dispose();
@@ -348,7 +348,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cmdlet"></param>
         internal void SetCmdlet(Cmdlet cmdlet)
         {
-            if (this.cimRegisterCimIndication != null)
+            if (this.cimRegisterCimIndication is not null)
             {
                 this.cimRegisterCimIndication.Cmdlet = cmdlet;
             }

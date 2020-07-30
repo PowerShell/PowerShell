@@ -86,7 +86,7 @@ namespace System.Management.Automation
         {
             lock (this)
             {
-                if (_attributes != null)
+                if (_attributes is not null)
                 {
                     // Another thread must have initialized the metadata.
                     return;
@@ -117,7 +117,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    _usesCmdletBinding = cmdletBindingAttribute != null;
+                    _usesCmdletBinding = cmdletBindingAttribute is not null;
                 }
 
                 bool automaticPosition = cmdletBindingAttribute is null || cmdletBindingAttribute.PositionalBinding;
@@ -203,7 +203,7 @@ namespace System.Management.Automation
             var scriptExtent = scriptBlockAst.Extent;
             var scriptFile = scriptExtent.File;
 
-            if (scriptFile != null
+            if (scriptFile is not null
                 && scriptFile.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase)
                 && IsScriptBlockInFactASafeHashtable())
             {
@@ -233,7 +233,7 @@ namespace System.Management.Automation
                 throw new ParseException(new[] { parseError });
             }
 
-            if (ScriptBlock.CheckSuspiciousContent(scriptBlockAst) != null)
+            if (ScriptBlock.CheckSuspiciousContent(scriptBlockAst) is not null)
             {
                 HasSuspiciousContent = true;
             }
@@ -246,11 +246,11 @@ namespace System.Management.Automation
                 // are enhanced, such as new members added to 'ScriptBlockAst', the code here needs
                 // to be reviewed and changed accordingly.
 
-                if (scriptBlockAst.BeginBlock != null
-                    || scriptBlockAst.ProcessBlock != null
-                    || scriptBlockAst.ParamBlock != null
-                    || scriptBlockAst.DynamicParamBlock != null
-                    || scriptBlockAst.ScriptRequirements != null
+                if (scriptBlockAst.BeginBlock is not null
+                    || scriptBlockAst.ProcessBlock is not null
+                    || scriptBlockAst.ParamBlock is not null
+                    || scriptBlockAst.DynamicParamBlock is not null
+                    || scriptBlockAst.ScriptRequirements is not null
                     || scriptBlockAst.UsingStatements.Count > 0
                     || scriptBlockAst.Attributes.Count > 0)
                 {
@@ -258,7 +258,7 @@ namespace System.Management.Automation
                 }
 
                 NamedBlockAst endBlock = scriptBlockAst.EndBlock;
-                if (!endBlock.Unnamed || endBlock.Traps != null || endBlock.Statements.Count != 1)
+                if (!endBlock.Unnamed || endBlock.Traps is not null || endBlock.Statements.Count != 1)
                 {
                     return false;
                 }
@@ -292,7 +292,7 @@ namespace System.Management.Automation
         {
             lock (this)
             {
-                if (_ast != null)
+                if (_ast is not null)
                 {
                     return _ast;
                 }
@@ -361,7 +361,7 @@ namespace System.Management.Automation
             //  If we access Ast, we may parse a "delay parsed" script block unnecessarily
             //  if _ast is null - it can't be a configuration as there is no way to create a configuration that way
             var scriptBlockAst = _ast as ScriptBlockAst;
-            return scriptBlockAst != null && scriptBlockAst.IsConfiguration;
+            return scriptBlockAst is not null && scriptBlockAst.IsConfiguration;
         }
 
         internal bool HasSuspiciousContent
@@ -387,7 +387,7 @@ namespace System.Management.Automation
             }
 
             Diagnostics.Assert(
-                _attributes != null,
+                _attributes is not null,
                 "after initialization, attributes is never null, must be an empty list if no attributes.");
             return _attributes.ToList();
         }
@@ -396,7 +396,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_attributes != null)
+                if (_attributes is not null)
                 {
                     return _usesCmdletBinding;
                 }
@@ -489,7 +489,7 @@ namespace System.Management.Automation
 
         public override string ToString()
         {
-            if (_scriptText != null)
+            if (_scriptText is not null)
             {
                 return _scriptText;
             }
@@ -500,7 +500,7 @@ namespace System.Management.Automation
             }
 
             var generatedMemberFunctionAst = _ast as CompilerGeneratedMemberFunctionAst;
-            if (generatedMemberFunctionAst != null)
+            if (generatedMemberFunctionAst is not null)
             {
                 return generatedMemberFunctionAst.Extent.Text;
             }
@@ -543,7 +543,7 @@ namespace System.Management.Automation
             // InitialSessionState, etc.) should explicitly set the LanguageMode to FullLanguage
             // when they are created.
             ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
-            if (context != null)
+            if (context is not null)
             {
                 this.LanguageMode = context.LanguageMode;
             }
@@ -580,7 +580,7 @@ namespace System.Management.Automation
         }
 
         private static bool IsDynamicKeyword(Ast ast)
-            => ast is CommandAst cmdAst && cmdAst.DefiningKeyword != null;
+            => ast is CommandAst cmdAst && cmdAst.DefiningKeyword is not null;
 
         private static bool IsUsingTypes(Ast ast)
             => ast is UsingStatementAst cmdAst && cmdAst.IsUsingModuleOrAssembly();
@@ -600,8 +600,8 @@ namespace System.Management.Automation
             // TODO(sevoroby): we can optimize it to ignore 'using' if there are no actual type usage in locally defined types.
 
             // using is always a top-level statements in scriptBlock, we don't need to search in child blocks.
-            if (scriptBlock.Ast.Find(ast => IsUsingTypes(ast), false) != null
-                || scriptBlock.Ast.Find(ast => IsDynamicKeyword(ast), true) != null)
+            if (scriptBlock.Ast.Find(ast => IsUsingTypes(ast), false) is not null
+                || scriptBlock.Ast.Find(ast => IsDynamicKeyword(ast), true) is not null)
             {
                 return;
             }
@@ -629,7 +629,7 @@ namespace System.Management.Automation
         internal static ScriptBlock Create(Parser parser, string fileName, string fileContents)
         {
             var scriptBlock = TryGetCachedScriptBlock(fileName, fileContents);
-            if (scriptBlock != null)
+            if (scriptBlock is not null)
             {
                 return scriptBlock;
             }
@@ -671,7 +671,7 @@ namespace System.Management.Automation
             }
 
             string sbText = sbAst.ToStringForSerialization(usingVariablesTuple, sbAst.Extent.StartOffset, sbAst.Extent.EndOffset);
-            if (sbAst.ParamBlock != null)
+            if (sbAst.ParamBlock is not null)
             {
                 return sbText;
             }
@@ -727,7 +727,7 @@ namespace System.Management.Automation
         {
             var pipelineAst = GetSimplePipeline(
                 resourceString => { throw PSTraceSource.NewInvalidOperationException(resourceString); });
-            Diagnostics.Assert(pipelineAst != null, "This should be checked by GetSimplePipeline");
+            Diagnostics.Assert(pipelineAst is not null, "This should be checked by GetSimplePipeline");
 
             if (!(pipelineAst.PipelineElements[0] is CommandAst))
             {
@@ -758,7 +758,7 @@ namespace System.Management.Automation
                 return errorHandler(AutomationExceptions.CanOnlyConvertOnePipeline);
             }
 
-            if (ast.Body.EndBlock.Traps != null && ast.Body.EndBlock.Traps.Count > 0)
+            if (ast.Body.EndBlock.Traps is not null && ast.Body.EndBlock.Traps.Count > 0)
             {
                 return errorHandler(AutomationExceptions.CantConvertScriptBlockWithTrap);
             }
@@ -792,7 +792,7 @@ namespace System.Management.Automation
 
         internal bool UsesCmdletBinding { get => _scriptBlockData.UsesCmdletBinding; }
 
-        internal bool HasDynamicParameters { get => AstInternal.Body.DynamicParamBlock != null; }
+        internal bool HasDynamicParameters { get => AstInternal.Body.DynamicParamBlock is not null; }
 
         /// <summary>
         /// DebuggerHidden.
@@ -846,7 +846,7 @@ namespace System.Management.Automation
             helpUriFromDotLink = null;
 
             var commentTokens = HelpCommentsParser.GetHelpCommentTokens(AstInternal, scriptBlockTokenCache);
-            if (commentTokens != null)
+            if (commentTokens is not null)
             {
                 return HelpCommentsParser.CreateFromComments(
                     context,
@@ -880,7 +880,7 @@ namespace System.Management.Automation
             Parser parser = new Parser();
 
             var ast = AstInternal;
-            if (HasBeginBlock || HasProcessBlock || ast.Body.ParamBlock != null)
+            if (HasBeginBlock || HasProcessBlock || ast.Body.ParamBlock is not null)
             {
                 Ast errorAst = ast.Body.BeginBlock ?? (Ast)ast.Body.ProcessBlock ?? ast.Body.ParamBlock;
                 parser.ReportError(
@@ -983,10 +983,10 @@ namespace System.Management.Automation
             // Validate at the arguments are consistent. The only public API that gets you here never sets createLocalScope to false...
             Diagnostics.Assert(
                 createLocalScope || functionsToDefine is null,
-                "When calling ScriptBlock.InvokeWithContext(), if 'functionsToDefine' != null then 'createLocalScope' must be true");
+                "When calling ScriptBlock.InvokeWithContext(), if 'functionsToDefine' is not null then 'createLocalScope' must be true");
             Diagnostics.Assert(
                 createLocalScope || variablesToDefine is null,
-                "When calling ScriptBlock.InvokeWithContext(), if 'variablesToDefine' != null then 'createLocalScope' must be true");
+                "When calling ScriptBlock.InvokeWithContext(), if 'variablesToDefine' is not null then 'createLocalScope' must be true");
 
             if (args is null)
             {
@@ -1055,7 +1055,7 @@ namespace System.Management.Automation
                 if (myInvocationInfo is null)
                 {
                     var callerFrame = context.Debugger.GetCallStack().LastOrDefault();
-                    var extent = (callerFrame != null)
+                    var extent = (callerFrame is not null)
                         ? callerFrame.FunctionContext.CurrentPosition
                         : Ast.Extent;
                     myInvocationInfo = new InvocationInfo(null, extent, context);
@@ -1063,7 +1063,7 @@ namespace System.Management.Automation
 
                 locals.SetAutomaticVariable(AutomaticVariable.MyInvocation, myInvocationInfo, context);
 
-                if (SessionStateInternal != null)
+                if (SessionStateInternal is not null)
                 {
                     context.EngineSessionState = SessionStateInternal;
                 }
@@ -1089,7 +1089,7 @@ namespace System.Management.Automation
                     context.EngineSessionState.CurrentScope = newScope;
                     newScope.LocalsTuple = locals;
                     // Inject passed in functions into the scope
-                    if (functionsToDefine != null)
+                    if (functionsToDefine is not null)
                     {
                         foreach (var def in functionsToDefine)
                         {
@@ -1115,7 +1115,7 @@ namespace System.Management.Automation
                         }
                     }
                     // Inject passed in variables into the scope
-                    if (variablesToDefine != null)
+                    if (variablesToDefine is not null)
                     {
                         int index = 0;
                         foreach (var psvar in variablesToDefine)
@@ -1219,14 +1219,14 @@ namespace System.Management.Automation
                 {
                     context.EngineSessionState.RemoveScope(context.EngineSessionState.CurrentScope);
                 }
-                else if (backupWhenDotting != null)
+                else if (backupWhenDotting is not null)
                 {
                     context.EngineSessionState.CurrentScope.DottedScopes.Pop();
 
-                    Diagnostics.Assert(backupWhenDotting != null, "when dotting, this dictionary isn't null");
+                    Diagnostics.Assert(backupWhenDotting is not null, "when dotting, this dictionary isn't null");
                     foreach (var pair in backupWhenDotting)
                     {
-                        if (pair.Value != null)
+                        if (pair.Value is not null)
                         {
                             context.EngineSessionState.SetVariable(pair.Value, false, CommandOrigin.Internal);
                         }
@@ -1302,7 +1302,7 @@ namespace System.Management.Automation
                 }
 
                 bool valueSet = false;
-                if (dotting && backupWhenDotting != null)
+                if (dotting && backupWhenDotting is not null)
                 {
                     backupWhenDotting[parameter.Name] =
                         context.EngineSessionState.GetVariableAtScope(parameter.Name, "local");
@@ -1460,7 +1460,7 @@ namespace System.Management.Automation
             ProtectedEventLogging logSetting =
                 Utils.GetPolicySetting<ProtectedEventLogging>(Utils.SystemWideOnlyConfig);
             bool wasEncoded = false;
-            if (logSetting != null)
+            if (logSetting is not null)
             {
                 lock (s_syncObject)
                 {
@@ -1475,7 +1475,7 @@ namespace System.Management.Automation
 
                     // If we have recipients to encrypt to, then do so.
                     // Otherwise, we'll just log the plain text version.
-                    if (s_encryptionRecipients != null)
+                    if (s_encryptionRecipients is not null)
                     {
                         // Encrypt the raw text from the scriptblock.
                         // The user may have to deal with any control characters in the data.
@@ -1489,7 +1489,7 @@ namespace System.Management.Automation
                             out error);
 
                         // Can't cache the reporting of encryption errors, as they are likely content-based.
-                        if (error != null)
+                        if (error is not null)
                         {
                             // If we got an error encrypting the content, log an error and continue
                             // logging the (unencrypted) message anyways. Logging trumps protected logging -
@@ -1608,14 +1608,14 @@ namespace System.Management.Automation
             if (logSetting.EnableProtectedEventLogging == true)
             {
                 // Get the encryption certificate
-                if (logSetting.EncryptionCertificate != null)
+                if (logSetting.EncryptionCertificate is not null)
                 {
                     ErrorRecord error = null;
                     ExecutionContext executionContext = LocalPipeline.GetExecutionContextFromTLS();
                     SessionState sessionState = null;
 
                     // Use the session state from the current pipeline, if it exists.
-                    if (executionContext != null)
+                    if (executionContext is not null)
                     {
                         sessionState = executionContext.SessionState;
                     }
@@ -1634,7 +1634,7 @@ namespace System.Management.Automation
                     ResetCertificateCacheIfNeeded(fullCertificateContent);
 
                     // If we have valid recipients, no need for further analysis.
-                    if (s_encryptionRecipients != null)
+                    if (s_encryptionRecipients is not null)
                     {
                         return true;
                     }
@@ -1653,7 +1653,7 @@ namespace System.Management.Automation
 
                     // If there's an error that we haven't already reported, report it in the event log.
                     // We only do this once, as the error will always be the same for a given certificate.
-                    if (error != null)
+                    if (error is not null)
                     {
                         // If we got an error resolving the encryption certificate, log a warning and continue
                         // logging the (unencrypted) message anyways. Logging trumps protected logging -
@@ -1751,7 +1751,7 @@ namespace System.Management.Automation
         internal static string CheckSuspiciousContent(Ast scriptBlockAst)
         {
             var foundSignature = SuspiciousContentChecker.Match(scriptBlockAst.Extent.Text);
-            if (foundSignature != null)
+            if (foundSignature is not null)
             {
                 return foundSignature;
             }
@@ -1765,7 +1765,7 @@ namespace System.Management.Automation
                         return (!ast.HasSuspiciousContent) && ast.Parent.HasSuspiciousContent;
                     }, true);
 
-                if (foundAst != null)
+                if (foundAst is not null)
                 {
                     return foundAst.Parent.Extent.Text;
                 }
@@ -1961,7 +1961,7 @@ namespace System.Management.Automation
                 for (var i = 0; i < upTo; i++)
                 {
                     var result = LookupHash(runningHash[i]);
-                    if (result != null)
+                    if (result is not null)
                     {
                         return result;
                     }
@@ -2032,7 +2032,7 @@ namespace System.Management.Automation
                     if (++longestPossiblePattern >= 4)
                     {
                         var result = CheckForMatches(runningHash, longestPossiblePattern);
-                        if (result != null) return result;
+                        if (result is not null) return result;
                     }
                 }
 
@@ -2136,11 +2136,11 @@ namespace System.Management.Automation
 
         internal Action<FunctionContext> UnoptimizedEndBlock { get => _scriptBlockData.UnoptimizedEndBlock; }
 
-        internal bool HasBeginBlock { get => AstInternal.Body.BeginBlock != null; }
+        internal bool HasBeginBlock { get => AstInternal.Body.BeginBlock is not null; }
 
-        internal bool HasProcessBlock { get => AstInternal.Body.ProcessBlock != null; }
+        internal bool HasProcessBlock { get => AstInternal.Body.ProcessBlock is not null; }
 
-        internal bool HasEndBlock { get => AstInternal.Body.EndBlock != null; }
+        internal bool HasEndBlock { get => AstInternal.Body.EndBlock is not null; }
     }
 
     [Serializable]

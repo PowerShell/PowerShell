@@ -171,17 +171,17 @@ namespace System.Management.Automation
 
             IContainsErrorRecord ier = except as IContainsErrorRecord;
 
-            if (ier != null)
+            if (ier is not null)
             {
                 ErrorRecord er = ier.ErrorRecord;
 
-                if (er != null)
+                if (er is not null)
                 {
                     sb.AppendLine(StringUtil.Format(EtwLoggingStrings.ErrorRecordId, er.FullyQualifiedErrorId));
 
                     ErrorDetails details = er.ErrorDetails;
 
-                    if (details != null)
+                    if (details is not null)
                     {
                         sb.AppendLine(StringUtil.Format(EtwLoggingStrings.ErrorRecordRecommendedAction, details.RecommendedAction));
                     }
@@ -196,7 +196,7 @@ namespace System.Management.Automation
         /// <param name="additionalInfo">Additional information.</param>
         protected static void AppendAdditionalInfo(StringBuilder sb, Dictionary<string, string> additionalInfo)
         {
-            if (additionalInfo != null)
+            if (additionalInfo is not null)
             {
                 foreach (KeyValuePair<string, string> value in additionalInfo)
                 {

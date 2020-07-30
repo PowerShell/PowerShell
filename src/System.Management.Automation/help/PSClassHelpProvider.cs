@@ -66,7 +66,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
-            Debug.Assert(helpRequest != null, "helpRequest cannot be null.");
+            Debug.Assert(helpRequest is not null, "helpRequest cannot be null.");
 
             string target = helpRequest.Target;
             Collection<string> patternList = new Collection<string>();
@@ -88,7 +88,7 @@ namespace System.Management.Automation
 
                 foreach (var helpInfo in GetHelpInfo(searcher))
                 {
-                    if (helpInfo != null)
+                    if (helpInfo is not null)
                         yield return helpInfo;
                 }
             }
@@ -101,7 +101,7 @@ namespace System.Management.Automation
         /// <returns>Enumerable of HelpInfo objects.</returns>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
-            Debug.Assert(helpRequest != null, "helpRequest cannot be null.");
+            Debug.Assert(helpRequest is not null, "helpRequest cannot be null.");
 
             if ((helpRequest.HelpCategory & Automation.HelpCategory.Class) == 0)
             {
@@ -115,7 +115,7 @@ namespace System.Management.Automation
 
             foreach (var helpInfo in GetHelpInfo(searcher))
             {
-                if (helpInfo != null)
+                if (helpInfo is not null)
                 {
                     yield return helpInfo;
                 }
@@ -161,7 +161,7 @@ namespace System.Management.Automation
 
                     HelpInfo helpInfo = GetHelpInfoFromHelpFile(current, helpFileToFind, searchPaths, true, out helpFileName);
 
-                    if (helpInfo != null)
+                    if (helpInfo is not null)
                     {
                         yield return helpInfo;
                     }
@@ -208,8 +208,8 @@ namespace System.Management.Automation
 
         private HelpInfo GetHelpInfoFromHelpFile(PSClassInfo classInfo, string helpFileToFind, Collection<string> searchPaths, bool reportErrors, out string helpFile)
         {
-            Dbg.Assert(classInfo != null, "Caller should verify that classInfo != null");
-            Dbg.Assert(helpFileToFind != null, "Caller should verify that helpFileToFind != null");
+            Dbg.Assert(classInfo is not null, "Caller should verify that classInfo is not null");
+            Dbg.Assert(helpFileToFind is not null, "Caller should verify that helpFileToFind is not null");
 
             helpFile = MUIFileSearcher.LocateFile(helpFileToFind, searchPaths);
 
@@ -242,7 +242,7 @@ namespace System.Management.Automation
 
             HelpInfo result = GetCache(helpFileIdentifier);
 
-            if (result != null)
+            if (result is not null)
             {
                 MamlClassHelpInfo original = (MamlClassHelpInfo)result;
                 result = original.Copy(helpCategory);
@@ -283,10 +283,10 @@ namespace System.Management.Automation
                 e = invalidOperationException;
             }
 
-            if (e != null)
+            if (e is not null)
                 s_tracer.WriteLine("Error occured in PSClassHelpProvider {0}", e.Message);
 
-            if (reportErrors && (e != null))
+            if (reportErrors && (e is not null))
             {
                 ReportHelpFileError(e, commandName, helpFile);
             }
@@ -360,7 +360,7 @@ namespace System.Management.Automation
                                     helpInfo = MamlClassHelpInfo.Load(node, HelpCategory.Class);
                             }
 
-                            if (helpInfo != null)
+                            if (helpInfo is not null)
                             {
                                 this.HelpSystem.TraceErrors(helpInfo.Errors);
                                 AddCache(helpFileIdentifier, helpInfo);

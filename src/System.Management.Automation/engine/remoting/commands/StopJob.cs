@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
                     Job2 job2 = job as Job2;
                     // if it is a Job2, then async is supported
                     // stop the job asynchronously
-                    if (job2 != null)
+                    if (job2 is not null)
                     {
                         _cleanUpActions.Add(job2, HandleStopJobCompleted);
                         job2.StopJobCompleted += HandleStopJobCompleted;
@@ -213,13 +213,13 @@ namespace Microsoft.PowerShell.Commands
         {
             Job job = sender as Job;
 
-            if (eventArgs.Error != null)
+            if (eventArgs.Error is not null)
             {
                 _errorsToWrite.Add(new ErrorRecord(eventArgs.Error, "StopJobError", ErrorCategory.ReadError, job));
             }
 
             var parentJob = job as ContainerParentJob;
-            if (parentJob != null && parentJob.ExecutionError.Count > 0)
+            if (parentJob is not null && parentJob.ExecutionError.Count > 0)
             {
                 foreach (
                     var e in

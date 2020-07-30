@@ -318,7 +318,7 @@ namespace System.Management.Automation.Remoting
         private void CleanUpDelegates()
         {
             // Free GCHandles so that the memory they point to may be unpinned (garbage collected)
-            if (_pluginShellGCHandle != null)
+            if (_pluginShellGCHandle is not null)
             {
                 _pluginShellGCHandle.Free();
                 _pluginReleaseShellContextGCHandle.Free();
@@ -450,7 +450,7 @@ namespace System.Management.Automation.Remoting
         {
             WSManPluginInstance.PerformShutdown(pluginContext);
 
-            if (workerPtrs != null)
+            if (workerPtrs is not null)
             {
                 workerPtrs.Dispose();
             }
@@ -519,7 +519,7 @@ namespace System.Management.Automation.Remoting
 
 #if(DEBUG)
             // In debug builds, allow remote runspaces to wait for debugger attach
-            if (Environment.GetEnvironmentVariable("__PSRemoteRunspaceWaitForDebugger", EnvironmentVariableTarget.Machine) != null)
+            if (Environment.GetEnvironmentVariable("__PSRemoteRunspaceWaitForDebugger", EnvironmentVariableTarget.Machine) is not null)
             {
                 bool debuggerAttached = false;
                 while (!debuggerAttached)

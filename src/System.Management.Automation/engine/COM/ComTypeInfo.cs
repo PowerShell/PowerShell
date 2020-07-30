@@ -45,7 +45,7 @@ namespace System.Management.Automation
             _properties = new Dictionary<string, ComProperty>(StringComparer.OrdinalIgnoreCase);
             _methods = new Dictionary<string, ComMethod>(StringComparer.OrdinalIgnoreCase);
 
-            if (_typeinfo != null)
+            if (_typeinfo is not null)
             {
                 Initialize();
             }
@@ -95,7 +95,7 @@ namespace System.Management.Automation
         /// </summary>
         private void Initialize()
         {
-            if (_typeinfo != null)
+            if (_typeinfo is not null)
             {
                 COM.TYPEATTR typeattr = GetTypeAttr(_typeinfo);
 
@@ -147,11 +147,11 @@ namespace System.Management.Automation
         {
             ComTypeInfo result = null;
             IDispatch disp = comObject as IDispatch;
-            if (disp != null)
+            if (disp is not null)
             {
                 COM.ITypeInfo typeinfo = null;
                 disp.GetTypeInfo(0, 0, out typeinfo);
-                if (typeinfo != null)
+                if (typeinfo is not null)
                 {
                     COM.TYPEATTR typeattr = GetTypeAttr(typeinfo);
 
@@ -183,7 +183,7 @@ namespace System.Management.Automation
                 _properties[strName] = prop;
             }
 
-            if (prop != null)
+            if (prop is not null)
             {
                 prop.UpdateFuncDesc(funcdesc, index);
             }
@@ -198,7 +198,7 @@ namespace System.Management.Automation
                 _methods[strName] = method;
             }
 
-            if (method != null)
+            if (method is not null)
             {
                 method.AddFuncDesc(index);
             }

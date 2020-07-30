@@ -129,7 +129,7 @@ namespace System.Management.Automation.Remoting
 
                 // if there is any exception serializing the timezone information
                 // ignore it and dont try to serialize again.
-                if (e != null)
+                if (e is not null)
                 {
                     _timeZoneInByteFormat = Array.Empty<byte>();
                 }

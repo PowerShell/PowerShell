@@ -36,7 +36,7 @@ namespace System.Management.Automation
         /// <param name="members">Updated members.</param>
         public void UpdateMembers(IList<PSClassMemberInfo> members)
         {
-            if (members != null)
+            if (members is not null)
                 this.Members = new ReadOnlyCollection<PSClassMemberInfo>(members);
         }
 

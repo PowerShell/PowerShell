@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             List<PSPropertyExpressionResult> res = ex.GetValues(obj);
             if (res.Count == 0)
                 return false;
-            if (res[0].Exception != null)
+            if (res[0].Exception is not null)
             {
                 expressionResult = res[0];
                 return false;
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             foreach (TypeOrGroupReference r in appliesTo.referenceList)
             {
                 PSPropertyExpression ex = null;
-                if (r.conditionToken != null)
+                if (r.conditionToken is not null)
                 {
                     ex = _expressionFactory.CreateFromExpressionToken(r.conditionToken);
                 }
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 int currentMatch = BestMatchIndexUndefined;
                 TypeReference tr = r as TypeReference;
 
-                if (tr != null)
+                if (tr is not null)
                 {
                     // we have a type
                     currentMatch = MatchTypeIndex(tr.name, currentObject, ex);
@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // find the type group definition the reference points to
                     TypeGroupDefinition tgd = DisplayDataQuery.FindGroupDefinition(_db, tgr.name);
 
-                    if (tgd != null)
+                    if (tgd is not null)
                     {
                         // we found the group, see if the group has the type
                         currentMatch = ComputeBestMatchInGroup(tgd, currentObject, ex);
@@ -282,14 +282,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            if (match.BestMatch != null)
+            if (match.BestMatch is not null)
             {
                 return ((EnumerableExpansionDirective)(match.BestMatch)).enumerableExpansion;
             }
             else
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (typesWithoutPrefix != null)
+                if (typesWithoutPrefix is not null)
                 {
                     EnumerableExpansion result = GetEnumerableExpansionFromType(expressionFactory, db, typesWithoutPrefix);
                     return result;
@@ -313,14 +313,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            if (match.BestMatch != null)
+            if (match.BestMatch is not null)
             {
                 return ((FormatShapeSelectionOnType)(match.BestMatch)).formatShape;
             }
             else
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (typesWithoutPrefix != null)
+                if (typesWithoutPrefix is not null)
                 {
                     FormatShape result = GetShapeFromType(expressionFactory, db, typesWithoutPrefix);
                     return result;
@@ -395,7 +395,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (result is null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (typesWithoutPrefix != null)
+                if (typesWithoutPrefix is not null)
                 {
                     result = GetOutOfBandView(expressionFactory, db, typesWithoutPrefix);
                 }
@@ -413,7 +413,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     ActiveTracer.WriteLine(
                         "NOT MATCH {0}  NAME: {1}",
-                        ControlBase.GetControlShapeName(vd.mainControl), (vd != null ? vd.name : string.Empty));
+                        ControlBase.GetControlShapeName(vd.mainControl), (vd is not null ? vd.name : string.Empty));
                     continue;
                 }
 
@@ -434,7 +434,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 // first make sure we match on name:
                 // if not, we do not try a match at all
-                if (viewName != null && !string.Equals(vd.name, viewName, StringComparison.OrdinalIgnoreCase))
+                if (viewName is not null && !string.Equals(vd.name, viewName, StringComparison.OrdinalIgnoreCase))
                 {
                     ActiveTracer.WriteLine(
                         "NOT MATCH {0}  NAME: {1}",
@@ -470,7 +470,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (result is null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (typesWithoutPrefix != null)
+                if (typesWithoutPrefix is not null)
                 {
                     result = GetView(expressionFactory, db, mainControlType, typesWithoutPrefix, viewName);
                 }
@@ -488,7 +488,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     StringBuilder sb = new StringBuilder();
                     TypeReference tr = togr as TypeReference;
                     sb.Append(isMatched ? "MATCH FOUND" : "NOT MATCH");
-                    if (tr != null)
+                    if (tr is not null)
                     {
                         sb.AppendFormat(CultureInfo.InvariantCulture, " {0} NAME: {1}  TYPE: {2}",
                             ControlBase.GetControlShapeName(vd.mainControl), vd.name, tr.name);
@@ -508,7 +508,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static ViewDefinition GetBestMatch(TypeMatch match)
         {
             ViewDefinition bestMatchedVD = match.BestMatch as ViewDefinition;
-            if (bestMatchedVD != null)
+            if (bestMatchedVD is not null)
             {
                 TraceHelper(bestMatchedVD, true);
             }
@@ -565,7 +565,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (result is null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (typesWithoutPrefix != null)
+                if (typesWithoutPrefix is not null)
                 {
                     result = GetDefaultView(expressionFactory, db, typesWithoutPrefix);
                 }
@@ -594,7 +594,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // if it is a type reference, just add the type name
                 TypeReference tr = r as TypeReference;
-                if (tr != null)
+                if (tr is not null)
                 {
                     if (!allTypes.Contains(tr.name))
                         allTypes.Add(tr.name);
@@ -648,7 +648,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // first tri to resolve the reference at the view level
             ControlBody controlBody = ResolveControlReferenceInList(controlReference,
                 viewControlDefinitionList);
-            if (controlBody != null)
+            if (controlBody is not null)
                 return controlBody;
 
             // fall back to the global definitions

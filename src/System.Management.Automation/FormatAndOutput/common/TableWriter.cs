@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return 0;
             }
-            else if (_header != null)
+            else if (_header is not null)
             {
                 foreach (string line in _header)
                 {

@@ -166,7 +166,7 @@ namespace System.Management.Automation
                 // If the parameter is not in the specified parameter set,
                 // throw a binding exception
 
-                if (parameter != null)
+                if (parameter is not null)
                 {
                     // Now check to make sure it hasn't already been
                     // bound by looking in the boundParameters collection

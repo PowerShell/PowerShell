@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         internal Type GetValueType(PSObject liveObject, out object columnValue)
         {
             columnValue = GetValue(liveObject);
-            if (columnValue != null && columnValue is IComparable)
+            if (columnValue is not null && columnValue is IComparable)
             {
                 return columnValue.GetType();
             }

@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (sam != null)
+            if (sam is not null)
             {
                 sam.Dispose();
                 sam = null;
@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         private void ProcessNames()
         {
-            if (Name != null)
+            if (Name is not null)
             {
                 foreach (var name in Name)
                 {
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void ProcessSids()
         {
-            if (SID != null)
+            if (SID is not null)
             {
                 foreach (var sid in SID)
                 {
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void ProcessUsers()
         {
-            if (InputObject != null)
+            if (InputObject is not null)
             {
                 foreach (var user in InputObject)
                 {

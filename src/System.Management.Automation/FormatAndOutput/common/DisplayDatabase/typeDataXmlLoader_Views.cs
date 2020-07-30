@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (MatchNodeName(n, XmlTags.ViewNode))
                     {
                         ViewDefinition view = LoadView(n, index++);
-                        if (view != null)
+                        if (view is not null)
                         {
                             ReportTrace(string.Format(CultureInfo.InvariantCulture,
                                 "{0} view {1} is loaded from file {2}",
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return null; // fatal
                 }
 
-                if (view.outOfBand && (view.groupBy != null))
+                if (view.outOfBand && (view.groupBy is not null))
                 {
                     // we cannot have grouping and out of band at the same time
                     // Error at XPath {0} in file {1}: An Out Of Band view cannot have GroupBy.
@@ -295,7 +295,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (MatchNodeName(n, XmlTags.ControlNode))
                     {
                         ControlDefinition def = LoadControlDefinition(n, controlDefinitionIndex++);
-                        if (def != null)
+                        if (def is not null)
                         {
                             controlDefinitionList.Add(def);
                         }

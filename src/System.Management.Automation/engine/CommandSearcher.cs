@@ -48,7 +48,7 @@ namespace System.Management.Automation
             CommandTypes commandTypes,
             ExecutionContext context)
         {
-            Diagnostics.Assert(context != null, "caller to verify context is not null");
+            Diagnostics.Assert(context is not null, "caller to verify context is not null");
             Diagnostics.Assert(!string.IsNullOrEmpty(commandName), "caller to verify commandName is valid");
 
             _commandName = commandName;
@@ -91,7 +91,7 @@ namespace System.Management.Automation
                 _currentMatch = SearchForAliases();
 
                 // Why don't we check IsVisible on other scoped items?
-                if (_currentMatch != null && SessionState.IsVisible(_commandOrigin, _currentMatch))
+                if (_currentMatch is not null && SessionState.IsVisible(_commandOrigin, _currentMatch))
                 {
                     return true;
                 }
@@ -108,7 +108,7 @@ namespace System.Management.Automation
                 _currentMatch = SearchForFunctions();
                 // Return the alias info only if it is visible. If not, then skip to the next
                 // stage of command resolution...
-                if (_currentMatch != null)
+                if (_currentMatch is not null)
                 {
                     return true;
                 }
@@ -120,7 +120,7 @@ namespace System.Management.Automation
             if (_currentState == SearchState.SearchingCmdlets)
             {
                 _currentMatch = SearchForCmdlets();
-                if (_currentMatch != null)
+                if (_currentMatch is not null)
                 {
                     return true;
                 }
@@ -194,7 +194,7 @@ namespace System.Management.Automation
 
                 _currentMatch = ProcessBuiltinScriptState();
 
-                if (_currentMatch != null)
+                if (_currentMatch is not null)
                 {
                     // Set the current state to QualifiedFileSystemPath since
                     // we want to skip the qualified file system path search
@@ -211,7 +211,7 @@ namespace System.Management.Automation
 
                 _currentMatch = ProcessPathResolutionState();
 
-                if (_currentMatch != null)
+                if (_currentMatch is not null)
                 {
                     return true;
                 }
@@ -224,7 +224,7 @@ namespace System.Management.Automation
             {
                 _currentMatch = ProcessQualifiedFileSystemState();
 
-                if (_currentMatch != null)
+                if (_currentMatch is not null)
                 {
                     return true;
                 }
@@ -236,7 +236,7 @@ namespace System.Management.Automation
 
                 _currentMatch = ProcessPathSearchState();
 
-                if (_currentMatch != null)
+                if (_currentMatch is not null)
                 {
                     return true;
                 }
@@ -249,7 +249,7 @@ namespace System.Management.Automation
         {
             CommandInfo? currentMatch = null;
 
-            if (_context.EngineSessionState != null &&
+            if (_context.EngineSessionState is not null &&
                 (_commandTypes & CommandTypes.Alias) != 0)
             {
                 currentMatch = GetNextAlias();
@@ -262,7 +262,7 @@ namespace System.Management.Automation
         {
             CommandInfo? currentMatch = null;
 
-            if (_context.EngineSessionState != null &&
+            if (_context.EngineSessionState is not null &&
                 (_commandTypes & (CommandTypes.Function | CommandTypes.Filter | CommandTypes.Configuration)) != 0)
             {
                 currentMatch = GetNextFunction();
@@ -289,7 +289,7 @@ namespace System.Management.Automation
 
             // Check to see if the path is qualified
 
-            if (_context.EngineSessionState != null &&
+            if (_context.EngineSessionState is not null &&
                 _context.EngineSessionState.ProviderCount > 0 &&
                 IsQualifiedPSPath(_commandName))
             {
@@ -364,7 +364,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    // the previous call to setupPathSearcher ensures _pathSearcher != null
+                    // the previous call to setupPathSearcher ensures _pathSearcher is not null
                     while (currentMatch is null && _pathSearcher!.MoveNext())
                     {
                         currentMatch = GetInfoFromPath(((IEnumerator<string>)_pathSearcher).Current);
@@ -429,7 +429,7 @@ namespace System.Management.Automation
         /// </summary>
         public void Dispose()
         {
-            if (_pathSearcher != null)
+            if (_pathSearcher is not null)
             {
                 _pathSearcher.Dispose();
                 _pathSearcher = null;
@@ -466,7 +466,7 @@ namespace System.Management.Automation
                 {
                     var path = GetNextLiteralPathThatExistsAndHandleExceptions(_commandName, out _);
 
-                    if (path != null)
+                    if (path is not null)
                     {
                         return GetInfoFromPath(path);
                     }
@@ -484,7 +484,7 @@ namespace System.Management.Automation
                 {
                     string? path = GetNextLiteralPathThatExistsAndHandleExceptions(_commandName, out _);
 
-                    if (path != null)
+                    if (path is not null)
                     {
                         return GetInfoFromPath(path);
                     }
@@ -714,7 +714,7 @@ namespace System.Management.Automation
 
                     // Process alias from modules
                     AliasInfo? c = GetAliasFromModules(_commandName);
-                    if (c != null)
+                    if (c is not null)
                     {
                         matchingAliases.Add(c);
                     }
@@ -749,7 +749,7 @@ namespace System.Management.Automation
                 result = null;
             }
 
-            if (result != null)
+            if (result is not null)
             {
                 CommandDiscovery.discoveryTracer.WriteLine(
                     "Alias found: {0}  {1}",
@@ -801,7 +801,7 @@ namespace System.Management.Automation
 
                     // Process functions from modules
                     CommandInfo? cmdInfo = GetFunctionFromModules(_commandName);
-                    if (cmdInfo != null)
+                    if (cmdInfo is not null)
                     {
                         matchingFunction.Add(cmdInfo);
                     }
@@ -864,7 +864,7 @@ namespace System.Management.Automation
             if ((result is FunctionInfo) &&
                 (executionContext.LanguageMode == PSLanguageMode.ConstrainedLanguage) &&
                 (result.DefiningLanguageMode == PSLanguageMode.FullLanguage) &&
-                (executionContext.Debugger != null) &&
+                (executionContext.Debugger is not null) &&
                 (executionContext.Debugger.InBreakpoint) &&
                 (!(executionContext.TopLevelSessionState.GetFunctionTableAtScope("GLOBAL").ContainsKey(result.Name))))
             {
@@ -882,7 +882,7 @@ namespace System.Management.Automation
             {
                 // See if it's a module qualified alias...
                 PSSnapinQualifiedName? qualifiedName = PSSnapinQualifiedName.GetInstance(command);
-                if (qualifiedName != null && !string.IsNullOrEmpty(qualifiedName.PSSnapInName))
+                if (qualifiedName is not null && !string.IsNullOrEmpty(qualifiedName.PSSnapInName))
                 {
                     PSModuleInfo? module = GetImportedModuleByName(qualifiedName.PSSnapInName);
 
@@ -901,7 +901,7 @@ namespace System.Management.Automation
             {
                 // See if it's a module qualified function call...
                 PSSnapinQualifiedName? qualifiedName = PSSnapinQualifiedName.GetInstance(command);
-                if (qualifiedName != null && !string.IsNullOrEmpty(qualifiedName.PSSnapInName))
+                if (qualifiedName is not null && !string.IsNullOrEmpty(qualifiedName.PSSnapInName))
                 {
                     PSModuleInfo? module = GetImportedModuleByName(qualifiedName.PSSnapInName);
 
@@ -917,7 +917,7 @@ namespace System.Management.Automation
             PSModuleInfo? module = null;
             List<PSModuleInfo> modules = _context.Modules.GetModules(new string[] { moduleName }, false);
 
-            if (modules != null && modules.Count > 0)
+            if (modules is not null && modules.Count > 0)
             {
                 foreach (PSModuleInfo m in modules)
                 {
@@ -951,7 +951,7 @@ namespace System.Management.Automation
         {
             CommandInfo? result = _context.EngineSessionState.GetFunction(function);
 
-            if (result != null)
+            if (result is not null)
             {
                 if (result is FilterInfo)
                 {
@@ -1011,7 +1011,7 @@ namespace System.Management.Automation
                     string? moduleName = PSSnapinQualifiedCommandName?.PSSnapInName;
 
                     var cmdletShortName = PSSnapinQualifiedCommandName?.ShortName;
-                    WildcardPattern? cmdletMatcher = cmdletShortName != null
+                    WildcardPattern? cmdletMatcher = cmdletShortName is not null
                         ? WildcardPattern.Get(cmdletShortName, WildcardOptions.IgnoreCase)
                         : null;
 
@@ -1021,7 +1021,7 @@ namespace System.Management.Automation
                     {
                         foreach (CmdletInfo cmdlet in cmdletList)
                         {
-                            if (cmdletMatcher != null &&
+                            if (cmdletMatcher is not null &&
                                 cmdletMatcher.IsMatch(cmdlet.Name) ||
                                 (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
                                  FuzzyMatcher.IsFuzzyMatch(cmdlet.Name, _commandName)))
@@ -1071,7 +1071,7 @@ namespace System.Management.Automation
         [return: NotNullIfNotNull("result")]
         private static CmdletInfo? traceResult(CmdletInfo? result)
         {
-            if (result != null)
+            if (result is not null)
             {
                 CommandDiscovery.discoveryTracer.WriteLine(
                     "Cmdlet found: {0}  {1}",
@@ -1086,7 +1086,7 @@ namespace System.Management.Automation
         {
             string? result = null;
 
-            if (_context.EngineSessionState != null &&
+            if (_context.EngineSessionState is not null &&
                 _context.EngineSessionState.ProviderCount > 0)
             {
                 // NTRAID#Windows OS Bugs-1009294-2004/02/04-JeffJon
@@ -1178,7 +1178,7 @@ namespace System.Management.Automation
                 }
 
                 // Verify the path was resolved to a file system path
-                if (provider != null && provider.NameEquals(_context.ProviderNames.FileSystem))
+                if (provider is not null && provider.NameEquals(_context.ProviderNames.FileSystem))
                 {
                     result = resolvedPath;
 
@@ -1512,7 +1512,7 @@ namespace System.Management.Automation
         private void setupPathSearcher()
         {
             // If it's already set up, just return...
-            if (_pathSearcher != null)
+            if (_pathSearcher is not null)
             {
                 return;
             }

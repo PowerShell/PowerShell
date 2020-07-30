@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
                 ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
                 for (int read = 1; 0 < read; totalLength += read)
                 {
-                    if (_ownerCmdlet != null)
+                    if (_ownerCmdlet is not null)
                     {
                         record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseProgressStatus, totalLength);
                         _ownerCmdlet.WriteProgress(record);
@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (_ownerCmdlet != null)
+                if (_ownerCmdlet is not null)
                 {
                     record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseComplete, totalLength);
                     record.RecordType = ProgressRecordType.Completed;
@@ -474,7 +474,7 @@ namespace Microsoft.PowerShell.Commands
 
             // HttpClient by default will automatically decompress GZip and Deflate content.
             // We keep this decompression logic here just in case.
-            if (contentEncoding != null && contentEncoding.Count > 0)
+            if (contentEncoding is not null && contentEncoding.Count > 0)
             {
                 if (contentEncoding.Contains("gzip"))
                 {

@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (pr.Name.Equals("Credentials", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (Credential != null)
+                    if (Credential is not null)
                     {
                         NetworkCredential cred = Credential.GetNetworkCredential();
                         pr.SetValue(instance, cred as object, null);
@@ -338,7 +338,7 @@ namespace Microsoft.PowerShell.Commands
             catch (WebException ex)
             {
                 ErrorRecord er = new ErrorRecord(ex, "WebException", ErrorCategory.ObjectNotFound, _uri);
-                if (ex.InnerException != null)
+                if (ex.InnerException is not null)
                     er.ErrorDetails = new ErrorDetails(ex.InnerException.Message);
                 WriteError(er);
                 return null;
@@ -475,11 +475,11 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
 
-                if (proxyType != null) break;
+                if (proxyType is not null) break;
             }
 
             System.Management.Automation.Diagnostics.Assert(
-                proxyType != null,
+                proxyType is not null,
                 "Proxy class should always get generated unless there were some errors earlier (in that case we shouldn't get here)");
 
             return assembly.CreateInstance(proxyType.ToString());

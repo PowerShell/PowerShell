@@ -32,7 +32,7 @@ namespace System.Management.Automation.Remoting
         private static bool IsKnownType(Type type)
         {
             TypeSerializationInfo info = KnownTypes.GetTypeSerializationInfo(type);
-            return (info != null);
+            return (info is not null);
         }
 
         /// <summary>
@@ -412,7 +412,7 @@ namespace System.Management.Automation.Remoting
                 return null;
             }
 
-            Dbg.Assert(type != null, "Expected type != null");
+            Dbg.Assert(type is not null, "Expected type is not null");
             if (type == typeof(PSObject))
             {
                 return DecodePSObject(obj);
@@ -510,8 +510,8 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal static void EncodeAndAddAsProperty(PSObject psObject, string propertyName, object propertyValue)
         {
-            Dbg.Assert(psObject != null, "Expected psObject != null");
-            Dbg.Assert(propertyName != null, "Expected propertyName != null");
+            Dbg.Assert(psObject is not null, "Expected psObject is not null");
+            Dbg.Assert(propertyName is not null, "Expected propertyName is not null");
             if (propertyValue is null)
             {
                 return;
@@ -525,9 +525,9 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal static object DecodePropertyValue(PSObject psObject, string propertyName, Type propertyValueType)
         {
-            Dbg.Assert(psObject != null, "Expected psObject != null");
-            Dbg.Assert(propertyName != null, "Expected propertyName != null");
-            Dbg.Assert(propertyValueType != null, "Expected propertyValueType != null");
+            Dbg.Assert(psObject is not null, "Expected psObject is not null");
+            Dbg.Assert(propertyName is not null, "Expected propertyName is not null");
+            Dbg.Assert(propertyValueType is not null, "Expected propertyValueType is not null");
             ReadOnlyPSMemberInfoCollection<PSPropertyInfo> matches = psObject.Properties.Match(propertyName);
             if (matches.Count == 0)
             {
@@ -624,7 +624,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private static PSObject EncodeArray(Array array)
         {
-            Dbg.Assert(array != null, "Expected array != null");
+            Dbg.Assert(array is not null, "Expected array is not null");
             Dbg.Assert(ArrayIsZeroBased(array), "Expected ArrayIsZeroBased(array)");
             Type arrayType = array.GetType();
             Type elementType = arrayType.GetElementType();

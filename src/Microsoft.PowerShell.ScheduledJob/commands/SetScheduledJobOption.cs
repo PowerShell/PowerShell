@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
 
             // Update ScheduledJobDefinition with changes.
-            if (_jobOptions.JobDefinition != null)
+            if (_jobOptions.JobDefinition is not null)
             {
                 _jobOptions.UpdateJobDefinition();
             }

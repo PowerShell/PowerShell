@@ -66,7 +66,7 @@ namespace System.Management.Automation
                 object invokeGetValue = entry.InvokeGet(memberName);
                 // if entry.Properties[memberName] returns empty value and invokeGet non-empty
                 // value..take invokeGet's value. This will fix bug Windows Bug 121188.
-                if ((collection is null) || ((collection.Value is null) && (invokeGetValue != null)))
+                if ((collection is null) || ((collection.Value is null) && (invokeGetValue is not null)))
                 {
                     valueToTake = invokeGetValue;
                 }
@@ -84,7 +84,7 @@ namespace System.Management.Automation
                 property = null;
             }
 
-            if (typeof(T).IsAssignableFrom(typeof(PSProperty)) && property != null)
+            if (typeof(T).IsAssignableFrom(typeof(PSProperty)) && property is not null)
             {
                 return property as T;
             }
@@ -193,7 +193,7 @@ namespace System.Management.Automation
         {
             PropertyValueCollection values = property.adapterData as PropertyValueCollection;
 
-            if (values != null)
+            if (values is not null)
             {
                 // This means GetMember returned PropertyValueCollection
                 try
@@ -228,7 +228,7 @@ namespace System.Management.Automation
             {
                 // This means GetMember returned the value from InvokeGet..So set the value using InvokeSet.
                 DirectoryEntry entry = (DirectoryEntry)property.baseObject;
-                Diagnostics.Assert(entry != null, "Object should be of type DirectoryEntry in DirectoryEntry adapter.");
+                Diagnostics.Assert(entry is not null, "Object should be of type DirectoryEntry in DirectoryEntry adapter.");
 
                 List<object> setValues = new List<object>();
                 IEnumerable enumValues = LanguagePrimitives.GetEnumerable(setValue);
@@ -355,7 +355,7 @@ namespace System.Management.Automation
             // this code is reached only on exception
             // check if there is a dotnet method, invoke the dotnet method if available
             PSMethod dotNetmethod = s_dotNetAdapter.GetDotNetMethod<PSMethod>(method.baseObject, method.name);
-            if (dotNetmethod != null)
+            if (dotNetmethod is not null)
             {
                 return dotNetmethod.Invoke(arguments);
             }

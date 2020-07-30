@@ -143,7 +143,7 @@ namespace System.Management.Automation
             try
             {
                 result = GetUriFromCommandPSObject(this.FullHelp);
-                if (result != null)
+                if (result is not null)
                 {
                     return result;
                 }
@@ -154,11 +154,11 @@ namespace System.Management.Automation
             }
             // else get uri from CommandInfo HelpUri attribute
             result = this.LookupUriFromCommandInfo();
-            if (result != null)
+            if (result is not null)
             {
                 return result;
             }
-            else if (uriFormatException != null)
+            else if (uriFormatException is not null)
             {
                 throw uriFormatException;
             }
@@ -201,10 +201,10 @@ namespace System.Management.Automation
 
             string commandName = this.Name;
             string moduleName = string.Empty;
-            if (this.FullHelp.Properties["ModuleName"] != null)
+            if (this.FullHelp.Properties["ModuleName"] is not null)
             {
                 PSNoteProperty moduleNameNP = this.FullHelp.Properties["ModuleName"] as PSNoteProperty;
-                if (moduleNameNP != null)
+                if (moduleNameNP is not null)
                 {
                     LanguagePrimitives.TryConvertTo<string>(moduleNameNP.Value, CultureInfo.InvariantCulture,
                                                             out moduleName);
@@ -306,7 +306,7 @@ namespace System.Management.Automation
 
                 PSObject navigationLink = PSObject.AsPSObject(navigationLinkAsObject);
                 PSNoteProperty uriNP = navigationLink.Properties["uri"] as PSNoteProperty;
-                if (uriNP != null)
+                if (uriNP is not null)
                 {
                     string uriString = string.Empty;
                     LanguagePrimitives.TryConvertTo<string>(uriNP.Value, CultureInfo.InvariantCulture, out uriString);
@@ -351,7 +351,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal override bool MatchPatternInContent(WildcardPattern pattern)
         {
-            Dbg.Assert(pattern != null, "pattern cannot be null");
+            Dbg.Assert(pattern is not null, "pattern cannot be null");
 
             string synopsis = Synopsis;
             string detailedDescription = DetailedDescription;
@@ -405,7 +405,7 @@ namespace System.Management.Automation
             }
 
             PSObject[] prmtArray = (PSObject[])LanguagePrimitives.ConvertTo(
-                paramAsPSObjArray[0] != null ? paramAsPSObjArray : param,
+                paramAsPSObjArray[0] is not null ? paramAsPSObjArray : param,
                 typeof(PSObject[]),
                 CultureInfo.InvariantCulture);
 

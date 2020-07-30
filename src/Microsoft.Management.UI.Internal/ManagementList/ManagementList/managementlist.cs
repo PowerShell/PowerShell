@@ -124,7 +124,7 @@ namespace Microsoft.Management.UI.Internal
         partial void OnEvaluatorChangedImplementation(PropertyChangedEventArgs<ItemsControlFilterEvaluator> e)
         {
             // Unregister the previous evaluator \\
-            if (e.OldValue != null)
+            if (e.OldValue is not null)
             {
                 e.OldValue.RemoveFilterExpressionProvider(this.SearchBox);
                 e.OldValue.RemoveFilterExpressionProvider(this.FilterRulePanel);
@@ -387,7 +387,7 @@ namespace Microsoft.Management.UI.Internal
 
         partial void PreOnApplyTemplate()
         {
-            if (this.viewManager != null)
+            if (this.viewManager is not null)
             {
                 this.viewManager.ItemSelected -= this.ViewManager_ItemSelected;
                 this.viewManager.ItemDeleted -= this.ViewManager_ItemDeleted;

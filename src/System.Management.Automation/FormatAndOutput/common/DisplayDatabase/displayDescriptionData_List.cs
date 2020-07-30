@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             ListControlBody result = new ListControlBody();
             result.autosize = this.autosize;
-            if (defaultEntryDefinition != null)
+            if (defaultEntryDefinition is not null)
             {
                 result.defaultEntryDefinition = this.defaultEntryDefinition.Copy();
             }
@@ -226,7 +226,7 @@ namespace System.Management.Automation
         internal ListControlEntry(ListControlEntryDefinition entrydefn)
             : this()
         {
-            if (entrydefn.appliesTo != null)
+            if (entrydefn.appliesTo is not null)
             {
                 EntrySelectedBy = EntrySelectedBy.Get(entrydefn.appliesTo.referenceList);
             }
@@ -314,21 +314,21 @@ namespace System.Management.Automation
 
         internal ListControlEntryItem(ListControlItemDefinition definition)
         {
-            if (definition.label != null)
+            if (definition.label is not null)
             {
                 Label = definition.label.text;
             }
 
             FieldPropertyToken fpt = definition.formatTokenList[0] as FieldPropertyToken;
-            if (fpt != null)
+            if (fpt is not null)
             {
-                if (fpt.fieldFormattingDirective.formatString != null)
+                if (fpt.fieldFormattingDirective.formatString is not null)
                 {
                     FormatString = fpt.fieldFormattingDirective.formatString;
                 }
 
                 DisplayEntry = new DisplayEntry(fpt.expression);
-                if (definition.conditionToken != null)
+                if (definition.conditionToken is not null)
                 {
                     ItemSelectionCondition = new DisplayEntry(definition.conditionToken);
                 }

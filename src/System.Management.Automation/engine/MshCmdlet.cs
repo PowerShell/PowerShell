@@ -240,7 +240,7 @@ namespace System.Management.Automation
         internal CommandInvocationIntrinsics(ExecutionContext context, PSCmdlet cmdlet)
         {
             _context = context;
-            if (cmdlet != null)
+            if (cmdlet is not null)
             {
                 _cmdlet = cmdlet;
                 _commandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
@@ -279,7 +279,7 @@ namespace System.Management.Automation
         /// </exception>
         public string ExpandString(string source)
         {
-            if (_cmdlet != null)
+            if (_cmdlet is not null)
                 _cmdlet.ThrowIfStopping();
             return _context.Engine.Expand(source);
         }
@@ -309,18 +309,18 @@ namespace System.Management.Automation
             try
             {
                 CommandOrigin commandOrigin = CommandOrigin.Runspace;
-                if (_cmdlet != null)
+                if (_cmdlet is not null)
                 {
                     commandOrigin = _cmdlet.CommandOrigin;
                 }
-                else if (_context != null)
+                else if (_context is not null)
                 {
                     commandOrigin = _context.EngineSessionState.CurrentScope.ScopeOrigin;
                 }
 
                 result = CommandDiscovery.LookupCommandInfo(commandName, type, SearchResolutionOptions.None, commandOrigin, _context);
 
-                if ((result != null) && (arguments != null) && (arguments.Length > 0))
+                if ((result is not null) && (arguments is not null) && (arguments.Length > 0))
                 {
                     // We've been asked to retrieve dynamic parameters
                     if (result.ImplementsDynamicParameters)
@@ -440,7 +440,7 @@ namespace System.Management.Automation
 
             Exception e = null;
             Type cmdletType = TypeResolver.ResolveType(cmdletTypeName, out e);
-            if (e != null)
+            if (e is not null)
             {
                 throw e;
             }
@@ -454,7 +454,7 @@ namespace System.Management.Automation
             foreach (var attr in cmdletType.GetCustomAttributes(true))
             {
                 ca = attr as CmdletAttribute;
-                if (ca != null)
+                if (ca is not null)
                     break;
             }
 
@@ -528,7 +528,7 @@ namespace System.Management.Automation
                 }
 
                 current = ((IEnumerator)searcher).Current as CmdletInfo;
-                if (current != null)
+                if (current is not null)
                     cmdlets.Add(current);
             }
 
@@ -626,7 +626,7 @@ namespace System.Management.Automation
                 commandTypes,
                 _context);
 
-            if (commandOrigin != null)
+            if (commandOrigin is not null)
             {
                 searcher.CommandOrigin = commandOrigin.Value;
             }
@@ -662,7 +662,7 @@ namespace System.Management.Automation
                 }
 
                 CommandInfo commandInfo = ((IEnumerator)searcher).Current as CommandInfo;
-                if (commandInfo != null)
+                if (commandInfo is not null)
                 {
                     yield return commandInfo;
                 }
@@ -795,7 +795,7 @@ namespace System.Management.Automation
         private Collection<PSObject> InvokeScript(ScriptBlock sb, bool useNewScope,
             PipelineResultTypes writeToPipeline, IList input, params object[] args)
         {
-            if (_cmdlet != null)
+            if (_cmdlet is not null)
                 _cmdlet.ThrowIfStopping();
 
             Cmdlet cmdletToUse = null;
@@ -824,7 +824,7 @@ namespace System.Management.Automation
             // If the cmdletToUse is not null, then the result of the evaluation will be
             // streamed out the output pipe of the cmdlet.
             object rawResult;
-            if (cmdletToUse != null)
+            if (cmdletToUse is not null)
             {
                 sb.InvokeUsingCmdlet(
                     contextCmdlet: cmdletToUse,
@@ -854,7 +854,7 @@ namespace System.Management.Automation
 
             // If the result is already a collection of PSObjects, just return it...
             Collection<PSObject> result = rawResult as Collection<PSObject>;
-            if (result != null)
+            if (result is not null)
                 return result;
 
             result = new Collection<PSObject>();
@@ -862,7 +862,7 @@ namespace System.Management.Automation
             IEnumerator list = null;
             list = LanguagePrimitives.GetEnumerator(rawResult);
 
-            if (list != null)
+            if (list is not null)
             {
                 while (list.MoveNext())
                 {
@@ -887,7 +887,7 @@ namespace System.Management.Automation
         /// <exception cref="ParseException"></exception>
         public ScriptBlock NewScriptBlock(string scriptText)
         {
-            if (_commandRuntime != null)
+            if (_commandRuntime is not null)
                 _commandRuntime.ThrowIfStopping();
 
             ScriptBlock result = ScriptBlock.Create(_context, scriptText);
@@ -972,7 +972,7 @@ namespace System.Management.Automation
                     if (_pagingParameters is null)
                     {
                         MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
+                        if (mshCommandRuntime is not null)
                         {
                             _pagingParameters = mshCommandRuntime.PagingParameters ?? new PagingParameters(mshCommandRuntime);
                         }

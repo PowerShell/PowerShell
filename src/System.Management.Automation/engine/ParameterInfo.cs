@@ -118,7 +118,7 @@ namespace System.Management.Automation
         private void SetAttributes(IList<Attribute> attributeMetadata)
         {
             Diagnostics.Assert(
-                attributeMetadata != null,
+                attributeMetadata is not null,
                 "The compiled attribute collection should never be null");
 
             Collection<Attribute> processedAttributes = new Collection<Attribute>();

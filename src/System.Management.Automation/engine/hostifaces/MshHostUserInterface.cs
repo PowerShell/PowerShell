@@ -184,7 +184,7 @@ namespace System.Management.Automation.Host
 
             // expressly not checking for value is null so that attempts to write a null cause an exception
 
-            if ((value != null) && (value.Length != 0))
+            if ((value is not null) && (value.Length != 0))
             {
                 Write(foregroundColor, backgroundColor, value);
             }
@@ -273,10 +273,10 @@ namespace System.Management.Automation.Host
                 // If we have access to a runspace, use the transcription data for that runspace.
                 // This is important when you have multiple runspaces within a host.
                 LocalRunspace localRunspace = Runspace.DefaultRunspace as LocalRunspace;
-                if (localRunspace != null)
+                if (localRunspace is not null)
                 {
                     _volatileTranscriptionData = localRunspace.TranscriptionData;
-                    if (_volatileTranscriptionData != null)
+                    if (_volatileTranscriptionData is not null)
                     {
                         return _volatileTranscriptionData;
                     }
@@ -284,7 +284,7 @@ namespace System.Management.Automation.Host
 
                 // Otherwise, use the last stored transcription data. This will let us transcribe
                 // errors where the runspace has gone away.
-                if (_volatileTranscriptionData != null)
+                if (_volatileTranscriptionData is not null)
                 {
                     return _volatileTranscriptionData;
                 }
@@ -317,7 +317,7 @@ namespace System.Management.Automation.Host
                 // the command generates output, or when we are told to invoke ignore the next command.
                 foreach (TranscriptionOption transcript in TranscriptionData.Transcripts.Prepend<TranscriptionOption>(TranscriptionData.SystemTranscript))
                 {
-                    if (transcript != null)
+                    if (transcript is not null)
                     {
                         lock (transcript.OutputToLog)
                         {
@@ -349,13 +349,13 @@ namespace System.Management.Automation.Host
         {
             string commandName = logElement;
 
-            if (invocation != null)
+            if (invocation is not null)
             {
                 commandName = invocation.InvocationName;
 
                 // Do not transcribe Out-Default
                 CmdletInfo invocationCmdlet = invocation.MyCommand as CmdletInfo;
-                if (invocationCmdlet != null)
+                if (invocationCmdlet is not null)
                 {
                     if (invocationCmdlet.ImplementingType == typeof(Microsoft.PowerShell.Commands.OutDefaultCommand))
                     {
@@ -405,7 +405,7 @@ namespace System.Management.Automation.Host
                 TranscriptionData.CommandBeingIgnored = commandText;
                 TranscriptionData.IsHelperCommand = false;
 
-                if ((invocation != null) && (invocation.MyCommand != null))
+                if ((invocation is not null) && (invocation.MyCommand is not null))
                 {
                     TranscriptionData.CommandBeingIgnored = invocation.MyCommand.Name;
                 }
@@ -455,7 +455,7 @@ namespace System.Management.Automation.Host
             get
             {
                 CheckSystemTranscript();
-                return (TranscriptionData.Transcripts.Count > 0) || (TranscriptionData.SystemTranscript != null);
+                return (TranscriptionData.Transcripts.Count > 0) || (TranscriptionData.SystemTranscript is not null);
             }
         }
 
@@ -466,7 +466,7 @@ namespace System.Management.Automation.Host
                 if (TranscriptionData.SystemTranscript is null)
                 {
                     TranscriptionData.SystemTranscript = PSHostUserInterface.GetSystemTranscriptOption(TranscriptionData.SystemTranscript);
-                    if (TranscriptionData.SystemTranscript != null)
+                    if (TranscriptionData.SystemTranscript is not null)
                     {
                         LogTranscriptHeader(null, TranscriptionData.SystemTranscript);
                     }
@@ -501,7 +501,7 @@ namespace System.Management.Automation.Host
                 string username = Environment.UserDomainName + "\\" + Environment.UserName;
                 string runAsUser = username;
 
-                if (senderInfo != null)
+                if (senderInfo is not null)
                 {
                     username = senderInfo.UserInfo.Identity.Name;
                 }
@@ -513,16 +513,16 @@ namespace System.Management.Automation.Host
                 {
                     object value = versionInfo[versionKey];
 
-                    if (value != null)
+                    if (value is not null)
                     {
                         var arrayValue = value as object[];
-                        string valueString = arrayValue != null ? string.Join(", ", arrayValue) : value.ToString();
+                        string valueString = arrayValue is not null ? string.Join(", ", arrayValue) : value.ToString();
                         versionInfoFooter.AppendLine(versionKey + ": " + valueString);
                     }
                 }
 
                 string configurationName = string.Empty;
-                if (senderInfo != null && !string.IsNullOrEmpty(senderInfo.ConfigurationName))
+                if (senderInfo is not null && !string.IsNullOrEmpty(senderInfo.ConfigurationName))
                 {
                     configurationName = senderInfo.ConfigurationName;
                 }
@@ -599,7 +599,7 @@ namespace System.Management.Automation.Host
 
             lock (TranscriptionData)
             {
-                if (TranscriptionData.SystemTranscript != null)
+                if (TranscriptionData.SystemTranscript is not null)
                 {
                     LogTranscriptFooter(TranscriptionData.SystemTranscript);
                     TranscriptionData.SystemTranscript.Dispose();
@@ -625,7 +625,7 @@ namespace System.Management.Automation.Host
                 // If the runspace that this result applies to is not the current runspace, update Runspace.DefaultRunspace
                 // so that the transcript paths / etc. will be available to the TranscriptionData accessor.
                 Runspace originalDefaultRunspace = null;
-                if (sourceRunspace != null)
+                if (sourceRunspace is not null)
                 {
                     originalDefaultRunspace = Runspace.DefaultRunspace;
                     Runspace.DefaultRunspace = sourceRunspace;
@@ -634,7 +634,7 @@ namespace System.Management.Automation.Host
                 try
                 {
                     // If we're ignoring a command, ignore its output.
-                    if (TranscriptionData.CommandBeingIgnored != null)
+                    if (TranscriptionData.CommandBeingIgnored is not null)
                     {
                         // If we're ignoring a prompt, capture the value
                         if (string.Equals("prompt", TranscriptionData.CommandBeingIgnored, StringComparison.OrdinalIgnoreCase))
@@ -648,7 +648,7 @@ namespace System.Management.Automation.Host
                     resultText = resultText.TrimEnd();
                     foreach (TranscriptionOption transcript in TranscriptionData.Transcripts.Prepend<TranscriptionOption>(TranscriptionData.SystemTranscript))
                     {
-                        if (transcript != null)
+                        if (transcript is not null)
                         {
                             lock (transcript.OutputToLog)
                             {
@@ -659,7 +659,7 @@ namespace System.Management.Automation.Host
                 }
                 finally
                 {
-                    if (originalDefaultRunspace != null)
+                    if (originalDefaultRunspace is not null)
                     {
                         Runspace.DefaultRunspace = originalDefaultRunspace;
                     }
@@ -684,7 +684,7 @@ namespace System.Management.Automation.Host
         {
             FlushPendingOutput();
 
-            if (invocation != null)
+            if (invocation is not null)
             {
                 // If we're ignoring a command that was internal, we still want the
                 // results of Out-Default. However, if it was a host helper command,
@@ -696,8 +696,8 @@ namespace System.Management.Automation.Host
                 }
 
                 // If we're completing a command that we were ignoring, start transcribing results / etc. again.
-                if ((TranscriptionData.CommandBeingIgnored != null) &&
-                    (invocation != null) && (invocation.MyCommand != null) &&
+                if ((TranscriptionData.CommandBeingIgnored is not null) &&
+                    (invocation is not null) && (invocation.MyCommand is not null) &&
                     string.Equals(commandNameToCheck, invocation.MyCommand.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     TranscriptionData.CommandBeingIgnored = null;
@@ -718,7 +718,7 @@ namespace System.Management.Automation.Host
         {
             foreach (TranscriptionOption transcript in TranscriptionData.Transcripts.Prepend<TranscriptionOption>(TranscriptionData.SystemTranscript))
             {
-                if (transcript != null)
+                if (transcript is not null)
                 {
                     lock (transcript.OutputToLog)
                     {
@@ -1013,7 +1013,7 @@ namespace System.Management.Automation.Host
                 ? Utils.GetPolicySetting<Transcription>(Utils.SystemWideThenCurrentUserConfig)
                 : s_transcriptionSettingCache.Value;
 
-            if (transcription != null)
+            if (transcription is not null)
             {
                 // If we have an existing system transcript for this process, use that.
                 // Otherwise, populate the static variable with the result of the group policy setting.
@@ -1044,7 +1044,7 @@ namespace System.Management.Automation.Host
 
             if (transcriptConfig.EnableTranscripting == true)
             {
-                if (currentTranscript != null)
+                if (currentTranscript is not null)
                 {
                     return currentTranscript;
                 }
@@ -1052,7 +1052,7 @@ namespace System.Management.Automation.Host
                 transcript = new TranscriptionOption();
 
                 // Pull out the transcript path
-                if (transcriptConfig.OutputDirectory != null)
+                if (transcriptConfig.OutputDirectory is not null)
                 {
                     transcript.Path = GetTranscriptPath(transcriptConfig.OutputDirectory, true);
                 }
@@ -1254,7 +1254,7 @@ namespace System.Management.Automation.Host
                 outputWait += 100;
             }
 
-            if (_contentWriter != null)
+            if (_contentWriter is not null)
             {
                 _contentWriter.Flush();
                 _contentWriter.Dispose();
@@ -1366,8 +1366,8 @@ namespace System.Management.Automation.Host
         ///</returns>
         internal static int DetermineChoicePicked(string response, Collection<ChoiceDescription> choices, string[,] hotkeysAndPlainLabels)
         {
-            Diagnostics.Assert(choices != null, "choices: expected a value");
-            Diagnostics.Assert(hotkeysAndPlainLabels != null, "hotkeysAndPlainLabels: expected a value");
+            Diagnostics.Assert(choices is not null, "choices: expected a value");
+            Diagnostics.Assert(hotkeysAndPlainLabels is not null, "hotkeysAndPlainLabels: expected a value");
 
             int result = -1;
 

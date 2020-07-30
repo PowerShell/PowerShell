@@ -439,7 +439,7 @@ namespace Microsoft.PowerShell.Commands
                     connectionInfo.AppName = ApplicationName;
                     connectionInfo.ShellUri = ConfigurationName;
                     connectionInfo.Port = Port;
-                    if (CertificateThumbprint != null)
+                    if (CertificateThumbprint is not null)
                     {
                         connectionInfo.CertificateThumbprint = CertificateThumbprint;
                     }
@@ -462,7 +462,7 @@ namespace Microsoft.PowerShell.Commands
                     WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
                     connectionInfo.ConnectionUri = connectionUri;
                     connectionInfo.ShellUri = ConfigurationName;
-                    if (CertificateThumbprint != null)
+                    if (CertificateThumbprint is not null)
                     {
                         connectionInfo.CertificateThumbprint = CertificateThumbprint;
                     }
@@ -501,7 +501,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Update the connectionInfo object with passed in session options.
-            if (SessionOption != null)
+            if (SessionOption is not null)
             {
                 connectionInfo.SetSessionOptions(SessionOption);
             }

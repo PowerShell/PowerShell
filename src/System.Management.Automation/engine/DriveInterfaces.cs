@@ -60,7 +60,7 @@ namespace System.Management.Automation
             get
             {
                 Dbg.Diagnostics.Assert(
-                    _sessionState != null,
+                    _sessionState is not null,
                     "The only constructor for this class should always set the sessionState field");
 
                 return _sessionState.CurrentDrive;
@@ -104,7 +104,7 @@ namespace System.Management.Automation
         public PSDriveInfo New(PSDriveInfo drive, string scope)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -153,7 +153,7 @@ namespace System.Management.Automation
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -186,7 +186,7 @@ namespace System.Management.Automation
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -216,7 +216,7 @@ namespace System.Management.Automation
         public void Remove(string driveName, bool force, string scope)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -249,7 +249,7 @@ namespace System.Management.Automation
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -279,7 +279,7 @@ namespace System.Management.Automation
         public PSDriveInfo Get(string driveName)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -316,7 +316,7 @@ namespace System.Management.Automation
         public PSDriveInfo GetAtScope(string driveName, string scope)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -330,7 +330,7 @@ namespace System.Management.Automation
         public Collection<PSDriveInfo> GetAll()
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             return _sessionState.Drives(null);
@@ -354,7 +354,7 @@ namespace System.Management.Automation
         public Collection<PSDriveInfo> GetAllAtScope(string scope)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             return _sessionState.Drives(scope);
@@ -372,7 +372,7 @@ namespace System.Management.Automation
         public Collection<PSDriveInfo> GetAllForProvider(string providerName)
         {
             Dbg.Diagnostics.Assert(
-                _sessionState != null,
+                _sessionState is not null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object

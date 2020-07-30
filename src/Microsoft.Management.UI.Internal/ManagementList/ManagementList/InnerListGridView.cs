@@ -155,7 +155,7 @@ namespace Microsoft.Management.UI.Internal
             {
                 this.Columns.Clear();
                 ObservableCollection<InnerListColumn> newColumns = columnPicker.SelectedColumns;
-                Debug.Assert(newColumns != null, "SelectedColumns not found");
+                Debug.Assert(newColumns is not null, "SelectedColumns not found");
                 foreach (InnerListColumn column in newColumns)
                 {
                     Debug.Assert(column.Visible, "is visible");
@@ -229,7 +229,7 @@ namespace Microsoft.Management.UI.Internal
         {
             if (e.Action != NotifyCollectionChangedAction.Move)
             {
-                if (e.OldItems != null)
+                if (e.OldItems is not null)
                 {
                     foreach (InnerListColumn oldColumn in e.OldItems)
                     {
@@ -237,7 +237,7 @@ namespace Microsoft.Management.UI.Internal
                     }
                 }
 
-                if (e.NewItems != null)
+                if (e.NewItems is not null)
                 {
                     foreach (InnerListColumn newColumn in e.NewItems)
                     {

@@ -94,7 +94,7 @@ namespace System.Management.Automation
         {
             object result = null;
             RuntimeDefinedParameter parameter;
-            if (this.Target.TryGetValue(name, out parameter) && parameter != null)
+            if (this.Target.TryGetValue(name, out parameter) && parameter is not null)
             {
                 result = parameter.Value;
             }

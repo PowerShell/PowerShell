@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// </summary>
             public void Dispose()
             {
-                if (_loader != null)
+                if (_loader is not null)
                 {
                     _loader.RemoveStackFrame();
                     _loader = null;
@@ -229,7 +229,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (disposing)
             {
-                if (_logger != null)
+                if (_logger is not null)
                 {
                     _logger.Dispose();
                     _logger = null;
@@ -387,7 +387,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (match && !allowAttributes)
             {
                 XmlElement e = n as XmlElement;
-                if (e != null && e.Attributes.Count > 0)
+                if (e is not null && e.Attributes.Count > 0)
                 {
                     // Error at XPath {0} in file {1}: The XML Element {2} does not allow attributes.
                     ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.AttributesNotAllowed, ComputeCurrentXPath(), FilePath, n.Name));
@@ -626,7 +626,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 isFullyTrusted = true;
             }
 
-            if (authorizationManager != null)
+            if (authorizationManager is not null)
             {
                 try
                 {

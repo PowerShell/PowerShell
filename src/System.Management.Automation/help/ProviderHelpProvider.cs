@@ -87,7 +87,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (matchingProviders != null)
+            if (matchingProviders is not null)
             {
                 foreach (ProviderInfo providerInfo in matchingProviders)
                 {
@@ -110,7 +110,7 @@ namespace System.Management.Automation
 
                     HelpInfo helpInfo = GetCache(providerInfo.PSSnapInName + "\\" + providerInfo.Name);
 
-                    if (helpInfo != null)
+                    if (helpInfo is not null)
                     {
                         yield return helpInfo;
                     }
@@ -170,7 +170,7 @@ namespace System.Management.Automation
             // Otherwise,
             //    Look in the default search path and cmdlet assembly path
             Collection<string> searchPaths = new Collection<string>();
-            if (mshSnapInInfo != null)
+            if (mshSnapInInfo is not null)
             {
                 Diagnostics.Assert(!string.IsNullOrEmpty(mshSnapInInfo.ApplicationBase),
                     "Application Base is null or empty.");
@@ -180,7 +180,7 @@ namespace System.Management.Automation
                 // will look only in that path.
                 helpFileToLoad = Path.Combine(mshSnapInInfo.ApplicationBase, helpFile);
             }
-            else if ((providerInfo.Module != null) && (!string.IsNullOrEmpty(providerInfo.Module.Path)))
+            else if ((providerInfo.Module is not null) && (!string.IsNullOrEmpty(providerInfo.Module.Path)))
             {
                 helpFileToLoad = Path.Combine(providerInfo.Module.ModuleBase, helpFile);
             }
@@ -231,7 +231,7 @@ namespace System.Management.Automation
                         {
                             HelpInfo helpInfo = ProviderHelpInfo.Load(node);
 
-                            if (helpInfo != null)
+                            if (helpInfo is not null)
                             {
                                 this.HelpSystem.TraceErrors(helpInfo.Errors);
                                 // Add snapin qualified type name for this command..
@@ -335,7 +335,7 @@ namespace System.Management.Automation
 
                     HelpInfo helpInfo = GetCache(providerInfo.PSSnapInName + "\\" + providerInfo.Name);
 
-                    if (helpInfo != null)
+                    if (helpInfo is not null)
                     {
                         if (searchOnlyContent)
                         {

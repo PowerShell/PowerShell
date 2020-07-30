@@ -26,7 +26,7 @@ namespace System.Management.Automation
 
         internal static string Multiply(string s, int times)
         {
-            Diagnostics.Assert(s != null, "caller to verify argument is not null");
+            Diagnostics.Assert(s is not null, "caller to verify argument is not null");
 
             if (times < 0)
             {
@@ -40,7 +40,7 @@ namespace System.Management.Automation
             }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            if (context != null &&
+            if (context is not null &&
                 context.LanguageMode == PSLanguageMode.RestrictedLanguage && (s.Length * times) > 1024)
             {
                 throw InterpreterError.NewInterpreterException(times, typeof(RuntimeException),
@@ -70,7 +70,7 @@ namespace System.Management.Automation
             try
             {
                 object[] formatArgsArray = formatArgs as object[];
-                return formatArgsArray != null
+                return formatArgsArray is not null
                            ? StringUtil.Format(formatString, formatArgsArray)
                            : StringUtil.Format(formatString, formatArgs);
             }
@@ -92,7 +92,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static int Compare(string strA, string strB, CultureInfo culture, CompareOptions option)
         {
-            Diagnostics.Assert(culture != null, "Caller makes sure that 'culture' is not null.");
+            Diagnostics.Assert(culture is not null, "Caller makes sure that 'culture' is not null.");
             return culture.CompareInfo.Compare(strA, strB, option);
         }
 
@@ -104,7 +104,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool Equals(string strA, string strB, CultureInfo culture, CompareOptions option)
         {
-            Diagnostics.Assert(culture != null, "Caller makes sure that 'culture' is not null.");
+            Diagnostics.Assert(culture is not null, "Caller makes sure that 'culture' is not null.");
             return culture.CompareInfo.Compare(strA, strB, option) == 0;
         }
     }

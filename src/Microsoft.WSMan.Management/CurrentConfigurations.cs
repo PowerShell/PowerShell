@@ -127,7 +127,7 @@ namespace Microsoft.WSMan.Management
                     pathToNodeFromRoot,
                     this.nameSpaceManger);
 
-            if (nodeToRemove != null)
+            if (nodeToRemove is not null)
             {
                 if (nodeToRemove is XmlAttribute)
                 {
@@ -170,7 +170,7 @@ namespace Microsoft.WSMan.Management
                     pathToNodeFromRoot,
                     this.nameSpaceManger);
 
-            if (nodeToUpdate != null)
+            if (nodeToUpdate is not null)
             {
                 foreach (XmlAttribute attribute in nodeToUpdate.Attributes)
                 {
@@ -205,7 +205,7 @@ namespace Microsoft.WSMan.Management
                     pathFromRoot,
                     this.nameSpaceManger);
 
-            if (requiredNode != null)
+            if (requiredNode is not null)
             {
                 return requiredNode.Value;
             }

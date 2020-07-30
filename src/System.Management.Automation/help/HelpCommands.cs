@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // write first help object only once.
-                        if (firstHelpInfoObject != null)
+                        if (firstHelpInfoObject is not null)
                         {
                             WriteObjectsOrShowOnlineHelp(firstHelpInfoObject, false);
                             firstHelpInfoObject = null;
@@ -404,7 +404,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>If Detailed and Full are not specified, nothing is changed.</remarks>
         private PSObject TransformView(PSObject originalHelpObject)
         {
-            Diagnostics.Assert(originalHelpObject != null,
+            Diagnostics.Assert(originalHelpObject is not null,
                 "HelpObject should not be null");
 
             if (_viewTokenToAdd == HelpView.Default)
@@ -522,25 +522,25 @@ namespace Microsoft.PowerShell.Commands
 
             if ((cat & supportedCategories) == 0)
             {
-                if (Parameter != null)
+                if (Parameter is not null)
                 {
                     throw PSTraceSource.NewArgumentException("Parameter",
                         HelpErrors.ParamNotSupported, "-Parameter");
                 }
 
-                if (Component != null)
+                if (Component is not null)
                 {
                     throw PSTraceSource.NewArgumentException("Component",
                         HelpErrors.ParamNotSupported, "-Component");
                 }
 
-                if (Role != null)
+                if (Role is not null)
                 {
                     throw PSTraceSource.NewArgumentException("Role",
                         HelpErrors.ParamNotSupported, "-Role");
                 }
 
-                if (Functionality != null)
+                if (Functionality is not null)
                 {
                     throw PSTraceSource.NewArgumentException("Functionality",
                         HelpErrors.ParamNotSupported, "-Functionality");
@@ -555,7 +555,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WriteObjectsOrShowOnlineHelp(HelpInfo helpInfo, bool showFullHelp)
         {
-            if (helpInfo != null)
+            if (helpInfo is not null)
             {
                 // online help can be showed only if showFullHelp is true..
                 // showFullHelp will be false when the help tries to display multiple help topics..
@@ -566,7 +566,7 @@ namespace Microsoft.PowerShell.Commands
                     // show online help
                     s_tracer.WriteLine("Preparing to show help online.");
                     Uri onlineUri = helpInfo.GetUriForOnlineHelp();
-                    if (onlineUri != null)
+                    if (onlineUri is not null)
                     {
                         onlineUriFound = true;
                         LaunchOnlineHelp(onlineUri);
@@ -589,7 +589,7 @@ namespace Microsoft.PowerShell.Commands
                     // show inline help
                     if (showFullHelp)
                     {
-                        if (Parameter != null)
+                        if (Parameter is not null)
                         {
                             GetAndWriteParameterInfo(helpInfo);
                         }
@@ -602,7 +602,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (Parameter != null)
+                        if (Parameter is not null)
                         {
                             PSObject[] pInfos = GetParameterInfo(helpInfo);
 
@@ -625,7 +625,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="uriToLaunch"></param>
         private void LaunchOnlineHelp(Uri uriToLaunch)
         {
-            Diagnostics.Assert(uriToLaunch != null, "uriToLaunch should not be null");
+            Diagnostics.Assert(uriToLaunch is not null, "uriToLaunch should not be null");
 
             if (!uriToLaunch.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase) &&
                 !uriToLaunch.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))
@@ -672,7 +672,7 @@ namespace Microsoft.PowerShell.Commands
                 exception = we;
             }
 
-            if (exception != null)
+            if (exception is not null)
             {
                 if (wrapCaughtException)
                     throw PSTraceSource.NewInvalidOperationException(exception, HelpErrors.CannotLaunchURI, uriToLaunch.OriginalString);
@@ -741,7 +741,7 @@ namespace Microsoft.PowerShell.Commands
         {
             InitialSessionState iss =
                 System.Management.Automation.Runspaces.Runspace.DefaultRunspace.InitialSessionState;
-            if (iss != null)
+            if (iss is not null)
             {
                 IEnumerable<SessionStateCommandEntry> publicGetHelpEntries = iss
                     .Commands["Get-Help"]
@@ -754,7 +754,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (SessionStateCommandEntry getHelpEntry in publicGetHelpEntries)
                 {
                     SessionStateCmdletEntry getHelpCmdlet = getHelpEntry as SessionStateCmdletEntry;
-                    if ((getHelpCmdlet != null) && (getHelpCmdlet.ImplementingType.Equals(typeof(GetHelpCommand))))
+                    if ((getHelpCmdlet is not null) && (getHelpCmdlet.ImplementingType.Equals(typeof(GetHelpCommand))))
                     {
                         return true;
                     }
@@ -804,8 +804,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             AliasInfo aliasInfo = cmdInfo as AliasInfo;
-            if ((aliasInfo != null) &&
-                (aliasInfo.ExternalCommandMetadata != null) &&
+            if ((aliasInfo is not null) &&
+                (aliasInfo.ExternalCommandMetadata is not null) &&
                 (!string.IsNullOrEmpty(aliasInfo.ExternalCommandMetadata.HelpUri)))
             {
                 return aliasInfo.ExternalCommandMetadata.HelpUri;
@@ -824,7 +824,7 @@ namespace Microsoft.PowerShell.Commands
                 // Win8: 651300 if core get-help is present in the runspace (and it is the only get-help command), use
                 // help system directly and avoid perf penalty.
                 var currentContext = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-                if ((currentContext != null) && (currentContext.HelpSystem != null))
+                if ((currentContext is not null) && (currentContext.HelpSystem is not null))
                 {
                     HelpRequest helpRequest = new HelpRequest(cmdName, cmdInfo.HelpCategory);
                     helpRequest.ProviderContext = new ProviderContext(
@@ -835,7 +835,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (
                         Uri result in
                             currentContext.HelpSystem.ExactMatchHelp(helpRequest).Select(
-                                helpInfo => helpInfo.GetUriForOnlineHelp()).Where(result => result != null))
+                                helpInfo => helpInfo.GetUriForOnlineHelp()).Where(result => result is not null))
                     {
                         return result.OriginalString;
                     }
@@ -857,7 +857,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Collection<PSObject> helpInfos = getHelpPS.Invoke();
 
-                    if (helpInfos != null)
+                    if (helpInfos is not null)
                     {
                         for (int index = 0; index < helpInfos.Count; index++)
                         {
@@ -865,7 +865,7 @@ namespace Microsoft.PowerShell.Commands
                             if (LanguagePrimitives.TryConvertTo<HelpInfo>(helpInfos[index], out helpInfo))
                             {
                                 Uri result = helpInfo.GetUriForOnlineHelp();
-                                if (result != null)
+                                if (result is not null)
                                 {
                                     return result.OriginalString;
                                 }
@@ -873,7 +873,7 @@ namespace Microsoft.PowerShell.Commands
                             else
                             {
                                 Uri result = BaseCommandHelpInfo.GetUriFromCommandPSObject(helpInfos[index]);
-                                return (result != null) ? result.OriginalString : string.Empty;
+                                return (result is not null) ? result.OriginalString : string.Empty;
                             }
                         }
                     }

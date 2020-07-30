@@ -34,7 +34,7 @@ namespace System.Management.Automation.Language
 
         public bool IsAmbiguous()
         {
-            return (ExternalNamespaces != null && ExternalNamespaces.Count > 1);
+            return (ExternalNamespaces is not null && ExternalNamespaces.Count > 1);
         }
     }
 
@@ -66,7 +66,7 @@ namespace System.Management.Automation.Language
             foreach (var member in typeDefinition.Members)
             {
                 var propertyMember = member as PropertyMemberAst;
-                if (propertyMember != null)
+                if (propertyMember is not null)
                 {
                     // Duplicate members are an error, but we catch that later after all types
                     // have been resolved.  We could report errors for properties here, but
@@ -85,7 +85,7 @@ namespace System.Management.Automation.Language
             TypeLookupResult result;
             if (_typeTable.TryGetValue(typeDefinitionAst.Name, out result))
             {
-                if (result.ExternalNamespaces != null)
+                if (result.ExternalNamespaces is not null)
                 {
                     // override external type by the type defined in the current namespace
                     result.ExternalNamespaces = null;
@@ -110,7 +110,7 @@ namespace System.Management.Automation.Language
             TypeLookupResult result;
             if (_typeTable.TryGetValue(typeDefinitionAst.Name, out result))
             {
-                if (result.ExternalNamespaces != null)
+                if (result.ExternalNamespaces is not null)
                 {
                     // override external type by the type defined in the current namespace
                     result.ExternalNamespaces.Add(moduleInfo.Name);
@@ -142,7 +142,7 @@ namespace System.Management.Automation.Language
 
         internal TypeLookupResult LookupType(TypeName typeName)
         {
-            if (typeName.AssemblyName != null)
+            if (typeName.AssemblyName is not null)
             {
                 return null;
             }
@@ -230,7 +230,7 @@ namespace System.Management.Automation.Language
             for (int i = _scopes.Count - 1; i >= 0; i--)
             {
                 result = _scopes[i].LookupType(typeName);
-                if (result != null)
+                if (result is not null)
                     break;
             }
 
@@ -243,7 +243,7 @@ namespace System.Management.Automation.Language
             for (int i = _scopes.Count - 1; i >= 0; i--)
             {
                 result = _scopes[i].LookupVariable(variablePath);
-                if (result != null)
+                if (result is not null)
                     break;
             }
 
@@ -259,7 +259,7 @@ namespace System.Management.Automation.Language
             for (int i = _scopes.Count - 1; i >= 0; i--)
             {
                 TypeDefinitionAst ast = _scopes[i]._ast as TypeDefinitionAst;
-                if (ast != null)
+                if (ast is not null)
                 {
                     return ast;
                 }
@@ -291,7 +291,7 @@ namespace System.Management.Automation.Language
                 // The goal is to re-use runspaces, because creating runspace is an expensive part in creating PowerShell instance.
                 if (t_usingStatementResolvePowerShell is null)
                 {
-                    if (Runspace.DefaultRunspace != null)
+                    if (Runspace.DefaultRunspace is not null)
                     {
                         t_usingStatementResolvePowerShell = PowerShell.Create(RunspaceMode.CurrentRunspace);
                     }
@@ -307,7 +307,7 @@ namespace System.Management.Automation.Language
                         t_usingStatementResolvePowerShell = PowerShell.Create(iss);
                     }
                 }
-                else if (Runspace.DefaultRunspace != null && t_usingStatementResolvePowerShell.Runspace != Runspace.DefaultRunspace)
+                else if (Runspace.DefaultRunspace is not null && t_usingStatementResolvePowerShell.Runspace != Runspace.DefaultRunspace)
                 {
                     t_usingStatementResolvePowerShell = PowerShell.Create(RunspaceMode.CurrentRunspace);
                 }
@@ -381,10 +381,10 @@ namespace System.Management.Automation.Language
                 {
                     var expression = expressionAst;
                     var variableExpressionAst = expression as VariableExpressionAst;
-                    while (variableExpressionAst is null && expression != null)
+                    while (variableExpressionAst is null && expression is not null)
                     {
                         var convertExpressionAst = expression as ConvertExpressionAst;
-                        if (convertExpressionAst != null)
+                        if (convertExpressionAst is not null)
                         {
                             expression = convertExpressionAst.Child;
                             variableExpressionAst = convertExpressionAst.Child as VariableExpressionAst;
@@ -395,16 +395,16 @@ namespace System.Management.Automation.Language
                         }
                     }
 
-                    if (variableExpressionAst != null && variableExpressionAst.VariablePath.IsVariable)
+                    if (variableExpressionAst is not null && variableExpressionAst.VariablePath.IsVariable)
                     {
                         var ast = _symbolTable.LookupVariable(variableExpressionAst.VariablePath);
                         var propertyMember = ast as PropertyMemberAst;
-                        if (propertyMember != null)
+                        if (propertyMember is not null)
                         {
                             if (propertyMember.IsStatic)
                             {
                                 var typeAst = _symbolTable.GetCurrentTypeDefinitionAst();
-                                Diagnostics.Assert(typeAst != null, "Method scopes can exist only inside type definitions.");
+                                Diagnostics.Assert(typeAst is not null, "Method scopes can exist only inside type definitions.");
 
                                 string typeString = string.Format(CultureInfo.InvariantCulture, "[{0}]::", typeAst.Name);
                                 _parser.ReportError(variableExpressionAst.Extent,
@@ -463,7 +463,7 @@ namespace System.Management.Automation.Language
 
             // fullyQualifiedName can be string or hashtable
             object fullyQualifiedName;
-            if (usingStatementAst.ModuleSpecification != null)
+            if (usingStatementAst.ModuleSpecification is not null)
             {
                 object resultObject;
                 if (!IsConstantValueVisitor.IsConstant(usingStatementAst.ModuleSpecification, out resultObject, forAttribute: false, forRequires: true))
@@ -475,7 +475,7 @@ namespace System.Management.Automation.Language
                 var hashtable = resultObject as System.Collections.Hashtable;
                 var ms = new ModuleSpecification();
                 exception = ModuleSpecification.ModuleSpecificationInitHelper(ms, hashtable);
-                if (exception != null)
+                if (exception is not null)
                 {
                     return null;
                 }
@@ -503,7 +503,7 @@ namespace System.Management.Automation.Language
                 if (isPath && !LocationGlobber.IsAbsolutePath(fullyQualifiedNameStr))
                 {
                     string rootPath = Path.GetDirectoryName(_parser._fileName);
-                    if (rootPath != null)
+                    if (rootPath is not null)
                     {
                         fullyQualifiedNameStr = Path.Combine(rootPath, fullyQualifiedNameStr);
                     }
@@ -547,7 +547,7 @@ namespace System.Management.Automation.Language
                         nameof(ParserStrings.RequiresArgumentMustBeConstant),
                         ParserStrings.RequiresArgumentMustBeConstant);
                 }
-                else if (exception != null)
+                else if (exception is not null)
                 {
                     // we re-using RequiresModuleInvalid string, semantic is very similar so it's fine to do that.
                     _parser.ReportError(usingStatementAst.Extent,
@@ -561,7 +561,7 @@ namespace System.Management.Automation.Language
                         nameof(ParserStrings.WildCardModuleNameError),
                         ParserStrings.WildCardModuleNameError);
                 }
-                else if (moduleInfo != null && moduleInfo.Count > 0)
+                else if (moduleInfo is not null && moduleInfo.Count > 0)
                 {
                     // it's ok, if we get more then one module. They are already sorted in the right order
                     // we just need to use the first one
@@ -577,7 +577,7 @@ namespace System.Management.Automation.Language
                 else
                 {
                     // if there is no exception, but we didn't find the module then it's not present
-                    string moduleText = usingStatementAst.Name != null ? usingStatementAst.Name.Value : usingStatementAst.ModuleSpecification.Extent.Text;
+                    string moduleText = usingStatementAst.Name is not null ? usingStatementAst.Name.Value : usingStatementAst.ModuleSpecification.Extent.Text;
                     _parser.ReportError(usingStatementAst.Extent,
                         nameof(ParserStrings.ModuleNotFoundDuringParse),
                         ParserStrings.ModuleNotFoundDuringParse,
@@ -598,21 +598,21 @@ namespace System.Management.Automation.Language
         {
             RuntimeHelpers.EnsureSufficientExecutionStack();
             var typeName = type as TypeName;
-            if (typeName != null)
+            if (typeName is not null)
             {
                 return VisitTypeName(typeName, genericArgumentCount, isAttribute);
             }
             else
             {
                 var arrayTypeName = type as ArrayTypeName;
-                if (arrayTypeName != null)
+                if (arrayTypeName is not null)
                 {
                     return VisitArrayTypeName(arrayTypeName);
                 }
                 else
                 {
                     var genericTypeName = type as GenericTypeName;
-                    if (genericTypeName != null)
+                    if (genericTypeName is not null)
                     {
                         return VisitGenericTypeName(genericTypeName);
                     }
@@ -638,7 +638,7 @@ namespace System.Management.Automation.Language
         {
             var classDefn = _symbolTable.LookupType(typeName);
 
-            if (classDefn != null && classDefn.IsAmbiguous())
+            if (classDefn is not null && classDefn.IsAmbiguous())
             {
                 _parser.ReportError(typeName.Extent,
                     nameof(ParserStrings.AmbiguousTypeReference),
@@ -647,7 +647,7 @@ namespace System.Management.Automation.Language
                     GetModuleQualifiedName(classDefn.ExternalNamespaces[0], typeName.Name),
                     GetModuleQualifiedName(classDefn.ExternalNamespaces[1], typeName.Name));
             }
-            else if (classDefn != null && genericArgumentCount == 0)
+            else if (classDefn is not null && genericArgumentCount == 0)
             {
                 typeName.SetTypeDefinition(classDefn.Type);
             }
@@ -661,7 +661,7 @@ namespace System.Management.Automation.Language
                 var type = TypeResolver.ResolveTypeNameWithContext(typeName, out e, null, trs);
                 if (type is null)
                 {
-                    if (_symbolTable.GetCurrentTypeDefinitionAst() != null)
+                    if (_symbolTable.GetCurrentTypeDefinitionAst() is not null)
                     {
                         // [ordered] is an attribute, but it's looks like a type constraint.
                         if (!typeName.FullName.Equals(LanguagePrimitives.OrderedAttribute, StringComparison.OrdinalIgnoreCase))
@@ -696,7 +696,7 @@ namespace System.Management.Automation.Language
         private bool VisitGenericTypeName(GenericTypeName genericTypeName)
         {
             var foundType = TypeCache.Lookup(genericTypeName, _typeResolutionState);
-            if (foundType != null)
+            if (foundType is not null)
             {
                 ((ISupportsTypeCaching)genericTypeName).CachedType = foundType;
                 return true;

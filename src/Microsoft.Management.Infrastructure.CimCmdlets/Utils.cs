@@ -420,7 +420,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public static string ValidateArgumentIsValidName(string parameterName, string value)
         {
             DebugHelper.WriteLogEx();
-            if (value != null)
+            if (value is not null)
             {
                 string trimed = value.Trim();
                 // The first character should be contained in set: [A-Za-z_]
@@ -447,12 +447,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <exception cref="ArgumentException">Throw if the given value contains any invalid name (class name or property name).</exception>
         public static string[] ValidateArgumentIsValidName(string parameterName, string[] value)
         {
-            if (value != null)
+            if (value is not null)
             {
                 foreach (string propertyName in value)
                 {
                     // * is wild char supported in select properties
-                    if ((propertyName != null) && string.Equals(propertyName.Trim(), "*", StringComparison.OrdinalIgnoreCase))
+                    if ((propertyName is not null) && string.Equals(propertyName.Trim(), "*", StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }

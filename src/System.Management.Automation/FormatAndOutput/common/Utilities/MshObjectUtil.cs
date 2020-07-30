@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             // first try to get the expression from the object (types.ps1xml data)
             PSPropertyExpression expressionFromObject = GetDefaultNameExpression(target);
-            if (expressionFromObject != null)
+            if (expressionFromObject is not null)
             {
                 return expressionFromObject;
             }
@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // evaluate the expression
             List<PSPropertyExpressionResult> resList = ex.GetValues(target);
 
-            if (resList.Count == 0 || resList[0].Exception != null)
+            if (resList.Count == 0 || resList[0].Exception is not null)
             {
                 // no results or the retrieval on the first one failed
                 return null;
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal static IEnumerable GetEnumerable(object obj)
         {
             PSObject mshObj = obj as PSObject;
-            if (mshObj != null)
+            if (mshObj is not null)
             {
                 obj = mshObj.BaseObject;
             }
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static string GetSmartToStringDisplayName(object x, PSPropertyExpressionFactory expressionFactory)
         {
             PSPropertyExpressionResult r = PSObjectHelper.GetDisplayName(PSObjectHelper.AsPSObject(x), expressionFactory);
-            if ((r != null) && (r.Exception is null))
+            if ((r is not null) && (r.Exception is null))
             {
                 return PSObjectHelper.AsPSObject(r.Result).ToString();
             }
@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 else
                 {
                     PSPropertyExpressionResult r = PSObjectHelper.GetDisplayName(PSObjectHelper.AsPSObject(x), expressionFactory);
-                    if ((r != null) && (r.Exception is null))
+                    if ((r is not null) && (r.Exception is null))
                     {
                         objName = PSObjectHelper.AsPSObject(r.Result).ToString();
                     }
@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (objName == string.Empty)
                         {
                             var baseObj = PSObject.Base(x);
-                            if (baseObj != null)
+                            if (baseObj is not null)
                             {
                                 objName = baseObj.ToString();
                             }
@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             try
             {
                 IEnumerable e = PSObjectHelper.GetEnumerable(so);
-                if (e != null)
+                if (e is not null)
                 {
                     StringBuilder sb = new StringBuilder();
                     sb.Append("{");
@@ -218,10 +218,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     bool first = true;
                     int enumCount = 0;
                     IEnumerator enumerator = e.GetEnumerator();
-                    if (enumerator != null)
+                    if (enumerator is not null)
                     {
                         IBlockingEnumerator<object> be = enumerator as IBlockingEnumerator<object>;
-                        if (be != null)
+                        if (be is not null)
                         {
                             while (be.MoveNext(false))
                             {
@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // NOTE: we catch all the exceptions, since we do not know
                 // what the underlying object access would throw
-                if (formatErrorObject != null)
+                if (formatErrorObject is not null)
                 {
                     formatErrorObject.sourceObject = so;
                     formatErrorObject.exception = e;
@@ -324,7 +324,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             StringFormatError formatErrorObject, PSPropertyExpressionFactory expressionFactory)
         {
             PSObject so = PSObjectHelper.AsPSObject(val);
-            if (directive != null && !string.IsNullOrEmpty(directive.formatString))
+            if (directive is not null && !string.IsNullOrEmpty(directive.formatString))
             {
                 // we have a formatting directive, apply it
                 // NOTE: with a format directive, we do not make any attempt
@@ -348,7 +348,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     // NOTE: we catch all the exceptions, since we do not know
                     // what the underlying object access would throw
-                    if (formatErrorObject != null)
+                    if (formatErrorObject is not null)
                     {
                         formatErrorObject.sourceObject = so;
                         formatErrorObject.exception = e;
@@ -365,7 +365,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static PSMemberSet MaskDeserializedAndGetStandardMembers(PSObject so)
         {
-            Diagnostics.Assert(so != null, "Shell object to process cannot be null");
+            Diagnostics.Assert(so is not null, "Shell object to process cannot be null");
             var typeNames = so.InternalTypeNames;
             Collection<string> typeNamesWithoutDeserializedPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
             if (typeNamesWithoutDeserializedPrefix is null)
@@ -386,10 +386,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static List<PSPropertyExpression> GetDefaultPropertySet(PSMemberSet standardMembersSet)
         {
-            if (standardMembersSet != null)
+            if (standardMembersSet is not null)
             {
                 PSPropertySet defaultDisplayPropertySet = standardMembersSet.Members[TypeTable.DefaultDisplayPropertySet] as PSPropertySet;
-                if (defaultDisplayPropertySet != null)
+                if (defaultDisplayPropertySet is not null)
                 {
                     List<PSPropertyExpression> retVal = new List<PSPropertyExpression>();
                     foreach (string prop in defaultDisplayPropertySet.ReferencedPropertyNames)
@@ -425,10 +425,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static PSPropertyExpression GetDefaultNameExpression(PSMemberSet standardMembersSet)
         {
-            if (standardMembersSet != null)
+            if (standardMembersSet is not null)
             {
                 PSNoteProperty defaultDisplayProperty = standardMembersSet.Members[TypeTable.DefaultDisplayProperty] as PSNoteProperty;
-                if (defaultDisplayProperty != null)
+                if (defaultDisplayProperty is not null)
                 {
                     string expressionString = defaultDisplayProperty.Value.ToString();
                     if (string.IsNullOrEmpty(expressionString))
@@ -483,7 +483,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             result = resList[0];
-            if (result.Exception != null)
+            if (result.Exception is not null)
             {
                 return string.Empty;
             }
@@ -499,7 +499,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal static bool ShouldShowComputerNameProperty(PSObject so)
         {
             bool result = false;
-            if (so != null)
+            if (so is not null)
             {
                 try
                 {
@@ -508,7 +508,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     // if computer name property exists then this must be a remote object. see
                     // if it can be displayed.
-                    if ((computerNameProperty != null) && (showComputerNameProperty != null))
+                    if ((computerNameProperty is not null) && (showComputerNameProperty is not null))
                     {
                         LanguagePrimitives.TryConvertTo<bool>(showComputerNameProperty.Value, out result);
                     }
@@ -581,7 +581,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (et.isScriptBlock)
             {
                 // we cache script blocks from expression tokens
-                if (_expressionCache != null)
+                if (_expressionCache is not null)
                 {
                     PSPropertyExpression value;
                     if (_expressionCache.TryGetValue(et, out value))
@@ -597,7 +597,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 bool isFullyTrusted = false;
                 bool isProductCode = false;
-                if (loadingInfo != null)
+                if (loadingInfo is not null)
                 {
                     isFullyTrusted = loadingInfo.isFullyTrusted;
                     isProductCode = loadingInfo.isProductCode;

@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         */
             get
             {
-                if (_value != null)
+                if (_value is not null)
                     return this._value.Value;
                 return _default;
             }
@@ -767,14 +767,14 @@ namespace System.Management.Automation
 
         internal static PSControlGroupBy Get(GroupBy groupBy)
         {
-            if (groupBy != null)
+            if (groupBy is not null)
             {
                 // TODO - groupBy.startGroup.control
                 var expressionToken = groupBy.startGroup.expression;
                 return new PSControlGroupBy
                 {
                     Expression = new DisplayEntry(expressionToken),
-                    Label = (groupBy.startGroup.labelTextToken != null) ? groupBy.startGroup.labelTextToken.text : null
+                    Label = (groupBy.startGroup.labelTextToken is not null) ? groupBy.startGroup.labelTextToken.text : null
                 };
             }
 
@@ -851,18 +851,18 @@ namespace System.Management.Automation
         internal static EntrySelectedBy Get(IEnumerable<string> entrySelectedByType, IEnumerable<DisplayEntry> entrySelectedByCondition)
         {
             EntrySelectedBy result = null;
-            if (entrySelectedByType != null || entrySelectedByCondition != null)
+            if (entrySelectedByType is not null || entrySelectedByCondition is not null)
             {
                 result = new EntrySelectedBy();
                 bool isEmpty = true;
-                if (entrySelectedByType != null)
+                if (entrySelectedByType is not null)
                 {
                     result.TypeNames = new List<string>(entrySelectedByType);
                     if (result.TypeNames.Count > 0)
                         isEmpty = false;
                 }
 
-                if (entrySelectedByCondition != null)
+                if (entrySelectedByCondition is not null)
                 {
                     result.SelectionCondition = new List<DisplayEntry>(entrySelectedByCondition);
                     if (result.SelectionCondition.Count > 0)
@@ -879,12 +879,12 @@ namespace System.Management.Automation
         internal static EntrySelectedBy Get(List<TypeOrGroupReference> references)
         {
             EntrySelectedBy result = null;
-            if (references != null && references.Count > 0)
+            if (references is not null && references.Count > 0)
             {
                 result = new EntrySelectedBy();
                 foreach (TypeOrGroupReference tr in references)
                 {
-                    if (tr.conditionToken != null)
+                    if (tr.conditionToken is not null)
                     {
                         if (result.SelectionCondition is null) result.SelectionCondition = new List<DisplayEntry>();
 

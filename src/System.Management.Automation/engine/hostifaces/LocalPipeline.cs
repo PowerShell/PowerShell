@@ -161,7 +161,7 @@ namespace System.Management.Automation.Runspaces
             _identityToImpersonate = null;
 
             // If impersonation identity flow is requested, then get current thread impersonation, if any.
-            if ((InvocationSettings != null) && InvocationSettings.FlowImpersonationPolicy)
+            if ((InvocationSettings is not null) && InvocationSettings.FlowImpersonationPolicy)
             {
                 Utils.TryGetWindowsImpersonatedIdentity(out _identityToImpersonate);
             }
@@ -182,7 +182,7 @@ namespace System.Management.Automation.Runspaces
 
                         ApartmentState apartmentState;
 
-                        if (InvocationSettings != null && InvocationSettings.ApartmentState != ApartmentState.Unknown)
+                        if (InvocationSettings is not null && InvocationSettings.ApartmentState != ApartmentState.Unknown)
                         {
                             apartmentState = InvocationSettings.ApartmentState; // set the user-defined apartmentstate.
                         }
@@ -438,7 +438,7 @@ namespace System.Management.Automation.Runspaces
                             {
                                 exitCode = (int)ee.Argument;
 
-                                if ((InvocationSettings != null) && (InvocationSettings.ExposeFlowControlExceptions))
+                                if ((InvocationSettings is not null) && (InvocationSettings.ExposeFlowControlExceptions))
                                 {
                                     flowControlException = ee;
                                 }
@@ -454,7 +454,7 @@ namespace System.Management.Automation.Runspaces
                     }
                     catch (FlowControlException e)
                     {
-                        if ((InvocationSettings != null) && (InvocationSettings.ExposeFlowControlExceptions) &&
+                        if ((InvocationSettings is not null) && (InvocationSettings.ExposeFlowControlExceptions) &&
                             ((e is BreakException) || (e is ContinueException) || (e is TerminateException)))
                         {
                             // Save FlowControl exception for return to caller.
@@ -473,7 +473,7 @@ namespace System.Management.Automation.Runspaces
                 finally
                 {
                     // Call StopProcessing() for all the commands.
-                    if (pipelineProcessor != null && pipelineProcessor.Commands != null)
+                    if (pipelineProcessor is not null && pipelineProcessor.Commands is not null)
                     {
                         for (int i = 0; i < pipelineProcessor.Commands.Count; i++)
                         {
@@ -491,7 +491,7 @@ namespace System.Management.Automation.Runspaces
                     }
 
                     PSLocalEventManager eventManager = LocalRunspace.Events as PSLocalEventManager;
-                    if (eventManager != null)
+                    if (eventManager is not null)
                     {
                         eventManager.ProcessPendingActions();
                     }
@@ -522,7 +522,7 @@ namespace System.Management.Automation.Runspaces
             finally
             {
                 // 2004/02/26-JonN added IDisposable to PipelineProcessor
-                if (pipelineProcessor != null)
+                if (pipelineProcessor is not null)
                 {
                     pipelineProcessor.Dispose();
                     pipelineProcessor = null;
@@ -539,7 +539,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void InvokeThreadProcImpersonate()
         {
-            if (_identityToImpersonate != null)
+            if (_identityToImpersonate is not null)
             {
                 WindowsIdentity.RunImpersonated(
                     _identityToImpersonate.AccessToken,
@@ -563,11 +563,11 @@ namespace System.Management.Automation.Runspaces
             try
             {
                 // Set up pipeline internal host if it is available.
-                if (InvocationSettings != null && InvocationSettings.Host != null)
+                if (InvocationSettings is not null && InvocationSettings.Host is not null)
                 {
                     InternalHost internalHost = InvocationSettings.Host as InternalHost;
 
-                    if (internalHost != null) // if we are given an internal host, use the external host
+                    if (internalHost is not null) // if we are given an internal host, use the external host
                     {
                         LocalRunspace.ExecutionContext.InternalHost.SetHostRef(internalHost.ExternalHost);
                     }
@@ -594,7 +594,7 @@ namespace System.Management.Automation.Runspaces
 
                 FlowControlException flowControlException = InvokeHelper();
 
-                if (flowControlException != null)
+                if (flowControlException is not null)
                 {
                     // Let pipeline propagate the BreakException.
                     SetPipelineState(Runspaces.PipelineState.Failed, flowControlException);
@@ -637,7 +637,7 @@ namespace System.Management.Automation.Runspaces
                 // Remove pipeline specific host if it was set.
                 // Win8:464422 Revert the host only if this pipeline invocation changed it
                 // with 464422 a nested pipeline reverts the host, although the nested pipeline did not set it.
-                if ((InvocationSettings != null && InvocationSettings.Host != null) &&
+                if ((InvocationSettings is not null && InvocationSettings.Host is not null) &&
                     (LocalRunspace.ExecutionContext.InternalHost.IsHostRefSet))
                 {
                     LocalRunspace.ExecutionContext.InternalHost.RevertHostRef();
@@ -851,7 +851,7 @@ namespace System.Management.Automation.Runspaces
                             // runs nested commands).  This prevents the script debugger command line from seeing private commands.
                             if (IsNested &&
                                 !LocalRunspace.InNestedPrompt &&
-                                !((LocalRunspace.Debugger != null) && (LocalRunspace.Debugger.InBreakpoint)))
+                                !((LocalRunspace.Debugger is not null) && (LocalRunspace.Debugger.InBreakpoint)))
                             {
                                 commandOrigin = CommandOrigin.Internal;
                             }
@@ -887,7 +887,7 @@ namespace System.Management.Automation.Runspaces
                         // Set the internal command origin member on the command object at this point...
                         commandProcessorBase.Command.CommandOriginInternal = CommandOrigin.Internal;
                         commandProcessorBase.Command.MyInvocation.InvocationName = command.CommandInfo.Name;
-                        if (command.Parameters != null)
+                        if (command.Parameters is not null)
                         {
                             foreach (CommandParameter publicParameter in command.Parameters)
                             {
@@ -939,20 +939,20 @@ namespace System.Management.Automation.Runspaces
             }
 
             CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
-            if (cmdletInfo != null)
+            if (cmdletInfo is not null)
             {
                 return new CommandProcessor(cmdletInfo, LocalRunspace.ExecutionContext);
             }
 
             IScriptCommandInfo functionInfo = commandInfo as IScriptCommandInfo;
-            if (functionInfo != null)
+            if (functionInfo is not null)
             {
                 return new CommandProcessor(functionInfo, LocalRunspace.ExecutionContext,
                     useLocalScope: false, fromScriptFile: false, sessionState: LocalRunspace.ExecutionContext.EngineSessionState);
             }
 
             ApplicationInfo applicationInfo = commandInfo as ApplicationInfo;
-            if (applicationInfo != null)
+            if (applicationInfo is not null)
             {
                 return new NativeCommandProcessor(applicationInfo, LocalRunspace.ExecutionContext);
             }
@@ -966,7 +966,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void InitStreams()
         {
-            if (LocalRunspace.ExecutionContext != null)
+            if (LocalRunspace.ExecutionContext is not null)
             {
                 _oldExternalErrorOutput = LocalRunspace.ExecutionContext.ExternalErrorOutput;
                 _oldExternalSuccessOutput = LocalRunspace.ExecutionContext.ExternalSuccessOutput;
@@ -981,7 +981,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void ClearStreams()
         {
-            if (LocalRunspace.ExecutionContext != null)
+            if (LocalRunspace.ExecutionContext is not null)
             {
                 LocalRunspace.ExecutionContext.ExternalErrorOutput = _oldExternalErrorOutput;
                 LocalRunspace.ExecutionContext.ExternalSuccessOutput = _oldExternalSuccessOutput;
@@ -1357,7 +1357,7 @@ namespace System.Management.Automation.Runspaces
                         _stack.Peek().ExecutionFailed = true;
                     }
                     // If this is the last pipeline processor on the stack, then propagate it's execution status
-                    if (_stack.Count == 1 && _localPipeline != null)
+                    if (_stack.Count == 1 && _localPipeline is not null)
                     {
                         _localPipeline.SetHadErrors(oldPipe.ExecutionFailed);
                     }
@@ -1384,7 +1384,7 @@ namespace System.Management.Automation.Runspaces
             if (copyStack.Length > 0)
             {
                 PipelineProcessor topLevel = copyStack[copyStack.Length - 1];
-                if (topLevel != null && _localPipeline != null)
+                if (topLevel is not null && _localPipeline is not null)
                 {
                     _localPipeline.SetHadErrors(topLevel.ExecutionFailed);
                 }

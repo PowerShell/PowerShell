@@ -63,19 +63,19 @@ namespace Microsoft.PowerShell.Cmdletization
                 }
 
                 var objectInstance = methodParameter.Value as T;
-                if (objectInstance != null)
+                if (objectInstance is not null)
                 {
                     result.Add(objectInstance);
                     continue;
                 }
 
                 var objectInstanceArray = methodParameter.Value as IEnumerable;
-                if (objectInstanceArray != null)
+                if (objectInstanceArray is not null)
                 {
                     foreach (object element in objectInstanceArray)
                     {
                         var objectInstance2 = element as T;
-                        if (objectInstance2 != null)
+                        if (objectInstance2 is not null)
                         {
                             result.Add(objectInstance2);
                         }

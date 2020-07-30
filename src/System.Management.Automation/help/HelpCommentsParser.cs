@@ -34,7 +34,7 @@ namespace System.Management.Automation
         private HelpCommentsParser(CommandInfo commandInfo, List<string> parameterDescriptions)
         {
             FunctionInfo fi = commandInfo as FunctionInfo;
-            if (fi != null)
+            if (fi is not null)
             {
                 _scriptBlock = fi.ScriptBlock;
                 _commandName = fi.Name;
@@ -42,7 +42,7 @@ namespace System.Management.Automation
             else
             {
                 ExternalScriptInfo si = commandInfo as ExternalScriptInfo;
-                if (si != null)
+                if (si is not null)
                 {
                     _scriptBlock = si.ScriptBlock;
                     _commandName = si.Path;
@@ -279,7 +279,7 @@ namespace System.Management.Automation
                     parameterSetData = parameter.GetParameterSetData(1u << i++);
                 }
 
-                if (parameterSetData != null)
+                if (parameterSetData is not null)
                 {
                     isMandatory = parameterSetData.IsMandatory;
                     valueFromPipeline = parameterSetData.ValueFromPipeline;
@@ -293,7 +293,7 @@ namespace System.Management.Automation
                 string defaultValueStr = string.Empty;
                 object defaultValue = null;
                 var defaultValueAttribute = compiledAttributes.OfType<PSDefaultValueAttribute>().FirstOrDefault();
-                if (defaultValueAttribute != null)
+                if (defaultValueAttribute is not null)
                 {
                     defaultValueStr = defaultValueAttribute.Help;
                     if (string.IsNullOrEmpty(defaultValueStr))
@@ -314,11 +314,11 @@ namespace System.Management.Automation
                     }
 
                     var wrapper = defaultValue as Compiler.DefaultValueExpressionWrapper;
-                    if (wrapper != null)
+                    if (wrapper is not null)
                     {
                         defaultValueStr = wrapper.Expression.Extent.Text;
                     }
-                    else if (defaultValue != null)
+                    else if (defaultValue is not null)
                     {
                         defaultValueStr = PSObject.ToStringParser(null, defaultValue);
                     }
@@ -426,7 +426,7 @@ namespace System.Management.Automation
                 outputs = _scriptBlock.OutputType;
             }
 
-            if (outputs != null)
+            if (outputs is not null)
             {
                 XmlElement returnValues = _doc.CreateElement("command:returnValues", commandURI);
                 foreach (object output in outputs)
@@ -649,7 +649,7 @@ namespace System.Management.Automation
             {
                 helpFileToLoad = Path.Combine(Path.GetDirectoryName(scriptFile), _sections.MamlHelpFile);
             }
-            else if (commandInfo.Module != null)
+            else if (commandInfo.Module is not null)
             {
                 helpFileToLoad = Path.Combine(Path.GetDirectoryName(commandInfo.Module.Path), _sections.MamlHelpFile);
             }
@@ -839,7 +839,7 @@ namespace System.Management.Automation
             HelpCommentsParser helpCommentsParser = new HelpCommentsParser(commandInfo, parameterDescriptions);
             helpCommentsParser.AnalyzeCommentBlock(comments);
 
-            if (helpCommentsParser._sections.Links != null && helpCommentsParser._sections.Links.Count != 0)
+            if (helpCommentsParser._sections.Links is not null && helpCommentsParser._sections.Links.Count != 0)
             {
                 helpUriFromDotLink = helpCommentsParser._sections.Links[0];
             }
@@ -866,7 +866,7 @@ namespace System.Management.Automation
             if (!dontSearchOnRemoteComputer)
             {
                 RemoteHelpInfo remoteHelpInfo = helpCommentsParser.GetRemoteHelpInfo(context, commandInfo);
-                if (remoteHelpInfo != null)
+                if (remoteHelpInfo is not null)
                 {
                     // Add HelpUri if necessary
                     if (remoteHelpInfo.GetUriForOnlineHelp() is null)
@@ -882,7 +882,7 @@ namespace System.Management.Automation
             XmlDocument doc = helpCommentsParser.BuildXmlFromComments();
             HelpCategory helpCategory = commandInfo.HelpCategory;
             MamlCommandHelpInfo localHelpInfo = MamlCommandHelpInfo.Load(doc.DocumentElement, helpCategory);
-            if (localHelpInfo != null)
+            if (localHelpInfo is not null)
             {
                 helpCommentsParser.SetAdditionalData(localHelpInfo);
 
@@ -1056,7 +1056,7 @@ namespace System.Management.Automation
 
                 var firstToken = FirstTokenInExtent(tokens, parameter.Extent, startIndex);
                 var comments = GetPrecedingCommentBlock(tokens, firstToken, CommentBlockProximity);
-                if (comments != null)
+                if (comments is not null)
                 {
                     foreach (var comment in comments)
                     {
@@ -1075,7 +1075,7 @@ namespace System.Management.Automation
 
                 lastToken += 1;
                 comments = GetCommentBlock(tokens, ref lastToken);
-                if (comments != null)
+                if (comments is not null)
                 {
                     foreach (var comment in comments)
                     {
@@ -1093,12 +1093,12 @@ namespace System.Management.Automation
         internal static Tuple<List<Language.Token>, List<string>> GetHelpCommentTokens(IParameterMetadataProvider ipmp,
             Dictionary<Ast, Token[]> scriptBlockTokenCache)
         {
-            Diagnostics.Assert(scriptBlockTokenCache != null, "scriptBlockTokenCache cannot be null");
+            Diagnostics.Assert(scriptBlockTokenCache is not null, "scriptBlockTokenCache cannot be null");
             var ast = (Ast)ipmp;
 
             var rootAst = ast;
             Ast configAst = null;
-            while (rootAst.Parent != null)
+            while (rootAst.Parent is not null)
             {
                 rootAst = rootAst.Parent;
                 if (rootAst is ConfigurationDefinitionAst)
@@ -1125,7 +1125,7 @@ namespace System.Management.Automation
 
             var funcDefnAst = ast as FunctionDefinitionAst;
             List<Language.Token> commentBlock;
-            if (funcDefnAst != null || configAst != null)
+            if (funcDefnAst is not null || configAst is not null)
             {
                 // The first comment block preceding the function or configuration keyword is a candidate help comment block.
                 var funcOrConfigTokenIndex =
@@ -1140,7 +1140,7 @@ namespace System.Management.Automation
 
                 // comment block is behind function definition
                 // we don't support it for configuration declaration as this style is rarely used
-                if (funcDefnAst != null)
+                if (funcDefnAst is not null)
                 {
                     startTokenIndex =
                         FirstTokenInExtent(tokens, funcDefnAst.Body.Extent) + 1;

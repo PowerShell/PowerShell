@@ -369,7 +369,7 @@ namespace System.Management.Automation
             foreach (int curIndex in GetAccessPath(size, index))
             {
                 PropertyInfo pi = tupleType.GetProperty("Item" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", curIndex));
-                Diagnostics.Assert(pi != null, "reflection should always find Item");
+                Diagnostics.Assert(pi is not null, "reflection should always find Item");
                 yield return pi;
                 tupleType = pi.PropertyType;
             }
@@ -452,7 +452,7 @@ namespace System.Management.Automation
             int size = end - start;
 
             Type type = GetTupleType(size);
-            if (type != null)
+            if (type is not null)
             {
                 Type[] typeArr = new Type[type.GetGenericArguments().Length];
                 int index = 0;
@@ -476,7 +476,7 @@ namespace System.Management.Automation
             }
 
             type = MutableTuple.GetTupleType(size);
-            Diagnostics.Assert(type != null, "type cannot be null");
+            Diagnostics.Assert(type is not null, "type cannot be null");
             Type[] nestedTypes = new Type[type.GetGenericArguments().Length];
             for (int i = 0; i < size; i++)
             {
@@ -520,7 +520,7 @@ namespace System.Management.Automation
         internal static Expression CreateNew(Type tupleType, int start, int end, Expression[] values)
         {
             int size = end - start;
-            Diagnostics.Assert(tupleType != null, "tupleType cannot be null");
+            Diagnostics.Assert(tupleType is not null, "tupleType cannot be null");
             Diagnostics.Assert(tupleType.IsSubclassOf(typeof(MutableTuple)), "tupleType must be derived from MutableTuple");
 
             Expression[] newValues;

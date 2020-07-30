@@ -155,10 +155,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             string nameVal = UnpackString (s, out width, out align);
 
             hash.Add (FormatParameterDefinitionKeys.NameEntryKey, nameVal);
-            if (width != null)
+            if (width is not null)
                 hash.Add (FormatParameterDefinitionKeys.WidthEntryKey, width);
 
-            if (align != null)
+            if (align is not null)
                 hash.Add (FormatParameterDefinitionKeys.AlignmentEntryKey, align);
 
             return hash;
@@ -177,14 +177,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // need to check the type:
             // it can be a string or a script block
             ScriptBlock sb = val as ScriptBlock;
-            if (sb != null)
+            if (sb is not null)
             {
                 PSPropertyExpression ex = new PSPropertyExpression(sb);
                 return ex;
             }
 
             string s = val as string;
-            if (s != null)
+            if (s is not null)
             {
                 if (string.IsNullOrEmpty(s))
                 {

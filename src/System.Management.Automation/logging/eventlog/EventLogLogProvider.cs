@@ -99,13 +99,13 @@ namespace System.Management.Automation
             Hashtable mapArgs = new Hashtable();
 
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (icer != null && icer.ErrorRecord != null)
+            if (icer is not null && icer.ErrorRecord is not null)
             {
                 mapArgs["ExceptionClass"] = exception.GetType().Name;
                 mapArgs["ErrorCategory"] = icer.ErrorRecord.CategoryInfo.Category;
                 mapArgs["ErrorId"] = icer.ErrorRecord.FullyQualifiedErrorId;
 
-                if (icer.ErrorRecord.ErrorDetails != null)
+                if (icer.ErrorRecord.ErrorDetails is not null)
                 {
                     mapArgs["ErrorMessage"] = icer.ErrorRecord.ErrorDetails.Message;
                 }
@@ -219,13 +219,13 @@ namespace System.Management.Automation
             Hashtable mapArgs = new Hashtable();
 
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (icer != null && icer.ErrorRecord != null)
+            if (icer is not null && icer.ErrorRecord is not null)
             {
                 mapArgs["ExceptionClass"] = exception.GetType().Name;
                 mapArgs["ErrorCategory"] = icer.ErrorRecord.CategoryInfo.Category;
                 mapArgs["ErrorId"] = icer.ErrorRecord.FullyQualifiedErrorId;
 
-                if (icer.ErrorRecord.ErrorDetails != null)
+                if (icer.ErrorRecord.ErrorDetails is not null)
                 {
                     mapArgs["ErrorMessage"] = icer.ErrorRecord.ErrorDetails.Message;
                 }
@@ -396,13 +396,13 @@ namespace System.Management.Automation
             mapArgs["ProviderName"] = providerName;
 
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (icer != null && icer.ErrorRecord != null)
+            if (icer is not null && icer.ErrorRecord is not null)
             {
                 mapArgs["ExceptionClass"] = exception.GetType().Name;
                 mapArgs["ErrorCategory"] = icer.ErrorRecord.CategoryInfo.Category;
                 mapArgs["ErrorId"] = icer.ErrorRecord.FullyQualifiedErrorId;
 
-                if (icer.ErrorRecord.ErrorDetails != null
+                if (icer.ErrorRecord.ErrorDetails is not null
                     && !string.IsNullOrEmpty(icer.ErrorRecord.ErrorDetails.Message))
                 {
                     mapArgs["ErrorMessage"] = icer.ErrorRecord.ErrorDetails.Message;

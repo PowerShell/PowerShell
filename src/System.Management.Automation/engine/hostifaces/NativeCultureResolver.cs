@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell
                 // This is required because there is difference in the parent hierarchy
                 // between CLR and Windows for Chinese. Ex: Native windows has
                 // zh-CN->zh-Hans->neutral whereas CLR has zh-CN->zh-CHS->zh-Hans->neutral
-                if ((base.Parent != null) && (!string.IsNullOrEmpty(base.Parent.Name)))
+                if ((base.Parent is not null) && (!string.IsNullOrEmpty(base.Parent.Name)))
                 {
                     return ImmediateParent;
                 }
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell
                 // returns fallback cultures (specified by the user)
                 // and also adds neutral culture where appropriate.
                 // Ex: ja-jp ja en-us en
-                while ((_fallbacks != null) && (_fallbacks.Length > 0))
+                while ((_fallbacks is not null) && (_fallbacks.Length > 0))
                 {
                     string fallback = _fallbacks[0];
                     string[] fallbacksForParent = null;
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell
                             // remove the parentCulture from the m_fallbacks list.
                             // ie., remove duplicates from the parent hierarchy.
                             string[] fallbacksForTheParent = null;
-                            if (_fallbacks != null)
+                            if (_fallbacks is not null)
                             {
                                 fallbacksForTheParent = new string[_fallbacks.Length];
                                 int currentIndex = 0;

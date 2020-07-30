@@ -536,7 +536,7 @@ namespace System.Management.Automation.Runspaces
             set
             {
                 var result = Interlocked.CompareExchange<Runspace>(ref s_primaryRunspace, value, null);
-                if (result != null)
+                if (result is not null)
                 {
                     throw new PSInvalidOperationException(RunspaceStrings.PrimaryRunspaceAlreadySet);
                 }
@@ -566,11 +566,11 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 RunspaceBase runspace = Runspace.DefaultRunspace as RunspaceBase;
-                if (runspace != null)
+                if (runspace is not null)
                 {
                     Pipeline currentPipeline = runspace.GetCurrentlyRunningPipeline();
                     LocalPipeline localPipeline = currentPipeline as LocalPipeline;
-                    if ((localPipeline != null) && (localPipeline.NestedPipelineExecutionThread != null))
+                    if ((localPipeline is not null) && (localPipeline.NestedPipelineExecutionThread is not null))
                     {
                         return
                             (localPipeline.NestedPipelineExecutionThread.ManagedThreadId
@@ -954,11 +954,11 @@ namespace System.Management.Automation.Runspaces
                             else
                             {
                                 RemoteRunspace remoteRunspace = this as RemoteRunspace;
-                                RemoteDebugger remoteDebugger = (remoteRunspace != null) ? remoteRunspace.Debugger as RemoteDebugger : null;
-                                Internal.ConnectCommandInfo remoteCommand = (remoteRunspace != null) ? remoteRunspace.RemoteCommand : null;
+                                RemoteDebugger remoteDebugger = (remoteRunspace is not null) ? remoteRunspace.Debugger as RemoteDebugger : null;
+                                Internal.ConnectCommandInfo remoteCommand = (remoteRunspace is not null) ? remoteRunspace.RemoteCommand : null;
                                 if (((pipelineState == PipelineState.Completed) || (pipelineState == PipelineState.Failed) ||
                                     ((pipelineState == PipelineState.Stopped) && (this.RunspaceStateInfo.State == RunspaceState.Opened)))
-                                    && (remoteCommand != null) && (cmdInstanceId != null) && (remoteCommand.CommandId == cmdInstanceId))
+                                    && (remoteCommand is not null) && (cmdInstanceId is not null) && (remoteCommand.CommandId == cmdInstanceId))
                                 {
                                     // Completed, Failed, and Stopped with Runspace.Opened states are command finish states and we know
                                     // that the command is finished on the server.
@@ -967,7 +967,7 @@ namespace System.Management.Automation.Runspaces
                                     remoteRunspace.RunspacePool.RemoteRunspacePoolInternal.ConnectCommands = null;
                                     remoteCommand = null;
 
-                                    if ((remoteDebugger != null) && (pipelineState == PipelineState.Stopped))
+                                    if ((remoteDebugger is not null) && (pipelineState == PipelineState.Stopped))
                                     {
                                         // Notify remote debugger of a stop in case the stop occurred while command was in debug stop.
                                         remoteDebugger.OnCommandStopped();
@@ -976,7 +976,7 @@ namespace System.Management.Automation.Runspaces
 
                                 Pipeline currentPipeline = this.GetCurrentlyRunningPipeline();
                                 RemotePipeline remotePipeline = currentPipeline as RemotePipeline;
-                                Guid? pipeLineCmdInstance = (remotePipeline != null && remotePipeline.PowerShell != null) ? remotePipeline.PowerShell.InstanceId : (Guid?)null;
+                                Guid? pipeLineCmdInstance = (remotePipeline is not null && remotePipeline.PowerShell is not null) ? remotePipeline.PowerShell.InstanceId : (Guid?)null;
                                 if (currentPipeline is null)
                                 {
                                     // A runspace is available:
@@ -986,9 +986,9 @@ namespace System.Management.Automation.Runspaces
                                     //    - if the remote runspace pool is marked as available for connection.
                                     if (remoteCommand is null)
                                     {
-                                        if (remoteRunspace != null)
+                                        if (remoteRunspace is not null)
                                         {
-                                            if ((remoteDebugger != null) && (pipelineState == PipelineState.Stopped))
+                                            if ((remoteDebugger is not null) && (pipelineState == PipelineState.Stopped))
                                             {
                                                 // Notify remote debugger of a stop in case the stop occurred while command was in debug stop.
                                                 remoteDebugger.OnCommandStopped();
@@ -1004,9 +1004,9 @@ namespace System.Management.Automation.Runspaces
                                         }
                                     }
                                 }
-                                else if ((cmdInstanceId != null) && (pipeLineCmdInstance != null) && (cmdInstanceId == pipeLineCmdInstance))
+                                else if ((cmdInstanceId is not null) && (pipeLineCmdInstance is not null) && (cmdInstanceId == pipeLineCmdInstance))
                                 {
-                                    if ((remoteDebugger != null) && (pipelineState == PipelineState.Stopped))
+                                    if ((remoteDebugger is not null) && (pipelineState == PipelineState.Stopped))
                                     {
                                         // Notify remote debugger of a stop in case the stop occurred while command was in debug stop.
                                         remoteDebugger.OnCommandStopped();
@@ -1123,11 +1123,11 @@ namespace System.Management.Automation.Runspaces
             Internal.ConnectCommandInfo remoteCommand = null;
             bool remoteDebug = false;
 
-            if (remoteRunspace != null)
+            if (remoteRunspace is not null)
             {
                 remoteCommand = remoteRunspace.RemoteCommand;
                 RemoteDebugger remoteDebugger = remoteRunspace.Debugger as RemoteDebugger;
-                remoteDebug = (remoteDebugger != null) && remoteDebugger.IsRemoteDebug;
+                remoteDebug = (remoteDebugger is not null) && remoteDebugger.IsRemoteDebug;
             }
 
             switch (oldAvailability)
@@ -1486,7 +1486,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="ps">PowerShell.</param>
         internal void PushRunningPowerShell(PowerShell ps)
         {
-            Dbg.Assert(ps != null, "Caller should not pass in null reference.");
+            Dbg.Assert(ps is not null, "Caller should not pass in null reference.");
 
             lock (_syncObject)
             {
@@ -1593,7 +1593,7 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 var context = GetExecutionContext;
-                return (context != null) ? context.Debugger : null;
+                return (context is not null) ? context.Debugger : null;
             }
         }
 
@@ -1675,7 +1675,7 @@ namespace System.Management.Automation.Runspaces
 
         internal SessionStateProxy(RunspaceBase runspace)
         {
-            Dbg.Assert(runspace != null, "Caller should validate the parameter");
+            Dbg.Assert(runspace is not null, "Caller should validate the parameter");
             _runspace = runspace;
         }
 

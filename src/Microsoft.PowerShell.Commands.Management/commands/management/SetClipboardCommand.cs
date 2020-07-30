@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (Value != null)
+            if (Value is not null)
             {
                 _contentList.AddRange(Value);
             }
@@ -90,13 +90,13 @@ namespace Microsoft.PowerShell.Commands
                 content.AppendLine(Clipboard.GetText());
             }
 
-            if (contentList != null)
+            if (contentList is not null)
             {
                 content.Append(string.Join(Environment.NewLine, contentList.ToArray(), 0, contentList.Count));
             }
 
             string verboseString = null;
-            if (contentList != null)
+            if (contentList is not null)
             {
                 verboseString = contentList[0];
                 if (verboseString.Length >= 20)

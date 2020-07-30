@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell
         internal static int Start(string bannerText, string helpText, string[] args)
         {
 #if DEBUG
-            if (Environment.GetEnvironmentVariable("POWERSHELL_DEBUG_STARTUP") != null)
+            if (Environment.GetEnvironmentVariable("POWERSHELL_DEBUG_STARTUP") is not null)
             {
                 while (!System.Diagnostics.Debugger.IsAttached)
                 {
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell
                 if ((s_cpp.ServerMode && s_cpp.NamedPipeServerMode) || (s_cpp.ServerMode && s_cpp.SocketServerMode) || (s_cpp.NamedPipeServerMode && s_cpp.SocketServerMode))
                 {
                     s_tracer.TraceError("Conflicting server mode parameters, parameters must be used exclusively.");
-                    if (s_theConsoleHost != null)
+                    if (s_theConsoleHost is not null)
                     {
                         s_theConsoleHost.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
                     }
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell
                 else
                 {
                     // Run PowerShell in normal console mode.
-                    if (hostException != null)
+                    if (hostException is not null)
                     {
                         // Unable to create console host.
                         throw hostException;
@@ -262,7 +262,7 @@ namespace Microsoft.PowerShell
             }
             finally
             {
-                if (s_theConsoleHost != null)
+                if (s_theConsoleHost is not null)
                 {
 #if LEGACYTELEMETRY
                     TelemetryAPI.ReportExitTelemetry(s_theConsoleHost);
@@ -362,14 +362,14 @@ namespace Microsoft.PowerShell
             Debugger debugger = null;
             lock (host.hostGlobalLock)
             {
-                if (host._runspaceRef.Runspace != null &&
-                    host._runspaceRef.Runspace.GetCurrentlyRunningPipeline() != null)
+                if (host._runspaceRef.Runspace is not null &&
+                    host._runspaceRef.Runspace.GetCurrentlyRunningPipeline() is not null)
                 {
                     debugger = host._runspaceRef.Runspace.Debugger;
                 }
             }
 
-            if (debugger != null)
+            if (debugger is not null)
             {
                 debugger.SetDebuggerStepMode(true);
                 return true;
@@ -423,7 +423,7 @@ namespace Microsoft.PowerShell
         private static void HandleBreak()
         {
             ConsoleHost consoleHost = s_theConsoleHost;
-            if (consoleHost != null)
+            if (consoleHost is not null)
             {
                 if (consoleHost.InDebugMode)
                 {
@@ -452,10 +452,10 @@ namespace Microsoft.PowerShell
                 if (consoleHost.ShouldEndSession)
                 {
                     var runspaceRef = ConsoleHost.SingletonInstance._runspaceRef;
-                    if (runspaceRef != null)
+                    if (runspaceRef is not null)
                     {
                         var runspace = runspaceRef.Runspace;
-                        if (runspace != null)
+                        if (runspace is not null)
                         {
                             runspace.Close();
                         }
@@ -476,7 +476,7 @@ namespace Microsoft.PowerShell
 
         private static bool StopPipeline(Pipeline cmd)
         {
-            if (cmd != null &&
+            if (cmd is not null &&
                 (cmd.PipelineStateInfo.State == PipelineState.Running ||
                  cmd.PipelineStateInfo.State == PipelineState.Disconnected))
             {
@@ -507,7 +507,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(s_theConsoleHost != null, "CreateSingletonInstance should be called before calling this method");
+                Dbg.Assert(s_theConsoleHost is not null, "CreateSingletonInstance should be called before calling this method");
                 return s_theConsoleHost;
             }
         }
@@ -565,7 +565,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(ui != null, "ui should have been allocated in ctor");
+                Dbg.Assert(ui is not null, "ui should have been allocated in ctor");
                 return ui;
             }
         }
@@ -578,17 +578,17 @@ namespace Microsoft.PowerShell
             if (_runspaceRef is null) { return; }
 
             RemoteRunspace remoteRunspace = newRunspace as RemoteRunspace;
-            Dbg.Assert(remoteRunspace != null, "Expected remoteRunspace != null");
+            Dbg.Assert(remoteRunspace is not null, "Expected remoteRunspace is not null");
             remoteRunspace.StateChanged += HandleRemoteRunspaceStateChanged;
 
             // Unsubscribe the local session debugger.
-            if (_runspaceRef.Runspace.Debugger != null)
+            if (_runspaceRef.Runspace.Debugger is not null)
             {
                 _runspaceRef.Runspace.Debugger.DebuggerStop -= OnExecutionSuspended;
             }
 
             // Subscribe to debugger stop event.
-            if (remoteRunspace.Debugger != null)
+            if (remoteRunspace.Debugger is not null)
             {
                 remoteRunspace.Debugger.DebuggerStop += OnExecutionSuspended;
             }
@@ -600,7 +600,7 @@ namespace Microsoft.PowerShell
             _runspaceRef.Override(remoteRunspace, hostGlobalLock, out _isRunspacePushed);
             RunspacePushed.SafeInvoke(this, EventArgs.Empty);
 
-            if (this.runningCmd != null)
+            if (this.runningCmd is not null)
             {
                 EnterPSSessionCommand.ContinueCommand(
                     remoteRunspace,
@@ -660,7 +660,7 @@ namespace Microsoft.PowerShell
                 this.ShouldEndSession = true;
             }
 
-            if (_runspaceRef.Runspace.Debugger != null)
+            if (_runspaceRef.Runspace.Debugger is not null)
             {
                 // Unsubscribe pushed runspace debugger.
                 _runspaceRef.Runspace.Debugger.DebuggerStop -= OnExecutionSuspended;
@@ -1013,7 +1013,7 @@ namespace Microsoft.PowerShell
                 Executor.CurrentExecutor = null;
                 lock (hostGlobalLock)
                 {
-                    IsNested = oldCurrent != null || this.ui.IsCommandCompletionRunning;
+                    IsNested = oldCurrent is not null || this.ui.IsCommandCompletionRunning;
                 }
 
                 InputLoop.RunNewInputLoop(this, IsNested);
@@ -1171,7 +1171,7 @@ namespace Microsoft.PowerShell
 
             Exception e = null;
 
-            if (args != null)
+            if (args is not null)
             {
                 e = (Exception)args.ExceptionObject;
             }
@@ -1206,7 +1206,7 @@ namespace Microsoft.PowerShell
             if (!_isDisposed)
             {
 #if !UNIX
-                Dbg.Assert(breakHandlerGcHandle != null, "break handler should be set");
+                Dbg.Assert(breakHandlerGcHandle is not null, "break handler should be set");
                 ConsoleControl.RemoveBreakHandler();
                 if (breakHandlerGcHandle.IsAllocated)
                 {
@@ -1221,17 +1221,17 @@ namespace Microsoft.PowerShell
                         StopTranscribing();
                     }
 
-                    if (_outputSerializer != null)
+                    if (_outputSerializer is not null)
                     {
                         _outputSerializer.End();
                     }
 
-                    if (_errorSerializer != null)
+                    if (_errorSerializer is not null)
                     {
                         _errorSerializer.End();
                     }
 
-                    if (_runspaceRef != null)
+                    if (_runspaceRef is not null)
                     {
                         // NTRAID#Windows Out Of Band Releases-925297-2005/12/14
                         try
@@ -1381,7 +1381,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(_consoleWriter != null, "consoleWriter should have been initialized");
+                Dbg.Assert(_consoleWriter is not null, "consoleWriter should have been initialized");
                 return _consoleWriter;
             }
         }
@@ -1401,7 +1401,7 @@ namespace Microsoft.PowerShell
         /// </returns>
         private uint Run(CommandLineParameterParser cpp, bool isPrestartWarned)
         {
-            Dbg.Assert(cpp != null, "CommandLine parameter parser cannot be null.");
+            Dbg.Assert(cpp is not null, "CommandLine parameter parser cannot be null.");
             uint exitCode = ExitCodeSuccess;
 
             do
@@ -1525,7 +1525,7 @@ namespace Microsoft.PowerShell
         private Exception InitializeRunspaceHelper(string command, Executor exec, Executor.ExecutionOptions options)
         {
             Dbg.Assert(!string.IsNullOrEmpty(command), "command should have a value");
-            Dbg.Assert(exec != null, "non-null Executor instance needed");
+            Dbg.Assert(exec is not null, "non-null Executor instance needed");
 
             s_runspaceInitTracer.WriteLine("running command {0}", command);
 
@@ -1540,7 +1540,7 @@ namespace Microsoft.PowerShell
                 exec.ExecuteCommand(command, out e, options);
             }
 
-            if (e != null)
+            if (e is not null)
             {
                 ReportException(e, exec);
             }
@@ -1554,7 +1554,7 @@ namespace Microsoft.PowerShell
             try
             {
                 args = runspaceCreationArgs as RunspaceCreationEventArgs;
-                Dbg.Assert(args != null, "Event Arguments to CreateRunspace should not be null");
+                Dbg.Assert(args is not null, "Event Arguments to CreateRunspace should not be null");
                 DoCreateRunspace(args.InitialCommand, args.SkipProfiles, args.StaMode, args.ConfigurationName, args.InitialCommandArgs);
             }
             catch (ConsoleHostStartupException startupException)
@@ -1614,7 +1614,7 @@ namespace Microsoft.PowerShell
         private void DoCreateRunspace(string initialCommand, bool skipProfiles, bool staMode, string configurationName, Collection<CommandParameter> initialCommandArgs)
         {
             Dbg.Assert(_runspaceRef is null, "runspace should be null");
-            Dbg.Assert(DefaultInitialSessionState != null, "DefaultInitialSessionState should not be null");
+            Dbg.Assert(DefaultInitialSessionState is not null, "DefaultInitialSessionState should not be null");
             s_runspaceInitTracer.WriteLine("Calling RunspaceFactory.CreateRunspace");
 
             try
@@ -1718,7 +1718,7 @@ namespace Microsoft.PowerShell
 
         private void DoRunspaceInitialization(bool skipProfiles, string initialCommand, string configurationName, Collection<CommandParameter> initialCommandArgs)
         {
-            if (_runspaceRef.Runspace.Debugger != null)
+            if (_runspaceRef.Runspace.Debugger is not null)
             {
                 _runspaceRef.Runspace.Debugger.SetDebugMode(DebugModes.LocalScript | DebugModes.RemoteScript);
                 _runspaceRef.Runspace.Debugger.DebuggerStop += this.OnExecutionSuspended;
@@ -1727,7 +1727,7 @@ namespace Microsoft.PowerShell
             Executor exec = new Executor(this, false, false);
 
             // If working directory was specified, set it
-            if (s_cpp != null && s_cpp.WorkingDirectory != null)
+            if (s_cpp is not null && s_cpp.WorkingDirectory is not null)
             {
                 Pipeline tempPipeline = exec.CreatePipeline();
                 var command = new Command("Set-Location");
@@ -1744,7 +1744,7 @@ namespace Microsoft.PowerShell
                     exec.ExecuteCommandHelper(tempPipeline, out exception, Executor.ExecutionOptions.AddOutputter);
                 }
 
-                if (exception != null)
+                if (exception is not null)
                 {
                     _lastRunspaceInitializationException = exception;
                     ReportException(exception, exec);
@@ -1829,7 +1829,7 @@ namespace Microsoft.PowerShell
 #endif
 
             // If a file was specified as the argument to run, then run it...
-            if (s_cpp != null && s_cpp.File != null)
+            if (s_cpp is not null && s_cpp.File is not null)
             {
                 string filePath = s_cpp.File;
 
@@ -1850,7 +1850,7 @@ namespace Microsoft.PowerShell
 
                 tempPipeline.Commands.Add(c);
 
-                if (initialCommandArgs != null)
+                if (initialCommandArgs is not null)
                 {
                     // add the args passed to the command.
 
@@ -1895,7 +1895,7 @@ namespace Microsoft.PowerShell
 
                 // Pipeline.Invoke has thrown, that's bad. It means the script did not actually
                 // execute properly. These exceptions should be reflected in the exit code
-                if (e1 != null)
+                if (e1 is not null)
                 {
                     if (!_noExit)
                     {
@@ -1919,7 +1919,7 @@ namespace Microsoft.PowerShell
 
                 Pipeline tempPipeline = exec.CreatePipeline(initialCommand, true);
 
-                if (initialCommandArgs != null)
+                if (initialCommandArgs is not null)
                 {
                     // add the args passed to the command.
 
@@ -1955,7 +1955,7 @@ namespace Microsoft.PowerShell
                     exec.ExecuteCommandHelper(tempPipeline, out e1, Executor.ExecutionOptions.AddOutputter);
                 }
 
-                if (e1 != null)
+                if (e1 is not null)
                 {
                     // Remember last exception
                     _lastRunspaceInitializationException = e1;
@@ -2032,8 +2032,8 @@ namespace Microsoft.PowerShell
         // Removed HandleUnexpectedExceptions infrastructure
         private void ReportException(Exception e, Executor exec)
         {
-            Dbg.Assert(e != null, "must supply an Exception");
-            Dbg.Assert(exec != null, "must supply an Executor");
+            Dbg.Assert(e is not null, "must supply an Exception");
+            Dbg.Assert(exec is not null, "must supply an Executor");
 
             // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
             // Removed HandleUnexpectedExceptions infrastructure
@@ -2048,7 +2048,7 @@ namespace Microsoft.PowerShell
 
             IContainsErrorRecord icer = e as IContainsErrorRecord;
 
-            if (icer != null)
+            if (icer is not null)
             {
                 error = icer.ErrorRecord;
             }
@@ -2074,7 +2074,7 @@ namespace Microsoft.PowerShell
                 exec.ExecuteCommandHelper(tempPipeline, out e1, Executor.ExecutionOptions.AddOutputter);
             }
 
-            if (e1 != null)
+            if (e1 is not null)
             {
                 // that didn't work.  Write out the error ourselves as a last resort.
 
@@ -2106,7 +2106,7 @@ namespace Microsoft.PowerShell
             // See if the exception has an error record attached to it...
             ErrorRecord er = null;
             IContainsErrorRecord icer = e as IContainsErrorRecord;
-            if (icer != null)
+            if (icer is not null)
                 er = icer.ErrorRecord;
 
             if (e is PSRemotingTransportException)
@@ -2124,7 +2124,7 @@ namespace Microsoft.PowerShell
             }
 
             // Add the position message for the error if it's available.
-            if (er != null && er.InvocationInfo != null)
+            if (er is not null && er.InvocationInfo is not null)
                 Console.Error.WriteLine(er.InvocationInfo.PositionMessage);
         }
 
@@ -2149,7 +2149,7 @@ namespace Microsoft.PowerShell
         {
             // Check local runspace internalHost to see if debugging is enabled.
             LocalRunspace localrunspace = LocalRunspace;
-            if ((localrunspace != null) && !localrunspace.ExecutionContext.EngineHostInterface.DebuggerEnabled) { return; }
+            if ((localrunspace is not null) && !localrunspace.ExecutionContext.EngineHostInterface.DebuggerEnabled) { return; }
 
             _debuggerStopEventArgs = e;
             InputLoop baseLoop = null;
@@ -2161,7 +2161,7 @@ namespace Microsoft.PowerShell
                     // For remote debugging block data coming from the main (not-nested)
                     // running command.
                     baseLoop = InputLoop.GetNonNestedLoop();
-                    if (baseLoop != null)
+                    if (baseLoop is not null)
                     {
                         baseLoop.BlockCommandOutput();
                     }
@@ -2195,7 +2195,7 @@ namespace Microsoft.PowerShell
                 //
                 // Write the source line
                 //
-                if (e.InvocationInfo != null)
+                if (e.InvocationInfo is not null)
                 {
                     //    line = StringUtil.Format(ConsoleHostStrings.DebuggerSourceCodeFormat, scriptFileName, e.InvocationInfo.ScriptLineNumber, e.InvocationInfo.Line);
                     WriteDebuggerMessage(e.InvocationInfo.PositionMessage);
@@ -2209,7 +2209,7 @@ namespace Microsoft.PowerShell
             finally
             {
                 _debuggerStopEventArgs = null;
-                if (baseLoop != null)
+                if (baseLoop is not null)
                 {
                     baseLoop.ResumeCommandOutput();
                 }
@@ -2416,7 +2416,7 @@ namespace Microsoft.PowerShell
                 System.Management.Automation.Host.PSHostUserInterface c = _parent.UI;
                 ConsoleHostUserInterface ui = c as ConsoleHostUserInterface;
 
-                Dbg.Assert(ui != null, "Host.UI should return an instance.");
+                Dbg.Assert(ui is not null, "Host.UI should return an instance.");
 
                 bool inBlockMode = false;
                 bool previousResponseWasEmpty = false;
@@ -2525,7 +2525,7 @@ namespace Microsoft.PowerShell
                             }
                         }
 
-                        Dbg.Assert(line != null, "line should not be null");
+                        Dbg.Assert(line is not null, "line should not be null");
                         Dbg.Assert(line.Length > 0 || _parent.InDebugMode, "line should not be empty unless the host is in debug mode");
                         Dbg.Assert(!inBlockMode, "should not be in block mode at point of pipeline execution");
 
@@ -2535,18 +2535,18 @@ namespace Microsoft.PowerShell
                         {
                             DebuggerCommandResults results = ProcessDebugCommand(line, out e);
 
-                            if (results.ResumeAction != null)
+                            if (results.ResumeAction is not null)
                             {
                                 _parent.ExitDebugMode(results.ResumeAction.Value);
                             }
 
-                            if (e != null)
+                            if (e is not null)
                             {
                                 var ex = e as PSInvalidOperationException;
                                 if (e is PSRemotingTransportException ||
                                     e is RemoteException ||
-                                    (ex != null &&
-                                     ex.ErrorRecord != null &&
+                                    (ex is not null &&
+                                     ex.ErrorRecord is not null &&
                                      ex.ErrorRecord.FullyQualifiedErrorId.Equals("Debugger:CannotProcessCommandNotStopped", StringComparison.OrdinalIgnoreCase)))
                                 {
                                     // Debugger session is broken.  Exit nested loop.
@@ -2586,7 +2586,7 @@ namespace Microsoft.PowerShell
                                 bht = _parent._breakHandlerThread;
                             }
 
-                            if (bht != null)
+                            if (bht is not null)
                             {
                                 bht.Join();
                             }
@@ -2596,14 +2596,14 @@ namespace Microsoft.PowerShell
 
                             ui.ResetProgress();
 
-                            if (e != null)
+                            if (e is not null)
                             {
                                 // Handle incomplete parse and other errors.
                                 inBlockMode = HandleErrors(e, line, inBlockMode, ref inputBlock);
 
                                 // If a remote runspace is pushed and it is not in a good state
                                 // then pop it.
-                                if (_isRunspacePushed && (_parent.Runspace != null) &&
+                                if (_isRunspacePushed && (_parent.Runspace is not null) &&
                                     ((_parent.Runspace.RunspaceStateInfo.State != RunspaceState.Opened) ||
                                      (_parent.Runspace.RunspaceAvailability != RunspaceAvailability.Available)))
                                 {
@@ -2629,7 +2629,7 @@ namespace Microsoft.PowerShell
             internal void BlockCommandOutput()
             {
                 RemotePipeline rCmdPipeline = _parent.runningCmd as RemotePipeline;
-                if (rCmdPipeline != null)
+                if (rCmdPipeline is not null)
                 {
                     rCmdPipeline.DrainIncomingData();
                     rCmdPipeline.SuspendIncomingData();
@@ -2643,7 +2643,7 @@ namespace Microsoft.PowerShell
             internal void ResumeCommandOutput()
             {
                 RemotePipeline rCmdPipeline = _parent.runningCmd as RemotePipeline;
-                if (rCmdPipeline != null)
+                if (rCmdPipeline is not null)
                 {
                     rCmdPipeline.ResumeIncomingData();
                 }
@@ -2655,7 +2655,7 @@ namespace Microsoft.PowerShell
 
             private bool HandleErrors(Exception e, string line, bool inBlockMode, ref StringBuilder inputBlock)
             {
-                Dbg.Assert(e != null, "Exception reference should not be null.");
+                Dbg.Assert(e is not null, "Exception reference should not be null.");
 
                 if (IsIncompleteParseException(e))
                 {
@@ -2794,7 +2794,7 @@ namespace Microsoft.PowerShell
                 if (_isRunspacePushed)
                 {
                     RemoteRunspace remoteRunspace = _parent.Runspace as RemoteRunspace;
-                    if (remoteRunspace != null)
+                    if (remoteRunspace is not null)
                     {
                         promptString = HostUtilities.GetRemotePrompt(remoteRunspace, promptString, _parent._inPushedConfiguredSession);
                     }
@@ -2827,11 +2827,11 @@ namespace Microsoft.PowerShell
                 }
 
                 PSObject prompt = output.ReadAndRemoveAt0();
-                string promptString = (prompt != null) ? (prompt.BaseObject as string) : null;
-                if (promptString != null)
+                string promptString = (prompt is not null) ? (prompt.BaseObject as string) : null;
+                if (promptString is not null)
                 {
                     RemoteRunspace remoteRunspace = _parent.Runspace as RemoteRunspace;
-                    if (remoteRunspace != null)
+                    if (remoteRunspace is not null)
                     {
                         promptString = HostUtilities.GetRemotePrompt(remoteRunspace, promptString, _parent._inPushedConfiguredSession);
                     }

@@ -116,7 +116,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static IEnumerable<LogProvider> GetLogProvider(LogContext logContext)
         {
-            System.Diagnostics.Debug.Assert(logContext != null);
+            System.Diagnostics.Debug.Assert(logContext is not null);
             System.Diagnostics.Debug.Assert(!string.IsNullOrEmpty(logContext.ShellId));
 
             return GetLogProvider(logContext.ShellId);
@@ -217,7 +217,7 @@ namespace System.Management.Automation
 
             InvocationInfo invocationInfo = null;
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (icer != null && icer.ErrorRecord != null)
+            if (icer is not null && icer.ErrorRecord is not null)
                 invocationInfo = icer.ErrorRecord.InvocationInfo;
             foreach (LogProvider provider in GetLogProvider(executionContext))
             {
@@ -419,7 +419,7 @@ namespace System.Management.Automation
 
             InvocationInfo invocationInfo = null;
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (icer != null && icer.ErrorRecord != null)
+            if (icer is not null && icer.ErrorRecord is not null)
                 invocationInfo = icer.ErrorRecord.InvocationInfo;
             foreach (LogProvider provider in GetLogProvider(executionContext))
             {
@@ -610,7 +610,7 @@ namespace System.Management.Automation
 
             InvocationInfo invocationInfo = null;
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (icer != null && icer.ErrorRecord != null)
+            if (icer is not null && icer.ErrorRecord is not null)
                 invocationInfo = icer.ErrorRecord.InvocationInfo;
             foreach (LogProvider provider in GetLogProvider(executionContext))
             {
@@ -768,7 +768,7 @@ namespace System.Management.Automation
             logContext.ShellId = shellId;
             logContext.Severity = severity.ToString();
 
-            if (executionContext.EngineHostInterface != null)
+            if (executionContext.EngineHostInterface is not null)
             {
                 logContext.HostName = executionContext.EngineHostInterface.Name;
                 logContext.HostVersion = executionContext.EngineHostInterface.Version.ToString();
@@ -777,13 +777,13 @@ namespace System.Management.Automation
 
             logContext.HostApplication = string.Join(" ", Environment.GetCommandLineArgs());
 
-            if (executionContext.CurrentRunspace != null)
+            if (executionContext.CurrentRunspace is not null)
             {
                 logContext.EngineVersion = executionContext.CurrentRunspace.Version.ToString();
                 logContext.RunspaceId = executionContext.CurrentRunspace.InstanceId.ToString();
 
                 Pipeline currentPipeline = ((RunspaceBase)executionContext.CurrentRunspace).GetCurrentlyRunningPipeline();
-                if (currentPipeline != null)
+                if (currentPipeline is not null)
                 {
                     logContext.PipelineId = currentPipeline.InstanceId.ToString(CultureInfo.CurrentCulture);
                 }
@@ -810,7 +810,7 @@ namespace System.Management.Automation
 
             System.Management.Automation.Remoting.PSSenderInfo psSenderInfo =
                     executionContext.SessionState.PSVariable.GetValue("PSSenderInfo") as System.Management.Automation.Remoting.PSSenderInfo;
-            if (psSenderInfo != null)
+            if (psSenderInfo is not null)
             {
                 logContext.ConnectedUser = psSenderInfo.UserInfo.Identity.Name;
             }
@@ -823,7 +823,7 @@ namespace System.Management.Automation
             logContext.ScriptName = invocationInfo.ScriptName;
             logContext.CommandLine = invocationInfo.Line;
 
-            if (invocationInfo.MyCommand != null)
+            if (invocationInfo.MyCommand is not null)
             {
                 logContext.CommandName = invocationInfo.MyCommand.Name;
                 logContext.CommandType = invocationInfo.MyCommand.CommandType.ToString();

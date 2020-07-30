@@ -55,8 +55,8 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="documentParagraph">Paragraph in which help text is built/searched.</param>
         internal HelpViewModel(PSObject psObj, Paragraph documentParagraph)
         {
-            Debug.Assert(psObj != null, "ensured by caller");
-            Debug.Assert(documentParagraph != null, "ensured by caller");
+            Debug.Assert(psObj is not null, "ensured by caller");
+            Debug.Assert(documentParagraph is not null, "ensured by caller");
 
             this.helpBuilder = new HelpParagraphBuilder(documentParagraph, psObj);
             this.helpBuilder.BuildParagraph();
@@ -274,7 +274,7 @@ namespace Microsoft.Management.UI.Internal
         private void OnNotifyPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;
-            if (handler != null)
+            if (handler is not null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }

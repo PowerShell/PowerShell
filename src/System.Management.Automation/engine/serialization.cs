@@ -552,7 +552,7 @@ namespace System.Management.Automation
 
                 // Read version attribute and validate it.
                 string versionAttribute = _reader.GetAttribute(SerializationStrings.VersionAttribute);
-                if (versionAttribute != null)
+                if (versionAttribute is not null)
                 {
                     version = versionAttribute;
                 }
@@ -649,7 +649,7 @@ namespace System.Management.Automation
         /// <param name="type"></param>
         internal static void AddDeserializationPrefix(ref string type)
         {
-            Dbg.Assert(type != null, "caller should validate the parameter");
+            Dbg.Assert(type is not null, "caller should validate the parameter");
             if (!type.StartsWith(Deserializer.DeserializationTypeNamePrefix, StringComparison.OrdinalIgnoreCase))
             {
                 type = type.Insert(0, Deserializer.DeserializationTypeNamePrefix);
@@ -696,10 +696,10 @@ namespace System.Management.Automation
             }
 
             PSObject pso = o as PSObject;
-            if (pso != null)
+            if (pso is not null)
             {
                 IEnumerable<string> typeNames = pso.InternalTypeNames;
-                if (typeNames != null)
+                if (typeNames is not null)
                 {
                     foreach (string typeName in typeNames)
                     {
@@ -744,7 +744,7 @@ namespace System.Management.Automation
         /// </returns>
         internal static Collection<string> MaskDeserializationPrefix(Collection<string> typeNames)
         {
-            Dbg.Assert(typeNames != null, "typeNames cannot be null");
+            Dbg.Assert(typeNames is not null, "typeNames cannot be null");
 
             bool atleastOneDeserializedTypeFound = false;
 
@@ -830,8 +830,8 @@ namespace System.Management.Automation
 
         internal InternalSerializer(XmlWriter writer, SerializationContext context)
         {
-            Dbg.Assert(writer != null, "caller should validate the parameter");
-            Dbg.Assert(context != null, "caller should validate the parameter");
+            Dbg.Assert(writer is not null, "caller should validate the parameter");
+            Dbg.Assert(context is not null, "caller should validate the parameter");
             _writer = writer;
             _context = context;
 
@@ -908,7 +908,7 @@ namespace System.Management.Automation
         {
             // Check if source is of primitive known type
             TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfo(input);
-            return (pktInfo != null);
+            return (pktInfo is not null);
         }
 
         /// <summary>
@@ -966,7 +966,7 @@ namespace System.Management.Automation
                 // Object is not of primitive known type. Check if this has
                 // already been serialized.
                 string refId = _objectRefIdHandler.GetRefId(source);
-                if (refId != null)
+                if (refId is not null)
                 {
                     WritePSObjectReference(streamName, property, refId);
                     return;
@@ -1036,11 +1036,11 @@ namespace System.Management.Automation
             string property
         )
         {
-            Dbg.Assert(source != null, "caller should validate the parameter");
+            Dbg.Assert(source is not null, "caller should validate the parameter");
 
             // Check if source is of primitive known type
             TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfo(source.GetType());
-            if (pktInfo != null)
+            if (pktInfo is not null)
             {
                 WriteOnePrimitiveKnownType(this, streamName, property, source, pktInfo);
                 return true;
@@ -1067,10 +1067,10 @@ namespace System.Management.Automation
             int depth
         )
         {
-            Dbg.Assert(source != null, "caller should validate the parameter");
+            Dbg.Assert(source is not null, "caller should validate the parameter");
             // Check if source is of primitive known type
             TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfo(source.GetType());
-            if (pktInfo != null)
+            if (pktInfo is not null)
             {
                 PSObject pktInfoPSObject = PSObject.AsPSObject(source);
                 return HandlePrimitiveKnownTypePSObject(pktInfoPSObject, streamName, property, depth);
@@ -1087,13 +1087,13 @@ namespace System.Management.Automation
         /// <returns></returns>
         private bool HandleSecureString(object source, string streamName, string property)
         {
-            Dbg.Assert(source != null, "caller should validate the parameter");
+            Dbg.Assert(source is not null, "caller should validate the parameter");
 
             SecureString secureString = null;
             secureString = source as SecureString;
             PSObject moSource;
 
-            if (secureString != null)
+            if (secureString is not null)
             {
                 moSource = PSObject.AsPSObject(secureString);
             }
@@ -1102,11 +1102,11 @@ namespace System.Management.Automation
                 moSource = source as PSObject;
             }
 
-            if (moSource != null && !moSource.ImmediateBaseObjectIsEmpty)
+            if (moSource is not null && !moSource.ImmediateBaseObjectIsEmpty)
             {
                 // check if source is of type secure string
                 secureString = moSource.ImmediateBaseObject as SecureString;
-                if (secureString != null)
+                if (secureString is not null)
                 {
                     // the principle used in serialization is that serialization
                     // never throws, and if something can't be serialized nothing
@@ -1114,7 +1114,7 @@ namespace System.Management.Automation
                     // However, in the case for non-Windows where secure string encryption
                     // is not yet supported, a PSCryptoException will be thrown.
                     string encryptedString;
-                    if (_context.cryptoHelper != null)
+                    if (_context.cryptoHelper is not null)
                     {
                         encryptedString = _context.cryptoHelper.EncryptSecureString(secureString);
                     }
@@ -1123,7 +1123,7 @@ namespace System.Management.Automation
                         encryptedString = Microsoft.PowerShell.SecureStringHelper.Protect(secureString);
                     }
 
-                    if (property != null)
+                    if (property is not null)
                     {
                         WriteStartElement(SerializationStrings.SecureStringTag);
                         WriteNameAttribute(property);
@@ -1133,7 +1133,7 @@ namespace System.Management.Automation
                         WriteStartElement(SerializationStrings.SecureStringTag);
                     }
 
-                    if (streamName != null)
+                    if (streamName is not null)
                     {
                         WriteAttribute(SerializationStrings.StreamNameAttribute, streamName);
                     }
@@ -1170,16 +1170,16 @@ namespace System.Management.Automation
             int depth
         )
         {
-            Dbg.Assert(source != null, "caller should validate the parameter");
+            Dbg.Assert(source is not null, "caller should validate the parameter");
 
             bool sourceHandled = false;
             PSObject moSource = source as PSObject;
-            if (moSource != null && !moSource.ImmediateBaseObjectIsEmpty)
+            if (moSource is not null && !moSource.ImmediateBaseObjectIsEmpty)
             {
                 // Check if baseObject is primitive known type
                 object baseObject = moSource.ImmediateBaseObject;
                 TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfo(baseObject.GetType());
-                if (pktInfo != null)
+                if (pktInfo is not null)
                 {
                     WritePrimitiveTypePSObject(moSource, baseObject, pktInfo, streamName, property, depth);
                     sourceHandled = true;
@@ -1197,7 +1197,7 @@ namespace System.Management.Automation
             int depth
         )
         {
-            Dbg.Assert(source != null, "caller should validate the parameter");
+            Dbg.Assert(source is not null, "caller should validate the parameter");
 
             ContainerType ct = ContainerType.None;
             PSObject mshSource = source as PSObject;
@@ -1205,13 +1205,13 @@ namespace System.Management.Automation
             IDictionary dictionary = null;
 
             // If passed in object is PSObject with no baseobject, return false.
-            if (mshSource != null && mshSource.ImmediateBaseObjectIsEmpty)
+            if (mshSource is not null && mshSource.ImmediateBaseObjectIsEmpty)
             {
                 return false;
             }
 
             // Check if source (or baseobject in mshSource) is known container type
-            SerializationUtilities.GetKnownContainerTypeInfo(mshSource != null ? mshSource.ImmediateBaseObject : source, out ct,
+            SerializationUtilities.GetKnownContainerTypeInfo(mshSource is not null ? mshSource.ImmediateBaseObject : source, out ct,
                                       out dictionary, out enumerable);
 
             if (ct == ContainerType.None)
@@ -1254,7 +1254,7 @@ namespace System.Management.Automation
                 // So on roundtrip it will show up as List.
                 // We serialize properties of enumerable and on deserialization mark the object as Deserialized.
                 // So if object is marked deserialized, we should write properties.
-                if (ct == ContainerType.Enumerable || (mshSource != null && mshSource.IsDeserialized))
+                if (ct == ContainerType.Enumerable || (mshSource is not null && mshSource.IsDeserialized))
                 {
                     PSObject sourceAsPSObject = PSObject.AsPSObject(source);
                     PSMemberInfoInternalCollection<PSPropertyInfo> specificPropertiesToSerialize = SerializationUtilities.GetSpecificPropertiesToSerialize(sourceAsPSObject, AllPropertiesCollection, _typeTable);
@@ -1262,7 +1262,7 @@ namespace System.Management.Automation
                     SerializeExtendedProperties(sourceAsPSObject, depth, specificPropertiesToSerialize);
                 }
                 // always serialize instance properties if there are any
-                else if (mshSource != null)
+                else if (mshSource is not null)
                 {
                     SerializeInstanceProperties(mshSource, depth);
                 }
@@ -1288,12 +1288,12 @@ namespace System.Management.Automation
             Dbg.Assert(!string.IsNullOrEmpty(refId), "caller should validate the parameter");
 
             WriteStartElement(SerializationStrings.ReferenceTag);
-            if (streamName != null)
+            if (streamName is not null)
             {
                 WriteAttribute(SerializationStrings.StreamNameAttribute, streamName);
             }
 
-            if (property != null)
+            if (property is not null)
             {
                 WriteNameAttribute(property);
             }
@@ -1352,12 +1352,12 @@ namespace System.Management.Automation
             int depth
         )
         {
-            Dbg.Assert(source != null, "Caller should validate source != null");
+            Dbg.Assert(source is not null, "Caller should validate source is not null");
 
             string toStringValue = SerializationUtilities.GetToStringForPrimitiveObject(source);
             bool hasModifiedTypesCollection = PSObjectHasModifiedTypesCollection(source);
             bool hasNotes = PSObjectHasNotes(source);
-            bool hasModifiedToString = (toStringValue != null);
+            bool hasModifiedToString = (toStringValue is not null);
 
             if (hasNotes || hasModifiedTypesCollection || hasModifiedToString)
             {
@@ -1374,7 +1374,7 @@ namespace System.Management.Automation
             }
             else
             {
-                if (primitive != null)
+                if (primitive is not null)
                 {
                     WriteOnePrimitiveKnownType(this, streamName, property, primitive, pktInfo);
                     return;
@@ -1419,8 +1419,8 @@ namespace System.Management.Automation
             int depth
         )
         {
-            Dbg.Assert(source != null, "caller should validate the parameter");
-            Dbg.Assert(pktInfo != null, "Caller should validate pktInfo != null");
+            Dbg.Assert(source is not null, "caller should validate the parameter");
+            Dbg.Assert(pktInfo is not null, "Caller should validate pktInfo is not null");
 
             string refId = _objectRefIdHandler.SetRefId(source);
             WriteStartOfPSObject(
@@ -1432,7 +1432,7 @@ namespace System.Management.Automation
                 toStringValue); // preserve ToString information only if got it from deserialization or overridden by PSObject
                                 // (example where preservation of TypeNames and ToString is needed: enums serialized as ints, help string with custom type names (HelpInfoShort))
 
-            if (pktInfo != null)
+            if (pktInfo is not null)
             {
                 WriteOnePrimitiveKnownType(this, streamName, null, primitive, pktInfo);
             }
@@ -1452,7 +1452,7 @@ namespace System.Management.Automation
             int depth
         )
         {
-            Dbg.Assert(source != null, "caller should validate the parameter");
+            Dbg.Assert(source is not null, "caller should validate the parameter");
             PSObject mshSource = PSObject.AsPSObject(source);
 
             // Figure out what kind of object we are dealing with
@@ -1467,14 +1467,14 @@ namespace System.Management.Automation
                 do // false loop
                 {
                     CimInstance cimInstance = mshSource.ImmediateBaseObject as CimInstance;
-                    if (cimInstance != null)
+                    if (cimInstance is not null)
                     {
                         isCimInstance = true;
                         break;
                     }
 
                     ErrorRecord errorRecord = mshSource.ImmediateBaseObject as ErrorRecord;
-                    if (errorRecord != null)
+                    if (errorRecord is not null)
                     {
                         errorRecord.ToPSObjectForRemoting(mshSource);
                         isErrorRecord = true;
@@ -1482,7 +1482,7 @@ namespace System.Management.Automation
                     }
 
                     InformationalRecord informationalRecord = mshSource.ImmediateBaseObject as InformationalRecord;
-                    if (informationalRecord != null)
+                    if (informationalRecord is not null)
                     {
                         informationalRecord.ToPSObjectForRemoting(mshSource);
                         isInformationalRecord = true;
@@ -1553,7 +1553,7 @@ namespace System.Management.Automation
             // CREATE SERIALIZED FORM OF THE CLASS METADATA
             //
             ArrayList psoClasses = new ArrayList();
-            for (CimClass cimClass = cimInstance.CimClass; cimClass != null; cimClass = cimClass.CimSuperClass)
+            for (CimClass cimClass = cimInstance.CimClass; cimClass is not null; cimClass = cimClass.CimSuperClass)
             {
                 PSObject psoClass = new PSObject();
                 psoClass.TypeNames.Clear();
@@ -1594,7 +1594,7 @@ namespace System.Management.Automation
             // ATTACH CLASS METADATA TO THE OBJECT BEING SERIALIZED
             //
             PSPropertyInfo classMetadataProperty = psObject.Properties[InternalDeserializer.CimClassMetadataProperty];
-            if (classMetadataProperty != null)
+            if (classMetadataProperty is not null)
             {
                 classMetadataProperty.Value = psoClasses;
             }
@@ -1617,7 +1617,7 @@ namespace System.Management.Automation
             {
                 PSObject instanceMetadata = new PSObject();
                 PSPropertyInfo instanceMetadataProperty = psObject.Properties[InternalDeserializer.CimInstanceMetadataProperty];
-                if (instanceMetadataProperty != null)
+                if (instanceMetadataProperty is not null)
                 {
                     instanceMetadataProperty.Value = instanceMetadata;
                 }
@@ -1656,22 +1656,22 @@ namespace System.Management.Automation
             string toStringValue
         )
         {
-            Dbg.Assert(mshObject != null, "caller should validate the parameter");
+            Dbg.Assert(mshObject is not null, "caller should validate the parameter");
 
             // Write PSObject start element.
             WriteStartElement(SerializationStrings.PSObjectTag);
 
-            if (streamName != null)
+            if (streamName is not null)
             {
                 WriteAttribute(SerializationStrings.StreamNameAttribute, streamName);
             }
 
-            if (property != null)
+            if (property is not null)
             {
                 WriteNameAttribute(property);
             }
 
-            if (refId != null)
+            if (refId is not null)
             {
                 WriteAttribute(SerializationStrings.ReferenceIdAttribute, refId);
             }
@@ -1689,7 +1689,7 @@ namespace System.Management.Automation
 
                         // Create a new refId and write it as attribute
                         string tnRefId = _typeRefIdHandler.SetRefId(typeNames);
-                        Dbg.Assert(tnRefId != null, "SetRefId should always succeed for strings");
+                        Dbg.Assert(tnRefId is not null, "SetRefId should always succeed for strings");
                         WriteAttribute(SerializationStrings.ReferenceIdAttribute, tnRefId);
 
                         foreach (string type in typeNames)
@@ -1708,7 +1708,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (toStringValue != null)
+            if (toStringValue is not null)
             {
                 WriteEncodedElementString(SerializationStrings.ToStringElementTag, toStringValue);
             }
@@ -1724,8 +1724,8 @@ namespace System.Management.Automation
         /// </returns>
         private static bool PSObjectHasNotes(PSObject source)
         {
-            Dbg.Assert(source != null, "Caller should validate the parameter");
-            if (source.InstanceMembers != null && source.InstanceMembers.Count > 0)
+            Dbg.Assert(source is not null, "Caller should validate the parameter");
+            if (source.InstanceMembers is not null && source.InstanceMembers.Count > 0)
             {
                 return true;
             }
@@ -1767,7 +1767,7 @@ namespace System.Management.Automation
             bool writeEnclosingMemberSetElementTag
         )
         {
-            Dbg.Assert(me != null, "caller should validate the parameter");
+            Dbg.Assert(me is not null, "caller should validate the parameter");
 
             bool enclosingTagWritten = false;
             foreach (PSMemberInfo info in me)
@@ -1821,7 +1821,7 @@ namespace System.Management.Automation
             int depth
         )
         {
-            Dbg.Assert(set != null, "Caller should validate the parameter");
+            Dbg.Assert(set is not null, "Caller should validate the parameter");
 
             if (!set.ShouldSerialize)
             {
@@ -1848,13 +1848,13 @@ namespace System.Management.Automation
             IEnumerable<PSPropertyInfo> specificPropertiesToSerialize
         )
         {
-            Dbg.Assert(source != null, "caller should validate the information");
+            Dbg.Assert(source is not null, "caller should validate the information");
 
             // Depth available for each property is one less
             --depth;
             Dbg.Assert(depth >= 0, "depth should be greater or equal to zero");
 
-            if (specificPropertiesToSerialize != null)
+            if (specificPropertiesToSerialize is not null)
             {
                 SerializeProperties(specificPropertiesToSerialize, SerializationStrings.AdapterProperties, depth);
             }
@@ -1864,7 +1864,7 @@ namespace System.Management.Automation
                 {
                     IEnumerable<PSPropertyInfo> adapterCollection = null;
                     adapterCollection = source.GetAdaptedProperties();
-                    if (adapterCollection != null)
+                    if (adapterCollection is not null)
                     {
                         SerializeProperties(adapterCollection, SerializationStrings.AdapterProperties, depth);
                     }
@@ -1879,9 +1879,9 @@ namespace System.Management.Automation
         )
         {
             // Serialize instanceMembers
-            Dbg.Assert(source != null, "caller should validate the information");
+            Dbg.Assert(source is not null, "caller should validate the information");
             PSMemberInfoCollection<PSMemberInfo> instanceMembers = source.InstanceMembers;
-            if (instanceMembers != null)
+            if (instanceMembers is not null)
             {
                 WriteMemberInfoCollection(instanceMembers, depth, true);
             }
@@ -1917,7 +1917,7 @@ namespace System.Management.Automation
             IEnumerable<PSPropertyInfo> specificPropertiesToSerialize
         )
         {
-            Dbg.Assert(source != null, "caller should validate the information");
+            Dbg.Assert(source is not null, "caller should validate the information");
 
             IEnumerable<PSMemberInfo> extendedMembersEnumerable = null;
             if (specificPropertiesToSerialize is null)
@@ -1951,7 +1951,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (extendedMembersEnumerable != null)
+            if (extendedMembersEnumerable is not null)
             {
                 WriteMemberInfoCollection(extendedMembersEnumerable, depth, true);
             }
@@ -1977,7 +1977,7 @@ namespace System.Management.Automation
             int depth
         )
         {
-            Dbg.Assert(propertyCollection != null, "caller should validate the parameter");
+            Dbg.Assert(propertyCollection is not null, "caller should validate the parameter");
             bool startElementWritten = false;
 
             foreach (PSMemberInfo info in propertyCollection)
@@ -2030,7 +2030,7 @@ namespace System.Management.Automation
             int depth
         )
         {
-            Dbg.Assert(enumerable != null, "caller should validate the parameter");
+            Dbg.Assert(enumerable is not null, "caller should validate the parameter");
             Dbg.Assert(!string.IsNullOrEmpty(tag), "caller should validate the parameter");
 
             // Start element
@@ -2063,7 +2063,7 @@ namespace System.Management.Automation
 
             // AD has incorrect implementation of IEnumerable where they returned null
             // for GetEnumerator instead of empty enumerator
-            if (enumerator != null)
+            if (enumerator is not null)
             {
                 while (true)
                 {
@@ -2111,7 +2111,7 @@ namespace System.Management.Automation
             int depth
         )
         {
-            Dbg.Assert(dictionary != null, "caller should validate the parameter");
+            Dbg.Assert(dictionary is not null, "caller should validate the parameter");
             Dbg.Assert(!string.IsNullOrEmpty(tag), "caller should validate the parameter");
 
             // Start element
@@ -2132,7 +2132,7 @@ namespace System.Management.Automation
                     exception.ToString());
             }
 
-            if (dictionaryEnum != null)
+            if (dictionaryEnum is not null)
             {
                 while (true)
                 {
@@ -2162,7 +2162,7 @@ namespace System.Management.Automation
                         break;
                     }
 
-                    Dbg.Assert(key != null, "Dictionary keys should never be null");
+                    Dbg.Assert(key is not null, "Dictionary keys should never be null");
                     if (key is null) break;
 
                     WriteStartElement(SerializationStrings.DictionaryEntryTag);
@@ -2186,12 +2186,12 @@ namespace System.Management.Automation
             string property,
             int depth)
         {
-            Dbg.Assert(source != null, "caller should validate the information");
+            Dbg.Assert(source is not null, "caller should validate the information");
 
             string value = GetSerializationString(source);
 
             TypeSerializationInfo pktInfo = null;
-            if (value != null)
+            if (value is not null)
             {
                 pktInfo = KnownTypes.GetTypeSerializationInfo(value.GetType());
             }
@@ -2213,7 +2213,7 @@ namespace System.Management.Automation
         /// </returns>
         private string GetSerializationString(PSObject source)
         {
-            Dbg.Assert(source != null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
 
             PSPropertyInfo serializationProperty = null;
             try
@@ -2226,15 +2226,15 @@ namespace System.Management.Automation
                     PSEventId.Serializer_ToStringFailed, PSOpcode.Exception, PSTask.Serialization,
                     PSKeyword.Serializer | PSKeyword.UseAlwaysAnalytic,
                     source.GetType().AssemblyQualifiedName,
-                    e.InnerException != null ? e.InnerException.ToString() : e.ToString());
+                    e.InnerException is not null ? e.InnerException.ToString() : e.ToString());
             }
 
             string result = null;
-            if (serializationProperty != null)
+            if (serializationProperty is not null)
             {
                 bool success;
                 object val = SerializationUtilities.GetPropertyValueInThreadSafeManner(serializationProperty, this.CanUseDefaultRunspaceInThreadSafeManner, out success);
-                if (success && (val != null))
+                if (success && (val is not null))
                 {
                     result = SerializationUtilities.GetToString(val);
                 }
@@ -2283,7 +2283,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private int GetDepthOfSerialization(object source, int depth)
         {
-            Dbg.Assert(source != null, "Caller should verify source != null");
+            Dbg.Assert(source is not null, "Caller should verify source is not null");
 
             PSObject pso = PSObject.AsPSObject(source);
             if (pso is null)
@@ -2351,12 +2351,12 @@ namespace System.Management.Automation
         {
             WriteStartElement(SerializationStrings.NilTag);
 
-            if (streamName != null)
+            if (streamName is not null)
             {
                 WriteAttribute(SerializationStrings.StreamNameAttribute, streamName);
             }
 
-            if (property != null)
+            if (property is not null)
             {
                 WriteNameAttribute(property);
             }
@@ -2383,11 +2383,11 @@ namespace System.Management.Automation
             TypeSerializationInfo entry
         )
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(raw != null, "caller should have validated the information");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(raw is not null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
-            if (property != null)
+            if (property is not null)
             {
                 serializer.WriteStartElement(entry.PropertyTag);
                 serializer.WriteNameAttribute(property);
@@ -2397,7 +2397,7 @@ namespace System.Management.Automation
                 serializer.WriteStartElement(entry.ItemTag);
             }
 
-            if (streamName != null)
+            if (streamName is not null)
             {
                 serializer.WriteAttribute(SerializationStrings.StreamNameAttribute, streamName);
             }
@@ -2423,16 +2423,16 @@ namespace System.Management.Automation
             TypeSerializationInfo entry
         )
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(source != null, "caller should have validated the information");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
             if (entry.Serializer is null)
             {
                 // we are not using GetToString, because we assume that
                 // ToString() for primitive types never throws
                 string value = Convert.ToString(source, CultureInfo.InvariantCulture);
-                Dbg.Assert(value != null, "ToString shouldn't return null for primitive types");
+                Dbg.Assert(value is not null, "ToString shouldn't return null for primitive types");
                 WriteRawString(serializer, streamName, property, value, entry);
             }
             else
@@ -2451,9 +2451,9 @@ namespace System.Management.Automation
         /// <param name="entry">Serialization information about source.</param>
         internal static void WriteDateTime(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(source != null, "caller should have validated the information");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
             WriteRawString(serializer, streamName, property, XmlConvert.ToString((DateTime)source, XmlDateTimeSerializationMode.RoundtripKind), entry);
         }
@@ -2468,10 +2468,10 @@ namespace System.Management.Automation
         /// <param name="entry">Serialization information about source.</param>
         internal static void WriteVersion(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(source != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
             Dbg.Assert(source is Version, "Caller should verify that typeof(source) is Version");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
             WriteRawString(serializer, streamName, property, Convert.ToString(source, CultureInfo.InvariantCulture), entry);
         }
@@ -2486,10 +2486,10 @@ namespace System.Management.Automation
         /// <param name="entry">Serialization information about source.</param>
         internal static void WriteSemanticVersion(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(source != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
             Dbg.Assert(source is SemanticVersion, "Caller should verify that typeof(source) is Version");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
             WriteRawString(serializer, streamName, property, Convert.ToString(source, CultureInfo.InvariantCulture), entry);
         }
@@ -2504,10 +2504,10 @@ namespace System.Management.Automation
         /// <param name="entry">Serialization information about source.</param>
         internal static void WriteScriptBlock(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(source != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
             Dbg.Assert(source is ScriptBlock, "Caller should verify that typeof(source) is ScriptBlock");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
             WriteEncodedString(serializer, streamName, property, Convert.ToString(source, CultureInfo.InvariantCulture), entry);
         }
@@ -2522,10 +2522,10 @@ namespace System.Management.Automation
         /// <param name="entry">Serialization information about source.</param>
         internal static void WriteUri(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(source != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
             Dbg.Assert(source is Uri, "Caller should verify that typeof(source) is Uri");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
             WriteEncodedString(serializer, streamName, property, Convert.ToString(source, CultureInfo.InvariantCulture), entry);
         }
@@ -2540,12 +2540,12 @@ namespace System.Management.Automation
         /// <param name="entry">Serialization information about source.</param>
         internal static void WriteEncodedString(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(source != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
             Dbg.Assert(source is string, "caller should have validated the information");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
-            if (property != null)
+            if (property is not null)
             {
                 serializer.WriteStartElement(entry.PropertyTag);
                 serializer.WriteNameAttribute(property);
@@ -2555,7 +2555,7 @@ namespace System.Management.Automation
                 serializer.WriteStartElement(entry.ItemTag);
             }
 
-            if (streamName != null)
+            if (streamName is not null)
             {
                 serializer.WriteAttribute(SerializationStrings.StreamNameAttribute, streamName);
             }
@@ -2581,9 +2581,9 @@ namespace System.Management.Automation
         /// <param name="entry">Serialization information about source.</param>
         internal static void WriteDouble(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(source != null, "caller should have validated the information");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
             WriteRawString(serializer, streamName, property, XmlConvert.ToString((double)source), entry);
         }
@@ -2598,9 +2598,9 @@ namespace System.Management.Automation
         /// <param name="entry">Serialization information about source.</param>
         internal static void WriteChar(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(source != null, "caller should have validated the information");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
             // Char is defined as unsigned short in schema
             WriteRawString(serializer, streamName, property, XmlConvert.ToString((UInt16)(char)source), entry);
@@ -2616,9 +2616,9 @@ namespace System.Management.Automation
         /// <param name="entry">Serialization information about source.</param>
         internal static void WriteBoolean(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(source != null, "caller should have validated the information");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
             WriteRawString(serializer, streamName, property, XmlConvert.ToString((bool)source), entry);
         }
@@ -2633,9 +2633,9 @@ namespace System.Management.Automation
         /// <param name="entry">Serialization information about source.</param>
         internal static void WriteSingle(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(source != null, "caller should have validated the information");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
             WriteRawString(serializer, streamName, property, XmlConvert.ToString((Single)source), entry);
         }
@@ -2650,9 +2650,9 @@ namespace System.Management.Automation
         /// <param name="entry">Serialization information about source.</param>
         internal static void WriteTimeSpan(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(source != null, "caller should have validated the information");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
             WriteRawString(serializer, streamName, property, XmlConvert.ToString((TimeSpan)source), entry);
         }
@@ -2667,12 +2667,12 @@ namespace System.Management.Automation
         /// <param name="entry">Serialization information about source.</param>
         internal static void WriteByteArray(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(source != null, "caller should have validated the information");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
             byte[] bytes = (byte[])source;
-            if (property != null)
+            if (property is not null)
             {
                 serializer.WriteStartElement(entry.PropertyTag);
                 serializer.WriteNameAttribute(property);
@@ -2682,7 +2682,7 @@ namespace System.Management.Automation
                 serializer.WriteStartElement(entry.ItemTag);
             }
 
-            if (streamName != null)
+            if (streamName is not null)
             {
                 serializer.WriteAttribute(SerializationStrings.StreamNameAttribute, streamName);
             }
@@ -2693,9 +2693,9 @@ namespace System.Management.Automation
 
         internal static void WriteXmlDocument(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(source != null, "caller should have validated the information");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
             string xml = ((XmlDocument)source).OuterXml;
             WriteEncodedString(serializer, streamName, property, xml, entry);
@@ -2703,18 +2703,18 @@ namespace System.Management.Automation
 
         internal static void WriteProgressRecord(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(source != null, "caller should have validated the information");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
             ProgressRecord rec = (ProgressRecord)source;
             serializer.WriteStartElement(entry.PropertyTag);
-            if (property != null)
+            if (property is not null)
             {
                 serializer.WriteNameAttribute(property);
             }
 
-            if (streamName != null)
+            if (streamName is not null)
             {
                 serializer.WriteAttribute(SerializationStrings.StreamNameAttribute, streamName);
             }
@@ -2733,9 +2733,9 @@ namespace System.Management.Automation
 
         internal static void WriteSecureString(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
         {
-            Dbg.Assert(serializer != null, "caller should have validated the information");
-            Dbg.Assert(source != null, "caller should have validated the information");
-            Dbg.Assert(entry != null, "caller should have validated the information");
+            Dbg.Assert(serializer is not null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
+            Dbg.Assert(entry is not null, "caller should have validated the information");
 
             serializer.HandleSecureString(source, streamName, property);
         }
@@ -2769,7 +2769,7 @@ namespace System.Management.Automation
         private void WriteAttribute(string name, string value)
         {
             Dbg.Assert(!string.IsNullOrEmpty(name), "Caller should validate the parameter");
-            Dbg.Assert(value != null, "Caller should validate the parameter");
+            Dbg.Assert(value is not null, "Caller should validate the parameter");
             _writer.WriteAttributeString(name, value);
         }
 
@@ -2802,7 +2802,7 @@ namespace System.Management.Automation
         /// </remarks>
         internal static string EncodeString(string s)
         {
-            Dbg.Assert(s != null, "Caller should validate the parameter");
+            Dbg.Assert(s is not null, "Caller should validate the parameter");
 
             int slen = s.Length;
             for (int i = 0; i < slen; ++i)
@@ -2836,7 +2836,7 @@ namespace System.Management.Automation
         /// <returns>Encoded string.</returns>
         private static string EncodeString(string s, int indexOfFirstEncodableCharacter)
         {
-            Dbg.Assert(s != null, "Caller should validate the 's' parameter");
+            Dbg.Assert(s is not null, "Caller should validate the 's' parameter");
             Dbg.Assert(indexOfFirstEncodableCharacter >= 0, "Caller should verify validity of indexOfFirstEncodableCharacter");
             Dbg.Assert(indexOfFirstEncodableCharacter < s.Length, "Caller should verify validity of indexOfFirstEncodableCharacter");
 
@@ -2904,7 +2904,7 @@ namespace System.Management.Automation
         private void WriteEncodedElementString(string name, string value)
         {
             Dbg.Assert(!string.IsNullOrEmpty(name), "Caller should validate the parameter");
-            Dbg.Assert(value != null, "Caller should validate the parameter");
+            Dbg.Assert(value is not null, "Caller should validate the parameter");
             this.CheckIfStopping();
 
             value = EncodeString(value);
@@ -2993,7 +2993,7 @@ namespace System.Management.Automation
         /// <param name="context"></param>
         internal InternalDeserializer(XmlReader reader, DeserializationContext context)
         {
-            Dbg.Assert(reader != null, "caller should validate the parameter");
+            Dbg.Assert(reader is not null, "caller should validate the parameter");
 
             _reader = reader;
             _context = context;
@@ -3055,7 +3055,7 @@ namespace System.Management.Automation
         /// </param>
         internal void ValidateVersion(string version)
         {
-            Dbg.Assert(version != null, "Caller should validate the parameter");
+            Dbg.Assert(version is not null, "Caller should validate the parameter");
 
             _version = null;
             Exception exceptionToRethrow = null;
@@ -3072,7 +3072,7 @@ namespace System.Management.Automation
                 exceptionToRethrow = e;
             }
 
-            if (exceptionToRethrow != null)
+            if (exceptionToRethrow is not null)
             {
                 throw NewXmlException(Serialization.InvalidVersion, exceptionToRethrow);
             }
@@ -3149,7 +3149,7 @@ namespace System.Management.Automation
 
             // Handle primitive known types
             TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfoFromItemTag(_reader.LocalName);
-            if (pktInfo != null)
+            if (pktInfo is not null)
             {
                 s_trace.WriteLine("Primitive Knowntype Element {0}", pktInfo.ItemTag);
                 isKnownPrimitiveType = true;
@@ -3202,13 +3202,13 @@ namespace System.Management.Automation
             PSPropertyInfo deserializedProperty,
             HashSet<string> namesOfModifiedProperties)
         {
-            Dbg.Assert(cimInstance != null, "Caller should make sure cimInstance != null");
-            Dbg.Assert(deserializedProperty != null, "Caller should make sure deserializedProperty != null");
+            Dbg.Assert(cimInstance is not null, "Caller should make sure cimInstance is not null");
+            Dbg.Assert(deserializedProperty is not null, "Caller should make sure deserializedProperty is not null");
 
             if (deserializedProperty.Name.Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase))
             {
                 string psComputerNameValue = deserializedProperty.Value as string;
-                if (psComputerNameValue != null)
+                if (psComputerNameValue is not null)
                 {
                     cimInstance.SetCimSessionComputerName(psComputerNameValue);
                 }
@@ -3224,7 +3224,7 @@ namespace System.Management.Automation
 
             // TODO/FIXME - think if it is possible to do the array handling in a more efficient way
             object propertyValue = deserializedProperty.Value;
-            if (propertyValue != null)
+            if (propertyValue is not null)
             {
                 PSObject psoPropertyValue = PSObject.AsPSObject(propertyValue);
                 if (psoPropertyValue.BaseObject is ArrayList)
@@ -3381,7 +3381,7 @@ namespace System.Management.Automation
 
                 CimClassSerializationId cimClassSerializationId = new CimClassSerializationId(cimClassName, cimNamespace, computerName, hashCode);
                 currentClass = _context.cimClassSerializationIdCache.GetCimClassFromCache(cimClassSerializationId);
-                if (currentClass != null)
+                if (currentClass is not null)
                 {
                     continue;
                 }
@@ -3453,12 +3453,12 @@ namespace System.Management.Automation
             // process __InstanceMetadata
             HashSet<string> namesOfModifiedProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             PSPropertyInfo instanceMetadataProperty = deserializedObject.InstanceMembers[CimInstanceMetadataProperty] as PSPropertyInfo;
-            if ((instanceMetadataProperty != null) && (instanceMetadataProperty.Value != null))
+            if ((instanceMetadataProperty is not null) && (instanceMetadataProperty.Value is not null))
             {
                 PSObject instanceMetadata = PSObject.AsPSObject(instanceMetadataProperty.Value);
 
                 PSPropertyInfo modifiedPropertiesProperty = instanceMetadata.InstanceMembers[CimModifiedProperties] as PSPropertyInfo;
-                if ((modifiedPropertiesProperty != null) && (modifiedPropertiesProperty.Value != null))
+                if ((modifiedPropertiesProperty is not null) && (modifiedPropertiesProperty.Value is not null))
                 {
                     string modifiedPropertiesString = modifiedPropertiesProperty.Value.ToString();
                     foreach (string nameOfModifiedProperty in modifiedPropertiesString.Split(Utils.Separators.Space))
@@ -3469,7 +3469,7 @@ namespace System.Management.Automation
             }
 
             // process properties that were originally "adapted" properties
-            if (deserializedObject.AdaptedMembers != null)
+            if (deserializedObject.AdaptedMembers is not null)
             {
                 foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.AdaptedMembers)
                 {
@@ -3501,7 +3501,7 @@ namespace System.Management.Automation
                 }
 
                 // skip adapted properties
-                if ((deserializedObject.AdaptedMembers != null) && (deserializedObject.AdaptedMembers[deserializedProperty.Name] != null))
+                if ((deserializedObject.AdaptedMembers is not null) && (deserializedObject.AdaptedMembers[deserializedProperty.Name] is not null))
                 {
                     continue;
                 }
@@ -3513,7 +3513,7 @@ namespace System.Management.Automation
                 }
 
                 // skip properties re-added by the client (i.e. through types.ps1xml)
-                if (psoCimInstance.Properties[deserializedProperty.Name] != null)
+                if (psoCimInstance.Properties[deserializedProperty.Name] is not null)
                 {
                     continue;
                 }
@@ -3563,7 +3563,7 @@ namespace System.Management.Automation
 
                     // Convert deserialized object to a user-defined type (specified in a types.ps1xml file)
                     Type targetType = mshSource.GetTargetTypeForDeserialization(_typeTable);
-                    if (targetType != null)
+                    if (targetType is not null)
                     {
                         Exception rehydrationException = null;
                         try
@@ -3587,8 +3587,8 @@ namespace System.Management.Automation
                             rehydrationException = e;
                         }
 
-                        Dbg.Assert(rehydrationException != null,
-                                   "The only way to get here is with rehydrationException != null");
+                        Dbg.Assert(rehydrationException is not null,
+                                   "The only way to get here is with rehydrationException is not null");
 
                         PSEtwLog.LogAnalyticError(PSEventId.Serializer_RehydrationFailure,
                                                   PSOpcode.Rehydration, PSTask.Serialization, PSKeyword.Serializer,
@@ -3667,7 +3667,7 @@ namespace System.Management.Automation
 
                     // Check if tag is PrimaryKnownType.
                     TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfoFromItemTag(_reader.LocalName);
-                    if (pktInfo != null)
+                    if (pktInfo is not null)
                     {
                         s_trace.WriteLine("Primitive Knowntype Element {0}", pktInfo.ItemTag);
                         baseObject = ReadPrimaryKnownType(pktInfo);
@@ -3696,7 +3696,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (baseObject != null)
+                    if (baseObject is not null)
                     {
                         dso.SetCoreOnDeserialization(baseObject, overrideTypeInfo);
                     }
@@ -3706,7 +3706,7 @@ namespace System.Management.Automation
             ReadEndElement();
 
             PSObject immediateBasePso = dso.ImmediateBaseObject as PSObject;
-            if (immediateBasePso != null)
+            if (immediateBasePso is not null)
             {
                 PSObject.CopyDeserializerFields(source: immediateBasePso, target: dso);
             }
@@ -3725,7 +3725,7 @@ namespace System.Management.Automation
             PSObject sh = new PSObject();
 
             // RefId is not mandatory attribute
-            if (refId != null)
+            if (refId is not null)
             {
                 s_trace.WriteLine("Read PSObject with refId: {0}", refId);
                 _objectRefIdHandler.SetRefId(sh, refId, this.DuplicateRefIdsAllowed);
@@ -3742,7 +3742,7 @@ namespace System.Management.Automation
         /// </param>
         private void ReadTypeNames(PSObject dso)
         {
-            Dbg.Assert(dso != null, "caller should validate the parameter");
+            Dbg.Assert(dso is not null, "caller should validate the parameter");
             Dbg.Assert(_reader.NodeType == XmlNodeType.Element, "NodeType should be Element");
 
             if (IsNextElement(SerializationStrings.TypeNamesTag))
@@ -3778,7 +3778,7 @@ namespace System.Management.Automation
 
                 dso.InternalTypeNames = new ConsolidatedString(typeNames);
 
-                if (refId != null)
+                if (refId is not null)
                 {
                     _typeRefIdHandler.SetRefId(dso.InternalTypeNames, refId, this.DuplicateRefIdsAllowed);
                 }
@@ -3823,7 +3823,7 @@ namespace System.Management.Automation
         /// </summary>
         private void ReadProperties(PSObject dso)
         {
-            Dbg.Assert(dso != null, "caller should validate the parameter");
+            Dbg.Assert(dso is not null, "caller should validate the parameter");
             Dbg.Assert(_reader.NodeType == XmlNodeType.Element, "NodeType should be Element");
 
             // Since we are adding baseobject properties as propertybag,
@@ -3863,7 +3863,7 @@ namespace System.Management.Automation
         /// </param>
         private void ReadMemberSet(PSMemberInfoCollection<PSMemberInfo> collection)
         {
-            Dbg.Assert(collection != null, "caller should validate the value");
+            Dbg.Assert(collection is not null, "caller should validate the value");
 
             if (ReadStartElementAndHandleEmpty(SerializationStrings.MemberSet))
             {
@@ -4146,7 +4146,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeBoolean(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             try
             {
                 return XmlConvert.ToBoolean(deserializer._reader.ReadElementContentAsString());
@@ -4159,7 +4159,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeByte(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             Exception recognizedException = null;
             try
             {
@@ -4179,7 +4179,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeChar(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             Exception recognizedException = null;
             try
             {
@@ -4199,7 +4199,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeDateTime(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             try
             {
                 return XmlConvert.ToDateTime(deserializer._reader.ReadElementContentAsString(), XmlDateTimeSerializationMode.RoundtripKind);
@@ -4212,7 +4212,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeDecimal(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             Exception recognizedException = null;
             try
             {
@@ -4232,7 +4232,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeDouble(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             Exception recognizedException = null;
             try
             {
@@ -4252,7 +4252,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeGuid(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             Exception recognizedException = null;
             try
             {
@@ -4275,7 +4275,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeVersion(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             Exception recognizedException = null;
             try
             {
@@ -4299,7 +4299,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeSemanticVersion(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             Exception recognizedException = null;
             try
             {
@@ -4323,7 +4323,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeInt16(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             Exception recognizedException = null;
             try
             {
@@ -4343,7 +4343,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeInt32(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             Exception recognizedException = null;
             try
             {
@@ -4363,7 +4363,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeInt64(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             Exception recognizedException = null;
             try
             {
@@ -4383,7 +4383,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeSByte(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             Exception recognizedException = null;
             try
             {
@@ -4403,7 +4403,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeSingle(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             Exception recognizedException = null;
             try
             {
@@ -4423,7 +4423,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeScriptBlock(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             string scriptBlockBody = deserializer.ReadDecodedElementString(SerializationStrings.ScriptBlockTag);
             if (DeserializationOptions.DeserializeScriptBlocks == (deserializer._context.options & DeserializationOptions.DeserializeScriptBlocks))
             {
@@ -4438,13 +4438,13 @@ namespace System.Management.Automation
 
         internal static object DeserializeString(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             return deserializer.ReadDecodedElementString(SerializationStrings.StringTag);
         }
 
         internal static object DeserializeTimeSpan(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             try
             {
                 return XmlConvert.ToTimeSpan(deserializer._reader.ReadElementContentAsString());
@@ -4457,7 +4457,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeUInt16(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             Exception recognizedException = null;
             try
             {
@@ -4477,7 +4477,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeUInt32(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             Exception recognizedException = null;
             try
             {
@@ -4497,7 +4497,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeUInt64(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             Exception recognizedException = null;
             try
             {
@@ -4517,7 +4517,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeUri(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             try
             {
                 string uriString = deserializer.ReadDecodedElementString(SerializationStrings.AnyUriTag);
@@ -4531,7 +4531,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeByteArray(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             try
             {
                 return Convert.FromBase64String(deserializer._reader.ReadElementContentAsString());
@@ -4613,7 +4613,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeXmlDocument(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
             string docAsString = deserializer.ReadDecodedElementString(SerializationStrings.XmlDocumentTag);
 
             try
@@ -4641,7 +4641,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeProgressRecord(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
 
             //
             // read deserialized elements of a progress record
@@ -4676,7 +4676,7 @@ namespace System.Management.Automation
                 recognizedException = e;
             }
 
-            if (recognizedException != null)
+            if (recognizedException is not null)
             {
                 throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(UInt64).FullName);
             }
@@ -4721,7 +4721,7 @@ namespace System.Management.Automation
 
         internal static object DeserializeSecureString(InternalDeserializer deserializer)
         {
-            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Dbg.Assert(deserializer is not null, "Caller should validate the parameter");
 
             //
             // read deserialized elements of a Secure String
@@ -4830,8 +4830,8 @@ namespace System.Management.Automation
         /// <returns></returns>
         private object ReadPrimaryKnownType(TypeSerializationInfo pktInfo)
         {
-            Dbg.Assert(pktInfo != null, "Deserializer should be available");
-            Dbg.Assert(pktInfo.Deserializer != null, "Deserializer should be available");
+            Dbg.Assert(pktInfo is not null, "Deserializer should be available");
+            Dbg.Assert(pktInfo.Deserializer is not null, "Deserializer should be available");
             object result = pktInfo.Deserializer(this);
             _reader.MoveToContent();
             return result;
@@ -4844,7 +4844,7 @@ namespace System.Management.Automation
             try
             {
                 object result;
-                if (_context.cryptoHelper != null)
+                if (_context.cryptoHelper is not null)
                 {
                     result = _context.cryptoHelper.DecryptSecureString(encryptedString);
                 }
@@ -4885,7 +4885,7 @@ namespace System.Management.Automation
 
             XmlException ex = null;
             IXmlLineInfo xmlLineInfo = _reader as IXmlLineInfo;
-            if (xmlLineInfo != null)
+            if (xmlLineInfo is not null)
             {
                 if (xmlLineInfo.HasLineInfo())
                 {
@@ -4915,7 +4915,7 @@ namespace System.Management.Automation
 
         private static string DecodeString(string s)
         {
-            Dbg.Assert(s != null, "Caller should validate the parameter");
+            Dbg.Assert(s is not null, "Caller should validate the parameter");
             return XmlConvert.DecodeName(s);
         }
 
@@ -4962,7 +4962,7 @@ namespace System.Management.Automation
         /// <returns>RefId assigned to the object.</returns>
         internal string SetRefId(T t)
         {
-            if (_object2refId != null)
+            if (_object2refId is not null)
             {
                 Dbg.Assert(!_object2refId.ContainsKey(t), "SetRefId shouldn't be called when the object is already assigned a ref id");
                 UInt64 refId = GetNewReferenceId();
@@ -4983,7 +4983,7 @@ namespace System.Management.Automation
         internal string GetRefId(T t)
         {
             UInt64 refId;
-            if ((_object2refId != null) && (_object2refId.TryGetValue(t, out refId)))
+            if ((_object2refId is not null) && (_object2refId.TryGetValue(t, out refId)))
             {
                 return refId.ToString(System.Globalization.CultureInfo.InvariantCulture);
             }
@@ -5354,14 +5354,14 @@ namespace System.Management.Automation
             out IDictionary dictionary,
             out IEnumerable enumerable)
         {
-            Dbg.Assert(source != null, "caller should validate the parameter");
+            Dbg.Assert(source is not null, "caller should validate the parameter");
 
             ct = ContainerType.None;
             dictionary = null;
             enumerable = null;
 
             dictionary = source as IDictionary;
-            if (dictionary != null)
+            if (dictionary is not null)
             {
                 ct = ContainerType.Dictionary;
             }
@@ -5369,19 +5369,19 @@ namespace System.Management.Automation
             {
                 ct = ContainerType.Stack;
                 enumerable = LanguagePrimitives.GetEnumerable(source);
-                Dbg.Assert(enumerable != null, "Stack is enumerable");
+                Dbg.Assert(enumerable is not null, "Stack is enumerable");
             }
             else if (source is Queue)
             {
                 ct = ContainerType.Queue;
                 enumerable = LanguagePrimitives.GetEnumerable(source);
-                Dbg.Assert(enumerable != null, "Queue is enumerable");
+                Dbg.Assert(enumerable is not null, "Queue is enumerable");
             }
             else if (source is IList)
             {
                 ct = ContainerType.List;
                 enumerable = LanguagePrimitives.GetEnumerable(source);
-                Dbg.Assert(enumerable != null, "IList is enumerable");
+                Dbg.Assert(enumerable is not null, "IList is enumerable");
             }
             else
             {
@@ -5392,19 +5392,19 @@ namespace System.Management.Automation
                     {
                         ct = ContainerType.Stack;
                         enumerable = LanguagePrimitives.GetEnumerable(source);
-                        Dbg.Assert(enumerable != null, "Stack is enumerable");
+                        Dbg.Assert(enumerable is not null, "Stack is enumerable");
                     }
                     else if (DerivesFromGenericType(gt, typeof(Queue<>)))
                     {
                         ct = ContainerType.Queue;
                         enumerable = LanguagePrimitives.GetEnumerable(source);
-                        Dbg.Assert(enumerable != null, "Queue is enumerable");
+                        Dbg.Assert(enumerable is not null, "Queue is enumerable");
                     }
                     else if (DerivesFromGenericType(gt, typeof(List<>)))
                     {
                         ct = ContainerType.List;
                         enumerable = LanguagePrimitives.GetEnumerable(source);
-                        Dbg.Assert(enumerable != null, "Queue is enumerable");
+                        Dbg.Assert(enumerable is not null, "Queue is enumerable");
                     }
                 }
             }
@@ -5415,7 +5415,7 @@ namespace System.Management.Automation
                 try
                 {
                     enumerable = LanguagePrimitives.GetEnumerable(source);
-                    if (enumerable != null)
+                    if (enumerable is not null)
                     {
                         ct = ContainerType.Enumerable;
                     }
@@ -5435,12 +5435,12 @@ namespace System.Management.Automation
             if (ct == ContainerType.None)
             {
                 enumerable = source as IEnumerable;
-                if (enumerable != null)
+                if (enumerable is not null)
                 {
                     // WinBlue: 206515 - There are no elements in the source. The source is of type XmlLinkedNode (which derives from XmlNode which implements IEnumerable).
                     // So, adding an additional check to see if this contains any elements
                     IEnumerator enumerator = enumerable.GetEnumerator();
-                    if (enumerator != null && enumerator.MoveNext())
+                    if (enumerator is not null && enumerator.MoveNext())
                     {
                         ct = ContainerType.Enumerable;
                     }
@@ -5456,9 +5456,9 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static bool DerivesFromGenericType(Type derived, Type baseType)
         {
-            Dbg.Assert(derived != null, "caller should validate the parameter");
-            Dbg.Assert(baseType != null, "caller should validate the parameter");
-            while (derived != null)
+            Dbg.Assert(derived is not null, "caller should validate the parameter");
+            Dbg.Assert(baseType is not null, "caller should validate the parameter");
+            while (derived is not null)
             {
                 if (derived.IsGenericType)
                     derived = derived.GetGenericTypeDefinition();
@@ -5485,7 +5485,7 @@ namespace System.Management.Automation
         /// </returns>
         internal static string GetToString(object source)
         {
-            Dbg.Assert(source != null, "caller should have validated the information");
+            Dbg.Assert(source is not null, "caller should have validated the information");
 
             // fall back value
             string result = null;
@@ -5516,14 +5516,14 @@ namespace System.Management.Automation
             }
 
             // preserve ToString throughout deserialization/*re*serialization
-            if (pso.ToStringFromDeserialization != null)
+            if (pso.ToStringFromDeserialization is not null)
             {
                 return pso.ToStringFromDeserialization;
             }
 
             // preserve token text (i.e. double: 0E1517567410;  see Windows 7 bug #694057 for more details)
             string token = pso.TokenText;
-            if (token != null)
+            if (token is not null)
             {
                 string originalToString = GetToString(pso.BaseObject);
                 if (originalToString is null || !string.Equals(token, originalToString, StringComparison.Ordinal))
@@ -5584,7 +5584,7 @@ namespace System.Management.Automation
 
         internal static object GetPropertyValueInThreadSafeManner(PSPropertyInfo property, bool canUseDefaultRunspaceInThreadSafeManner, out bool success)
         {
-            Dbg.Assert(property != null, "Caller should validate the parameter");
+            Dbg.Assert(property is not null, "Caller should validate the parameter");
 
             if (!property.IsGettable)
             {
@@ -5593,14 +5593,14 @@ namespace System.Management.Automation
             }
 
             PSAliasProperty alias = property as PSAliasProperty;
-            if (alias != null)
+            if (alias is not null)
             {
                 property = alias.ReferencedMember as PSPropertyInfo;
             }
 
             PSScriptProperty script = property as PSScriptProperty;
-            Dbg.Assert(script is null || script.GetterScript != null, "scriptProperty.IsGettable => (scriptProperty.GetterScript != null)");
-            if ((script != null) && (!canUseDefaultRunspaceInThreadSafeManner))
+            Dbg.Assert(script is null || script.GetterScript is not null, "scriptProperty.IsGettable => (scriptProperty.GetterScript is not null)");
+            if ((script is not null) && (!canUseDefaultRunspaceInThreadSafeManner))
             {
                 PSEtwLog.LogAnalyticWarning(
                     PSEventId.Serializer_ScriptPropertyWithoutRunspace, PSOpcode.Exception, PSTask.Serialization,
@@ -5703,7 +5703,7 @@ namespace System.Management.Automation
                 foreach (KeyValuePair<WeakReference, T> weakKeyValuePair in _dictionary)
                 {
                     object key = weakKeyValuePair.Key.Target;
-                    if (key != null)
+                    if (key is not null)
                     {
                         alive.Add(weakKeyValuePair.Key, weakKeyValuePair.Value);
                     }
@@ -5735,7 +5735,7 @@ namespace System.Management.Automation
                 foreach (WeakReference weakKey in _dictionary.Keys)
                 {
                     object key = weakKey.Target;
-                    if (key != null)
+                    if (key is not null)
                     {
                         keys.Add(key);
                     }
@@ -5852,7 +5852,7 @@ namespace System.Management.Automation
             foreach (KeyValuePair<WeakReference, T> weakKeyValuePair in this.WeakCollection)
             {
                 object key = weakKeyValuePair.Key.Target;
-                if (key != null)
+                if (key is not null)
                 {
                     yield return new KeyValuePair<object, T>(key, weakKeyValuePair.Value);
                 }
@@ -5913,7 +5913,7 @@ namespace System.Management.Automation
             foreach (DictionaryEntry entry in other)
             {
                 Hashtable valueAsHashtable = PSObject.Base(entry.Value) as Hashtable;
-                if (valueAsHashtable != null)
+                if (valueAsHashtable is not null)
                 {
                     this.Add(entry.Key, new PSPrimitiveDictionary(valueAsHashtable));
                 }
@@ -6505,14 +6505,14 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static PSPrimitiveDictionary CloneAndAddPSVersionTable(PSPrimitiveDictionary originalHash)
         {
-            if ((originalHash != null) &&
+            if ((originalHash is not null) &&
                 (originalHash.ContainsKey(PSVersionInfo.PSVersionTableName)))
             {
                 return (PSPrimitiveDictionary)originalHash.Clone();
             }
 
             PSPrimitiveDictionary result = originalHash;
-            if (originalHash != null)
+            if (originalHash is not null)
             {
                 result = (PSPrimitiveDictionary)originalHash.Clone();
             }
@@ -6542,9 +6542,9 @@ namespace System.Management.Automation
         /// <returns><c>true</c> if the value was found and was of the correct type; <c>false</c> otherwise.</returns>
         internal static bool TryPathGet<T>(IDictionary data, out T result, params string[] keys)
         {
-            Dbg.Assert(keys != null, "Caller should verify that keys != null");
+            Dbg.Assert(keys is not null, "Caller should verify that keys is not null");
             Dbg.Assert(keys.Length >= 1, "Caller should verify that keys.Length >= 1");
-            Dbg.Assert(keys[0] != null, "Caller should verify that keys[i] != null");
+            Dbg.Assert(keys[0] is not null, "Caller should verify that keys[i] is not null");
 
             if (data is null || !data.Contains(keys[0]))
             {
@@ -6560,7 +6560,7 @@ namespace System.Management.Automation
             {
                 IDictionary subData;
                 if (LanguagePrimitives.TryConvertTo<IDictionary>(data[keys[0]], out subData)
-                    && subData != null)
+                    && subData is not null)
                 {
                     string[] subKeys = new string[keys.Length - 1];
                     Array.Copy(keys, 1, subKeys, 0, subKeys.Length);
@@ -6853,8 +6853,8 @@ namespace Microsoft.PowerShell
         /// <returns></returns>
         internal static T GetPropertyValue<T>(PSObject pso, string propertyName, RehydrationFlags flags)
         {
-            Dbg.Assert(pso != null, "Caller should verify pso != null");
-            Dbg.Assert(!string.IsNullOrEmpty(propertyName), "Caller should verify propertyName != null");
+            Dbg.Assert(pso is not null, "Caller should verify pso is not null");
+            Dbg.Assert(!string.IsNullOrEmpty(propertyName), "Caller should verify propertyName is not null");
 
             PSPropertyInfo property = pso.Properties[propertyName];
             if ((property is null) && (RehydrationFlags.MissingPropertyOk == (flags & RehydrationFlags.MissingPropertyOk)))
@@ -6930,19 +6930,19 @@ namespace Microsoft.PowerShell
             Hashtable h = new Hashtable();
 
             PSPropertyInfo addProperty = pso.Properties[PSListModifier.AddKey];
-            if ((addProperty != null) && (addProperty.Value != null))
+            if ((addProperty is not null) && (addProperty.Value is not null))
             {
                 h.Add(PSListModifier.AddKey, addProperty.Value);
             }
 
             PSPropertyInfo removeProperty = pso.Properties[PSListModifier.RemoveKey];
-            if ((removeProperty != null) && (removeProperty.Value != null))
+            if ((removeProperty is not null) && (removeProperty.Value is not null))
             {
                 h.Add(PSListModifier.RemoveKey, removeProperty.Value);
             }
 
             PSPropertyInfo replaceProperty = pso.Properties[PSListModifier.ReplaceKey];
-            if ((replaceProperty != null) && (replaceProperty.Value != null))
+            if ((replaceProperty is not null) && (replaceProperty.Value is not null))
             {
                 h.Add(PSListModifier.ReplaceKey, replaceProperty.Value);
             }
@@ -6996,12 +6996,12 @@ namespace Microsoft.PowerShell
             PSPropertyInfo property = pso.Properties["Reason"];
             string message = string.Empty;
 
-            if (property != null)
+            if (property is not null)
             {
                 propertyValue = property.Value;
             }
 
-            if (propertyValue != null)
+            if (propertyValue is not null)
             {
                 if (Deserializer.IsDeserializedInstanceOfType(propertyValue, typeof(Exception)))
                 {
@@ -7042,7 +7042,7 @@ namespace Microsoft.PowerShell
             JobStateInfo previousJobStateInfo = null;
             var previousJobStateInfoProperty = pso.Properties["PreviousJobStateInfo"];
 
-            if (previousJobStateInfoProperty != null && previousJobStateInfoProperty.Value != null)
+            if (previousJobStateInfoProperty is not null && previousJobStateInfoProperty.Value is not null)
             {
                 previousJobStateInfo = RehydrateJobStateInfo(PSObject.AsPSObject(previousJobStateInfoProperty.Value));
             }
@@ -7156,13 +7156,13 @@ namespace Microsoft.PowerShell
         internal static DebuggerStopEventArgs RehydrateDebuggerStopEventArgs(PSObject pso)
         {
             PSObject psoInvocationInfo = GetPropertyValue<PSObject>(pso, "SerializedInvocationInfo", RehydrationFlags.NullValueOk | RehydrationFlags.MissingPropertyOk);
-            InvocationInfo invocationInfo = (psoInvocationInfo != null) ? new InvocationInfo(psoInvocationInfo) : null;
+            InvocationInfo invocationInfo = (psoInvocationInfo is not null) ? new InvocationInfo(psoInvocationInfo) : null;
             DebuggerResumeAction resumeAction = GetPropertyValue<DebuggerResumeAction>(pso, "ResumeAction");
             Collection<Breakpoint> breakpoints = new Collection<Breakpoint>();
             foreach (var item in GetPropertyValue<ArrayList>(pso, "Breakpoints"))
             {
                 Breakpoint bp = item as Breakpoint;
-                if (bp != null)
+                if (bp is not null)
                 {
                     breakpoints.Add(bp);
                 }
@@ -7600,7 +7600,7 @@ namespace Microsoft.PowerShell
                 RehydrationFlags.NullValueBad);
 
             var result = new ExtendedTypeDefinition(typeName, viewDefinitions);
-            if (typeNames != null && typeNames.Count > 1)
+            if (typeNames is not null && typeNames.Count > 1)
             {
                 for (var i = 1; i < typeNames.Count; i++)
                 {

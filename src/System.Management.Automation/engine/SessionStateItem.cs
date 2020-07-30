@@ -170,15 +170,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ItemCmdletProvider itemCmdletProvider =
@@ -308,15 +308,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ItemCmdletProvider itemCmdletProvider =
@@ -472,7 +472,7 @@ namespace System.Management.Automation
                         out provider,
                         out providerInstance);
 
-                if (providerPaths != null)
+                if (providerPaths is not null)
                 {
                     foreach (string providerPath in providerPaths)
                     {
@@ -514,15 +514,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ItemCmdletProvider itemCmdletProvider =
@@ -659,15 +659,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ItemCmdletProvider itemCmdletProvider =
@@ -821,7 +821,7 @@ namespace System.Management.Automation
                         out provider,
                         out providerInstance);
 
-                if (providerPaths != null)
+                if (providerPaths is not null)
                 {
                     foreach (string providerPath in providerPaths)
                     {
@@ -859,15 +859,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ItemCmdletProvider itemCmdletProvider =
@@ -997,15 +997,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ItemCmdletProvider itemCmdletProvider =
@@ -1148,7 +1148,7 @@ namespace System.Management.Automation
                         out provider,
                         out providerInstance);
 
-                if (providerPaths != null)
+                if (providerPaths is not null)
                 {
                     foreach (string providerPath in providerPaths)
                     {
@@ -1186,15 +1186,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ItemCmdletProvider itemCmdletProvider =
@@ -1324,15 +1324,15 @@ namespace System.Management.Automation
         {
             // All parameters should have been validated by caller
             Dbg.Diagnostics.Assert(
-                providerInstance != null,
+                providerInstance is not null,
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
+                path is not null,
                 "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
-                context != null,
+                context is not null,
                 "Caller should validate context before calling this method");
 
             ItemCmdletProvider itemCmdletProvider =

@@ -283,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // figure out the column names (and lock-in their order)
                 _propertyNames = ExportCsvHelper.BuildPropertyNames(InputObject, _propertyNames);
-                if (_isActuallyAppending && _preexistingPropertyNames != null)
+                if (_isActuallyAppending && _preexistingPropertyNames is not null)
                 {
                     this.ReconcilePreexistingPropertyNames();
                 }
@@ -400,9 +400,9 @@ namespace Microsoft.PowerShell.Commands
 
         private void CleanUp()
         {
-            if (_fs != null)
+            if (_fs is not null)
             {
-                if (_sw != null)
+                if (_sw is not null)
                 {
                     _sw.Flush();
                     _sw.Dispose();
@@ -413,11 +413,11 @@ namespace Microsoft.PowerShell.Commands
                 _fs = null;
 
                 // reset the read-only attribute
-                if (_readOnlyFileInfo != null)
+                if (_readOnlyFileInfo is not null)
                     _readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
             }
 
-            if (_helper != null)
+            if (_helper is not null)
             {
                 _helper.Dispose();
             }
@@ -624,7 +624,7 @@ namespace Microsoft.PowerShell.Commands
                 this.ThrowTerminatingError(errorRecord);
             }
 
-            if (_paths != null)
+            if (_paths is not null)
             {
                 foreach (string path in _paths)
                 {
@@ -823,12 +823,12 @@ namespace Microsoft.PowerShell.Commands
                         this.ThrowTerminatingError(errorRecord);
                     }
 
-                    if ((Header is null) && (helper.Header != null))
+                    if ((Header is null) && (helper.Header is not null))
                     {
                         Header = helper.Header.ToArray();
                     }
 
-                    if ((_typeName is null) && (helper.TypeName != null))
+                    if ((_typeName is null) && (helper.TypeName is not null))
                     {
                         _typeName = helper.TypeName;
                     }
@@ -878,7 +878,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static IList<string> BuildPropertyNames(PSObject source, IList<string> propertyNames)
         {
-            if (propertyNames != null)
+            if (propertyNames is not null)
             {
                 throw new InvalidOperationException(CsvCommandStrings.BuildPropertyNamesMethodShouldBeCalledOnlyOncePerCmdletInstance);
             }
@@ -923,7 +923,7 @@ namespace Microsoft.PowerShell.Commands
                     _outputString.Append(_delimiter);
                 }
 
-                if (_quoteFields != null)
+                if (_quoteFields is not null)
                 {
                     if (_quoteFields.TryGetValue(propertyName, out _))
                     {
@@ -994,7 +994,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     var value = GetToStringValueForProperty(property);
 
-                    if (_quoteFields != null)
+                    if (_quoteFields is not null)
                     {
                         if (_quoteFields.TryGetValue(propertyName, out _))
                         {
@@ -1013,7 +1013,7 @@ namespace Microsoft.PowerShell.Commands
                                 AppendStringWithEscapeAlways(_outputString, value);
                                 break;
                             case BaseCsvWritingCommand.QuoteKind.AsNeeded:
-                                if (value != null && value.Contains(_delimiter))
+                                if (value is not null && value.Contains(_delimiter))
                                 {
                                     AppendStringWithEscapeAlways(_outputString, value);
                                 }
@@ -1053,7 +1053,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 object temp = property.Value;
-                if (temp != null)
+                if (temp is not null)
                 {
                     value = temp.ToString();
                 }
@@ -1312,7 +1312,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (Header != null && Header.Count > 0)
+            if (Header is not null && Header.Count > 0)
             {
                 ValidatePropertyNames(Header);
             }
@@ -1351,7 +1351,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="names"></param>
         private static void ValidatePropertyNames(IList<string> names)
         {
-            if (names != null)
+            if (names is not null)
             {
                 if (names.Count == 0)
                 {

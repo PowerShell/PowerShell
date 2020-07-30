@@ -43,9 +43,9 @@ namespace System.Management.Automation
                 List<string> list = hashtable
                     .Keys
                     .Cast<object>()
-                    .Where(k => k != null)
+                    .Where(k => k is not null)
                     .Select(k => k.ToString())
-                    .Where(s => s != null)
+                    .Where(s => s is not null)
                     .ToList();
                 return new Collection<string>(list);
             }
@@ -82,7 +82,7 @@ namespace System.Management.Automation
             moduleInfo.DeclaredVariableExports = RehydrateHashtableKeys(deserializedModuleInfo, "ExportedVariables");
 
             var compatiblePSEditions = DeserializingTypeConverter.GetPropertyValue<string[]>(deserializedModuleInfo, "CompatiblePSEditions", rehydrationFlags);
-            if (compatiblePSEditions != null && compatiblePSEditions.Length > 0)
+            if (compatiblePSEditions is not null && compatiblePSEditions.Length > 0)
             {
                 foreach (var edition in compatiblePSEditions)
                 {
@@ -92,7 +92,7 @@ namespace System.Management.Automation
 
             // PowerShellGet related properties
             var tags = DeserializingTypeConverter.GetPropertyValue<string[]>(deserializedModuleInfo, "Tags", rehydrationFlags);
-            if (tags != null && tags.Length > 0)
+            if (tags is not null && tags.Length > 0)
             {
                 foreach (var tag in tags)
                 {
@@ -325,7 +325,7 @@ namespace System.Management.Automation
         private static ErrorRecord GetErrorRecordForRemoteDiscoveryProvider(Exception innerException)
         {
             CimException cimException = innerException as CimException;
-            if ((cimException != null) &&
+            if ((cimException is not null) &&
                 ((cimException.NativeErrorCode == NativeErrorCode.InvalidNamespace) ||
                  (cimException.NativeErrorCode == NativeErrorCode.InvalidClass) ||
                  (cimException.NativeErrorCode == NativeErrorCode.MethodNotFound) ||
@@ -360,9 +360,9 @@ namespace System.Management.Automation
             Exception outerException = new InvalidOperationException(errorMessage, innerException);
 
             RemoteException remoteException = innerException as RemoteException;
-            ErrorRecord remoteErrorRecord = remoteException != null ? remoteException.ErrorRecord : null;
-            string errorId = remoteErrorRecord != null ? remoteErrorRecord.FullyQualifiedErrorId : innerException.GetType().Name;
-            ErrorCategory errorCategory = remoteErrorRecord != null ? remoteErrorRecord.CategoryInfo.Category : ErrorCategory.NotSpecified;
+            ErrorRecord remoteErrorRecord = remoteException is not null ? remoteException.ErrorRecord : null;
+            string errorId = remoteErrorRecord is not null ? remoteErrorRecord.FullyQualifiedErrorId : innerException.GetType().Name;
+            ErrorCategory errorCategory = remoteErrorRecord is not null ? remoteErrorRecord.CategoryInfo.Category : ErrorCategory.NotSpecified;
             ErrorRecord errorRecord = new ErrorRecord(outerException, errorId, errorCategory, null);
 
             return errorRecord;
@@ -371,11 +371,11 @@ namespace System.Management.Automation
         private static ErrorRecord GetErrorRecordForRemotePipelineInvocation(ErrorRecord innerErrorRecord, string errorMessageTemplate)
         {
             string innerErrorMessage;
-            if (innerErrorRecord.ErrorDetails != null && innerErrorRecord.ErrorDetails.Message != null)
+            if (innerErrorRecord.ErrorDetails is not null && innerErrorRecord.ErrorDetails.Message is not null)
             {
                 innerErrorMessage = innerErrorRecord.ErrorDetails.Message;
             }
-            else if (innerErrorRecord.Exception != null && innerErrorRecord.Exception.Message != null)
+            else if (innerErrorRecord.Exception is not null && innerErrorRecord.Exception.Message is not null)
             {
                 innerErrorMessage = innerErrorRecord.Exception.Message;
             }
@@ -408,7 +408,7 @@ namespace System.Management.Automation
                 exceptionHandler(e);
             }
 
-            if (enumerator != null)
+            if (enumerator is not null)
                 using (enumerator)
                 {
                     bool gotResults = false;
@@ -455,8 +455,8 @@ namespace System.Management.Automation
         {
             if (!cmdlet.MyInvocation.ExpectingInput)
             {
-                if (((powerShell.Runspace != null) && (powerShell.Runspace.RunspaceStateInfo.State != RunspaceState.Opened)) ||
-                    ((powerShell.RunspacePool != null) && (powerShell.RunspacePool.RunspacePoolStateInfo.State != RunspacePoolState.Opened)))
+                if (((powerShell.Runspace is not null) && (powerShell.Runspace.RunspaceStateInfo.State != RunspaceState.Opened)) ||
+                    ((powerShell.RunspacePool is not null) && (powerShell.RunspacePool.RunspacePoolStateInfo.State != RunspacePoolState.Opened)))
                 {
                     cmdlet.ThrowTerminatingError(errorRecord);
                 }
@@ -624,7 +624,7 @@ namespace System.Management.Automation
 
             internal CimModule(CimInstance baseObject)
             {
-                Dbg.Assert(baseObject != null, "Caller should make sure baseObject != null");
+                Dbg.Assert(baseObject is not null, "Caller should make sure baseObject is not null");
                 Dbg.Assert(
                     baseObject.CimSystemProperties.ClassName.Equals(DiscoveryProviderModuleClass, StringComparison.OrdinalIgnoreCase),
                     "Caller should make sure baseObject is an instance of the right CIM class");
@@ -693,8 +693,8 @@ namespace System.Management.Automation
             {
                 internal CimModuleManifestFile(string fileName, byte[] rawFileData)
                 {
-                    Dbg.Assert(fileName != null, "Caller should make sure fileName != null");
-                    Dbg.Assert(rawFileData != null, "Caller should make sure rawFileData != null");
+                    Dbg.Assert(fileName is not null, "Caller should make sure fileName is not null");
+                    Dbg.Assert(rawFileData is not null, "Caller should make sure rawFileData is not null");
 
                     FileName = fileName;
                     RawFileDataCore = rawFileData;
@@ -711,7 +711,7 @@ namespace System.Management.Automation
 
                 internal CimModuleImplementationFile(CimInstance baseObject)
                 {
-                    Dbg.Assert(baseObject != null, "Caller should make sure baseObject != null");
+                    Dbg.Assert(baseObject is not null, "Caller should make sure baseObject is not null");
                     Dbg.Assert(
                         baseObject.CimSystemProperties.ClassName.Equals(DiscoveryProviderFileClass, StringComparison.OrdinalIgnoreCase),
                         "Caller should make sure baseObject is an instance of the right CIM class");
@@ -769,8 +769,8 @@ namespace System.Management.Automation
             Cmdlet cmdlet,
             CancellationToken cancellationToken)
         {
-            Dbg.Assert(cimSession != null, "Caller should verify cimSession != null");
-            Dbg.Assert(moduleNamePattern != null, "Caller should verify that moduleNamePattern != null");
+            Dbg.Assert(cimSession is not null, "Caller should verify cimSession is not null");
+            Dbg.Assert(moduleNamePattern is not null, "Caller should verify that moduleNamePattern is not null");
 
             const WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
             var wildcardPattern = WildcardPattern.Get(moduleNamePattern, wildcardOptions);
@@ -778,7 +778,7 @@ namespace System.Management.Automation
 
             var options = new CimOperationOptions { CancellationToken = cancellationToken };
             options.SetCustomOption("PS_ModuleNamePattern", dosWildcard, mustComply: false);
-            if (resourceUri != null)
+            if (resourceUri is not null)
             {
                 options.ResourceUri = resourceUri;
             }
@@ -991,7 +991,7 @@ namespace System.Management.Automation
             var sessionOptions = new CimSessionOptions();
 
             CimCredential cimCredentials = GetCimCredentials(authentication, credential);
-            if (cimCredentials != null)
+            if (cimCredentials is not null)
             {
                 sessionOptions.AddDestinationCredentials(cimCredentials);
             }
@@ -1010,7 +1010,7 @@ namespace System.Management.Automation
                 System.Management.Automation.Language.Token[] throwAwayTokens;
                 ParseError[] parseErrors;
                 scriptBlockAst = System.Management.Automation.Language.Parser.ParseInput(cimModuleFile.FileData, temporaryModuleManifestPath, out throwAwayTokens, out parseErrors);
-                if ((scriptBlockAst is null) || (parseErrors != null && parseErrors.Length > 0))
+                if ((scriptBlockAst is null) || (parseErrors is not null && parseErrors.Length > 0))
                 {
                     containedErrors = true;
                 }
@@ -1083,14 +1083,14 @@ namespace System.Management.Automation
             }
 
             Tuple<CimSession, Uri, string> cimSessionInfo = weaklyTypeSession as Tuple<CimSession, Uri, string>;
-            if (cimSessionInfo != null)
+            if (cimSessionInfo is not null)
             {
                 cimSessionAction(cimSessionInfo.Item1, cimSessionInfo.Item2, cimSessionInfo.Item3);
                 return;
             }
 
             PSSession psSession = weaklyTypeSession as PSSession;
-            if (psSession != null)
+            if (psSession is not null)
             {
                 psSessionAction(psSession);
                 return;

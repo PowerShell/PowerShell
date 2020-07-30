@@ -180,7 +180,7 @@ namespace System.Management.Automation.Interpreter
         {
             var scope = _variables[definition.Parameter];
             scope.Stop = end;
-            if (scope.Parent != null)
+            if (scope.Parent is not null)
             {
                 _variables[definition.Parameter] = scope.Parent;
             }
@@ -203,7 +203,7 @@ namespace System.Management.Automation.Interpreter
             int curChild = 0;
             for (int i = scope.Start; i < scope.Stop && i < instructions.Count; i++)
             {
-                if (scope.ChildScopes != null && scope.ChildScopes[curChild].Start == i)
+                if (scope.ChildScopes is not null && scope.ChildScopes[curChild].Start == i)
                 {
                     // skip boxing in the child scope
                     var child = scope.ChildScopes[curChild];
@@ -248,7 +248,7 @@ namespace System.Management.Automation.Interpreter
                 return true;
             }
 
-            if (_closureVariables != null && _closureVariables.TryGetValue(var, out local))
+            if (_closureVariables is not null && _closureVariables.TryGetValue(var, out local))
             {
                 return true;
             }

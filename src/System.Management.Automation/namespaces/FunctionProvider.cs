@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell.Commands
 
             CommandInfo modifiedItem = null;
 
-            bool dynamicParametersSpecified = dynamicParameters != null && dynamicParameters.OptionsSet;
+            bool dynamicParametersSpecified = dynamicParameters is not null && dynamicParameters.OptionsSet;
 
             if (value is null)
             {
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     modifiedItem = (CommandInfo)GetSessionStateItem(name);
 
-                    if (modifiedItem != null)
+                    if (modifiedItem is not null)
                     {
                         SetOptions(modifiedItem, dynamicParameters.Options);
                     }
@@ -186,13 +186,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Unwrap the PSObject before binding it as a scriptblock...
                     PSObject pso = value as PSObject;
-                    if (pso != null)
+                    if (pso is not null)
                     {
                         value = pso.BaseObject;
                     }
 
                     ScriptBlock scriptBlockValue = value as ScriptBlock;
-                    if (scriptBlockValue != null)
+                    if (scriptBlockValue is not null)
                     {
                         if (dynamicParametersSpecified)
                         {
@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     FunctionInfo function = value as FunctionInfo;
-                    if (function != null)
+                    if (function is not null)
                     {
                         ScopedItemOptions options = function.Options;
 
@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     string stringValue = value as string;
-                    if (stringValue != null)
+                    if (stringValue is not null)
                     {
                         ScriptBlock scriptBlock = ScriptBlock.Create(Context.ExecutionContext, stringValue);
 
@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands
                     throw PSTraceSource.NewArgumentException(nameof(value));
                 } while (false);
 
-                if (writeItem && modifiedItem != null)
+                if (writeItem && modifiedItem is not null)
                 {
                     WriteItemObject(modifiedItem, modifiedItem.Name, false);
                 }
@@ -286,13 +286,13 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetValueOfItem(object item)
         {
             Dbg.Diagnostics.Assert(
-                item != null,
+                item is not null,
                 "Caller should verify the item parameter");
 
             object value = item;
 
             FunctionInfo function = item as FunctionInfo;
-            if (function != null)
+            if (function is not null)
             {
                 value = function.ScriptBlock;
             }
@@ -327,7 +327,7 @@ namespace Microsoft.PowerShell.Commands
             bool result = false;
 
             FunctionInfo functionInfo = item as FunctionInfo;
-            if (functionInfo != null)
+            if (functionInfo is not null)
             {
                 if ((functionInfo.Options & ScopedItemOptions.Constant) != 0 ||
                     ((functionInfo.Options & ScopedItemOptions.ReadOnly) != 0 && !Force))

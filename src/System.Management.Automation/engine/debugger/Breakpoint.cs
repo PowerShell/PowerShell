@@ -47,7 +47,7 @@ namespace System.Management.Automation
         /// </summary>
         internal bool IsScriptBreakpoint
         {
-            get { return Script != null; }
+            get { return Script is not null; }
         }
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace System.Management.Automation
             }
 
             var externalScript = commandInfo as ExternalScriptInfo;
-            if (externalScript != null)
+            if (externalScript is not null)
             {
                 if (externalScript.Path.Equals(Command, StringComparison.OrdinalIgnoreCase))
                     return true;
@@ -486,7 +486,7 @@ namespace System.Management.Automation
             // A quick check to see if the breakpoint is within the scriptblock.
             bool couldBeInNestedScriptBlock;
             var scriptBlock = functionContext._scriptBlock;
-            if (scriptBlock != null)
+            if (scriptBlock is not null)
             {
                 var ast = scriptBlock.Ast;
                 if (!ast.Extent.ContainsLineAndColumn(Line, Column))
@@ -509,7 +509,7 @@ namespace System.Management.Automation
 
             int sequencePointIndex;
             var sequencePoint = FindSequencePoint(functionContext, Line, Column, out sequencePointIndex);
-            if (sequencePoint != null)
+            if (sequencePoint is not null)
             {
                 // If the bp could be in a nested script block, we want to be careful and get the bp in the correct script block.
                 // If it's a simple line bp (no column specified), then the start line must match the bp line exactly, otherwise
@@ -530,7 +530,7 @@ namespace System.Management.Automation
             // Not found.  First, we check if the line/column is before any real code.  If so, we'll
             // move the breakpoint to the first interesting sequence point (could be a dynamicparam,
             // begin, process, or end block.)
-            if (scriptBlock != null)
+            if (scriptBlock is not null)
             {
                 var ast = scriptBlock.Ast;
                 var bodyAst = ((IParameterMetadataProvider)ast).Body;
@@ -545,7 +545,7 @@ namespace System.Management.Automation
             }
 
             // Still not found.  Try fudging a bit, but only if it's a simple line breakpoint.
-            if (Column == 0 && FindSequencePoint(functionContext, Line + 1, 0, out sequencePointIndex) != null)
+            if (Column == 0 && FindSequencePoint(functionContext, Line + 1, 0, out sequencePointIndex) is not null)
             {
                 SetBreakpoint(functionContext, sequencePointIndex);
                 return true;
@@ -585,12 +585,12 @@ namespace System.Management.Automation
 
         internal override bool RemoveSelf(ScriptDebugger debugger)
         {
-            if (this.SequencePoints != null)
+            if (this.SequencePoints is not null)
             {
                 // Remove ourselves from the list of bound breakpoints in this script.  It's possible the breakpoint was never
                 // bound, in which case there is nothing to do.
                 var boundBreakPoints = debugger.GetBoundBreakpoints(this.SequencePoints);
-                if (boundBreakPoints != null)
+                if (boundBreakPoints is not null)
                 {
                     Diagnostics.Assert(boundBreakPoints.Contains(this),
                                        "If we set _scriptBlock, we should have also added the breakpoint to the bound breakpoint list");

@@ -175,7 +175,7 @@ namespace System.Management.Automation.Runspaces
 
             int numberOfObjectsWritten = 0;
             IEnumerable enumerable = LanguagePrimitives.GetEnumerable(obj);
-            if (enumerable != null)
+            if (enumerable is not null)
             {
                 foreach (object o in enumerable)
                 {

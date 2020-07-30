@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 }
 
                 ScheduledJobDefinition definition = trigger.JobDefinition;
-                if (definition != null)
+                if (definition is not null)
                 {
                     bool jobUpdateFailed = false;
 
@@ -513,7 +513,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 }
             }
 
-            if (trigger != null)
+            if (trigger is not null)
             {
                 if (trigger.At == null && !MyInvocation.BoundParameters.ContainsKey(nameof(At)))
                 {
@@ -564,7 +564,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 return false;
             }
 
-            if (trigger != null)
+            if (trigger is not null)
             {
                 if (trigger.At == null && !MyInvocation.BoundParameters.ContainsKey(nameof(At)))
                 {
@@ -608,7 +608,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 return false;
             }
 
-            if (trigger != null)
+            if (trigger is not null)
             {
                 if (trigger.At == null && !MyInvocation.BoundParameters.ContainsKey(nameof(At)))
                 {

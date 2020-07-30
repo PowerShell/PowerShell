@@ -130,7 +130,7 @@ namespace System.Management.Automation
             SessionStateScope processingScope = _currentScope;
             int originalID = scopeID;
 
-            while (scopeID > 0 && processingScope != null)
+            while (scopeID > 0 && processingScope is not null)
             {
                 processingScope = processingScope.Parent;
                 scopeID--;
@@ -175,7 +175,7 @@ namespace System.Management.Automation
             set
             {
                 Diagnostics.Assert(
-                    value != null,
+                    value is not null,
                     "A null scope should never be set");
 #if DEBUG
                 // This code is ifdef'd for DEBUG because it may pose a significant
@@ -188,7 +188,7 @@ namespace System.Management.Automation
                 SessionStateScope scope = value;
                 bool inGlobalScopeLineage = false;
 
-                while (scope != null)
+                while (scope is not null)
                 {
                     if (scope == GlobalScope)
                     {
@@ -227,7 +227,7 @@ namespace System.Management.Automation
         internal SessionStateScope NewScope(bool isScriptScope)
         {
             Diagnostics.Assert(
-                _currentScope != null,
+                _currentScope is not null,
                 "The currentScope should always be set.");
 
             // Create the new child scope.
@@ -255,7 +255,7 @@ namespace System.Management.Automation
         internal void RemoveScope(SessionStateScope scope)
         {
             Diagnostics.Assert(
-                _currentScope != null,
+                _currentScope is not null,
                 "The currentScope should always be set.");
 
             if (scope == GlobalScope)
@@ -313,7 +313,7 @@ namespace System.Management.Automation
             // If the scope being removed is the current scope,
             // then it must be removed from the tree.
 
-            if (scope == _currentScope && _currentScope.Parent != null)
+            if (scope == _currentScope && _currentScope.Parent is not null)
             {
                 _currentScope = _currentScope.Parent;
             }

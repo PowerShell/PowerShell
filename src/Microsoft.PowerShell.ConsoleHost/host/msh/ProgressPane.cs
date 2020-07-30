@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                return (_savedRegion != null);
+                return (_savedRegion is not null);
             }
         }
 
@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell
         void
         Show(PendingProgress pendingProgress)
         {
-            Dbg.Assert(pendingProgress != null, "pendingProgress may not be null");
+            Dbg.Assert(pendingProgress is not null, "pendingProgress may not be null");
 
             _bufSize = _rawui.BufferSize;
 
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...
 
             BufferCell[,] newRegion = _rawui.NewBufferCellArray(contents, _ui.ProgressForegroundColor, _ui.ProgressBackgroundColor);
-            Dbg.Assert(newRegion != null, "NewBufferCellArray has failed!");
+            Dbg.Assert(newRegion is not null, "NewBufferCellArray has failed!");
 
             if (_progressRegion is null)
             {

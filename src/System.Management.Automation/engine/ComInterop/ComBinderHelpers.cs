@@ -20,7 +20,7 @@ namespace System.Management.Automation.ComInterop
     {
         internal static bool PreferPut(Type type, bool holdsNull)
         {
-            Debug.Assert(type != null);
+            Debug.Assert(type is not null);
 
             if (type.IsValueType || type.IsArray) return true;
 
@@ -41,7 +41,7 @@ namespace System.Management.Automation.ComInterop
         internal static bool IsByRef(DynamicMetaObject mo)
         {
             ParameterExpression pe = mo.Expression as ParameterExpression;
-            return pe != null && pe.IsByRef;
+            return pe is not null && pe.IsByRef;
         }
 
         internal static bool IsPSReferenceArg(DynamicMetaObject o)
@@ -55,7 +55,7 @@ namespace System.Management.Automation.ComInterop
         internal static bool[] ProcessArgumentsForCom(ComMethodDesc method, ref DynamicMetaObject[] args,
             List<ParameterExpression> temps, List<Expression> initTemps)
         {
-            Debug.Assert(args != null);
+            Debug.Assert(args is not null);
 
             DynamicMetaObject[] newArgs = new DynamicMetaObject[args.Length];
             bool[] isByRefArg = new bool[args.Length];
@@ -91,7 +91,7 @@ namespace System.Management.Automation.ComInterop
                         );
 
                         PSReference value = curArgument.Value as PSReference;
-                        object boxedValue = value != null ? value.Value : null;
+                        object boxedValue = value is not null ? value.Value : null;
 
                         newArgs[i] = new DynamicMetaObject(
                             boxedValueAccessor,
@@ -103,7 +103,7 @@ namespace System.Management.Automation.ComInterop
                     }
                     else
                     {
-                        if ((method.ParameterInformation != null) && (i < method.ParameterInformation.Length))
+                        if ((method.ParameterInformation is not null) && (i < method.ParameterInformation.Length))
                         {
                             newArgs[i] = new DynamicMetaObject(curArgument.CastOrConvertMethodArgument(
                                 method.ParameterInformation[i].parameterType,

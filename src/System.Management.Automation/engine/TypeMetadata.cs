@@ -39,7 +39,7 @@ namespace System.Management.Automation
         /// <param name="psMD"></param>
         internal ParameterSetMetadata(ParameterSetSpecificMetadata psMD)
         {
-            Dbg.Assert(psMD != null, "ParameterSetSpecificMetadata cannot be null");
+            Dbg.Assert(psMD is not null, "ParameterSetSpecificMetadata cannot be null");
             Initialize(psMD);
         }
 
@@ -485,7 +485,7 @@ namespace System.Management.Automation
         /// </param>
         internal ParameterMetadata(CompiledCommandParameter cmdParameterMD)
         {
-            Dbg.Assert(cmdParameterMD != null,
+            Dbg.Assert(cmdParameterMD is not null,
                 "CompiledCommandParameter cannot be null");
 
             Initialize(cmdParameterMD);
@@ -599,7 +599,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_parameterType != null)
+                if (_parameterType is not null)
                 {
                     return _parameterType.Equals(typeof(SwitchParameter));
                 }
@@ -678,7 +678,7 @@ namespace System.Management.Automation
         internal static Dictionary<string, ParameterMetadata> GetParameterMetadata(MergedCommandParameterMetadata
             cmdParameterMetadata)
         {
-            Dbg.Assert(cmdParameterMetadata != null, "cmdParameterMetadata cannot be null");
+            Dbg.Assert(cmdParameterMetadata is not null, "cmdParameterMetadata cannot be null");
 
             Dictionary<string, ParameterMetadata> result = new Dictionary<string, ParameterMetadata>(StringComparer.OrdinalIgnoreCase);
 
@@ -696,7 +696,7 @@ namespace System.Management.Automation
         internal bool IsMatchingType(PSTypeName psTypeName)
         {
             Type dotNetType = psTypeName.Type;
-            if (dotNetType != null)
+            if (dotNetType is not null)
             {
                 // ConstrainedLanguage note - This conversion is analyzed, but actually invoked via regular conversion.
                 bool parameterAcceptsObjects =
@@ -709,12 +709,12 @@ namespace System.Management.Automation
 
                 if (parameterAcceptsObjects)
                 {
-                    return (psTypeName.Type != null) && (psTypeName.Type.Equals(typeof(object)));
+                    return (psTypeName.Type is not null) && (psTypeName.Type.Equals(typeof(object)));
                 }
 
                 // ConstrainedLanguage note - This conversion is analyzed, but actually invoked via regular conversion.
                 var conversionData = LanguagePrimitives.FigureConversion(dotNetType, this.ParameterType);
-                if (conversionData != null)
+                if (conversionData is not null)
                 {
                     if ((int)(conversionData.Rank) >= (int)(ConversionRank.NumericImplicitS2A))
                     {
@@ -738,10 +738,10 @@ namespace System.Management.Automation
                 return true;
             }
 
-            if (this.Attributes != null)
+            if (this.Attributes is not null)
             {
                 PSTypeNameAttribute typeNameAttribute = this.Attributes.OfType<PSTypeNameAttribute>().FirstOrDefault();
-                if (typeNameAttribute != null && wildcardPattern.IsMatch(typeNameAttribute.PSTypeName))
+                if (typeNameAttribute is not null && wildcardPattern.IsMatch(typeNameAttribute.PSTypeName))
                 {
                     return true;
                 }
@@ -792,7 +792,7 @@ namespace System.Management.Automation
         {
             Text.StringBuilder result = new System.Text.StringBuilder();
 
-            if (_parameterSets != null && isProxyForCmdlet)
+            if (_parameterSets is not null && isProxyForCmdlet)
             {
                 foreach (var pair in _parameterSets)
                 {
@@ -824,7 +824,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if ((_aliases != null) && (_aliases.Count > 0))
+            if ((_aliases is not null) && (_aliases.Count > 0))
             {
                 Text.StringBuilder aliasesData = new System.Text.StringBuilder();
                 string comma = string.Empty; // comma is not need for the first element
@@ -842,7 +842,7 @@ namespace System.Management.Automation
                 result.AppendFormat(CultureInfo.InvariantCulture, AliasesFormat, prefix, aliasesData.ToString());
             }
 
-            if ((_attributes != null) && (_attributes.Count > 0))
+            if ((_attributes is not null) && (_attributes.Count > 0))
             {
                 foreach (Attribute attrib in _attributes)
                 {
@@ -858,7 +858,7 @@ namespace System.Management.Automation
             {
                 result.AppendFormat(CultureInfo.InvariantCulture, ParameterTypeFormat, prefix, "switch");
             }
-            else if (_parameterType != null)
+            else if (_parameterType is not null)
             {
                 result.AppendFormat(CultureInfo.InvariantCulture, ParameterTypeFormat, prefix, ToStringCodeMethods.Type(_parameterType));
             }
@@ -866,7 +866,7 @@ namespace System.Management.Automation
             /* 1. CredentialAttribute needs to go after the type
              * 2. To avoid risk, I don't want to move other attributes to go here / after the type */
             CredentialAttribute credentialAttrib = _attributes.OfType<CredentialAttribute>().FirstOrDefault();
-            if (credentialAttrib != null)
+            if (credentialAttrib is not null)
             {
                 string attribData = string.Format(CultureInfo.InvariantCulture, CredentialAttributeFormat, prefix);
                 if (!string.IsNullOrEmpty(attribData))
@@ -900,7 +900,7 @@ namespace System.Management.Automation
             string result;
 
             ValidateLengthAttribute validLengthAttrib = attrib as ValidateLengthAttribute;
-            if (validLengthAttrib != null)
+            if (validLengthAttrib is not null)
             {
                 result = string.Format(
                     CultureInfo.InvariantCulture,
@@ -911,7 +911,7 @@ namespace System.Management.Automation
             }
 
             ValidateRangeAttribute validRangeAttrib = attrib as ValidateRangeAttribute;
-            if (validRangeAttrib != null)
+            if (validRangeAttrib is not null)
             {
                 if (validRangeAttrib.RangeKind.HasValue)
                 {
@@ -947,7 +947,7 @@ namespace System.Management.Automation
             }
 
             AllowNullAttribute allowNullAttrib = attrib as AllowNullAttribute;
-            if (allowNullAttrib != null)
+            if (allowNullAttrib is not null)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
                     AllowNullFormat, prefix);
@@ -955,7 +955,7 @@ namespace System.Management.Automation
             }
 
             AllowEmptyStringAttribute allowEmptyStringAttrib = attrib as AllowEmptyStringAttribute;
-            if (allowEmptyStringAttrib != null)
+            if (allowEmptyStringAttrib is not null)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
                     AllowEmptyStringFormat, prefix);
@@ -963,7 +963,7 @@ namespace System.Management.Automation
             }
 
             AllowEmptyCollectionAttribute allowEmptyColAttrib = attrib as AllowEmptyCollectionAttribute;
-            if (allowEmptyColAttrib != null)
+            if (allowEmptyColAttrib is not null)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
                     AllowEmptyCollectionFormat, prefix);
@@ -971,7 +971,7 @@ namespace System.Management.Automation
             }
 
             ValidatePatternAttribute patternAttrib = attrib as ValidatePatternAttribute;
-            if (patternAttrib != null)
+            if (patternAttrib is not null)
             {
                 /* TODO: Validate Pattern dont support Options in ScriptCmdletText.
                 StringBuilder regexOps = new System.Text.StringBuilder();
@@ -1002,7 +1002,7 @@ namespace System.Management.Automation
             }
 
             ValidateCountAttribute countAttrib = attrib as ValidateCountAttribute;
-            if (countAttrib != null)
+            if (countAttrib is not null)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
                     ValidateCountFormat, prefix, countAttrib.MinLength, countAttrib.MaxLength);
@@ -1010,7 +1010,7 @@ namespace System.Management.Automation
             }
 
             ValidateNotNullAttribute notNullAttrib = attrib as ValidateNotNullAttribute;
-            if (notNullAttrib != null)
+            if (notNullAttrib is not null)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
                     ValidateNotNullFormat, prefix);
@@ -1018,7 +1018,7 @@ namespace System.Management.Automation
             }
 
             ValidateNotNullOrEmptyAttribute notNullEmptyAttrib = attrib as ValidateNotNullOrEmptyAttribute;
-            if (notNullEmptyAttrib != null)
+            if (notNullEmptyAttrib is not null)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
                     ValidateNotNullOrEmptyFormat, prefix);
@@ -1026,7 +1026,7 @@ namespace System.Management.Automation
             }
 
             ValidateSetAttribute setAttrib = attrib as ValidateSetAttribute;
-            if (setAttrib != null)
+            if (setAttrib is not null)
             {
                 Text.StringBuilder values = new System.Text.StringBuilder();
                 string comma = string.Empty;
@@ -1046,7 +1046,7 @@ namespace System.Management.Automation
             }
 
             ValidateScriptAttribute scriptAttrib = attrib as ValidateScriptAttribute;
-            if (scriptAttrib != null)
+            if (scriptAttrib is not null)
             {
                 // Talked with others and I think it is okay to use *unescaped* value from sb.ToString()
                 // 1. implicit remoting is not bringing validation scripts across
@@ -1058,7 +1058,7 @@ namespace System.Management.Automation
             }
 
             PSTypeNameAttribute psTypeNameAttrib = attrib as PSTypeNameAttribute;
-            if (psTypeNameAttrib != null)
+            if (psTypeNameAttrib is not null)
             {
                 result = string.Format(
                     CultureInfo.InvariantCulture,
@@ -1069,7 +1069,7 @@ namespace System.Management.Automation
             }
 
             ObsoleteAttribute obsoleteAttrib = attrib as ObsoleteAttribute;
-            if (obsoleteAttrib != null)
+            if (obsoleteAttrib is not null)
             {
                 string parameters = string.Empty;
                 if (obsoleteAttrib.IsError)
@@ -1077,7 +1077,7 @@ namespace System.Management.Automation
                     string message = "'" + CodeGeneration.EscapeSingleQuotedStringContent(obsoleteAttrib.Message) + "'";
                     parameters = message + ", $true";
                 }
-                else if (obsoleteAttrib.Message != null)
+                else if (obsoleteAttrib.Message is not null)
                 {
                     parameters = "'" + CodeGeneration.EscapeSingleQuotedStringContent(obsoleteAttrib.Message) + "'";
                 }
@@ -1173,7 +1173,7 @@ namespace System.Management.Automation
             {
                 result = new InternalParameterMetadata(type, processingDynamicParameters);
 
-                if (context != null)
+                if (context is not null)
                 {
                     s_parameterMetadataCache.TryAdd(type.AssemblyQualifiedName, result);
                 }
@@ -1305,7 +1305,7 @@ namespace System.Management.Automation
             bool checkNames)
         {
             Diagnostics.Assert(
-                runtimeDefinedParameters != null,
+                runtimeDefinedParameters is not null,
                 "This method should only be called when constructed with a valid runtime-defined parameter collection");
 
             foreach (RuntimeDefinedParameter parameterDefinition in runtimeDefinedParameters.Values)
@@ -1336,7 +1336,7 @@ namespace System.Management.Automation
         private void ConstructCompiledParametersUsingReflection(bool processingDynamicParameters)
         {
             Diagnostics.Assert(
-                _type != null,
+                _type is not null,
                 "This method should only be called when constructed with the Type");
 
             // Get the property and field info
@@ -1501,7 +1501,7 @@ namespace System.Management.Automation
             try
             {
                 var expAttribute = member.GetCustomAttributes<ExperimentalAttribute>(inherit: false).FirstOrDefault();
-                if (expAttribute != null && expAttribute.ToHide) { return false; }
+                if (expAttribute is not null && expAttribute.ToHide) { return false; }
 
                 var hasAnyVisibleParamAttributes = false;
                 var paramAttributes = member.GetCustomAttributes<ParameterAttribute>(inherit: false);

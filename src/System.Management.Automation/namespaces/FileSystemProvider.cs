@@ -253,10 +253,10 @@ namespace Microsoft.PowerShell.Commands
         {
             bool attributeFilterSet = false;
             GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
-            if (fspDynamicParam != null)
+            if (fspDynamicParam is not null)
             {
                 attributeFilterSet = (
-                    (fspDynamicParam.Attributes != null)
+                    (fspDynamicParam.Attributes is not null)
                         || (fspDynamicParam.Directory)
                         || (fspDynamicParam.File)
                         || (fspDynamicParam.Hidden)
@@ -389,7 +389,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Execute the XPath query and return its MAML snippet
                 XmlNode result = document.SelectSingleNode(xpathQuery, nsMgr);
-                if (result != null)
+                if (result is not null)
                 {
                     return result.OuterXml;
                 }
@@ -424,7 +424,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (reader != null)
+                if (reader is not null)
                 {
                     ((IDisposable)reader).Dispose();
                 }
@@ -451,7 +451,7 @@ namespace Microsoft.PowerShell.Commands
         protected override ProviderInfo Start(ProviderInfo providerInfo)
         {
             // Set the home folder for the user
-            if (providerInfo != null && string.IsNullOrEmpty(providerInfo.Home))
+            if (providerInfo is not null && string.IsNullOrEmpty(providerInfo.Home))
             {
                 // %USERPROFILE% - indicate where a user's home directory is located in the file system.
                 string homeDirectory = Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
@@ -609,7 +609,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WinMapNetworkDrive(PSDriveInfo drive)
         {
-            if (drive != null && !string.IsNullOrEmpty(drive.Root))
+            if (drive is not null && !string.IsNullOrEmpty(drive.Root))
             {
                 const int CONNECT_UPDATE_PROFILE = 0x00000001;
                 const int CONNECT_NOPERSIST = 0x00000000;
@@ -643,7 +643,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // If alternate credentials is supplied then use them to get connected to network share.
-                if (drive.Credential != null && !drive.Credential.Equals(PSCredential.Empty))
+                if (drive.Credential is not null && !drive.Credential.Equals(PSCredential.Empty))
                 {
                     userName = drive.Credential.UserName;
 
@@ -695,7 +695,7 @@ namespace Microsoft.PowerShell.Commands
                 finally
                 {
                     // Clear the password in the memory.
-                    if (passwd != null)
+                    if (passwd is not null)
                     {
                         Array.Clear(passwd, 0, passwd.Length - 1);
                     }
@@ -711,8 +711,8 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private bool IsNetworkMappedDrive(PSDriveInfo drive)
         {
-            bool shouldMapNetworkDrive = (drive != null && !string.IsNullOrEmpty(drive.Root) && PathIsNetworkPath(drive.Root)) &&
-                                         (drive.Persist || (drive.Credential != null && !drive.Credential.Equals(PSCredential.Empty)));
+            bool shouldMapNetworkDrive = (drive is not null && !string.IsNullOrEmpty(drive.Root) && PathIsNetworkPath(drive.Root)) &&
+                                         (drive.Persist || (drive.Credential is not null && !drive.Credential.Equals(PSCredential.Empty)));
 
             return shouldMapNetworkDrive;
         }
@@ -792,7 +792,7 @@ namespace Microsoft.PowerShell.Commands
         private bool IsSupportedDriveForPersistence(PSDriveInfo drive)
         {
             bool isSupportedDriveForPersistence = false;
-            if (drive != null && !string.IsNullOrEmpty(drive.Name) && drive.Name.Length == 1)
+            if (drive is not null && !string.IsNullOrEmpty(drive.Name) && drive.Name.Length == 1)
             {
                 char driveChar = Convert.ToChar(drive.Name, CultureInfo.InvariantCulture);
 
@@ -1012,7 +1012,7 @@ namespace Microsoft.PowerShell.Commands
             Collection<PSDriveInfo> results = new Collection<PSDriveInfo>();
 
             DriveInfo[] logicalDrives = DriveInfo.GetDrives();
-            if (logicalDrives != null)
+            if (logicalDrives is not null)
             {
                 foreach (DriveInfo newDrive in logicalDrives)
                 {
@@ -1276,12 +1276,12 @@ namespace Microsoft.PowerShell.Commands
                 bool retrieveStreams = false;
                 FileSystemProviderGetItemDynamicParameters dynamicParameters = null;
 
-                if (DynamicParameters != null)
+                if (DynamicParameters is not null)
                 {
                     dynamicParameters = DynamicParameters as FileSystemProviderGetItemDynamicParameters;
-                    if (dynamicParameters != null)
+                    if (dynamicParameters is not null)
                     {
-                        if ((dynamicParameters.Stream != null) && (dynamicParameters.Stream.Length > 0))
+                        if ((dynamicParameters.Stream is not null) && (dynamicParameters.Stream.Length > 0))
                         {
                             retrieveStreams = true;
                         }
@@ -1305,7 +1305,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
 
                 FileSystemInfo result = GetFileSystemItem(path, ref isContainer, false);
-                if (result != null)
+                if (result is not null)
                 {
 #if !UNIX
                     // If we want to retrieve the file streams, retrieve them.
@@ -1388,7 +1388,7 @@ namespace Microsoft.PowerShell.Commands
             FlagsExpression<FileAttributes> evaluator = null;
             FlagsExpression<FileAttributes> switchEvaluator = null;
             GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
-            if (fspDynamicParam != null)
+            if (fspDynamicParam is not null)
             {
                 evaluator = fspDynamicParam.Attributes;
                 switchEvaluator = FormatAttributeSwitchParameters();
@@ -1397,12 +1397,12 @@ namespace Microsoft.PowerShell.Commands
             bool filterHidden = false;           // "Hidden" is specified somewhere in the expression
             bool switchFilterHidden = false;     // "Hidden" is specified somewhere in the parameters
 
-            if (evaluator != null)
+            if (evaluator is not null)
             {
                 filterHidden = evaluator.ExistsInExpression(FileAttributes.Hidden);
             }
 
-            if (switchEvaluator != null)
+            if (switchEvaluator is not null)
             {
                 switchFilterHidden = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
             }
@@ -1642,7 +1642,7 @@ namespace Microsoft.PowerShell.Commands
 
             var fsinfo = GetFileSystemInfo(path, out bool isDirectory);
 
-            if (fsinfo != null)
+            if (fsinfo is not null)
             {
                 if (isDirectory)
                 {
@@ -1651,7 +1651,7 @@ namespace Microsoft.PowerShell.Commands
                     if (recurse)
                     {
                         GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
-                        if (fspDynamicParam != null && fspDynamicParam.FollowSymlink)
+                        if (fspDynamicParam is not null && fspDynamicParam.FollowSymlink)
                         {
                             tracker = new InodeTracker(fsinfo.FullName);
                         }
@@ -1665,7 +1665,7 @@ namespace Microsoft.PowerShell.Commands
                     FlagsExpression<FileAttributes> evaluator = null;
                     FlagsExpression<FileAttributes> switchEvaluator = null;
                     GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
-                    if (fspDynamicParam != null)
+                    if (fspDynamicParam is not null)
                     {
                         evaluator = fspDynamicParam.Attributes;
                         switchEvaluator = FormatAttributeSwitchParameters();
@@ -1676,13 +1676,13 @@ namespace Microsoft.PowerShell.Commands
                     bool filterHidden = false;           // "Hidden" is specified somewhere in the expression
                     bool switchFilterHidden = false;     // "Hidden" is specified somewhere in the parameters
 
-                    if (evaluator != null)
+                    if (evaluator is not null)
                     {
                         attributeFilter = evaluator.Evaluate(fsinfo.Attributes);  // expressions
                         filterHidden = evaluator.ExistsInExpression(FileAttributes.Hidden);
                     }
 
-                    if (switchEvaluator != null)
+                    if (switchEvaluator is not null)
                     {
                         switchAttributeFilter = switchEvaluator.Evaluate(fsinfo.Attributes);  // switch parameters
                         switchFilterHidden = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
@@ -1734,7 +1734,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                if (Filter != null &&
+                if (Filter is not null &&
                     Filter.Length > 0)
                 {
                     if (returnContainers == ReturnContainers.ReturnAllContainers)
@@ -1776,7 +1776,7 @@ namespace Microsoft.PowerShell.Commands
                 FlagsExpression<FileAttributes> switchEvaluator = null;
 
                 GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
-                if (fspDynamicParam != null)
+                if (fspDynamicParam is not null)
                 {
                     evaluator = fspDynamicParam.Attributes;
                     switchEvaluator = FormatAttributeSwitchParameters();
@@ -1805,13 +1805,13 @@ namespace Microsoft.PowerShell.Commands
                             // 'Hidden' is specified somewhere in the parameters
                             bool switchFilterHidden = false;
 
-                            if (evaluator != null)
+                            if (evaluator is not null)
                             {
                                 attributeFilter = evaluator.Evaluate(filesystemInfo.Attributes);
                                 filterHidden = evaluator.ExistsInExpression(FileAttributes.Hidden);
                             }
 
-                            if (switchEvaluator != null)
+                            if (switchEvaluator is not null)
                             {
                                 switchAttributeFilter = switchEvaluator.Evaluate(filesystemInfo.Attributes);
                                 switchFilterHidden = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
@@ -1868,12 +1868,12 @@ namespace Microsoft.PowerShell.Commands
                 bool isFilterHiddenSpecified = false;           // "Hidden" is specified somewhere in the expression
                 bool isSwitchFilterHiddenSpecified = false;     // "Hidden" is specified somewhere in the parameters
 
-                if (evaluator != null)
+                if (evaluator is not null)
                 {
                     isFilterHiddenSpecified = evaluator.ExistsInExpression(FileAttributes.Hidden);
                 }
 
-                if (switchEvaluator != null)
+                if (switchEvaluator is not null)
                 {
                     isSwitchFilterHiddenSpecified = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
                 }
@@ -2314,7 +2314,7 @@ namespace Microsoft.PowerShell.Commands
                                 FileAccess.Write,
                                 FileShare.None))
                         {
-                            if (value != null)
+                            if (value is not null)
                             {
                                 StreamWriter streamWriter = new StreamWriter(newFile);
                                 streamWriter.Write(value.ToString());
@@ -2385,7 +2385,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;
+                            exists = GetFileSystemInfo(strTargetPath, out isDirectory) is not null;
                         }
                     }
                     catch (Exception e)
@@ -2417,7 +2417,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        symLinkExists = GetFileSystemInfo(path, out isSymLinkDirectory) != null;
+                        symLinkExists = GetFileSystemInfo(path, out isSymLinkDirectory) is not null;
                     }
                     catch (Exception e)
                     {
@@ -2552,7 +2552,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;
+                        exists = GetFileSystemInfo(strTargetPath, out isDirectory) is not null;
                     }
                     catch (Exception e)
                     {
@@ -2588,7 +2588,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    bool pathExists = pathDirInfo != null;
+                    bool pathExists = pathDirInfo is not null;
 
                     if (pathExists)
                     {
@@ -2793,7 +2793,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (error != null)
+            if (error is not null)
             {
                 WriteError(error);
                 return;
@@ -2856,7 +2856,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string root = string.Empty;
 
-                    if (PSDriveInfo != null)
+                    if (PSDriveInfo is not null)
                     {
                         root = PSDriveInfo.Root;
                     }
@@ -2942,12 +2942,12 @@ namespace Microsoft.PowerShell.Commands
                 bool removeStreams = false;
                 FileSystemProviderRemoveItemDynamicParameters dynamicParameters = null;
 
-                if (DynamicParameters != null)
+                if (DynamicParameters is not null)
                 {
                     dynamicParameters = DynamicParameters as FileSystemProviderRemoveItemDynamicParameters;
-                    if (dynamicParameters != null)
+                    if (dynamicParameters is not null)
                     {
-                        if ((dynamicParameters.Stream != null) && (dynamicParameters.Stream.Length > 0))
+                        if ((dynamicParameters.Stream is not null) && (dynamicParameters.Stream.Length > 0))
                         {
                             removeStreams = true;
                         }
@@ -3090,7 +3090,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void RemoveDirectoryInfoItem(DirectoryInfo directory, bool recurse, bool force, bool rootOfRemoval)
         {
-            Dbg.Diagnostics.Assert(directory != null, "Caller should always check directory");
+            Dbg.Diagnostics.Assert(directory is not null, "Caller should always check directory");
 
             bool continueRemoval = true;
 
@@ -3136,7 +3136,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    if (childDir != null)
+                    if (childDir is not null)
                     {
                         RemoveDirectoryInfoItem(childDir, recurse, force, false);
                     }
@@ -3162,7 +3162,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    if (file != null)
+                    if (file is not null)
                     {
                         if (recurse)
                         {
@@ -3209,7 +3209,7 @@ namespace Microsoft.PowerShell.Commands
         private void RemoveFileInfoItem(FileInfo file, bool force)
         {
             Dbg.Diagnostics.Assert(
-                file != null,
+                file is not null,
                 "Caller should always check file");
 
             string action = FileSystemProviderStrings.RemoveItemActionFile;
@@ -3234,7 +3234,7 @@ namespace Microsoft.PowerShell.Commands
         private void RemoveFileSystemItem(FileSystemInfo fileSystemInfo, bool force)
         {
             Dbg.Diagnostics.Assert(
-                fileSystemInfo != null,
+                fileSystemInfo is not null,
                 "Caller should always check fileSystemInfo");
 
             // First check if we can delete this file when force is not specified.
@@ -3373,7 +3373,7 @@ namespace Microsoft.PowerShell.Commands
             ErrorRecord error = null;
             bool result = ItemExists(path, out error);
 
-            if (error != null)
+            if (error is not null)
             {
                 WriteError(error);
             }
@@ -3414,13 +3414,13 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 var fsinfo = GetFileSystemInfo(path, out bool _);
-                result = fsinfo != null;
+                result = fsinfo is not null;
 
                 FileSystemItemProviderDynamicParameters itemExistsDynamicParameters =
                     DynamicParameters as FileSystemItemProviderDynamicParameters;
 
                 // If the items see if we need to check the age of the file...
-                if (result && itemExistsDynamicParameters != null)
+                if (result && itemExistsDynamicParameters is not null)
                 {
                     DateTime lastWriteTime = fsinfo.LastWriteTime;
 
@@ -3562,7 +3562,7 @@ namespace Microsoft.PowerShell.Commands
         private static bool DirectoryInfoHasChildItems(DirectoryInfo directory)
         {
             Dbg.Diagnostics.Assert(
-                directory != null,
+                directory is not null,
                 "The caller should verify directory.");
 
             bool result = false;
@@ -3623,9 +3623,9 @@ namespace Microsoft.PowerShell.Commands
 
             CopyItemDynamicParameters copyDynamicParameter = DynamicParameters as CopyItemDynamicParameters;
 
-            if (copyDynamicParameter != null)
+            if (copyDynamicParameter is not null)
             {
-                if (copyDynamicParameter.FromSession != null)
+                if (copyDynamicParameter.FromSession is not null)
                 {
                     fromSession = copyDynamicParameter.FromSession;
                 }
@@ -3647,14 +3647,14 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
             // Copy-Item from session
-            if (fromSession != null)
+            if (fromSession is not null)
             {
                 CopyItemFromRemoteSession(path, destinationPath, recurse, Force, fromSession);
             }
             else
             {
                 // Copy-Item to session
-                if (toSession != null)
+                if (toSession is not null)
                 {
                     using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
                     {
@@ -3700,7 +3700,7 @@ namespace Microsoft.PowerShell.Commands
                         throw PSTraceSource.NewArgumentNullException(SessionStateStrings.PathNotFound, path);
                     }
 
-                    if (op["Items"] != null)
+                    if (op["Items"] is not null)
                     {
                         PSObject obj = (PSObject)op["Items"];
                         ArrayList itemsList = (ArrayList)obj.BaseObject;
@@ -3789,7 +3789,7 @@ namespace Microsoft.PowerShell.Commands
             System.Management.Automation.PowerShell ps)
         {
             Dbg.Diagnostics.Assert(
-                directory != null,
+                directory is not null,
                 "The caller should verify directory.");
 
             // Generate the path based on whether the destination path exists and
@@ -3870,7 +3870,7 @@ namespace Microsoft.PowerShell.Commands
                             return;
                         }
 
-                        if (file != null)
+                        if (file is not null)
                         {
                             try
                             {
@@ -3902,7 +3902,7 @@ namespace Microsoft.PowerShell.Commands
                             return;
                         }
 
-                        if (childDir != null)
+                        if (childDir is not null)
                         {
                             try
                             {
@@ -3930,7 +3930,7 @@ namespace Microsoft.PowerShell.Commands
         private void CopyFileInfoItem(FileInfo file, string destinationPath, bool force, System.Management.Automation.PowerShell ps)
         {
             Dbg.Diagnostics.Assert(
-                file != null,
+                file is not null,
                 "The caller should verify file.");
 
             // If the destination is a container, add the file name
@@ -4050,7 +4050,7 @@ namespace Microsoft.PowerShell.Commands
             bool recurse,
             System.Management.Automation.PowerShell ps)
         {
-            Dbg.Diagnostics.Assert((sourceDirectoryName != null && sourceDirectoryFullName != null), "The caller should verify directory.");
+            Dbg.Diagnostics.Assert((sourceDirectoryName is not null && sourceDirectoryFullName is not null), "The caller should verify directory.");
 
             if (IsItemContainer(destination))
             {
@@ -4092,7 +4092,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    if (op["Files"] != null)
+                    if (op["Files"] is not null)
                     {
                         PSObject obj = (PSObject)op["Files"];
                         ArrayList filesList = (ArrayList)obj.BaseObject;
@@ -4125,7 +4125,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (op["Directories"] != null)
+                    if (op["Directories"] is not null)
                     {
                         PSObject obj = (PSObject)op["Directories"];
                         ArrayList directories = (ArrayList)obj.BaseObject;
@@ -4164,7 +4164,7 @@ namespace Microsoft.PowerShell.Commands
             ps.AddParameter("supportAltStreamPath", path);
 
             Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
-            if (op != null && op["SourceSupportsAlternateStreams"] != null)
+            if (op is not null && op["SourceSupportsAlternateStreams"] is not null)
             {
                 supportsAlternateStreams = (bool)op["SourceSupportsAlternateStreams"];
             }
@@ -4235,21 +4235,21 @@ namespace Microsoft.PowerShell.Commands
         {
             Hashtable metadata = GetRemoteFileMetadata(sourceFileFullName, ps);
 
-            if (metadata != null)
+            if (metadata is not null)
             {
                 // LastWriteTime
-                if (metadata["LastWriteTimeUtc"] != null)
+                if (metadata["LastWriteTimeUtc"] is not null)
                 {
                     destinationFile.LastWriteTimeUtc = (DateTime)metadata["LastWriteTimeUtc"];
                 }
 
-                if (metadata["LastWriteTime"] != null)
+                if (metadata["LastWriteTime"] is not null)
                 {
                     destinationFile.LastWriteTime = (DateTime)metadata["LastWriteTime"];
                 }
 
                 // Attributes
-                if (metadata["Attributes"] != null)
+                if (metadata["Attributes"] is not null)
                 {
                     PSObject obj = (PSObject)metadata["Attributes"];
                     foreach (string value in (ArrayList)obj.BaseObject)
@@ -4283,7 +4283,7 @@ namespace Microsoft.PowerShell.Commands
             System.Management.Automation.PowerShell ps,
             long fileSize = 0)
         {
-            Dbg.Diagnostics.Assert(sourceFileFullName != null, "The caller should verify file.");
+            Dbg.Diagnostics.Assert(sourceFileFullName is not null, "The caller should verify file.");
 
             // If the destination is a container, add the file name
             // to the destination path.
@@ -4312,7 +4312,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Check if the remote source file has any alternate data streams
                     ArrayList remoteFileStreams = GetRemoteSourceAlternateStreams(ps, sourceFileFullName);
-                    if ((remoteFileStreams != null) && (remoteFileStreams.Count > 0))
+                    if ((remoteFileStreams is not null) && (remoteFileStreams.Count > 0))
                     {
                         foreach (string streamName in remoteFileStreams)
                         {
@@ -4410,7 +4410,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
 
-                    if (op["ExceptionThrown"] != null)
+                    if (op["ExceptionThrown"] is not null)
                     {
                         bool failedToReadFile = (bool)(op["ExceptionThrown"]);
                         if (failedToReadFile)
@@ -4423,7 +4423,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // To accomodate empty files
                     string content = string.Empty;
-                    if (op["b64Fragment"] != null)
+                    if (op["b64Fragment"] is not null)
                     {
                         content = (string)op["b64Fragment"];
                     }
@@ -4475,7 +4475,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (wStream != null)
+                if (wStream is not null)
                 {
                     wStream.Dispose();
                 }
@@ -4526,7 +4526,7 @@ namespace Microsoft.PowerShell.Commands
             ps.AddParameter("supportAltStreamPath", path);
 
             Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
-            if (op != null && op["TargetSupportsAlternateStreams"] != null)
+            if (op is not null && op["TargetSupportsAlternateStreams"] is not null)
             {
                 supportsAlternateStreams = (bool)op["TargetSupportsAlternateStreams"];
             }
@@ -4550,19 +4550,19 @@ namespace Microsoft.PowerShell.Commands
             ps.AddParameter(nameof(remotePath), remotePath);
             Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
 
-            if (op != null)
+            if (op is not null)
             {
-                if (op["IsDirectoryInfo"] != null)
+                if (op["IsDirectoryInfo"] is not null)
                 {
                     isDirectoryInfo = (bool)op["IsDirectoryInfo"];
                 }
 
-                if (op["IsFileInfo"] != null)
+                if (op["IsFileInfo"] is not null)
                 {
                     isFileInfo = (bool)op["IsFileInfo"];
                 }
 
-                if (op["ParentIsDirectoryInfo"] != null)
+                if (op["ParentIsDirectoryInfo"] is not null)
                 {
                     parentIsDirectoryInfo = (bool)op["ParentIsDirectoryInfo"];
                 }
@@ -4599,9 +4599,9 @@ namespace Microsoft.PowerShell.Commands
             ps.AddParameter("dirPathExists", path);
             Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
 
-            if (op != null)
+            if (op is not null)
             {
-                if (op["Exists"] != null)
+                if (op["Exists"] is not null)
                     pathExists = (bool)op["Exists"];
             }
 
@@ -4644,7 +4644,7 @@ namespace Microsoft.PowerShell.Commands
                     fStream = AlternateDataStreamUtilities.CreateFileStream(file.FullName, streamName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 }
 #endif
-                long remainingFileSize = fStream != null ? fStream.Length : 0;
+                long remainingFileSize = fStream is not null ? fStream.Length : 0;
                 do
                 {
                     if (Stopping)
@@ -4758,7 +4758,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (fStream != null)
+                if (fStream is not null)
                 {
                     fStream.Dispose();
                 }
@@ -4786,7 +4786,7 @@ namespace Microsoft.PowerShell.Commands
         private void SetRemoteFileMetadata(FileInfo file, string remoteFilePath, System.Management.Automation.PowerShell ps)
         {
             Hashtable metadata = GetFileMetadata(file);
-            if (metadata != null)
+            if (metadata is not null)
             {
                 ps.AddCommand(CopyFileRemoteUtils.PSCopyToSessionHelperName);
                 ps.AddParameter("metaDataFilePath", remoteFilePath);
@@ -4868,7 +4868,7 @@ namespace Microsoft.PowerShell.Commands
             Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
 
             // If op is null,  SafeInvokeCommand.Invoke throwns an error.
-            if (op["ExceptionThrown"] != null)
+            if (op["ExceptionThrown"] is not null)
             {
                 // If an error is thrown on the remote session, it is written via SafeInvokeCommand.Invoke.
                 if ((bool)op["ExceptionThrown"])
@@ -5596,7 +5596,7 @@ namespace Microsoft.PowerShell.Commands
                     // Clean up the child name to proper casing and short-path
                     // expansion if required. Also verify that .NET hasn't over-normalized
                     // the path
-                    if (fsinfo != null)
+                    if (fsinfo is not null)
                     {
                         // This might happen if you've passed a child name of two or more dots,
                         // which the .NET APIs treat as the parent directory
@@ -5828,7 +5828,7 @@ namespace Microsoft.PowerShell.Commands
                     FileInfo file = new FileInfo(path);
 
                     Dbg.Diagnostics.Assert(
-                        file != null,
+                        file is not null,
                         "FileInfo should be throwing an exception but it's " +
                         "returning null instead");
 
@@ -5873,7 +5873,7 @@ namespace Microsoft.PowerShell.Commands
             bool output)
         {
             Dbg.Diagnostics.Assert(
-                file != null,
+                file is not null,
                 "The caller should verify file.");
 
             Dbg.Diagnostics.Assert(
@@ -5945,7 +5945,7 @@ namespace Microsoft.PowerShell.Commands
                 if (force && File.Exists(destination))
                 {
                     FileInfo destfile = new FileInfo(destination);
-                    if (destfile != null)
+                    if (destfile is not null)
                     {
                         try
                         {
@@ -5998,7 +5998,7 @@ namespace Microsoft.PowerShell.Commands
             bool force)
         {
             Dbg.Diagnostics.Assert(
-                directory != null,
+                directory is not null,
                 "The caller should verify directory.");
 
             Dbg.Diagnostics.Assert(
@@ -6201,14 +6201,14 @@ namespace Microsoft.PowerShell.Commands
                     {
                         foreach (string property in providerSpecificPickList)
                         {
-                            if (property != null && property.Length > 0)
+                            if (property is not null && property.Length > 0)
                             {
                                 try
                                 {
                                     PSObject mshObject = PSObject.AsPSObject(fileSystemObject);
                                     PSMemberInfo member = mshObject.Properties[property];
                                     object value;
-                                    if (member != null)
+                                    if (member is not null)
                                     {
                                         value = member.Value;
                                         if (result is null)
@@ -6251,7 +6251,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(new ErrorRecord(accessException, "GetPropertyUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
             }
 
-            if (result != null)
+            if (result is not null)
             {
                 WritePropertyObject(result, path);
             }
@@ -6317,7 +6317,7 @@ namespace Microsoft.PowerShell.Commands
             var fsinfo = GetFileSystemInfo(path, out bool isDirectory);
 
             // Create a PSObject with either a DirectoryInfo or FileInfo object at its core.
-            if (fsinfo != null)
+            if (fsinfo is not null)
             {
                 PSObject fileSystemInfoShell = PSObject.AsPSObject(fsinfo);
 
@@ -6371,7 +6371,7 @@ namespace Microsoft.PowerShell.Commands
                         PSObject mshObject = PSObject.AsPSObject(fileSystemInfoShell);
                         PSMemberInfo member = mshObject.Properties[property.Name];
 
-                        if (member != null)
+                        if (member is not null)
                         {
                             if (string.Equals(property.Name, "attributes", StringComparison.OrdinalIgnoreCase))
                             {
@@ -6609,12 +6609,12 @@ namespace Microsoft.PowerShell.Commands
 
             // Get the dynamic parameters.
             // They override the defaults specified above.
-            if (DynamicParameters != null)
+            if (DynamicParameters is not null)
             {
                 FileSystemContentReaderDynamicParameters dynParams =
                     DynamicParameters as FileSystemContentReaderDynamicParameters;
 
-                if (dynParams != null)
+                if (dynParams is not null)
                 {
                     // -raw is not allowed when -first,-last or -wait is specified
                     // this call will validate that and throws.
@@ -6779,12 +6779,12 @@ namespace Microsoft.PowerShell.Commands
             bool suppressNewline = false;
 
             // Get the dynamic parameters
-            if (DynamicParameters != null)
+            if (DynamicParameters is not null)
             {
                 FileSystemContentWriterDynamicParameters dynParams =
                     DynamicParameters as FileSystemContentWriterDynamicParameters;
 
-                if (dynParams != null)
+                if (dynParams is not null)
                 {
                     usingByteEncoding = dynParams.AsByteStream;
                     streamTypeSpecified = dynParams.WasStreamTypeSpecified;
@@ -6917,20 +6917,20 @@ namespace Microsoft.PowerShell.Commands
                 // We get called during:
                 //     - Clear-Content
                 //     - Set-Content, in the phase that clears the path first.
-                if (DynamicParameters != null)
+                if (DynamicParameters is not null)
                 {
                     dynamicParameters = DynamicParameters as FileSystemClearContentDynamicParameters;
                     writerDynamicParameters = DynamicParameters as FileSystemContentWriterDynamicParameters;
 
-                    if (dynamicParameters != null)
+                    if (dynamicParameters is not null)
                     {
-                        if ((dynamicParameters.Stream != null) && (dynamicParameters.Stream.Length > 0))
+                        if ((dynamicParameters.Stream is not null) && (dynamicParameters.Stream.Length > 0))
                             clearStream = true;
                         streamName = dynamicParameters.Stream;
                     }
-                    else if (writerDynamicParameters != null)
+                    else if (writerDynamicParameters is not null)
                     {
-                        if ((writerDynamicParameters.Stream != null) && (writerDynamicParameters.Stream.Length > 0))
+                        if ((writerDynamicParameters.Stream is not null) && (writerDynamicParameters.Stream.Length > 0))
                             clearStream = true;
                         streamName = writerDynamicParameters.Stream;
                     }
@@ -6969,7 +6969,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // If we've been called as part of Clear-Content, validate that the stream exists.
                         // This is because the core API doesn't support truncate mode.
-                        if (dynamicParameters != null)
+                        if (dynamicParameters is not null)
                         {
                             fileStream = AlternateDataStreamUtilities.CreateFileStream(path, streamName, FileMode.Open, FileAccess.Write, FileShare.Write);
                             fileStream.Dispose();
@@ -7428,7 +7428,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (useFileSystemProviderContext)
             {
-                Dbg.Diagnostics.Assert(fileSystemContext != null, "The caller should verify FileSystemProvider context.");
+                Dbg.Diagnostics.Assert(fileSystemContext is not null, "The caller should verify FileSystemProvider context.");
             }
 
             Collection<Hashtable> output;
@@ -7474,7 +7474,7 @@ namespace Microsoft.PowerShell.Commands
                 if (output.Count != 1 || output[0].GetType() != typeof(Hashtable))
                 {
                     // unexpected output
-                    Dbg.Diagnostics.Assert(output[0] != null, "Expected an output from the remote call.");
+                    Dbg.Diagnostics.Assert(output[0] is not null, "Expected an output from the remote call.");
                     return null;
                 }
 
@@ -8083,7 +8083,7 @@ namespace Microsoft.PowerShell.Commands
         {
             FileSystemInfo fileSysInfo = instance.BaseObject as FileSystemInfo;
 
-            if (fileSysInfo != null)
+            if (fileSysInfo is not null)
             {
                 return InternalGetLinkType(fileSysInfo);
             }
@@ -8422,7 +8422,7 @@ namespace Microsoft.PowerShell.Commands
                         return null;
                 }
 
-                if (targetDir != null && targetDir.StartsWith(NonInterpretedPathPrefix, StringComparison.OrdinalIgnoreCase))
+                if (targetDir is not null && targetDir.StartsWith(NonInterpretedPathPrefix, StringComparison.OrdinalIgnoreCase))
                 {
                     targetDir = targetDir.Substring(NonInterpretedPathPrefix.Length);
                 }

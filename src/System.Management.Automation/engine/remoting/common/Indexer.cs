@@ -39,7 +39,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal Indexer(int[] lengths)
         {
-            Dbg.Assert(lengths != null, "Expected lengths != null");
+            Dbg.Assert(lengths is not null, "Expected lengths is not null");
             _lengths = lengths;
             Dbg.Assert(CheckLengthsNonNegative(lengths), "Expected CheckLengthsNonNegative(lengths)");
             _current = new int[lengths.Length];

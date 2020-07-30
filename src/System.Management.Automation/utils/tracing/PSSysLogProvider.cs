@@ -151,7 +151,7 @@ namespace System.Management.Automation.Tracing
                 StringBuilder payload = PayloadBuilder;
                 payload.Clear();
 
-                if (logContext.CommandType != null)
+                if (logContext.CommandType is not null)
                 {
                     if (logContext.CommandType.Equals(StringLiterals.Script, StringComparison.OrdinalIgnoreCase))
                     {
@@ -185,7 +185,7 @@ namespace System.Management.Automation.Tracing
             StringBuilder payload = PayloadBuilder;
             payload.Clear();
 
-            if (pipelineExecutionDetail != null)
+            if (pipelineExecutionDetail is not null)
             {
                 foreach (string detail in pipelineExecutionDetail)
                 {

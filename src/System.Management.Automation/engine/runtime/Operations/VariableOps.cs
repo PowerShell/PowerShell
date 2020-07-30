@@ -57,7 +57,7 @@ namespace System.Management.Automation
             }
             else
             {
-                if (attributeAsts != null)
+                if (attributeAsts is not null)
                 {
                     // Use bytewise operation directly instead of 'var.IsReadOnly || var.IsConstant' on
                     // a hot path (setting variable with type constraint) to get better performance.
@@ -81,7 +81,7 @@ namespace System.Management.Automation
                             null,
                             Metadata.InvalidValueFailure,
                             var.Name,
-                            ((value != null) ? value.ToString() : "$null"));
+                            ((value is not null) ? value.ToString() : "$null"));
 
                         throw e;
                     }
@@ -130,7 +130,7 @@ namespace System.Management.Automation
             if (executionContext.IsStrictVersion(1))
             {
                 var parent = varAst.Parent;
-                while (parent != null)
+                while (parent is not null)
                 {
                     if (parent is ExpandableStringExpressionAst)
                     {
@@ -187,7 +187,7 @@ namespace System.Management.Automation
             SessionStateScope scope;
             PSVariable var = sessionState.GetVariableItem(variablePath, out scope, origin);
 
-            if (var != null)
+            if (var is not null)
             {
                 return var.Value;
             }
@@ -224,10 +224,10 @@ namespace System.Management.Automation
             }
 
             object value = var.Value;
-            if (staticType is null && value != null)
+            if (staticType is null && value is not null)
             {
                 value = PSObject.Base(value);
-                if (value != null)
+                if (value is not null)
                 {
                     staticType = value.GetType();
                 }
@@ -236,7 +236,7 @@ namespace System.Management.Automation
             if (staticType is null)
             {
                 var declaredType = var.Attributes.OfType<ArgumentTypeConverterAttribute>().FirstOrDefault();
-                staticType = declaredType != null ? declaredType.TargetType : typeof(LanguagePrimitives.Null);
+                staticType = declaredType is not null ? declaredType.TargetType : typeof(LanguagePrimitives.Null);
             }
 
             return PSReference.CreateInstance(var, staticType);
@@ -257,10 +257,10 @@ namespace System.Management.Automation
         {
             var boundParameters =
                 tuple.GetAutomaticVariable(AutomaticVariable.PSBoundParameters) as PSBoundParametersDictionary;
-            if (boundParameters != null)
+            if (boundParameters is not null)
             {
                 var implicitUsingParameters = boundParameters.ImplicitUsingParameters;
-                if (implicitUsingParameters != null)
+                if (implicitUsingParameters is not null)
                 {
                     if (implicitUsingParameters.Contains(usingExpressionKey))
                     {
@@ -285,16 +285,16 @@ namespace System.Management.Automation
         internal static object GetUsingValue(MutableTuple tuple, string usingExpressionKey, int index, ExecutionContext context)
         {
             UsingResult result = GetUsingValueFromTuple(tuple, usingExpressionKey, index);
-            if (result != null)
+            if (result is not null)
             {
                 return result.Value;
             }
 
             var scope = context.EngineSessionState.CurrentScope;
-            while (scope != null)
+            while (scope is not null)
             {
                 result = GetUsingValueFromTuple(scope.LocalsTuple, usingExpressionKey, index);
-                if (result != null)
+                if (result is not null)
                 {
                     return result.Value;
                 }
@@ -302,7 +302,7 @@ namespace System.Management.Automation
                 foreach (var dottedScope in scope.DottedScopes)
                 {
                     result = GetUsingValueFromTuple(dottedScope, usingExpressionKey, index);
-                    if (result != null)
+                    if (result is not null)
                     {
                         return result.Value;
                     }

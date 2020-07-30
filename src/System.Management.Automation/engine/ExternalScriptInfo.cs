@@ -224,7 +224,7 @@ namespace System.Management.Automation
             private set
             {
                 _scriptBlock = value;
-                if (value != null)
+                if (value is not null)
                 {
                     _scriptBlock.LanguageMode = this.DefiningLanguageMode;
                 }
@@ -242,7 +242,7 @@ namespace System.Management.Automation
             if (definingLanguageMode.HasValue && (definingLanguageMode == PSLanguageMode.FullLanguage))
             {
                 var context = LocalPipeline.GetExecutionContextFromTLS();
-                if ((context != null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage))
+                if ((context is not null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage))
                 {
                     context.LanguageMode = PSLanguageMode.FullLanguage;
                     try
@@ -267,7 +267,7 @@ namespace System.Management.Automation
                 this.ScriptBlock = ScriptBlock.TryGetCachedScriptBlock(_path, scriptContents);
             }
 
-            if (_scriptBlock != null)
+            if (_scriptBlock is not null)
             {
                 return (ScriptBlockAst)_scriptBlock.Ast;
             }
@@ -281,7 +281,7 @@ namespace System.Management.Automation
                 // to parse the script contents in FullLanguage mode context.  Otherwise we will get bogus parsing errors
                 // such as "Configuration or Class keyword not allowed".
                 var context = LocalPipeline.GetExecutionContextFromTLS();
-                if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
+                if (context is not null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
                     DefiningLanguageMode == PSLanguageMode.FullLanguage)
                 {
                     context.LanguageMode = PSLanguageMode.FullLanguage;
@@ -326,7 +326,7 @@ namespace System.Management.Automation
                 // to get the CommandMetadata for a script (either to prepopulate the metadata
                 // or creating a proxy).  If context can be null under any other circumstances,
                 // we need to make sure it's acceptable if the parser is invoked on unsigned scripts.
-                if (context != null)
+                if (context is not null)
                 {
                     CommandDiscovery.ShouldRun(context, host, this, CommandOrigin.Internal);
                     _signatureChecked = true;
@@ -536,7 +536,7 @@ namespace System.Management.Automation
                             }
                             else
                             {
-                                if (this.Context != null)
+                                if (this.Context is not null)
                                 {
                                     this.DefiningLanguageMode = this.Context.LanguageMode;
                                 }

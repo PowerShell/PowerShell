@@ -162,12 +162,12 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(argumentName);
             }
 
-            if (SecureKey != null)
+            if (SecureKey is not null)
             {
                 Dbg.Diagnostics.Assert(Key is null, "Only one encryption key should be specified");
                 encryptionResult = SecureStringHelper.Encrypt(SecureString, SecureKey);
             }
-            else if (Key != null)
+            else if (Key is not null)
             {
                 encryptionResult = SecureStringHelper.Encrypt(SecureString, Key);
             }
@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
                 exportedString = SecureStringHelper.Protect(SecureString);
             }
 
-            if (encryptionResult != null)
+            if (encryptionResult is not null)
             {
                 // The formatted string is Algorithm Version,
                 // Initialization Vector, Encrypted Data
@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
                 string encodedString = Convert.ToBase64String(outputBytes);
                 WriteObject(SecureStringHelper.SecureStringExportHeader + encodedString);
             }
-            else if (exportedString != null)
+            else if (exportedString is not null)
             {
                 WriteObject(exportedString);
             }
@@ -346,12 +346,12 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (SecureKey != null)
+                if (SecureKey is not null)
                 {
                     Dbg.Diagnostics.Assert(Key is null, "Only one encryption key should be specified");
                     importedString = SecureStringHelper.Decrypt(encryptedContent, SecureKey, iv);
                 }
-                else if (Key != null)
+                else if (Key is not null)
                 {
                     importedString = SecureStringHelper.Decrypt(encryptedContent, Key, iv);
                 }
@@ -384,7 +384,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(er);
             }
 
-            if (importedString != null)
+            if (importedString is not null)
             {
                 WriteObject(importedString);
             }

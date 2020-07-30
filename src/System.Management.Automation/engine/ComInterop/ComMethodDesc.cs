@@ -61,7 +61,7 @@ namespace System.Management.Automation.ComInterop
         {
             get
             {
-                Debug.Assert(_name != null);
+                Debug.Assert(_name is not null);
                 return _name;
             }
         }

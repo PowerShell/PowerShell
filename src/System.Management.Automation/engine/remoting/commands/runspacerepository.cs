@@ -42,7 +42,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         protected override Guid GetKey(PSSession item)
         {
-            if (item != null)
+            if (item is not null)
             {
                 return item.InstanceId;
             }

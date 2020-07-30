@@ -121,19 +121,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 LocalGroup group = null;
 
-                if (InputObject != null)
+                if (InputObject is not null)
                 {
                     if (CheckShouldProcess(InputObject.ToString()))
                         group = InputObject;
                 }
-                else if (Name != null)
+                else if (Name is not null)
                 {
                     group = sam.GetLocalGroup(Name);
 
                     if (!CheckShouldProcess(Name))
                         group = null;
                 }
-                else if (SID != null)
+                else if (SID is not null)
                 {
                     group = sam.GetLocalGroup(SID);
 
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
                         group = null;
                 }
 
-                if (group != null)
+                if (group is not null)
                 {
                     var delta = group.Clone();
 
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (sam != null)
+            if (sam is not null)
             {
                 sam.Dispose();
                 sam = null;

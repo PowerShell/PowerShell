@@ -98,7 +98,7 @@ namespace System.Management.Automation.Language
             ast.Body.InternalVisit(visitor);
             forceNoOptimizing = visitor._disableOptimizations;
 
-            if (ast.Parameters != null)
+            if (ast.Parameters is not null)
             {
                 visitor.VisitParameters(ast.Parameters);
             }
@@ -213,7 +213,7 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitDataStatement(DataStatementAst dataStatementAst)
         {
-            if (dataStatementAst.Variable != null)
+            if (dataStatementAst.Variable is not null)
             {
                 NoteVariable(dataStatementAst.Variable, VariableAnalysis.Unanalyzed, null);
             }
@@ -273,7 +273,7 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitCommand(CommandAst commandAst)
         {
             var commandName = commandAst.CommandElements[0] as StringConstantExpressionAst;
-            if (commandName != null && s_hashOfPessimizingCmdlets.Contains(commandName.Value))
+            if (commandName is not null && s_hashOfPessimizingCmdlets.Contains(commandName.Value))
             {
                 // TODO: psuedo-bind the command invocation to figure out the variable and only force that variable to be unoptimized
                 _disableOptimizations = true;
@@ -582,7 +582,7 @@ namespace System.Management.Automation.Language
             _variables = FindAllVariablesVisitor.Visit(ast, disableOptimizations, scriptCmdlet, out _localsAllocated, out _disableOptimizations);
             Init();
 
-            if (ast.Parameters != null)
+            if (ast.Parameters is not null)
             {
                 foreach (var parameter in ast.Parameters)
                 {
@@ -671,7 +671,7 @@ namespace System.Management.Automation.Language
                 foreach (var pred in block._predecessors)
                 {
                     // VisitData can be null when the pred occurs because of a continue statement.
-                    if (pred._visitData != null)
+                    if (pred._visitData is not null)
                     {
                         predCount += 1;
                         bitArray.And((BitArray)pred._visitData);
@@ -731,7 +731,7 @@ namespace System.Management.Automation.Language
                 // Automatic variables assign the type directly, not relying on any analysis.  For
                 // all other variables, we don't determine the type of the local until we're done
                 // with the analysis.
-                Diagnostics.Assert(details.Type != null, "Type should be resolved already");
+                Diagnostics.Assert(details.Type is not null, "Type should be resolved already");
             }
 
             var tupleType = MutableTuple.MakeTupleType((from l in orderedLocals select l.Type).ToArray());
@@ -750,7 +750,7 @@ namespace System.Management.Automation.Language
         private static void FixTupleIndex(Ast ast, int newIndex)
         {
             var variableAst = ast as VariableExpressionAst;
-            if (variableAst != null)
+            if (variableAst is not null)
             {
                 if (variableAst.TupleIndex != ForceDynamic)
                 {
@@ -760,7 +760,7 @@ namespace System.Management.Automation.Language
             else
             {
                 var dataStatementAst = ast as DataStatementAst;
-                if (dataStatementAst != null)
+                if (dataStatementAst is not null)
                 {
                     if (dataStatementAst.TupleIndex != ForceDynamic)
                     {
@@ -773,7 +773,7 @@ namespace System.Management.Automation.Language
         private static void FixAssigned(Ast ast, VariableAnalysisDetails details)
         {
             var variableAst = ast as VariableExpressionAst;
-            if (variableAst != null && details.Assigned)
+            if (variableAst is not null && details.Assigned)
             {
                 variableAst.Assigned = true;
             }
@@ -784,7 +784,7 @@ namespace System.Management.Automation.Language
             foreach (var ast in block._asts)
             {
                 var variableExpressionAst = ast as VariableExpressionAst;
-                if (variableExpressionAst != null)
+                if (variableExpressionAst is not null)
                 {
                     var varPath = variableExpressionAst.VariablePath;
                     if (varPath.IsAnyLocal())
@@ -808,9 +808,9 @@ namespace System.Management.Automation.Language
                 }
 
                 var assignmentTarget = ast as AssignmentTarget;
-                if (assignmentTarget != null)
+                if (assignmentTarget is not null)
                 {
-                    if (assignmentTarget._targetAst != null)
+                    if (assignmentTarget._targetAst is not null)
                     {
                         CheckLHSAssign(assignmentTarget._targetAst, assignedBitArray);
                     }
@@ -823,7 +823,7 @@ namespace System.Management.Automation.Language
                 }
 
                 var dataStatementAst = ast as DataStatementAst;
-                if (dataStatementAst != null)
+                if (dataStatementAst is not null)
                 {
                     var details = CheckLHSAssignVar(dataStatementAst.Variable, assignedBitArray, typeof(object));
                     dataStatementAst.TupleIndex = details.LocalTupleIndex;
@@ -839,14 +839,14 @@ namespace System.Management.Automation.Language
         {
             var convertExpr = lhs as ConvertExpressionAst;
             Type convertType = null;
-            if (convertExpr != null)
+            if (convertExpr is not null)
             {
                 lhs = convertExpr.Child;
                 convertType = convertExpr.StaticType;
             }
 
             var varExpr = lhs as VariableExpressionAst;
-            Diagnostics.Assert(varExpr != null, "unexpected ast type on lhs");
+            Diagnostics.Assert(varExpr is not null, "unexpected ast type on lhs");
 
             var varPath = varExpr.VariablePath;
             if (varPath.IsAnyLocal())
@@ -885,7 +885,7 @@ namespace System.Management.Automation.Language
                                                       : _localsAllocated++;
             }
 
-            if (convertType != null && MustBeBoxed(convertType))
+            if (convertType is not null && MustBeBoxed(convertType))
             {
                 analysisDetails.LocalTupleIndex = VariableAnalysis.ForceDynamic;
             }
@@ -904,7 +904,7 @@ namespace System.Management.Automation.Language
                     convertType = typeof(object);
                 }
 
-                if (convertType != null && !convertType.Equals(type))
+                if (convertType is not null && !convertType.Equals(type))
                 {
                     if (analysisDetails.Automatic || analysisDetails.PreferenceVariable)
                     {
@@ -938,22 +938,22 @@ namespace System.Management.Automation.Language
         {
             _currentBlock = _entryBlock;
 
-            if (scriptBlockAst.DynamicParamBlock != null)
+            if (scriptBlockAst.DynamicParamBlock is not null)
             {
                 scriptBlockAst.DynamicParamBlock.Accept(this);
             }
 
-            if (scriptBlockAst.BeginBlock != null)
+            if (scriptBlockAst.BeginBlock is not null)
             {
                 scriptBlockAst.BeginBlock.Accept(this);
             }
 
-            if (scriptBlockAst.ProcessBlock != null)
+            if (scriptBlockAst.ProcessBlock is not null)
             {
                 scriptBlockAst.ProcessBlock.Accept(this);
             }
 
-            if (scriptBlockAst.EndBlock != null)
+            if (scriptBlockAst.EndBlock is not null)
             {
                 scriptBlockAst.EndBlock.Accept(this);
             }
@@ -1053,7 +1053,7 @@ namespace System.Management.Automation.Language
                 _currentBlock = nextBlock;
             }
 
-            if (ifStmtAst.ElseClause != null)
+            if (ifStmtAst.ElseClause is not null)
             {
                 ifStmtAst.ElseClause.Accept(this);
                 _currentBlock.FlowsTo(afterStmt);
@@ -1109,7 +1109,7 @@ namespace System.Management.Automation.Language
 
             Action switchBodyGenerator = () =>
             {
-                bool hasDefault = (switchStatementAst.Default != null);
+                bool hasDefault = (switchStatementAst.Default is not null);
                 Block afterStmt = new Block();
 
                 int clauseCount = switchStatementAst.Clauses.Count;
@@ -1154,7 +1154,7 @@ namespace System.Management.Automation.Language
         public object VisitDataStatement(DataStatementAst dataStatementAst)
         {
             dataStatementAst.Body.Accept(this);
-            if (dataStatementAst.Variable != null)
+            if (dataStatementAst.Variable is not null)
             {
                 _currentBlock.AddAst(dataStatementAst);
             }
@@ -1183,7 +1183,7 @@ namespace System.Management.Automation.Language
 
             var continueBlock = new Block();
 
-            if (continueAction != null)
+            if (continueAction is not null)
             {
                 var blockAfterContinue = new Block();
 
@@ -1207,7 +1207,7 @@ namespace System.Management.Automation.Language
 
             // Condition can be null from an uncommon for loop: for() {}
 
-            if (generateCondition != null)
+            if (generateCondition is not null)
             {
                 generateCondition();
                 _currentBlock.FlowsTo(breakBlock);
@@ -1310,12 +1310,12 @@ namespace System.Management.Automation.Language
 
         public object VisitForStatement(ForStatementAst forStatementAst)
         {
-            if (forStatementAst.Initializer != null)
+            if (forStatementAst.Initializer is not null)
             {
                 forStatementAst.Initializer.Accept(this);
             }
 
-            var generateCondition = forStatementAst.Condition != null
+            var generateCondition = forStatementAst.Condition is not null
                 ? () => forStatementAst.Condition.Accept(this)
                 : (Action)null;
 
@@ -1374,7 +1374,7 @@ namespace System.Management.Automation.Language
                 _currentBlock.FlowsTo(finallyFirstBlock ?? afterTry);
             }
 
-            if (finallyFirstBlock != null)
+            if (finallyFirstBlock is not null)
             {
                 lastBlockInTry.FlowsTo(finallyFirstBlock);
 
@@ -1413,13 +1413,13 @@ namespace System.Management.Automation.Language
         private void BreakOrContinue(ExpressionAst label, Func<LoopGotoTargets, Block> fieldSelector)
         {
             Block targetBlock = null;
-            if (label != null)
+            if (label is not null)
             {
                 label.Accept(this);
                 if (_loopTargets.Count > 0)
                 {
                     var labelStrAst = label as StringConstantExpressionAst;
-                    if (labelStrAst != null)
+                    if (labelStrAst is not null)
                     {
                         targetBlock = (from t in _loopTargets
                                        where t.Label.Equals(labelStrAst.Value, StringComparison.OrdinalIgnoreCase)
@@ -1461,7 +1461,7 @@ namespace System.Management.Automation.Language
 
         private Block ControlFlowStatement(PipelineBaseAst pipelineAst)
         {
-            if (pipelineAst != null)
+            if (pipelineAst is not null)
             {
                 pipelineAst.Accept(this);
             }
@@ -1497,7 +1497,7 @@ namespace System.Management.Automation.Language
         private static IEnumerable<ExpressionAst> GetAssignmentTargets(ExpressionAst expressionAst)
         {
             var parenExpr = expressionAst as ParenExpressionAst;
-            if (parenExpr != null)
+            if (parenExpr is not null)
             {
                 foreach (var e in GetAssignmentTargets(parenExpr.Pipeline.GetPureExpression()))
                 {
@@ -1507,7 +1507,7 @@ namespace System.Management.Automation.Language
             else
             {
                 var arrayLiteral = expressionAst as ArrayLiteralAst;
-                if (arrayLiteral != null)
+                if (arrayLiteral is not null)
                 {
                     foreach (var e in arrayLiteral.Elements.SelectMany(GetAssignmentTargets))
                     {
@@ -1552,7 +1552,7 @@ namespace System.Management.Automation.Language
                     // We don't handle them at all in the variable analysis.
 
                     if (anyAttributes || convertCount > 1 ||
-                        (convertAst != null && convertAst.Type.TypeName.GetReflectionType() is null))
+                        (convertAst is not null && convertAst.Type.TypeName.GetReflectionType() is null))
                     {
                         var varPath = ((VariableExpressionAst)leftAst).VariablePath;
                         if (varPath.IsAnyLocal())
@@ -1635,7 +1635,7 @@ namespace System.Management.Automation.Language
 
         public object VisitCommandParameter(CommandParameterAst commandParameterAst)
         {
-            if (commandParameterAst.Argument != null)
+            if (commandParameterAst.Argument is not null)
             {
                 commandParameterAst.Argument.Accept(this);
             }
@@ -1768,7 +1768,7 @@ namespace System.Management.Automation.Language
         {
             invokeMemberExpressionAst.Expression.Accept(this);
             invokeMemberExpressionAst.Member.Accept(this);
-            if (invokeMemberExpressionAst.Arguments != null)
+            if (invokeMemberExpressionAst.Arguments is not null)
             {
                 foreach (var arg in invokeMemberExpressionAst.Arguments)
                 {

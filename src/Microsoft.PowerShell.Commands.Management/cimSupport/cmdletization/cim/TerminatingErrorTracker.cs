@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             foreach (object cmdletArgument in invocationInfo.BoundParameters.Values)
             {
                 CimInstance[] array = cmdletArgument as CimInstance[];
-                if (array != null)
+                if (array is not null)
                 {
                     int numberOfSessionsAssociatedWithArgument = array
                         .Select(CimCmdletAdapter.GetSessionOfOriginFromCimInstance)
@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
             }
 
-            if (sessionException != null)
+            if (sessionException is not null)
             {
                 MarkSessionAsTerminated(potentiallyBrokenSession, out sessionWasAlreadyTerminated);
                 return sessionException;

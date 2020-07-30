@@ -461,9 +461,9 @@ else
 
             WSManConfigurationOption wsmanOption = transportOption as WSManConfigurationOption;
 
-            if (wsmanOption != null)
+            if (wsmanOption is not null)
             {
-                if (wsmanOption.ProcessIdleTimeoutSec != null && !isUseSharedProcessSpecified)
+                if (wsmanOption.ProcessIdleTimeoutSec is not null && !isUseSharedProcessSpecified)
                 {
                     PSInvalidOperationException ioe = new PSInvalidOperationException(
                         StringUtil.Format(RemotingErrorIdStrings.InvalidConfigurationXMLAttribute, "ProcessIdleTimeoutSec",
@@ -564,9 +564,9 @@ else
                 int errorCountBefore = errorList.Count;
 
                 if (force &&
-                this.Context != null &&
-                this.Context.EngineHostInterface != null &&
-                this.Context.EngineHostInterface.ExternalHost != null &&
+                this.Context is not null &&
+                this.Context.EngineHostInterface is not null &&
+                this.Context.EngineHostInterface.ExternalHost is not null &&
                 this.Context.EngineHostInterface.ExternalHost is System.Management.Automation.Remoting.ServerRemoteHost)
                 {
                     WriteWarning(RemotingErrorIdStrings.WinRMForceRestartWarning);
@@ -589,8 +589,8 @@ else
                                             restartServiceTarget,
                                             restartServiceAction,
                                             restartWSManRequiredForUI,
-                                            runAsCredential != null ? runAsCredential.UserName : null,
-                                            runAsCredential != null ? runAsCredential.Password : null,
+                                            runAsCredential is not null ? runAsCredential.UserName : null,
+                                            runAsCredential is not null ? runAsCredential.Password : null,
                                             AccessMode,
                                             isSddlSpecified,
                                             _configTableSDDL,
@@ -607,7 +607,7 @@ else
 
             // If the file no longer exists then re-copy the configuration file to the dest location after
             // newPluginSb script is run the file no longer exists.
-            if ((srcConfigFilePath != null) && (destConfigFilePath != null) &&
+            if ((srcConfigFilePath is not null) && (destConfigFilePath is not null) &&
                 !File.Exists(destConfigFilePath))
             {
                 try
@@ -676,7 +676,7 @@ else
                 e = nse;
             }
 
-            if (e != null)
+            if (e is not null)
             {
                 throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.NcsCannotDeleteFileAfterInstall,
                                                                  tmpFileName,
@@ -703,7 +703,7 @@ else
             if (File.Exists(tmpFileName))
             {
                 FileInfo destfile = new FileInfo(tmpFileName);
-                if (destfile != null)
+                if (destfile is not null)
                 {
                     try
                     {
@@ -748,7 +748,7 @@ else
                         e = ioe;
                     }
 
-                    if (e != null)
+                    if (e is not null)
                     {
                         throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.NcsCannotDeleteFile,
                                                                          tmpFileName,
@@ -782,7 +782,7 @@ else
                 e = dnfe;
             }
 
-            if (e != null)
+            if (e is not null)
             {
                 throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.NcsCannotWritePluginContent,
                                                                  tmpFileName,
@@ -801,7 +801,7 @@ else
             bool assemblyAndTypeTokensSet = false;
 
             // DISC endpoint
-            if (Path != null)
+            if (Path is not null)
             {
                 ProviderInfo provider = null;
                 PSDriveInfo drive;
@@ -851,7 +851,7 @@ else
                     {
                         try
                         {
-                            if (configTable[ConfigFileConstants.Guid] != null)
+                            if (configTable[ConfigFileConstants.Guid] is not null)
                             {
                                 sessionGuid = Guid.Parse(configTable[ConfigFileConstants.Guid].ToString());
                             }
@@ -913,7 +913,7 @@ else
                         configTable,
                         AccessMode,
                         out error);
-                    if (error != null)
+                    if (error is not null)
                     {
                         WriteError(error);
                     }
@@ -1076,7 +1076,7 @@ else
                 psVersion = PSVersionInfo.PSVersion;
             }
 
-            if (psVersion != null)
+            if (psVersion is not null)
             {
                 initParameters.Append(string.Format(CultureInfo.InvariantCulture,
                     initParamFormat,
@@ -1087,7 +1087,7 @@ else
                 // Calculate MaxPSVersion from PSVersion
                 MaxPSVersion = PSSessionConfigurationCommandUtilities.CalculateMaxPSVersion(psVersion);
 
-                if (MaxPSVersion != null)
+                if (MaxPSVersion is not null)
                 {
                     initParameters.Append(string.Format(CultureInfo.InvariantCulture,
                         initParamFormat,
@@ -1165,7 +1165,7 @@ else
 
             StringBuilder sessionConfigurationData = new StringBuilder();
 
-            if (modulesToImport != null && modulesToImport.Length > 0)
+            if (modulesToImport is not null && modulesToImport.Length > 0)
             {
                 sessionConfigurationData.Append(string.Format(CultureInfo.InvariantCulture,
                                                 initParamFormat,
@@ -1174,7 +1174,7 @@ else
                                                 string.Empty));
             }
 
-            if (sessionTypeOption != null)
+            if (sessionTypeOption is not null)
             {
                 // TODO: This should probably be a terminating exception for Win8
                 string privateData = this.sessionTypeOption.ConstructPrivateData();
@@ -1332,7 +1332,7 @@ else
             // confirm is always true to start with
             confirm = false;
             MshCommandRuntime cmdRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-            if (cmdRuntime != null)
+            if (cmdRuntime is not null)
             {
                 whatIf = cmdRuntime.WhatIf;
                 // take the value of confirm only if it is explicitly set by the user
@@ -1395,7 +1395,7 @@ else
         internal static Version CalculateMaxPSVersion(Version psVersion)
         {
             Version maxPSVersion = null;
-            if (psVersion != null && psVersion.Major == 2)
+            if (psVersion is not null && psVersion.Major == 2)
             {
                 maxPSVersion = new Version(2, 0);
             }
@@ -1408,13 +1408,13 @@ else
         /// </summary>
         internal static string GetModulePathAsString(object[] modulePath)
         {
-            if (modulePath != null && modulePath.Length > 0)
+            if (modulePath is not null && modulePath.Length > 0)
             {
                 StringBuilder sb = new StringBuilder();
                 foreach (object s in modulePath)
                 {
                     var module = s as string;
-                    if (module != null)
+                    if (module is not null)
                     {
                         sb.Append(s);
                         sb.Append(',');
@@ -1422,7 +1422,7 @@ else
                     else
                     {
                         var moduleSpec = s as ModuleSpecification;
-                        if (moduleSpec != null)
+                        if (moduleSpec is not null)
                         {
                             // Double escaping on ModuleSpecification string is required to treat it as a single value along with module names/paths in SessionConfigurationData
                             sb.Append(SecurityElement.Escape(SecurityElement.Escape(moduleSpec.ToString())));
@@ -1445,7 +1445,7 @@ else
         internal static Version ConstructVersionFormatForConfigXml(Version psVersion)
         {
             Version result = null;
-            if (psVersion != null)
+            if (psVersion is not null)
             {
                 result = new Version(psVersion.Major, psVersion.Minor);
             }
@@ -1504,7 +1504,7 @@ else
             PSSessionConfigurationAccessMode accessMode,
             out ErrorRecord error)
         {
-            Dbg.Assert(configTable != null, "configTable input parameter cannot be null.");
+            Dbg.Assert(configTable is not null, "configTable input parameter cannot be null.");
 
             string sddl = string.Empty;
             error = null;
@@ -1562,7 +1562,7 @@ else
 
                     // RequiredGroups
                     string conditionalGroupACE = CreateConditionalACEFromConfig(configTable);
-                    if (conditionalGroupACE != null)
+                    if (conditionalGroupACE is not null)
                     {
                         sddl = UpdateSDDLUsersWithGroupConditional(sddl, conditionalGroupACE);
                     }
@@ -1817,7 +1817,7 @@ else
             //      @{ Or = 'Group1', @{ And = 'Group2','Group3' } }
             //      (Member_of {SID(Group1)} || (Member_of {SID(Group2)} && Member_of {SID(Group3)}))
             object[] values = keyValue as object[];
-            if (values != null)
+            if (values is not null)
             {
                 int count = values.Length;
                 for (int i = 0; i < count;)
@@ -1845,7 +1845,7 @@ else
         {
             // Value to parse can be a single object or an array of objects
             object[] values = inValue as object[];
-            if (values != null)
+            if (values is not null)
             {
                 foreach (object value in values)
                 {
@@ -1864,7 +1864,7 @@ else
         {
             // Single value objects can be either a group name or a new logical hash table
             string groupName = value as string;
-            if (groupName != null)
+            if (groupName is not null)
             {
                 // Resolve group name to SID
                 NTAccount ntAccount = new NTAccount(groupName);
@@ -1874,7 +1874,7 @@ else
             else
             {
                 Hashtable recurseCondition = value as Hashtable;
-                if (recurseCondition != null)
+                if (recurseCondition is not null)
                 {
                     // Recurse to handle logical hash table
                     AddCondition(sb, recurseCondition);
@@ -2352,16 +2352,16 @@ else
             set
             {
                 List<object> modulesToImportList = new List<object>();
-                if (value != null)
+                if (value is not null)
                 {
                     foreach (var s in value)
                     {
                         var hashtable = s as Hashtable;
 
-                        if (hashtable != null)
+                        if (hashtable is not null)
                         {
                             var moduleSpec = new ModuleSpecification(hashtable);
-                            if (moduleSpec != null)
+                            if (moduleSpec is not null)
                             {
                                 modulesToImportList.Add(moduleSpec);
                             }
@@ -2861,7 +2861,7 @@ $args[0] | ForEach-Object {{
 
             string csNotFoundMessageFormat = RemotingErrorIdStrings.CustomShellNotFound;
             object arguments = "*";
-            if (Name != null)
+            if (Name is not null)
             {
                 arguments = Name;
             }
@@ -3261,7 +3261,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
             }
 
             // Populate the configTable hash, and get its SDDL if needed
-            if (Path != null)
+            if (Path is not null)
             {
                 ProviderInfo provider = null;
                 PSDriveInfo drive;
@@ -3278,7 +3278,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                         _configTable,
                         AccessMode,
                         out error);
-                    if (error != null)
+                    if (error is not null)
                     {
                         WriteError(error);
                     }
@@ -3405,7 +3405,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
             }
 
             // Update the PSSC file if there was one
-            if (_configTable != null)
+            if (_configTable is not null)
             {
                 Guid sessionGuid = Guid.Empty;
 
@@ -3563,7 +3563,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
         private void SetQuotas()
         {
-            if (this.transportOption != null)
+            if (this.transportOption is not null)
             {
                 ScriptBlock setQuotasSb = ScriptBlock.Create(
                        string.Format(CultureInfo.InvariantCulture, setSessionConfigurationQuotaSbFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
@@ -3639,7 +3639,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
             setOptionsSb.LanguageMode = PSLanguageMode.FullLanguage;
 
             Hashtable optionsTable
-                = transportOption != null
+                = transportOption is not null
                 ? transportOption.ConstructOptionsAsHashtable()
                 : new Hashtable();
 
@@ -3676,7 +3676,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
         private void SetSessionConfigurationTypeOptions()
         {
-            if (sessionTypeOption != null)
+            if (sessionTypeOption is not null)
             {
                 using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
                 {
@@ -3910,7 +3910,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                             if (unsetModulePath)
                             {
                                 // ModulesToImport exist in the pssessionConfigurationData
-                                if (scd.ModulesToImportInternal != null && scd.ModulesToImportInternal.Count != 0)
+                                if (scd.ModulesToImportInternal is not null && scd.ModulesToImportInternal.Count != 0)
                                 {
                                     sessionConfigurationData.Append(string.Format(CultureInfo.InvariantCulture,
                                         initParamFormat,
@@ -3950,7 +3950,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
             }
 
             // DISC endpoint
-            if (Path != null)
+            if (Path is not null)
             {
                 ProviderInfo provider = null;
                 PSDriveInfo drive;
@@ -4353,7 +4353,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (Name != null)
+            if (Name is not null)
             {
                 foreach (string shell in Name)
                 {
@@ -4592,7 +4592,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (Name != null)
+            if (Name is not null)
             {
                 foreach (string shell in Name)
                 {
@@ -5321,7 +5321,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
             {
                 string configFilePath = null;
                 PSPropertyInfo configFilePathProperty = foundConfiguration.Properties["ConfigFilePath"];
-                if (configFilePathProperty != null)
+                if (configFilePathProperty is not null)
                 {
                     configFilePath = configFilePathProperty.Value as string;
                 }

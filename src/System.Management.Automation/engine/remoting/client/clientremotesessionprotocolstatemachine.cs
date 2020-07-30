@@ -186,7 +186,7 @@ namespace System.Management.Automation.Remoting
 
                 case RemoteSessionEvent.NegotiationReceived:
                     {
-                        Dbg.Assert(eventArgs.RemoteSessionCapability != null,
+                        Dbg.Assert(eventArgs.RemoteSessionCapability is not null,
                             "State can be set to NegotiationReceived only when RemoteSessionCapability is not null");
                         if (eventArgs.RemoteSessionCapability is null)
                         {
@@ -253,7 +253,7 @@ namespace System.Management.Automation.Remoting
                         if (_state == RemoteSessionState.EstablishedAndKeySent)
                         {
                             Timer tmp = Interlocked.Exchange(ref _keyExchangeTimer, null);
-                            if (tmp != null)
+                            if (tmp is not null)
                             {
                                 tmp.Dispose();
                             }
@@ -338,7 +338,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(_state == RemoteSessionState.EstablishedAndKeySent, "timeout should only happen when waiting for a key");
 
             Timer tmp = Interlocked.Exchange(ref _keyExchangeTimer, null);
-            if (tmp != null)
+            if (tmp is not null)
             {
                 tmp.Dispose();
             }
@@ -558,7 +558,7 @@ namespace System.Management.Automation.Remoting
             }
 
             EventHandler<RemoteSessionStateMachineEventArgs> handler = _stateMachineHandle[(int)State, (int)arg.StateEvent];
-            if (handler != null)
+            if (handler is not null)
             {
                 s_trace.WriteLine("Before calling state machine event handler: state = {0}, event = {1}, id = {2}", State, arg.StateEvent, _id);
 

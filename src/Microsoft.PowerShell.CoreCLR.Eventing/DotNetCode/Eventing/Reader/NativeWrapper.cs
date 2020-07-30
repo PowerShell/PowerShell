@@ -678,7 +678,7 @@ namespace System.Diagnostics.Eventing.Reader
 
             using (taskMem)
             {
-                if (val != null)
+                if (val is not null)
                 {
                     switch (enumType)
                     {

@@ -981,7 +981,7 @@ namespace System.Management.Automation
             }
 
             var o = element as PSObject;
-            if (o != null)
+            if (o is not null)
             {
                 element = o.BaseObject;
             }
@@ -1023,7 +1023,7 @@ namespace System.Management.Automation
             {
                 bool failure = true;
                 _promotedType = GetCommonType(minRange.GetType(), maxRange.GetType());
-                if (_promotedType != null)
+                if (_promotedType is not null)
                 {
                     if (LanguagePrimitives.TryConvertTo(minRange, _promotedType, out object minResultValue)
                         && LanguagePrimitives.TryConvertTo(maxRange, _promotedType, out object maxResultValue))
@@ -1059,7 +1059,7 @@ namespace System.Management.Automation
             }
 
             _maxComparable = maxRange as IComparable;
-            Diagnostics.Assert(_maxComparable != null, "maxComparable comes from a type that is IComparable");
+            Diagnostics.Assert(_maxComparable is not null, "maxComparable comes from a type that is IComparable");
 
             // Thanks to the IComparable test above this will not throw. They have the same type and are IComparable.
             if (_minComparable.CompareTo(maxRange) > 0)
@@ -1558,7 +1558,7 @@ namespace System.Management.Automation
             // Because we have a background task to clear the cache by '_validValues = null'
             // we use the local variable to exclude a race condition.
             var validValuesLocal = _validValues;
-            if (validValuesLocal != null)
+            if (validValuesLocal is not null)
             {
                 return validValuesLocal;
             }
@@ -1947,7 +1947,7 @@ namespace System.Management.Automation
                 case ParameterCollectionType.IList:
                 case ParameterCollectionType.ICollectionGeneric:
                     Type elementType = information.ElementType;
-                    isElementValueType = elementType != null && elementType.IsValueType;
+                    isElementValueType = elementType is not null && elementType.IsValueType;
                     return true;
                 default:
                     return false;
@@ -2166,7 +2166,7 @@ namespace System.Management.Automation
             bool trackDataInputSource = true)
         {
             object result = Transform(engineIntrinsics, inputData);
-            if (trackDataInputSource && engineIntrinsics != null)
+            if (trackDataInputSource && engineIntrinsics is not null)
             {
                 ExecutionContext.PropagateInputSource(
                     inputData,

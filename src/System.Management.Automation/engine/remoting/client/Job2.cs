@@ -342,7 +342,7 @@ namespace System.Management.Automation
 #pragma warning disable 56500
             try
             {
-                if (handler != null)
+                if (handler is not null)
                 {
                     handler(this, eventArgs);
                 }
@@ -797,7 +797,7 @@ namespace System.Management.Automation
             if (ChildJobs.Count == 1)
             {
                 Job2 child = ChildJobs[0] as Job2;
-                Dbg.Assert(child != null, "Job is null after initial null check");
+                Dbg.Assert(child is not null, "Job is null after initial null check");
 #pragma warning disable 56500
                 try
                 {
@@ -827,11 +827,11 @@ namespace System.Management.Automation
             EventHandler<AsyncCompletedEventArgs> eventHandler = (object sender, AsyncCompletedEventArgs e) =>
             {
                 var childJob = sender as Job2;
-                Dbg.Assert(childJob != null,
+                Dbg.Assert(childJob is not null,
                            "StartJobCompleted only available on Job2");
                 _tracer.WriteMessage(TraceClassName, "StartJob-Handler", Guid.Empty, this,
                     "Finished starting child job asynchronously, child InstanceId: {0}", childJob.InstanceId.ToString());
-                if (e.Error != null)
+                if (e.Error is not null)
                 {
                     ExecutionError.Add(
                         new ErrorRecord(e.Error,
@@ -855,7 +855,7 @@ namespace System.Management.Automation
 
             foreach (Job2 job in ChildJobs)
             {
-                Dbg.Assert(job != null, "Job is null after initial null check");
+                Dbg.Assert(job is not null, "Job is null after initial null check");
 
                 job.StartJobCompleted += eventHandler;
                 _tracer.WriteMessage(TraceClassName, "StartJob", Guid.Empty, this,
@@ -870,7 +870,7 @@ namespace System.Management.Automation
             completed.WaitOne();
             foreach (Job2 job in ChildJobs)
             {
-                Dbg.Assert(job != null, "Job is null after initial null check");
+                Dbg.Assert(job is not null, "Job is null after initial null check");
 
                 job.StartJobCompleted -= eventHandler;
             }
@@ -915,10 +915,10 @@ namespace System.Management.Automation
             eventHandler = (sender, e) =>
              {
                  var childJob = sender as Job2;
-                 Dbg.Assert(childJob != null, "StartJobCompleted only available on Job2");
+                 Dbg.Assert(childJob is not null, "StartJobCompleted only available on Job2");
                  _tracer.WriteMessage(TraceClassName, "StartJobAsync-Handler", Guid.Empty, this,
                      "Finished starting child job asynchronously, child InstanceId: {0}", childJob.InstanceId.ToString());
-                 if (e.Error != null)
+                 if (e.Error is not null)
                  {
                      ExecutionError.Add(new ErrorRecord(e.Error, "ContainerParentJobStartAsyncError",
                          ErrorCategory.InvalidResult, childJob));
@@ -928,7 +928,7 @@ namespace System.Management.Automation
                  }
 
                  Interlocked.Increment(ref startedChildJobsCount);
-                 Dbg.Assert(eventHandler != null, "Event handler magically disappeared");
+                 Dbg.Assert(eventHandler is not null, "Event handler magically disappeared");
                  childJob.StartJobCompleted -= eventHandler;
 
                  if (startedChildJobsCount == ChildJobs.Count)
@@ -946,7 +946,7 @@ namespace System.Management.Automation
 
             foreach (Job2 job in ChildJobs)
             {
-                Dbg.Assert(job != null, "Job is null after initial null check");
+                Dbg.Assert(job is not null, "Job is null after initial null check");
                 job.StartJobCompleted += eventHandler;
 
                 _tracer.WriteMessage(TraceClassName, "StartJobAsync", Guid.Empty, this,
@@ -982,7 +982,7 @@ namespace System.Management.Automation
             if (ChildJobs.Count == 1)
             {
                 Job2 child = ChildJobs[0] as Job2;
-                Dbg.Assert(child != null, "Job is null after initial null check");
+                Dbg.Assert(child is not null, "Job is null after initial null check");
 #pragma warning disable 56500
                 try
                 {
@@ -1012,15 +1012,15 @@ namespace System.Management.Automation
             EventHandler<AsyncCompletedEventArgs> eventHandler = null;
             foreach (Job2 job in ChildJobs)
             {
-                Dbg.Assert(job != null, "Job is null after initial null check");
+                Dbg.Assert(job is not null, "Job is null after initial null check");
 
                 eventHandler = (object sender, AsyncCompletedEventArgs e) =>
                                             {
                                                 var childJob = sender as Job2;
-                                                Dbg.Assert(childJob != null, "ResumeJobCompleted only available on Job2");
+                                                Dbg.Assert(childJob is not null, "ResumeJobCompleted only available on Job2");
                                                 _tracer.WriteMessage(TraceClassName, "ResumeJob-Handler", Guid.Empty, this,
                                                     "Finished resuming child job asynchronously, child InstanceId: {0}", job.InstanceId.ToString());
-                                                if (e.Error != null)
+                                                if (e.Error is not null)
                                                 {
                                                     ExecutionError.Add(new ErrorRecord(e.Error, "ContainerParentJobResumeError",
                                                         ErrorCategory.InvalidResult, job));
@@ -1045,10 +1045,10 @@ namespace System.Management.Automation
             }
 
             completed.WaitOne();
-            Dbg.Assert(eventHandler != null, "Event handler magically disappeared");
+            Dbg.Assert(eventHandler is not null, "Event handler magically disappeared");
             foreach (Job2 job in ChildJobs)
             {
-                Dbg.Assert(job != null, "Job is null after initial null check");
+                Dbg.Assert(job is not null, "Job is null after initial null check");
 
                 job.ResumeJobCompleted -= eventHandler;
             }
@@ -1079,16 +1079,16 @@ namespace System.Management.Automation
             var resumedChildJobsCount = 0;
             foreach (Job2 job in ChildJobs)
             {
-                Dbg.Assert(job != null, "Job is null after initial null check");
+                Dbg.Assert(job is not null, "Job is null after initial null check");
 
                 EventHandler<AsyncCompletedEventArgs> eventHandler = null;
                 eventHandler = (sender, e) =>
                                         {
                                             var childJob = sender as Job2;
-                                            Dbg.Assert(childJob != null, "ResumeJobCompleted only available on Job2");
+                                            Dbg.Assert(childJob is not null, "ResumeJobCompleted only available on Job2");
                                             _tracer.WriteMessage(TraceClassName, "ResumeJobAsync-Handler", Guid.Empty, this,
                                                 "Finished resuming child job asynchronously, child InstanceId: {0}", job.InstanceId.ToString());
-                                            if (e.Error != null)
+                                            if (e.Error is not null)
                                             {
                                                 ExecutionError.Add(new ErrorRecord(e.Error, "ContainerParentJobResumeAsyncError",
                                                     ErrorCategory.InvalidResult, job));
@@ -1098,7 +1098,7 @@ namespace System.Management.Automation
                                             }
 
                                             Interlocked.Increment(ref resumedChildJobsCount);
-                                            Dbg.Assert(eventHandler != null, "Event handler magically disappeared");
+                                            Dbg.Assert(eventHandler is not null, "Event handler magically disappeared");
                                             childJob.ResumeJobCompleted -= eventHandler;
                                             if (resumedChildJobsCount == ChildJobs.Count)
                                             {
@@ -1222,7 +1222,7 @@ namespace System.Management.Automation
             if (ChildJobs.Count == 1)
             {
                 Job2 child = ChildJobs[0] as Job2;
-                Dbg.Assert(child != null, "Job is null after initial null check");
+                Dbg.Assert(child is not null, "Job is null after initial null check");
 #pragma warning disable 56500
                 try
                 {
@@ -1251,15 +1251,15 @@ namespace System.Management.Automation
             EventHandler<AsyncCompletedEventArgs> eventHandler = null;
             foreach (Job2 job in ChildJobs)
             {
-                Dbg.Assert(job != null, "Job is null after initial null check");
+                Dbg.Assert(job is not null, "Job is null after initial null check");
 
                 eventHandler = (object sender, AsyncCompletedEventArgs e) =>
                                         {
                                             var childJob = sender as Job2;
-                                            Dbg.Assert(childJob != null, "UnblockJobCompleted only available on Job2");
+                                            Dbg.Assert(childJob is not null, "UnblockJobCompleted only available on Job2");
                                             _tracer.WriteMessage(TraceClassName, "UnblockJob-Handler", Guid.Empty, this,
                                                 "Finished unblock child job asynchronously, child InstanceId: {0}", job.InstanceId.ToString());
-                                            if (e.Error != null)
+                                            if (e.Error is not null)
                                             {
                                                 ExecutionError.Add(new ErrorRecord(e.Error, "ContainerParentJobUnblockError",
                                                     ErrorCategory.InvalidResult, childJob));
@@ -1283,10 +1283,10 @@ namespace System.Management.Automation
             }
 
             completed.WaitOne();
-            Dbg.Assert(eventHandler != null, "Event handler magically disappeared");
+            Dbg.Assert(eventHandler is not null, "Event handler magically disappeared");
             foreach (Job2 job in ChildJobs)
             {
-                Dbg.Assert(job != null, "Job is null after initial null check");
+                Dbg.Assert(job is not null, "Job is null after initial null check");
 
                 job.UnblockJobCompleted -= eventHandler;
             }
@@ -1318,16 +1318,16 @@ namespace System.Management.Automation
             int unblockedChildJobsCount = 0;
             foreach (Job2 job in ChildJobs)
             {
-                Dbg.Assert(job != null, "Job is null after initial null check");
+                Dbg.Assert(job is not null, "Job is null after initial null check");
 
                 EventHandler<AsyncCompletedEventArgs> eventHandler = null;
                 eventHandler = (sender, e) =>
                                         {
                                             var childJob = sender as Job2;
-                                            Dbg.Assert(childJob != null, "UnblockJobCompleted only available on Job2");
+                                            Dbg.Assert(childJob is not null, "UnblockJobCompleted only available on Job2");
                                             _tracer.WriteMessage(TraceClassName, "UnblockJobAsync-Handler", Guid.Empty, this,
                                                 "Finished unblock child job asynchronously, child InstanceId: {0}", job.InstanceId.ToString());
-                                            if (e.Error != null)
+                                            if (e.Error is not null)
                                             {
                                                 ExecutionError.Add(new ErrorRecord(e.Error, "ContainerParentJobUnblockError",
                                                     ErrorCategory.InvalidResult, childJob));
@@ -1337,7 +1337,7 @@ namespace System.Management.Automation
                                             }
 
                                             Interlocked.Increment(ref unblockedChildJobsCount);
-                                            Dbg.Assert(eventHandler != null, "Event handler magically disappeared");
+                                            Dbg.Assert(eventHandler is not null, "Event handler magically disappeared");
                                             childJob.UnblockJobCompleted -= eventHandler;
                                             if (unblockedChildJobsCount == ChildJobs.Count)
                                             {
@@ -1390,7 +1390,7 @@ namespace System.Management.Automation
             if (ChildJobs.Count == 1)
             {
                 Job2 child = ChildJobs[0] as Job2;
-                Dbg.Assert(child != null, "Job is null after initial null check");
+                Dbg.Assert(child is not null, "Job is null after initial null check");
 #pragma warning disable 56500
                 try
                 {
@@ -1422,16 +1422,16 @@ namespace System.Management.Automation
             EventHandler<AsyncCompletedEventArgs> eventHandler = null;
             foreach (Job2 job in ChildJobs)
             {
-                Dbg.Assert(job != null, "Job is null after initial null check");
+                Dbg.Assert(job is not null, "Job is null after initial null check");
 
                 eventHandler = (object sender, AsyncCompletedEventArgs e) =>
                 {
                     var childJob = sender as Job2;
-                    Dbg.Assert(childJob != null,
+                    Dbg.Assert(childJob is not null,
                                 "SuspendJobCompleted only available on Job2");
                     _tracer.WriteMessage(TraceClassName, "SuspendJob-Handler", Guid.Empty, this,
                         "Finished suspending child job asynchronously, child InstanceId: {0} force: {1}", job.InstanceId.ToString(), force.ToString());
-                    if (e.Error != null)
+                    if (e.Error is not null)
                     {
                         ExecutionError.Add(new ErrorRecord(e.Error, "ContainerParentJobSuspendError",
                             ErrorCategory.InvalidResult, job));
@@ -1459,10 +1459,10 @@ namespace System.Management.Automation
             }
 
             completed.WaitOne();
-            Dbg.Assert(eventHandler != null, "Event handler magically disappeared");
+            Dbg.Assert(eventHandler is not null, "Event handler magically disappeared");
             foreach (Job2 job in ChildJobs)
             {
-                Dbg.Assert(job != null, "Job is null after initial null check");
+                Dbg.Assert(job is not null, "Job is null after initial null check");
 
                 job.SuspendJobCompleted -= eventHandler;
             }
@@ -1495,16 +1495,16 @@ namespace System.Management.Automation
             var suspendedChildJobsCount = 0;
             foreach (Job2 job in ChildJobs)
             {
-                Dbg.Assert(job != null, "Job is null after initial null check");
+                Dbg.Assert(job is not null, "Job is null after initial null check");
 
                 EventHandler<AsyncCompletedEventArgs> eventHandler = null;
                 eventHandler = (sender, e) =>
                 {
                     var childJob = sender as Job2;
-                    Dbg.Assert(childJob != null, "SuspendJobCompleted only available on Job2");
+                    Dbg.Assert(childJob is not null, "SuspendJobCompleted only available on Job2");
                     _tracer.WriteMessage(TraceClassName, "SuspendJobAsync-Handler", Guid.Empty, this,
                         "Finished suspending child job asynchronously, child InstanceId: {0} force: {1}", job.InstanceId.ToString(), force.ToString());
-                    if (e.Error != null)
+                    if (e.Error is not null)
                     {
                         ExecutionError.Add(new ErrorRecord(e.Error, "ContainerParentJobSuspendAsyncError",
                             ErrorCategory.InvalidResult, job));
@@ -1514,7 +1514,7 @@ namespace System.Management.Automation
                     }
 
                     Interlocked.Increment(ref suspendedChildJobsCount);
-                    Dbg.Assert(eventHandler != null, "Event handler magically disappeared");
+                    Dbg.Assert(eventHandler is not null, "Event handler magically disappeared");
                     childJob.SuspendJobCompleted -= eventHandler;
                     if (suspendedChildJobsCount == ChildJobs.Count)
                     {
@@ -1566,7 +1566,7 @@ namespace System.Management.Automation
             if (ChildJobs.Count == 1)
             {
                 Job2 child = ChildJobs[0] as Job2;
-                Dbg.Assert(child != null, "Job is null after initial null check");
+                Dbg.Assert(child is not null, "Job is null after initial null check");
 #pragma warning disable 56500
                 try
                 {
@@ -1599,16 +1599,16 @@ namespace System.Management.Automation
             EventHandler<AsyncCompletedEventArgs> eventHandler = null;
             foreach (Job2 job in ChildJobs)
             {
-                Dbg.Assert(job != null, "Job is null after initial null check");
+                Dbg.Assert(job is not null, "Job is null after initial null check");
 
                 eventHandler = (object sender, AsyncCompletedEventArgs e) =>
                 {
                     var childJob = sender as Job2;
-                    Dbg.Assert(childJob != null,
+                    Dbg.Assert(childJob is not null,
                                 "StopJobCompleted only available on Job2");
                     _tracer.WriteMessage(TraceClassName, "StopJob-Handler", Guid.Empty, this,
                         "Finished stopping child job asynchronously, child InstanceId: {0}", job.InstanceId.ToString());
-                    if (e.Error != null)
+                    if (e.Error is not null)
                     {
                         ExecutionError.Add(new ErrorRecord(e.Error, "ContainerParentJobStopError",
                             ErrorCategory.InvalidResult, job));
@@ -1636,10 +1636,10 @@ namespace System.Management.Automation
             }
 
             completed.WaitOne();
-            Dbg.Assert(eventHandler != null, "Event handler magically disappeared");
+            Dbg.Assert(eventHandler is not null, "Event handler magically disappeared");
             foreach (Job2 job in ChildJobs)
             {
-                Dbg.Assert(job != null, "Job is null after initial null check");
+                Dbg.Assert(job is not null, "Job is null after initial null check");
 
                 job.StopJobCompleted -= eventHandler;
             }
@@ -1673,16 +1673,16 @@ namespace System.Management.Automation
             int stoppedChildJobsCount = 0;
             foreach (Job2 job in ChildJobs)
             {
-                Dbg.Assert(job != null, "Job is null after initial null check");
+                Dbg.Assert(job is not null, "Job is null after initial null check");
 
                 EventHandler<AsyncCompletedEventArgs> eventHandler = null;
                 eventHandler = (sender, e) =>
                 {
                     var childJob = sender as Job2;
-                    Dbg.Assert(childJob != null, "StopJobCompleted only available on Job2");
+                    Dbg.Assert(childJob is not null, "StopJobCompleted only available on Job2");
                     _tracer.WriteMessage(TraceClassName, "StopJobAsync-Handler", Guid.Empty, this,
                         "Finished stopping child job asynchronously, child InstanceId: {0}", job.InstanceId.ToString());
-                    if (e.Error != null)
+                    if (e.Error is not null)
                     {
                         ExecutionError.Add(new ErrorRecord(e.Error, "ContainerParentJobStopAsyncError",
                             ErrorCategory.InvalidResult, childJob));
@@ -1692,7 +1692,7 @@ namespace System.Management.Automation
                     }
 
                     Interlocked.Increment(ref stoppedChildJobsCount);
-                    Dbg.Assert(eventHandler != null, "Event handler magically disappeared");
+                    Dbg.Assert(eventHandler is not null, "Event handler magically disappeared");
                     childJob.StopJobCompleted -= eventHandler;
                     if (stoppedChildJobsCount == ChildJobs.Count)
                     {
@@ -1733,7 +1733,7 @@ namespace System.Management.Automation
                             JobRunning.Set();
 
                             // Do not create the event if it doesn't already exist. Suspend may never be called.
-                            if (_jobSuspendedOrAborted != null)
+                            if (_jobSuspendedOrAborted is not null)
                                 JobSuspendedOrAborted.Reset();
                         }
                     }
@@ -2022,10 +2022,10 @@ namespace System.Management.Automation
                     job.Dispose();
                 }
 
-                if (_jobRunning != null)
+                if (_jobRunning is not null)
                     _jobRunning.Dispose();
 
-                if (_jobSuspendedOrAborted != null)
+                if (_jobSuspendedOrAborted is not null)
                     _jobSuspendedOrAborted.Dispose();
             }
             finally

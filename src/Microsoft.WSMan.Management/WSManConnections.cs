@@ -254,7 +254,7 @@ namespace Microsoft.WSMan.Management
         protected override void BeginProcessing()
         {
             WSManHelper helper = new WSManHelper(this);
-            if (connectionuri != null)
+            if (connectionuri is not null)
             {
                 try
                 {
@@ -362,7 +362,7 @@ namespace Microsoft.WSMan.Management
             }
 
             object _ws = helper.RemoveFromDictionary(computername);
-            if (_ws != null)
+            if (_ws is not null)
             {
                 Dispose(_ws);
             }

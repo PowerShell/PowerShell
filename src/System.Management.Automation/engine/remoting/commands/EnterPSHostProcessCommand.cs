@@ -212,7 +212,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing()
         {
             RemoteRunspace connectingRunspace = _connectingRemoteRunspace;
-            if (connectingRunspace != null)
+            if (connectingRunspace is not null)
             {
                 connectingRunspace.AbortOpen();
             }
@@ -250,9 +250,9 @@ namespace Microsoft.PowerShell.Commands
             catch (RuntimeException e)
             {
                 // Unwrap inner exception for original error message, if any.
-                string errorMessage = (e.InnerException != null) ? (e.InnerException.Message ?? string.Empty) : string.Empty;
+                string errorMessage = (e.InnerException is not null) ? (e.InnerException.Message ?? string.Empty) : string.Empty;
 
-                if (connectionInfo.CustomPipeName != null)
+                if (connectionInfo.CustomPipeName is not null)
                 {
                     ThrowTerminatingError(
                         new ErrorRecord(
@@ -653,7 +653,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (int.TryParse(idString, out id))
                                 {
                                     // Filter on provided proc Ids.
-                                    if (procIds != null)
+                                    if (procIds is not null)
                                     {
                                         bool found = false;
                                         foreach (int procId in procIds)

@@ -286,9 +286,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
             GetCimInstanceCommand cmd = cmdlet as GetCimInstanceCommand;
-            if (cmd != null)
+            if (cmd is not null)
             {
-                if (cmd.QueryDialect != null || cmd.SelectProperties != null || cmd.Filter != null)
+                if (cmd.QueryDialect is not null || cmd.SelectProperties is not null || cmd.Filter is not null)
                 {
                     return true;
                 }
@@ -301,7 +301,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
             GetCimInstanceCommand cmd = cmdlet as GetCimInstanceCommand;
-            if (cmd != null)
+            if (cmd is not null)
             {
                 StringBuilder propertyList = new StringBuilder();
                 if (cmd.SelectProperties is null)
@@ -385,7 +385,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 proxy.KeyOnly = getCimInstance.KeyOnly;
                 proxy.Shallow = getCimInstance.Shallow;
                 proxy.OperationTimeout = getCimInstance.OperationTimeoutSec;
-                if (getCimInstance.ResourceUri != null)
+                if (getCimInstance.ResourceUri is not null)
                 {
                     proxy.ResourceUri = getCimInstance.ResourceUri;
                 }
@@ -394,7 +394,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 RemoveCimInstanceCommand removeCimInstance = cmdlet as RemoveCimInstanceCommand;
                 proxy.OperationTimeout = removeCimInstance.OperationTimeoutSec;
-                if (removeCimInstance.ResourceUri != null)
+                if (removeCimInstance.ResourceUri is not null)
                 {
                     proxy.ResourceUri = removeCimInstance.ResourceUri;
                 }
@@ -408,7 +408,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 SetCimInstanceCommand setCimInstance = cmdlet as SetCimInstanceCommand;
                 proxy.OperationTimeout = setCimInstance.OperationTimeoutSec;
-                if (setCimInstance.ResourceUri != null)
+                if (setCimInstance.ResourceUri is not null)
                 {
                     proxy.ResourceUri = setCimInstance.ResourceUri;
                 }
@@ -518,7 +518,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cmdlet"></param>
         private void SetPreProcess(CimSessionProxy proxy, GetCimInstanceCommand cmdlet)
         {
-            if (cmdlet.KeyOnly || (cmdlet.SelectProperties != null))
+            if (cmdlet.KeyOnly || (cmdlet.SelectProperties is not null))
             {
                 proxy.ObjectPreProcess = new FormatPartialCimInstance();
             }

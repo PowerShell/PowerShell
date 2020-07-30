@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 string outFilename = Host.UI.StopTranscribing();
-                if (outFilename != null)
+                if (outFilename is not null)
                 {
                     PSObject outputObject = new PSObject(
                         StringUtil.Format(TranscriptStrings.TranscriptionStopped, outFilename));

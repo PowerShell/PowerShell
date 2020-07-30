@@ -171,7 +171,7 @@ namespace System.Management.Automation
 
             SetValueRawImpl(value, true);
 
-            if (attributes != null)
+            if (attributes is not null)
             {
                 foreach (Attribute attribute in attributes)
                 {
@@ -224,10 +224,10 @@ namespace System.Management.Automation
 
         internal void DebuggerCheckVariableRead()
         {
-            var context = SessionState != null
+            var context = SessionState is not null
                               ? SessionState.ExecutionContext
                               : LocalPipeline.GetExecutionContextFromTLS();
-            if (context != null && context._debuggingMode > 0)
+            if (context is not null && context._debuggingMode > 0)
             {
                 context.Debugger.CheckVariableRead(Name);
             }
@@ -235,10 +235,10 @@ namespace System.Management.Automation
 
         internal void DebuggerCheckVariableWrite()
         {
-            var context = SessionState != null
+            var context = SessionState is not null
                               ? SessionState.ExecutionContext
                               : LocalPipeline.GetExecutionContextFromTLS();
-            if (context != null && context._debuggingMode > 0)
+            if (context is not null && context._debuggingMode > 0)
             {
                 context.Debugger.CheckVariableWrite(Name);
             }
@@ -292,7 +292,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Module != null)
+                if (Module is not null)
                     return Module.Name;
                 return string.Empty;
             }
@@ -412,7 +412,7 @@ namespace System.Management.Automation
 
         internal static bool IsValidValue(IEnumerable<Attribute> attributes, object value)
         {
-            if (attributes != null)
+            if (attributes is not null)
             {
                 foreach (Attribute attribute in attributes)
                 {
@@ -443,7 +443,7 @@ namespace System.Management.Automation
             bool result = true;
 
             ValidateArgumentsAttribute validationAttribute = attribute as ValidateArgumentsAttribute;
-            if (validationAttribute != null)
+            if (validationAttribute is not null)
             {
                 try
                 {
@@ -452,7 +452,7 @@ namespace System.Management.Automation
                     ExecutionContext context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
                     EngineIntrinsics engine = null;
 
-                    if (context != null)
+                    if (context is not null)
                     {
                         engine = context.EngineIntrinsics;
                     }
@@ -486,7 +486,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static object TransformValue(IEnumerable<Attribute> attributes, object value)
         {
-            Diagnostics.Assert(attributes != null, "caller to verify attributes is not null");
+            Diagnostics.Assert(attributes is not null, "caller to verify attributes is not null");
 
             object result = value;
 
@@ -495,7 +495,7 @@ namespace System.Management.Automation
             ExecutionContext context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
             EngineIntrinsics engine = null;
 
-            if (context != null)
+            if (context is not null)
             {
                 engine = context.EngineIntrinsics;
             }
@@ -504,7 +504,7 @@ namespace System.Management.Automation
             {
                 ArgumentTransformationAttribute transformationAttribute =
                     attribute as ArgumentTransformationAttribute;
-                if (transformationAttribute != null)
+                if (transformationAttribute is not null)
                 {
                     result = transformationAttribute.TransformInternal(engine, result);
                 }
@@ -641,7 +641,7 @@ namespace System.Management.Automation
 
             // Now perform all ArgumentTransformations that are needed
             object transformedValue = value;
-            if (_attributes != null && _attributes.Count > 0)
+            if (_attributes is not null && _attributes.Count > 0)
             {
                 transformedValue = TransformValue(_attributes, value);
 
@@ -654,13 +654,13 @@ namespace System.Management.Automation
                         null,
                         Metadata.InvalidValueFailure,
                         Name,
-                        ((transformedValue != null) ? transformedValue.ToString() : "$null"));
+                        ((transformedValue is not null) ? transformedValue.ToString() : "$null"));
 
                     throw e;
                 }
             }
 
-            if (transformedValue != null)
+            if (transformedValue is not null)
             {
                 transformedValue = CopyMutableValues(transformedValue);
             }
@@ -699,7 +699,7 @@ namespace System.Management.Automation
         {
             if (!this.IsConstant)
             {
-                if (_value != null)
+                if (_value is not null)
                 {
                     _value = PSObject.AsPSObject(_value);
                 }
@@ -723,10 +723,10 @@ namespace System.Management.Automation
                 return value;
 
             PSObject valueAsPSObject = value as PSObject;
-            if (valueAsPSObject != null)
+            if (valueAsPSObject is not null)
             {
                 object baseObject = valueAsPSObject.BaseObject;
-                if (baseObject != null)
+                if (baseObject is not null)
                 {
                     valueType = baseObject.GetType();
                     if (valueType.IsValueType && !valueType.IsPrimitive)

@@ -124,7 +124,7 @@ namespace System.Management.Automation
                     }
 
                     IEnumerable enumerable = LanguagePrimitives.GetEnumerable(entry.Value);
-                    if (enumerable != null)
+                    if (enumerable is not null)
                     {
                         foreach (object obj in enumerable)
                         {

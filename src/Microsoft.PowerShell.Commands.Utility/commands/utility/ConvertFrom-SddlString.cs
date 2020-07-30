@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
             List<string> foundAccessRightNames = new List<string>();
             HashSet<int> foundAccessRightValues = new HashSet<int>();
 
-            if (typeName != null)
+            if (typeName is not null)
             {
                 typesToExamine.Add(GetRealAccessRightType(typeName.Value));
             }

@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            if (Path != null)
+            if (Path is not null)
             {
                 return InvokeProvider.Property.RenamePropertyDynamicParameters(Path, Name, NewName, context);
             }
