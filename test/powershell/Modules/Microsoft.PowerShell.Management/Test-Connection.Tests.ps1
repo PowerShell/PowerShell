@@ -105,7 +105,7 @@ Describe "Test-Connection" -tags "CI" {
             $error[0].Exception.InnerException.ErrorCode | Should -Be $code
         }
 
-        It "Force IPv4 with implicit PingOptions" {
+        It "Force IPv4 with implicit PingOptions" -Pending {
             $result = Test-Connection $testAddress -Count 1 -IPv4
 
             $result[0].Address | Should -BeExactly $testAddress
@@ -116,7 +116,7 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         # In VSTS, address is 0.0.0.0
-        It "Force IPv4 with explicit PingOptions" {
+        It "Force IPv4 with explicit PingOptions" -Pending {
             $result1 = Test-Connection $testAddress -Count 1 -IPv4 -MaxHops 10 -DontFragment
 
             # explicitly go to google dns. this test will pass even if the destination is unreachable
@@ -259,7 +259,7 @@ Describe "Test-Connection" -tags "CI" {
     Context "MTUSizeDetect" {
         # We skip the MtuSize detection tests when in containers, as the environments throw raw exceptions
         # instead of returning a PacketTooBig response cleanly.
-        It "MTUSizeDetect works" -Pending:($env:__INCONTAINER -eq 1) {
+        It "MTUSizeDetect works" -Pending:($true -or $env:__INCONTAINER -eq 1) {
             $result = Test-Connection $testAddress -MtuSize
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
@@ -268,7 +268,7 @@ Describe "Test-Connection" -tags "CI" {
             $result.MtuSize | Should -BeGreaterThan 0
         }
 
-        It "Quiet works" -Pending:($env:__INCONTAINER -eq 1) {
+        It "Quiet works" -Pending:($true -or $env:__INCONTAINER -eq 1) {
             $result = Test-Connection $gatewayAddress -MtuSize -Quiet
 
             $result | Should -BeOfType Int32
