@@ -277,7 +277,7 @@ Describe "Test-Connection" -tags "CI" {
     }
 
     Context "TraceRoute" {
-        It "TraceRoute works" {
+        It "TraceRoute works" -Pending {
             # real address is an ipv4 address, so force IPv4
             $result = Test-Connection $testAddress -TraceRoute -IPv4
 
