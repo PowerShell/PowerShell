@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         /// -->
         protected override PSDriveInfo NewDrive(PSDriveInfo drive)
         {
-            if (drive is null)
+            if (drive == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
 
-                if (GetHiveRoot(root) is null)
+                if (GetHiveRoot(root) == null)
                 {
                     result = false;
                 }
@@ -225,7 +225,7 @@ namespace Microsoft.PowerShell.Commands
 
             IRegistryWrapper result = GetRegkeyForPathWriteIfError(path, false);
 
-            if (result is null)
+            if (result == null)
             {
                 return;
             }
@@ -271,7 +271,7 @@ namespace Microsoft.PowerShell.Commands
 
                 IRegistryWrapper key = GetRegkeyForPathWriteIfError(path, true);
 
-                if (key is null)
+                if (key == null)
                 {
                     return;
                 }
@@ -434,7 +434,7 @@ namespace Microsoft.PowerShell.Commands
 
                 IRegistryWrapper key = GetRegkeyForPathWriteIfError(path, true);
 
-                if (key is null)
+                if (key == null)
                 {
                     return;
                 }
@@ -531,7 +531,7 @@ namespace Microsoft.PowerShell.Commands
         {
             s_tracer.WriteLine("recurse = {0}, depth = {1}", recurse, depth);
 
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -557,7 +557,7 @@ namespace Microsoft.PowerShell.Commands
 
                 IRegistryWrapper key = GetRegkeyForPathWriteIfError(path, false);
 
-                if (key is null)
+                if (key == null)
                 {
                     return;
                 }
@@ -678,7 +678,7 @@ namespace Microsoft.PowerShell.Commands
             string path,
             ReturnContainers returnContainers)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -704,7 +704,7 @@ namespace Microsoft.PowerShell.Commands
 
                 IRegistryWrapper key = GetRegkeyForPathWriteIfError(path, false);
 
-                if (key is null)
+                if (key == null)
                 {
                     return;
                 }
@@ -999,7 +999,7 @@ namespace Microsoft.PowerShell.Commands
                 // Get the key at the specified path
                 IRegistryWrapper key = GetRegkeyForPathWriteIfError(parentPath, true);
 
-                if (key is null)
+                if (key == null)
                 {
                     return;
                 }
@@ -1114,7 +1114,7 @@ namespace Microsoft.PowerShell.Commands
 
             IRegistryWrapper key = GetRegkeyForPathWriteIfError(parentPath, true);
 
-            if (key is null)
+            if (key == null)
             {
                 return;
             }
@@ -1184,7 +1184,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = false;
 
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -1238,7 +1238,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = false;
 
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -1311,7 +1311,7 @@ namespace Microsoft.PowerShell.Commands
 
             IRegistryWrapper key = GetRegkeyForPathWriteIfError(path, false);
 
-            if (key is null)
+            if (key == null)
             {
                 return;
             }
@@ -1389,7 +1389,7 @@ namespace Microsoft.PowerShell.Commands
             string destinationName = GetChildName(path);
             string destinationParent = destination;
 
-            if (newParentKey is null)
+            if (newParentKey == null)
             {
                 destinationParent = GetParentPath(destination, null);
                 destinationName = GetChildName(destination);
@@ -1397,7 +1397,7 @@ namespace Microsoft.PowerShell.Commands
                 newParentKey = GetRegkeyForPathWriteIfError(destinationParent, true);
             }
 
-            if (newParentKey is null)
+            if (newParentKey == null)
             {
                 // The key was not found.
                 // An error should have been written by GetRegkeyForPathWriteIfError
@@ -1584,7 +1584,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         protected override bool IsItemContainer(string path)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -1678,7 +1678,7 @@ namespace Microsoft.PowerShell.Commands
 
             IRegistryWrapper key = GetRegkeyForPathWriteIfError(path, false);
 
-            if (key is null)
+            if (key == null)
             {
                 return;
             }
@@ -1783,7 +1783,7 @@ namespace Microsoft.PowerShell.Commands
             string path,
             Collection<string> providerSpecificPickList)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -1802,7 +1802,7 @@ namespace Microsoft.PowerShell.Commands
                                             false,
                                             out key,
                                             out filteredPropertyCollection);
-            if (key is null)
+            if (key == null)
             {
                 return;
             }
@@ -1851,7 +1851,7 @@ namespace Microsoft.PowerShell.Commands
             string path,
             PSObject propertyValue)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -1861,14 +1861,14 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (propertyValue is null)
+            if (propertyValue == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(propertyValue));
             }
 
             IRegistryWrapper key = GetRegkeyForPathWriteIfError(path, true);
 
-            if (key is null)
+            if (key == null)
             {
                 return;
             }
@@ -1976,7 +1976,7 @@ namespace Microsoft.PowerShell.Commands
             string path,
             Collection<string> propertyToClear)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -1995,7 +1995,7 @@ namespace Microsoft.PowerShell.Commands
                                             true,
                                             out key,
                                             out filteredPropertyCollection);
-            if (key is null)
+            if (key == null)
             {
                 return;
             }
@@ -2120,7 +2120,7 @@ namespace Microsoft.PowerShell.Commands
             string type,
             object value)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -2132,7 +2132,7 @@ namespace Microsoft.PowerShell.Commands
 
             IRegistryWrapper key = GetRegkeyForPathWriteIfError(path, true);
 
-            if (key is null)
+            if (key == null)
             {
                 return;
             }
@@ -2164,7 +2164,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Check to see if the property already exists
                     // or overwrite if frce is on
-                    if (Force || key.GetValue(propertyName) is null)
+                    if (Force || key.GetValue(propertyName) == null)
                     {
                         // Create the value
                         SetRegistryValue(key, propertyName, value, kind, path);
@@ -2232,7 +2232,7 @@ namespace Microsoft.PowerShell.Commands
             string path,
             string propertyName)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -2244,7 +2244,7 @@ namespace Microsoft.PowerShell.Commands
 
             IRegistryWrapper key = GetRegkeyForPathWriteIfError(path, true);
 
-            if (key is null)
+            if (key == null)
             {
                 return;
             }
@@ -2335,7 +2335,7 @@ namespace Microsoft.PowerShell.Commands
             string sourceProperty,
             string destinationProperty)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -2347,7 +2347,7 @@ namespace Microsoft.PowerShell.Commands
 
             IRegistryWrapper key = GetRegkeyForPathWriteIfError(path, true);
 
-            if (key is null)
+            if (key == null)
             {
                 return;
             }
@@ -2424,12 +2424,12 @@ namespace Microsoft.PowerShell.Commands
             string destinationPath,
             string destinationProperty)
         {
-            if (sourcePath is null)
+            if (sourcePath == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sourcePath));
             }
 
-            if (destinationPath is null)
+            if (destinationPath == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationPath));
             }
@@ -2441,13 +2441,13 @@ namespace Microsoft.PowerShell.Commands
 
             IRegistryWrapper key = GetRegkeyForPathWriteIfError(sourcePath, false);
 
-            if (key is null)
+            if (key == null)
             {
                 return;
             }
 
             IRegistryWrapper destinationKey = GetRegkeyForPathWriteIfError(destinationPath, true);
-            if (destinationKey is null)
+            if (destinationKey == null)
             {
                 return;
             }
@@ -2524,12 +2524,12 @@ namespace Microsoft.PowerShell.Commands
             string destinationPath,
             string destinationProperty)
         {
-            if (sourcePath is null)
+            if (sourcePath == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sourcePath));
             }
 
-            if (destinationPath is null)
+            if (destinationPath == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationPath));
             }
@@ -2541,13 +2541,13 @@ namespace Microsoft.PowerShell.Commands
 
             IRegistryWrapper key = GetRegkeyForPathWriteIfError(sourcePath, true);
 
-            if (key is null)
+            if (key == null)
             {
                 return;
             }
 
             IRegistryWrapper destinationKey = GetRegkeyForPathWriteIfError(destinationPath, true);
-            if (destinationKey is null)
+            if (destinationKey == null)
             {
                 return;
             }
@@ -2985,14 +2985,14 @@ namespace Microsoft.PowerShell.Commands
             filteredCollection = new Collection<string>();
             key = GetRegkeyForPathWriteIfError(path, writeAccess);
 
-            if (key is null)
+            if (key == null)
             {
                 return;
             }
 
             // If properties were not specified, get all the values
 
-            if (propertyNames is null)
+            if (propertyNames == null)
             {
                 propertyNames = new Collection<string>();
             }
@@ -3197,7 +3197,7 @@ namespace Microsoft.PowerShell.Commands
         private bool IsHiveContainer(string path)
         {
             bool result = false;
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -3357,7 +3357,7 @@ namespace Microsoft.PowerShell.Commands
 
                 IRegistryWrapper rootKey = GetHiveRoot(keyRoot);
 
-                if (remainingPath.Length == 0 || rootKey is null)
+                if (remainingPath.Length == 0 || rootKey == null)
                 {
                     throw PSTraceSource.NewArgumentException(nameof(path));
                 }
@@ -3439,7 +3439,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = GetRegkeyForPath(path, writeAccess);
 
-                if (result is null)
+                if (result == null)
                 {
                     // The key was not found, write out an error.
 
@@ -3543,7 +3543,7 @@ namespace Microsoft.PowerShell.Commands
 
                 IRegistryWrapper resultRoot = GetHiveRoot(keyRoot);
 
-                if (remainingPath.Length == 0 || resultRoot is null)
+                if (remainingPath.Length == 0 || resultRoot == null)
                 {
                     result = resultRoot;
                     break;
@@ -3559,7 +3559,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // If we could not open the key, see if we can find the subkey that matches.
-                if (result is null)
+                if (result == null)
                 {
                     IRegistryWrapper currentKey = resultRoot;
                     IRegistryWrapper tempKey = null;
@@ -3894,7 +3894,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Corresponding RegistryValueKind.</returns>
         private static RegistryValueKind GetValueKindFromObject(object value)
         {
-            if (value is null)
+            if (value == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(value));
             }
@@ -4004,7 +4004,7 @@ namespace Microsoft.PowerShell.Commands
             IRegistryWrapper key,
             string path)
         {
-            if (key is null)
+            if (key == null)
             {
                 Dbg.Diagnostics.Assert(
                     key != null,

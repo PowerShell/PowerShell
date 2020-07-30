@@ -267,7 +267,7 @@ namespace System.Management.Automation
         internal void SendApplicationPrivateDataToClient()
         {
             // Include Debug mode information.
-            if (_applicationPrivateData is null)
+            if (_applicationPrivateData == null)
             {
                 _applicationPrivateData = new PSPrimitiveDictionary();
             }
@@ -382,7 +382,7 @@ namespace System.Management.Automation
         /// </summary>
         public void EnterNestedPipeline()
         {
-            if (_driverNestedInvoker is null)
+            if (_driverNestedInvoker == null)
             {
                 throw new PSNotSupportedException(RemotingErrorIdStrings.NestedPipelineNotSupported);
             }
@@ -396,7 +396,7 @@ namespace System.Management.Automation
         /// </summary>
         public void ExitNestedPipeline()
         {
-            if (_driverNestedInvoker is null)
+            if (_driverNestedInvoker == null)
             {
                 throw new PSNotSupportedException(RemotingErrorIdStrings.NestedPipelineNotSupported);
             }
@@ -455,7 +455,7 @@ namespace System.Management.Automation
         private void SetupRemoteDebugger(Runspace runspace)
         {
             CmdletInfo cmdletInfo = runspace.ExecutionContext.SessionState.InvokeCommand.GetCmdlet(ServerRemoteDebugger.SetPSBreakCommandText);
-            if (cmdletInfo is null)
+            if (cmdletInfo == null)
             {
                 if ((runspace.ExecutionContext.LanguageMode != PSLanguageMode.FullLanguage) &&
                     (!runspace.ExecutionContext.UseFullLanguageModeInDebugger))
@@ -1134,7 +1134,7 @@ namespace System.Management.Automation
         private bool ResetRunspaceState()
         {
             LocalRunspace runspaceToReset = _rsToUseForSteppablePipeline as LocalRunspace;
-            if ((runspaceToReset is null) || (RunspacePool.GetMaxRunspaces() > 1))
+            if ((runspaceToReset == null) || (RunspacePool.GetMaxRunspaces() > 1))
             {
                 return false;
             }
@@ -1310,7 +1310,7 @@ namespace System.Management.Automation
                     return PreProcessCommandResult.ValidNotProcessed;
                 }
 
-                if ((command.Parameters is null) || (command.Parameters.Count == 0) ||
+                if ((command.Parameters == null) || (command.Parameters.Count == 0) ||
                     (!command.Parameters[0].Name.Equals("ResumeAction", StringComparison.OrdinalIgnoreCase)))
                 {
                     throw new PSArgumentException("ResumeAction");
@@ -1338,7 +1338,7 @@ namespace System.Management.Automation
                 // __Set-PSDebugMode private virtual command.
                 // DebugModes enum input parameter.
                 // Returns void.
-                if ((command.Parameters is null) || (command.Parameters.Count == 0) ||
+                if ((command.Parameters == null) || (command.Parameters.Count == 0) ||
                     (!command.Parameters[0].Name.Equals("Mode", StringComparison.OrdinalIgnoreCase)))
                 {
                     throw new PSArgumentException("Mode");
@@ -1366,7 +1366,7 @@ namespace System.Management.Automation
                 // __Set-PSDebuggerStepMode private virtual command.
                 // Boolean Enabled input parameter.
                 // Returns void.
-                if ((command.Parameters is null) || (command.Parameters.Count == 0) ||
+                if ((command.Parameters == null) || (command.Parameters.Count == 0) ||
                    (!command.Parameters[0].Name.Equals("Enabled", StringComparison.OrdinalIgnoreCase)))
                 {
                     throw new PSArgumentException("Enabled");
@@ -1381,7 +1381,7 @@ namespace System.Management.Automation
                 // __Set-PSUnhandledBreakpointMode private virtual command.
                 // UnhandledBreakpointMode input parameter.
                 // Returns void.
-                if ((command.Parameters is null) || (command.Parameters.Count == 0) ||
+                if ((command.Parameters == null) || (command.Parameters.Count == 0) ||
                    (!command.Parameters[0].Name.Equals("UnhandledBreakpointMode", StringComparison.OrdinalIgnoreCase)))
                 {
                     throw new PSArgumentException("UnhandledBreakpointMode");
@@ -1434,7 +1434,7 @@ namespace System.Management.Automation
                 // Returns Breakpoint object(s).
                 TryGetParameter<Breakpoint>(command, "Breakpoint", out Breakpoint breakpoint);
                 TryGetParameter<ArrayList>(command, "BreakpointList", out ArrayList breakpoints);
-                if (breakpoint is null && breakpoints is null)
+                if (breakpoint == null && breakpoints == null)
                 {
                     throw new PSArgumentException(DebuggerStrings.BreakpointOrBreakpointListNotSpecified);
                 }
@@ -1484,7 +1484,7 @@ namespace System.Management.Automation
 
                 Breakpoint breakpoint = serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId);
                 preProcessOutput.Add(
-                    breakpoint is null
+                    breakpoint == null
                         ? false
                         : serverRemoteDebugger.RemoveBreakpoint(breakpoint, runspaceId));
 
@@ -1834,17 +1834,17 @@ namespace System.Management.Automation
             Runspace runspace,
             Debugger debugger)
         {
-            if (driverInvoker is null)
+            if (driverInvoker == null)
             {
                 throw new PSArgumentNullException(nameof(driverInvoker));
             }
 
-            if (runspace is null)
+            if (runspace == null)
             {
                 throw new PSArgumentNullException(nameof(runspace));
             }
 
-            if (debugger is null)
+            if (debugger == null)
             {
                 throw new PSArgumentNullException(nameof(debugger));
             }
@@ -2002,7 +2002,7 @@ namespace System.Management.Automation
                     StringUtil.Format(DebuggerStrings.CannotProcessDebuggerCommandNotStopped));
             }
 
-            if (_processCommandCompleteEvent is null)
+            if (_processCommandCompleteEvent == null)
             {
                 _processCommandCompleteEvent = new ManualResetEventSlim(false);
             }
@@ -2525,7 +2525,7 @@ namespace System.Management.Automation
                 {
                     // Blocking call for nested debugger execution (Debug-Runspace) stop events.
                     // The root debugger never makes two EnterDebugMode calls without an ExitDebugMode.
-                    if (_nestedDebugStopCompleteEvent is null)
+                    if (_nestedDebugStopCompleteEvent == null)
                     {
                         _nestedDebugStopCompleteEvent = new ManualResetEventSlim(false);
                     }
@@ -2774,7 +2774,7 @@ namespace System.Management.Automation
 
         internal void PushDebugger(Debugger debugger)
         {
-            if (debugger is null)
+            if (debugger == null)
             {
                 return;
             }

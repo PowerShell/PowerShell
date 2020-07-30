@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     CimException cimException;
                     potentiallyBrokenSession.TestConnection(out throwAwayCimInstance, out cimException);
                     sessionException = cimException;
-                    if (sessionException is null)
+                    if (sessionException == null)
                     {
                         this.MarkSessionAsConnected(potentiallyBrokenSession);
                     }

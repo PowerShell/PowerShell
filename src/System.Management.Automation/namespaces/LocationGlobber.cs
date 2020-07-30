@@ -56,7 +56,7 @@ namespace System.Management.Automation
         /// </exception>
         internal LocationGlobber(SessionState sessionState)
         {
-            if (sessionState is null)
+            if (sessionState == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
@@ -172,12 +172,12 @@ namespace System.Management.Automation
             out CmdletProvider providerInstance)
         {
             providerInstance = null;
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            if (context is null)
+            if (context == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
@@ -226,8 +226,8 @@ namespace System.Management.Automation
                 if (!allowNonexistingPaths &&
                     result.Count < 1 &&
                     (!WildcardPattern.ContainsWildcardCharacters(path) || context.SuppressWildcardExpansion) &&
-                    (context.Include is null || context.Include.Count == 0) &&
-                    (context.Exclude is null || context.Exclude.Count == 0))
+                    (context.Include == null || context.Include.Count == 0) &&
+                    (context.Exclude == null || context.Exclude.Count == 0))
                 {
                     // Since we are not globbing, throw an exception since
                     // the path doesn't exist
@@ -327,8 +327,8 @@ namespace System.Management.Automation
             if ((!allowNonexistingPaths) &&
                 stringResult.Count < 1 &&
                 !WildcardPattern.ContainsWildcardCharacters(providerPath) &&
-                (context.Include is null || context.Include.Count == 0) &&
-                (context.Exclude is null || context.Exclude.Count == 0))
+                (context.Include == null || context.Include.Count == 0) &&
+                (context.Exclude == null || context.Exclude.Count == 0))
             {
                 ItemNotFoundException pathNotFound =
                     new ItemNotFoundException(
@@ -542,8 +542,8 @@ namespace System.Management.Automation
             if ((!allowNonexistingPaths) &&
                 stringResult.Count < 1 &&
                 !WildcardPattern.ContainsWildcardCharacters(path) &&
-                (context.Include is null || context.Include.Count == 0) &&
-                (context.Exclude is null || context.Exclude.Count == 0))
+                (context.Include == null || context.Include.Count == 0) &&
+                (context.Exclude == null || context.Exclude.Count == 0))
             {
                 ItemNotFoundException pathNotFound =
                     new ItemNotFoundException(
@@ -661,7 +661,7 @@ namespace System.Management.Automation
             out CmdletProvider providerInstance)
         {
             providerInstance = null;
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -736,12 +736,12 @@ namespace System.Management.Automation
             out ProviderInfo provider,
             out CmdletProvider providerInstance)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            if (context is null)
+            if (context == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
@@ -759,7 +759,7 @@ namespace System.Management.Automation
                 PSDriveInfo drive = null;
                 string providerPath = GetProviderPath(path, context, out provider, out drive);
 
-                if (providerPath is null)
+                if (providerPath == null)
                 {
                     providerInstance = null;
                     s_tracer.WriteLine("provider returned a null path so return an empty array");
@@ -847,7 +847,7 @@ namespace System.Management.Automation
         {
             providerInstance = null;
 
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -933,17 +933,17 @@ namespace System.Management.Automation
         {
             providerInstance = null;
 
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            if (providerId is null)
+            if (providerId == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(providerId));
             }
 
-            if (context is null)
+            if (context == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
@@ -1055,7 +1055,7 @@ namespace System.Management.Automation
         /// </exception>
         internal string GetProviderPath(string path, out ProviderInfo provider)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -1127,7 +1127,7 @@ namespace System.Management.Automation
         /// </exception>
         internal string GetProviderPath(string path, CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -1215,12 +1215,12 @@ namespace System.Management.Automation
             out ProviderInfo provider,
             out PSDriveInfo drive)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            if (context is null)
+            if (context == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
@@ -1372,7 +1372,7 @@ namespace System.Management.Automation
         {
             // Verify parameters
 
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -1470,7 +1470,7 @@ namespace System.Management.Automation
         {
             // Verify parameters
 
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -1559,7 +1559,7 @@ namespace System.Management.Automation
         {
             // Verify parameters
 
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -1670,7 +1670,7 @@ namespace System.Management.Automation
         /// </exception>
         private static string RemoveGlobEscaping(string path)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -1712,7 +1712,7 @@ namespace System.Management.Automation
         /// </exception>
         internal bool IsShellVirtualDrive(string driveName, out SessionStateScope scope)
         {
-            if (driveName is null)
+            if (driveName == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(driveName));
             }
@@ -1815,7 +1815,7 @@ namespace System.Management.Automation
         {
             // Verify parameters
 
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -1855,7 +1855,7 @@ namespace System.Management.Automation
                     // appears to be a drive (like HTTP://). The drive will not
                     // actually exist, but this is not an absolute path.
 
-                    if (_sessionState.Drive.Current is null)
+                    if (_sessionState.Drive.Current == null)
                     {
                         throw;
                     }
@@ -1905,7 +1905,7 @@ namespace System.Management.Automation
                 workingDriveForPath = _sessionState.Drive.Current;
             }
 
-            if (workingDriveForPath is null)
+            if (workingDriveForPath == null)
             {
                 ItemNotFoundException pathNotFound =
                     new ItemNotFoundException(
@@ -2044,12 +2044,12 @@ namespace System.Management.Automation
         {
             // Verify parameters
 
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            if (drive is null)
+            if (drive == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
@@ -2317,12 +2317,12 @@ namespace System.Management.Automation
             string workingPath,
             CmdletProviderContext context)
         {
-            if (drive is null)
+            if (drive == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
-            if (workingPath is null)
+            if (workingPath == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(workingPath));
             }
@@ -2376,7 +2376,7 @@ namespace System.Management.Automation
         /// </exception>
         private static string ParseProviderPath(string path, out string providerId)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -2455,17 +2455,17 @@ namespace System.Management.Automation
             ContainerCmdletProvider containerProvider,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            if (containerProvider is null)
+            if (containerProvider == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(containerProvider));
             }
 
-            if (context is null)
+            if (context == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
@@ -2495,7 +2495,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static bool StringContainsGlobCharacters(string path)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -2632,17 +2632,17 @@ namespace System.Management.Automation
             ContainerCmdletProvider provider,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            if (provider is null)
+            if (provider == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
-            if (drive is null)
+            if (drive == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
@@ -2849,7 +2849,7 @@ namespace System.Management.Automation
                                         s_pathResolutionTracer.WriteLine("{0} is not a container", dirs[index]);
                                         dirs.RemoveAt(index);
                                     }
-                                    else if (navigationProvider is null)
+                                    else if (navigationProvider == null)
                                     {
                                         Dbg.Diagnostics.Assert(
                                             navigationProvider != null,
@@ -3057,12 +3057,12 @@ namespace System.Management.Automation
         /// </exception>
         internal static string GetDriveQualifiedPath(string path, PSDriveInfo drive)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            if (drive is null)
+            if (drive == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
@@ -3200,12 +3200,12 @@ namespace System.Management.Automation
         /// </exception>
         internal static string GetProviderQualifiedPath(string path, ProviderInfo provider)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            if (provider is null)
+            if (provider == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
@@ -3340,12 +3340,12 @@ namespace System.Management.Automation
             ContainerCmdletProvider provider,
             CmdletProviderContext context)
         {
-            if (currentDirs is null)
+            if (currentDirs == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(currentDirs));
             }
 
-            if (provider is null)
+            if (provider == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
@@ -3409,7 +3409,7 @@ namespace System.Management.Automation
                                 provider,
                                 out mshQualifiedParentPath);
 
-                        if (childNamesObjectArray is null)
+                        if (childNamesObjectArray == null)
                         {
                             s_tracer.TraceError("GetChildNames returned a null array");
                             s_pathResolutionTracer.WriteLine("No child names returned for '{0}'", dir);
@@ -3574,12 +3574,12 @@ namespace System.Management.Automation
             ContainerCmdletProvider provider,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            if (provider is null)
+            if (provider == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
@@ -3814,7 +3814,7 @@ namespace System.Management.Automation
                                         s_pathResolutionTracer.WriteLine("{0} is not a container", dirs[index]);
                                         dirs.RemoveAt(index);
                                     }
-                                    else if (navigationProvider is null)
+                                    else if (navigationProvider == null)
                                     {
                                         Dbg.Diagnostics.Assert(
                                             navigationProvider != null,
@@ -3946,12 +3946,12 @@ namespace System.Management.Automation
             ContainerCmdletProvider provider,
             CmdletProviderContext context)
         {
-            if (currentDirs is null)
+            if (currentDirs == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(currentDirs));
             }
 
-            if (provider is null)
+            if (provider == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
@@ -4006,7 +4006,7 @@ namespace System.Management.Automation
                         Collection<PSObject> childNamesObjectArray =
                             GetChildNamesInDir(dir, leafElement, !isLastLeaf, context, true, null, provider, out unescapedDir);
 
-                        if (childNamesObjectArray is null)
+                        if (childNamesObjectArray == null)
                         {
                             s_tracer.TraceError("GetChildNames returned a null array");
 
@@ -4347,7 +4347,7 @@ namespace System.Management.Automation
 
                 childName = baseObject as string;
 
-                if (childName is null)
+                if (childName == null)
                 {
                     s_tracer.TraceError("GetChildNames returned an object that wasn't a string");
                     break;
@@ -4427,7 +4427,7 @@ namespace System.Management.Automation
         /// </exception>
         private static string ConvertMshEscapeToRegexEscape(string path)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -4517,7 +4517,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static bool IsHomePath(string path)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -4566,7 +4566,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static bool IsProviderDirectPath(string path)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -4606,7 +4606,7 @@ namespace System.Management.Automation
         /// </exception>
         internal string GetHomeRelativePath(string path)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }

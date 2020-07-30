@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell
         {
             HandleThrowOnReadAndPrompt();
 
-            if (choices is null)
+            if (choices == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(choices));
             }
@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell
         {
             HandleThrowOnReadAndPrompt();
 
-            if (choices is null)
+            if (choices == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(choices));
             }

@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
 
             bool dynamicParametersSpecified = dynamicParameters != null && dynamicParameters.OptionsSet;
 
-            if (value is null)
+            if (value == null)
             {
                 if (dynamicParametersSpecified)
                 {

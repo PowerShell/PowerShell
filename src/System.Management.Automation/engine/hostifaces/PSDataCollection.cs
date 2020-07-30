@@ -331,14 +331,14 @@ namespace System.Management.Automation
         /// <param name="context">The streaming context for this instance.</param>
         protected PSDataCollection(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
+            if (info == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             IList<T> listToUse = info.GetValue("Data", typeof(IList<T>)) as IList<T>;
 
-            if (listToUse is null)
+            if (listToUse == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
@@ -759,7 +759,7 @@ namespace System.Management.Automation
             {
                 lock (SyncObject)
                 {
-                    if (_data is null)
+                    if (_data == null)
                         return 0;
                     else
                         return _data.Count;
@@ -1297,7 +1297,7 @@ namespace System.Management.Automation
         /// <param name="context">The streaming context for this instance.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
+            if (info == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
@@ -1321,11 +1321,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_readWaitHandle is null)
+                if (_readWaitHandle == null)
                 {
                     lock (SyncObject)
                     {
-                        if (_readWaitHandle is null)
+                        if (_readWaitHandle == null)
                         {
                             // Create the handle signaled if there are objects in the buffer
                             // or the buffer has been closed.
@@ -1512,7 +1512,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void InternalAddRange(Guid psInstanceId, ICollection collection)
         {
-            if (collection is null)
+            if (collection == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(collection));
             }
@@ -1627,7 +1627,7 @@ namespace System.Management.Automation
         /// </exception>
         private static void VerifyValueType(object value)
         {
-            if (value is null)
+            if (value == null)
             {
                 if (typeof(T).IsValueType)
                 {
@@ -1657,7 +1657,7 @@ namespace System.Management.Automation
             else
             {
                 object deserialized = PSSerializer.Deserialize(PSSerializer.Serialize(value));
-                if (deserialized is null)
+                if (deserialized == null)
                 {
                     return null;
                 }
@@ -1670,13 +1670,13 @@ namespace System.Management.Automation
 
         private bool SerializationWouldHaveNoEffect(PSObject result)
         {
-            if (result is null)
+            if (result == null)
             {
                 return true;
             }
 
             object baseObject = PSObject.Base(result);
-            if (baseObject is null)
+            if (baseObject == null)
             {
                 return true;
             }

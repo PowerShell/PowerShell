@@ -331,7 +331,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         internal RunspaceStateEventArgs(RunspaceStateInfo runspaceStateInfo)
         {
-            if (runspaceStateInfo is null)
+            if (runspaceStateInfo == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(runspaceStateInfo));
             }
@@ -510,7 +510,7 @@ namespace System.Management.Automation.Runspaces
 
             set
             {
-                if (value is null || !value.RunspaceIsRemote)
+                if (value == null || !value.RunspaceIsRemote)
                 {
                     t_threadSpecificDefaultRunspace = value;
                 }
@@ -650,7 +650,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return !(this is LocalRunspace || ConnectionInfo is null);
+                return !(this is LocalRunspace || ConnectionInfo == null);
             }
         }
 
@@ -977,14 +977,14 @@ namespace System.Management.Automation.Runspaces
                                 Pipeline currentPipeline = this.GetCurrentlyRunningPipeline();
                                 RemotePipeline remotePipeline = currentPipeline as RemotePipeline;
                                 Guid? pipeLineCmdInstance = (remotePipeline != null && remotePipeline.PowerShell != null) ? remotePipeline.PowerShell.InstanceId : (Guid?)null;
-                                if (currentPipeline is null)
+                                if (currentPipeline == null)
                                 {
                                     // A runspace is available:
                                     //  - if there is no currently running pipeline
                                     //    and for remote runspaces:
                                     //    - if there is no remote command associated with it.
                                     //    - if the remote runspace pool is marked as available for connection.
-                                    if (remoteCommand is null)
+                                    if (remoteCommand == null)
                                     {
                                         if (remoteRunspace != null)
                                         {
@@ -1142,7 +1142,7 @@ namespace System.Management.Automation.Runspaces
                             }
                             else
                             {
-                                this.RunspaceAvailability = (remoteCommand is null && GetCurrentlyRunningPipeline() is null) ?
+                                this.RunspaceAvailability = (remoteCommand == null && GetCurrentlyRunningPipeline() == null) ?
                                     RunspaceAvailability.Available : RunspaceAvailability.Busy;
                             }
 
@@ -1699,7 +1699,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         public virtual void SetVariable(string name, object value)
         {
-            if (name is null)
+            if (name == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -1727,7 +1727,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         public virtual object GetVariable(string name)
         {
-            if (name is null)
+            if (name == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }

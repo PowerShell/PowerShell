@@ -136,7 +136,7 @@ namespace System.Management.Automation
             DataStructureHandler.HostResponseReceived += HandleHostResponseReceived;
             DataStructureHandler.OnSessionConnected += HandleSessionConnected;
 
-            if (rsToUse is null)
+            if (rsToUse == null)
             {
                 throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.NestedPipelineMissingRunspace);
             }

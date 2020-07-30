@@ -53,7 +53,7 @@ namespace System.Management.Automation
         /// </param>
         internal CustomSerialization(XmlWriter writer, bool notypeinformation, int depth)
         {
-            if (writer is null)
+            if (writer == null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(writer));
             }
@@ -271,7 +271,7 @@ namespace System.Management.Automation
 
             CheckIfStopping();
 
-            if (source is null)
+            if (source == null)
             {
                 WriteNull(property);
                 return;
@@ -711,7 +711,7 @@ namespace System.Management.Automation
                 }
 
                 PSPropertyInfo property = info as PSPropertyInfo;
-                if (property is null)
+                if (property == null)
                 {
                     continue;
                 }
@@ -773,7 +773,7 @@ namespace System.Management.Automation
                     continue;
                 }
                 // Write the property
-                if (value is null)
+                if (value == null)
                 {
                     WritePropertyWithNullValue(_writer, prop, depth);
                 }
@@ -1014,7 +1014,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static int GetDepthOfSerialization(PSObject source, int depth)
         {
-            if (source is null)
+            if (source == null)
                 return depth;
 
             // get the depth from the PSObject

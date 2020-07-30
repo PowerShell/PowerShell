@@ -115,12 +115,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (this.dataBaseInfo.view != null)
             {
                 GroupBy gb = this.dataBaseInfo.view.groupBy;
-                if (gb is null)
+                if (gb == null)
                 {
                     return;
                 }
 
-                if (gb.startGroup is null || gb.startGroup.expression is null)
+                if (gb.startGroup == null || gb.startGroup.expression == null)
                 {
                     return;
                 }
@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal GroupStartData GenerateGroupStartData(PSObject firstObjectInGroup, int enumerationLimit)
         {
             GroupStartData startGroup = new GroupStartData();
-            if (_groupingManager is null)
+            if (_groupingManager == null)
                 return startGroup;
 
             object currentGroupingValue = _groupingManager.CurrentGroupingKeyPropertyValue;
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             startGroup.groupingEntry = new GroupingEntry();
 
-            if (control is null)
+            if (control == null)
             {
                 // we do not have a control, we auto generate a
                 // snippet of complex display using a label
@@ -278,7 +278,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns>True if the value of the key changed.</returns>
         internal bool UpdateGroupingKeyValue(PSObject so)
         {
-            if (_groupingManager is null)
+            if (_groupingManager == null)
                 return false;
             return _groupingManager.UpdateGroupingKeyValue(so);
         }
@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal bool IsObjectApplicable(Collection<string> typeNames)
         {
-            if (dataBaseInfo.view is null)
+            if (dataBaseInfo.view == null)
                 return true;
 
             if (typeNames.Count == 0)
@@ -402,7 +402,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         protected bool EvaluateDisplayCondition(PSObject so, ExpressionToken conditionToken)
         {
-            if (conditionToken is null)
+            if (conditionToken == null)
                 return true;
 
             PSPropertyExpression ex = this.expressionFactory.CreateFromExpressionToken(conditionToken, this.dataBaseInfo.view.loadingInfo);

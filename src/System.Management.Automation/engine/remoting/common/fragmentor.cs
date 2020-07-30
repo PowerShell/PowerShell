@@ -693,7 +693,7 @@ namespace System.Management.Automation.Remoting
 
                 while (dataWritten < count)
                 {
-                    if (_readStream is null)
+                    if (_readStream == null)
                     {
                         if (_queuedStreams.Count > 0)
                         {
@@ -781,7 +781,7 @@ namespace System.Management.Automation.Remoting
                         return;
                     }
 
-                    if (_writeStream is null)
+                    if (_writeStream == null)
                     {
                         _writeStream = new MemoryStream(_fragmentSize);
                         s_trace.WriteLine("Created write stream: {0}", _writeStream.GetHashCode());
@@ -1106,7 +1106,7 @@ namespace System.Management.Automation.Remoting
                 deserializer.Done();
             }
 
-            if (result is null)
+            if (result == null)
             {
                 // cannot be null.
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.DeserializedObjectIsNull);

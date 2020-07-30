@@ -86,7 +86,7 @@ namespace System.Management.Automation.Remoting
             ArrayList parameterList = new ArrayList();
             for (int i = 0; i < parameters.Length; ++i)
             {
-                object parameter = parameters[i] is null ? null : RemoteHostEncoder.EncodeObject(parameters[i]);
+                object parameter = parameters[i] == null ? null : RemoteHostEncoder.EncodeObject(parameters[i]);
                 parameterList.Add(parameter);
             }
 
@@ -104,7 +104,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(parameters.Count == parameterTypes.Length, "Expected parameters.Count == parameterTypes.Length");
             for (int i = 0; i < parameters.Count; ++i)
             {
-                object parameter = parameters[i] is null ? null : RemoteHostEncoder.DecodeObject(parameters[i], parameterTypes[i]);
+                object parameter = parameters[i] == null ? null : RemoteHostEncoder.DecodeObject(parameters[i], parameterTypes[i]);
                 decodedParameters.Add(parameter);
             }
 
@@ -170,7 +170,7 @@ namespace System.Management.Automation.Remoting
         {
             // The clientHost can be null if the user creates a runspace object without providing
             // a host parameter.
-            if (clientHost is null)
+            if (clientHost == null)
             {
                 return;
             }
@@ -204,14 +204,14 @@ namespace System.Management.Automation.Remoting
 
             // Are we a Start-PSSession enabled host?
             IHostSupportsInteractiveSession host = clientHost as IHostSupportsInteractiveSession;
-            if (host is null || !host.IsRunspacePushed)
+            if (host == null || !host.IsRunspacePushed)
             {
                 return null;
             }
 
             // Now inspect the runspace.
             RemoteRunspace remoteRunspace = host.Runspace as RemoteRunspace;
-            if (remoteRunspace is null || !remoteRunspace.ShouldCloseOnPop)
+            if (remoteRunspace == null || !remoteRunspace.ShouldCloseOnPop)
             {
                 return null;
             }
@@ -238,7 +238,7 @@ namespace System.Management.Automation.Remoting
         {
             // The clientHost can be null if the user creates a runspace object without providing
             // a host parameter.
-            if (clientHost is null)
+            if (clientHost == null)
             {
                 throw RemoteHostExceptions.NewNullClientHostException();
             }
@@ -283,7 +283,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private object SelectTargetObject(PSHost host)
         {
-            if (host is null || host.UI is null) { return null; }
+            if (host == null || host.UI == null) { return null; }
 
             if (_methodInfo.InterfaceType == typeof(PSHost)) { return host; }
 
@@ -588,7 +588,7 @@ namespace System.Management.Automation.Remoting
         private static void EncodeAndAddReturnValue(PSObject psObject, object returnValue)
         {
             // Do nothing if the return value is null.
-            if (returnValue is null) { return; }
+            if (returnValue == null) { return; }
 
             // Otherwise add the property.
             RemoteHostEncoder.EncodeAndAddAsProperty(psObject, RemoteDataNameStrings.MethodReturnValue, returnValue);
@@ -617,7 +617,7 @@ namespace System.Management.Automation.Remoting
         private static Exception DecodeException(PSObject psObject)
         {
             object result = RemoteHostEncoder.DecodePropertyValue(psObject, RemoteDataNameStrings.MethodException, typeof(Exception));
-            if (result is null) { return null; }
+            if (result == null) { return null; }
 
             if (result is Exception) { return (Exception)result; }
 

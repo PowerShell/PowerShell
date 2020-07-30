@@ -51,7 +51,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="context"></param>
         private PSSenderInfo(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
+            if (info == null)
             {
                 return;
             }
@@ -68,7 +68,7 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            if (serializedData is null)
+            if (serializedData == null)
             {
                 return;
             }

@@ -700,7 +700,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (SessionStateInternal is null)
+                if (SessionStateInternal == null)
                 {
                     ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
                     if (context != null)
@@ -714,7 +714,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(value));
                 }
@@ -823,7 +823,7 @@ namespace System.Management.Automation
             ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
 
             // If ExecutionContext from TLS is null then we are not in powershell engine thread.
-            if (context is null)
+            if (context == null)
             {
                 string scriptText = this.ToString();
 
@@ -881,7 +881,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static Collection<PSObject> GetWrappedResult(List<object> result)
         {
-            if (result is null || result.Count == 0)
+            if (result == null || result.Count == 0)
             {
                 return new Collection<PSObject>();
             }
@@ -959,7 +959,7 @@ namespace System.Management.Automation
                 context = SessionStateInternal.ExecutionContext;
                 shouldGenerateEvent = true;
             }
-            else if (context is null)
+            else if (context == null)
             {
                 // This will throw.
                 GetContextFromTLS();
@@ -1099,12 +1099,12 @@ namespace System.Management.Automation
     {
         internal SteppablePipeline(ExecutionContext context, PipelineProcessor pipeline)
         {
-            if (pipeline is null)
+            if (pipeline == null)
             {
                 throw new ArgumentNullException(nameof(pipeline));
             }
 
-            if (context is null)
+            if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
@@ -1131,14 +1131,14 @@ namespace System.Management.Automation
         /// <param name="contextToRedirectTo">Context used to figure out how to route the output and errors.</param>
         public void Begin(bool expectInput, EngineIntrinsics contextToRedirectTo)
         {
-            if (contextToRedirectTo is null)
+            if (contextToRedirectTo == null)
             {
                 throw new ArgumentNullException(nameof(contextToRedirectTo));
             }
 
             ExecutionContext executionContext = contextToRedirectTo.SessionState.Internal.ExecutionContext;
             CommandProcessorBase commandProcessor = executionContext.CurrentCommandProcessor;
-            ICommandRuntime crt = commandProcessor is null ? null : commandProcessor.CommandRuntime;
+            ICommandRuntime crt = commandProcessor == null ? null : commandProcessor.CommandRuntime;
             Begin(expectInput, crt);
         }
 
@@ -1150,7 +1150,7 @@ namespace System.Management.Automation
         /// <param name="command">The command you're calling this from (i.e. instance of PSCmdlet or value of $PSCmdlet variable).</param>
         public void Begin(InternalCommand command)
         {
-            if (command is null || command.MyInvocation is null)
+            if (command == null || command.MyInvocation == null)
             {
                 throw new ArgumentNullException(nameof(command));
             }
@@ -1430,7 +1430,7 @@ namespace System.Management.Automation
             InvocationInfo invocationInfo,
             object[] args)
         {
-            if (scriptBlock is null)
+            if (scriptBlock == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(scriptBlock));
             }

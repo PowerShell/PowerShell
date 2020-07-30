@@ -57,7 +57,7 @@ namespace System.Management.Automation.Language
             Diagnostics.Assert(attributeType != null, "Semantic checks should have verified attribute type exists");
 
             Diagnostics.Assert(
-                attributeType.GetCustomAttribute<AttributeUsageAttribute>(true) is null ||
+                attributeType.GetCustomAttribute<AttributeUsageAttribute>(true) == null ||
                 (attributeType.GetCustomAttribute<AttributeUsageAttribute>(true).ValidOn & attributeTargets) != 0, "Semantic checks should have verified attribute usage");
 
             var positionalArgs = new object[attributeAst.PositionalArguments.Count];
@@ -87,7 +87,7 @@ namespace System.Management.Automation.Language
                 out expandParamsOnBest,
                 out callNonVirtually);
 
-            if (bestMethod is null)
+            if (bestMethod == null)
             {
                 parser.ReportError(new ParseError(attributeAst.Extent, errorId,
                     string.Format(CultureInfo.InvariantCulture, errorMsg, attributeType.Name, attributeAst.PositionalArguments.Count)));
@@ -340,7 +340,7 @@ namespace System.Management.Automation.Language
                     else
                     {
                         baseClass = firstBaseTypeAst.TypeName.GetReflectionType();
-                        if (baseClass is null)
+                        if (baseClass == null)
                         {
                             parser.ReportError(firstBaseTypeAst.Extent,
                                 nameof(ParserStrings.TypeNotFound),
@@ -416,7 +416,7 @@ namespace System.Management.Automation.Language
                         else
                         {
                             Type interfaceType = baseTypeAsts[i].TypeName.GetReflectionType();
-                            if (interfaceType is null)
+                            if (interfaceType == null)
                             {
                                 parser.ReportError(baseTypeAsts[i].Extent,
                                     nameof(ParserStrings.TypeNotFound),
@@ -446,7 +446,7 @@ namespace System.Management.Automation.Language
 
             private bool ShouldImplementProperty(string name, Type type)
             {
-                if (_interfaceProperties is null)
+                if (_interfaceProperties == null)
                 {
                     _interfaceProperties = new HashSet<Tuple<string, Type>>();
                     var allInterfaces = new HashSet<Type>();
@@ -541,7 +541,7 @@ namespace System.Management.Automation.Language
                         var parameters = ((IParameterMetadataProvider)ctor.Body).Parameters;
                         // We report error for static ctors with parameters, even with default values.
                         // We don't take them into account.
-                        if (parameters is null || parameters.Count == 0)
+                        if (parameters == null || parameters.Count == 0)
                         {
                             needStaticCtor = false;
                         }
@@ -596,7 +596,7 @@ namespace System.Management.Automation.Language
                 _definedProperties.Add(propertyMemberAst.Name, propertyMemberAst);
 
                 Type type;
-                if (propertyMemberAst.PropertyType is null)
+                if (propertyMemberAst.PropertyType == null)
                 {
                     type = typeof(object);
                 }
@@ -766,7 +766,7 @@ namespace System.Management.Automation.Language
             private Type[] GetParameterTypes(FunctionMemberAst functionMemberAst)
             {
                 var parameters = ((IParameterMetadataProvider)functionMemberAst).Parameters;
-                if (parameters is null)
+                if (parameters == null)
                 {
                     return Type.EmptyTypes;
                 }
@@ -779,7 +779,7 @@ namespace System.Management.Automation.Language
                     var paramType = (typeConstraint != null)
                                         ? typeConstraint.TypeName.GetReflectionType()
                                         : typeof(object);
-                    if (paramType is null)
+                    if (paramType == null)
                     {
                         _parser.ReportError(typeConstraint.Extent,
                             nameof(ParserStrings.TypeNotFound),
@@ -819,7 +819,7 @@ namespace System.Management.Automation.Language
             private void DefineMethod(FunctionMemberAst functionMemberAst)
             {
                 var parameterTypes = GetParameterTypes(functionMemberAst);
-                if (parameterTypes is null)
+                if (parameterTypes == null)
                 {
                     // There must have been an error, just return
                     return;
@@ -871,7 +871,7 @@ namespace System.Management.Automation.Language
                 }
 
                 var returnType = functionMemberAst.GetReturnType();
-                if (returnType is null)
+                if (returnType == null)
                 {
                     _parser.ReportError(functionMemberAst.ReturnType.Extent,
                         nameof(ParserStrings.TypeNotFound),
@@ -1074,7 +1074,7 @@ namespace System.Management.Automation.Language
                     foreach (var enumerator in helper._enumDefinitionAst.Members)
                     {
                         var initExpr = ((PropertyMemberAst)enumerator).InitialValue;
-                        if (initExpr is null)
+                        if (initExpr == null)
                         {
                             // No initializer, so no dependency (this is incorrect assumption if
                             // we wanted to be more general like C#.)
@@ -1155,7 +1155,7 @@ namespace System.Management.Automation.Language
             internal void DefineEnum()
             {
                 var typeConstraintAst = _enumDefinitionAst.BaseTypes.FirstOrDefault();
-                var underlyingType = typeConstraintAst is null ? typeof(int) : typeConstraintAst.TypeName.GetReflectionType();
+                var underlyingType = typeConstraintAst == null ? typeof(int) : typeConstraintAst.TypeName.GetReflectionType();
 
                 var definedEnumerators = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 var enumBuilder = _moduleBuilder.DefineEnum(_typeName, Reflection.TypeAttributes.Public, underlyingType);
@@ -1302,7 +1302,7 @@ namespace System.Management.Automation.Language
 
         internal static Assembly DefineTypes(Parser parser, Ast rootAst, TypeDefinitionAst[] typeDefinitions)
         {
-            Diagnostics.Assert(rootAst.Parent is null, "Caller should only define types from the root ast");
+            Diagnostics.Assert(rootAst.Parent == null, "Caller should only define types from the root ast");
 
             var definedTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -1427,7 +1427,7 @@ namespace System.Management.Automation.Language
                 parent = parent.Parent;
             }
 
-            if (nameParts is null)
+            if (nameParts == null)
             {
                 return typeDefinitionAst.Name;
             }

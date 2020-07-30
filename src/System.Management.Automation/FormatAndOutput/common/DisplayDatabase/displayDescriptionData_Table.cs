@@ -290,7 +290,7 @@ namespace System.Management.Automation
         /// <param name="tableControlRow"></param>
         public TableControl(TableControlRow tableControlRow) : this()
         {
-            if (tableControlRow is null)
+            if (tableControlRow == null)
                 throw PSTraceSource.NewArgumentNullException("tableControlRows");
 
             this.Rows.Add(tableControlRow);
@@ -303,9 +303,9 @@ namespace System.Management.Automation
         /// <param name="tableControlColumnHeaders"></param>
         public TableControl(TableControlRow tableControlRow, IEnumerable<TableControlColumnHeader> tableControlColumnHeaders) : this()
         {
-            if (tableControlRow is null)
+            if (tableControlRow == null)
                 throw PSTraceSource.NewArgumentNullException("tableControlRows");
-            if (tableControlColumnHeaders is null)
+            if (tableControlColumnHeaders == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(tableControlColumnHeaders));
 
             this.Rows.Add(tableControlRow);
@@ -466,7 +466,7 @@ namespace System.Management.Automation
         /// <summary>Public constructor for TableControlRow.</summary>
         public TableControlRow(IEnumerable<TableControlColumn> columns) : this()
         {
-            if (columns is null)
+            if (columns == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(columns));
             foreach (TableControlColumn column in columns)
             {
@@ -488,7 +488,7 @@ namespace System.Management.Automation
         internal bool CompatibleWithOldPowerShell()
         {
             // Old versions of PowerShell don't support multiple row definitions.
-            return SelectedBy is null;
+            return SelectedBy == null;
         }
     }
 

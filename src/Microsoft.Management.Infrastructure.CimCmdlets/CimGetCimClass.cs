@@ -126,7 +126,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             List<CimSessionProxy> proxys = new List<CimSessionProxy>();
             string nameSpace = ConstValue.GetNamespace(cmdlet.Namespace);
-            string className = (cmdlet.ClassName is null) ? @"*" : cmdlet.ClassName;
+            string className = (cmdlet.ClassName == null) ? @"*" : cmdlet.ClassName;
             CimGetCimClassContext context = new CimGetCimClassContext(
                 cmdlet.ClassName,
                 cmdlet.MethodName,

@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet, CancellationToken cancellationToken)
         {
-            if (cmdlet is null)
+            if (cmdlet == null)
             {
                 throw new ArgumentNullException(nameof(cmdlet));
             }
@@ -418,7 +418,7 @@ namespace Microsoft.PowerShell.Commands
         internal static string DecodeStream(Stream stream, ref Encoding encoding)
         {
             bool isDefaultEncoding = false;
-            if (encoding is null)
+            if (encoding == null)
             {
                 // Use the default encoding if one wasn't provided
                 encoding = ContentHelper.GetDefaultEncoding();
@@ -453,7 +453,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static byte[] EncodeToBytes(string str, Encoding encoding)
         {
-            if (encoding is null)
+            if (encoding == null)
             {
                 // just use the default encoding if one wasn't provided
                 encoding = ContentHelper.GetDefaultEncoding();

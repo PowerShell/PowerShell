@@ -33,7 +33,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PSVariableIntrinsics(SessionStateInternal sessionState)
         {
-            if (sessionState is null)
+            if (sessionState == null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(sessionState));
             }

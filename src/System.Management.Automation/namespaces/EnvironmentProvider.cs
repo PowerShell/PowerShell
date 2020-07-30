@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
                 !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
-            if (value is null)
+            if (value == null)
             {
                 Environment.SetEnvironmentVariable(name, null);
             }
@@ -127,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 string stringValue = value as string;
-                if (stringValue is null)
+                if (stringValue == null)
                 {
                     // try using ETS to convert to a string.
 

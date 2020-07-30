@@ -295,14 +295,14 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         internal void DispatchInputQueueData(object sender, RemoteDataEventArgs dataEventArg)
         {
-            if (dataEventArg is null)
+            if (dataEventArg == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(dataEventArg));
             }
 
             RemoteDataObject<PSObject> rcvdData = dataEventArg.ReceivedData;
 
-            if (rcvdData is null)
+            if (rcvdData == null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(dataEventArg));
             }
@@ -564,7 +564,7 @@ namespace System.Management.Automation.Remoting
             serializedStream.Seek(0, SeekOrigin.Begin);
             RemoteDataObject<PSObject> capabilityObject = RemoteDataObject<PSObject>.CreateFrom(serializedStream, defragmentor);
 
-            if (capabilityObject is null)
+            if (capabilityObject == null)
             {
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnInputValidation);
             }
@@ -606,7 +606,7 @@ namespace System.Management.Automation.Remoting
             serializedStream.Seek(0, SeekOrigin.Begin);
             RemoteDataObject<PSObject> connectRunspacePoolObject = RemoteDataObject<PSObject>.CreateFrom(serializedStream, defragmentor);
 
-            if (connectRunspacePoolObject is null)
+            if (connectRunspacePoolObject == null)
             {
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnServerStateValidation);
             }
@@ -663,7 +663,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnInputValidation);
             }
 
-            if (_runspacePoolDriver is null)
+            if (_runspacePoolDriver == null)
             {
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnServerStateValidation);
             }
@@ -741,7 +741,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void HandleCreateRunspacePool(object sender, RemoteDataEventArgs createRunspaceEventArg)
         {
-            if (createRunspaceEventArg is null)
+            if (createRunspaceEventArg == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(createRunspaceEventArg));
             }
@@ -809,7 +809,7 @@ namespace System.Management.Automation.Remoting
                 rsSessionStateToUse = _sessionConfigProvider.GetInitialSessionState(_senderInfo);
             }
 
-            if (rsSessionStateToUse is null)
+            if (rsSessionStateToUse == null)
             {
                 throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.InitialSessionStateNull, _configProviderId);
             }
@@ -919,7 +919,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void HandleNegotiationReceived(object sender, RemoteSessionNegotiationEventArgs negotiationEventArg)
         {
-            if (negotiationEventArg is null)
+            if (negotiationEventArg == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(negotiationEventArg));
             }
@@ -1144,7 +1144,7 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         internal ServerRunspacePoolDriver GetRunspacePoolDriver(Guid clientRunspacePoolId)
         {
-            if (_runspacePoolDriver is null)
+            if (_runspacePoolDriver == null)
             {
                 return null;
             }

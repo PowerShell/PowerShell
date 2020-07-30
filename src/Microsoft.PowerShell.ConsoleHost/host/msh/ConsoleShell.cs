@@ -32,12 +32,12 @@ namespace Microsoft.PowerShell
         /// <returns>An integer value which should be used as exit code for the process.</returns>
         public static int Start(InitialSessionState initialSessionState, string bannerText, string helpText, string[] args)
         {
-            if (initialSessionState is null)
+            if (initialSessionState == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
-            if (args is null)
+            if (args == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(args));
             }

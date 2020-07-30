@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (this.InputObject is null || this.InputObject == AutomationNull.Value)
+            if (this.InputObject == null || this.InputObject == AutomationNull.Value)
             {
                 return;
             }
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             if (((View & PSMemberViewTypes.Base) == PSMemberViewTypes.Base) &&
-                (InputObject.InternalBaseDotNetAdapter is null))
+                (InputObject.InternalBaseDotNetAdapter == null))
             {
                 // the input object don't have a custom adapter..
                 // for this case adapted view and base view are the same.

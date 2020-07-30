@@ -110,7 +110,7 @@ namespace System.Management.Automation.Interpreter
 
             if (_targetIndex == UnknownIndex)
             {
-                if (_forwardBranchFixups is null)
+                if (_forwardBranchFixups == null)
                 {
                     _forwardBranchFixups = new List<int>();
                 }

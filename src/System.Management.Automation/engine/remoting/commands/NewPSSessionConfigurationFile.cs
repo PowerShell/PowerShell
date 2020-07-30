@@ -787,7 +787,7 @@ namespace Microsoft.PowerShell.Commands
                     resultData, streamWriter, (_scriptsToProcess.Length == 0)));
 
                 // Role definitions
-                if (_roleDefinitions is null)
+                if (_roleDefinitions == null)
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.RoleDefinitions, RemotingErrorIdStrings.DISCRoleDefinitionsComment,
                         "@{ 'CONTOSO\\SqlAdmins' = @{ RoleCapabilities = 'SqlAdministration' }; 'CONTOSO\\SqlManaged' = @{ RoleCapabilityFiles = 'C:\\RoleCapability\\SqlManaged.psrc' }; 'CONTOSO\\ServerMonitors' = @{ VisibleCmdlets = 'Get-Process' } } ", streamWriter, true));
@@ -803,7 +803,7 @@ namespace Microsoft.PowerShell.Commands
                 // Required groups
                 if (ShouldGenerateConfigurationSnippet("RequiredGroups"))
                 {
-                    if (_requiredGroups is null)
+                    if (_requiredGroups == null)
                     {
                         result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.RequiredGroups, RemotingErrorIdStrings.DISCRequiredGroupsComment,
                             "@{ And = @{ Or = 'CONTOSO\\SmartCard-Logon1', 'CONTOSO\\SmartCard-Logon2' }, 'Administrators' }", streamWriter, true));
@@ -842,7 +842,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (ShouldGenerateConfigurationSnippet("PowerShellVersion"))
                 {
-                    if (_powerShellVersion is null)
+                    if (_powerShellVersion == null)
                     {
                         isExample = true;
                         _powerShellVersion = PSVersionInfo.PSVersion;
@@ -853,7 +853,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Modules to import
-                if (_modulesToImport is null)
+                if (_modulesToImport == null)
                 {
                     if (Full)
                     {
@@ -875,7 +875,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Visible cmdlets
-                if ((_visibleCmdlets is null) || (_visibleCmdlets.Length == 0))
+                if ((_visibleCmdlets == null) || (_visibleCmdlets.Length == 0))
                 {
                     if (Full)
                     {
@@ -890,7 +890,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Visible functions
-                if ((_visibleFunctions is null) || (_visibleFunctions.Length == 0))
+                if ((_visibleFunctions == null) || (_visibleFunctions.Length == 0))
                 {
                     if (Full)
                     {
@@ -919,7 +919,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Alias definitions
-                if ((_aliasDefinitions is null) || (_aliasDefinitions.Length == 0))
+                if ((_aliasDefinitions == null) || (_aliasDefinitions.Length == 0))
                 {
                     if (Full)
                     {
@@ -934,7 +934,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Function definitions
-                if (_functionDefinitions is null)
+                if (_functionDefinitions == null)
                 {
                     if (Full)
                     {
@@ -967,7 +967,7 @@ namespace Microsoft.PowerShell.Commands
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
-                            if ((hashtable[ConfigFileConstants.FunctionValueToken] as ScriptBlock) is null)
+                            if ((hashtable[ConfigFileConstants.FunctionValueToken] as ScriptBlock) == null)
                             {
                                 PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock,
                                     ConfigFileConstants.FunctionValueToken, ConfigFileConstants.FunctionDefinitions, _path));
@@ -996,7 +996,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Variable definitions
-                if (_variableDefinitions is null)
+                if (_variableDefinitions == null)
                 {
                     if (Full)
                     {
@@ -1060,7 +1060,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Environment variables
-                if (_environmentVariables is null)
+                if (_environmentVariables == null)
                 {
                     if (Full)
                     {
@@ -1095,7 +1095,7 @@ namespace Microsoft.PowerShell.Commands
                 if (ShouldGenerateConfigurationSnippet("AssembliesToLoad"))
                 {
                     isExample = false;
-                    if ((_assembliesToLoad is null) || (_assembliesToLoad.Length == 0))
+                    if ((_assembliesToLoad == null) || (_assembliesToLoad.Length == 0))
                     {
                         isExample = true;
                         _assembliesToLoad = new string[] { "System.Web", "System.OtherAssembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" };
@@ -1619,7 +1619,7 @@ namespace Microsoft.PowerShell.Commands
                     SessionConfigurationUtils.QuoteName(_copyright), streamWriter, false));
 
                 // Modules to import
-                if (_modulesToImport is null)
+                if (_modulesToImport == null)
                 {
                     string exampleModulesToImport = "'MyCustomModule', @{ ModuleName = 'MyCustomModule'; ModuleVersion = '1.0.0.0'; GUID = '4d30d5f0-cb16-4898-812d-f20a6c596bdf' }";
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.ModulesToImport, RemotingErrorIdStrings.DISCModulesToImportComment, exampleModulesToImport, streamWriter, true));
@@ -1635,7 +1635,7 @@ namespace Microsoft.PowerShell.Commands
                     SessionConfigurationUtils.GetVisibilityDefault(_visibleAliases, streamWriter, this), streamWriter, _visibleAliases.Length == 0));
 
                 // Visible cmdlets
-                if ((_visibleCmdlets is null) || (_visibleCmdlets.Length == 0))
+                if ((_visibleCmdlets == null) || (_visibleCmdlets.Length == 0))
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleCmdlets, RemotingErrorIdStrings.DISCVisibleCmdletsComment,
                         "'Invoke-Cmdlet1', @{ Name = 'Invoke-Cmdlet2'; Parameters = @{ Name = 'Parameter1'; ValidateSet = 'Item1', 'Item2' }, @{ Name = 'Parameter2'; ValidatePattern = 'L*' } }", streamWriter, true));
@@ -1647,7 +1647,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Visible functions
-                if ((_visibleFunctions is null) || (_visibleFunctions.Length == 0))
+                if ((_visibleFunctions == null) || (_visibleFunctions.Length == 0))
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleFunctions, RemotingErrorIdStrings.DISCVisibleFunctionsComment,
                         "'Invoke-Function1', @{ Name = 'Invoke-Function2'; Parameters = @{ Name = 'Parameter1'; ValidateSet = 'Item1', 'Item2' }, @{ Name = 'Parameter2'; ValidatePattern = 'L*' } }", streamWriter, true));
@@ -1672,7 +1672,7 @@ namespace Microsoft.PowerShell.Commands
                     resultData, streamWriter, (_scriptsToProcess.Length == 0)));
 
                 // Alias definitions
-                if ((_aliasDefinitions is null) || (_aliasDefinitions.Length == 0))
+                if ((_aliasDefinitions == null) || (_aliasDefinitions.Length == 0))
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.AliasDefinitions, RemotingErrorIdStrings.DISCAliasDefinitionsComment,
                        "@{ Name = 'Alias1'; Value = 'Invoke-Alias1'}, @{ Name = 'Alias2'; Value = 'Invoke-Alias2'}", streamWriter, true));
@@ -1684,7 +1684,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Function definitions
-                if (_functionDefinitions is null)
+                if (_functionDefinitions == null)
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.FunctionDefinitions, RemotingErrorIdStrings.DISCFunctionDefinitionsComment,
                         "@{ Name = 'MyFunction'; ScriptBlock = { param($MyInput) $MyInput } }", streamWriter, true));
@@ -1714,7 +1714,7 @@ namespace Microsoft.PowerShell.Commands
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
-                            if ((hashtable[ConfigFileConstants.FunctionValueToken] as ScriptBlock) is null)
+                            if ((hashtable[ConfigFileConstants.FunctionValueToken] as ScriptBlock) == null)
                             {
                                 PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock,
                                     ConfigFileConstants.FunctionValueToken, ConfigFileConstants.FunctionDefinitions, _path));
@@ -1743,7 +1743,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Variable definitions
-                if (_variableDefinitions is null)
+                if (_variableDefinitions == null)
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VariableDefinitions, RemotingErrorIdStrings.DISCVariableDefinitionsComment,
                         "@{ Name = 'Variable1'; Value = { 'Dynamic' + 'InitialValue' } }, @{ Name = 'Variable2'; Value = 'StaticInitialValue' }", streamWriter, true));
@@ -1804,7 +1804,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Environment variables
-                if (_environmentVariables is null)
+                if (_environmentVariables == null)
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.EnvironmentVariables, RemotingErrorIdStrings.DISCEnvironmentVariablesComment,
                         "@{ Variable1 = 'Value1'; Variable2 = 'Value2' }",
@@ -1828,7 +1828,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Assemblies to load
                 bool isExample = false;
-                if ((_assembliesToLoad is null) || (_assembliesToLoad.Length == 0))
+                if ((_assembliesToLoad == null) || (_assembliesToLoad.Length == 0))
                 {
                     isExample = true;
                     _assembliesToLoad = new string[] { "System.Web", "System.OtherAssembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" };
@@ -1883,7 +1883,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The quoted string.</returns>
         internal static string QuoteName(object name)
         {
-            if (name is null)
+            if (name == null)
                 return "''";
             return "'" + System.Management.Automation.Language.CodeGeneration.EscapeSingleQuotedStringContent(name.ToString()) + "'";
         }
@@ -1895,7 +1895,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The wrapped string.</returns>
         internal static string WrapScriptBlock(object sb)
         {
-            if (sb is null)
+            if (sb == null)
                 return "{}";
             return "{" + sb.ToString() + "}";
         }
@@ -2117,7 +2117,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     Hashtable hashVal = values[i] as Hashtable;
-                    if (hashVal is null)
+                    if (hashVal == null)
                     {
                         string message = StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeStringOrHashtableArray,
                                                            ConfigFileConstants.ModulesToImport);

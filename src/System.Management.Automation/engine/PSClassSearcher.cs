@@ -132,7 +132,7 @@ namespace System.Management.Automation
             PSClassInfo returnValue = null;
             WildcardPattern classNameMatcher = WildcardPattern.Get(_className, WildcardOptions.IgnoreCase);
 
-            if (_matchingClassList is null)
+            if (_matchingClassList == null)
             {
                 _matchingClassList = new Collection<PSClassInfo>();
 

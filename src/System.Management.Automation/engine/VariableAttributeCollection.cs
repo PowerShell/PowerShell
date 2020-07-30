@@ -28,7 +28,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PSVariableAttributeCollection(PSVariable variable)
         {
-            if (variable is null)
+            if (variable == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(variable));
             }

@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _typename = value;
 
-                if (_typename is null)
+                if (_typename == null)
                 {
                     _filter = Array.Empty<WildcardPattern>();
                 }
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (_filter[0] is null)
+            if (_filter[0] == null)
             {
                 _filter[0] = WildcardPattern.Get("*", WildcardOptions.None);
             }
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
             //            presumably because only the latter type deserializes type-faithfully.
             var clientVersion = PowerShellVersion;
             PSSenderInfo remotingClientInfo = GetVariableValue("PSSenderInfo") as PSSenderInfo;
-            if (clientVersion is null && remotingClientInfo != null)
+            if (clientVersion == null && remotingClientInfo != null)
             {
                 clientVersion = PSObject.Base((PSObject.Base(remotingClientInfo.ApplicationArguments["PSVersionTable"]) as PSPrimitiveDictionary)?["PSVersion"]) as Version;
             }
@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
             // During remoting, remain compatible with v5.0- clients by default.
             // Passing a -PowerShellVersion argument allows overriding the client version.
             bool writeOldWay =
-                (remotingClientInfo != null && clientVersion is null)  // To be safe: Remoting client version could unexpectedly not be determined.
+                (remotingClientInfo != null && clientVersion == null)  // To be safe: Remoting client version could unexpectedly not be determined.
                 ||
                 (clientVersion != null
                     &&

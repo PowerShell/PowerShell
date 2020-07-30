@@ -40,7 +40,7 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                if (_newValue is null)
+                if (_newValue == null)
                 {
                     return _oldValue;
                 }

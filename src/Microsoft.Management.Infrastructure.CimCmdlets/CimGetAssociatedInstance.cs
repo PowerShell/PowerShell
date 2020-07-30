@@ -39,7 +39,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(cmdlet.ComputerName);
             // use the namespace from parameter
             string nameSpace = cmdlet.Namespace;
-            if ((nameSpace is null) && (cmdlet.ResourceUri is null))
+            if ((nameSpace == null) && (cmdlet.ResourceUri == null))
             {
                 // try to use namespace of ciminstance, then fall back to default namespace
                 nameSpace = ConstValue.GetNamespace(cmdlet.CimInstance.CimSystemProperties.Namespace);

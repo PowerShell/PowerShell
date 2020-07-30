@@ -124,7 +124,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (this.FullHelp is null)
+                if (this.FullHelp == null)
                     return null;
 
                 PSObject shortHelpObject = new PSObject(this.FullHelp);
@@ -198,35 +198,35 @@ namespace System.Management.Automation
         /// <returns></returns>
         protected void AddCommonHelpProperties()
         {
-            if (this.FullHelp is null)
+            if (this.FullHelp == null)
                 return;
 
-            if (this.FullHelp.Properties["Name"] is null)
+            if (this.FullHelp.Properties["Name"] == null)
             {
                 this.FullHelp.Properties.Add(new PSNoteProperty("Name", this.Name));
             }
 
-            if (this.FullHelp.Properties["Category"] is null)
+            if (this.FullHelp.Properties["Category"] == null)
             {
                 this.FullHelp.Properties.Add(new PSNoteProperty("Category", this.HelpCategory.ToString()));
             }
 
-            if (this.FullHelp.Properties["Synopsis"] is null)
+            if (this.FullHelp.Properties["Synopsis"] == null)
             {
                 this.FullHelp.Properties.Add(new PSNoteProperty("Synopsis", this.Synopsis));
             }
 
-            if (this.FullHelp.Properties["Component"] is null)
+            if (this.FullHelp.Properties["Component"] == null)
             {
                 this.FullHelp.Properties.Add(new PSNoteProperty("Component", this.Component));
             }
 
-            if (this.FullHelp.Properties["Role"] is null)
+            if (this.FullHelp.Properties["Role"] == null)
             {
                 this.FullHelp.Properties.Add(new PSNoteProperty("Role", this.Role));
             }
 
-            if (this.FullHelp.Properties["Functionality"] is null)
+            if (this.FullHelp.Properties["Functionality"] == null)
             {
                 this.FullHelp.Properties.Add(new PSNoteProperty("Functionality", this.Functionality));
             }
@@ -242,7 +242,7 @@ namespace System.Management.Automation
         /// </remarks>
         protected void UpdateUserDefinedDataProperties()
         {
-            if (this.FullHelp is null)
+            if (this.FullHelp == null)
                 return;
 
             this.FullHelp.Properties.Remove("Component");

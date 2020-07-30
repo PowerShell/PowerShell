@@ -87,7 +87,7 @@ namespace System.Management.Automation.Provider
 
         private static void CheckIfSecurityDescriptorInterfaceIsSupported(ISecurityDescriptorCmdletProvider permissionProvider)
         {
-            if (permissionProvider is null)
+            if (permissionProvider == null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(

@@ -70,14 +70,14 @@ namespace System.Management.Automation
 
         private static T TypeTableGetMemberDelegate<T>(PSObject msjObj, TypeTable typeTableToUse, string name) where T : PSMemberInfo
         {
-            if (typeTableToUse is null)
+            if (typeTableToUse == null)
             {
                 return null;
             }
 
             PSMemberInfoInternalCollection<PSMemberInfo> allMembers = typeTableToUse.GetMembers<PSMemberInfo>(msjObj.InternalTypeNames);
             PSMemberInfo member = allMembers[name];
-            if (member is null)
+            if (member == null)
             {
                 PSObject.MemberResolution.WriteLine("\"{0}\" NOT present in type table.", name);
                 return null;
@@ -102,7 +102,7 @@ namespace System.Management.Automation
 
         internal static PSMemberInfoInternalCollection<T> TypeTableGetMembersDelegate<T>(PSObject msjObj, TypeTable typeTableToUse) where T : PSMemberInfo
         {
-            if (typeTableToUse is null)
+            if (typeTableToUse == null)
             {
                 return new PSMemberInfoInternalCollection<T>();
             }
@@ -127,18 +127,18 @@ namespace System.Management.Automation
         {
             if (msjObj.IsDeserialized)
             {
-                if (msjObj.AdaptedMembers is null)
+                if (msjObj.AdaptedMembers == null)
                 {
                     return null;
                 }
 
                 T adaptedMember = msjObj.AdaptedMembers[name] as T;
-                PSObject.MemberResolution.WriteLine("Serialized adapted member: {0}.", adaptedMember is null ? "not found" : adaptedMember.Name);
+                PSObject.MemberResolution.WriteLine("Serialized adapted member: {0}.", adaptedMember == null ? "not found" : adaptedMember.Name);
                 return adaptedMember;
             }
 
             T retValue = msjObj.InternalAdapter.BaseGetMember<T>(msjObj.ImmediateBaseObject, name);
-            PSObject.MemberResolution.WriteLine("Adapted member: {0}.", retValue is null ? "not found" : retValue.Name);
+            PSObject.MemberResolution.WriteLine("Adapted member: {0}.", retValue == null ? "not found" : retValue.Name);
             return retValue;
         }
 
@@ -146,7 +146,7 @@ namespace System.Management.Automation
         {
             if (msjObj.IsDeserialized && typeof(T).IsAssignableFrom(typeof(PSPropertyInfo)))
             {
-                if (msjObj.AdaptedMembers is null)
+                if (msjObj.AdaptedMembers == null)
                 {
                     return null;
                 }
@@ -188,7 +188,7 @@ namespace System.Management.Automation
         {
             if (msjObj.IsDeserialized)
             {
-                if (msjObj.AdaptedMembers is null)
+                if (msjObj.AdaptedMembers == null)
                 {
                     return new PSMemberInfoInternalCollection<T>();
                 }
@@ -221,7 +221,7 @@ namespace System.Management.Automation
             if (msjObj.InternalBaseDotNetAdapter != null)
             {
                 T retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, name);
-                PSObject.MemberResolution.WriteLine("DotNet member: {0}.", retValue is null ? "not found" : retValue.Name);
+                PSObject.MemberResolution.WriteLine("DotNet member: {0}.", retValue == null ? "not found" : retValue.Name);
                 return retValue;
             }
 
@@ -265,7 +265,7 @@ namespace System.Management.Automation
             Collection<CollectionEntry<PSMemberInfo>> returnValue = new Collection<CollectionEntry<PSMemberInfo>>();
             if ((viewType & PSMemberViewTypes.Extended) == PSMemberViewTypes.Extended)
             {
-                if (backupTypeTable is null)
+                if (backupTypeTable == null)
                 {
                     returnValue.Add(new CollectionEntry<PSMemberInfo>(
                         PSObject.TypeTableGetMembersDelegate<PSMemberInfo>,
@@ -369,7 +369,7 @@ namespace System.Management.Automation
             Collection<CollectionEntry<PSPropertyInfo>> returnValue = new Collection<CollectionEntry<PSPropertyInfo>>();
             if ((viewType & PSMemberViewTypes.Extended) == PSMemberViewTypes.Extended)
             {
-                if (backupTypeTable is null)
+                if (backupTypeTable == null)
                 {
                     returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                         PSObject.TypeTableGetMembersDelegate<PSPropertyInfo>,
@@ -487,7 +487,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (result is null)
+            if (result == null)
             {
                 if (objectType.IsCOMObject)
                 {
@@ -568,7 +568,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "This is shipped as part of V1. Retaining this for backward compatibility.")]
         public PSObject(object obj)
         {
-            if (obj is null)
+            if (obj == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(obj));
             }
@@ -583,14 +583,14 @@ namespace System.Management.Automation
         /// <param name="context">The streaming context for this instance.</param>
         protected PSObject(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
+            if (info == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             string serializedData = info.GetValue("CliXml", typeof(string)) as string;
 
-            if (serializedData is null)
+            if (serializedData == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
@@ -670,11 +670,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_instanceMembers is null)
+                if (_instanceMembers == null)
                 {
                     lock (_lockObject)
                     {
-                        if (_instanceMembers is null)
+                        if (_instanceMembers == null)
                         {
                             _instanceMembers =
                                 s_instanceMembersResurrectionTable.GetValue(
@@ -717,11 +717,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_adapterSet is null)
+                if (_adapterSet == null)
                 {
                     lock (_lockObject)
                     {
-                        if (_adapterSet is null)
+                        if (_adapterSet == null)
                         {
                             _adapterSet = GetMappedAdapter(_immediateBaseObject, GetTypeTable());
                         }
@@ -739,11 +739,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_members is null)
+                if (_members == null)
                 {
                     lock (_lockObject)
                     {
-                        if (_members is null)
+                        if (_members == null)
                         {
                             _members = new PSMemberInfoIntegratingCollection<PSMemberInfo>(this, s_memberCollection);
                         }
@@ -761,11 +761,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_properties is null)
+                if (_properties == null)
                 {
                     lock (_lockObject)
                     {
-                        if (_properties is null)
+                        if (_properties == null)
                         {
                             _properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(this, s_propertyCollection);
                         }
@@ -783,11 +783,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_methods is null)
+                if (_methods == null)
                 {
                     lock (_lockObject)
                     {
-                        if (_methods is null)
+                        if (_methods == null)
                         {
                             _methods = new PSMemberInfoIntegratingCollection<PSMethodInfo>(this, s_methodCollection);
                         }
@@ -862,11 +862,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_typeNames is null)
+                if (_typeNames == null)
                 {
                     lock (_lockObject)
                     {
-                        if (_typeNames is null)
+                        if (_typeNames == null)
                         {
                             if (!s_typeNamesResurrectionTable.TryGetValue(GetKeyForResurrectionTables(this), out _typeNames))
                             {
@@ -917,7 +917,7 @@ namespace System.Management.Automation
             {
                 lock (psobj)
                 {
-                    if (psobj._instanceMembers is null)
+                    if (psobj._instanceMembers == null)
                     {
                         s_instanceMembersResurrectionTable.TryGetValue(GetKeyForResurrectionTables(psobj), out psobj._instanceMembers);
                     }
@@ -989,7 +989,7 @@ namespace System.Management.Automation
         internal static object Base(object obj)
         {
             PSObject mshObj = obj as PSObject;
-            if (mshObj is null)
+            if (mshObj == null)
             {
                 return obj;
             }
@@ -1014,7 +1014,7 @@ namespace System.Management.Automation
         internal static PSMemberInfo GetStaticCLRMember(object obj, string methodName)
         {
             obj = PSObject.Base(obj);
-            if (obj is null || methodName is null || methodName.Length == 0)
+            if (obj == null || methodName == null || methodName.Length == 0)
             {
                 return null;
             }
@@ -1050,7 +1050,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "AsPSObject is shipped as part of V1. This is a new overload method.")]
         internal static PSObject AsPSObject(object obj, bool storeTypeNameAndInstanceMembersLocally)
         {
-            if (obj is null)
+            if (obj == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(obj));
             }
@@ -1074,7 +1074,7 @@ namespace System.Management.Automation
         internal static object GetKeyForResurrectionTables(object obj)
         {
             var pso = obj as PSObject;
-            if (pso is null)
+            if (pso == null)
             {
                 return obj;
             }
@@ -1309,9 +1309,9 @@ namespace System.Management.Automation
             PSObject mshObj = obj as PSObject;
 
             #region plain object
-            if (mshObj is null)
+            if (mshObj == null)
             {
-                if (obj is null)
+                if (obj == null)
                 {
                     return string.Empty;
                 }
@@ -1360,7 +1360,7 @@ namespace System.Management.Automation
                 IFormattable objFormattable = obj as IFormattable;
                 try
                 {
-                    if (objFormattable is null)
+                    if (objFormattable == null)
                     {
                         Type type = obj as Type;
                         if (type != null)
@@ -1393,7 +1393,7 @@ namespace System.Management.Automation
                 method = instanceMembers["ToString"] as PSMethodInfo;
             }
 
-            if (method is null)
+            if (method == null)
             {
                 if (mshObj.InternalTypeNames.Count != 0)
                 {
@@ -1502,7 +1502,7 @@ namespace System.Management.Automation
             IFormattable msjObjFormattable = baseObject as IFormattable;
             try
             {
-                var result = msjObjFormattable is null ? baseObject.ToString() : msjObjFormattable.ToString(format, formatProvider);
+                var result = msjObjFormattable == null ? baseObject.ToString() : msjObjFormattable.ToString(format, formatProvider);
 
                 return result ?? string.Empty;
             }
@@ -1814,7 +1814,7 @@ namespace System.Management.Automation
         /// <param name="context">The streaming context for this instance.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
+            if (info == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
@@ -1851,7 +1851,7 @@ namespace System.Management.Automation
             object defaultValue, Type expectedType,
             bool shouldReplicateInstance, PSObject ownerObject)
         {
-            if (settings is null)
+            if (settings == null)
             {
                 return defaultValue;
             }
@@ -1862,13 +1862,13 @@ namespace System.Management.Automation
             }
 
             PSNoteProperty note = settings.Members[noteName] as PSNoteProperty;
-            if (note is null)
+            if (note == null)
             {
                 return defaultValue;
             }
 
             object noteValue = note.Value;
-            if (noteValue is null || noteValue.GetType() != expectedType)
+            if (noteValue == null || noteValue.GetType() != expectedType)
             {
                 return defaultValue;
             }
@@ -2046,7 +2046,7 @@ namespace System.Management.Automation
                 target.ClrMembers = source.ClrMembers;
             }
 
-            if (target.ToStringFromDeserialization is null)
+            if (target.ToStringFromDeserialization == null)
             {
                 target.ToStringFromDeserialization = source.ToStringFromDeserialization;
                 target.TokenText = source.TokenText;
@@ -2514,7 +2514,7 @@ namespace Microsoft.PowerShell
 
         internal static string Type(Type type, bool dropNamespaces = false, string key = null)
         {
-            if (type is null)
+            if (type == null)
             {
                 return string.Empty;
             }
@@ -2550,7 +2550,7 @@ namespace Microsoft.PowerShell
             else
             {
                 result = TypeAccelerators.FindBuiltinAccelerator(type, key);
-                if (result is null)
+                if (result == null)
                 {
                     if (type == typeof(PSCustomObject))
                     {
@@ -2564,7 +2564,7 @@ namespace Microsoft.PowerShell
                             // For nested types, we should return OuterType+InnerType. For example,
                             //  System.Environment+SpecialFolder ->  Environment+SpecialFolder
                             string fullName = type.ToString();
-                            result = type.Namespace is null
+                            result = type.Namespace == null
                                         ? fullName
                                         : fullName.Substring(type.Namespace.Length + 1);
                         }
@@ -2603,7 +2603,7 @@ namespace Microsoft.PowerShell
         /// <param name="instance">Instance of PSObject wrapping a Type.</param>
         public static string Type(PSObject instance)
         {
-            if (instance is null)
+            if (instance == null)
             {
                 return string.Empty;
             }
@@ -2618,7 +2618,7 @@ namespace Microsoft.PowerShell
         public static string XmlNode(PSObject instance)
         {
             XmlNode node = (XmlNode)instance?.BaseObject;
-            if (node is null)
+            if (node == null)
             {
                 return string.Empty;
             }
@@ -2633,14 +2633,14 @@ namespace Microsoft.PowerShell
         public static string XmlNodeList(PSObject instance)
         {
             XmlNodeList nodes = (XmlNodeList)instance?.BaseObject;
-            if (nodes is null)
+            if (nodes == null)
             {
                 return string.Empty;
             }
 
             if (nodes.Count == 1)
             {
-                if (nodes[0] is null)
+                if (nodes[0] == null)
                 {
                     return string.Empty;
                 }

@@ -121,7 +121,7 @@ namespace System.Management.Automation
             lock (driver.SyncObject)
             {
                 // Make sure start event handler was called
-                if (driver.SteppablePipeline is null)
+                if (driver.SteppablePipeline == null)
                 {
                     return;
                 }

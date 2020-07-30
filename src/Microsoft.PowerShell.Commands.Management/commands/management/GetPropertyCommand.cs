@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (Path is null || Path.Length == 0)
+            if (Path == null || Path.Length == 0)
             {
                 paths = new string[] { "." };
             }

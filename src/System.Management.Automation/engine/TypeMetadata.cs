@@ -49,7 +49,7 @@ namespace System.Management.Automation
         /// <param name="other">Object to copy.</param>
         internal ParameterSetMetadata(ParameterSetMetadata other)
         {
-            if (other is null)
+            if (other == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(other));
             }
@@ -429,7 +429,7 @@ namespace System.Management.Automation
         /// <param name="other">Object to copy.</param>
         public ParameterMetadata(ParameterMetadata other)
         {
-            if (other is null)
+            if (other == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(other));
             }
@@ -446,7 +446,7 @@ namespace System.Management.Automation
             }
 
             // deep copy of the collection, collection items (Attributes) copied by reference
-            if (other._attributes is null)
+            if (other._attributes == null)
             {
                 _attributes = null;
             }
@@ -461,7 +461,7 @@ namespace System.Management.Automation
 
             // deep copy
             _parameterSets = null;
-            if (other._parameterSets is null)
+            if (other._parameterSets == null)
             {
                 _parameterSets = null;
             }
@@ -623,7 +623,7 @@ namespace System.Management.Automation
         /// </exception>
         public static Dictionary<string, ParameterMetadata> GetParameterMetadata(Type type)
         {
-            if (type is null)
+            if (type == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
@@ -1130,7 +1130,7 @@ namespace System.Management.Automation
                                                       bool processingDynamicParameters,
                                                       bool checkNames)
         {
-            if (runtimeDefinedParameters is null)
+            if (runtimeDefinedParameters == null)
             {
                 throw PSTraceSource.NewArgumentNullException("runtimeDefinedParameter");
             }
@@ -1163,13 +1163,13 @@ namespace System.Management.Automation
         /// </exception>
         internal static InternalParameterMetadata Get(Type type, ExecutionContext context, bool processingDynamicParameters)
         {
-            if (type is null)
+            if (type == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
             InternalParameterMetadata result;
-            if (context is null || !s_parameterMetadataCache.TryGetValue(type.AssemblyQualifiedName, out result))
+            if (context == null || !s_parameterMetadataCache.TryGetValue(type.AssemblyQualifiedName, out result))
             {
                 result = new InternalParameterMetadata(type, processingDynamicParameters);
 
@@ -1206,7 +1206,7 @@ namespace System.Management.Automation
         /// </exception>
         internal InternalParameterMetadata(RuntimeDefinedParameterDictionary runtimeDefinedParameters, bool processingDynamicParameters, bool checkNames)
         {
-            if (runtimeDefinedParameters is null)
+            if (runtimeDefinedParameters == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(runtimeDefinedParameters));
             }
@@ -1234,7 +1234,7 @@ namespace System.Management.Automation
         /// </exception>
         internal InternalParameterMetadata(Type type, bool processingDynamicParameters)
         {
-            if (type is null)
+            if (type == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
@@ -1315,7 +1315,7 @@ namespace System.Management.Automation
                 {
                     // When processing dynamic parameters, parameter definitions come from the user,
                     // Invalid data could be passed in, or the parameter could be actually disabled.
-                    if (parameterDefinition is null || parameterDefinition.IsDisabled()) { continue; }
+                    if (parameterDefinition == null || parameterDefinition.IsDisabled()) { continue; }
                 }
 
                 CompiledCommandParameter parameter = new CompiledCommandParameter(parameterDefinition, processingDynamicParameters);
@@ -1403,7 +1403,7 @@ namespace System.Management.Automation
 
                 Type existingParamDeclaringType = existingParameter.DeclaringType;
 
-                if (existingParamDeclaringType is null)
+                if (existingParamDeclaringType == null)
                 {
                     error = true;
                     break;

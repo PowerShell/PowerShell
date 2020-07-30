@@ -412,12 +412,12 @@ namespace Microsoft.PowerShell.Commands
         /// the event which triggered this method</param>
         private void HandleRunspaceStateChanged(object sender, OperationStateEventArgs stateEventArgs)
         {
-            if (sender is null)
+            if (sender == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sender));
             }
 
-            if (stateEventArgs is null)
+            if (stateEventArgs == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(stateEventArgs));
             }
@@ -527,7 +527,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        if (reason is null)
+                        if (reason == null)
                         {
                             reason = new RuntimeException(this.GetMessage(RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState, state));
                         }
@@ -640,7 +640,7 @@ namespace Microsoft.PowerShell.Commands
             int rsIndex = 0;
             foreach (PSSession remoteRunspaceInfo in _remoteRunspaceInfos)
             {
-                if (remoteRunspaceInfo is null || remoteRunspaceInfo.Runspace is null)
+                if (remoteRunspaceInfo == null || remoteRunspaceInfo.Runspace == null)
                 {
                     ThrowTerminatingError(new ErrorRecord(
                         new ArgumentNullException("PSSession"), "PSSessionArgumentNull",

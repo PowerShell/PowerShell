@@ -275,7 +275,7 @@ namespace System.Management.Automation
                     // This is important when splatting, we reconstruct the parameter if the
                     // value is splatted.
                     var parameterText = new PSObject(new string(parameter.ParameterText));
-                    if (parameterText.Properties[NotePropertyNameForSplattingParametersInArgs] is null)
+                    if (parameterText.Properties[NotePropertyNameForSplattingParametersInArgs] == null)
                     {
                         var noteProperty = new PSNoteProperty(NotePropertyNameForSplattingParametersInArgs,
                                                               parameter.ParameterName)

@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Check for host that supports interactive remote sessions.
             _interactiveHost = this.Host as IHostSupportsInteractiveSession;
-            if (_interactiveHost is null)
+            if (_interactiveHost == null)
             {
                 WriteError(
                     new ErrorRecord(
@@ -456,7 +456,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             var _interactiveHost = this.Host as IHostSupportsInteractiveSession;
-            if (_interactiveHost is null)
+            if (_interactiveHost == null)
             {
                 WriteError(
                     new ErrorRecord(
@@ -587,7 +587,7 @@ namespace Microsoft.PowerShell.Commands
 
         private int[] GetProcIdsFromNames(string[] names)
         {
-            if ((names is null) || (names.Length == 0))
+            if ((names == null) || (names.Length == 0))
             {
                 return null;
             }
@@ -691,7 +691,7 @@ namespace Microsoft.PowerShell.Commands
                                         // Do nothing if the process no longer exists
                                     }
 
-                                    if (process is null)
+                                    if (process == null)
                                     {
                                         try
                                         {

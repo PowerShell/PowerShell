@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         internal PSHostTraceListener(PSCmdlet cmdlet)
             : base(string.Empty)
         {
-            if (cmdlet is null)
+            if (cmdlet == null)
             {
                 throw new PSArgumentNullException(nameof(cmdlet));
             }

@@ -353,7 +353,7 @@ namespace Microsoft.PowerShell.Commands
                             PSRemotingJob remoteJob =
                                         job as PSRemotingJob;
 
-                            if (remoteJob is null)
+                            if (remoteJob == null)
                             {
                                 string message = GetMessage(RemotingErrorIdStrings.RunspaceParamNotSupported);
 
@@ -387,7 +387,7 @@ namespace Microsoft.PowerShell.Commands
                                         job as PSRemotingJob;
 
                             // ComputerName parameter can only be used with remoting jobs
-                            if (remoteJob is null)
+                            if (remoteJob == null)
                             {
                                 string message = GetMessage(RemotingErrorIdStrings.ComputerNameParamNotSupported);
 
@@ -416,7 +416,7 @@ namespace Microsoft.PowerShell.Commands
 
                 case "Location":
                     {
-                        if (_locations is null)
+                        if (_locations == null)
                         {
                             // WriteAll();
                             jobsToWrite.AddRange(_jobs);
@@ -728,7 +728,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void WriteJobResults(Job job)
         {
-            if (job is null) return;
+            if (job == null) return;
 
             // Q: Why do we need to unblock the job, before getting
             // the results
@@ -794,7 +794,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (PSObject o in output)
                 {
-                    if (o is null) continue;
+                    if (o == null) continue;
                     WriteObject(o);
                 }
 
@@ -802,7 +802,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (ErrorRecord e in errorRecords)
                 {
-                    if (e is null) continue;
+                    if (e == null) continue;
                     MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
                     if (mshCommandRuntime != null)
                     {
@@ -815,7 +815,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (VerboseRecord v in verboseRecords)
                 {
-                    if (v is null) continue;
+                    if (v == null) continue;
                     MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
                     if (mshCommandRuntime != null)
                     {
@@ -827,7 +827,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (DebugRecord d in debugRecords)
                 {
-                    if (d is null) continue;
+                    if (d == null) continue;
                     MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
                     if (mshCommandRuntime != null)
                     {
@@ -839,7 +839,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (WarningRecord w in warningRecords)
                 {
-                    if (w is null) continue;
+                    if (w == null) continue;
                     MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
                     if (mshCommandRuntime != null)
                     {
@@ -851,7 +851,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (ProgressRecord p in progressRecords)
                 {
-                    if (p is null) continue;
+                    if (p == null) continue;
                     MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
                     if (mshCommandRuntime != null)
                     {
@@ -863,7 +863,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (InformationRecord p in informationRecords)
                 {
-                    if (p is null) continue;
+                    if (p == null) continue;
                     MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
                     if (mshCommandRuntime != null)
                     {
@@ -904,7 +904,7 @@ namespace Microsoft.PowerShell.Commands
                 // location information.
                 if ((exceptionWithLocation != null) && (exceptionWithLocation.DisplayScriptPosition != null))
                 {
-                    if (errorRecord.InvocationInfo is null)
+                    if (errorRecord.InvocationInfo == null)
                     {
                         errorRecord.SetInvocationInfo(new InvocationInfo(null, null));
                     }
@@ -1055,11 +1055,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (job.MonitorOutputProcessing)
             {
-                if (_outputProcessingNotification is null)
+                if (_outputProcessingNotification == null)
                 {
                     lock (_syncObject)
                     {
-                        if (_outputProcessingNotification is null)
+                        if (_outputProcessingNotification == null)
                         {
                             _outputProcessingNotification = new OutputProcessingState();
                         }

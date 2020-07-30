@@ -93,7 +93,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         public static CommandCompletion CompleteInput(string input, int cursorIndex, Hashtable options)
         {
-            if (input is null)
+            if (input == null)
             {
                 return s_emptyCommandCompletion;
             }
@@ -111,17 +111,17 @@ namespace System.Management.Automation
         /// <returns></returns>
         public static CommandCompletion CompleteInput(Ast ast, Token[] tokens, IScriptPosition positionOfCursor, Hashtable options)
         {
-            if (ast is null)
+            if (ast == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(ast));
             }
 
-            if (tokens is null)
+            if (tokens == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(tokens));
             }
 
-            if (positionOfCursor is null)
+            if (positionOfCursor == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(positionOfCursor));
             }
@@ -141,7 +141,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "powershell")]
         public static CommandCompletion CompleteInput(string input, int cursorIndex, Hashtable options, PowerShell powershell)
         {
-            if (input is null)
+            if (input == null)
             {
                 return s_emptyCommandCompletion;
             }
@@ -151,7 +151,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(cursorIndex));
             }
 
-            if (powershell is null)
+            if (powershell == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(powershell));
             }
@@ -215,22 +215,22 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "powershell")]
         public static CommandCompletion CompleteInput(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable options, PowerShell powershell)
         {
-            if (ast is null)
+            if (ast == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(ast));
             }
 
-            if (tokens is null)
+            if (tokens == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(tokens));
             }
 
-            if (cursorPosition is null)
+            if (cursorPosition == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(cursorPosition));
             }
 
-            if (powershell is null)
+            if (powershell == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(powershell));
             }
@@ -328,7 +328,7 @@ namespace System.Management.Automation
         /// <returns>A collection of completions with the replacement start and length.</returns>
         internal static CommandCompletion CompleteInputInDebugger(string input, int cursorIndex, Hashtable options, Debugger debugger)
         {
-            if (input is null)
+            if (input == null)
             {
                 return s_emptyCommandCompletion;
             }
@@ -338,7 +338,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(cursorIndex));
             }
 
-            if (debugger is null)
+            if (debugger == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(debugger));
             }
@@ -362,22 +362,22 @@ namespace System.Management.Automation
         /// <returns>Command completion.</returns>
         internal static CommandCompletion CompleteInputInDebugger(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable options, Debugger debugger)
         {
-            if (ast is null)
+            if (ast == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(ast));
             }
 
-            if (tokens is null)
+            if (tokens == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(tokens));
             }
 
-            if (cursorPosition is null)
+            if (cursorPosition == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(cursorPosition));
             }
 
-            if (debugger is null)
+            if (debugger == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(debugger));
             }
@@ -431,7 +431,7 @@ namespace System.Management.Automation
             if (remoteRunspaceInternal != null)
             {
                 var transportManager = remoteRunspaceInternal.DataStructureHandler.TransportManager;
-                if (transportManager != null && transportManager.TypeTable is null)
+                if (transportManager != null && transportManager.TypeTable == null)
                 {
                     // The remote runspace was created without a TypeTable instance.
                     // The tab completion results cannot be deserialized if the TypeTable is not available
@@ -450,7 +450,7 @@ namespace System.Management.Automation
                     .AddArgument(cursorIndex)
                     .AddArgument(options);
                 var results = powershell.Invoke();
-                if (results is null)
+                if (results == null)
                 {
                     return s_emptyCommandCompletion;
                 }
@@ -487,7 +487,7 @@ namespace System.Management.Automation
                     .AddArgument(cursorPosition)
                     .AddArgument(options);
                 var results = powershell.Invoke();
-                if (results is null)
+                if (results == null)
                 {
                     return s_emptyCommandCompletion;
                 }
@@ -543,7 +543,7 @@ namespace System.Management.Automation
                         replacementIndex += inputAndCursor.Item3;
                     }
 
-                    if (results is null || results.Count == 0)
+                    if (results == null || results.Count == 0)
                     {
                         /* BROKEN code commented out, fix sometime
                         // If we were invoked from TabExpansion2, we want to "remove" TabExpansion2 and anything it calls
@@ -661,7 +661,7 @@ namespace System.Management.Automation
                 foreach (var oldResult in oldResults)
                 {
                     var completionResult = PSObject.Base(oldResult) as CompletionResult;
-                    if (completionResult is null)
+                    if (completionResult == null)
                     {
                         var oldResultStr = oldResult.ToString();
 
@@ -681,7 +681,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (remoteToWin7 && (results is null || results.Count == 0))
+            if (remoteToWin7 && (results == null || results.Count == 0))
             {
                 string quoteStr = quote == '\0' ? string.Empty : quote.ToString();
                 results = PSv2CompletionCompleter.PSv2GenerateMatchSetOfFiles(helper, lastword, replacementIndex == 0, quoteStr);
@@ -814,7 +814,7 @@ namespace System.Management.Automation
                 string quotedFileName = AddQuoteIfNecessary(name, quote, completingAtStartOfLine);
 
                 var commandType = SafeGetProperty<CommandTypes?>(commandAndName.Command, "CommandType");
-                if (commandType is null)
+                if (commandType == null)
                 {
                     return;
                 }
@@ -973,13 +973,13 @@ namespace System.Management.Automation
 
             private static IEnumerable<PathItemAndConvertedPath> CombineMatchSets(List<PathItemAndConvertedPath> s1, List<PathItemAndConvertedPath> s2)
             {
-                if (s1 is null || s1.Count < 1)
+                if (s1 == null || s1.Count < 1)
                 {
                     // only s2 contains results; which may be null or empty
                     return s2;
                 }
 
-                if (s2 is null || s2.Count < 1)
+                if (s2 == null || s2.Count < 1)
                 {
                     // only s1 contains results
                     return s1;
@@ -1021,19 +1021,19 @@ namespace System.Management.Automation
 
             private static T SafeGetProperty<T>(PSObject psObject, string propertyName)
             {
-                if (psObject is null)
+                if (psObject == null)
                 {
                     return default(T);
                 }
 
                 PSPropertyInfo property = psObject.Properties[propertyName];
-                if (property is null)
+                if (property == null)
                 {
                     return default(T);
                 }
 
                 object propertyValue = property.Value;
-                if (propertyValue is null)
+                if (propertyValue == null)
                 {
                     return default(T);
                 }
@@ -1106,7 +1106,7 @@ namespace System.Management.Automation
                 }
 
                 Collection<PSObject> paths = helper.ExecuteCurrentPowerShell(out exceptionThrown);
-                if (paths is null || paths.Count == 0)
+                if (paths == null || paths.Count == 0)
                 {
                     return null;
                 }
@@ -1120,7 +1120,7 @@ namespace System.Management.Automation
                         PSObject item = pathsArray[1] as PSObject;
                         object convertedPath = pathsArray[1];
 
-                        if (objectPath is null || item is null || convertedPath is null)
+                        if (objectPath == null || item == null || convertedPath == null)
                         {
                             continue;
                         }

@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         {
             set
             {
-                if (value is null)
+                if (value == null)
                     return;
 
                 _functionImportList = value;
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
         {
             set
             {
-                if (value is null)
+                if (value == null)
                     return;
 
                 _cmdletImportList = value;

@@ -31,7 +31,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _convertTypes is null
+                return _convertTypes == null
                            ? null
                            : _convertTypes.LastOrDefault();
             }
@@ -44,7 +44,7 @@ namespace System.Management.Automation
 
         internal object Transform(EngineIntrinsics engineIntrinsics, object inputData, bool bindingParameters, bool bindingScriptCmdlet)
         {
-            if (_convertTypes is null)
+            if (_convertTypes == null)
                 return inputData;
 
             object result = inputData;
@@ -69,7 +69,7 @@ namespace System.Management.Automation
 
                             PSReference reference = temp as PSReference;
 
-                            if (reference is null)
+                            if (reference == null)
                             {
                                 throw new PSInvalidCastException("InvalidCastExceptionReferenceTypeExpected", null,
                                                                    ExtendedTypeSystem.ReferenceTypeExpected);

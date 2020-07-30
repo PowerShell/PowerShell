@@ -343,7 +343,7 @@ namespace System.Management.Automation.Remoting
         // to keep the other overload in sync: LengthInBufferCells(string, int)
         public override int LengthInBufferCells(string source)
         {
-            if (source is null)
+            if (source == null)
             {
                 throw new ArgumentNullException(nameof(source));
             }
@@ -354,7 +354,7 @@ namespace System.Management.Automation.Remoting
         // more performant than the default implementation provided by PSHostRawUserInterface
         public override int LengthInBufferCells(string source, int offset)
         {
-            if (source is null)
+            if (source == null)
             {
                 throw new ArgumentNullException(nameof(source));
             }

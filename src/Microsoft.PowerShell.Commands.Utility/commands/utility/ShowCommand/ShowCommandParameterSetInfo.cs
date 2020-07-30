@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// </param>
         public ShowCommandParameterSetInfo(CommandParameterSetInfo other)
         {
-            if (other is null)
+            if (other == null)
             {
                 throw new ArgumentNullException(nameof(other));
             }
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// </param>
         public ShowCommandParameterSetInfo(PSObject other)
         {
-            if (other is null)
+            if (other == null)
             {
                 throw new ArgumentNullException(nameof(other));
             }

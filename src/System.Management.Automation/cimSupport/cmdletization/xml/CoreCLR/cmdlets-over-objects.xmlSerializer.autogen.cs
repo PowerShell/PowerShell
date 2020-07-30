@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 //    return checkDeserializeAdvances ? countingReader.AdvanceCount : 0;
                 // and checkDeserializeAdvances is set in the static constructor:
                 //    XmlSerializerSection configSection = ConfigurationManager.GetSection(ConfigurationStrings.XmlSerializerSectionPath) as XmlSerializerSection;
-                //    checkDeserializeAdvances = (configSection is null) ? false : configSection.CheckDeserializeAdvances;
+                //    checkDeserializeAdvances = (configSection == null) ? false : configSection.CheckDeserializeAdvances;
                 // When XmlSerializationReader is used in powershell, there is no configuration file defined for it, so 'checkDeserializeAdvances' will actually
                 // always be 'false'. Therefore, here we directly return 0 for 'ReaderCount'.
                 return 0;
@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         {
             get
             {
-                if (_d is null)
+                if (_d == null)
                 {
                     _d = new XmlDocument(_r.NameTable);
                 }
@@ -299,7 +299,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
 
         protected Array ShrinkArray(Array a, int length, Type elementType, bool isNullable)
         {
-            if (a is null)
+            if (a == null)
             {
                 if (isNullable) return null;
                 return Array.CreateInstance(elementType, 0);
@@ -313,7 +313,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
 
         protected Array EnsureArrayIndex(Array a, int index, Type elementType)
         {
-            if (a is null) return Array.CreateInstance(elementType, 32);
+            if (a == null) return Array.CreateInstance(elementType, 32);
             if (index < a.Length) return a;
             Array b = Array.CreateInstance(elementType, a.Length * 2);
             Array.Copy(a, b, index);
@@ -322,7 +322,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
 
         protected string CollapseWhitespace(string value)
         {
-            if (value is null)
+            if (value == null)
                 return null;
             return value.Trim();
         }
@@ -367,7 +367,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
 
         private void UnknownNode(XmlNode unknownNode, object o, string qnames)
         {
-            if (unknownNode is null)
+            if (unknownNode == null)
                 return;
 
             // No XmlDeserializationEvents in CoreCLR. The events like 'onUnknownNode', 'onUnknownAttribute' and
@@ -394,7 +394,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             string str = _r.ReadContentAsString();
             if (str != null && trim)
                 str = str.Trim();
-            if (value is null || value.Length == 0)
+            if (value == null || value.Length == 0)
                 return str;
             return value + str;
         }
@@ -406,7 +406,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
 
         internal XmlQualifiedName ToXmlQualifiedName(string value, bool decodeName)
         {
-            int colon = value is null ? -1 : value.LastIndexOf(':');
+            int colon = value == null ? -1 : value.LastIndexOf(':');
             string prefix = colon < 0 ? null : value.Substring(0, colon);
             string localName = value.Substring(colon + 1);
 
@@ -416,14 +416,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 localName = XmlConvert.DecodeName(localName);
             }
 
-            if (prefix is null || prefix.Length == 0)
+            if (prefix == null || prefix.Length == 0)
             {
                 return new XmlQualifiedName(_r.NameTable.Add(value), _r.LookupNamespace(string.Empty));
             }
             else
             {
                 string ns = _r.LookupNamespace(prefix);
-                if (ns is null)
+                if (ns == null)
                 {
                     // Namespace prefix '{0}' is not defined.
                     throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "XmlUndefinedAlias. Prefix: {0}", prefix));
@@ -442,13 +442,13 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         protected XmlQualifiedName GetXsiType()
         {
             string type = _r.GetAttribute(_typeID, _instanceNsID);
-            if (type is null)
+            if (type == null)
             {
                 type = _r.GetAttribute(_typeID, _instanceNs2000ID);
-                if (type is null)
+                if (type == null)
                 {
                     type = _r.GetAttribute(_typeID, _instanceNs1999ID);
-                    if (type is null)
+                    if (type == null)
                         return null;
                 }
             }
@@ -459,16 +459,16 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         protected bool GetNullAttr()
         {
             string isNull = _r.GetAttribute(_nilID, _instanceNsID);
-            if (isNull is null)
+            if (isNull == null)
                 isNull = _r.GetAttribute(_nullID, _instanceNsID);
-            if (isNull is null)
+            if (isNull == null)
             {
                 isNull = _r.GetAttribute(_nullID, _instanceNs2000ID);
-                if (isNull is null)
+                if (isNull == null)
                     isNull = _r.GetAttribute(_nullID, _instanceNs1999ID);
             }
 
-            if (isNull is null || !XmlConvert.ToBoolean(isNull)) return false;
+            if (isNull == null || !XmlConvert.ToBoolean(isNull)) return false;
             return true;
         }
 
@@ -1426,7 +1426,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id40_EnumMetadataEnumValue && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id40_EnumMetadataEnumValue && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -1492,7 +1492,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id39_EnumMetadataEnum && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id39_EnumMetadataEnum && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -1575,7 +1575,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -1641,7 +1641,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id38_ClassMetadataData && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id38_ClassMetadataData && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -1723,7 +1723,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id36_WildcardablePropertyQuery && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id36_WildcardablePropertyQuery && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -1793,7 +1793,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id13_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id13_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -2005,7 +2005,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id17_ObsoleteAttributeMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id17_ObsoleteAttributeMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -2066,7 +2066,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -2132,7 +2132,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -2198,7 +2198,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -2270,7 +2270,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     else return null;
                 }
 
-                if (xsiType is null)
+                if (xsiType == null)
                 {
                     return ReadTypedPrimitive(new System.Xml.XmlQualifiedName("anyType", "http://www.w3.org/2001/XMLSchema"));
                 }
@@ -2836,7 +2836,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -2919,7 +2919,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -2989,7 +2989,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id24_StaticCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id24_StaticCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -3061,7 +3061,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id27_StaticMethodMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id27_StaticMethodMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -3181,7 +3181,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id29_StaticMethodParameterMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id29_StaticMethodParameterMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -3265,7 +3265,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id30_CmdletOutputMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id30_CmdletOutputMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -3334,7 +3334,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id19_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id19_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -3527,7 +3527,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id8_TypeMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id8_TypeMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -3593,7 +3593,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -3662,7 +3662,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -3777,7 +3777,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id31_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id31_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -3861,7 +3861,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id18_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id18_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -4048,7 +4048,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id20_QueryOption && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id20_QueryOption && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -4122,7 +4122,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id12_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id12_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id13_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
@@ -4330,7 +4330,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id9_Association && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id9_Association && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -4409,7 +4409,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -4478,7 +4478,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id7_PropertyMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id7_PropertyMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -4575,7 +4575,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id35_PropertyQuery && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id35_PropertyQuery && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id36_WildcardablePropertyQuery && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
@@ -4641,7 +4641,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id11_CmdletParameterMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id11_CmdletParameterMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id12_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
@@ -4830,7 +4830,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id6_GetCmdletParameters && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id6_GetCmdletParameters && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -5032,7 +5032,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id25_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id25_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -5135,7 +5135,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id22_CommonCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id22_CommonCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id25_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
@@ -5235,7 +5235,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id21_GetCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id21_GetCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -5304,7 +5304,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id33_InstanceMethodMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id33_InstanceMethodMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -5419,7 +5419,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id26_CommonMethodMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id26_CommonMethodMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id33_InstanceMethodMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
@@ -5492,7 +5492,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id28_CommonMethodParameterMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id28_CommonMethodParameterMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id29_StaticMethodParameterMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
@@ -5570,7 +5570,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id34_InstanceCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id34_InstanceCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -5644,7 +5644,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id3_ClassMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id3_ClassMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -5831,7 +5831,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -5908,7 +5908,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id5_ClassMetadataInstanceCmdlets && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id5_ClassMetadataInstanceCmdlets && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -5985,7 +5985,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id10_AssociationAssociatedInstance && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id10_AssociationAssociatedInstance && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -6054,7 +6054,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id14_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id14_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -6120,7 +6120,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id15_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id15_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -6186,7 +6186,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id16_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id16_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -6252,7 +6252,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id32_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id32_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -6321,7 +6321,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             if (isNullable) isNull = ReadNull();
             if (checkType)
             {
-                if (xsiType is null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                 {
                 }
                 else
@@ -6678,7 +6678,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         internal object Deserialize(XmlReader reader)
         {
-            if (reader is null)
+            if (reader == null)
             {
                 throw new ArgumentNullException("reader");
             }

@@ -207,7 +207,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             lock (cimSessionProxyCacheLock)
             {
-                if (this.cimSessionProxyCache is null)
+                if (this.cimSessionProxyCache == null)
                 {
                     this.cimSessionProxyCache = new List<CimSessionProxy>();
                 }
@@ -349,7 +349,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected object GetBaseObject(object value)
         {
             PSObject psObject = value as PSObject;
-            if (psObject is null)
+            if (psObject == null)
             {
                 return value;
             }
@@ -357,7 +357,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 object baseObject = psObject.BaseObject;
                 var arrayObject = baseObject as object[];
-                if (arrayObject is null)
+                if (arrayObject == null)
                 {
                     return baseObject;
                 }
@@ -389,7 +389,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 object baseObject = GetBaseObject(cimReference.Value);
                 CimInstance cimInstance = baseObject as CimInstance;
-                if (cimInstance is null)
+                if (cimInstance == null)
                 {
                     return null;
                 }
@@ -400,7 +400,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             else
             {
                 object[] cimReferenceArray = value as object[];
-                if (cimReferenceArray is null)
+                if (cimReferenceArray == null)
                 {
                     return null;
                 }
@@ -413,14 +413,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 for (int i = 0; i < cimReferenceArray.Length; i++)
                 {
                     PSReference tempCimReference = cimReferenceArray[i] as PSReference;
-                    if (tempCimReference is null)
+                    if (tempCimReference == null)
                     {
                         return null;
                     }
 
                     object baseObject = GetBaseObject(tempCimReference.Value);
                     cimInstanceArray[i] = baseObject as CimInstance;
-                    if (cimInstanceArray[i] is null)
+                    if (cimInstanceArray[i] == null)
                     {
                         return null;
                     }

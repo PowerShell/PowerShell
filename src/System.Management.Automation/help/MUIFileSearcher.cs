@@ -66,7 +66,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_result is null)
+                if (_result == null)
                 {
                     _result = new Collection<string>();
 
@@ -155,7 +155,7 @@ namespace System.Management.Automation
             {
                 string[] files = GetFiles(muiDirectory, pattern);
 
-                if (files is null)
+                if (files == null)
                     return;
 
                 foreach (string file in files)
@@ -348,7 +348,7 @@ namespace System.Management.Automation
         {
             MUIFileSearcher searcher = new MUIFileSearcher(file, searchPaths, SearchMode.First);
 
-            if (searcher.Result is null || searcher.Result.Count == 0)
+            if (searcher.Result == null || searcher.Result.Count == 0)
                 return null;
 
             return searcher.Result[0];

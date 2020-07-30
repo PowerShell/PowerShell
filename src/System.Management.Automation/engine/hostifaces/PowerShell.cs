@@ -358,7 +358,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Host");
                 }
@@ -762,7 +762,7 @@ namespace System.Management.Automation
 
             // create the client remote powershell for remoting
             // communications
-            if (RemotePowerShell is null)
+            if (RemotePowerShell == null)
             {
                 RemotePowerShell = new ClientRemotePowerShell(this, ((RunspacePool)_rsConnection).RemoteRunspacePoolInternal);
             }
@@ -804,7 +804,7 @@ namespace System.Management.Automation
 
             RedirectShellErrorOutputPipe = redirectShellErrorOutputPipe;
 
-            if (RemotePowerShell is null)
+            if (RemotePowerShell == null)
             {
                 RemotePowerShell = new ClientRemotePowerShell(this, ((RunspacePool)_rsConnection).RemoteRunspacePoolInternal);
             }
@@ -842,7 +842,7 @@ namespace System.Management.Automation
             switch (runspace)
             {
                 case RunspaceMode.CurrentRunspace:
-                    if (Runspace.DefaultRunspace is null)
+                    if (Runspace.DefaultRunspace == null)
                     {
                         throw new InvalidOperationException(PowerShellStrings.NoDefaultRunspaceForPSCreate);
                     }
@@ -891,7 +891,7 @@ namespace System.Management.Automation
         /// </remarks>
         public static PowerShell Create(Runspace runspace)
         {
-            if (runspace is null)
+            if (runspace == null)
             {
                 throw new PSArgumentNullException(nameof(runspace));
             }
@@ -1167,7 +1167,7 @@ namespace System.Management.Automation
         /// </exception>
         public PowerShell AddCommand(CommandInfo commandInfo)
         {
-            if (commandInfo is null)
+            if (commandInfo == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
             }
@@ -1290,7 +1290,7 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
-                if (parameters is null)
+                if (parameters == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(parameters));
                 }
@@ -1338,7 +1338,7 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
-                if (parameters is null)
+                if (parameters == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(parameters));
                 }
@@ -1354,7 +1354,7 @@ namespace System.Management.Automation
                 {
                     string parameterName = entry.Key as string;
 
-                    if (parameterName is null)
+                    if (parameterName == null)
                     {
                         throw PSTraceSource.NewArgumentException(nameof(parameters), PowerShellStrings.KeyMustBeString);
                     }
@@ -1465,7 +1465,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Command");
                 }
@@ -1508,7 +1508,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Error");
                 }
@@ -1543,7 +1543,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Progress");
                 }
@@ -1577,7 +1577,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Verbose");
                 }
@@ -1611,7 +1611,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Debug");
                 }
@@ -1648,7 +1648,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Warning");
                 }
@@ -1685,7 +1685,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Information");
                 }
@@ -1794,11 +1794,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_runspace is null && _runspacePool is null) // create a runspace only if neither a runspace nor a runspace pool have been set
+                if (_runspace == null && _runspacePool == null) // create a runspace only if neither a runspace nor a runspace pool have been set
                 {
                     lock (_syncObject)
                     {
-                        if (_runspace is null && _runspacePool is null)
+                        if (_runspace == null && _runspacePool == null)
                         {
                             AssertChangesAreAccepted();
                             SetRunspace(RunspaceFactory.CreateRunspace(), true);
@@ -1835,7 +1835,7 @@ namespace System.Management.Automation
         {
             RemoteRunspace remoteRunspace = runspace as RemoteRunspace;
 
-            if (remoteRunspace is null)
+            if (remoteRunspace == null)
             {
                 _rsConnection = runspace;
             }
@@ -2027,7 +2027,7 @@ namespace System.Management.Automation
                         OutputBuffer = output;
                         OutputBufferOwner = false;
                     }
-                    else if (OutputBuffer is null)
+                    else if (OutputBuffer == null)
                     {
                         OutputBuffer = new PSDataCollection<PSObject>();
                         OutputBufferOwner = true;
@@ -2042,7 +2042,7 @@ namespace System.Management.Automation
                                                      InformationalBuffers, null);
                 }
 
-                Dbg.Assert((_invokeAsyncResult is null), "Async result should be null in the reconstruct scenario.");
+                Dbg.Assert((_invokeAsyncResult == null), "Async result should be null in the reconstruct scenario.");
                 _invokeAsyncResult = new PowerShellAsyncResult(InstanceId, invocationCallback, state, streamToUse, true);
             }
             else
@@ -2064,7 +2064,7 @@ namespace System.Management.Automation
                         OutputBuffer = output;
                         OutputBufferOwner = false;
                     }
-                    else if (_invokeAsyncResult.Output is null ||
+                    else if (_invokeAsyncResult.Output == null ||
                              !_invokeAsyncResult.Output.IsOpen)
                     {
                         OutputBuffer = new PSDataCollection<PSObject>();
@@ -2129,7 +2129,7 @@ namespace System.Management.Automation
                 remoteRunspacePoolInternal = (_rsConnection as RunspacePool).RemoteRunspacePoolInternal;
             }
 
-            if (remoteRunspacePoolInternal is null)
+            if (remoteRunspacePoolInternal == null)
             {
                 throw new InvalidOperationException(PowerShellStrings.CannotConnect);
             }
@@ -2220,7 +2220,7 @@ namespace System.Management.Automation
             {
                 if (addToHistory)
                 {
-                    if (settings is null)
+                    if (settings == null)
                     {
                         settings = new PSInvocationSettings();
                     }
@@ -2725,7 +2725,7 @@ namespace System.Management.Automation
         /// </exception>
         public void Invoke<T>(IEnumerable input, IList<T> output, PSInvocationSettings settings)
         {
-            if (output is null)
+            if (output == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(output));
             }
@@ -2796,7 +2796,7 @@ namespace System.Management.Automation
         /// </exception>
         public void Invoke<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
-            if (output is null)
+            if (output == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(output));
             }
@@ -3032,7 +3032,7 @@ namespace System.Management.Automation
         /// </exception>
         public IAsyncResult BeginInvoke<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, AsyncCallback callback, object state)
         {
-            if (output is null)
+            if (output == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(output));
             }
@@ -3309,7 +3309,7 @@ namespace System.Management.Automation
         {
             PSDataCollection<PSObject> asyncOutput = (object)output as PSDataCollection<PSObject>;
 
-            if (asyncOutput is null)
+            if (asyncOutput == null)
             {
                 throw PSTraceSource.NewInvalidOperationException();
             }
@@ -3404,7 +3404,7 @@ namespace System.Management.Automation
 
                     // If we get here, then ErrorActionPreference is either Continue,
                     // SilentlyContinue, or Inquire (Continue), so we just continue....
-                    if (_batchInvocationSettings is null)
+                    if (_batchInvocationSettings == null)
                     {
                         ActionPreference preference = (ActionPreference)Runspace.SessionStateProxy.GetVariable("ErrorActionPreference");
 
@@ -3504,7 +3504,7 @@ namespace System.Management.Automation
                         break;
                 }
 
-                if (objs is null)
+                if (objs == null)
                 {
                     objs = _batchAsyncResult.Output;
                 }
@@ -3647,14 +3647,14 @@ namespace System.Management.Automation
             {
                 _commandInvokedSynchronously = true;
 
-                if (asyncResult is null)
+                if (asyncResult == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
                 }
 
                 PowerShellAsyncResult psAsyncResult = asyncResult as PowerShellAsyncResult;
 
-                if ((psAsyncResult is null) ||
+                if ((psAsyncResult == null) ||
                     (psAsyncResult.OwnerId != InstanceId) ||
                     (psAsyncResult.IsAssociatedWithAsyncInvoke != true))
                 {
@@ -3750,14 +3750,14 @@ namespace System.Management.Automation
         /// </exception>
         public void EndStop(IAsyncResult asyncResult)
         {
-            if (asyncResult is null)
+            if (asyncResult == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             PowerShellAsyncResult psAsyncResult = asyncResult as PowerShellAsyncResult;
 
-            if ((psAsyncResult is null) ||
+            if ((psAsyncResult == null) ||
                 (psAsyncResult.OwnerId != InstanceId) ||
                 (psAsyncResult.IsAssociatedWithAsyncInvoke))
             {
@@ -3889,7 +3889,7 @@ namespace System.Management.Automation
             ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
 
             // If ExecutionContext from TLS is null then we are not in powershell engine thread.
-            if (context is null)
+            if (context == null)
             {
                 string scriptText = this.Commands.Commands.Count > 0 ? this.Commands.Commands[0].CommandText : null;
                 PSInvalidOperationException e = null;
@@ -4770,7 +4770,7 @@ namespace System.Management.Automation
             RunspacePool pool = _rsConnection as RunspacePool;
 
             // We dont need to create worker if pool is remote
-            Prepare<TInput, TOutput>(input, output, settings, (pool is null || !pool.IsRemote));
+            Prepare<TInput, TOutput>(input, output, settings, (pool == null || !pool.IsRemote));
 
             _invokeAsyncResult = new PowerShellAsyncResult(InstanceId, callback, state, asyncResultOutput, true);
 
@@ -4819,7 +4819,7 @@ namespace System.Management.Automation
 
                                 if (!RemotePowerShell.Initialized)
                                 {
-                                    if (inputStream is null)
+                                    if (inputStream == null)
                                     {
                                         inputStream = new ObjectStream();
                                         inputStream.Close();
@@ -4971,7 +4971,7 @@ namespace System.Management.Automation
 
             lock (_syncObject)
             {
-                if ((_psCommand is null) || (_psCommand.Commands is null) || (0 == _psCommand.Commands.Count))
+                if ((_psCommand == null) || (_psCommand.Commands == null) || (0 == _psCommand.Commands.Count))
                 {
                     throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.NoCommandToInvoke);
                 }
@@ -5075,7 +5075,7 @@ namespace System.Management.Automation
 
                     case PSInvocationState.Stopping:
                         // Create new stop sync object if none exists.  Otherwise return existing.
-                        if (_stopAsyncResult is null)
+                        if (_stopAsyncResult == null)
                         {
                             _stopAsyncResult = new PowerShellAsyncResult(InstanceId, callback, state, null, false);
                             _stopAsyncResult.SetAsCompleted(null);
@@ -5385,7 +5385,7 @@ namespace System.Management.Automation
                 {
                     // Set the host for this local runspace if user specified one.
                     LocalRunspace rs = rsToUse as LocalRunspace;
-                    if (rs is null)
+                    if (rs == null)
                     {
                         lock (_shell._syncObject)
                         {
@@ -5646,7 +5646,7 @@ namespace System.Management.Automation
                     _outputStream.Close();
                     _errorStream.Close();
 
-                    if (CurrentlyRunningPipeline is null)
+                    if (CurrentlyRunningPipeline == null)
                     {
                         return;
                     }
@@ -5655,7 +5655,7 @@ namespace System.Management.Automation
                     // and pipeline.dispose will not change powershell instances state
                     CurrentlyRunningPipeline.StateChanged -= _shell.PipelineStateChanged;
 
-                    if ((GetRunspaceAsyncResult is null) && (_shell._rsConnection is null))
+                    if ((GetRunspaceAsyncResult == null) && (_shell._rsConnection == null))
                     {
                         // user did not supply a runspace..Invoke* method created
                         // a new runspace..so close it.
@@ -5718,7 +5718,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static PowerShell FromPSObjectForRemoting(PSObject powerShellAsPSObject)
         {
-            if (powerShellAsPSObject is null)
+            if (powerShellAsPSObject == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(powerShellAsPSObject));
             }
@@ -5738,7 +5738,7 @@ namespace System.Management.Automation
                         System.Management.Automation.Runspaces.Command command =
                             System.Management.Automation.Runspaces.Command.FromPSObjectForRemoting(extraCommand);
 
-                        if (cmd is null)
+                        if (cmd == null)
                         {
                             cmd = new PSCommand(command);
                         }
@@ -5758,7 +5758,7 @@ namespace System.Management.Automation
                 System.Management.Automation.Runspaces.Command command =
                     System.Management.Automation.Runspaces.Command.FromPSObjectForRemoting(commandAsPSObject);
 
-                if (psCommand is null)
+                if (psCommand == null)
                 {
                     psCommand = new PSCommand(command);
                 }
@@ -5833,7 +5833,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void SuspendIncomingData()
         {
-            if (RemotePowerShell is null)
+            if (RemotePowerShell == null)
             {
                 throw new PSNotSupportedException();
             }
@@ -5849,7 +5849,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void ResumeIncomingData()
         {
-            if (RemotePowerShell is null)
+            if (RemotePowerShell == null)
             {
                 throw new PSNotSupportedException();
             }
@@ -5867,7 +5867,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void WaitForServicingComplete()
         {
-            if (RemotePowerShell is null)
+            if (RemotePowerShell == null)
             {
                 throw new PSNotSupportedException();
             }
@@ -6151,12 +6151,12 @@ namespace System.Management.Automation
 
         internal PowerShellStopper(ExecutionContext context, PowerShell powerShell)
         {
-            if (context is null)
+            if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (powerShell is null)
+            if (powerShell == null)
             {
                 throw new ArgumentNullException(nameof(powerShell));
             }

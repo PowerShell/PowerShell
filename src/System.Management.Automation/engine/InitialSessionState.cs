@@ -201,7 +201,7 @@ namespace System.Management.Automation.Runspaces
         public SessionStateTypeEntry(TypeTable typeTable)
             : base("*")
         {
-            if (typeTable is null)
+            if (typeTable == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(typeTable));
             }
@@ -217,7 +217,7 @@ namespace System.Management.Automation.Runspaces
         public SessionStateTypeEntry(TypeData typeData, bool isRemove)
             : base("*")
         {
-            if (typeData is null)
+            if (typeData == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(typeData));
             }
@@ -308,7 +308,7 @@ namespace System.Management.Automation.Runspaces
         public SessionStateFormatEntry(FormatTable formattable)
             : base("*")
         {
-            if (formattable is null)
+            if (formattable == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(formattable));
             }
@@ -323,7 +323,7 @@ namespace System.Management.Automation.Runspaces
         public SessionStateFormatEntry(ExtendedTypeDefinition typeDefinition)
             : base("*")
         {
-            if (typeDefinition is null)
+            if (typeDefinition == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(typeDefinition));
             }
@@ -977,7 +977,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="items"></param>
         public InitialSessionStateEntryCollection(IEnumerable<T> items)
         {
-            if (items is null)
+            if (items == null)
             {
                 throw new ArgumentNullException(nameof(items));
             }
@@ -1081,7 +1081,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal Collection<T> LookUpByName(string name)
         {
-            if (name is null)
+            if (name == null)
             {
                 throw new PSArgumentNullException(nameof(name));
             }
@@ -1151,7 +1151,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="type">The type of object to remove, can be null to remove any type.</param>
         public void Remove(string name, object type)
         {
-            if (name is null)
+            if (name == null)
             {
                 throw new ArgumentNullException(nameof(name));
             }
@@ -1169,12 +1169,12 @@ namespace System.Management.Automation.Runspaces
                 for (int i = _internalCollection.Count - 1; i >= 0; i--)
                 {
                     T element = _internalCollection[i];
-                    if (element is null)
+                    if (element == null)
                     {
                         continue;
                     }
 
-                    if ((objType is null || element.GetType() == objType) &&
+                    if ((objType == null || element.GetType() == objType) &&
                         string.Equals(element.Name, name, StringComparison.OrdinalIgnoreCase))
                     {
                         _internalCollection.RemoveAt(i);
@@ -1189,7 +1189,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="item">The item to add...</param>
         public void Add(T item)
         {
-            if (item is null)
+            if (item == null)
             {
                 throw new ArgumentNullException(nameof(item));
             }
@@ -1206,7 +1206,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="items"></param>
         public void Add(IEnumerable<T> items)
         {
-            if (items is null)
+            if (items == null)
             {
                 throw new ArgumentNullException(nameof(items));
             }
@@ -1837,7 +1837,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public void ImportPSModule(params string[] name)
         {
-            if (name is null)
+            if (name == null)
             {
                 throw new ArgumentNullException(nameof(name));
             }
@@ -1865,7 +1865,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         public void ImportPSModule(IEnumerable<ModuleSpecification> modules)
         {
-            if (modules is null)
+            if (modules == null)
             {
                 throw new ArgumentNullException(nameof(modules));
             }
@@ -1896,7 +1896,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal void ImportPSCoreModule(string[] name)
         {
-            if (name is null)
+            if (name == null)
             {
                 throw new ArgumentNullException(nameof(name));
             }
@@ -1931,7 +1931,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (_assemblies is null)
+                if (_assemblies == null)
                 {
                     Interlocked.CompareExchange(ref _assemblies, new InitialSessionStateEntryCollection<SessionStateAssemblyEntry>(), null);
                 }
@@ -1949,7 +1949,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (_types is null)
+                if (_types == null)
                 {
                     Interlocked.CompareExchange(ref _types, new InitialSessionStateEntryCollection<SessionStateTypeEntry>(), null);
                 }
@@ -1966,7 +1966,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (_formats is null)
+                if (_formats == null)
                 {
                     Interlocked.CompareExchange(ref _formats, new InitialSessionStateEntryCollection<SessionStateFormatEntry>(), null);
                 }
@@ -1991,7 +1991,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (_providers is null)
+                if (_providers == null)
                 {
                     Interlocked.CompareExchange(ref _providers, new InitialSessionStateEntryCollection<SessionStateProviderEntry>(), null);
                 }
@@ -2009,7 +2009,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (_commands is null)
+                if (_commands == null)
                 {
                     Interlocked.CompareExchange(ref _commands, new InitialSessionStateEntryCollection<SessionStateCommandEntry>(), null);
                 }
@@ -2026,7 +2026,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (_unresolvedCommandsToExpose is null)
+                if (_unresolvedCommandsToExpose == null)
                 {
                     Interlocked.CompareExchange(ref _unresolvedCommandsToExpose, new HashSet<string>(StringComparer.OrdinalIgnoreCase), null);
                 }
@@ -2041,7 +2041,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (_commandModifications is null)
+                if (_commandModifications == null)
                 {
                     Interlocked.CompareExchange(ref _commandModifications, new Dictionary<string, Hashtable>(StringComparer.OrdinalIgnoreCase), null);
                 }
@@ -2056,7 +2056,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (_dynamicVariablesToDefine is null)
+                if (_dynamicVariablesToDefine == null)
                 {
                     Interlocked.CompareExchange(ref _dynamicVariablesToDefine, new List<Hashtable>(), null);
                 }
@@ -2073,7 +2073,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (_variables is null)
+                if (_variables == null)
                 {
                     Interlocked.CompareExchange(ref _variables, new InitialSessionStateEntryCollection<SessionStateVariableEntry>(), null);
                 }
@@ -2090,7 +2090,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (_environmentVariables is null)
+                if (_environmentVariables == null)
                 {
                     Interlocked.CompareExchange(ref _environmentVariables, new InitialSessionStateEntryCollection<SessionStateVariableEntry>(), null);
                 }
@@ -2107,7 +2107,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (_startupScripts is null)
+                if (_startupScripts == null)
                 {
                     Interlocked.CompareExchange(ref _startupScripts, new HashSet<string>(), null);
                 }
@@ -2420,11 +2420,11 @@ namespace System.Management.Automation.Runspaces
                 Exception error = null;
                 Assembly asm = context.AddAssembly(ssae.Name, ssae.FileName, out error);
 
-                if (asm is null || error != null)
+                if (asm == null || error != null)
                 {
                     // If no module was found but there was no specific error, then
                     // create a not found error.
-                    if (error is null)
+                    if (error == null)
                     {
                         string msg = StringUtil.Format(global::Modules.ModuleAssemblyFound, ssae.Name);
                         error = new DllNotFoundException(msg);
@@ -2655,7 +2655,7 @@ namespace System.Management.Automation.Runspaces
                 Hashtable commandModification = pair.Value;
 
                 CommandInfo existingCommand = initializedRunspace.SessionStateProxy.InvokeCommand.GetCommand(commandName, CommandTypes.Cmdlet | CommandTypes.Function);
-                if (existingCommand is null)
+                if (existingCommand == null)
                 {
                     // Could not find the command - just continue, rather than generating an error. This could just be a missing module
                     // or something similar.
@@ -2962,7 +2962,7 @@ namespace System.Management.Automation.Runspaces
                     ModuleSpecification moduleSpecification = module as ModuleSpecification;
                     if (moduleSpecification != null)
                     {
-                        if ((moduleSpecification.RequiredVersion is null) && (moduleSpecification.Version is null) && (moduleSpecification.MaximumVersion is null) && (moduleSpecification.Guid is null))
+                        if ((moduleSpecification.RequiredVersion == null) && (moduleSpecification.Version == null) && (moduleSpecification.MaximumVersion == null) && (moduleSpecification.Guid == null))
                         {
                             // if only name is specified in the module spec, just try import the module
                             // ie., don't take the performance overhead of calling GetModule.
@@ -3014,7 +3014,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if (exceptionToReturn is null)
+            if (exceptionToReturn == null)
             {
                 // Now go through the list of commands not yet resolved to ensure they are public if requested
                 foreach (string unresolvedCommand in unresolvedCmdsToExpose.ToArray<string>())
@@ -3317,7 +3317,7 @@ namespace System.Management.Automation.Runspaces
                     // Make sure we have a CurrentDrive set so that we can deal with
                     // UNC paths
 
-                    if (context.EngineSessionState.CurrentDrive is null)
+                    if (context.EngineSessionState.CurrentDrive == null)
                     {
                         bool fsDriveSet = false;
                         try
@@ -3519,7 +3519,7 @@ namespace System.Management.Automation.Runspaces
 
                 foreach (SessionStateTypeEntry entry in context.InitialSessionState.Types)
                 {
-                    if (entry.FileName is null)
+                    if (entry.FileName == null)
                     {
                         // The entry is associated with a TypeData instance
                         newTypes.Add(entry);
@@ -3868,7 +3868,7 @@ namespace System.Management.Automation.Runspaces
             Dictionary<string, List<SessionStateAliasEntry>> aliases = null;
             Dictionary<string, SessionStateProviderEntry> providers = null;
 
-            if (psSnapInInfo is null)
+            if (psSnapInInfo == null)
             {
                 ArgumentNullException e = new ArgumentNullException(nameof(psSnapInInfo));
                 throw e;
@@ -3883,7 +3883,7 @@ namespace System.Management.Automation.Runspaces
 
                 assembly = PSSnapInHelpers.LoadPSSnapInAssembly(psSnapInInfo);
 
-                if (assembly is null)
+                if (assembly == null)
                 {
                     s_PSSnapInTracer.TraceError("Loading assembly for psSnapIn {0} failed", psSnapInInfo.Name);
                     warning = null;
@@ -4002,7 +4002,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (defaultSnapin.Name.Equals(psSnapinName, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (loadedSnapins is null)
+                    if (loadedSnapins == null)
                     {
                         loadedSnapins = new List<PSSnapInInfo>();
                     }
@@ -4014,7 +4014,7 @@ namespace System.Management.Automation.Runspaces
             PSSnapInInfo importedSnapin = null;
             if (ImportedSnapins.TryGetValue(psSnapinName, out importedSnapin))
             {
-                if (loadedSnapins is null)
+                if (loadedSnapins == null)
                 {
                     loadedSnapins = new List<PSSnapInInfo>();
                 }
@@ -4031,7 +4031,7 @@ namespace System.Management.Automation.Runspaces
             s_PSSnapInTracer.WriteLine("Loading assembly for psSnapIn {0}", fileName);
 
             Assembly assembly = Assembly.LoadFrom(fileName);
-            if (assembly is null)
+            if (assembly == null)
             {
                 s_PSSnapInTracer.TraceError("Loading assembly for psSnapIn {0} failed", fileName);
                 return null;
@@ -4044,7 +4044,7 @@ namespace System.Management.Automation.Runspaces
 
         internal void ImportCmdletsFromAssembly(Assembly assembly, PSModuleInfo module)
         {
-            if (assembly is null)
+            if (assembly == null)
             {
                 ArgumentNullException e = new ArgumentNullException(nameof(assembly));
                 throw e;
@@ -4994,7 +4994,7 @@ end {
             out string helpFile)
         {
             helpFile = null;
-            if (assembly is null)
+            if (assembly == null)
             {
                 throw new ArgumentNullException(nameof(assembly));
             }
@@ -5015,13 +5015,13 @@ end {
                 {
                     var key = pair.Key;
                     var entry = pair.Value;
-                    if (entry.Item1.PSSnapIn is null && psSnapInInfo != null)
+                    if (entry.Item1.PSSnapIn == null && psSnapInInfo != null)
                     {
                         entry.Item1.SetPSSnapIn(psSnapInInfo);
                     }
 
                     var newEntry = (SessionStateCmdletEntry)entry.Item1.Clone();
-                    if (newEntry.PSSnapIn != null && psSnapInInfo is null)
+                    if (newEntry.PSSnapIn != null && psSnapInInfo == null)
                     {
                         newEntry.SetPSSnapIn(null);
                     }
@@ -5033,13 +5033,13 @@ end {
                         var aliasList = new List<SessionStateAliasEntry>();
                         foreach (var alias in entry.Item2)
                         {
-                            if (alias.PSSnapIn is null && psSnapInInfo != null)
+                            if (alias.PSSnapIn == null && psSnapInInfo != null)
                             {
                                 alias.SetPSSnapIn(psSnapInInfo);
                             }
 
                             var newAliasEntry = (SessionStateAliasEntry)alias.Clone();
-                            if (newAliasEntry.PSSnapIn != null && psSnapInInfo is null)
+                            if (newAliasEntry.PSSnapIn != null && psSnapInInfo == null)
                             {
                                 newAliasEntry.SetPSSnapIn(null);
                             }
@@ -5060,13 +5060,13 @@ end {
                 {
                     var key = pair.Key;
                     var entry = pair.Value;
-                    if (entry.PSSnapIn is null && psSnapInInfo != null)
+                    if (entry.PSSnapIn == null && psSnapInInfo != null)
                     {
                         entry.SetPSSnapIn(psSnapInInfo);
                     }
 
                     var newEntry = (SessionStateProviderEntry)entry.Clone();
-                    if (newEntry.PSSnapIn != null && psSnapInInfo is null)
+                    if (newEntry.PSSnapIn != null && psSnapInInfo == null)
                     {
                         newEntry.SetPSSnapIn(null);
                     }
@@ -5108,7 +5108,7 @@ end {
                 Dictionary<string, List<SessionStateAliasEntry>> aliasesCheck = null;
                 AnalyzeModuleAssemblyWithReflection(assembly, name, psSnapInInfo, moduleInfo, helpFile, ref cmdletsCheck, ref aliasesCheck, ref providersCheck);
 
-                Diagnostics.Assert(aliasesCheck is null, "InitializeCoreCmdletsAndProviders assumes no aliases are defined in System.Management.Automation.dll");
+                Diagnostics.Assert(aliasesCheck == null, "InitializeCoreCmdletsAndProviders assumes no aliases are defined in System.Management.Automation.dll");
                 Diagnostics.Assert(providersCheck.Count == providers.Count, "new Provider added to System.Management.Automation.dll - update InitializeCoreCmdletsAndProviders");
                 foreach (var pair in providersCheck)
                 {
@@ -5475,7 +5475,7 @@ end {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool HasDefaultConstructor(Type type)
         {
-            return !(type.GetConstructor(Type.EmptyTypes) is null);
+            return !(type.GetConstructor(Type.EmptyTypes) == null);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

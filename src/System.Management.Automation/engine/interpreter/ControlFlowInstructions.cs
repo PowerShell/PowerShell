@@ -157,7 +157,7 @@ namespace System.Management.Automation.Interpreter
         {
             get
             {
-                if (s_caches is null)
+                if (s_caches == null)
                 {
                     s_caches = new Instruction[2][][] { new Instruction[2][], new Instruction[2][] };
                 }
@@ -312,7 +312,7 @@ namespace System.Management.Automation.Interpreter
 
         internal void SetTryHandler(TryCatchFinallyHandler tryHandler)
         {
-            Debug.Assert(_tryHandler is null && tryHandler != null, "the tryHandler can be set only once");
+            Debug.Assert(_tryHandler == null && tryHandler != null, "the tryHandler can be set only once");
             _tryHandler = tryHandler;
         }
 
@@ -381,7 +381,7 @@ namespace System.Management.Automation.Interpreter
                 // Search for the best handler in the TryCatchFinally block. If no suitable handler is found, rethrow
                 ExceptionHandler exHandler;
                 frame.InstructionIndex += _tryHandler.GotoHandler(frame, exception, out exHandler);
-                if (exHandler is null) { throw; }
+                if (exHandler == null) { throw; }
                 bool rethrow = false;
                 try
                 {
@@ -746,7 +746,7 @@ namespace System.Management.Automation.Interpreter
 
         private bool Compiled
         {
-            get { return _loop is null; }
+            get { return _loop == null; }
         }
 
         private void Compile(object frameObj)

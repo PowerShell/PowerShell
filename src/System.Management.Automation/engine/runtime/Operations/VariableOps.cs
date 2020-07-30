@@ -39,9 +39,9 @@ namespace System.Management.Automation
             SessionStateScope scope;
             PSVariable var = sessionState.GetVariableItem(variablePath, out scope, origin);
 
-            if (var is null)
+            if (var == null)
             {
-                var attributes = attributeAsts is null
+                var attributes = attributeAsts == null
                                      ? new Collection<Attribute>()
                                      : GetAttributeCollection(attributeAsts);
                 var = new PSVariable(variablePath.UnqualifiedPath, value, ScopedItemOptions.None, attributes);
@@ -117,7 +117,7 @@ namespace System.Management.Automation
         {
             // In some limited cases, the compiler knows we don't want an error, like when we're backing up
             // $foreach and $switch, which might not be set.  In that case, the ast passed is null.
-            if (varAst is null)
+            if (varAst == null)
             {
                 return false;
             }
@@ -216,7 +216,7 @@ namespace System.Management.Automation
             SessionStateScope scope;
             PSVariable var = sessionState.GetVariableItem(variablePath, out scope, origin);
 
-            if (var is null)
+            if (var == null)
             {
                 throw InterpreterError.NewInterpreterException(variablePath, typeof(RuntimeException), null,
                                                                "NonExistingVariableReference",
@@ -224,7 +224,7 @@ namespace System.Management.Automation
             }
 
             object value = var.Value;
-            if (staticType is null && value != null)
+            if (staticType == null && value != null)
             {
                 value = PSObject.Base(value);
                 if (value != null)
@@ -233,7 +233,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (staticType is null)
+            if (staticType == null)
             {
                 var declaredType = var.Attributes.OfType<ArgumentTypeConverterAttribute>().FirstOrDefault();
                 staticType = declaredType != null ? declaredType.TargetType : typeof(LanguagePrimitives.Null);

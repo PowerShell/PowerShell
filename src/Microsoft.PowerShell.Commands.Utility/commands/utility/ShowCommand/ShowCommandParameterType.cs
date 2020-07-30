@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// </param>
         public ShowCommandParameterType(Type other)
         {
-            if (other is null)
+            if (other == null)
             {
                 throw new ArgumentNullException(nameof(other));
             }
@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// </param>
         public ShowCommandParameterType(PSObject other)
         {
-            if (other is null)
+            if (other == null)
             {
                 throw new ArgumentNullException(nameof(other));
             }

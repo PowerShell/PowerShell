@@ -66,7 +66,7 @@ namespace System.Management.Automation
         /// </returns>
         internal static PSSnapinQualifiedName? GetInstance(string? name)
         {
-            if (name is null)
+            if (name == null)
                 return null;
             string[] splitName = name.Split(Utils.Separators.Backslash);
             if (splitName.Length == 0 || splitName.Length > 2)

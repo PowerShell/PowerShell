@@ -170,7 +170,7 @@ namespace System.Management.Automation
                     indexArray = null;
                 }
 
-                if (indexArray is null || indexArray.Length != array.Rank)
+                if (indexArray == null || indexArray.Length != array.Rank)
                 {
                     if (whyFailed != null)
                     {
@@ -216,7 +216,7 @@ namespace System.Management.Automation
             // Convert this index into something printable (we hope)...
             string msgString = IndexStringMessage(index);
 
-            if (reason is null)
+            if (reason == null)
             {
                 throw InterpreterError.NewInterpreterException(index, typeof(RuntimeException), null,
                     "NeedMultidimensionalIndex", ParserStrings.NeedMultidimensionalIndex, array.Rank, msgString);
@@ -278,7 +278,7 @@ namespace System.Management.Automation
             }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            if (context is null || !context.IsStrictVersion(2))
+            if (context == null || !context.IsStrictVersion(2))
             {
                 return AutomationNull.Value;
             }

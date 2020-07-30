@@ -207,7 +207,7 @@ namespace System.Management.Automation
 
             var enumerator = _getEnumeratorSite.Target.Invoke(_getEnumeratorSite, arguments);
 
-            if (enumerator is null)
+            if (enumerator == null)
             {
                 ValidateElement(arguments);
                 return;
@@ -551,7 +551,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         public AliasAttribute(params string[] aliasNames)
         {
-            if (aliasNames is null)
+            if (aliasNames == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(aliasNames));
             }
@@ -840,7 +840,7 @@ namespace System.Management.Automation
         protected override void ValidateElement(object element)
         {
             string objectString = element as string;
-            if (objectString is null)
+            if (objectString == null)
             {
                 throw new ValidationMetadataException(
                     "ValidateLengthNotString",
@@ -972,7 +972,7 @@ namespace System.Management.Automation
         /// </exception>
         protected override void ValidateElement(object element)
         {
-            if (element is null)
+            if (element == null)
             {
                 throw new ValidationMetadataException(
                         "ArgumentIsEmpty",
@@ -1009,12 +1009,12 @@ namespace System.Management.Automation
         /// </exception>
         public ValidateRangeAttribute(object minRange, object maxRange) : base()
         {
-            if (minRange is null)
+            if (minRange == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(minRange));
             }
 
-            if (maxRange is null)
+            if (maxRange == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(maxRange));
             }
@@ -1050,7 +1050,7 @@ namespace System.Management.Automation
 
             // minRange and maxRange have the same type, so we just need to check one of them
             _minComparable = minRange as IComparable;
-            if (_minComparable is null)
+            if (_minComparable == null)
             {
                 throw new ValidationMetadataException(
                     "MinRangeNotIComparable",
@@ -1086,7 +1086,7 @@ namespace System.Management.Automation
         private void ValidateRange(object element, ValidateRangeKind rangeKind)
         {
             Type commonType = GetCommonType(typeof(int), element.GetType());
-            if (commonType is null)
+            if (commonType == null)
             {
                 throw new ValidationMetadataException(
                     "ValidationRangeElementType",
@@ -1288,7 +1288,7 @@ namespace System.Management.Automation
         /// </exception>
         protected override void ValidateElement(object element)
         {
-            if (element is null)
+            if (element == null)
             {
                 throw new ValidationMetadataException(
                         "ArgumentIsEmpty",
@@ -1357,7 +1357,7 @@ namespace System.Management.Automation
         /// <exception cref="ValidationMetadataException">If <paramref name="element"/> is invalid.</exception>
         protected override void ValidateElement(object element)
         {
-            if (element is null)
+            if (element == null)
             {
                 throw new ValidationMetadataException(
                         "ArgumentIsEmpty",
@@ -1393,7 +1393,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         public ValidateScriptAttribute(ScriptBlock scriptBlock)
         {
-            if (scriptBlock is null)
+            if (scriptBlock == null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(scriptBlock));
             }
@@ -1433,7 +1433,7 @@ namespace System.Management.Automation
         protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
         {
             int len = 0;
-            if (arguments is null || arguments == AutomationNull.Value)
+            if (arguments == null || arguments == AutomationNull.Value)
             {
                 // treat a nul list the same as an empty list
                 // with a count of zero.
@@ -1565,7 +1565,7 @@ namespace System.Management.Automation
 
             var validValuesNoCache = GenerateValidValues();
 
-            if (validValuesNoCache is null)
+            if (validValuesNoCache == null)
             {
                 throw new ValidationMetadataException(
                     "ValidateSetGeneratedValidValuesListIsNull",
@@ -1623,14 +1623,14 @@ namespace System.Management.Automation
         {
             get
             {
-                if (validValuesGenerator is null)
+                if (validValuesGenerator == null)
                 {
                     return _validValues;
                 }
 
                 var validValuesLocal = validValuesGenerator.GetValidValues();
 
-                if (validValuesLocal is null)
+                if (validValuesLocal == null)
                 {
                     throw new ValidationMetadataException(
                         "ValidateSetGeneratedValidValuesListIsNull",
@@ -1652,7 +1652,7 @@ namespace System.Management.Automation
         /// </exception>
         protected override void ValidateElement(object element)
         {
-            if (element is null)
+            if (element == null)
             {
                 throw new ValidationMetadataException(
                     "ArgumentIsEmpty",
@@ -1690,7 +1690,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentOutOfRangeException">For invalid arguments.</exception>
         public ValidateSetAttribute(params string[] validValues)
         {
-            if (validValues is null)
+            if (validValues == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(validValues));
             }
@@ -1834,7 +1834,7 @@ namespace System.Management.Automation
         /// <param name="validRootDrives">List of approved root drives for path.</param>
         public ValidateDriveAttribute(params string[] validRootDrives)
         {
-            if (validRootDrives is null)
+            if (validRootDrives == null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(validRootDrives));
             }
@@ -1849,7 +1849,7 @@ namespace System.Management.Automation
         /// <param name="engineIntrinsics">Engine intrinsics.</param>
         protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
         {
-            if (arguments is null)
+            if (arguments == null)
             {
                 throw new ValidationMetadataException(
                     "PathArgumentIsEmpty",
@@ -1858,7 +1858,7 @@ namespace System.Management.Automation
             }
 
             var path = arguments as string;
-            if (path is null)
+            if (path == null)
             {
                 throw new ValidationMetadataException(
                     "PathArgumentIsNotValid",

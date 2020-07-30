@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands
                 object value = this.GetVariableValue("global:TRANSCRIPT", null);
 
                 // $TRANSCRIPT is not set, so create a file name (the default: $HOME/My Documents/PowerShell_transcript.YYYYMMDDmmss.txt)
-                if (value is null)
+                if (value == null)
                 {
                     // If they've specified an output directory, use it. Otherwise, use "My Documents"
                     if (OutputDirectory != null)

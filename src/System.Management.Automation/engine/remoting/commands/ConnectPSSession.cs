@@ -622,7 +622,7 @@ namespace Microsoft.PowerShell.Commands
                     // Check to see if failure is due to stale PSSession error and
                     // add to retry list if this is the case.
                     bool writeError = true;
-                    if (_queryRunspaces is null)
+                    if (_queryRunspaces == null)
                     {
                         PSRemotingTransportException transportException = eArgs.RunspaceStateInfo.Reason as PSRemotingTransportException;
                         if (transportException != null &&

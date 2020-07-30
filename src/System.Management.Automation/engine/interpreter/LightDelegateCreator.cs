@@ -98,7 +98,7 @@ namespace System.Management.Automation.Interpreter
                 }
             }
 
-            if (_interpreter is null)
+            if (_interpreter == null)
             {
                 // We can't interpret, so force a compile
                 Compile(null);

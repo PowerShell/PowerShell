@@ -122,7 +122,7 @@ namespace System.Management.Automation
 
         internal HelpErrorTracer(HelpSystem helpSystem)
         {
-            if (helpSystem is null)
+            if (helpSystem == null)
             {
                 throw PSTraceSource.NewArgumentNullException("HelpSystem");
             }

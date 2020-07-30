@@ -36,7 +36,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PropertyCmdletProviderIntrinsics(Cmdlet cmdlet)
         {
-            if (cmdlet is null)
+            if (cmdlet == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(cmdlet));
             }
@@ -56,7 +56,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PropertyCmdletProviderIntrinsics(SessionStateInternal sessionState)
         {
-            if (sessionState is null)
+            if (sessionState == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }

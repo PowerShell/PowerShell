@@ -222,8 +222,8 @@ namespace System.Management.Automation.Remoting
 
         private void CreateCollectionIfNecessary()
         {
-            if (_modulesToImport is null) _modulesToImport = new List<string>();
-            if (_modulesToImportInternal is null) _modulesToImportInternal = new List<object>();
+            if (_modulesToImport == null) _modulesToImport = new List<string>();
+            if (_modulesToImportInternal == null) _modulesToImportInternal = new List<object>();
         }
 
         private const string SessionConfigToken = "SessionConfigurationData";

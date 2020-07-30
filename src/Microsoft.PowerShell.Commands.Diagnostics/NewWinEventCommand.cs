@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (_providerMetadata is null)
+            if (_providerMetadata == null)
             {
                 string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("NoProviderFound"), _providerName);
                 throw new ArgumentException(msg);
@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        if (matchedEvent is null)
+                        if (matchedEvent == null)
                         {
                             string msg = string.Format(CultureInfo.InvariantCulture,
                                 _resourceMgr.GetString("IncorrectEventVersion"),
@@ -270,7 +270,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if ((_payload is null && definedParameterCount != 0)
+                if ((_payload == null && definedParameterCount != 0)
                     || ((_payload != null) && _payload.Length != definedParameterCount))
                 {
                     string warning = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("PayloadMismatch"), _id, emd.Template);
@@ -322,7 +322,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     for (int i = 0; i < _payload.Length; i++)
                     {
-                        if (_payload[i] is null)
+                        if (_payload[i] == null)
                         {
                             _payload[i] = string.Empty;
                         }

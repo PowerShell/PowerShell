@@ -65,7 +65,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_providerPath is null)
+                if (_providerPath == null)
                 {
                     // Construct the providerPath
 
@@ -105,7 +105,7 @@ namespace System.Management.Automation
         {
             string result = _path;
 
-            if (_drive is null ||
+            if (_drive == null ||
                 _drive.Hidden)
             {
                 // For hidden drives just return the current location
@@ -143,17 +143,17 @@ namespace System.Management.Automation
         /// </exception>
         internal PathInfo(PSDriveInfo drive, ProviderInfo provider, string path, SessionState sessionState)
         {
-            if (provider is null)
+            if (provider == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            if (sessionState is null)
+            if (sessionState == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }

@@ -490,7 +490,7 @@ namespace System.Management.Automation.Internal
 
                     IDictionary<string, CommandTypes> exportedCommands = AnalysisCache.GetExportedCommands(modulePath, testOnly: false, context);
 
-                    if (exportedCommands is null) { continue; }
+                    if (exportedCommands == null) { continue; }
 
                     tempModuleInfo = new PSModuleInfo(moduleShortName, modulePath, sessionState: null, context: null);
                     if (InitialSessionState.IsEngineModule(moduleShortName))

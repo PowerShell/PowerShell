@@ -685,7 +685,7 @@ namespace System.Management.Automation.Language
             }
 
             Expression result = s_intConstants[i + 1];
-            if (result is null)
+            if (result == null)
             {
                 result = Expression.Constant(i);
                 s_intConstants[i + 1] = result;
@@ -951,7 +951,7 @@ namespace System.Management.Automation.Language
 
         private IEnumerable<Expression> CompileInvocationArguments(IEnumerable<ExpressionAst> arguments)
         {
-            return arguments is null ? Array.Empty<Expression>() : arguments.Select(CompileExpressionOperand);
+            return arguments == null ? Array.Empty<Expression>() : arguments.Select(CompileExpressionOperand);
         }
 
         internal Expression ReduceAssignment(ISupportsAssignment left, TokenKind tokenKind, Expression right)
@@ -1091,7 +1091,7 @@ namespace System.Management.Automation.Language
 
         internal static Expression IsStrictMode(int version, Expression executionContext = null)
         {
-            if (executionContext is null)
+            if (executionContext == null)
             {
                 executionContext = ExpressionCache.NullExecutionContext;
             }
@@ -1155,12 +1155,12 @@ namespace System.Management.Automation.Language
                 expr = ((AttributedExpressionAst)expr).Child;
             }
 
-            return firstConvert is null ? null : firstConvert.Type.TypeName.GetReflectionType();
+            return firstConvert == null ? null : firstConvert.Type.TypeName.GetReflectionType();
         }
 
         internal static PSMethodInvocationConstraints CombineTypeConstraintForMethodResolution(Type targetType, Type argType)
         {
-            if (targetType is null && argType is null)
+            if (targetType == null && argType == null)
             {
                 return null;
             }
@@ -1170,7 +1170,7 @@ namespace System.Management.Automation.Language
 
         internal static PSMethodInvocationConstraints CombineTypeConstraintForMethodResolution(Type targetType, Type[] argTypes)
         {
-            if (targetType is null && (argTypes is null || argTypes.Length == 0))
+            if (targetType == null && (argTypes == null || argTypes.Length == 0))
             {
                 return null;
             }
@@ -1687,7 +1687,7 @@ namespace System.Management.Automation.Language
         internal static Attribute GetAttribute(AttributeAst attributeAst)
         {
             var attributeType = attributeAst.TypeName.GetReflectionAttributeType();
-            if (attributeType is null)
+            if (attributeType == null)
             {
                 throw InterpreterError.NewInterpreterException(
                     attributeAst,
@@ -1734,7 +1734,7 @@ namespace System.Management.Automation.Language
                 // Unwrap the wrapped exception
                 var innerException = tie.InnerException;
                 var rte = innerException as RuntimeException;
-                if (rte is null)
+                if (rte == null)
                 {
                     rte = InterpreterError.NewInterpreterExceptionWithInnerException(
                         null,
@@ -1761,7 +1761,7 @@ namespace System.Management.Automation.Language
                 type = ihct.CachedType;
             }
 
-            if (type is null)
+            if (type == null)
             {
                 type = TypeOps.ResolveTypeName(typeConstraintAst.TypeName, typeConstraintAst.Extent);
                 if (ihct != null)
@@ -1972,7 +1972,7 @@ namespace System.Management.Automation.Language
                 {
                     // TODO: default argument support
                     var parameters = ((IParameterMetadataProvider)functionMemberAst.Body).Parameters;
-                    if (parameters is null || parameters.Count == 0)
+                    if (parameters == null || parameters.Count == 0)
                     {
                         SpecialMemberFunctionType = functionMemberAst.IsStatic
                             ? SpecialMemberFunctionType.StaticConstructor
@@ -2028,7 +2028,7 @@ namespace System.Management.Automation.Language
 
             // The sequence points are identical optimized or not.  Regardless, we want to ensure
             // that the list is unique no matter when the property is accessed, so make sure it is set just once.
-            if (scriptBlock.SequencePoints is null)
+            if (scriptBlock.SequencePoints == null)
             {
                 scriptBlock.SequencePoints = _sequencePoints.ToArray();
             }
@@ -2036,7 +2036,7 @@ namespace System.Management.Automation.Language
 
         private Action<FunctionContext> CompileTree(Expression<Action<FunctionContext>> lambda, CompileInterpretChoice compileInterpretChoice)
         {
-            if (lambda is null)
+            if (lambda == null)
             {
                 return null;
             }
@@ -2100,7 +2100,7 @@ namespace System.Management.Automation.Language
 
             // Can't be exposed to untrusted input - invoking arbitrary code could result in remote code
             // execution.
-            if (lambda is null)
+            if (lambda == null)
             {
                 lambda = (new Compiler()).CompileSingleExpression(expressionAst, out sequencePoints, out localsTupleType);
             }
@@ -2589,7 +2589,7 @@ namespace System.Management.Automation.Language
             // But it's possible that we are loading something from the codepaths that we never execute.
 
             // If Parent of rootForDefiningTypesAndUsings is not null, then we already defined all types, when Visit a parent ScriptBlock
-            if (rootForDefiningTypesAndUsings.Parent is null)
+            if (rootForDefiningTypesAndUsings.Parent == null)
             {
                 if (rootForDefiningTypesAndUsings.UsingStatements.Count > 0)
                 {
@@ -2673,7 +2673,7 @@ namespace System.Management.Automation.Language
         {
             // TODO(sevoroby): this Diagnostic is conceptually right.
             // BUT It triggers, when we define type in an InitialSessionState and use it later in two different PowerShell instances.
-            // Diagnostics.Assert(typeAsts[0].Type is null, "We must not call DefinePowerShellTypes twice for the same TypeDefinitionAsts");
+            // Diagnostics.Assert(typeAsts[0].Type == null, "We must not call DefinePowerShellTypes twice for the same TypeDefinitionAsts");
             if (typeAsts[0].Type != null)
             {
                 // We treat Type as a mutable buffer field and wipe it here to start definitions from scratch.
@@ -2755,7 +2755,7 @@ namespace System.Management.Automation.Language
             foreach (KeyValuePair<string, TypeDefinitionAst> parseTypePair in parseTimeTypes)
             {
                 // We only need to populate types, if ASTs are not reused. Otherwise it's already populated.
-                if (parseTypePair.Value.Type is null)
+                if (parseTypePair.Value.Type == null)
                 {
                     TypeDefinitionAst typeDefinitionAst;
                     if (!runtimeTypes.TryGetValue(parseTypePair.Key, out typeDefinitionAst))
@@ -2800,7 +2800,7 @@ namespace System.Management.Automation.Language
             {
             }
 
-            if (assembly is null)
+            if (assembly == null)
             {
                 throw InterpreterError.NewInterpreterException(
                     assemblyName,
@@ -2922,11 +2922,11 @@ namespace System.Management.Automation.Language
         private Expression InitializeMemberProperties(Expression ourThis)
         {
             var exprs = new List<Expression>();
-            bool wantStatic = ourThis is null;
+            bool wantStatic = ourThis == null;
             var bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | (wantStatic ? BindingFlags.Static : BindingFlags.Instance);
             foreach (var propertyMember in _memberFunctionType.Members.OfType<PropertyMemberAst>())
             {
-                if (propertyMember.InitialValue is null || propertyMember.IsStatic != wantStatic)
+                if (propertyMember.InitialValue == null || propertyMember.IsStatic != wantStatic)
                 {
                     continue;
                 }
@@ -3270,7 +3270,7 @@ namespace System.Management.Automation.Language
             ExpressionAst expressionAst = pipelineAst.GetPureExpression();
 
             // If the pipeline is not a simple expression, it will set $?
-            if (expressionAst is null)
+            if (expressionAst == null)
             {
                 return false;
             }
@@ -3898,7 +3898,7 @@ namespace System.Management.Automation.Language
                 // This will simply return a Linq.Expression representing the redirection.
                 var compiledRedirection = VisitFileRedirection(fileRedirectionAst);
 
-                if (extraFileRedirectExprs is null)
+                if (extraFileRedirectExprs == null)
                 {
                     extraFileRedirectExprs = new List<Expression>(commandExpr.Redirections.Count);
                 }
@@ -4205,7 +4205,7 @@ namespace System.Management.Automation.Language
             {
                 result = Expression.Call(CachedReflectionInfo.PipelineOps_CheckAutomationNullInCommandArgumentArray, result);
             }
-            else if (constElement is null && result.Type == typeof(object))
+            else if (constElement == null && result.Type == typeof(object))
             {
                 result = Expression.Call(CachedReflectionInfo.PipelineOps_CheckAutomationNullInCommandArgument, result);
             }
@@ -4330,7 +4330,7 @@ namespace System.Management.Automation.Language
 
             const BindingFlags Flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
             ConstructorInfo constructor = exception.GetConstructor(Flags, null, CallingConventions.Any, exceptionArgTypes, null);
-            if (constructor is null)
+            if (constructor == null)
             {
                 throw new PSArgumentException("Type doesn't have constructor with a given signature");
             }
@@ -4769,7 +4769,7 @@ namespace System.Management.Automation.Language
             _generatingWhileOrDoLoop = true;
             generateLoopBody(loopBodyExprs, breakLabel, continueLabel);
             _generatingWhileOrDoLoop = false;
-            if (continueAst is null)
+            if (continueAst == null)
             {
                 loopBodyExprs.Add(Expression.Goto(loopTop));
             }
@@ -5321,11 +5321,11 @@ namespace System.Management.Automation.Language
                         {
                             var ct = c.CatchTypes[index1];
                             catchTypes[i] = ct.TypeName.GetReflectionType();
-                            if (catchTypes[i] is null)
+                            if (catchTypes[i] == null)
                             {
                                 // Type needs to be resolved at runtime, so we'll use code like:
                                 //
-                                // if (catchTypes[i] is null) catchTypes[i] = ResolveTypeName(ct.TypeName)
+                                // if (catchTypes[i] == null) catchTypes[i] = ResolveTypeName(ct.TypeName)
                                 //
                                 // We use a constant array, resolve just once (unless it fails) to prevent re-resolving
                                 // each time it executes.
@@ -5590,7 +5590,7 @@ namespace System.Management.Automation.Language
             // We should not preserve the partial output if exception is thrown when evaluating throwStmt.pipeline.
             Expression throwExpr = throwStatementAst.IsRethrow
                                        ? s_currentExceptionBeingHandled
-                                       : (throwStatementAst.Pipeline is null)
+                                       : (throwStatementAst.Pipeline == null)
                                              ? ExpressionCache.NullConstant
                                              : CaptureStatementResults(throwStatementAst.Pipeline,
                                                                        CaptureAstContext.AssignmentWithoutResultPreservation);
@@ -5924,13 +5924,13 @@ namespace System.Management.Automation.Language
         private static Expression GetLikeRHSOperand(WildcardOptions options, Expression expr)
         {
             var constExpr = expr as ConstantExpression;
-            if (constExpr is null)
+            if (constExpr == null)
             {
                 return expr;
             }
 
             var val = constExpr.Value as string;
-            if (val is null)
+            if (val == null)
             {
                 return expr;
             }
@@ -6099,7 +6099,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (childExpr is null)
+            if (childExpr == null)
             {
                 childExpr = Compile(convertExpressionAst.Child);
             }
@@ -6397,7 +6397,7 @@ namespace System.Management.Automation.Language
             ExpressionAst pureExprAst = null;
 
             var subExpr = arrayExpressionAst.SubExpression;
-            if (subExpr.Traps is null)
+            if (subExpr.Traps == null)
             {
                 if (subExpr.Statements.Count == 1)
                 {
@@ -6668,7 +6668,7 @@ namespace System.Management.Automation.Language
                 return _argExprTemps;
             }
 
-            return InvokeMemberExpressionAst.Arguments is null
+            return InvokeMemberExpressionAst.Arguments == null
                ? Array.Empty<Expression>()
                : InvokeMemberExpressionAst.Arguments.Select(compiler.Compile).ToArray();
         }

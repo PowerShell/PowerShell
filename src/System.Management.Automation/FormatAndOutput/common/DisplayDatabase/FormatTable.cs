@@ -85,7 +85,7 @@ namespace System.Management.Automation.Runspaces
         protected FormatTableLoadException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            if (info is null)
+            if (info == null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -112,7 +112,7 @@ namespace System.Management.Automation.Runspaces
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
+            if (info == null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -206,7 +206,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         public void AppendFormatData(IEnumerable<ExtendedTypeDefinition> formatData)
         {
-            if (formatData is null)
+            if (formatData == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(formatData));
             _formatDBMgr.AddFormatData(formatData, false);
         }
@@ -225,7 +225,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         public void PrependFormatData(IEnumerable<ExtendedTypeDefinition> formatData)
         {
-            if (formatData is null)
+            if (formatData == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(formatData));
             _formatDBMgr.AddFormatData(formatData, true);
         }
@@ -251,7 +251,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         internal FormatTable(IEnumerable<string> formatFiles, AuthorizationManager authorizationManager, PSHost host)
         {
-            if (formatFiles is null)
+            if (formatFiles == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(formatFiles));
             }

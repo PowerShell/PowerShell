@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     _path = ".";
                 }

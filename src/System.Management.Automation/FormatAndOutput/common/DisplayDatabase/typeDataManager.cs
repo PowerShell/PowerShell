@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // data base to an empty instance
                 lock (databaseLock)
                 {
-                    if (Database is null)
+                    if (Database == null)
                     {
                         TypeInfoDataBase tempDataBase = new TypeInfoDataBase();
                         AddPreLoadIntrinsics(tempDataBase);
@@ -488,7 +488,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             List<XmlLoaderLoggerEntry> logEntries,
             ref bool success)
         {
-            if (s_builtinGenerators is null)
+            if (s_builtinGenerators == null)
             {
                 var builtInGenerators = new Dictionary<string, Tuple<bool, TypeGenerator>>(StringComparer.OrdinalIgnoreCase);
 

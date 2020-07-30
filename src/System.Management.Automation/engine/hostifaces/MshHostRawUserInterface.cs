@@ -1679,7 +1679,7 @@ namespace System.Management.Automation.Host
             int offset
         )
         {
-            if (source is null)
+            if (source == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(source));
             }
@@ -1718,7 +1718,7 @@ namespace System.Management.Automation.Host
             string source
         )
         {
-            if (source is null)
+            if (source == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(source));
             }
@@ -1805,7 +1805,7 @@ namespace System.Management.Automation.Host
         {
 #pragma warning disable 56506
 
-            if (contents is null)
+            if (contents == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(contents));
             }

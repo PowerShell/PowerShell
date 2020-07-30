@@ -176,7 +176,7 @@ namespace System.Management.Automation
         /// </exception>
         public Job2 NewJob(JobDefinition definition)
         {
-            if (definition is null)
+            if (definition == null)
             {
                 throw new ArgumentNullException(nameof(definition));
             }
@@ -216,12 +216,12 @@ namespace System.Management.Automation
         /// </exception>
         public Job2 NewJob(JobInvocationInfo specification)
         {
-            if (specification is null)
+            if (specification == null)
             {
                 throw new ArgumentNullException(nameof(specification));
             }
 
-            if (specification.Definition is null)
+            if (specification.Definition == null)
             {
                 throw new ArgumentException(RemotingErrorIdStrings.NewJobSpecificationError, nameof(specification));
             }
@@ -261,12 +261,12 @@ namespace System.Management.Automation
         /// <param name="definition">Job definition containing source adapter information.</param>
         public void PersistJob(Job2 job, JobDefinition definition)
         {
-            if (job is null)
+            if (job == null)
             {
                 throw new PSArgumentNullException(nameof(job));
             }
 
-            if (definition is null)
+            if (definition == null)
             {
                 throw new PSArgumentNullException(nameof(definition));
             }
@@ -593,7 +593,7 @@ namespace System.Management.Automation
                     }
 #pragma warning restore 56500
 
-                    if (jobs is null) continue;
+                    if (jobs == null) continue;
                     allJobs.AddRange(jobs);
                 }
             }
@@ -619,7 +619,7 @@ namespace System.Management.Automation
         private bool CheckTypeNames(JobSourceAdapter sourceAdapter, string[] jobSourceAdapterTypes)
         {
             // If no type names were specified then allow all adapter types.
-            if (jobSourceAdapterTypes is null ||
+            if (jobSourceAdapterTypes == null ||
                 jobSourceAdapterTypes.Length == 0)
             {
                 return true;
@@ -758,7 +758,7 @@ namespace System.Management.Automation
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterGetJobByInstanceIdError", sourceAdapter);
                     }
 
-                    if (job is null) continue;
+                    if (job == null) continue;
 
                     if (writeObject)
                     {
@@ -939,7 +939,7 @@ namespace System.Management.Automation
                     }
 #pragma warning restore 56500
 
-                    if (foundJob is null) continue;
+                    if (foundJob == null) continue;
                     jobFound = true;
                     RemoveJobIdForReuse(foundJob);
 

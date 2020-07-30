@@ -146,7 +146,7 @@ namespace System.Management.Automation
         /// </exception>
         public static Collection<PSToken> Tokenize(string script, out Collection<PSParseError> errors)
         {
-            if (script is null)
+            if (script == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(script));
 
             PSParser psParser = new PSParser();
@@ -173,7 +173,7 @@ namespace System.Management.Automation
         /// </exception>
         public static Collection<PSToken> Tokenize(object[] script, out Collection<PSParseError> errors)
         {
-            if (script is null)
+            if (script == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(script));
 
             StringBuilder sb = new StringBuilder();

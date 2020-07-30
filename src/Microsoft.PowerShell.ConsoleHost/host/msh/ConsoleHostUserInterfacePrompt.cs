@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell
             // Need to implement EchoOnPrompt
             HandleThrowOnReadAndPrompt();
 
-            if (descriptions is null)
+            if (descriptions == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(descriptions));
             }
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell
                 foreach (FieldDescription desc in descriptions)
                 {
                     descIndex++;
-                    if (desc is null)
+                    if (desc == null)
                     {
                         throw PSTraceSource.NewArgumentException(nameof(descriptions),
                             ConsoleHostUserInterfaceStrings.NullErrorTemplate,
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell
                     }
 
                     Type fieldType = InternalHostUserInterface.GetFieldType(desc);
-                    if (fieldType is null)
+                    if (fieldType == null)
                     {
                         if (InternalHostUserInterface.IsSecuritySensitiveType(desc.ParameterTypeName))
                         {
@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell
                 WriteToConsole(printFieldPrompt, true);
                 SecureString secureString = ReadLineAsSecureString();
                 convertedObj = secureString;
-                cancelInput = (convertedObj is null);
+                cancelInput = (convertedObj == null);
                 if ((secureString != null) && (secureString.Length == 0) && listInput)
                 {
                     endListInput = true;
@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell
                         userName: null,
                         targetName: string.Empty);
                 convertedObj = credential;
-                cancelInput = (convertedObj is null);
+                cancelInput = (convertedObj == null);
                 if ((credential != null) && (credential.Password.Length == 0) && listInput)
                 {
                     endListInput = true;
@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell
                     rawInputString = userInputString;
                 }
 
-                if (rawInputString is null)
+                if (rawInputString == null)
                 {
                     // processedInputString is null as well. No need to assign null to it.
                     cancelled = true;

@@ -107,9 +107,9 @@ namespace System.Management.Automation
             {
                 // First check if this is a severe exception.
                 var innerCom = te.InnerException as COMException;
-                if (innerCom is null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
+                if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
                 {
-                    string message = te.InnerException is null ? te.Message : te.InnerException.Message;
+                    string message = te.InnerException == null ? te.Message : te.InnerException.Message;
                     throw new MethodInvocationException(
                         "ComMethodTargetInvocation",
                         te,

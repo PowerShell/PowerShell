@@ -170,7 +170,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         internal override void RaiseDataReceivedEvent(RemoteDataEventArgs dataArg)
         {
-            if (dataArg is null)
+            if (dataArg == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(dataArg));
             }

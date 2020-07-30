@@ -52,7 +52,7 @@ namespace System.Management.Automation
         /// </exception>
         internal CmdletProviderContext(ExecutionContext executionContext)
         {
-            if (executionContext is null)
+            if (executionContext == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(executionContext));
             }
@@ -82,7 +82,7 @@ namespace System.Management.Automation
         /// </exception>
         internal CmdletProviderContext(ExecutionContext executionContext, CommandOrigin origin)
         {
-            if (executionContext is null)
+            if (executionContext == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(executionContext));
             }
@@ -116,7 +116,7 @@ namespace System.Management.Automation
             PSDriveInfo drive)
         {
             // verify the command parameter
-            if (command is null)
+            if (command == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
@@ -131,12 +131,12 @@ namespace System.Management.Automation
 
             Drive = drive;
 
-            if (command.Host is null)
+            if (command.Host == null)
             {
                 throw PSTraceSource.NewArgumentException("command.Host");
             }
 
-            if (command.Context is null)
+            if (command.Context == null)
             {
                 throw PSTraceSource.NewArgumentException("command.Context");
             }
@@ -170,7 +170,7 @@ namespace System.Management.Automation
             PSCredential credentials)
         {
             // verify the command parameter
-            if (command is null)
+            if (command == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
@@ -183,12 +183,12 @@ namespace System.Management.Automation
                 _credentials = credentials;
             }
 
-            if (command.Host is null)
+            if (command.Host == null)
             {
                 throw PSTraceSource.NewArgumentException("command.Host");
             }
 
-            if (command.Context is null)
+            if (command.Context == null)
             {
                 throw PSTraceSource.NewArgumentException("command.Context");
             }
@@ -218,7 +218,7 @@ namespace System.Management.Automation
             Cmdlet command)
         {
             // verify the command parameter
-            if (command is null)
+            if (command == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
@@ -226,7 +226,7 @@ namespace System.Management.Automation
             _command = command;
             Origin = command.CommandOrigin;
 
-            if (command.Context is null)
+            if (command.Context == null)
             {
                 throw PSTraceSource.NewArgumentException("command.Context");
             }
@@ -254,7 +254,7 @@ namespace System.Management.Automation
         internal CmdletProviderContext(
             CmdletProviderContext contextToCopyFrom)
         {
-            if (contextToCopyFrom is null)
+            if (contextToCopyFrom == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(contextToCopyFrom));
             }
@@ -450,7 +450,7 @@ namespace System.Management.Automation
 
                 // If the username wasn't specified, use the drive credentials
 
-                if (_credentials is null && Drive != null)
+                if (_credentials == null && Drive != null)
                 {
                     result = Drive.Credential;
                 }
@@ -983,7 +983,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void WriteErrorsToContext(CmdletProviderContext errorContext)
         {
-            if (errorContext is null)
+            if (errorContext == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(errorContext));
             }

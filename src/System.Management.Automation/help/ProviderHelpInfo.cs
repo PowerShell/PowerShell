@@ -36,17 +36,17 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_fullHelpObject is null)
+                if (_fullHelpObject == null)
                     return string.Empty;
 
-                if (_fullHelpObject.Properties["Name"] is null)
+                if (_fullHelpObject.Properties["Name"] == null)
                     return string.Empty;
 
-                if (_fullHelpObject.Properties["Name"].Value is null)
+                if (_fullHelpObject.Properties["Name"].Value == null)
                     return string.Empty;
 
                 string name = _fullHelpObject.Properties["Name"].Value.ToString();
-                if (name is null)
+                if (name == null)
                     return string.Empty;
 
                 return name.Trim();
@@ -61,17 +61,17 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_fullHelpObject is null)
+                if (_fullHelpObject == null)
                     return string.Empty;
 
-                if (_fullHelpObject.Properties["Synopsis"] is null)
+                if (_fullHelpObject.Properties["Synopsis"] == null)
                     return string.Empty;
 
-                if (_fullHelpObject.Properties["Synopsis"].Value is null)
+                if (_fullHelpObject.Properties["Synopsis"].Value == null)
                     return string.Empty;
 
                 string synopsis = _fullHelpObject.Properties["Synopsis"].Value.ToString();
-                if (synopsis is null)
+                if (synopsis == null)
                     return string.Empty;
 
                 return synopsis.Trim();
@@ -86,17 +86,17 @@ namespace System.Management.Automation
         {
             get
             {
-                if (this.FullHelp is null)
+                if (this.FullHelp == null)
                     return string.Empty;
 
-                if (this.FullHelp.Properties["DetailedDescription"] is null ||
-                    this.FullHelp.Properties["DetailedDescription"].Value is null)
+                if (this.FullHelp.Properties["DetailedDescription"] == null ||
+                    this.FullHelp.Properties["DetailedDescription"].Value == null)
                 {
                     return string.Empty;
                 }
 
                 IList descriptionItems = FullHelp.Properties["DetailedDescription"].Value as IList;
-                if (descriptionItems is null || descriptionItems.Count == 0)
+                if (descriptionItems == null || descriptionItems.Count == 0)
                 {
                     return string.Empty;
                 }
@@ -108,9 +108,9 @@ namespace System.Management.Automation
                 foreach (object descriptionItem in descriptionItems)
                 {
                     PSObject descriptionObject = PSObject.AsPSObject(descriptionItem);
-                    if ((descriptionObject is null) ||
-                        (descriptionObject.Properties["Text"] is null) ||
-                        (descriptionObject.Properties["Text"].Value is null))
+                    if ((descriptionObject == null) ||
+                        (descriptionObject.Properties["Text"] == null) ||
+                        (descriptionObject.Properties["Text"].Value == null))
                     {
                         continue;
                     }
@@ -167,12 +167,12 @@ namespace System.Management.Automation
             string synopsis = Synopsis;
             string detailedDescription = DetailedDescription;
 
-            if (synopsis is null)
+            if (synopsis == null)
             {
                 synopsis = string.Empty;
             }
 
-            if (detailedDescription is null)
+            if (detailedDescription == null)
             {
                 detailedDescription = string.Empty;
             }
@@ -199,7 +199,7 @@ namespace System.Management.Automation
 
             LoadCmdletHelps();
 
-            if (_cmdletHelps is null)
+            if (_cmdletHelps == null)
                 return null;
 
             return (PSObject)_cmdletHelps[cmdletName];
@@ -214,21 +214,21 @@ namespace System.Management.Automation
             if (_cmdletHelps != null)
                 return;
 
-            if (_fullHelpObject is null)
+            if (_fullHelpObject == null)
                 return;
 
             _cmdletHelps = new Hashtable();
 
-            if (_fullHelpObject.Properties["Cmdlets"] is null)
+            if (_fullHelpObject.Properties["Cmdlets"] == null)
                 return;
 
             PSObject cmdlets = (PSObject)_fullHelpObject.Properties["Cmdlets"].Value;
 
-            if (cmdlets is null)
+            if (cmdlets == null)
                 return;
 
-            if (cmdlets.Properties["Cmdlet"] is null ||
-                cmdlets.Properties["Cmdlet"].Value is null)
+            if (cmdlets.Properties["Cmdlet"] == null ||
+                cmdlets.Properties["Cmdlet"].Value == null)
                 return;
 
             if (cmdlets.Properties["Cmdlet"].Value.GetType().Equals(typeof(PSObject[])))
@@ -237,8 +237,8 @@ namespace System.Management.Automation
 
                 for (int i = 0; i < cmdletHelpItems.Length; i++)
                 {
-                    if (cmdletHelpItems[i].Properties["Name"] is null
-                        || cmdletHelpItems[i].Properties["Name"].Value is null)
+                    if (cmdletHelpItems[i].Properties["Name"] == null
+                        || cmdletHelpItems[i].Properties["Name"].Value == null)
                         return;
 
                     string name = ((PSObject)cmdletHelpItems[i].Properties["Name"].Value).ToString();
@@ -265,12 +265,12 @@ namespace System.Management.Automation
         /// <returns>An array of mshObject that contains the parameter help.</returns>
         internal PSObject[] GetDynamicParameterHelp(string[] parameters)
         {
-            if (parameters is null || parameters.Length == 0)
+            if (parameters == null || parameters.Length == 0)
                 return null;
 
             LoadDynamicParameterHelps();
 
-            if (_dynamicParameterHelps is null)
+            if (_dynamicParameterHelps == null)
                 return null;
 
             ArrayList result = new ArrayList();
@@ -295,21 +295,21 @@ namespace System.Management.Automation
             if (_dynamicParameterHelps != null)
                 return;
 
-            if (_fullHelpObject is null)
+            if (_fullHelpObject == null)
                 return;
 
             _dynamicParameterHelps = new Hashtable();
 
-            if (_fullHelpObject.Properties["DynamicParameters"] is null)
+            if (_fullHelpObject.Properties["DynamicParameters"] == null)
                 return;
 
             PSObject dynamicParameters = (PSObject)_fullHelpObject.Properties["DynamicParameters"].Value;
 
-            if (dynamicParameters is null)
+            if (dynamicParameters == null)
                 return;
 
-            if (dynamicParameters.Properties["DynamicParameter"] is null
-                || dynamicParameters.Properties["DynamicParameter"].Value is null)
+            if (dynamicParameters.Properties["DynamicParameter"] == null
+                || dynamicParameters.Properties["DynamicParameter"].Value == null)
                 return;
 
             if (dynamicParameters.Properties["DynamicParameter"].Value.GetType().Equals(typeof(PSObject[])))
@@ -318,8 +318,8 @@ namespace System.Management.Automation
 
                 for (int i = 0; i < dynamicParameterHelpItems.Length; i++)
                 {
-                    if (dynamicParameterHelpItems[i].Properties["Name"] is null
-                        || dynamicParameterHelpItems[i].Properties["Name"].Value is null)
+                    if (dynamicParameterHelpItems[i].Properties["Name"] == null
+                        || dynamicParameterHelpItems[i].Properties["Name"].Value == null)
                         return;
 
                     string name = ((PSObject)dynamicParameterHelpItems[i].Properties["Name"].Value).ToString();

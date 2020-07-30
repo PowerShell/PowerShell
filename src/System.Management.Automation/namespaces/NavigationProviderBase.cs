@@ -315,8 +315,8 @@ namespace System.Management.Automation.Provider
             {
                 string result = null;
 
-                if (parent is null &&
-                    child is null)
+                if (parent == null &&
+                    child == null)
                 {
                     throw PSTraceSource.NewArgumentException(nameof(parent));
                 }
@@ -410,7 +410,7 @@ namespace System.Management.Automation.Provider
                     throw PSTraceSource.NewArgumentException(nameof(path));
                 }
 
-                if (root is null)
+                if (root == null)
                 {
                     if (PSDriveInfo != null)
                     {
@@ -506,7 +506,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
 
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -516,7 +516,7 @@ namespace System.Management.Automation.Provider
                 return string.Empty;
             }
 
-            if (basePath is null)
+            if (basePath == null)
             {
                 basePath = string.Empty;
             }

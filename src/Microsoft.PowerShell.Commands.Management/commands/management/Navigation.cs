@@ -505,7 +505,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     // If the drive wasn't specified but the provider was
-                    else if ((PSDrive is null || PSDrive.Length == 0) &&
+                    else if ((PSDrive == null || PSDrive.Length == 0) &&
                              (PSProvider != null && PSProvider.Length > 0))
                     {
                         foreach (string providerName in PSProvider)
@@ -1370,7 +1370,7 @@ namespace Microsoft.PowerShell.Commands
         {
             List<PSDriveInfo> results = new List<PSDriveInfo>();
 
-            if (providerNames is null || providerNames.Length == 0)
+            if (providerNames == null || providerNames.Length == 0)
             {
                 providerNames = new string[] { "*" };
             }
@@ -1419,7 +1419,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     pssnapinQualifiedProviderName = PSSnapinQualifiedName.GetInstance(providerName);
 
-                    if (pssnapinQualifiedProviderName is null)
+                    if (pssnapinQualifiedProviderName == null)
                     {
                         // This is a malformed pssnapin-qualified name so there is no chances for a match.
                         continue;
@@ -1582,7 +1582,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = NavigationResources.RemoveDriveConfirmResourceTemplate;
 
             bool verifyMatch = true;
-            if (_names is null)
+            if (_names == null)
             {
                 _names = new string[] { string.Empty };
                 verifyMatch = false;
@@ -2109,7 +2109,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (Path is null || Path.Length == 0)
+            if (Path == null || Path.Length == 0)
             {
                 Path = new string[] { string.Empty };
             }
@@ -3329,7 +3329,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             Collection<PathInfo> resolvedPaths = GetResolvedPaths(Path);
-            if (resolvedPaths is null)
+            if (resolvedPaths == null)
             {
                 return;
             }
@@ -4158,7 +4158,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (PSProvider is null || PSProvider.Length == 0)
+            if (PSProvider == null || PSProvider.Length == 0)
             {
                 // Get all the providers
 

@@ -165,7 +165,7 @@ namespace System.Management.Automation.Language
         /// <param name="keywordToAdd"></param>
         public static void AddKeyword(DynamicKeyword keywordToAdd)
         {
-            if (keywordToAdd is null)
+            if (keywordToAdd == null)
             {
                 PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(keywordToAdd));
                 throw e;
@@ -1122,7 +1122,7 @@ namespace System.Management.Automation.Language
 
         internal void CheckAstIsBeforeSignature(Ast ast)
         {
-            if (_beginSignatureExtent is null)
+            if (_beginSignatureExtent == null)
                 return;
 
             if (_beginSignatureExtent.StartOffset < ast.Extent.StartOffset)
@@ -1224,7 +1224,7 @@ namespace System.Management.Automation.Language
                     // Don't remember these tokens, they aren't useful in $$ and $^.
                     break;
                 default:
-                    if (FirstToken is null)
+                    if (FirstToken == null)
                     {
                         FirstToken = token;
                     }
@@ -1725,7 +1725,7 @@ namespace System.Management.Automation.Language
                             // about 4.45 ms with the more simplistic algorithm.
 
                             string commentLineComparison = commentLine.ToString().ToLowerInvariant();
-                            if (_beginTokenSimilarity2dArray is null)
+                            if (_beginTokenSimilarity2dArray == null)
                             {
                                 // Create the 2 dimensional array for edit distance calculation if it hasn't been created yet.
                                 _beginTokenSimilarity2dArray = new int[beginTokenSimilarityUpperBound + 1, beginSignatureTextNoSpace.Length + 1];
@@ -1797,7 +1797,7 @@ namespace System.Management.Automation.Language
             }
             else if (matchedRequires && _nestedTokensAdjustment == 0)
             {
-                if (RequiresTokens is null)
+                if (RequiresTokens == null)
                     RequiresTokens = new List<Token>();
                 RequiresTokens.Add(token);
             }
@@ -1890,7 +1890,7 @@ namespace System.Management.Automation.Language
 
         internal ScriptRequirements GetScriptRequirements()
         {
-            if (RequiresTokens is null)
+            if (RequiresTokens == null)
                 return null;
 
             // Make sure a nested scan of the #requires lines don't affect our processing here.
@@ -1935,7 +1935,7 @@ namespace System.Management.Automation.Language
                             PSSnapinToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
                         {
                             snapinSpecified = true;
-                            if (requiredSnapins is null)
+                            if (requiredSnapins == null)
                             {
                                 requiredSnapins = new List<PSSnapInSpecification>();
                             }
@@ -2026,7 +2026,7 @@ namespace System.Management.Automation.Language
                 return;
             }
 
-            if (argumentAst is null)
+            if (argumentAst == null)
             {
                 ReportError(parameter.Extent,
                     nameof(ParserStrings.ParameterRequiresArgument),
@@ -2126,7 +2126,7 @@ namespace System.Management.Automation.Language
             {
                 var argumentText = argumentValue as string ?? argumentAst.Extent.Text;
                 var version = Utils.StringToVersion(argumentText);
-                if (version is null)
+                if (version == null)
                 {
                     ReportError(argumentAst.Extent,
                         nameof(ParserStrings.RequiresVersionInvalid),
@@ -2204,7 +2204,7 @@ namespace System.Management.Automation.Language
                         return;
                     }
 
-                    if (requiredModules is null)
+                    if (requiredModules == null)
                         requiredModules = new List<ModuleSpecification>();
                     requiredModules.Add(moduleSpecification);
                 }
@@ -2228,7 +2228,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                if (requiredAssemblies is null)
+                if (requiredAssemblies == null)
                     requiredAssemblies = new List<string>();
 
                 if (!requiredAssemblies.Contains((string)arg))
@@ -2251,7 +2251,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                if (requiredEditions is null)
+                if (requiredEditions == null)
                     requiredEditions = new List<string>();
 
                 var edition = (string)arg;
@@ -3896,7 +3896,7 @@ namespace System.Management.Automation.Language
             string strNum = ScanNumberHelper(firstChar, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier);
 
             // the token is not a number. i.e. 77z.exe
-            if (strNum is null)
+            if (strNum == null)
             {
                 // Rescan the characters, this is simpler than keeping track of the suffix, multiplier, and 0x prefix.
                 _currentIndex = _tokenStart;
@@ -5013,7 +5013,7 @@ namespace System.Management.Automation.Language
                         _currentIndex = _tokenStart;
                         c = GetChar();
 
-                        if (strNum is null)
+                        if (strNum == null)
                         {
                             return ScanGenericToken(c);
                         }

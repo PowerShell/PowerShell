@@ -207,9 +207,9 @@ namespace System.Management.Automation
 
         internal void AddMembersByInferredTypesClrType(PSTypeName typename, bool isStatic, Func<object, bool> filter, Func<object, bool> filterToCall, List<object> results)
         {
-            if (CurrentTypeDefinitionAst is null || CurrentTypeDefinitionAst.Type != typename.Type)
+            if (CurrentTypeDefinitionAst == null || CurrentTypeDefinitionAst.Type != typename.Type)
             {
-                if (filterToCall is null)
+                if (filterToCall == null)
                 {
                     filterToCall = o => !IsMemberHidden(o);
                 }
@@ -277,7 +277,7 @@ namespace System.Management.Automation
         {
             if (CurrentTypeDefinitionAst != typename.TypeDefinitionAst)
             {
-                if (filterToCall is null)
+                if (filterToCall == null)
                 {
                     filterToCall = o => !IsMemberHidden(o);
                 }
@@ -317,7 +317,7 @@ namespace System.Management.Automation
             foreach (var baseType in typename.TypeDefinitionAst.BaseTypes)
             {
                 var baseTypeName = baseType.TypeName as TypeName;
-                if (baseTypeName is null)
+                if (baseTypeName == null)
                 {
                     continue;
                 }
@@ -330,7 +330,7 @@ namespace System.Management.Automation
             if (isStatic)
             {
                 // Don't add base class constructors
-                if (filter is null)
+                if (filter == null)
                 {
                     filterToCall = o => !IsConstructor(o);
                 }
@@ -378,7 +378,7 @@ namespace System.Management.Automation
 
                 foreach (var cimClass in cimClasses)
                 {
-                    if (filterToCall is null)
+                    if (filterToCall == null)
                     {
                         results.AddRange(cimClass.CimClassProperties);
                     }
@@ -429,7 +429,7 @@ namespace System.Management.Automation
         {
             cimNamespace = null;
             className = null;
-            if (typename is null)
+            if (typename == null)
             {
                 return false;
             }
@@ -567,7 +567,7 @@ namespace System.Management.Automation
                                     break;
                                 default:
                                     typeName = InferTypes(kv.Item2).FirstOrDefault()?.Name;
-                                    if (typeName is null)
+                                    if (typeName == null)
                                     {
                                         if (SafeExprEvaluator.TrySafeEval(expression, _context.ExecutionContext, out object safeValue))
                                         {
@@ -986,7 +986,7 @@ namespace System.Management.Automation
             PseudoBindingInfo pseudoBinding = new PseudoParameterBinder()
             .DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ParameterCompletion);
 
-            if (pseudoBinding?.CommandInfo is null)
+            if (pseudoBinding?.CommandInfo == null)
             {
                 return;
             }
@@ -1122,7 +1122,7 @@ namespace System.Management.Automation
             if (pseudoBinding.BoundArguments.TryGetValue("MemberName", out AstParameterArgumentPair argument))
             {
                 var previousPipelineElement = GetPreviousPipelineCommand(commandAst);
-                if (previousPipelineElement is null)
+                if (previousPipelineElement == null)
                 {
                     return;
                 }
@@ -1190,7 +1190,7 @@ namespace System.Management.Automation
 
             bool IsInPropertyArgument(object o)
             {
-                if (properties is null)
+                if (properties == null)
                 {
                     return true;
                 }
@@ -1305,7 +1305,7 @@ namespace System.Management.Automation
                             break;
                     }
 
-                    if (properties is null)
+                    if (properties == null)
                     {
                         return;
                     }
@@ -1356,7 +1356,7 @@ namespace System.Management.Automation
             }
 
             var previousPipelineElement = GetPreviousPipelineCommand(commandAst);
-            if (previousPipelineElement is null)
+            if (previousPipelineElement == null)
             {
                 return;
             }
@@ -1485,13 +1485,13 @@ namespace System.Management.Automation
 
             // If the member name isn't simple, don't even try.
             var memberAsStringConst = memberCommandElement as StringConstantExpressionAst;
-            if (memberAsStringConst is null)
+            if (memberAsStringConst == null)
             {
                 return Array.Empty<PSTypeName>();
             }
 
             var exprType = GetExpressionType(expression, isStatic);
-            if (exprType is null || exprType.Length == 0)
+            if (exprType == null || exprType.Length == 0)
             {
                 return Array.Empty<PSTypeName>();
             }
@@ -1729,16 +1729,16 @@ namespace System.Management.Automation
             if (isStatic)
             {
                 var exprAsType = expression as TypeExpressionAst;
-                if (exprAsType is null)
+                if (exprAsType == null)
                 {
                     return null;
                 }
 
                 var type = exprAsType.TypeName.GetReflectionType();
-                if (type is null)
+                if (type == null)
                 {
                     var typeName = exprAsType.TypeName as TypeName;
-                    if (typeName?._typeDefinitionAst is null)
+                    if (typeName?._typeDefinitionAst == null)
                     {
                         return null;
                     }
@@ -1890,7 +1890,7 @@ namespace System.Management.Automation
             if (astVariablePath.IsUnqualified)
             {
                 var isThis = astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.This);
-                if (!isThis || (_context.CurrentTypeDefinitionAst is null && _context.CurrentThisType is null))
+                if (!isThis || (_context.CurrentTypeDefinitionAst == null && _context.CurrentThisType == null))
                 {
                     for (int i = 0; i < SpecialVariables.AutomaticVariables.Length; i++)
                     {
@@ -2029,7 +2029,7 @@ namespace System.Management.Automation
             PSTypeName foundType = null;
             foreach (PSTypeName inferredType in inferredTypes)
             {
-                if (inferredType.Type is null)
+                if (inferredType.Type == null)
                 {
                     return new PSTypeName(typeof(object[]));
                 }
@@ -2043,7 +2043,7 @@ namespace System.Management.Automation
                     break;
                 }
 
-                if (foundType is null)
+                if (foundType == null)
                 {
                     foundType = inferredType;
                     continue;
@@ -2056,7 +2056,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (foundType is null)
+            if (foundType == null)
             {
                 return new PSTypeName(typeof(object[]));
             }
@@ -2265,14 +2265,14 @@ namespace System.Management.Automation
             foreach (PSTypeName maybeEnumerableType in enumerableTypes)
             {
                 Type type = maybeEnumerableType.Type;
-                if (type is null)
+                if (type == null)
                 {
                     yield return maybeEnumerableType;
                     continue;
                 }
 
                 Type enumeratedItemType = GetMostSpecificEnumeratedItemType(type);
-                yield return enumeratedItemType is null
+                yield return enumeratedItemType == null
                     ? maybeEnumerableType
                     : new PSTypeName(enumeratedItemType);
             }
@@ -2282,7 +2282,7 @@ namespace System.Management.Automation
         {
             var argumentPair = argument as AstPair;
             var scriptBlockExpressionAst = argumentPair?.Argument as ScriptBlockExpressionAst;
-            if (scriptBlockExpressionAst is null)
+            if (scriptBlockExpressionAst == null)
             {
                 return;
             }

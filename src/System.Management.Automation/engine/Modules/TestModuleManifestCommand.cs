@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Make sure at least one file was found...
-            if (filePaths is null || filePaths.Count < 1)
+            if (filePaths == null || filePaths.Count < 1)
             {
                 string message = StringUtil.Format(Modules.ModuleNotFound, _path);
                 FileNotFoundException fnf = new FileNotFoundException(message);
@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
                             // Ensure that PowerShellVersion module manifest key value is '5.1' or higher.
                             //
                             var minimumRequiredPowerShellVersion = new Version(5, 1);
-                            if ((module.PowerShellVersion is null) || module.PowerShellVersion < minimumRequiredPowerShellVersion)
+                            if ((module.PowerShellVersion == null) || module.PowerShellVersion < minimumRequiredPowerShellVersion)
                             {
                                 string errorMsg = StringUtil.Format(Modules.InvalidPowerShellVersionInModuleManifest, filePath);
                                 var errorRecord = new ErrorRecord(new ArgumentException(errorMsg), "Modules_InvalidPowerShellVersionInModuleManifest", ErrorCategory.InvalidArgument, _path);

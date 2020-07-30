@@ -244,7 +244,7 @@ namespace System.Management.Automation.Remoting.Internal
             jobInstanceId = Guid.Empty;
             computerName = string.Empty;
 
-            if (message is null) return;
+            if (message == null) return;
             string[] parts = message.Split(Utils.Separators.Colon, 3);
 
             if (parts.Length != 3) return;
@@ -286,7 +286,7 @@ namespace System.Management.Automation.Remoting.Internal
                         ErrorRecord errorRecord = (ErrorRecord)this.Value;
                         RemotingErrorRecord remoteErrorRecord = errorRecord as RemotingErrorRecord;
 
-                        if (remoteErrorRecord is null)
+                        if (remoteErrorRecord == null)
                         {
                             // if we get a base ErrorRecord object, check if the computerName is
                             // populated in the RecommendedAction field
@@ -348,7 +348,7 @@ namespace System.Management.Automation.Remoting.Internal
                         ProgressRecord progressRecord = (ProgressRecord)Value;
 
                         RemotingProgressRecord remotingProgressRecord = progressRecord as RemotingProgressRecord;
-                        if (remotingProgressRecord is null)
+                        if (remotingProgressRecord == null)
                         {
                             Guid jobInstanceId;
                             string computerName;
@@ -389,7 +389,7 @@ namespace System.Management.Automation.Remoting.Internal
                         InformationRecord informationRecord = (InformationRecord)this.Value;
                         RemotingInformationRecord remoteInformationRecord = informationRecord as RemotingInformationRecord;
 
-                        if (remoteInformationRecord is null)
+                        if (remoteInformationRecord == null)
                         {
                             // if we get a base InformationRecord object, check if the computerName is
                             // populated in the Source field
@@ -496,8 +496,8 @@ namespace System.Management.Automation.Remoting.Internal
 
         internal static ErrorRecord AddSourceTagToError(ErrorRecord errorRecord, Guid sourceId)
         {
-            if (errorRecord is null) return null;
-            if (errorRecord.ErrorDetails is null) errorRecord.ErrorDetails = new ErrorDetails(string.Empty);
+            if (errorRecord == null) return null;
+            if (errorRecord.ErrorDetails == null) errorRecord.ErrorDetails = new ErrorDetails(string.Empty);
             errorRecord.ErrorDetails.RecommendedAction = CreateInformationalMessage(sourceId, errorRecord.ErrorDetails.RecommendedAction);
             return errorRecord;
         }

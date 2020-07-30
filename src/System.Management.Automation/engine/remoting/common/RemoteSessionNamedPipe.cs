@@ -93,7 +93,7 @@ namespace System.Management.Automation.Remoting
             System.Diagnostics.Process proc,
             string appDomainName)
         {
-            if (proc is null)
+            if (proc == null)
             {
                 throw new PSArgumentNullException(nameof(proc));
             }
@@ -450,7 +450,7 @@ namespace System.Management.Automation.Remoting
         internal RemoteSessionNamedPipeServer(
             string pipeName)
         {
-            if (pipeName is null)
+            if (pipeName == null)
             {
                 throw new PSArgumentNullException(nameof(pipeName));
             }
@@ -480,11 +480,11 @@ namespace System.Management.Automation.Remoting
             string coreName,
             CommonSecurityDescriptor securityDesc)
         {
-            if (serverName is null) { throw new PSArgumentNullException(nameof(serverName)); }
+            if (serverName == null) { throw new PSArgumentNullException(nameof(serverName)); }
 
-            if (namespaceName is null) { throw new PSArgumentNullException(nameof(namespaceName)); }
+            if (namespaceName == null) { throw new PSArgumentNullException(nameof(namespaceName)); }
 
-            if (coreName is null) { throw new PSArgumentNullException(nameof(coreName)); }
+            if (coreName == null) { throw new PSArgumentNullException(nameof(coreName)); }
 
 #if !UNIX
             string fullPipeName = @"\\" + serverName + @"\" + namespaceName + @"\" + coreName;
@@ -679,7 +679,7 @@ namespace System.Management.Automation.Remoting
         internal void StartListening(
             Action<RemoteSessionNamedPipeServer> clientConnectCallback)
         {
-            if (clientConnectCallback is null)
+            if (clientConnectCallback == null)
             {
                 throw new PSArgumentNullException(nameof(clientConnectCallback));
             }
@@ -850,7 +850,7 @@ namespace System.Management.Automation.Remoting
                 PSKeyword.UseAlwaysOperational,
                 processId, appDomainName, userName);
 
-            if (ex is null)
+            if (ex == null)
             {
                 // Normal listener exit.
                 _tracer.WriteMessage("RemoteSessionNamedPipeServer", "StartListening", Guid.Empty,
@@ -899,7 +899,7 @@ namespace System.Management.Automation.Remoting
             IPCNamedPipeServerEnabled = true;
             CreateIPCNamedPipeServerSingleton();
 
-            if (IPCNamedPipeServer is null)
+            if (IPCNamedPipeServer == null)
             {
                 throw new RuntimeException(RemotingErrorIdStrings.NamedPipeServerCannotStart);
             }
@@ -929,7 +929,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (!IPCNamedPipeServerEnabled) { return; }
 
-                if (IPCNamedPipeServer is null || IPCNamedPipeServer.IsDisposed)
+                if (IPCNamedPipeServer == null || IPCNamedPipeServer.IsDisposed)
                 {
                     try
                     {
@@ -1174,7 +1174,7 @@ namespace System.Management.Automation.Remoting
         internal RemoteSessionNamedPipeClient(
            string pipeName)
         {
-            if (pipeName is null)
+            if (pipeName == null)
             {
                 throw new PSArgumentNullException(nameof(pipeName));
             }
@@ -1182,7 +1182,7 @@ namespace System.Management.Automation.Remoting
             _pipeName = pipeName;
 
             // Defer creating the .Net NamedPipeClientStream object until we connect.
-            // _clientPipeStream is null.
+            // _clientPipeStream == null.
         }
 
         /// <summary>
@@ -1196,16 +1196,16 @@ namespace System.Management.Automation.Remoting
             string namespaceName,
             string coreName)
         {
-            if (serverName is null) { throw new PSArgumentNullException(nameof(serverName)); }
+            if (serverName == null) { throw new PSArgumentNullException(nameof(serverName)); }
 
-            if (namespaceName is null) { throw new PSArgumentNullException(nameof(namespaceName)); }
+            if (namespaceName == null) { throw new PSArgumentNullException(nameof(namespaceName)); }
 
-            if (coreName is null) { throw new PSArgumentNullException(nameof(coreName)); }
+            if (coreName == null) { throw new PSArgumentNullException(nameof(coreName)); }
 
             _pipeName = @"\\" + serverName + @"\" + namespaceName + @"\" + coreName;
 
             // Defer creating the .Net NamedPipeClientStream object until we connect.
-            // _clientPipeStream is null.
+            // _clientPipeStream == null.
         }
 
         #endregion

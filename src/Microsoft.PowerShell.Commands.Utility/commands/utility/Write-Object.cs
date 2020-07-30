@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (InputObject is null)
+            if (InputObject == null)
             {
                 WriteObject(InputObject);
                 return;

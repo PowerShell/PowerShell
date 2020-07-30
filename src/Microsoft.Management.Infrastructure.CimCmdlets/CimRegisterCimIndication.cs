@@ -167,7 +167,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             UInt32 operationTimeout)
         {
             DebugHelper.WriteLogEx("queryDialect = '{0}'; queryExpression = '{1}'", 0, queryDialect, queryExpression);
-            if (cimSession is null)
+            if (cimSession == null)
             {
                 throw new ArgumentNullException(string.Format(CultureInfo.CurrentUICulture, CimCmdletStrings.NullArgument, @"cimSession"));
             }

@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell
 
             lock (transcriptionStateLock)
             {
-                Dbg.Assert(transcriptionWriter is null, "writer should not exist");
+                Dbg.Assert(transcriptionWriter == null, "writer should not exist");
                 this.transcriptFileName = transcriptFilename;
 
                 transcriptionWriter = new StreamWriter(transcriptFilename, shouldAppend, new System.Text.UnicodeEncoding());
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell
         {
             lock (_transcriptionStateLock)
             {
-                if (_transcriptionWriter is null)
+                if (_transcriptionWriter == null)
                 {
                     return null;
                 }

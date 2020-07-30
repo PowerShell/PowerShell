@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
 
             bool? supportsVT100 = this.Host?.UI.SupportsVirtualTerminal;
 
-            // supportsVT100 is null if the host is null.
+            // supportsVT100 == null if the host is null.
             // supportsVT100 == false if host does not support VT100.
             if (supportsVT100 != true)
             {

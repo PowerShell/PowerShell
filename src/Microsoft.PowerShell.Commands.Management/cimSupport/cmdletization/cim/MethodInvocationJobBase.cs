@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 .GetMethodInputParametersCore(p => p.Name.StartsWith(CustomOperationOptionPrefix, StringComparison.OrdinalIgnoreCase));
             foreach (MethodParameter customOption in customOptions)
             {
-                if (customOption.Value is null)
+                if (customOption.Value == null)
                 {
                     continue;
                 }

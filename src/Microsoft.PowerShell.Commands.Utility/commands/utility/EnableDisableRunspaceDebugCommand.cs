@@ -218,7 +218,7 @@ namespace Microsoft.PowerShell.Commands
         {
             IReadOnlyList<Runspace> results = null;
 
-            if ((ParameterSetName == CommonRunspaceCommandBase.RunspaceNameParameterSet) && ((RunspaceName is null) || RunspaceName.Length == 0))
+            if ((ParameterSetName == CommonRunspaceCommandBase.RunspaceNameParameterSet) && ((RunspaceName == null) || RunspaceName.Length == 0))
             {
                 results = GetRunspaceUtils.GetAllRunspaces();
             }
@@ -261,7 +261,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (PSInvalidOperationException) { }
 
-            if (debugger is null)
+            if (debugger == null)
             {
                 WriteError(
                     new ErrorRecord(
@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!string.IsNullOrEmpty(currentAppDomainName))
                     {
-                        if (appDomainNames is null)
+                        if (appDomainNames == null)
                         {
                             appDomainNames = new List<string>();
                         }
@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 System.Management.Automation.Debugger debugger = GetDebuggerFromRunspace(runspace);
-                if (debugger is null)
+                if (debugger == null)
                 {
                     continue;
                 }
@@ -460,7 +460,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     System.Management.Automation.Debugger debugger = GetDebuggerFromRunspace(runspace);
-                    if (debugger is null)
+                    if (debugger == null)
                     {
                         continue;
                     }

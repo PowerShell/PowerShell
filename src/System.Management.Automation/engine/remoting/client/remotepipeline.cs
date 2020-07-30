@@ -137,7 +137,7 @@ namespace System.Management.Automation
         internal RemotePipeline(RemoteRunspace runspace)
             : this(runspace, false, false)
         {
-            if (runspace.RemoteCommand is null)
+            if (runspace.RemoteCommand == null)
             {
                 throw new InvalidOperationException(PipelineStrings.InvalidRemoteCommand);
             }
@@ -169,7 +169,7 @@ namespace System.Management.Automation
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
             // the above comment copied from RemotePipelineBase which
             // originally copied it from PipelineBase
-            if (pipeline is null)
+            if (pipeline == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(pipeline));
             }
@@ -423,7 +423,7 @@ namespace System.Management.Automation
         /// </remarks>
         public override Collection<PSObject> Invoke(System.Collections.IEnumerable input)
         {
-            if (input is null)
+            if (input == null)
             {
                 this.InputStream.Close();
             }
@@ -866,7 +866,7 @@ namespace System.Management.Automation
         /// <param name="invokeAndDisconnect">Invoke and Disconnect.</param>
         private void InitPowerShell(bool syncCall, bool invokeAndDisconnect = false)
         {
-            if (_commands is null || _commands.Count == 0)
+            if (_commands == null || _commands.Count == 0)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                         RunspaceStrings.NoCommandInPipeline);
@@ -921,7 +921,7 @@ namespace System.Management.Automation
             }
 
             // Initialize the PowerShell object if it hasn't been initialized before.
-            if ((_powershell.RemotePowerShell) is null || !_powershell.RemotePowerShell.Initialized)
+            if ((_powershell.RemotePowerShell) == null || !_powershell.RemotePowerShell.Initialized)
             {
                 PSInvocationSettings settings = new PSInvocationSettings();
                 settings.AddToHistory = _addToHistory;
@@ -1050,7 +1050,7 @@ namespace System.Management.Automation
 
             if (_isNested == false)
             {
-                if (currentPipeline is null &&
+                if (currentPipeline == null &&
                     ((RemoteRunspace)_runspace).RunspaceAvailability != RunspaceAvailability.Busy &&
                     ((RemoteRunspace)_runspace).RunspaceAvailability != RunspaceAvailability.RemoteDebug)
                 {
@@ -1059,7 +1059,7 @@ namespace System.Management.Automation
                     return;
                 }
 
-                if (currentPipeline is null &&
+                if (currentPipeline == null &&
                     ((RemoteRunspace)_runspace).RemoteCommand != null &&
                     _connectCmdInfo != null &&
                     Guid.Equals(((RemoteRunspace)_runspace).RemoteCommand.CommandId, _connectCmdInfo.CommandId))
@@ -1099,7 +1099,7 @@ namespace System.Management.Automation
                                 RunspaceStrings.NestedPipelineInvokeAsync);
                     }
 
-                    if (currentPipeline is null)
+                    if (currentPipeline == null)
                     {
                         if (!_isSteppable)
                         {

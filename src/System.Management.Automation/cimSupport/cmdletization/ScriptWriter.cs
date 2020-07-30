@@ -415,7 +415,7 @@ function __cmdletization_BindCommonParameters
 
         private GetCmdletParameters GetGetCmdletParameters(InstanceCmdletMetadata instanceCmdlet)
         {
-            if (instanceCmdlet is null)
+            if (instanceCmdlet == null)
             {
                 if ((_cmdletizationMetadata.Class.InstanceCmdlets.GetCmdlet != null) &&
                     (_cmdletizationMetadata.Class.InstanceCmdlets.GetCmdlet.GetCmdletParameters != null))
@@ -629,7 +629,7 @@ function __cmdletization_BindCommonParameters
                 {
                     Type parameterType = parameterMetadata.ParameterType;
                     Type elementType;
-                    if (parameterType is null)
+                    if (parameterType == null)
                     {
                         elementType = typeof(string);
                     }
@@ -991,7 +991,7 @@ function __cmdletization_BindCommonParameters
 
             if (methodParameter.CmdletOutputMetadata != null)
             {
-                if (methodParameter.CmdletOutputMetadata.ErrorCode is null)
+                if (methodParameter.CmdletOutputMetadata.ErrorCode == null)
                 {
                     bindings |= MethodParameterBindings.Out;
                 }
@@ -1016,7 +1016,7 @@ function __cmdletization_BindCommonParameters
 
             if (methodParameter.CmdletOutputMetadata != null)
             {
-                if (methodParameter.CmdletOutputMetadata.ErrorCode is null)
+                if (methodParameter.CmdletOutputMetadata.ErrorCode == null)
                 {
                     bindings |= MethodParameterBindings.Out;
                 }
@@ -1036,7 +1036,7 @@ function __cmdletization_BindCommonParameters
             MethodParameterBindings bindings = 0;
             if (returnValue.CmdletOutputMetadata != null)
             {
-                if (returnValue.CmdletOutputMetadata.ErrorCode is null)
+                if (returnValue.CmdletOutputMetadata.ErrorCode == null)
                 {
                     bindings |= MethodParameterBindings.Out;
                 }
@@ -1481,7 +1481,7 @@ function __cmdletization_BindCommonParameters
             WildcardablePropertyQuery wildcardablePropertyQuery = query as WildcardablePropertyQuery;
             if ((wildcardablePropertyQuery != null) && (!cmdletParameterMetadata.SwitchParameter))
             {
-                if (cmdletParameterMetadata.ParameterType is null)
+                if (cmdletParameterMetadata.ParameterType == null)
                 {
                     cmdletParameterMetadata.ParameterType = typeof(object);
                 }
@@ -1491,8 +1491,8 @@ function __cmdletization_BindCommonParameters
 
             GenerateIfBoundParameter(commonParameterSets, methodParameterSets, cmdletParameterMetadata, output);
 
-            string localVariableName = wildcardablePropertyQuery is null ? "__cmdletization_value" : "__cmdletization_values";
-            if (wildcardablePropertyQuery is null)
+            string localVariableName = wildcardablePropertyQuery == null ? "__cmdletization_value" : "__cmdletization_values";
+            if (wildcardablePropertyQuery == null)
             {
                 output.WriteLine(
                     "        [object]${0} = ${{{1}}}",
@@ -1512,7 +1512,7 @@ function __cmdletization_BindCommonParameters
                 queryBuilderMethodName,
                 CodeGeneration.EscapeSingleQuotedStringContent(property.PropertyName),
                 localVariableName);
-            if (wildcardablePropertyQuery is null)
+            if (wildcardablePropertyQuery == null)
             {
                 output.WriteLine(
                     ", '{0}')",
@@ -1536,7 +1536,7 @@ function __cmdletization_BindCommonParameters
 
         private static BehaviorOnNoMatch GetBehaviorWhenNoMatchesFound(CmdletParameterMetadataForGetCmdletFilteringParameter cmdletParameterMetadata)
         {
-            if ((cmdletParameterMetadata is null) || (!cmdletParameterMetadata.ErrorOnNoMatchSpecified))
+            if ((cmdletParameterMetadata == null) || (!cmdletParameterMetadata.ErrorOnNoMatchSpecified))
             {
                 return BehaviorOnNoMatch.Default;
             }
@@ -1929,7 +1929,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
             {
                 foreach (InstanceMethodParameterMetadata parameter in instanceCmdletMetadata.Method.Parameters)
                 {
-                    if ((parameter.CmdletOutputMetadata != null) && (parameter.CmdletOutputMetadata.ErrorCode is null))
+                    if ((parameter.CmdletOutputMetadata != null) && (parameter.CmdletOutputMetadata.ErrorCode == null))
                     {
                         outParametersArePresent = true;
                         break;
@@ -1940,7 +1940,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
             if (instanceCmdletMetadata.Method.ReturnValue != null)
             {
                 if ((instanceCmdletMetadata.Method.ReturnValue.CmdletOutputMetadata != null) &&
-                    (instanceCmdletMetadata.Method.ReturnValue.CmdletOutputMetadata.ErrorCode is null))
+                    (instanceCmdletMetadata.Method.ReturnValue.CmdletOutputMetadata.ErrorCode == null))
                 {
                     outParametersArePresent = true;
                 }

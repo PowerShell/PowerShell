@@ -26,7 +26,7 @@ namespace System.Management.Automation
         /// </exception>
         internal SessionState(SessionStateInternal sessionState)
         {
-            if (sessionState is null)
+            if (sessionState == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
@@ -51,7 +51,7 @@ namespace System.Management.Automation
         /// </exception>
         internal SessionState(ExecutionContext context, bool createAsChild, bool linkToGlobal)
         {
-            if (context is null)
+            if (context == null)
                 throw new InvalidOperationException("ExecutionContext");
 
             if (createAsChild)
@@ -72,7 +72,7 @@ namespace System.Management.Automation
         public SessionState()
         {
             ExecutionContext ecFromTLS = LocalPipeline.GetExecutionContextFromTLS();
-            if (ecFromTLS is null)
+            if (ecFromTLS == null)
                 throw new InvalidOperationException("ExecutionContext");
 
             _sessionState = new SessionStateInternal(ecFromTLS);
@@ -271,7 +271,7 @@ namespace System.Management.Automation
         {
             if (origin == CommandOrigin.Internal)
                 return true;
-            if (variable is null)
+            if (variable == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(variable));
             }
@@ -288,7 +288,7 @@ namespace System.Management.Automation
         {
             if (origin == CommandOrigin.Internal)
                 return true;
-            if (commandInfo is null)
+            if (commandInfo == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
             }

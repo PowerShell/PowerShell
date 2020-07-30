@@ -66,7 +66,7 @@ namespace System.Management.Automation
                 object invokeGetValue = entry.InvokeGet(memberName);
                 // if entry.Properties[memberName] returns empty value and invokeGet non-empty
                 // value..take invokeGet's value. This will fix bug Windows Bug 121188.
-                if ((collection is null) || ((collection.Value is null) && (invokeGetValue != null)))
+                if ((collection == null) || ((collection.Value == null) && (invokeGetValue != null)))
                 {
                     valueToTake = invokeGetValue;
                 }
@@ -79,7 +79,7 @@ namespace System.Management.Automation
             }
 #pragma warning restore 56500
 
-            if (valueToTake is null)
+            if (valueToTake == null)
             {
                 property = null;
             }
@@ -91,7 +91,7 @@ namespace System.Management.Automation
 
             if (typeof(T).IsAssignableFrom(typeof(PSMethod)))
             {
-                if (property is null)
+                if (property == null)
                 {
                     #region Readme
                     // we are unable to find a native adsi object property.
@@ -113,7 +113,7 @@ namespace System.Management.Automation
                     // method.
                     #endregion
 
-                    if (base.GetDotNetProperty<T>(obj, memberName) is null)
+                    if (base.GetDotNetProperty<T>(obj, memberName) == null)
                     {
                         return new PSMethod(memberName, this, obj, null) as T;
                     }
@@ -141,7 +141,7 @@ namespace System.Management.Automation
 
             PSMemberInfoInternalCollection<T> members = new PSMemberInfoInternalCollection<T>();
 
-            if (entry.Properties is null || entry.Properties.PropertyNames is null)
+            if (entry.Properties == null || entry.Properties.PropertyNames == null)
             {
                 return null;
             }
@@ -202,7 +202,7 @@ namespace System.Management.Automation
                 }
                 catch (System.Runtime.InteropServices.COMException e)
                 {
-                    if (e.ErrorCode != unchecked((int)0x80004005) || (setValue is null))
+                    if (e.ErrorCode != unchecked((int)0x80004005) || (setValue == null))
                         // When clear is called, DirectoryEntry calls PutEx on AD object with Clear option and Null Value
                         // WinNT provider throws E_FAIL when null value is specified though actually ADS_PROPERTY_CLEAR option is used,
                         // we need to catch this exception here.
@@ -212,7 +212,7 @@ namespace System.Management.Automation
 
                 IEnumerable enumValues = LanguagePrimitives.GetEnumerable(setValue);
 
-                if (enumValues is null)
+                if (enumValues == null)
                 {
                     values.Add(setValue);
                 }
@@ -233,7 +233,7 @@ namespace System.Management.Automation
                 List<object> setValues = new List<object>();
                 IEnumerable enumValues = LanguagePrimitives.GetEnumerable(setValue);
 
-                if (enumValues is null)
+                if (enumValues == null)
                 {
                     setValues.Add(setValue);
                 }
@@ -288,7 +288,7 @@ namespace System.Management.Automation
             {
             }
 
-            var type = value is null ? typeof(object) : value.GetType();
+            var type = value == null ? typeof(object) : value.GetType();
             return forDisplay ? ToStringCodeMethods.Type(type) : type.FullName;
         }
 

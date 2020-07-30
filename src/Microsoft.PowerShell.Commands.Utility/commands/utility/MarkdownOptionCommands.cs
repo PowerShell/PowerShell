@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
                     object baseObj = InputObject.BaseObject;
                     mdOptionInfo = baseObj as PSMarkdownOptionInfo;
 
-                    if (mdOptionInfo is null)
+                    if (mdOptionInfo == null)
                     {
                         var errorMessage = StringUtil.Format(ConvertMarkdownStrings.InvalidInputObjectType, baseObj.GetType());
 

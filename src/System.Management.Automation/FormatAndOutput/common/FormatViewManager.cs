@@ -403,7 +403,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                     FormattingCommandLineParameters parameters)
         {
             // use some heuristics to determine the shape if none is specified
-            if (shape == FormatShape.Undefined && parameters is null)
+            if (shape == FormatShape.Undefined && parameters == null)
             {
                 // check first if we have a known shape for a type
                 var typeNames = so.InternalTypeNames;

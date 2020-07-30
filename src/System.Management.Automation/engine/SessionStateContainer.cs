@@ -58,7 +58,7 @@ namespace System.Management.Automation
         /// </exception>
         internal bool ItemExists(string path, bool force, bool literalPath)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -106,7 +106,7 @@ namespace System.Management.Automation
             string path,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -250,7 +250,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object ItemExistsDynamicParameters(string path, CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -390,7 +390,7 @@ namespace System.Management.Automation
         /// </exception>
         internal bool IsValidPath(string path)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -436,7 +436,7 @@ namespace System.Management.Automation
              string path,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -560,7 +560,7 @@ namespace System.Management.Automation
         /// </exception>
         internal bool IsItemContainer(string path)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -606,7 +606,7 @@ namespace System.Management.Automation
             string path,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -787,7 +787,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveItem(string[] paths, bool recurse, bool force, bool literalPath)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -838,14 +838,14 @@ namespace System.Management.Automation
             bool recurse,
             CmdletProviderContext context)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             foreach (string path in paths)
             {
-                if (path is null)
+                if (path == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -1079,7 +1079,7 @@ namespace System.Management.Automation
             bool recurse,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }
@@ -1238,7 +1238,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Collection<PSObject> GetChildItems(string[] paths, bool recurse, uint depth, bool force, bool literalPath)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -1249,7 +1249,7 @@ namespace System.Management.Automation
 
             foreach (string path in paths)
             {
-                if (path is null)
+                if (path == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -1305,12 +1305,12 @@ namespace System.Management.Automation
             uint depth,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            if (context is null)
+            if (context == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
@@ -1344,7 +1344,7 @@ namespace System.Management.Automation
                             path = parentName;
                         }
                         // dir c:\tem* -include *.ps1 -rec => No change
-                        if ((context.Include is null) || (context.Include.Count == 0))
+                        if ((context.Include == null) || (context.Include.Count == 0))
                         {
                             // dir c:\tem* -rec => dir c:\ -include tem* -rec
                             // dir tem* -rec => dir -include tem* -rec
@@ -1843,7 +1843,7 @@ namespace System.Management.Automation
 
                     string childName = childNameObjects[index].BaseObject as string;
 
-                    if (childName is null)
+                    if (childName == null)
                     {
                         continue;
                     }
@@ -1852,7 +1852,7 @@ namespace System.Management.Automation
 
                     string qualifiedPath = MakePath(providerInstance, path, childName, context);
 
-                    if (qualifiedPath is null)
+                    if (qualifiedPath == null)
                     {
                         continue;
                     }
@@ -1989,7 +1989,7 @@ namespace System.Management.Automation
             bool recurse,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }
@@ -2032,7 +2032,7 @@ namespace System.Management.Automation
                 // ItemNotFoundException will be thrown out. In this case, we catch the exception
                 // and check if the "providerInstance" is identified. If providerInstance is not null,
                 // we can carry on with the get-dynamic-parameters method.
-                if (providerInstance is null)
+                if (providerInstance == null)
                 {
                     throw;
                 }
@@ -2075,7 +2075,7 @@ namespace System.Management.Automation
                  BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
                 providerType = providerType.BaseType;
             } while (
-                (mi is null) &&
+                (mi == null) &&
                 (providerType != null) &&
                 (providerType != typeof(ContainerCmdletProvider))
             );
@@ -2227,7 +2227,7 @@ namespace System.Management.Automation
             bool force,
             bool literalPath)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -2238,7 +2238,7 @@ namespace System.Management.Automation
 
             foreach (string path in paths)
             {
-                if (path is null)
+                if (path == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -2318,7 +2318,7 @@ namespace System.Management.Automation
             uint depth,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -2590,7 +2590,7 @@ namespace System.Management.Automation
 
                     string name = result.BaseObject as string;
 
-                    if (name is null)
+                    if (name == null)
                     {
                         continue;
                     }
@@ -2640,7 +2640,7 @@ namespace System.Management.Automation
 
                             string name = result.BaseObject as string;
 
-                            if (name is null)
+                            if (name == null)
                             {
                                 continue;
                             }
@@ -2798,7 +2798,7 @@ namespace System.Management.Automation
             string path,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }
@@ -2831,7 +2831,7 @@ namespace System.Management.Automation
                 // ItemNotFoundException will be thrown out. In this case, we catch the exception
                 // and check if the "providerInstance" is identified. If providerInstance is not null,
                 // we can carry on with the get-dynamic-parameters method.
-                if (providerInstance is null)
+                if (providerInstance == null)
                 {
                     throw;
                 }
@@ -2977,7 +2977,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Collection<PSObject> RenameItem(string path, string newName, bool force)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -3035,7 +3035,7 @@ namespace System.Management.Automation
             string newName,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -3186,7 +3186,7 @@ namespace System.Management.Automation
             string newName,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }
@@ -3343,7 +3343,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Collection<PSObject> NewItem(string[] paths, string name, string type, object content, bool force)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -3407,7 +3407,7 @@ namespace System.Management.Automation
             object content,
             CmdletProviderContext context)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
@@ -3415,7 +3415,7 @@ namespace System.Management.Automation
             foreach (string path in paths)
             {
                 string resolvePath = null;
-                if (path is null)
+                if (path == null)
                 {
                     PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -3658,7 +3658,7 @@ namespace System.Management.Automation
             object newItemValue,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }
@@ -3812,7 +3812,7 @@ namespace System.Management.Automation
         /// </exception>
         internal bool HasChildItems(string path, bool force, bool literalPath)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -3864,7 +3864,7 @@ namespace System.Management.Automation
              string path,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -3922,7 +3922,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(providerId));
             }
 
-            if (path is null)
+            if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -4090,12 +4090,12 @@ namespace System.Management.Automation
                                                bool force,
                                                bool literalPath)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            if (copyPath is null)
+            if (copyPath == null)
             {
                 copyPath = string.Empty;
             }
@@ -4156,12 +4156,12 @@ namespace System.Management.Automation
             CopyContainers copyContainers,
             CmdletProviderContext context)
         {
-            if (paths is null)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            if (copyPath is null)
+            if (copyPath == null)
             {
                 copyPath = string.Empty;
             }
@@ -4240,7 +4240,7 @@ namespace System.Management.Automation
                 }
 
                 string root = ValidateRemotePathAndGetRoot(providerDestinationPath, session, context, remoteLanguageMode, false);
-                if (root is null)
+                if (root == null)
                 {
                     return;
                 }
@@ -4253,7 +4253,7 @@ namespace System.Management.Automation
 
             foreach (string path in paths)
             {
-                if (path is null)
+                if (path == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
@@ -4264,7 +4264,7 @@ namespace System.Management.Automation
                 {
                     // Get the root for the remote path
                     string root = ValidateRemotePathAndGetRoot(path, session, context, remoteLanguageMode, true);
-                    if (root is null)
+                    if (root == null)
                     {
                         return;
                     }
@@ -4629,7 +4629,7 @@ namespace System.Management.Automation
             bool recurse,
             CmdletProviderContext context)
         {
-            if (path is null)
+            if (path == null)
             {
                 return null;
             }
@@ -4840,7 +4840,7 @@ namespace System.Management.Automation
                 op = Microsoft.PowerShell.Commands.SafeInvokeCommand.Invoke(ps, null, context);
             }
 
-            if (op is null)
+            if (op == null)
             {
                 context.WriteError(new ErrorRecord(
                                 new InvalidOperationException(
@@ -4883,7 +4883,7 @@ namespace System.Management.Automation
             bool invalidRemoteSource = (sourceIsRemote && (!pathExist));
 
             // 2) For a remote destination, if the root does not exist, error out.
-            bool invalidRemoteDestination = (root is null);
+            bool invalidRemoteDestination = (root == null);
 
             if (invalidRemoteSource || invalidRemoteDestination)
             {
@@ -4902,7 +4902,7 @@ namespace System.Management.Automation
 
         private bool isValidSession(PSSession session, CmdletProviderContext context, out PSLanguageMode? languageMode)
         {
-            // session is null is validated by the parameter binding
+            // session == null is validated by the parameter binding
             if (session.Availability != RunspaceAvailability.Available)
             {
                 context.WriteError(new ErrorRecord(

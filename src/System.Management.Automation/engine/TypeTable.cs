@@ -170,7 +170,7 @@ namespace System.Management.Automation.Runspaces
 
         private ScriptBlock GetScriptBlock(string text, int initialLine)
         {
-            if (text is null)
+            if (text == null)
             {
                 return null;
             }
@@ -207,7 +207,7 @@ namespace System.Management.Automation.Runspaces
             {
                 _context.AddError(line, exception.Message);
             }
-            else if (type is null)
+            else if (type == null)
             {
                 _context.AddError(line, ParserStrings.TypeNotFound, typeName);
             }
@@ -303,7 +303,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if (result is null)
+            if (result == null)
                 NodeNotFound(0, _idTypes, "Document");
 
             return result;
@@ -431,7 +431,7 @@ namespace System.Management.Automation.Runspaces
             {
                 NodeNotFound(lineNumber, _idName, _idType);
             }
-            else if (members is null && typeConverter is null && typeAdapter is null)
+            else if (members == null && typeConverter == null && typeAdapter == null)
             {
                 _context.AddError(name, lineNumber, TypesXmlStrings.TypeNodeShouldHaveMembersOrTypeConverters);
             }
@@ -771,7 +771,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Somewhat pointlessly (backcompat), we allow a missing Member node
-            if (members is null)
+            if (members == null)
             {
                 members = new Collection<TypeMemberData>();
             }
@@ -841,7 +841,7 @@ namespace System.Management.Automation.Runspaces
                                     {
                                         if ((object)_reader.LocalName == (object)_idName)
                                         {
-                                            if (referencedProperties is null)
+                                            if (referencedProperties == null)
                                             {
                                                 referencedProperties = new List<string>(8);
                                             }
@@ -882,7 +882,7 @@ namespace System.Management.Automation.Runspaces
 
             if (string.IsNullOrWhiteSpace(name))
                 NodeNotFound(lineNumber, _idName, _idPropertySet);
-            if (referencedProperties is null)
+            if (referencedProperties == null)
                 NodeNotFound(lineNumber, _idReferencedProperties, _idPropertySet);
 
             if (_context.errors.Count != errorCount)
@@ -938,7 +938,7 @@ namespace System.Management.Automation.Runspaces
 
                             methodLineNumber = _readerLineInfo.LineNumber;
                             codeReference = Read_CodeReference();
-                            if (codeReference is null)
+                            if (codeReference == null)
                                 _context.AddError(methodLineNumber, ExtendedTypeSystem.CodeMethodMethodFormat);
                         }
                         else
@@ -959,7 +959,7 @@ namespace System.Management.Automation.Runspaces
 
             if (string.IsNullOrWhiteSpace(name))
                 NodeNotFound(lineNumber, _idName, _idCodeMethod);
-            if (codeReference is null && methodLineNumber == 0)
+            if (codeReference == null && methodLineNumber == 0)
                 NodeNotFound(lineNumber, _idCodeReference, _idCodeMethod);
             if (codeReference != null && !PSCodeMethod.CheckMethodInfo(codeReference))
                 _context.AddError(methodLineNumber, ExtendedTypeSystem.CodeMethodMethodFormat);
@@ -1180,7 +1180,7 @@ namespace System.Management.Automation.Runspaces
 
                             getterLineNumber = _readerLineInfo.LineNumber;
                             getter = Read_CodeReference();
-                            if (getter is null)
+                            if (getter == null)
                             {
                                 _context.AddError(getterLineNumber, ExtendedTypeSystem.CodePropertyGetterAndSetterNull);
                             }
@@ -1194,7 +1194,7 @@ namespace System.Management.Automation.Runspaces
 
                             setterLineNumber = _readerLineInfo.LineNumber;
                             setter = Read_CodeReference();
-                            if (setter is null)
+                            if (setter == null)
                             {
                                 _context.AddError(setterLineNumber, ExtendedTypeSystem.CodePropertyGetterAndSetterNull);
                             }
@@ -1220,7 +1220,7 @@ namespace System.Management.Automation.Runspaces
                 NodeNotFound(lineNumber, _idName, _idCodeProperty);
             }
 
-            if (getter is null && setter is null && getterLineNumber == 0 && setterLineNumber == 0)
+            if (getter == null && setter == null && getterLineNumber == 0 && setterLineNumber == 0)
             {
                 _context.AddError(lineNumber, TypesXmlStrings.CodePropertyShouldHaveGetterOrSetter);
             }
@@ -1814,7 +1814,7 @@ namespace System.Management.Automation.Runspaces
         protected TypeTableLoadException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            if (info is null)
+            if (info == null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -1841,7 +1841,7 @@ namespace System.Management.Automation.Runspaces
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
+            if (info == null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -1928,7 +1928,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="type"></param>
         public TypeData(Type type) : this()
         {
-            if (type is null)
+            if (type == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
@@ -1981,7 +1981,7 @@ namespace System.Management.Automation.Runspaces
             set
             {
                 _serializationMethod = value;
-                if (_serializationMethod is null)
+                if (_serializationMethod == null)
                 {
                     StandardMembers.Remove(TypeTable.SerializationMethodNode);
                     return;
@@ -2013,7 +2013,7 @@ namespace System.Management.Automation.Runspaces
             set
             {
                 _targetTypeForDeserialization = value;
-                if (_targetTypeForDeserialization is null)
+                if (_targetTypeForDeserialization == null)
                 {
                     StandardMembers.Remove(TypeTable.TargetTypeForDeserialization);
                     return;
@@ -2072,7 +2072,7 @@ namespace System.Management.Automation.Runspaces
             set
             {
                 _defaultDisplayProperty = value;
-                if (_defaultDisplayProperty is null)
+                if (_defaultDisplayProperty == null)
                 {
                     StandardMembers.Remove(TypeTable.DefaultDisplayProperty);
                     return;
@@ -2129,7 +2129,7 @@ namespace System.Management.Automation.Runspaces
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     // If we set the standard member via StringSerializationSourceProperty, we
                     // don't want to remove it, so only remove the member if our previous
@@ -2177,7 +2177,7 @@ namespace System.Management.Automation.Runspaces
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     // If we set the standard member via StringSerializationSource, we
                     // don't want to remove it, so only remove the member if our previous
@@ -2333,13 +2333,13 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            newTypeData.DefaultDisplayPropertySet = this.DefaultDisplayPropertySet is null
+            newTypeData.DefaultDisplayPropertySet = this.DefaultDisplayPropertySet == null
                                                         ? null
                                                         : (PropertySetData)this.DefaultDisplayPropertySet.Copy();
-            newTypeData.DefaultKeyPropertySet = this.DefaultKeyPropertySet is null
+            newTypeData.DefaultKeyPropertySet = this.DefaultKeyPropertySet == null
                                                     ? null
                                                     : (PropertySetData)this.DefaultKeyPropertySet.Copy();
-            newTypeData.PropertySerializationSet = this.PropertySerializationSet is null
+            newTypeData.PropertySerializationSet = this.PropertySerializationSet == null
                                                        ? null
                                                        : (PropertySetData)this.PropertySerializationSet.Copy();
 
@@ -2714,7 +2714,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="referencedProperties"></param>
         public PropertySetData(IEnumerable<string> referencedProperties)
         {
-            if (referencedProperties is null)
+            if (referencedProperties == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(referencedProperties));
             }
@@ -2930,7 +2930,7 @@ namespace System.Management.Automation.Runspaces
 
             member.IsInstance = false;
 
-            if (membersCollection[member.name] is null)
+            if (membersCollection[member.name] == null)
             {
                 membersCollection.Add(member);
             }
@@ -2954,13 +2954,13 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if (noteAsMemberInfo is null)
+            if (noteAsMemberInfo == null)
             {
                 return true;
             }
 
             note = noteAsMemberInfo as PSNoteProperty;
-            if (note is null)
+            if (note == null)
             {
                 AddError(errors, typeName, TypesXmlStrings.MemberShouldBeNote, noteAsMemberInfo.Name);
                 return false;
@@ -3025,7 +3025,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if (member is null)
+            if (member == null)
             {
                 return true;
             }
@@ -3139,7 +3139,7 @@ namespace System.Management.Automation.Runspaces
                         break;
                     }
 
-                    if (inheritPropertiesNote != null && inheritPropertiesNote.Value.Equals(false) && propertySerializationSet is null)
+                    if (inheritPropertiesNote != null && inheritPropertiesNote.Value.Equals(false) && propertySerializationSet == null)
                     {
                         AddError(
                             errors,
@@ -3327,7 +3327,7 @@ namespace System.Management.Automation.Runspaces
             ScriptBlock getter = scriptPropertyData.GetScriptBlock;
             ScriptBlock setter = scriptPropertyData.SetScriptBlock;
 
-            if (setter is null && getter is null)
+            if (setter == null && getter == null)
             {
                 AddError(errors, typeName, TypesXmlStrings.ScriptPropertyShouldHaveGetterOrSetter);
                 return;
@@ -3342,7 +3342,7 @@ namespace System.Management.Automation.Runspaces
 
         internal static void ProcessCodePropertyData(ConcurrentBag<string> errors, string typeName, CodePropertyData codePropertyData, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
-            if ((codePropertyData.GetCodeReference is null) && (codePropertyData.SetCodeReference is null))
+            if ((codePropertyData.GetCodeReference == null) && (codePropertyData.SetCodeReference == null))
             {
                 AddError(errors, typeName, TypesXmlStrings.CodePropertyShouldHaveGetterOrSetter);
                 return;
@@ -3365,7 +3365,7 @@ namespace System.Management.Automation.Runspaces
 
         internal static void ProcessScriptMethodData(ConcurrentBag<string> errors, string typeName, ScriptMethodData scriptMethodData, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
-            if (scriptMethodData.Script is null)
+            if (scriptMethodData.Script == null)
             {
                 AddError(errors, typeName, TypesXmlStrings.TypeDataShouldHaveValue, "ScriptMethodData", "Script");
                 return;
@@ -3377,7 +3377,7 @@ namespace System.Management.Automation.Runspaces
 
         internal static void ProcessCodeMethodData(ConcurrentBag<string> errors, string typeName, CodeMethodData codeMethodData, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
-            if (codeMethodData.CodeReference is null)
+            if (codeMethodData.CodeReference == null)
             {
                 AddError(errors, typeName, TypesXmlStrings.TypeDataShouldHaveValue, "CodeMethodData", "CodeReference");
                 return;
@@ -3399,7 +3399,7 @@ namespace System.Management.Automation.Runspaces
 
         internal static void ProcessPropertySetData(ConcurrentBag<string> errors, string typeName, PropertySetData propertySetData, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
-            if (propertySetData.ReferencedProperties is null || propertySetData.ReferencedProperties.Count == 0)
+            if (propertySetData.ReferencedProperties == null || propertySetData.ReferencedProperties.Count == 0)
             {
                 AddError(errors, typeName, TypesXmlStrings.TypeDataShouldHaveValue, "PropertySetData", "ReferencedProperties");
                 return;
@@ -3457,7 +3457,7 @@ namespace System.Management.Automation.Runspaces
             int newMemberCount = standardMembers.Count() + propertySets.Count();
 
             // If StandardMembers do not exists, we follow the original logic to create the StandardMembers
-            if (membersCollection[PSStandardMembers] is null)
+            if (membersCollection[PSStandardMembers] == null)
             {
                 var memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(newMemberCount);
 
@@ -3515,7 +3515,7 @@ namespace System.Management.Automation.Runspaces
                 // into the original member collection. Replace the old StandardMembers with the new one
                 foreach (PSMemberInfo member in existingMembers)
                 {
-                    if (oldMembersCopy[member.name] is null)
+                    if (oldMembersCopy[member.name] == null)
                     {
                         oldMembersCopy.Add(member);
                     }
@@ -3539,7 +3539,7 @@ namespace System.Management.Automation.Runspaces
             bool isOverride)
         {
             // If StandardMembers do not exists, we follow the original logic to create the StandardMembers
-            if (typeMemberCollection[PSStandardMembers] is null)
+            if (typeMemberCollection[PSStandardMembers] == null)
             {
                 CheckStandardMembers(errors, typeName, memberSetMembers);
                 PSMemberSet standardMemberSet = new PSMemberSet(PSStandardMembers, memberSetMembers)
@@ -3588,7 +3588,7 @@ namespace System.Management.Automation.Runspaces
                 // into the original member collection. Replace the old StandardMembers with the new one
                 foreach (PSMemberInfo member in existingMembers)
                 {
-                    if (oldMembersCopy[member.name] is null)
+                    if (oldMembersCopy[member.name] == null)
                     {
                         oldMembersCopy.Add(member);
                     }
@@ -3646,7 +3646,7 @@ namespace System.Management.Automation.Runspaces
             {
                 PSPropertyAdapter psPropertyAdapter = instance as PSPropertyAdapter;
 
-                if (psPropertyAdapter is null)
+                if (psPropertyAdapter == null)
                 {
                     AddError(errors, typeName, TypesXmlStrings.TypeIsNotTypeAdapter, adapterType.FullName);
                 }
@@ -3696,7 +3696,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             if (typeData.Members.Count == 0 && typeData.StandardMembers.Count == 0
-                && typeData.TypeConverter is null && typeData.TypeAdapter is null
+                && typeData.TypeConverter == null && typeData.TypeAdapter == null
                 && propertySets.Count == 0 && !typeData.fromTypesXmlFile)
             {
                 AddError(errors, typeName, TypesXmlStrings.TypeDataShouldNotBeEmpty);
@@ -3720,7 +3720,7 @@ namespace System.Management.Automation.Runspaces
 
             if (hasStandardMembers)
             {
-                if (typeMembers is null)
+                if (typeMembers == null)
                 {
                     typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
                 }
@@ -3920,7 +3920,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         internal TypeTable(IEnumerable<string> typeFiles, AuthorizationManager authorizationManager, PSHost host) : this(isShared: true)
         {
-            if (typeFiles is null)
+            if (typeFiles == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(typeFiles));
             }
@@ -3955,7 +3955,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>Null if this should not be serialized with SpecificProperties.</returns>
         internal Collection<string> GetSpecificProperties(ConsolidatedString types)
         {
-            if (types is null || string.IsNullOrEmpty(types.Key))
+            if (types == null || string.IsNullOrEmpty(types.Key))
             {
                 return new Collection<string>();
             }
@@ -3972,7 +3972,7 @@ namespace System.Management.Automation.Runspaces
 
                     PSMemberSet settings = typeMembers[PSStandardMembers] as PSMemberSet;
                     PSPropertySet typeProperties = settings?.Members[PropertySerializationSet] as PSPropertySet;
-                    if (typeProperties is null)
+                    if (typeProperties == null)
                     {
                         continue;
                     }
@@ -4024,7 +4024,7 @@ namespace System.Management.Automation.Runspaces
 
         internal PSMemberInfoInternalCollection<PSMemberInfo> GetMembers(ConsolidatedString types)
         {
-            if ((types is null) || string.IsNullOrEmpty(types.Key))
+            if ((types == null) || string.IsNullOrEmpty(types.Key))
             {
                 return new PSMemberInfoInternalCollection<PSMemberInfo>();
             }
@@ -4047,7 +4047,7 @@ namespace System.Management.Automation.Runspaces
                     PSMemberInfo currentMember = retValue[typeMember.Name];
 
                     // If the member was not present, we add it
-                    if (currentMember is null)
+                    if (currentMember == null)
                     {
                         retValue.Add(typeMember.Copy());
                         continue;
@@ -4059,7 +4059,7 @@ namespace System.Management.Automation.Runspaces
 
                     // if we are not in a memberset inherit members situation we just replace
                     // the current member with the new more specific member
-                    if (currentMemberAsMemberSet is null || typeMemberAsMemberSet is null ||
+                    if (currentMemberAsMemberSet == null || typeMemberAsMemberSet == null ||
                         !typeMemberAsMemberSet.InheritMembers)
                     {
                         retValue.Remove(typeMember.Name);
@@ -4071,7 +4071,7 @@ namespace System.Management.Automation.Runspaces
                     // typeMembers to the existing memberset.
                     foreach (PSMemberInfo typeMemberAsMemberSetMember in typeMemberAsMemberSet.Members)
                     {
-                        if (currentMemberAsMemberSet.Members[typeMemberAsMemberSetMember.Name] is null)
+                        if (currentMemberAsMemberSet.Members[typeMemberAsMemberSetMember.Name] == null)
                         {
                             ((PSMemberInfoIntegratingCollection<PSMemberInfo>)currentMemberAsMemberSet.Members)
                                 .AddToTypesXmlCache(typeMemberAsMemberSetMember, false);
@@ -4113,7 +4113,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>The type adapter or null, if there is no adapter.</returns>
         internal PSObject.AdapterSet GetTypeAdapter(Type type)
         {
-            if (type is null)
+            if (type == null)
             {
                 return null;
             }
@@ -4553,7 +4553,7 @@ namespace System.Management.Automation.Runspaces
             bool isProductCode;
             string fileContents = GetModuleContents(snapinName, fileToLoad, errors, authorizationManager, host, out isFullyTrusted, out failToLoadFile, out isProductCode);
 
-            if (fileContents is null)
+            if (fileContents == null)
             {
                 return;
             }
@@ -4667,7 +4667,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="typeData">A TypeData instance to update the TypeTable.</param>
         public void AddType(TypeData typeData)
         {
-            if (typeData is null)
+            if (typeData == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(typeData));
 
             Dbg.Assert(isShared, "This method should only be called by the developer user. It should not be used internally.");
@@ -4739,12 +4739,12 @@ namespace System.Management.Automation.Runspaces
             PSHost host,
             out bool failToLoadFile)
         {
-            if (filePath is null)
+            if (filePath == null)
             {
                 throw new ArgumentNullException(nameof(filePath));
             }
 
-            if (errors is null)
+            if (errors == null)
             {
                 throw new ArgumentNullException(nameof(errors));
             }
@@ -4817,9 +4817,9 @@ namespace System.Management.Automation.Runspaces
             ConcurrentBag<string> errors,
             bool isRemove)
         {
-            if (type is null)
+            if (type == null)
                 throw new ArgumentNullException(nameof(type));
-            if (errors is null)
+            if (errors == null)
                 throw new ArgumentNullException(nameof(errors));
 
             if (isShared)

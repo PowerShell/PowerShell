@@ -416,7 +416,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             for (int k = 0; k < lines.Length; k++)
             {
-                if (lines[k] is null || displayCells.Length(lines[k]) <= firstLineLen)
+                if (lines[k] == null || displayCells.Length(lines[k]) <= firstLineLen)
                 {
                     // we do not need to split further, just add
                     retVal.Add(lines[k]);
@@ -532,7 +532,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             for (int k = 0; k < lines.Length; k++)
             {
-                if (lines[k] is null || displayCells.Length(lines[k]) <= firstLineLen)
+                if (lines[k] == null || displayCells.Length(lines[k]) <= firstLineLen)
                 {
                     // we do not need to split further, just add
                     retVal.Add(lines[k]);

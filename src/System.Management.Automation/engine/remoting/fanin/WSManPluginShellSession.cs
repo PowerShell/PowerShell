@@ -142,7 +142,7 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            if (inboundData is null)
+            if (inboundData == null)
             {
                 // no data is supplied..just ignore.
                 WSManPluginInstance.ReportOperationComplete(
@@ -200,7 +200,7 @@ namespace System.Management.Automation.Remoting
                 return false;
             }
 
-            if ((streamSet is null) ||
+            if ((streamSet == null) ||
                 (1 != streamSet.streamIDsCount))
             {
                 // only "stdout" is the supported output stream.
@@ -271,7 +271,7 @@ namespace System.Management.Automation.Remoting
                             shutDownContext,
                             -1, // INFINITE
                             true); // TODO: Do I need to worry not being able to set missing WT_TRANSFER_IMPERSONATION?
-                        if (this.registeredShutDownWaitHandle is null)
+                        if (this.registeredShutDownWaitHandle == null)
                         {
                             isRegisterWaitForSingleObjectFailed = true;
                             registeredShutdownNotification = 0;
@@ -440,7 +440,7 @@ namespace System.Management.Automation.Remoting
             int flags, // in
             WSManNativeApi.WSManData_UnToMan inboundConnectInformation) // in optional
         {
-            if (inboundConnectInformation is null)
+            if (inboundConnectInformation == null)
             {
                 WSManPluginInstance.ReportOperationComplete(
                     requestDetails,
@@ -562,7 +562,7 @@ namespace System.Management.Automation.Remoting
             WSManPluginOperationShutdownContext context)
         {
             WSManPluginCommandSession mgdCmdSession = GetCommandSession(context.commandContext);
-            if (mgdCmdSession is null)
+            if (mgdCmdSession == null)
             {
                 // this should never be the case. this will protect the service.
                 return;

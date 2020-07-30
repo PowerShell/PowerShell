@@ -105,7 +105,7 @@ namespace System.Management.Automation
         /// <returns>The constructed WildcardPattern object.</returns>
         public WildcardPattern(string pattern, WildcardOptions options)
         {
-            if (pattern is null)
+            if (pattern == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(pattern));
             }
@@ -124,7 +124,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         public static WildcardPattern Get(string pattern, WildcardOptions options)
         {
-            if (pattern is null)
+            if (pattern == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(pattern));
 
             if (pattern.Length == 1 && pattern[0] == '*')
@@ -215,12 +215,12 @@ namespace System.Management.Automation
         /// </returns>
         internal static string Escape(string pattern, char[] charsNotToEscape)
         {
-            if (pattern is null)
+            if (pattern == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(pattern));
             }
 
-            if (charsNotToEscape is null)
+            if (charsNotToEscape == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(charsNotToEscape));
             }
@@ -329,7 +329,7 @@ namespace System.Management.Automation
         /// </exception>
         public static string Unescape(string pattern)
         {
-            if (pattern is null)
+            if (pattern == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(pattern));
             }
@@ -447,7 +447,7 @@ namespace System.Management.Automation
         internal WildcardPatternException(ErrorRecord errorRecord)
             : base(RetrieveMessage(errorRecord))
         {
-            if (errorRecord is null)
+            if (errorRecord == null)
             {
                 throw new ArgumentNullException(nameof(errorRecord));
             }

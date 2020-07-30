@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (this.hashEntries[k].IsKeyMatch(keyName))
                 {
                     // we have a match
-                    if (matchingEntry is null)
+                    if (matchingEntry == null)
                     {
                         // this is the first match, we save the entry
                         // and we keep going for ambiguity check
@@ -253,7 +253,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <exception cref="ArgumentException"></exception>
         internal List<MshParameter> ProcessParameters(object[] p, TerminatingErrorContext invocationContext)
         {
-            if (p is null || p.Length == 0)
+            if (p == null || p.Length == 0)
                 return null;
 
             List<MshParameter> retVal = new List<MshParameter>();
@@ -311,13 +311,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             foreach (DictionaryEntry e in hash)
             {
-                if (e.Key is null)
+                if (e.Key == null)
                 {
                     ProcessNullHashTableKey(invocationContext);
                 }
 
                 string currentStringKey = e.Key as string;
-                if (currentStringKey is null)
+                if (currentStringKey == null)
                 {
                     ProcessNonStringHashTableKey(invocationContext, e.Key);
                 }
@@ -333,7 +333,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // now the key is verified, need to check the type
                 bool matchType = false;
 
-                if (def.AllowedTypes is null || def.AllowedTypes.Length == 0)
+                if (def.AllowedTypes == null || def.AllowedTypes.Length == 0)
                 {
                     // we match on any type, it will be up to the entry to further check
                     matchType = true;
@@ -342,7 +342,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     for (int t = 0; t < def.AllowedTypes.Length; t++)
                     {
-                        if (e.Value is null)
+                        if (e.Value == null)
                         {
                             ProcessMissingKeyValue(invocationContext, currentStringKey);
                         }

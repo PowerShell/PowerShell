@@ -219,7 +219,7 @@ namespace System.Management.Automation.Tracing
             {
                 StringBuilder payload = new StringBuilder();
 
-                if (previousValue is null)
+                if (previousValue == null)
                 {
                     payload.AppendLine(StringUtil.Format(EtwLoggingStrings.SettingChangeNoPrevious, variableName, value));
                 }

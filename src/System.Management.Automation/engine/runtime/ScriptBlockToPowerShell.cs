@@ -48,7 +48,7 @@ namespace System.Management.Automation
                 // know that we have at least:
                 //     * a NamedBlockAst (the end block)
                 //     * a ScriptBlockAst (the ast we're comparing to)
-                if (pipelineAst.GetPureExpression() is null || pipelineAst.Parent.Parent == ScriptBeingConverted)
+                if (pipelineAst.GetPureExpression() == null || pipelineAst.Parent.Parent == ScriptBeingConverted)
                 {
                     ThrowError(
                         new ScriptBlockToPowerShellNotSupportedException(
@@ -226,7 +226,7 @@ namespace System.Management.Automation
         {
             ExecutionContext.CheckStackDepth();
 
-            if (args is null)
+            if (args == null)
             {
                 args = Array.Empty<object>();
             }
@@ -257,7 +257,7 @@ namespace System.Management.Automation
 
             // When the context is null (or they haven't supplied any variables), throw, but only if we really need the
             // context (basically, if we have some variable reference to resolve).
-            if (context is null && (checker.HasUsingExpr || checker.UsesParameter) && (variables is null))
+            if (context == null && (checker.HasUsingExpr || checker.UsesParameter) && (variables == null))
             {
                 throw new PSInvalidOperationException(AutomationExceptions.CantConvertScriptBlockWithNoContext);
             }
@@ -387,7 +387,7 @@ namespace System.Management.Automation
                     if (variables != null)
                     {
                         var variableAst = usingAst.SubExpression as VariableExpressionAst;
-                        if (variableAst is null)
+                        if (variableAst == null)
                         {
                             throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                                 usingAst.Extent, "CantGetUsingExpressionValueWithSpecifiedVariableDictionary", AutomationExceptions.CantGetUsingExpressionValueWithSpecifiedVariableDictionary, usingAst.Extent.Text);
@@ -479,7 +479,7 @@ namespace System.Management.Automation
                     // We find the closest parent ScriptBlockAst of the current UsingExpression, which represents the scope
                     // that the current UsingExpression is in.
 
-                    if (sbClosestToPreviousUsingExpr is null)
+                    if (sbClosestToPreviousUsingExpr == null)
                     {
                         // The current UsingExpression is the first one to be analyzed.
                         sbClosestToPreviousUsingExpr = sbAst;
@@ -503,7 +503,7 @@ namespace System.Management.Automation
                     // must be in 'Parameters' property of this FunctionDefinitionAst.
                     // In this case, the 'Body' of this FunctionDefinitionAst represents the scope that the UsingExpression is in.
 
-                    if (sbClosestToPreviousUsingExpr is null)
+                    if (sbClosestToPreviousUsingExpr == null)
                     {
                         // The current UsingExpression is the first one to be analyzed.
                         sbClosestToPreviousUsingExpr = funcAst.Body;
@@ -697,7 +697,7 @@ namespace System.Management.Automation
             if (exprAst != null)
             {
                 var value = GetExpressionValue(exprAst, isTrustedInput);
-                if (value is null)
+                if (value == null)
                 {
                     ScriptBlockToPowerShellChecker.ThrowError(
                         new ScriptBlockToPowerShellNotSupportedException(
@@ -735,7 +735,7 @@ namespace System.Management.Automation
 
         private void GetSplattedVariable(VariableExpressionAst variableAst)
         {
-            if (_context is null)
+            if (_context == null)
             {
                 throw new PSInvalidOperationException(AutomationExceptions.CantConvertScriptBlockWithNoContext);
             }
@@ -755,7 +755,7 @@ namespace System.Management.Automation
         private object GetExpressionValue(ExpressionAst exprAst, bool isTrustedInput)
         {
             // be sure that there's a context at hand
-            if (_context is null)
+            if (_context == null)
             {
                 var rs = RunspaceFactory.CreateRunspace(InitialSessionState.Create());
                 rs.Open();

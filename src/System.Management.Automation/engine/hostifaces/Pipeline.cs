@@ -303,7 +303,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         internal Pipeline(Runspace runspace, CommandCollection command)
         {
-            if (runspace is null)
+            if (runspace == null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(runspace));
             }

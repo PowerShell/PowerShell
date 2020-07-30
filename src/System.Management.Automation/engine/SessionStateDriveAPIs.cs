@@ -63,7 +63,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PSDriveInfo NewDrive(PSDriveInfo drive, string scopeID)
         {
-            if (drive is null)
+            if (drive == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
@@ -138,12 +138,12 @@ namespace System.Management.Automation
         /// </exception>
         internal void NewDrive(PSDriveInfo drive, string scopeID, CmdletProviderContext context)
         {
-            if (drive is null)
+            if (drive == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
-            if (context is null)
+            if (context == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
@@ -165,7 +165,7 @@ namespace System.Management.Automation
 
             // We assume that the provider wrote the error message as they
             // are suppose to.
-            if (result is null)
+            if (result == null)
             {
                 return;
             }
@@ -203,7 +203,7 @@ namespace System.Management.Automation
                     throw;
                 }
 
-                if (ProvidersCurrentWorkingDrive[drive.Provider] is null)
+                if (ProvidersCurrentWorkingDrive[drive.Provider] == null)
                 {
                     // Set the new drive as the current
                     // drive for the provider since there isn't one set.
@@ -376,7 +376,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object NewDriveDynamicParameters(string providerId, CmdletProviderContext context)
         {
-            if (providerId is null)
+            if (providerId == null)
             {
                 // If the provider hasn't been specified yet, just return null.
                 // The provider can be specified as pipeline input.
@@ -430,7 +430,7 @@ namespace System.Management.Automation
 
         private PSDriveInfo GetDrive(string name, bool automount)
         {
-            if (name is null)
+            if (name == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -471,14 +471,14 @@ namespace System.Management.Automation
                 ++scopeID;
             }
 
-            if (result is null && automount)
+            if (result == null && automount)
             {
                 // Attempt to automount as a file system drive
                 // or as a BuiltIn drive (e.g. "Cert"/"Certificate"/"WSMan")
                 result = AutomountFileSystemDrive(name) ?? AutomountBuiltInDrive(name);
             }
 
-            if (result is null)
+            if (result == null)
             {
                 DriveNotFoundException driveNotFound =
                     new DriveNotFoundException(
@@ -522,7 +522,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PSDriveInfo GetDrive(string name, string scopeID)
         {
-            if (name is null)
+            if (name == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -561,7 +561,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (result is null)
+                if (result == null)
                 {
                     result = AutomountFileSystemDrive(name);
                 }
@@ -991,14 +991,14 @@ namespace System.Management.Automation
         /// </param>
         internal void RemoveDrive(string driveName, bool force, string scopeID)
         {
-            if (driveName is null)
+            if (driveName == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(driveName));
             }
 
             PSDriveInfo drive = GetDrive(driveName, scopeID);
 
-            if (drive is null)
+            if (drive == null)
             {
                 DriveNotFoundException e = new DriveNotFoundException(
                     driveName,
@@ -1034,7 +1034,7 @@ namespace System.Management.Automation
             string scopeID,
             CmdletProviderContext context)
         {
-            if (driveName is null)
+            if (driveName == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(driveName));
             }
@@ -1045,7 +1045,7 @@ namespace System.Management.Automation
 
             PSDriveInfo drive = GetDrive(driveName, scopeID);
 
-            if (drive is null)
+            if (drive == null)
             {
                 DriveNotFoundException e = new DriveNotFoundException(
                     driveName,
@@ -1076,7 +1076,7 @@ namespace System.Management.Automation
         /// </param>
         internal void RemoveDrive(PSDriveInfo drive, bool force, string scopeID)
         {
-            if (drive is null)
+            if (drive == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
@@ -1238,12 +1238,12 @@ namespace System.Management.Automation
         /// </exception>
         private bool CanRemoveDrive(PSDriveInfo drive, CmdletProviderContext context)
         {
-            if (context is null)
+            if (context == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
-            if (drive is null)
+            if (drive == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }

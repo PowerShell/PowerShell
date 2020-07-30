@@ -691,7 +691,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (newItem is null)
+            if (newItem == null)
             {
                 ArgumentNullException argException =
                     PSTraceSource.NewArgumentNullException("value");
@@ -1107,7 +1107,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            if (provider is null)
+            if (provider == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
@@ -1173,7 +1173,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         public IList Write(IList content)
         {
-            if (content is null)
+            if (content == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(content));
             }

@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
                     match = true;
                 }
             }
-            else if (_unicodeName is null && dnsName._unicodeName is null)
+            else if (_unicodeName == null && dnsName._unicodeName == null)
             {
                 match = true;
             }
@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell.Commands
                 _storeHandle = null;        // release the old handle
             }
 
-            if (_storeHandle is null)
+            if (_storeHandle == null)
             {
                 _valid = false;
                 _open = false;
@@ -634,7 +634,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 lock (s_staticLock)
                 {
-                    if (s_certPathRegex is null)
+                    if (s_certPathRegex == null)
                     {
                         RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Compiled;
                         s_certPathRegex = new Regex(certPathPattern, options);
@@ -656,7 +656,7 @@ namespace Microsoft.PowerShell.Commands
             //
             lock (s_staticLock)
             {
-                if (s_storeLocations is null)
+                if (s_storeLocations == null)
                 {
                     s_pathCache = new Hashtable(StringComparer.OrdinalIgnoreCase);
                     s_storeLocations =
@@ -1241,7 +1241,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!isContainer) // certificate
                 {
                     // If the filter is null, output the certificate we got.
-                    if (filter is null)
+                    if (filter == null)
                     {
                         WriteItemObject(item, path, isContainer);
                     }
@@ -1338,7 +1338,7 @@ namespace Microsoft.PowerShell.Commands
         {
             const string moduleName = "pki";
 
-            if (Runspaces.Runspace.DefaultRunspace is null)
+            if (Runspaces.Runspace.DefaultRunspace == null)
             {
                 //
                 // Requires default runspace. Only import the module.
@@ -2049,7 +2049,7 @@ namespace Microsoft.PowerShell.Commands
             //
             item = GetCachedItem(path);
 
-            if (item is null)
+            if (item == null)
             {
                 switch (pathElements.Length)
                 {
@@ -2368,7 +2368,7 @@ namespace Microsoft.PowerShell.Commands
                     // false.  Then we should return the names whether 'filter'
                     // is null or not.
 
-                    if (filter is null || returnNames)
+                    if (filter == null || returnNames)
                     {
                         WriteItemObject(thingToReturn, l.LocationName, true);
                     }
@@ -2496,7 +2496,7 @@ namespace Microsoft.PowerShell.Commands
             X509StoreLocation location =
                 GetCachedItem(path) as X509StoreLocation;
 
-            if (location is null)
+            if (location == null)
             {
                 ThrowItemNotFound(path, CertificateProviderItem.StoreLocation);
             }
@@ -2516,7 +2516,7 @@ namespace Microsoft.PowerShell.Commands
             X509StoreLocation location = GetStoreLocation(pathElements[0]);
             X509NativeStore store = GetStore(path, pathElements[1], location);
 
-            if (store is null)
+            if (store == null)
             {
                 if (test)
                 {
@@ -2560,7 +2560,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (s_storeCache is null)
+            if (s_storeCache == null)
             {
                 s_storeCache = new X509NativeStore(storeLocation, storeName);
             }
@@ -2639,7 +2639,7 @@ namespace Microsoft.PowerShell.Commands
                 // false.  Then we should return the names whether 'filter'
                 // is null or not.
 
-                if (filter is null || returnNames)
+                if (filter == null || returnNames)
                 {
                     WriteItemObject(thingToReturn, name, true);
                 }
@@ -2729,7 +2729,7 @@ namespace Microsoft.PowerShell.Commands
         private static bool MatchesFilter(X509Certificate2 cert, CertificateFilterInfo filter)
         {
             // No filter means, match everything
-            if (filter is null)
+            if (filter == null)
             {
                 return true;
             }
@@ -3110,7 +3110,7 @@ namespace Microsoft.PowerShell.Commands
                     match = true;
                 }
             }
-            else if (_oid is null && keyUsage._oid is null)
+            else if (_oid == null && keyUsage._oid == null)
             {
                 match = true;
             }

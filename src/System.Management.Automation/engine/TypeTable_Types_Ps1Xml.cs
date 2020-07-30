@@ -28,7 +28,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             int cacheIndex = capacity - 1;
-            if (s_valueFactoryCache[cacheIndex] is null)
+            if (s_valueFactoryCache[cacheIndex] == null)
             {
                 Interlocked.CompareExchange(
                     ref s_valueFactoryCache[cacheIndex],

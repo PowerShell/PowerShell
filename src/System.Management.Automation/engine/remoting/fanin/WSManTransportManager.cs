@@ -913,7 +913,7 @@ namespace System.Management.Automation.Remoting.Client
             ReceivedDataCollection.PrepareForStreamConnect();
             // additional content with connect shell call. Negotiation and connect related messages
             // should be included in payload
-            if (_openContent is null)
+            if (_openContent == null)
             {
                 DataPriorityType additionalDataType;
                 byte[] additionalData = dataToBeSent.ReadOrRegisterCallback(null, out additionalDataType);
@@ -1068,7 +1068,7 @@ namespace System.Management.Automation.Remoting.Client
 
             // additional content with create shell call. Piggy back first fragment from
             // the dataToBeSent buffer.
-            if (_openContent is null)
+            if (_openContent == null)
             {
                 DataPriorityType additionalDataType;
                 byte[] additionalData = dataToBeSent.ReadOrRegisterCallback(null, out additionalDataType);
@@ -1482,7 +1482,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 result = WSManNativeApi.WSManCreateSession(WSManAPIData.WSManAPIHandle, connectionStr, 0,
                      authCredentials.GetMarshalledObject(),
-                     (proxyInfo is null) ? IntPtr.Zero : (IntPtr)proxyInfo,
+                     (proxyInfo == null) ? IntPtr.Zero : (IntPtr)proxyInfo,
                      ref _wsManSessionHandle);
             }
             finally
@@ -2614,7 +2614,7 @@ namespace System.Management.Automation.Remoting.Client
         private void DisposeWSManAPIDataAsync()
         {
             WSManAPIDataCommon tempWSManApiData = WSManAPIData;
-            if (tempWSManApiData is null) { return; }
+            if (tempWSManApiData == null) { return; }
 
             WSManAPIData = null;
 
@@ -3060,7 +3060,7 @@ namespace System.Management.Automation.Remoting.Client
                                 0,
                                 PowershellInstanceId.ToString().ToUpperInvariant(),
                                 // WSManRunsShellCommand doesn't accept empty string "".
-                                (_cmdLine is null || _cmdLine.Length == 0) ? " " : (_cmdLine.Length <= 256 ? _cmdLine : _cmdLine.Substring(0, 255)),
+                                (_cmdLine == null || _cmdLine.Length == 0) ? " " : (_cmdLine.Length <= 256 ? _cmdLine : _cmdLine.Substring(0, 255)),
                                 argSet,
                                 IntPtr.Zero,
                                 _createCmdCompleted,
@@ -3979,7 +3979,7 @@ namespace System.Management.Automation.Remoting.Client
             Dbg.Assert(data != null, "data cannot be null in the data available callback");
 
             tracer.WriteLine("Received data from dataToBeSent store.");
-            Dbg.Assert(_chunkToSend is null, "data callback received while a chunk is pending to be sent");
+            Dbg.Assert(_chunkToSend == null, "data callback received while a chunk is pending to be sent");
             _chunkToSend = new SendDataChunk(data, priorityType);
             SendOneItem();
         }

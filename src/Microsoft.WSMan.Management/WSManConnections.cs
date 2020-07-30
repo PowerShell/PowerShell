@@ -346,7 +346,7 @@ namespace Microsoft.WSMan.Management
         protected override void BeginProcessing()
         {
             WSManHelper helper = new WSManHelper(this);
-            if (computername is null)
+            if (computername == null)
             {
                 computername = "localhost";
             }

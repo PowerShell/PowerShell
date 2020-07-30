@@ -169,14 +169,14 @@ namespace System.Management.Automation
         {
             IEnumerator list = LanguagePrimitives.GetEnumerator(obj);
 
-            Diagnostics.Assert((argArrayAst is null) || obj is object[] && ((object[])obj).Length == argArrayAst.Elements.Count, "array argument and ArrayLiteralAst differ in number of elements");
+            Diagnostics.Assert((argArrayAst == null) || obj is object[] && ((object[])obj).Length == argArrayAst.Elements.Count, "array argument and ArrayLiteralAst differ in number of elements");
 
             int currentElement = -1;
             string separator = string.Empty;
             do
             {
                 string arg;
-                if (list is null)
+                if (list == null)
                 {
                     arg = PSObject.ToStringParser(context, obj);
                 }
@@ -446,7 +446,7 @@ namespace System.Management.Automation
 
         private static string GetEnumerableArgSeparator(ArrayLiteralAst arrayLiteralAst, int index)
         {
-            if (arrayLiteralAst is null) return " ";
+            if (arrayLiteralAst == null) return " ";
 
             // index points to the *next* element, so we're looking for space between
             // it and the previous element.

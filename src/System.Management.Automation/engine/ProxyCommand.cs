@@ -39,7 +39,7 @@ namespace System.Management.Automation
         /// </exception>
         public static string Create(CommandMetadata commandMetadata)
         {
-            if (commandMetadata is null)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
@@ -65,7 +65,7 @@ namespace System.Management.Automation
         /// </exception>
         public static string Create(CommandMetadata commandMetadata, string helpComment)
         {
-            if (commandMetadata is null)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
@@ -95,7 +95,7 @@ namespace System.Management.Automation
         /// </exception>
         public static string Create(CommandMetadata commandMetadata, string helpComment, bool generateDynamicParameters)
         {
-            if (commandMetadata is null)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
@@ -118,7 +118,7 @@ namespace System.Management.Automation
         /// </exception>
         public static string GetCmdletBindingAttribute(CommandMetadata commandMetadata)
         {
-            if (commandMetadata is null)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
@@ -143,7 +143,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         public static string GetParamBlock(CommandMetadata commandMetadata)
         {
-            if (commandMetadata is null)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
@@ -167,7 +167,7 @@ namespace System.Management.Automation
         /// </exception>
         public static string GetBegin(CommandMetadata commandMetadata)
         {
-            if (commandMetadata is null)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
@@ -191,7 +191,7 @@ namespace System.Management.Automation
         /// </exception>
         public static string GetProcess(CommandMetadata commandMetadata)
         {
-            if (commandMetadata is null)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
@@ -215,7 +215,7 @@ namespace System.Management.Automation
         /// </exception>
         public static string GetDynamicParam(CommandMetadata commandMetadata)
         {
-            if (commandMetadata is null)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
@@ -239,7 +239,7 @@ namespace System.Management.Automation
         /// </exception>
         public static string GetEnd(CommandMetadata commandMetadata)
         {
-            if (commandMetadata is null)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
@@ -352,7 +352,7 @@ namespace System.Management.Automation
         /// <exception cref="System.InvalidOperationException">When the help argument is not recognized as a HelpInfo object.</exception>
         public static string GetHelpComments(PSObject help)
         {
-            if (help is null)
+            if (help == null)
             {
                 throw new ArgumentNullException(nameof(help));
             }

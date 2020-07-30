@@ -193,7 +193,7 @@ namespace System.Management.Automation
         #region ctor
         internal ErrorCategoryInfo(ErrorRecord errorRecord)
         {
-            if (errorRecord is null)
+            if (errorRecord == null)
             {
                 throw new ArgumentNullException(nameof(errorRecord));
             }
@@ -810,7 +810,7 @@ namespace System.Management.Automation
             string resourceId,
             params object[] args)
         {
-            if (cmdlet is null)
+            if (cmdlet == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(cmdlet));
             }
@@ -851,7 +851,7 @@ namespace System.Management.Automation
             string resourceId,
             params object[] args)
         {
-            if (resourceSupplier is null)
+            if (resourceSupplier == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(resourceSupplier));
             }
@@ -892,7 +892,7 @@ namespace System.Management.Automation
             string resourceId,
             params object[] args)
         {
-            if (assembly is null)
+            if (assembly == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(assembly));
             }
@@ -1019,12 +1019,12 @@ namespace System.Management.Automation
             ErrorCategory errorCategory,
             object targetObject)
         {
-            if (exception is null)
+            if (exception == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(exception));
             }
 
-            if (errorId is null)
+            if (errorId == null)
             {
                 errorId = string.Empty;
             }
@@ -1162,12 +1162,12 @@ namespace System.Management.Automation
             string errorDetails_RecommendedAction,
             string errorDetails_ScriptStackTrace)
         {
-            if (exception is null)
+            if (exception == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(exception));
             }
 
-            if (fullyQualifiedErrorId is null)
+            if (fullyQualifiedErrorId == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(fullyQualifiedErrorId));
             }
@@ -1223,7 +1223,7 @@ namespace System.Management.Automation
                 RemotingEncoder.AddNoteProperty<string>(dest, "ErrorDetails_RecommendedAction", delegate () { return ErrorDetails.RecommendedAction; });
             }
 
-            if (!serializeExtInfo || this.InvocationInfo is null)
+            if (!serializeExtInfo || this.InvocationInfo == null)
             {
                 RemotingEncoder.AddNoteProperty(dest, "SerializeExtendedInfo", () => false);
             }
@@ -1287,7 +1287,7 @@ namespace System.Management.Automation
 
         private void ConstructFromPSObjectForRemoting(PSObject serializedErrorRecord)
         {
-            if (serializedErrorRecord is null)
+            if (serializedErrorRecord == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(serializedErrorRecord));
             }
@@ -1394,7 +1394,7 @@ namespace System.Management.Automation
         public ErrorRecord(ErrorRecord errorRecord,
                              Exception replaceParentContainsErrorRecordException)
         {
-            if (errorRecord is null)
+            if (errorRecord == null)
             {
                 throw new PSArgumentNullException(nameof(errorRecord));
             }
@@ -1549,7 +1549,7 @@ namespace System.Management.Automation
             {
                 _invocationInfo = new InvocationInfo(invocationInfo.MyCommand, invocationInfo.ScriptPosition);
                 _invocationInfo.InvocationName = invocationInfo.InvocationName;
-                if (invocationInfo.MyCommand is null)
+                if (invocationInfo.MyCommand == null)
                 {
                     // Pass the history id to new InvocationInfo object of command info is null since history
                     // information cannot be obtained in this case.
@@ -1651,13 +1651,13 @@ namespace System.Management.Automation
         private string GetInvocationTypeName()
         {
             InvocationInfo invocationInfo = this.InvocationInfo;
-            if (invocationInfo is null)
+            if (invocationInfo == null)
             {
                 return string.Empty;
             }
 
             CommandInfo commandInfo = invocationInfo.MyCommand;
-            if (commandInfo is null)
+            if (commandInfo == null)
             {
                 return string.Empty;
             }
@@ -1669,7 +1669,7 @@ namespace System.Management.Automation
             }
 
             CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
-            if (cmdletInfo is null)
+            if (cmdletInfo == null)
             {
                 return string.Empty;
             }

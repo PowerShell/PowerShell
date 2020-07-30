@@ -24,16 +24,16 @@ namespace Microsoft.PowerShell
         /// <param name="instance">Instance of PSObject wrapping a PropertyValueCollection.</param>
         public static string PropertyValueCollection(PSObject instance)
         {
-            if (instance is null)
+            if (instance == null)
                 return string.Empty;
 
             var values = (PropertyValueCollection)instance.BaseObject;
-            if (values is null)
+            if (values == null)
                 return string.Empty;
 
             if (values.Count == 1)
             {
-                if (values[0] is null)
+                if (values[0] == null)
                 {
                     return string.Empty;
                 }
@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "integer")]
         public static Int64 ConvertLargeIntegerToInt64(PSObject deInstance, PSObject largeIntegerInstance)
         {
-            if (largeIntegerInstance is null)
+            if (largeIntegerInstance == null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(largeIntegerInstance));
             }
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "dn", Justification = "DN represents valid prefix w.r.t Active Directory.")]
         public static string ConvertDNWithBinaryToString(PSObject deInstance, PSObject dnWithBinaryInstance)
         {
-            if (dnWithBinaryInstance is null)
+            if (dnWithBinaryInstance == null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(dnWithBinaryInstance));
             }

@@ -393,7 +393,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!_hasProcessedFirstInputObject)
                 {
-                    if (Property is null)
+                    if (Property == null)
                     {
                         Property = OrderByProperty.GetDefaultKeyPropertySet(InputObject);
                     }
@@ -442,7 +442,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void UpdateOrderPropertyTypeInfo(List<ObjectCommandPropertyValue> currentEntryOrderValues)
         {
-            if (_propertyTypesCandidate is null)
+            if (_propertyTypesCandidate == null)
             {
                 _propertyTypesCandidate = currentEntryOrderValues.Select(c => PSObject.Base(c.PropertyValue)?.GetType()).ToArray();
                 return;
@@ -461,7 +461,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 var candidateType = _propertyTypesCandidate[i];
                 var propertyType = PSObject.Base(currentEntryOrderValues[i].PropertyValue)?.GetType();
-                if (propertyType is null)
+                if (propertyType == null)
                 {
                     // we ignore properties without values. We can always compare against null.
                     continue;
@@ -470,7 +470,7 @@ namespace Microsoft.PowerShell.Commands
                 // if we haven't gotten a type for a property yet, update it when we do get a value
                 if (propertyType != candidateType)
                 {
-                    if (candidateType is null)
+                    if (candidateType == null)
                     {
                         _propertyTypesCandidate[i] = propertyType;
                     }

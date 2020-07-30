@@ -74,7 +74,7 @@ namespace System.Management.Automation.Language
     {
         internal PipeObjectPair(string parameterName, Type pipeObjType)
         {
-            if (parameterName is null)
+            if (parameterName == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(parameterName));
 
             Parameter = null;
@@ -95,9 +95,9 @@ namespace System.Management.Automation.Language
     {
         internal AstArrayPair(string parameterName, ICollection<ExpressionAst> arguments)
         {
-            if (parameterName is null)
+            if (parameterName == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(parameterName));
-            if (arguments is null || arguments.Count == 0)
+            if (arguments == null || arguments.Count == 0)
                 throw PSTraceSource.NewArgumentNullException(nameof(arguments));
 
             Parameter = null;
@@ -124,7 +124,7 @@ namespace System.Management.Automation.Language
     {
         internal FakePair(CommandParameterAst parameterAst)
         {
-            if (parameterAst is null)
+            if (parameterAst == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(parameterAst));
 
             Parameter = parameterAst;
@@ -144,7 +144,7 @@ namespace System.Management.Automation.Language
     {
         internal SwitchPair(CommandParameterAst parameterAst)
         {
-            if (parameterAst is null)
+            if (parameterAst == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(parameterAst));
 
             Parameter = parameterAst;
@@ -174,7 +174,7 @@ namespace System.Management.Automation.Language
     {
         internal AstPair(CommandParameterAst parameterAst)
         {
-            if (parameterAst is null || parameterAst.Argument is null)
+            if (parameterAst == null || parameterAst.Argument == null)
                 throw PSTraceSource.NewArgumentException(nameof(parameterAst));
 
             Parameter = parameterAst;
@@ -194,7 +194,7 @@ namespace System.Management.Automation.Language
             if (parameterAst != null && parameterAst.Argument != null)
                 throw PSTraceSource.NewArgumentException(nameof(parameterAst));
 
-            if (parameterAst is null && argumentAst is null)
+            if (parameterAst == null && argumentAst == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(argumentAst));
 
             Parameter = parameterAst;
@@ -214,7 +214,7 @@ namespace System.Management.Automation.Language
             if (parameterAst != null && parameterAst.Argument != null)
                 throw PSTraceSource.NewArgumentException(nameof(parameterAst));
 
-            if (parameterAst is null || argumentAst is null)
+            if (parameterAst == null || argumentAst == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(argumentAst));
 
             Parameter = parameterAst;
@@ -328,11 +328,11 @@ namespace System.Management.Automation.Language
             }
 
             PseudoBindingInfo pseudoBinding = null;
-            if (Runspace.DefaultRunspace is null)
+            if (Runspace.DefaultRunspace == null)
             {
                 // Handle static binding from a non-PowerShell / C# application
                 // DefaultRunspace is a thread static field, so race condition will not happen because different threads will access different instances of "DefaultRunspace"
-                if (t_bindCommandRunspace is null)
+                if (t_bindCommandRunspace == null)
                 {
                     // Create a mini runspace by remove the types and formats
                     InitialSessionState minimalState = InitialSessionState.CreateDefault2();
@@ -370,7 +370,7 @@ namespace System.Management.Automation.Language
             BoundParameters = new Dictionary<string, ParameterBindingResult>(StringComparer.OrdinalIgnoreCase);
             BindingExceptions = new Dictionary<string, StaticBindingError>(StringComparer.OrdinalIgnoreCase);
 
-            if (bindingInfo is null)
+            if (bindingInfo == null)
             {
                 CreateBindingResultForSyntacticBind(commandAst);
             }
@@ -574,7 +574,7 @@ namespace System.Management.Automation.Language
 
         private void AddDuplicateParameterBindingException(CommandParameterAst duplicateParameter)
         {
-            if (duplicateParameter is null)
+            if (duplicateParameter == null)
             {
                 return;
             }
@@ -947,7 +947,7 @@ namespace System.Management.Automation.Language
         /// <returns>PseudoBindingInfo.</returns>
         internal PseudoBindingInfo DoPseudoParameterBinding(CommandAst command, Type pipeArgumentType, CommandParameterAst paramAstAtCursor, BindingType bindingType)
         {
-            if (command is null)
+            if (command == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
@@ -1039,7 +1039,7 @@ namespace System.Management.Automation.Language
             if (!_bindingEffective)
             {
                 // The command is not a cmdlet, not a script cmdlet, and not a function
-                if (_bindableParameters is null)
+                if (_bindableParameters == null)
                     return null;
 
                 // get all bindable parameters
@@ -1447,7 +1447,7 @@ namespace System.Management.Automation.Language
                     continue;
                 }
 
-                if (matchingParameter is null)
+                if (matchingParameter == null)
                 {
                     // The parameter cannot be found. The reason could be:
                     // 1. It's a bynamic parameter, and we cannot retrieve the ParameterMetadata for it
@@ -1512,7 +1512,7 @@ namespace System.Management.Automation.Language
                             MergedCompiledCommandParameter nextMatchingParameter =
                                 _bindableParameters.GetMatchingParameter(nextArg.ParameterName, false, true, null);
                             // The next parameter doesn't exist. We use it as an argument
-                            if (nextMatchingParameter is null)
+                            if (nextMatchingParameter == null)
                             {
                                 AstPair newArg = new AstPair(argument.Parameter, nextArg.Parameter);
                                 result.Add(newArg);
@@ -1587,7 +1587,7 @@ namespace System.Management.Automation.Language
                     continue;
                 }
 
-                if (parameter is null)
+                if (parameter == null)
                 {
                     // Cannot find a matching parameter. It's not processed in ParseParameterArguments. It comes from
                     // a CommandParameterAst with argument. We ignore it and carry on with our binding
@@ -1668,7 +1668,7 @@ namespace System.Management.Automation.Language
                         result,
                         ref unboundArgumentsIndex);
 
-                    if (argument is null)
+                    if (argument == null)
                     {
                         break;
                     }

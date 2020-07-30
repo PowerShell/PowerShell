@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
             string message = StringUtil.Format(errorMessage,
                 serviceName,
                 displayName,
-                (innerException is null) ? string.Empty : innerException.Message);
+                (innerException == null) ? string.Empty : innerException.Message);
 
             var exception = new ServiceCommandException(message, innerException);
             exception.ServiceName = serviceName;
@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (_allServices is null)
+                if (_allServices == null)
                 {
                     _allServices = ServiceController.GetServices();
                 }
@@ -383,7 +383,7 @@ namespace Microsoft.PowerShell.Commands
         {
             List<ServiceController> matchingServices = new List<ServiceController>();
 
-            if (serviceNames is null)
+            if (serviceNames == null)
             {
                 foreach (ServiceController service in AllServices)
                 {
@@ -445,7 +445,7 @@ namespace Microsoft.PowerShell.Commands
         private List<ServiceController> MatchingServicesByDisplayName()
         {
             List<ServiceController> matchingServices = new List<ServiceController>();
-            if (DisplayName is null)
+            if (DisplayName == null)
             {
                 Diagnostics.Assert(false, "null DisplayName");
                 throw PSTraceSource.NewInvalidOperationException();
@@ -488,7 +488,7 @@ namespace Microsoft.PowerShell.Commands
         private List<ServiceController> MatchingServicesByInput()
         {
             List<ServiceController> matchingServices = new List<ServiceController>();
-            if (InputObject is null)
+            if (InputObject == null)
             {
                 Diagnostics.Assert(false, "null InputObject");
                 throw PSTraceSource.NewInvalidOperationException();
@@ -545,7 +545,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private bool Matches(ServiceController service, string[] matchList)
         {
-            if (matchList is null)
+            if (matchList == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(matchList));
             string serviceID = (selectionMode == SelectionMode.DisplayName)
                                 ? service.DisplayName
@@ -914,7 +914,7 @@ namespace Microsoft.PowerShell.Commands
             catch (InvalidOperationException e)
             {
                 Win32Exception eInner = e.InnerException as Win32Exception;
-                if (eInner is null
+                if (eInner == null
                     || NativeMethods.ERROR_SERVICE_ALREADY_RUNNING != eInner.NativeErrorCode)
                 {
                     exception = e;
@@ -1032,7 +1032,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Win32Exception eInner =
                     e.InnerException as Win32Exception;
-                if (eInner is null
+                if (eInner == null
                     || NativeMethods.ERROR_SERVICE_NOT_ACTIVE != eInner.NativeErrorCode)
                 {
                     exception = e;
@@ -2563,7 +2563,7 @@ namespace Microsoft.PowerShell.Commands
         protected ServiceCommandException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            if (info is null)
+            if (info == null)
             {
                 throw new ArgumentNullException(nameof(info));
             }
@@ -2578,7 +2578,7 @@ namespace Microsoft.PowerShell.Commands
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
+            if (info == null)
             {
                 throw new ArgumentNullException(nameof(info));
             }

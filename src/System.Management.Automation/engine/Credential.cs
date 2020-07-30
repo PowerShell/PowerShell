@@ -113,7 +113,7 @@ namespace System.Management.Automation
         /// <param name="context"></param>
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
+            if (info == null)
                 return;
 
             // serialize the secure string
@@ -151,7 +151,7 @@ namespace System.Management.Automation
         /// <param name="context"></param>
         private PSCredential(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
+            if (info == null)
                 return;
 
             _userName = (string)info.GetValue("UserName", typeof(string));
@@ -218,7 +218,7 @@ namespace System.Management.Automation
         /// <param name="pso"></param>
         public PSCredential(PSObject pso)
         {
-            if (pso is null)
+            if (pso == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(pso));
 
             if (pso.Properties["UserName"] != null)
@@ -256,7 +256,7 @@ namespace System.Management.Automation
         /// </returns>
         public NetworkCredential GetNetworkCredential()
         {
-            if (_netCred is null)
+            if (_netCred == null)
             {
                 string user = null;
                 string domain = null;
@@ -285,7 +285,7 @@ namespace System.Management.Automation
         {
 #pragma warning disable 56506
 
-            if (credential is null)
+            if (credential == null)
             {
                 throw PSTraceSource.NewArgumentNullException("credential");
             }
@@ -331,8 +331,8 @@ namespace System.Management.Automation
 
             SplitUserDomain(input, out user, out domain);
 
-            if ((user is null) ||
-                (domain is null) ||
+            if ((user == null) ||
+                (domain == null) ||
                 (user.Length == 0))
             {
                 // UserName is the public property of Credential object. Use this as

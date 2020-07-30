@@ -206,7 +206,7 @@ namespace System.Management.Automation.Interpreter
 
         private HashSet<ParameterExpression> EnterVariableScope(ICollection<ParameterExpression> variables)
         {
-            if (_loopLocals is null)
+            if (_loopLocals == null)
             {
                 _loopLocals = new HashSet<ParameterExpression>(variables);
                 return null;
@@ -374,7 +374,7 @@ namespace System.Management.Automation.Interpreter
 
         private ParameterExpression AddTemp(ParameterExpression variable)
         {
-            if (_temps is null)
+            if (_temps == null)
             {
                 _temps = new List<ParameterExpression>();
             }

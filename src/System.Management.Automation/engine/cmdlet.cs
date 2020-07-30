@@ -269,7 +269,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentException(nameof(baseName), GetErrorText.ResourceBaseNameFailure, baseName);
                 }
 
-                if (retValue is null)
+                if (retValue == null)
                 {
                     throw PSTraceSource.NewArgumentException(nameof(resourceId), GetErrorText.ResourceIdFailure, resourceId);
                 }
@@ -1597,7 +1597,7 @@ namespace System.Management.Automation
             }
 
             var result = new List<object>();
-            if (this.commandRuntime is null)
+            if (this.commandRuntime == null)
             {
                 this.CommandRuntime = new DefaultCommandRuntime(result);
             }
@@ -1718,7 +1718,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (errorRecord is null)
+                if (errorRecord == null)
                     throw new ArgumentNullException(nameof(errorRecord));
 
                 if (commandRuntime != null)

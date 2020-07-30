@@ -101,7 +101,7 @@ namespace System.Management.Automation
             {
             }
 
-            if (providerInfo is null)
+            if (providerInfo == null)
             {
                 return null;
             }
@@ -111,7 +111,7 @@ namespace System.Management.Automation
             ICmdletProviderSupportsHelp provider = cmdletProvider as ICmdletProviderSupportsHelp;
 
             // Under JEA sessions the resolvedProviderPath will be null, we should allow get-help to continue.
-            if (provider is null)
+            if (provider == null)
             {
                 return null;
             }
@@ -131,7 +131,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (resolvedProviderPath is null)
+            if (resolvedProviderPath == null)
             {
                 if (isJEASession)
                 {

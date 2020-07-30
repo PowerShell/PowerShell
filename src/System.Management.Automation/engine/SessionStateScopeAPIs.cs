@@ -136,7 +136,7 @@ namespace System.Management.Automation
                 scopeID--;
             }
 
-            if (processingScope is null && scopeID >= 0)
+            if (processingScope == null && scopeID >= 0)
             {
                 ArgumentOutOfRangeException outOfRange =
                     PSTraceSource.NewArgumentOutOfRangeException(
@@ -275,7 +275,7 @@ namespace System.Management.Automation
 
             foreach (PSDriveInfo drive in scope.Drives)
             {
-                if (drive is null)
+                if (drive == null)
                 {
                     continue;
                 }

@@ -160,7 +160,7 @@ namespace System.Management.Automation
                     return false;
             }
 
-            return SelectedBy is null || SelectedBy.SafeForExport();
+            return SelectedBy == null || SelectedBy.SafeForExport();
         }
     }
 
@@ -264,9 +264,9 @@ namespace System.Management.Automation
 
         internal override bool SafeForExport()
         {
-            return (ItemSelectionCondition is null || ItemSelectionCondition.SafeForExport()) &&
-                   (Expression is null || Expression.SafeForExport()) &&
-                   (CustomControl is null || CustomControl.SafeForExport());
+            return (ItemSelectionCondition == null || ItemSelectionCondition.SafeForExport()) &&
+                   (Expression == null || Expression.SafeForExport()) &&
+                   (CustomControl == null || CustomControl.SafeForExport());
         }
     }
 

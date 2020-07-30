@@ -145,14 +145,14 @@ namespace System.Management.Automation
         /// <returns></returns>
         protected static string GetPSLogUserData(ExecutionContext context)
         {
-            if (context is null)
+            if (context == null)
             {
                 return string.Empty;
             }
 
             object logData = context.GetVariableValue(SpecialVariables.PSLogUserDataPath);
 
-            if (logData is null)
+            if (logData == null)
             {
                 return string.Empty;
             }

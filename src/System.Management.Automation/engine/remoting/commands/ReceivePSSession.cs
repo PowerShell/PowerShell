@@ -484,7 +484,7 @@ namespace Microsoft.PowerShell.Commands
                     // Check the local repository for an existing viable session.
                     PSSession locSession = this.RunspaceRepository.GetItem(runspace.InstanceId);
 
-                    // Connect the session here.  If it fails (connectedSession is null) revert to the
+                    // Connect the session here.  If it fails (connectedSession == null) revert to the
                     // reconstruct method.
                     Exception ex;
                     PSSession connectedSession = ConnectSession(locSession, out ex);
@@ -640,7 +640,7 @@ namespace Microsoft.PowerShell.Commands
             else if (ParameterSetName == ReceivePSSessionCommand.IdParameterSet)
             {
                 session = GetSessionById(Id);
-                if (session is null)
+                if (session == null)
                 {
                     WriteInvalidArgumentError(PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedSessionId,
                                               RemotingErrorIdStrings.RemoteRunspaceNotAvailableForSpecifiedSessionId,
@@ -652,7 +652,7 @@ namespace Microsoft.PowerShell.Commands
             else if (ParameterSetName == ReceivePSSessionCommand.NameParameterSet)
             {
                 session = GetSessionByName(Name);
-                if (session is null)
+                if (session == null)
                 {
                     WriteInvalidArgumentError(PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedName,
                                               RemotingErrorIdStrings.RemoteRunspaceNotAvailableForSpecifiedName,
@@ -664,7 +664,7 @@ namespace Microsoft.PowerShell.Commands
             else if (ParameterSetName == ReceivePSSessionCommand.InstanceIdParameterSet)
             {
                 session = GetSessionByInstanceId(InstanceId);
-                if (session is null)
+                if (session == null)
                 {
                     WriteInvalidArgumentError(PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedRunspaceId,
                                               RemotingErrorIdStrings.RemoteRunspaceNotAvailableForSpecifiedRunspaceId,
@@ -692,14 +692,14 @@ namespace Microsoft.PowerShell.Commands
             if (ShouldProcess(session.Name, VerbsCommunications.Receive))
             {
                 Exception ex;
-                if (ConnectSession(session, out ex) is null)
+                if (ConnectSession(session, out ex) == null)
                 {
                     // Unable to connect runspace.  If this was a *reconnect* runspace then try
                     // obtaining a connectable runspace directly from the server and do a
                     // *reconstruct* connect.
                     PSSession oldSession = session;
                     session = TryGetSessionFromServer(oldSession);
-                    if (session is null)
+                    if (session == null)
                     {
                         // No luck.  Return error.
                         string message = StringUtil.Format(RemotingErrorIdStrings.RunspaceCannotBeConnected, oldSession.Name);
@@ -883,7 +883,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Otherwise this must be a new disconnected session object that has a running command
             // associated with it.
-            if (remoteRunspace.RemoteCommand is null)
+            if (remoteRunspace.RemoteCommand == null)
             {
                 // There is no associated running command for this runspace, so we cannot proceed.
                 // Check to see if session is in debug mode.
@@ -1032,23 +1032,23 @@ namespace Microsoft.PowerShell.Commands
             PSObject psObject,
             PSSession session)
         {
-            if (psObject is null)
+            if (psObject == null)
             {
                 return;
             }
 
             // Add note properties for this session if they don't already exist.
-            if (psObject.Properties[RemotingConstants.ComputerNameNoteProperty] is null)
+            if (psObject.Properties[RemotingConstants.ComputerNameNoteProperty] == null)
             {
                 psObject.Properties.Add(new PSNoteProperty(RemotingConstants.ComputerNameNoteProperty, session.ComputerName));
             }
 
-            if (psObject.Properties[RemotingConstants.RunspaceIdNoteProperty] is null)
+            if (psObject.Properties[RemotingConstants.RunspaceIdNoteProperty] == null)
             {
                 psObject.Properties.Add(new PSNoteProperty(RemotingConstants.RunspaceIdNoteProperty, session.InstanceId));
             }
 
-            if (psObject.Properties[RemotingConstants.ShowComputerNameNoteProperty] is null)
+            if (psObject.Properties[RemotingConstants.ShowComputerNameNoteProperty] == null)
             {
                 psObject.Properties.Add(new PSNoteProperty(RemotingConstants.ShowComputerNameNoteProperty, true));
             }
@@ -1069,7 +1069,7 @@ namespace Microsoft.PowerShell.Commands
             // Otherwise create a new job object in the disconnected state for this
             // session and then connect it.
             bool newJobCreated = false;
-            if (job is null)
+            if (job == null)
             {
                 // The PSRemoting job object uses helper objects to track remote command execution.
                 List<IThrottleOperation> helpers = new List<IThrottleOperation>();
@@ -1119,7 +1119,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ex = null;
 
-            if (session is null ||
+            if (session == null ||
                 (session.Runspace.RunspaceStateInfo.State != RunspaceState.Opened &&
                  session.Runspace.RunspaceStateInfo.State != RunspaceState.Disconnected))
             {
@@ -1147,7 +1147,7 @@ namespace Microsoft.PowerShell.Commands
                 ex = e;
             }
 
-            return (ex is null) ? session : null;
+            return (ex == null) ? session : null;
         }
 
         /// <summary>
@@ -1159,7 +1159,7 @@ namespace Microsoft.PowerShell.Commands
         private PSSession TryGetSessionFromServer(PSSession session)
         {
             RemoteRunspace remoteRunspace = session.Runspace as RemoteRunspace;
-            if (remoteRunspace is null)
+            if (remoteRunspace == null)
             {
                 return null;
             }
@@ -1196,7 +1196,7 @@ namespace Microsoft.PowerShell.Commands
             PSRemotingJob job = null;
             RemoteRunspace remoteSessionRunspace = session.Runspace as RemoteRunspace;
 
-            if (remoteSessionRunspace is null ||
+            if (remoteSessionRunspace == null ||
                 remoteSessionRunspace.RemoteCommand != null)
             {
                 // The provided session is created for *reconstruction* and we

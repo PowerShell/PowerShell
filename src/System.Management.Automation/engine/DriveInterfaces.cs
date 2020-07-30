@@ -36,7 +36,7 @@ namespace System.Management.Automation
         /// </exception>
         internal DriveManagementIntrinsics(SessionStateInternal sessionState)
         {
-            if (sessionState is null)
+            if (sessionState == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }

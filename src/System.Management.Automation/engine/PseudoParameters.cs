@@ -56,7 +56,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
-            if (parameterType is null)
+            if (parameterType == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(parameterType));
             }
@@ -114,7 +114,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (value is null)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("value");
                 }

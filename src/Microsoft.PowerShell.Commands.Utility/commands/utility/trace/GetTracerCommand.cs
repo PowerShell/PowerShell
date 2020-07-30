@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value is null || value.Length == 0)
+                if (value == null || value.Length == 0)
                 {
                     value = new string[] { "*" };
                 }

@@ -403,7 +403,7 @@ namespace System.Management.Automation
         /// </exception>
         internal AliasInfo SetAliasItem(AliasInfo alias, bool force, CommandOrigin origin)
         {
-            if (alias is null)
+            if (alias == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(alias));
             }
@@ -450,7 +450,7 @@ namespace System.Management.Automation
         /// </exception>
         internal AliasInfo SetAliasItemAtScope(AliasInfo alias, string scopeID, bool force, CommandOrigin origin)
         {
-            if (alias is null)
+            if (alias == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(alias));
             }

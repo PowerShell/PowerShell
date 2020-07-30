@@ -611,7 +611,7 @@ namespace Microsoft.PowerShell
 
                 case CommandTypes.ExternalScript:
                     ExternalScriptInfo si = commandInfo as ExternalScriptInfo;
-                    if (si is null)
+                    if (si == null)
                     {
                         reason = PSTraceSource.NewArgumentException("scriptInfo");
                     }
@@ -640,14 +640,14 @@ namespace Microsoft.PowerShell
                                                 Signature signature,
                                                 PSHost host)
         {
-            if ((host is null) || (host.UI is null))
+            if ((host == null) || (host.UI == null))
             {
                 return RunPromptDecision.DoNotRun;
             }
 
             RunPromptDecision decision = RunPromptDecision.DoNotRun;
 
-            if (signature is null)
+            if (signature == null)
             {
                 return decision;
             }
@@ -673,7 +673,7 @@ namespace Microsoft.PowerShell
 
                     string promptText;
 
-                    if (signature.SignerCertificate is null)
+                    if (signature.SignerCertificate == null)
                     {
                         promptText =
                             StringUtil.Format(Authenticode.AuthenticodePromptText_UnknownPublisher,
@@ -711,7 +711,7 @@ namespace Microsoft.PowerShell
 
         private RunPromptDecision RemoteFilePrompt(string path, PSHost host)
         {
-            if ((host is null) || (host.UI is null))
+            if ((host == null) || (host.UI == null))
             {
                 return RunPromptDecision.DoNotRun;
             }

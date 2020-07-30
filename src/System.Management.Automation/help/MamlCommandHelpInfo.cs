@@ -220,7 +220,7 @@ namespace System.Management.Automation
         /// <param name="userDefinedData">User defined data object.</param>
         internal void AddUserDefinedData(UserDefinedHelpData userDefinedData)
         {
-            if (userDefinedData is null)
+            if (userDefinedData == null)
                 return;
 
             string propertyValue;
@@ -284,7 +284,7 @@ namespace System.Management.Automation
         /// <returns>Merged command help info object.</returns>
         internal MamlCommandHelpInfo MergeProviderSpecificHelp(PSObject cmdletHelp, PSObject[] dynamicParameterHelp)
         {
-            if (this._fullHelpObject is null)
+            if (this._fullHelpObject == null)
                 return null;
 
             MamlCommandHelpInfo result = (MamlCommandHelpInfo)this.MemberwiseClone();
@@ -317,11 +317,11 @@ namespace System.Management.Automation
         /// <returns></returns>
         private string ExtractTextForHelpProperty(PSObject psObject, string propertyName)
         {
-            if (psObject is null)
+            if (psObject == null)
                 return string.Empty;
 
-            if (psObject.Properties[propertyName] is null ||
-                psObject.Properties[propertyName].Value is null)
+            if (psObject.Properties[propertyName] == null ||
+                psObject.Properties[propertyName].Value == null)
             {
                 return string.Empty;
             }
@@ -338,7 +338,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private string ExtractText(PSObject psObject)
         {
-            if (psObject is null)
+            if (psObject == null)
             {
                 return string.Empty;
             }
