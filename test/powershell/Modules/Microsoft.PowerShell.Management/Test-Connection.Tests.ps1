@@ -34,6 +34,7 @@ function GetExternalHostAddress([string]$HostName)
 
 Describe "Test-Connection" -tags "CI" {
     BeforeAll {
+        $oldDefaultValues = $PSDefaultParameterValues
         $PSDefaultParameterValues["It:Pending"] = $true
 
         $hostName = [System.Net.Dns]::GetHostName()
@@ -52,7 +53,7 @@ Describe "Test-Connection" -tags "CI" {
     }
 
     AfterAll {
-        $PSDefaultParameterValues["It:Pending"] = $false
+        $PSDefaultParameterValues = $oldDefaultValues
     }
 
     Context "Ping" {
