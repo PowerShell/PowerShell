@@ -33,7 +33,7 @@ namespace System.Management.Automation
         /// </param>
         internal CommandProcessorBase(CommandInfo commandInfo)
         {
-            if (commandInfo == null)
+            if (commandInfo is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
             }
@@ -134,7 +134,7 @@ namespace System.Management.Automation
 
                     // Set the execution context for the command it's currently
                     // null and our context has already been set up.
-                    if (value.Context == null && _context != null)
+                    if (value.Context is null && _context != null)
                         value.Context = _context;
                 }
 
@@ -278,7 +278,7 @@ namespace System.Management.Automation
             string helpTarget,
             HelpCategory helpCategory)
         {
-            if (context == null)
+            if (context is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
@@ -341,7 +341,7 @@ namespace System.Management.Automation
             // Make sure we have a session state instance for this command.
             // If one hasn't been explicitly set, then use the session state
             // available on the engine execution context...
-            if (CommandSessionState == null)
+            if (CommandSessionState is null)
             {
                 CommandSessionState = Context.EngineSessionState;
             }

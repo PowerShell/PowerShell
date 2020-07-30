@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
             // cleanup code will be called in IDisposable.Dispose()
             outInner.LineOutput = InstantiateLineOutputInterface();
 
-            if (_sw == null)
+            if (_sw is null)
             {
                 return;
             }
@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             _processRecordExecuted = true;
-            if (_sw == null)
+            if (_sw is null)
             {
                 return;
             }
@@ -254,7 +254,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (_sw == null)
+            if (_sw is null)
             {
                 return;
             }

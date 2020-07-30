@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         // now read the columns section
                         LoadListControlEntries(n, listBody);
-                        if (listBody.defaultEntryDefinition == null)
+                        if (listBody.defaultEntryDefinition is null)
                         {
                             return null; // fatal error
                         }
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (MatchNodeName(n, XmlTags.ListEntryNode))
                     {
                         ListControlEntryDefinition lved = LoadListControlEntryDefinition(n, entryIndex++);
-                        if (lved == null)
+                        if (lved is null)
                         {
                             // Error at XPath {0} in file {1}: {2} failed to load.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.ListEntryNode));
@@ -75,9 +75,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             return; // fatal error
                         }
                         // determine if we have a default entry and if it's already set
-                        if (lved.appliesTo == null)
+                        if (lved.appliesTo is null)
                         {
-                            if (listBody.defaultEntryDefinition == null)
+                            if (listBody.defaultEntryDefinition is null)
                             {
                                 listBody.defaultEntryDefinition = lved;
                             }
@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-                if (listBody.optionalEntryList == null)
+                if (listBody.optionalEntryList is null)
                 {
                     // Error at XPath {0} in file {1}: There must be at least one default {2}.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoDefaultShapeEntry, ComputeCurrentXPath(), FilePath, XmlTags.ListEntryNode));
@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-                if (lved.itemDefinitionList == null)
+                if (lved.itemDefinitionList is null)
                 {
                     // Error at XPath {0} in file {1}: Missing definition list.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoDefinitionList, ComputeCurrentXPath(), FilePath));
@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         index++;
                         ListControlItemDefinition lvid = LoadListControlItemDefinition(n);
-                        if (lvid == null)
+                        if (lvid is null)
                         {
                             // Error at XPath {0} in file {1}: Invalid property entry.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidPropertyEntry, ComputeCurrentXPath(), FilePath));
@@ -229,7 +229,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         itemSelectionConditionNodeFound = true;
                         condition = LoadItemSelectionCondition(n);
-                        if (condition == null)
+                        if (condition is null)
                         {
                             return null; // fatal error
                         }
@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         labelNodeFound = true;
                         labelToken = LoadLabel(n);
-                        if (labelToken == null)
+                        if (labelToken is null)
                         {
                             return null; // fatal error
                         }

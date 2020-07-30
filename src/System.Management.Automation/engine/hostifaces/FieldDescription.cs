@@ -74,7 +74,7 @@ namespace System.Management.Automation.Host
         void
         SetParameterType(System.Type parameterType)
         {
-            if (parameterType == null)
+            if (parameterType is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(parameterType));
             }
@@ -203,7 +203,7 @@ namespace System.Management.Automation.Host
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     throw PSTraceSource.NewArgumentNullException("value");
                 }
@@ -236,7 +236,7 @@ namespace System.Management.Automation.Host
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     throw PSTraceSource.NewArgumentNullException("value");
                 }

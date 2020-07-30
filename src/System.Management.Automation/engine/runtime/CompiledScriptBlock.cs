@@ -56,14 +56,14 @@ namespace System.Management.Automation
 
         internal bool Compile(bool optimized)
         {
-            if (_attributes == null)
+            if (_attributes is null)
             {
                 InitializeMetadata();
             }
 
             // We need the name to index map to check if any allscope variables are assigned.  If they
             // are, we can't run the optimized version, so we'll compile once more unoptimized and run that.
-            if (optimized && NameToIndexMap == null)
+            if (optimized && NameToIndexMap is null)
             {
                 CompileOptimized();
             }
@@ -120,7 +120,7 @@ namespace System.Management.Automation
                     _usesCmdletBinding = cmdletBindingAttribute != null;
                 }
 
-                bool automaticPosition = cmdletBindingAttribute == null || cmdletBindingAttribute.PositionalBinding;
+                bool automaticPosition = cmdletBindingAttribute is null || cmdletBindingAttribute.PositionalBinding;
                 var runtimeDefinedParameterDictionary =
                     Ast.GetParameterMetadata(automaticPosition, ref _usesCmdletBinding);
 
@@ -194,7 +194,7 @@ namespace System.Management.Automation
         private void PerformSecurityChecks()
         {
             var scriptBlockAst = Ast as ScriptBlockAst;
-            if (scriptBlockAst == null)
+            if (scriptBlockAst is null)
             {
                 // Checks are only needed at the top level.
                 return;
@@ -264,13 +264,13 @@ namespace System.Management.Automation
                 }
 
                 PipelineAst pipelineAst = endBlock.Statements[0] as PipelineAst;
-                if (pipelineAst == null)
+                if (pipelineAst is null)
                 {
                     return false;
                 }
 
                 HashtableAst hashtableAst = pipelineAst.GetPureExpression() as HashtableAst;
-                if (hashtableAst == null)
+                if (hashtableAst is null)
                 {
                     return false;
                 }
@@ -346,7 +346,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_isProductCode == null)
+                if (_isProductCode is null)
                 {
                     _isProductCode = SecuritySupport.IsProductBinary(((Ast)_ast).Extent.File);
                 }
@@ -381,7 +381,7 @@ namespace System.Management.Automation
 
         internal List<Attribute> GetAttributes()
         {
-            if (_attributes == null)
+            if (_attributes is null)
             {
                 InitializeMetadata();
             }
@@ -409,7 +409,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_runtimeDefinedParameterDictionary == null)
+                if (_runtimeDefinedParameterDictionary is null)
                 {
                     InitializeMetadata();
                 }
@@ -422,7 +422,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_runtimeDefinedParameterDictionary == null)
+                if (_runtimeDefinedParameterDictionary is null)
                 {
                     InitializeMetadata();
                 }
@@ -437,7 +437,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_runtimeDefinedParameterDictionary == null)
+                if (_runtimeDefinedParameterDictionary is null)
                 {
                     InitializeMetadata();
                 }
@@ -469,11 +469,11 @@ namespace System.Management.Automation
 
         public MergedCommandParameterMetadata GetParameterMetadata(ScriptBlock scriptBlock)
         {
-            if (_parameterMetadata == null)
+            if (_parameterMetadata is null)
             {
                 lock (this)
                 {
-                    if (_parameterMetadata == null)
+                    if (_parameterMetadata is null)
                     {
                         CommandMetadata metadata = new CommandMetadata(
                             scriptBlock,
@@ -506,7 +506,7 @@ namespace System.Management.Automation
             }
 
             var funcDefn = (FunctionDefinitionAst)_ast;
-            if (funcDefn.Parameters == null)
+            if (funcDefn.Parameters is null)
             {
                 return funcDefn.Body.ToStringForSerialization();
             }
@@ -571,7 +571,7 @@ namespace System.Management.Automation
             if (s_cachedScripts.TryGetValue(key, out scriptBlock))
             {
                 Diagnostics.Assert(
-                    scriptBlock.SessionStateInternal == null,
+                    scriptBlock.SessionStateInternal is null,
                     "A cached scriptblock should not have it's session state bound, that causes a memory leak.");
                 return scriptBlock.Clone();
             }
@@ -664,7 +664,7 @@ namespace System.Management.Automation
         {
             FunctionDefinitionAst funcDefn = null;
             var sbAst = Ast as ScriptBlockAst;
-            if (sbAst == null)
+            if (sbAst is null)
             {
                 funcDefn = (FunctionDefinitionAst)Ast;
                 sbAst = funcDefn.Body;
@@ -678,7 +678,7 @@ namespace System.Management.Automation
 
             string paramText;
             string additionalNewParams = usingVariablesTuple.Item2;
-            if (funcDefn == null || funcDefn.Parameters == null)
+            if (funcDefn is null || funcDefn.Parameters is null)
             {
                 paramText = "param(" + additionalNewParams + ")" + Environment.NewLine;
             }
@@ -696,7 +696,7 @@ namespace System.Management.Automation
         /// </summary>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
@@ -764,7 +764,7 @@ namespace System.Management.Automation
             }
 
             var pipeAst = statements[0] as PipelineAst;
-            if (pipeAst == null)
+            if (pipeAst is null)
             {
                 return errorHandler(AutomationExceptions.CanOnlyConvertOnePipeline);
             }
@@ -919,7 +919,7 @@ namespace System.Management.Automation
                 AstInternal.GetWithInputHandlingForInvokeCommandWithUsingExpression(usingVariablesTuple);
 
             // result.Item1 is ParamText; result.Item2 is ScriptBlockText
-            return result.Item1 == null ? result.Item2 : result.Item1 + result.Item2;
+            return result.Item1 is null ? result.Item2 : result.Item1 + result.Item2;
         }
 
         internal bool IsUsingDollarInput() => AstSearcher.IsUsingDollarInput(this.Ast);
@@ -972,7 +972,7 @@ namespace System.Management.Automation
 
             ExecutionContext context = GetContextFromTLS();
             Diagnostics.Assert(
-                SessionStateInternal == null || SessionStateInternal.ExecutionContext == context,
+                SessionStateInternal is null || SessionStateInternal.ExecutionContext == context,
                 "The scriptblock is being invoked in a runspace different than the one where it was created");
 
             if (context.CurrentPipelineStopping)
@@ -982,25 +982,25 @@ namespace System.Management.Automation
 
             // Validate at the arguments are consistent. The only public API that gets you here never sets createLocalScope to false...
             Diagnostics.Assert(
-                createLocalScope || functionsToDefine == null,
+                createLocalScope || functionsToDefine is null,
                 "When calling ScriptBlock.InvokeWithContext(), if 'functionsToDefine' != null then 'createLocalScope' must be true");
             Diagnostics.Assert(
-                createLocalScope || variablesToDefine == null,
+                createLocalScope || variablesToDefine is null,
                 "When calling ScriptBlock.InvokeWithContext(), if 'variablesToDefine' != null then 'createLocalScope' must be true");
 
-            if (args == null)
+            if (args is null)
             {
                 args = Array.Empty<object>();
             }
 
             bool runOptimized = context._debuggingMode > 0 ? false : createLocalScope;
             var codeToInvoke = GetCodeToInvoke(ref runOptimized, clauseToInvoke);
-            if (codeToInvoke == null)
+            if (codeToInvoke is null)
             {
                 return;
             }
 
-            if (outputPipe == null)
+            if (outputPipe is null)
             {
                 // If we don't have a pipe to write to, we need to discard all results.
                 outputPipe = new Pipe { NullPipe = true };
@@ -1052,7 +1052,7 @@ namespace System.Management.Automation
             try
             {
                 var myInvocationInfo = invocationInfo;
-                if (myInvocationInfo == null)
+                if (myInvocationInfo is null)
                 {
                     var callerFrame = context.Debugger.GetCallStack().LastOrDefault();
                     var extent = (callerFrame != null)
@@ -1102,7 +1102,7 @@ namespace System.Management.Automation
                                 throw e;
                             }
 
-                            if (def.Value == null)
+                            if (def.Value is null)
                             {
                                 PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
                                     ParserStrings.NullFunctionBodyInFunctionDefinitionDictionary, def.Key);
@@ -1121,7 +1121,7 @@ namespace System.Management.Automation
                         foreach (var psvar in variablesToDefine)
                         {
                             // Check for null entries.
-                            if (psvar == null)
+                            if (psvar is null)
                             {
                                 PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
                                     ParserStrings.NullEntryInVariablesDefinitionList, index);
@@ -1141,7 +1141,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    if (context.EngineSessionState.CurrentScope.LocalsTuple == null)
+                    if (context.EngineSessionState.CurrentScope.LocalsTuple is null)
                     {
                         // If the locals tuple is null, that means either:
                         //     * we're invoking a script block for a module
@@ -1623,7 +1623,7 @@ namespace System.Management.Automation
                     // If the engine hasn't started up yet, then we're just compiling script
                     // blocks. We'll have to log them when they are used and we have an engine
                     // to work with.
-                    if (sessionState == null)
+                    if (sessionState is null)
                     {
                         return false;
                     }
@@ -2150,13 +2150,13 @@ namespace System.Management.Automation
 
         private ScriptBlockSerializationHelper(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new ArgumentNullException(nameof(info));
             }
 
             _scriptText = info.GetValue("ScriptText", typeof(string)) as string;
-            if (_scriptText == null)
+            if (_scriptText is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
@@ -2382,7 +2382,7 @@ namespace System.Management.Automation
             if (_scriptBlock.HasDynamicParameters)
             {
                 var resultList = new List<object>();
-                Diagnostics.Assert(_functionContext._outputPipe == null, "Output pipe should not be set yet.");
+                Diagnostics.Assert(_functionContext._outputPipe is null, "Output pipe should not be set yet.");
                 _functionContext._outputPipe = new Pipe(resultList);
                 RunClause(
                     clause: _runOptimized ? _scriptBlock.DynamicParamBlock : _scriptBlock.UnoptimizedDynamicParamBlock,
@@ -2406,7 +2406,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void SetLocalsTupleForNewScope(SessionStateScope scope)
         {
-            Diagnostics.Assert(scope.LocalsTuple == null, "a newly created scope shouldn't have it's tuple set.");
+            Diagnostics.Assert(scope.LocalsTuple is null, "a newly created scope shouldn't have it's tuple set.");
             scope.LocalsTuple = _localsTuple;
         }
 

@@ -269,7 +269,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Just return a single line if the user didn't
             // enable context-tracking.
-            if (Context == null)
+            if (Context is null)
             {
                 return FormatLine(line, this.LineNumber, displayPath, EmptyPrefix);
             }
@@ -532,7 +532,7 @@ namespace Microsoft.PowerShell.Commands
 
             public void CopyTo(T[] array, int arrayIndex)
             {
-                if (array == null)
+                if (array is null)
                 {
                     throw new ArgumentNullException(nameof(array));
                 }
@@ -1478,7 +1478,7 @@ namespace Microsoft.PowerShell.Commands
             if (Path != null)
             {
                 expandedPaths = ResolveFilePaths(Path, _isLiteralPath);
-                if (expandedPaths == null)
+                if (expandedPaths is null)
                 {
                     return;
                 }
@@ -1539,7 +1539,7 @@ namespace Microsoft.PowerShell.Commands
                 if (matched)
                 {
                     // Don't re-write the line number if it was already set...
-                    if (matchInfo == null)
+                    if (matchInfo is null)
                     {
                         result.LineNumber = _inputRecordNumber;
                     }

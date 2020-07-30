@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
                             ref Dictionary<string, string[]> counterInstanceMapping)
         {
             _counterSetName = setName;
-            if (machineName == null || machineName.Length == 0)
+            if (machineName is null || machineName.Length == 0)
             {
                 machineName = ".";
             }

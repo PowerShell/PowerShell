@@ -478,14 +478,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (InputObject == null || InputObject == AutomationNull.Value)
+            if (InputObject is null || InputObject == AutomationNull.Value)
             {
                 return;
             }
 
             _totalRecordCount++;
 
-            if (Property == null)
+            if (Property is null)
                 AnalyzeValue(null, InputObject.BaseObject);
             else
                 AnalyzeObjectProperties(InputObject);
@@ -509,7 +509,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (var expression in Property)
             {
                 List<PSPropertyExpression> resolvedNames = expression.ResolveNames(inObj);
-                if (resolvedNames == null || resolvedNames.Count == 0)
+                if (resolvedNames is null || resolvedNames.Count == 0)
                 {
                     // Insert a blank entry so we can track
                     // property misses in EndProcessing.
@@ -535,7 +535,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     List<PSPropertyExpressionResult> tempExprRes = resolvedName.GetValues(inObj);
-                    if (tempExprRes == null || tempExprRes.Count == 0)
+                    if (tempExprRes is null || tempExprRes.Count == 0)
                     {
                         // Shouldn't happen - would somehow mean
                         // that the property went away between when
@@ -560,7 +560,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void AnalyzeValue(string propertyName, object objValue)
         {
-            if (propertyName == null)
+            if (propertyName is null)
                 propertyName = thisObject;
 
             Statistics stat = _statistics.EnsureEntry(propertyName);
@@ -570,7 +570,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_measureCharacters || _measureWords || _measureLines)
             {
-                string strValue = (objValue == null) ? string.Empty : objValue.ToString();
+                string strValue = (objValue is null) ? string.Empty : objValue.ToString();
                 AnalyzeString(strValue, stat);
             }
 
@@ -634,7 +634,7 @@ namespace Microsoft.PowerShell.Commands
                 statValue = PSObject.AsPSObject(statValue).ToString();
             }
 
-            if ((statValue == null) ||
+            if ((statValue is null) ||
                 ((LanguagePrimitives.Compare(statValue, currentValue, false, CultureInfo.CurrentCulture) * factor) > 0))
             {
                 return objValue;
@@ -808,7 +808,7 @@ namespace Microsoft.PowerShell.Commands
             // Fix for 917114: If Property is not set,
             // and we aren't passed any records at all,
             // output 0s to emulate wc behavior.
-            if (_totalRecordCount == 0 && Property == null)
+            if (_totalRecordCount == 0 && Property is null)
             {
                 _statistics.EnsureEntry(thisObject);
             }
@@ -828,8 +828,8 @@ namespace Microsoft.PowerShell.Commands
                 if (IsMeasuringGeneric)
                 {
                     double temp;
-                    if ((stat.min == null || LanguagePrimitives.TryConvertTo<double>(stat.min, out temp)) &&
-                        (stat.max == null || LanguagePrimitives.TryConvertTo<double>(stat.max, out temp)))
+                    if ((stat.min is null || LanguagePrimitives.TryConvertTo<double>(stat.min, out temp)) &&
+                        (stat.max is null || LanguagePrimitives.TryConvertTo<double>(stat.max, out temp)))
                     {
                         mi = CreateGenericMeasureInfo(stat, true);
                     }

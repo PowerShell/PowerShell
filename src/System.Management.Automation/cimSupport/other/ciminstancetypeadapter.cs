@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Cim
         {
             // baseObject should never be null
             CimInstance cimInstance = baseObject as CimInstance;
-            if (cimInstance == null)
+            if (cimInstance is null)
             {
                 string msg = string.Format(CultureInfo.InvariantCulture,
                     CimInstanceTypeAdapterResources.BaseObjectNotCimInstance,
@@ -103,14 +103,14 @@ namespace Microsoft.PowerShell.Cim
         /// <returns></returns>
         public override PSAdaptedProperty GetProperty(object baseObject, string propertyName)
         {
-            if (propertyName == null)
+            if (propertyName is null)
             {
                 throw new PSArgumentNullException(nameof(propertyName));
             }
 
             // baseObject should never be null
             CimInstance cimInstance = baseObject as CimInstance;
-            if (cimInstance == null)
+            if (cimInstance is null)
             {
                 string msg = string.Format(CultureInfo.InvariantCulture,
                     CimInstanceTypeAdapterResources.BaseObjectNotCimInstance,
@@ -138,14 +138,14 @@ namespace Microsoft.PowerShell.Cim
         /// <inheritdoc />
         public override PSAdaptedProperty GetFirstPropertyOrDefault(object baseObject, MemberNamePredicate predicate)
         {
-            if (predicate == null)
+            if (predicate is null)
             {
                 throw new PSArgumentNullException(nameof(predicate));
             }
 
             // baseObject should never be null
             CimInstance cimInstance = baseObject as CimInstance;
-            if (cimInstance == null)
+            if (cimInstance is null)
             {
                 string msg = string.Format(
                     CultureInfo.InvariantCulture,
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Cim
         /// <returns></returns>
         public override string GetPropertyTypeName(PSAdaptedProperty adaptedProperty)
         {
-            if (adaptedProperty == null)
+            if (adaptedProperty is null)
             {
                 throw new ArgumentNullException(nameof(adaptedProperty));
             }
@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Cim
         /// <returns></returns>
         public override object GetPropertyValue(PSAdaptedProperty adaptedProperty)
         {
-            if (adaptedProperty == null)
+            if (adaptedProperty is null)
             {
                 throw new ArgumentNullException(nameof(adaptedProperty));
             }
@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Cim
         public override Collection<string> GetTypeNameHierarchy(object baseObject)
         {
             var cimInstance = baseObject as CimInstance;
-            if (cimInstance == null)
+            if (cimInstance is null)
             {
                 throw new ArgumentNullException(nameof(baseObject));
             }
@@ -295,7 +295,7 @@ namespace Microsoft.PowerShell.Cim
             var typeNamesWithoutNamespace = new List<string>();
 
             IList<CimClass> inheritanceChain = GetInheritanceChain(cimInstance);
-            if ((inheritanceChain == null) || (inheritanceChain.Count == 0))
+            if ((inheritanceChain is null) || (inheritanceChain.Count == 0))
             {
                 AddTypeNameHierarchy(
                     typeNamesWithNamespace,
@@ -357,13 +357,13 @@ namespace Microsoft.PowerShell.Cim
             return writeQualifierValue;
             */
 
-            if (adaptedProperty == null)
+            if (adaptedProperty is null)
             {
                 return false;
             }
 
             CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
-            if (cimProperty == null)
+            if (cimProperty is null)
             {
                 return false;
             }
@@ -379,7 +379,7 @@ namespace Microsoft.PowerShell.Cim
         /// <param name="value"></param>
         public override void SetPropertyValue(PSAdaptedProperty adaptedProperty, object value)
         {
-            if (adaptedProperty == null)
+            if (adaptedProperty is null)
             {
                 throw new ArgumentNullException(nameof(adaptedProperty));
             }

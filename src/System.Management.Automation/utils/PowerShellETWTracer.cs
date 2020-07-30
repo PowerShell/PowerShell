@@ -858,7 +858,7 @@ namespace System.Management.Automation.Tracing
             {
                 for (int i = 0; i < args.Length; i++)
                 {
-                    if (args[i] == null)
+                    if (args[i] is null)
                     {
                         args[i] = string.Empty;
                     }
@@ -1136,7 +1136,7 @@ namespace System.Management.Automation.Tracing
                                         PSOpcode.Method, PSTask.None,
                                         PSKeyword.UseAlwaysAnalytic,
                                         className, methodName, workflowId.ToString(),
-                                        parameters == null ? message : StringUtil.Format(message, parameters),
+                                        parameters is null ? message : StringUtil.Format(message, parameters),
                                         string.Empty, // Job
                                         string.Empty, // Activity name
                                         string.Empty, // Activity GUID
@@ -1187,7 +1187,7 @@ namespace System.Management.Automation.Tracing
                                         PSOpcode.Method, PSTask.None,
                                         PSKeyword.UseAlwaysAnalytic,
                                         className, methodName, workflowId.ToString(),
-                                        parameters == null ? message : StringUtil.Format(message, parameters),
+                                        parameters is null ? message : StringUtil.Format(message, parameters),
                                         sb.ToString(),// Job
                                         string.Empty, // Activity name
                                         string.Empty, // Activity GUID
@@ -1457,7 +1457,7 @@ namespace System.Management.Automation.Tracing
                                         PSOpcode.Method, PSTask.None,
                                         PSKeyword.UseAlwaysAnalytic,
                                         className, methodName, workflowId.ToString(),
-                                        parameters == null ? message : StringUtil.Format(message, parameters),
+                                        parameters is null ? message : StringUtil.Format(message, parameters),
                                         string.Empty, // Job
                                         activityName,
                                         activityId.ToString(),

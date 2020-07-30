@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             PSObject so = this.ReadObject();
 
-            if (so == null || so == AutomationNull.Value)
+            if (so is null || so == AutomationNull.Value)
                 return;
 
             // try to process the object
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // instantiate the cache if not done yet
-            if (_cache == null)
+            if (_cache is null)
             {
                 _cache = new FormattedObjectsCache(this.LineOutput.RequiresBuffering);
             }
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 FormatShape shape = FormatShape.Table; // default
                 FormatOutputContext foc = this.FormatContext;
 
-                if (foc == null || foc.Data.shapeInfo == null)
+                if (foc is null || foc.Data.shapeInfo is null)
                     return shape;
 
                 if (foc.Data.shapeInfo is TableHeaderInfo)
@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns>Array of objects returned by the preprocessing step.</returns>
         private Array ApplyFormatting(object o)
         {
-            if (_command == null)
+            if (_command is null)
             {
                 _command = new CommandWrapper();
                 _command.Initialize(this.OuterCmdlet().Context, "format-default", typeof(FormatDefaultCommand));
@@ -506,12 +506,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void ProcessPayload(FormatEntryData fed, FormatMessagesContextManager.OutputContext c)
         {
             // we assume FormatEntryData as a standard wrapper
-            if (fed == null)
+            if (fed is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(fed));
             }
 
-            if (fed.formatEntryInfo == null)
+            if (fed.formatEntryInfo is null)
             {
                 PSTraceSource.NewArgumentNullException("fed.formatEntryInfo");
             }
@@ -521,7 +521,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 _lo.WriteStream = fed.writeStream;
 
-                if (c == null)
+                if (c is null)
                 {
                     ProcessOutOfBandPayload(fed);
                 }
@@ -607,7 +607,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 FormatOutputContext foc = this.FormatContext;
 
-                if (foc == null)
+                if (foc is null)
                     return null;
 
                 return foc.Data.shapeInfo;
@@ -1390,7 +1390,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal override void ProcessPayload(FormatEntryData fed)
             {
                 ComplexViewEntry cve = fed.formatEntryInfo as ComplexViewEntry;
-                if (cve == null || cve.formatValueList == null)
+                if (cve is null || cve.formatValueList is null)
                     return;
                 _writer.WriteObject(cve.formatValueList);
             }

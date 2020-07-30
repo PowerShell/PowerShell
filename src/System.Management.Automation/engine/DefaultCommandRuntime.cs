@@ -20,7 +20,7 @@ namespace System.Management.Automation
         /// </summary>
         public DefaultCommandRuntime(List<object> outputList)
         {
-            if (outputList == null)
+            if (outputList is null)
                 throw new System.ArgumentNullException(nameof(outputList));
 
             _output = outputList;
@@ -75,7 +75,7 @@ namespace System.Management.Automation
             if (enumerateCollection)
             {
                 IEnumerator e = LanguagePrimitives.GetEnumerator(sendToPipeline);
-                if (e == null)
+                if (e is null)
                 {
                     _output.Add(sendToPipeline);
                 }

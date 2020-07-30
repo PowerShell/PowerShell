@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }

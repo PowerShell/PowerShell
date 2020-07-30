@@ -169,7 +169,7 @@ namespace System.Management.Automation
             {
                 foreach (ComMethod method in _comTypeInfo.Methods.Values)
                 {
-                    if (collection[method.Name] == null)
+                    if (collection[method.Name] is null)
                     {
                         PSMethod mshmethod = new PSMethod(method.Name, this, obj, method);
                         collection.Add(mshmethod as T);

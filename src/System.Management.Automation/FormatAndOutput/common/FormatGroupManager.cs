@@ -48,13 +48,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns>True if there was an update.</returns>
         internal bool UpdateGroupingKeyValue(PSObject so)
         {
-            if (_groupingKeyExpression == null)
+            if (_groupingKeyExpression is null)
                 return false;
 
             List<PSPropertyExpressionResult> results = _groupingKeyExpression.GetValues(so);
 
             // if we have more that one match, we have to select the first one
-            if (results.Count > 0 && results[0].Exception == null)
+            if (results.Count > 0 && results[0].Exception is null)
             {
                 // no exception got thrown, so we can update
                 object newValue = results[0].Result;
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 bool update = !(IsEqual(_currentGroupingKeyPropertyValue, oldValue) ||
                                 IsEqual(oldValue, _currentGroupingKeyPropertyValue));
 
-                if (update && _label == null)
+                if (update && _label is null)
                 {
                     _groupingKeyDisplayName = results[0].ResolvedExpression.ToString();
                 }

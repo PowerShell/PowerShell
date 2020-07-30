@@ -30,7 +30,7 @@ namespace System.Management.Automation
         /// </throws>
         internal static ISecurityDescriptorCmdletProvider GetPermissionProviderInstance(CmdletProvider providerInstance)
         {
-            if (providerInstance == null)
+            if (providerInstance is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
@@ -38,7 +38,7 @@ namespace System.Management.Automation
             ISecurityDescriptorCmdletProvider permissionCmdletProvider =
                 providerInstance as ISecurityDescriptorCmdletProvider;
 
-            if (permissionCmdletProvider == null)
+            if (permissionCmdletProvider is null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -67,7 +67,7 @@ namespace System.Management.Automation
         internal Collection<PSObject> GetSecurityDescriptor(string path,
                                                              AccessControlSections sections)
         {
-            if (path == null)
+            if (path is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -108,7 +108,7 @@ namespace System.Management.Automation
             AccessControlSections sections,
             CmdletProviderContext context)
         {
-            if (path == null)
+            if (path is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -198,12 +198,12 @@ namespace System.Management.Automation
         /// </returns>
         internal Collection<PSObject> SetSecurityDescriptor(string path, ObjectSecurity securityDescriptor)
         {
-            if (path == null)
+            if (path is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            if (securityDescriptor == null)
+            if (securityDescriptor is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(securityDescriptor));
             }
@@ -245,12 +245,12 @@ namespace System.Management.Automation
             ObjectSecurity securityDescriptor,
             CmdletProviderContext context)
         {
-            if (path == null)
+            if (path is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            if (securityDescriptor == null)
+            if (securityDescriptor is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(securityDescriptor));
             }
@@ -392,7 +392,7 @@ namespace System.Management.Automation
         {
             ObjectSecurity sd = null;
 
-            if (path == null)
+            if (path is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -531,12 +531,12 @@ namespace System.Management.Automation
         {
             ObjectSecurity sd = null;
 
-            if (type == null)
+            if (type is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
-            if (providerInstance == null)
+            if (providerInstance is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }

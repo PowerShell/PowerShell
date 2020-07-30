@@ -295,7 +295,7 @@ namespace System.Management.Automation
         /// </exception>
         protected ProviderInfo(ProviderInfo providerInfo)
         {
-            if (providerInfo == null)
+            if (providerInfo is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInfo));
             }
@@ -392,12 +392,12 @@ namespace System.Management.Automation
             PSSnapInInfo psSnapIn)
         {
             // Verify parameters
-            if (sessionState == null)
+            if (sessionState is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
-            if (implementingType == null)
+            if (implementingType is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(implementingType));
             }
@@ -497,13 +497,13 @@ namespace System.Management.Automation
         {
             bool result = false;
 
-            if (psSnapinQualifiedName == null)
+            if (psSnapinQualifiedName is null)
             {
                 result = true;
             }
             else
             {
-                if (namePattern == null)
+                if (namePattern is null)
                 {
                     if (string.Equals(Name, psSnapinQualifiedName.ShortName, StringComparison.OrdinalIgnoreCase) &&
                         IsPSSnapinNameMatch(psSnapinQualifiedName))
@@ -565,7 +565,7 @@ namespace System.Management.Automation
 
             object providerInstance = Thread.GetData(instance);
 
-            if (providerInstance == null)
+            if (providerInstance is null)
             {
 #else
             object providerInstance = null;
@@ -598,7 +598,7 @@ namespace System.Management.Automation
             }
 #endif
 
-            if (providerInstance == null)
+            if (providerInstance is null)
             {
                 ProviderNotFoundException e = null;
 
@@ -642,7 +642,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void GetOutputTypes(string cmdletname, List<PSTypeName> listToAppend)
         {
-            if (_providerOutputType == null)
+            if (_providerOutputType is null)
             {
                 _providerOutputType = new Dictionary<string, List<PSTypeName>>();
                 foreach (OutputTypeAttribute outputType in ImplementingType.GetCustomAttributes<OutputTypeAttribute>(false))
@@ -676,7 +676,7 @@ namespace System.Management.Automation
 
         internal PSNoteProperty GetNotePropertyForProviderCmdlets(string name)
         {
-            if (_noteProperty == null)
+            if (_noteProperty is null)
             {
                 Interlocked.CompareExchange(ref _noteProperty,
                                             new PSNoteProperty(name, this), null);

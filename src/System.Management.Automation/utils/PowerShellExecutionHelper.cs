@@ -16,7 +16,7 @@ namespace System.Management.Automation
         // Used by the ISE
         internal PowerShellExecutionHelper(PowerShell powershell)
         {
-            if (powershell == null)
+            if (powershell is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(powershell));
             }
@@ -57,7 +57,7 @@ namespace System.Management.Automation
             Exception exceptionThrown;
             Collection<PSObject> streamResults = ExecuteCurrentPowerShell(out exceptionThrown);
 
-            if (exceptionThrown != null || streamResults == null || streamResults.Count == 0)
+            if (exceptionThrown != null || streamResults is null || streamResults.Count == 0)
             {
                 return false;
             }
@@ -71,13 +71,13 @@ namespace System.Management.Automation
             Exception exceptionThrown;
             Collection<PSObject> streamResults = ExecuteCurrentPowerShell(out exceptionThrown);
 
-            if (exceptionThrown != null || streamResults == null || streamResults.Count == 0)
+            if (exceptionThrown != null || streamResults is null || streamResults.Count == 0)
             {
                 return null;
             }
 
             // we got back one or more objects. Pick off the first result.
-            if (streamResults[0] == null)
+            if (streamResults[0] is null)
                 return string.Empty;
 
             // And convert the base object into a string. We can't use the proxied
@@ -177,7 +177,7 @@ namespace System.Management.Automation
         /// <returns>The result of the conversion...</returns>
         internal static string SafeToString(object obj)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 return string.Empty;
             }
@@ -215,7 +215,7 @@ namespace System.Management.Automation
         /// <param name="obj">The object to convert to a string...</param>
         internal static void SafeAddToStringList(List<string> list, object obj)
         {
-            if (list == null)
+            if (list is null)
                 return;
             string result = SafeToString(obj);
             if (!string.IsNullOrEmpty(result))

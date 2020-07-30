@@ -823,7 +823,7 @@ namespace System.Management.Automation
 
         private static Type GetArgumentType(object argument, bool isByRefParameter)
         {
-            if (argument == null)
+            if (argument is null)
             {
                 return typeof(LanguagePrimitives.Null);
             }
@@ -1036,7 +1036,7 @@ namespace System.Management.Automation
             for (int i = 0; i < candidates.Count; i++)
             {
                 OverloadCandidate currentCandidate = candidates[i];
-                if (bestCandidateSoFar == null) // first iteration
+                if (bestCandidateSoFar is null) // first iteration
                 {
                     bestCandidateSoFar = currentCandidate;
                     continue;
@@ -1196,7 +1196,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(method != null, "Caller should verify method != null");
 
-            if (method.method == null)
+            if (method.method is null)
             {
                 return true; // do not apply methodTargetType constraint to non-.NET types (i.e. to COM or WMI types)
             }
@@ -1212,7 +1212,7 @@ namespace System.Management.Automation
             // will have no method target type.
 
             var methodDeclaringType = method.method.DeclaringType;
-            if (invocationConstraints == null || invocationConstraints.MethodTargetType == null)
+            if (invocationConstraints is null || invocationConstraints.MethodTargetType is null)
             {
                 // If no method target type is specified, we say the constraint is matched as long as the method is not an interface.
                 // This behavior matches V2 - our candidate sets never included methods with declaring type as an interface in V2.
@@ -1283,7 +1283,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(overloadCandidate != null, "Caller should verify overloadCandidate != null");
 
-            if (invocationConstraints == null)
+            if (invocationConstraints is null)
             {
                 return true;
             }
@@ -1338,7 +1338,7 @@ namespace System.Management.Automation
         {
             callNonVirtually = false;
             var methodInfo = FindBestMethodImpl(methods, invocationConstraints, allowCastingToByRefLikeType, arguments, ref errorId, ref errorMsg, out expandParamsOnBest);
-            if (methodInfo == null)
+            if (methodInfo is null)
             {
                 return null;
             }
@@ -1397,7 +1397,7 @@ namespace System.Management.Automation
             if ((methods.Length == 1) &&
                 (methods[0].hasVarArgs == false) &&
                 (methods[0].isGeneric == false) &&
-                (methods[0].method == null || !(methods[0].method.DeclaringType.IsGenericTypeDefinition)) &&
+                (methods[0].method is null || !(methods[0].method.DeclaringType.IsGenericTypeDefinition)) &&
                 // generic methods need to be double checked in a loop below - generic methods can be rejected if type inference fails
                 (methods[0].parameters.Length == arguments.Length))
             {
@@ -1434,7 +1434,7 @@ namespace System.Management.Automation
                     }
 
                     method = TypeInference.Infer(method, argumentTypesForTypeInference);
-                    if (method == null)
+                    if (method is null)
                     {
                         // Skip generic methods for which we cannot infer type arguments
                         continue;
@@ -1625,7 +1625,7 @@ namespace System.Management.Automation
 
                     for (int j = 1; j < argAsArray.Length; ++j)
                     {
-                        if (argAsArray[j] == null || firstType != PSObject.Base(argAsArray[j]).GetType())
+                        if (argAsArray[j] is null || firstType != PSObject.Base(argAsArray[j]).GetType())
                         {
                             allSameType = false;
                             break;
@@ -1656,16 +1656,16 @@ namespace System.Management.Automation
                     object originalArgument = originalArguments[i];
                     PSReference originalArgumentReference = originalArgument as PSReference;
                     // It still might be an PSObject wrapping an PSReference
-                    if (originalArgumentReference == null)
+                    if (originalArgumentReference is null)
                     {
                         PSObject originalArgumentObj = originalArgument as PSObject;
-                        if (originalArgumentObj == null)
+                        if (originalArgumentObj is null)
                         {
                             continue;
                         }
 
                         originalArgumentReference = originalArgumentObj.BaseObject as PSReference;
-                        if (originalArgumentReference == null)
+                        if (originalArgumentReference is null)
                         {
                             continue;
                         }
@@ -1715,7 +1715,7 @@ namespace System.Management.Automation
                 out expandParamsOnBest,
                 out callNonVirtually);
 
-            if (bestMethod == null)
+            if (bestMethod is null)
             {
                 throw new MethodException(errorId, null, errorMsg, methodName, arguments.Length);
             }
@@ -1765,7 +1765,7 @@ namespace System.Management.Automation
             // and convert them to the propper type, if necessary to be the
             // one argument for this last parameter
             int remainingArgumentCount = arguments.Length - parametersLength + 1;
-            if (remainingArgumentCount == 1 && arguments[arguments.Length - 1] == null)
+            if (remainingArgumentCount == 1 && arguments[arguments.Length - 1] is null)
             {
                 // Don't turn a single null argument into an array of 1 element, just pass null.
                 retValue[parametersLength - 1] = null;
@@ -1854,7 +1854,7 @@ namespace System.Management.Automation
         {
             using (PSObject.MemberResolution.TraceScope("Method argument conversion."))
             {
-                if (resultType == null)
+                if (resultType is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(resultType));
                 }
@@ -1909,7 +1909,7 @@ namespace System.Management.Automation
         {
             using (PSObject.MemberResolution.TraceScope("Converting parameter \"{0}\" to \"{1}\".", valueToConvert, resultType))
             {
-                if (resultType == null)
+                if (resultType is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(resultType));
                 }
@@ -2085,7 +2085,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_cachedMethodDefinition == null)
+                if (_cachedMethodDefinition is null)
                 {
                     var name = method is ConstructorInfo ? "new" : method.Name;
                     var methodDefn = DotNetAdapter.GetMethodInfoOverloadDefinition(name, method, method.GetParameters().Length - parameters.Length);
@@ -2203,7 +2203,7 @@ namespace System.Management.Automation
 
             if (!_useReflection)
             {
-                if (_methodInvoker == null)
+                if (_methodInvoker is null)
                 {
                     _methodInvoker = GetMethodInvoker(methodInfo);
                 }
@@ -2394,7 +2394,7 @@ namespace System.Management.Automation
                     if (method.IsVirtual)
                     {
                         type = FindInterfaceForMethod(method, out methodToCall);
-                        if (type == null)
+                        if (type is null)
                         {
                             _useReflection = true;
                             return null;
@@ -2636,7 +2636,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    if (_isHidden == null)
+                    if (_isHidden is null)
                     {
                         bool hasHiddenAttribute = false;
                         foreach (var method in methodInformationStructures)
@@ -2765,8 +2765,8 @@ namespace System.Management.Automation
                     declaringType.IsCOMObject ||
                     propertyType.IsCOMObject)
                 {
-                    this.readOnly = property.GetSetMethod() == null;
-                    this.writeOnly = property.GetGetMethod() == null;
+                    this.readOnly = property.GetSetMethod() is null;
+                    this.writeOnly = property.GetGetMethod() is null;
                     this.useReflection = true;
                     return;
                 }
@@ -2953,7 +2953,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    if (_getterDelegate == null)
+                    if (_getterDelegate is null)
                     {
                         InitGetter();
                     }
@@ -2968,7 +2968,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    if (_setterDelegate == null)
+                    if (_setterDelegate is null)
                     {
                         InitSetter();
                     }
@@ -2991,7 +2991,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    if (_isHidden == null)
+                    if (_isHidden is null)
                     {
                         _isHidden = member.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0;
                     }
@@ -3006,7 +3006,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    if (_attributes == null)
+                    if (_attributes is null)
                     {
                         // Since AttributeCollection can only be constructed with an Attribute[], one is built.
                         var objAttributes = this.member.GetCustomAttributes(true);
@@ -3082,7 +3082,7 @@ namespace System.Management.Automation
                 {
                     string methodName = method.Name;
                     var previousMethodEntry = (List<MethodBase>)typeMethods[methodName];
-                    if (previousMethodEntry == null)
+                    if (previousMethodEntry is null)
                     {
                         var methodEntry = new List<MethodBase> { method };
                         typeMethods.Add(methodName, methodEntry);
@@ -3105,7 +3105,7 @@ namespace System.Management.Automation
             foreach (var ctor in ctors)
             {
                 var previousMethodEntry = (List<MethodBase>)typeMethods["new"];
-                if (previousMethodEntry == null)
+                if (previousMethodEntry is null)
                 {
                     var methodEntry = new List<MethodBase>();
                     methodEntry.Add(ctor);
@@ -3179,7 +3179,7 @@ namespace System.Management.Automation
                     }
 
                     var previousMethodEntry = (List<MethodBase>)typeMethods[interfaceMethodDefinition.Name];
-                    if (previousMethodEntry == null)
+                    if (previousMethodEntry is null)
                     {
                         var methodEntry = new List<MethodBase> { interfaceMethodDefinition };
                         typeMethods.Add(interfaceMethodDefinition.Name, methodEntry);
@@ -3199,7 +3199,7 @@ namespace System.Management.Automation
                 // We don't add constructors if there was a static method named new.
                 // We don't add constructors if the target type is not public, because it's useless to an internal type.
                 var previousMethodEntry = (List<MethodBase>)typeMethods["new"];
-                if (previousMethodEntry == null)
+                if (previousMethodEntry is null)
                 {
                     var ctorBindingFlags = bindingFlags & ~(BindingFlags.FlattenHierarchy | BindingFlags.Static);
                     ctorBindingFlags |= BindingFlags.Instance;
@@ -3368,7 +3368,7 @@ namespace System.Management.Automation
                     FieldInfo field = fields[i];
                     string fieldName = field.Name;
                     var previousMember = (PropertyCacheEntry)typeProperties[fieldName];
-                    if (previousMember == null)
+                    if (previousMember is null)
                     {
                         typeProperties.Add(fieldName, new PropertyCacheEntry(field));
                     }
@@ -3689,7 +3689,7 @@ namespace System.Management.Automation
                               ? (MethodCacheEntry)typeTable.GetFirstOrDefault(predicate)
                               : (MethodCacheEntry)typeTable[methodName];
 
-            if (methods == null)
+            if (methods is null)
             {
                 return null;
             }
@@ -3745,7 +3745,7 @@ namespace System.Management.Automation
         protected T GetFirstDynamicMemberOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
             var idmop = obj as IDynamicMetaObjectProvider;
-            if (idmop == null || obj is PSObject)
+            if (idmop is null || obj is PSObject)
             {
                 return null;
             }
@@ -3785,7 +3785,7 @@ namespace System.Management.Automation
                 {
                     if (lookingForProperties)
                     {
-                        if (!ignoreDuplicates || (members[propertyEntry.member.Name] == null))
+                        if (!ignoreDuplicates || (members[propertyEntry.member.Name] is null))
                         {
                             members.Add(
                                 new PSProperty(
@@ -3800,7 +3800,7 @@ namespace System.Management.Automation
                 else if (lookingForParameterizedProperties)
                 {
                     var parameterizedPropertyEntry = (ParameterizedPropertyCacheEntry)table.memberCollection[i];
-                    if (!ignoreDuplicates || (members[parameterizedPropertyEntry.propertyName] == null))
+                    if (!ignoreDuplicates || (members[parameterizedPropertyEntry.propertyName] is null))
                     {
                         // TODO: check for HiddenAttribute
                         // We can't currently write a parameterized property in a PowerShell class so this isn't too important,
@@ -3829,7 +3829,7 @@ namespace System.Management.Automation
                 var isCtor = method[0].method is ConstructorInfo;
                 var name = isCtor ? "new" : method[0].method.Name;
 
-                if (!ignoreDuplicates || (members[name] == null))
+                if (!ignoreDuplicates || (members[name] is null))
                 {
                     bool isSpecial = !isCtor && method[0].method.IsSpecialName;
                     members.Add(PSMethod.Create(name, this, obj, method, isSpecial, method.IsHidden) as T);
@@ -3850,7 +3850,7 @@ namespace System.Management.Automation
 
             foreach (var psEvent in table.Values)
             {
-                if (!ignoreDuplicates || (members[psEvent.events[0].Name] == null))
+                if (!ignoreDuplicates || (members[psEvent.events[0].Name] is null))
                 {
                     members.Add(new PSEvent(psEvent.events[0]) as T);
                 }
@@ -3860,7 +3860,7 @@ namespace System.Management.Automation
         internal void AddAllDynamicMembers<T>(object obj, PSMemberInfoInternalCollection<T> members, bool ignoreDuplicates) where T : PSMemberInfo
         {
             var idmop = obj as IDynamicMetaObjectProvider;
-            if (idmop == null || obj is PSObject)
+            if (idmop is null || obj is PSObject)
             {
                 return;
             }
@@ -3879,7 +3879,7 @@ namespace System.Management.Automation
         private static bool PropertyIsStatic(PSProperty property)
         {
             PropertyCacheEntry entry = property.adapterData as PropertyCacheEntry;
-            if (entry == null)
+            if (entry is null)
             {
                 return false;
             }
@@ -4685,7 +4685,7 @@ namespace System.Management.Automation
                 T returnValue = base.GetDotNetMethod<T>(obj, memberName);
                 // We only return a method if there is no property by the same name
                 // to match the behavior we have in GetMembers
-                if (returnValue != null && property == null)
+                if (returnValue != null && property is null)
                 {
                     return returnValue;
                 }
@@ -4696,7 +4696,7 @@ namespace System.Management.Automation
                 PSParameterizedProperty parameterizedProperty = base.GetDotNetProperty<PSParameterizedProperty>(obj, memberName);
                 // We only return a parameterized property if there is no property by the same name
                 // to match the behavior we have in GetMembers
-                if (parameterizedProperty != null && property == null)
+                if (parameterizedProperty != null && property is null)
                 {
                     return parameterizedProperty as T;
                 }
@@ -4727,7 +4727,7 @@ namespace System.Management.Automation
 
                 // We only return a method if there is no property by the same name
                 // to match the behavior we have in GetMembers
-                if (returnValue != null && property == null)
+                if (returnValue != null && property is null)
                 {
                     return returnValue;
                 }
@@ -4739,7 +4739,7 @@ namespace System.Management.Automation
 
                 // We only return a parameterized property if there is no property by the same name
                 // to match the behavior we have in GetMembers
-                if (parameterizedProperty != null && property == null)
+                if (parameterizedProperty != null && property is null)
                 {
                     return parameterizedProperty as T;
                 }
@@ -5120,7 +5120,7 @@ namespace System.Management.Automation
                 T returnValue = base.GetDotNetMethod<T>(obj, memberName);
                 // We only return a method if there is no property by the same name
                 // to match the behavior we have in GetMembers
-                if (returnValue != null && property == null)
+                if (returnValue != null && property is null)
                 {
                     return returnValue;
                 }
@@ -5131,7 +5131,7 @@ namespace System.Management.Automation
                 PSParameterizedProperty parameterizedProperty = base.GetDotNetProperty<PSParameterizedProperty>(obj, memberName);
                 // We only return a parameterized property if there is no property by the same name
                 // to match the behavior we have in GetMembers
-                if (parameterizedProperty != null && property == null)
+                if (parameterizedProperty != null && property is null)
                 {
                     return parameterizedProperty as T;
                 }
@@ -5163,7 +5163,7 @@ namespace System.Management.Automation
 
                 // We only return a method if there is no property by the same name
                 // to match the behavior we have in GetMembers
-                if (returnValue != null && property == null)
+                if (returnValue != null && property is null)
                 {
                     return returnValue;
                 }
@@ -5175,7 +5175,7 @@ namespace System.Management.Automation
 
                 // We only return a parameterized property if there is no property by the same name
                 // to match the behavior we have in GetMembers
-                if (parameterizedProperty != null && property == null)
+                if (parameterizedProperty != null && property is null)
                 {
                     return parameterizedProperty as T;
                 }
@@ -5253,7 +5253,7 @@ namespace System.Management.Automation
                 StringBuilder firstType = null;
                 foreach (string baseType in baseTypeNames)
                 {
-                    if (firstType == null)
+                    if (firstType is null)
                     {
                         firstType = new StringBuilder(baseType);
                         firstType.Append("#");
@@ -5342,7 +5342,7 @@ namespace System.Management.Automation
         protected override PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate)
         {
             XmlNode node = FindNode(obj, predicate);
-            return node == null ? null : new PSProperty(node.LocalName, this, obj, node);
+            return node is null ? null : new PSProperty(node.LocalName, this, obj, node);
         }
 
         /// <summary>
@@ -5377,7 +5377,7 @@ namespace System.Management.Automation
             }
 
             XmlNodeList nodeChildren = node.ChildNodes;
-            if ((nodeChildren == null) || (nodeChildren.Count == 0))
+            if ((nodeChildren is null) || (nodeChildren.Count == 0))
             {
                 return true;
             }
@@ -5499,7 +5499,7 @@ namespace System.Management.Automation
             }
 
             XmlNodeList nodeChildren = node.ChildNodes;
-            if (nodeChildren == null || nodeChildren.Count == 0)
+            if (nodeChildren is null || nodeChildren.Count == 0)
             {
                 node.InnerText = valueString;
                 return;
@@ -5541,7 +5541,7 @@ namespace System.Management.Automation
             {
             }
 
-            var type = value == null ? typeof(object) : value.GetType();
+            var type = value is null ? typeof(object) : value.GetType();
             return forDisplay ? ToStringCodeMethods.Type(type) : type.FullName;
         }
         #endregion virtual
@@ -5635,7 +5635,7 @@ namespace System.Management.Automation
         protected override void DoAddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members)
         {
             DataRow dataRow = (DataRow)obj;
-            if (dataRow.Table == null || dataRow.Table.Columns == null)
+            if (dataRow.Table is null || dataRow.Table.Columns is null)
             {
                 return;
             }
@@ -5757,7 +5757,7 @@ namespace System.Management.Automation
         protected override void DoAddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members)
         {
             DataRowView dataRowView = (DataRowView)obj;
-            if (dataRowView.Row == null || dataRowView.Row.Table == null || dataRowView.Row.Table.Columns == null)
+            if (dataRowView.Row is null || dataRowView.Row.Table is null || dataRowView.Row.Table.Columns is null)
             {
                 return;
             }
@@ -5913,7 +5913,7 @@ namespace System.Management.Automation
             // we can try to infer for this signature instead
             //   M<T1,T2,T3>)(T1, T2, ..., T3, T3, T3, T3)
             // where T3 is repeated appropriate number of times depending on the number of actual method arguments.
-            if (inferredMethod == null &&
+            if (inferredMethod is null &&
                 hasVarArgs &&
                 typesOfMethodArguments.Length >= (typesOfMethodParameters.Length - 1))
             {
@@ -5955,7 +5955,7 @@ namespace System.Management.Automation
                 }
 
                 IEnumerable<Type> inferredTypeParameters = typeParameters.Select(typeInference.GetInferredType);
-                if (inferredTypeParameters.Any(inferredType => inferredType == null))
+                if (inferredTypeParameters.Any(inferredType => inferredType is null))
                 {
                     return null;
                 }
@@ -6066,7 +6066,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (inferenceCandidates == null)
+            if (inferenceCandidates is null)
             {
                 s_tracer.WriteLine("Couldn't infer type parameter {0}", typeParameter);
                 return null;
@@ -6117,7 +6117,7 @@ namespace System.Management.Automation
 #endif
 
                 HashSet<Type> inferenceCandidates = _typeParameterIndexToSetOfInferenceCandidates[parameterType.GenericParameterPosition];
-                if (inferenceCandidates == null)
+                if (inferenceCandidates is null)
                 {
                     inferenceCandidates = new HashSet<Type>();
                     _typeParameterIndexToSetOfInferenceCandidates[parameterType.GenericParameterPosition] = inferenceCandidates;

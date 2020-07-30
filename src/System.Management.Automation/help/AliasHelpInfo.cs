@@ -22,7 +22,7 @@ namespace System.Management.Automation
         {
             _fullHelpObject = new PSObject();
 
-            string name = (aliasInfo.ResolvedCommand == null) ? aliasInfo.UnresolvedCommandName : aliasInfo.ResolvedCommand.Name;
+            string name = (aliasInfo.ResolvedCommand is null) ? aliasInfo.UnresolvedCommandName : aliasInfo.ResolvedCommand.Name;
 
             this.ForwardTarget = name;
             // A Cmdlet/Function/Script etc can have alias.
@@ -92,10 +92,10 @@ namespace System.Management.Automation
         /// <returns>AliasHelpInfo object.</returns>
         internal static AliasHelpInfo GetHelpInfo(AliasInfo aliasInfo)
         {
-            if (aliasInfo == null)
+            if (aliasInfo is null)
                 return null;
 
-            if (aliasInfo.ResolvedCommand == null && aliasInfo.UnresolvedCommandName == null)
+            if (aliasInfo.ResolvedCommand is null && aliasInfo.UnresolvedCommandName is null)
                 return null;
 
             AliasHelpInfo aliasHelpInfo = new AliasHelpInfo(aliasInfo);

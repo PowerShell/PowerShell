@@ -96,7 +96,7 @@ namespace System.Management.Automation
             : base(RuntimeException.RetrieveMessage(errorRecord),
                     RuntimeException.RetrieveException(errorRecord))
         {
-            if (errorRecord == null)
+            if (errorRecord is null)
             {
                 throw new ArgumentNullException(nameof(errorRecord));
             }
@@ -235,7 +235,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
+                if (_errorRecord is null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
@@ -260,7 +260,7 @@ namespace System.Management.Automation
             string path,
             Exception innerException)
         {
-            if (innerException == null)
+            if (innerException is null)
             {
                 Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage needs innerException");
@@ -274,7 +274,7 @@ namespace System.Management.Automation
                 return RuntimeException.RetrieveMessage(innerException);
             }
 
-            if (provider == null)
+            if (provider is null)
             {
                 Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage needs provider");
@@ -291,7 +291,7 @@ namespace System.Management.Automation
 
             string result = null;
 
-            if (path == null)
+            if (path is null)
             {
                 result =
                     string.Format(
@@ -480,7 +480,7 @@ namespace System.Management.Automation
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -499,7 +499,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
+                if (_errorRecord is null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),

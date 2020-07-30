@@ -42,7 +42,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            if (context == null)
+            if (context is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
@@ -91,7 +91,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_version == null)
+                if (_version is null)
                 {
                     FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Path);
                     _version = new Version(versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, versionInfo.ProductBuildPart, versionInfo.ProductPrivatePart);
@@ -123,7 +123,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_outputType == null)
+                if (_outputType is null)
                 {
                     List<PSTypeName> l = new List<PSTypeName>();
                     l.Add(new PSTypeName(typeof(string)));

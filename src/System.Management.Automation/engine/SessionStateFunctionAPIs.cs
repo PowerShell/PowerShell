@@ -182,7 +182,7 @@ namespace System.Management.Automation
             // Early out.
             // Always allow built-in functions needed for command line debugging.
             if ((this.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage) ||
-                (fnInfo == null) ||
+                (fnInfo is null) ||
                 (fnInfo.Name.Equals("prompt", StringComparison.OrdinalIgnoreCase)) ||
                 (fnInfo.Name.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase)) ||
                 (fnInfo.Name.Equals("Clear-Host", StringComparison.Ordinal)))
@@ -222,7 +222,7 @@ namespace System.Management.Automation
 
         private IEnumerable<string> GetFunctionAliases(IParameterMetadataProvider ipmp)
         {
-            if (ipmp == null || ipmp.Body.ParamBlock == null)
+            if (ipmp is null || ipmp.Body.ParamBlock is null)
                 yield break;
 
             var attributes = ipmp.Body.ParamBlock.Attributes;
@@ -272,7 +272,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
-            if (function == null)
+            if (function is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(function));
             }
@@ -507,7 +507,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
-            if (function == null)
+            if (function is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(function));
             }
@@ -586,7 +586,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
-            if (function == null)
+            if (function is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(function));
             }

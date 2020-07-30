@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
             List<Job> matches = new List<Job>();
             Hashtable duplicateDetector = new Hashtable();
 
-            if (_names == null) return matches;
+            if (_names is null) return matches;
 
             foreach (string name in _names)
             {
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands
 
             Hashtable duplicateDetector = new Hashtable();
 
-            if (_instanceIds == null) return matches;
+            if (_instanceIds is null) return matches;
 
             foreach (Guid id in _instanceIds)
             {
@@ -306,7 +306,7 @@ namespace Microsoft.PowerShell.Commands
         {
             List<Job> matches = new List<Job>();
 
-            if (_sessionIds == null) return matches;
+            if (_sessionIds is null) return matches;
 
             Hashtable duplicateDetector = new Hashtable();
 
@@ -408,7 +408,7 @@ namespace Microsoft.PowerShell.Commands
         {
             List<Job> matches = new List<Job>();
 
-            if (_commands == null) return matches;
+            if (_commands is null) return matches;
 
             List<Job> jobs = new List<Job>();
 
@@ -558,7 +558,7 @@ namespace Microsoft.PowerShell.Commands
         internal List<Job> CopyJobsToList(Job[] jobs, bool writeobject, bool checkIfJobCanBeRemoved)
         {
             List<Job> matches = new List<Job>();
-            if (jobs == null) return matches;
+            if (jobs is null) return matches;
 
             foreach (Job job in jobs)
             {

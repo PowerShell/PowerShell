@@ -20,7 +20,7 @@ namespace System.Management.Automation.Tracing
 
         public EtwActivityReverterMethodInvoker(IEtwEventCorrelator eventCorrelator)
         {
-            if (eventCorrelator == null)
+            if (eventCorrelator is null)
             {
                 throw new ArgumentNullException(nameof(eventCorrelator));
             }

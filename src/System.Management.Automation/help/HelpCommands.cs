@@ -364,7 +364,7 @@ namespace Microsoft.PowerShell.Commands
 
         private HelpCategory ToHelpCategory(string[] category, ref bool failed)
         {
-            if (category == null || category.Length == 0)
+            if (category is null || category.Length == 0)
                 return HelpCategory.None;
 
             HelpCategory helpCategory = HelpCategory.None;
@@ -486,7 +486,7 @@ namespace Microsoft.PowerShell.Commands
 
             PSObject[] pInfos = GetParameterInfo(helpInfo);
 
-            if ((pInfos == null) || (pInfos.Length == 0))
+            if ((pInfos is null) || (pInfos.Length == 0))
             {
                 Exception innerException = PSTraceSource.NewArgumentException("Parameter",
                     HelpErrors.NoParmsFound, Parameter);
@@ -606,7 +606,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             PSObject[] pInfos = GetParameterInfo(helpInfo);
 
-                            if ((pInfos == null) || (pInfos.Length == 0))
+                            if ((pInfos is null) || (pInfos.Length == 0))
                             {
                                 return;
                             }
@@ -778,7 +778,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings")]
         public static string GetHelpUri(PSObject commandInfoPSObject)
         {
-            if (commandInfoPSObject == null)
+            if (commandInfoPSObject is null)
             {
                 return string.Empty;
             }
@@ -786,7 +786,7 @@ namespace Microsoft.PowerShell.Commands
             CommandInfo cmdInfo = PSObject.Base(commandInfoPSObject) as CommandInfo;
             // GetHelpUri helper method is expected to be used only by System.Management.Automation.CommandInfo
             // objects from types.ps1xml
-            if ((cmdInfo == null) || (string.IsNullOrEmpty(cmdInfo.Name)))
+            if ((cmdInfo is null) || (string.IsNullOrEmpty(cmdInfo.Name)))
             {
                 return string.Empty;
             }

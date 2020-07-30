@@ -536,7 +536,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The quoted string.</returns>
         private string QuoteName(string name)
         {
-            if (name == null)
+            if (name is null)
                 return "''";
             return ("'" + name.Replace("'", "''") + "'");
         }
@@ -548,7 +548,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The quoted AbsoluteUri.</returns>
         private string QuoteName(Uri name)
         {
-            if (name == null)
+            if (name is null)
                 return "''";
             return QuoteName(name.AbsoluteUri);
         }
@@ -560,7 +560,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The quoted Version string.</returns>
         private string QuoteName(Version name)
         {
-            if (name == null)
+            if (name is null)
                 return "''";
             return QuoteName(name.ToString());
         }
@@ -574,7 +574,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The quoted list.</returns>
         private string QuoteNames(IEnumerable names, StreamWriter streamWriter)
         {
-            if (names == null)
+            if (names is null)
                 return "@()";
 
             StringBuilder result = new StringBuilder();
@@ -657,7 +657,7 @@ namespace Microsoft.PowerShell.Commands
                 bool firstModule = true;
                 foreach (object spec in moduleSpecs)
                 {
-                    if (spec == null)
+                    if (spec is null)
                     {
                         continue;
                     }
@@ -677,7 +677,7 @@ namespace Microsoft.PowerShell.Commands
 
                     firstModule = false;
 
-                    if ((moduleSpecification.Guid == null) && (moduleSpecification.Version == null) && (moduleSpecification.MaximumVersion == null) && (moduleSpecification.RequiredVersion == null))
+                    if ((moduleSpecification.Guid is null) && (moduleSpecification.Version is null) && (moduleSpecification.MaximumVersion is null) && (moduleSpecification.RequiredVersion is null))
                     {
                         result.Append(QuoteName(moduleSpecification.Name));
                     }
@@ -809,7 +809,7 @@ namespace Microsoft.PowerShell.Commands
         //                {
         //                }
 
-        //                if (fileDir == null
+        //                if (fileDir is null
         //                    || !fileDir.StartsWith(basePathDir, StringComparison.OrdinalIgnoreCase))
         //                {
         //                    WriteWarning(StringUtil.Format(Modules.IncludedItemPathFallsOutsideSaveTree, name,
@@ -846,7 +846,7 @@ namespace Microsoft.PowerShell.Commands
                     sessionState.Path.GetResolvedProviderPathFromPSPath(filePath, out provider);
 
                 // If the name doesn't resolve to something we can use, just return the unresolved name...
-                if (!provider.NameEquals(this.Context.ProviderNames.FileSystem) || filePaths == null || filePaths.Count < 1)
+                if (!provider.NameEquals(this.Context.ProviderNames.FileSystem) || filePaths is null || filePaths.Count < 1)
                 {
                     result.Add(filePath);
                     return result;
@@ -949,11 +949,11 @@ namespace Microsoft.PowerShell.Commands
             // wildcards for exported commands that weren't specified on the command line.
             if (_rootModule != null || _nestedModules != null || _requiredModules != null)
             {
-                if (_exportedFunctions == null)
+                if (_exportedFunctions is null)
                     _exportedFunctions = new string[] { "*" };
-                if (_exportedAliases == null)
+                if (_exportedAliases is null)
                     _exportedAliases = new string[] { "*" };
-                if (_exportedCmdlets == null)
+                if (_exportedCmdlets is null)
                     _exportedCmdlets = new string[] { "*" };
             }
 
@@ -1031,7 +1031,7 @@ namespace Microsoft.PowerShell.Commands
                     result.Append(streamWriter.NewLine);
                     result.Append(streamWriter.NewLine);
 
-                    if (_rootModule == null)
+                    if (_rootModule is null)
                         _rootModule = string.Empty;
 
                     BuildModuleManifest(result, nameof(RootModule), Modules.RootModule, !string.IsNullOrEmpty(_rootModule), () => QuoteName(_rootModule), streamWriter);
@@ -1150,9 +1150,9 @@ namespace Microsoft.PowerShell.Commands
         private void BuildPrivateDataInModuleManifest(StringBuilder result, StreamWriter streamWriter)
         {
             var privateDataHashTable = PrivateData as Hashtable;
-            bool specifiedPSDataProperties = !(Tags == null && ReleaseNotes == null && ProjectUri == null && IconUri == null && LicenseUri == null);
+            bool specifiedPSDataProperties = !(Tags is null && ReleaseNotes is null && ProjectUri is null && IconUri is null && LicenseUri is null);
 
-            if (_privateData != null && privateDataHashTable == null)
+            if (_privateData != null && privateDataHashTable is null)
             {
                 if (specifiedPSDataProperties)
                 {

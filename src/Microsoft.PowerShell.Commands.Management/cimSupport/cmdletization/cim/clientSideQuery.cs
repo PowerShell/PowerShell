@@ -371,23 +371,23 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             public bool IsMatch(CimInstance o)
             {
-                if (o == null)
+                if (o is null)
                 {
                     return false;
                 }
 
                 CimProperty propertyInfo = o.CimInstanceProperties[PropertyName];
-                if (propertyInfo == null)
+                if (propertyInfo is null)
                 {
                     return false;
                 }
 
                 object actualPropertyValue = propertyInfo.Value;
 
-                if (CimTypedExpectedPropertyValue == null)
+                if (CimTypedExpectedPropertyValue is null)
                 {
-                    HadMatch = HadMatch || (actualPropertyValue == null);
-                    return actualPropertyValue == null;
+                    HadMatch = HadMatch || (actualPropertyValue is null);
+                    return actualPropertyValue is null;
                 }
 
                 CimValueConverter.AssertIntrinsicCimValue(actualPropertyValue);
@@ -429,12 +429,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             private static bool IsSameType(object actualPropertyValue, object expectedPropertyValue)
             {
-                if (actualPropertyValue == null)
+                if (actualPropertyValue is null)
                 {
                     return true;
                 }
 
-                if (expectedPropertyValue == null)
+                if (expectedPropertyValue is null)
                 {
                     return true;
                 }
@@ -573,7 +573,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 try
                 {
                     var expectedComparable = expectedPropertyValue as IComparable;
-                    if (expectedComparable == null)
+                    if (expectedComparable is null)
                     {
                         return false;
                     }
@@ -609,7 +609,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 try
                 {
                     var actualComparable = actualPropertyValue as IComparable;
-                    if (actualComparable == null)
+                    if (actualComparable is null)
                     {
                         return false;
                     }

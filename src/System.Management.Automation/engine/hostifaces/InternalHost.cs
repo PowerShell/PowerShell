@@ -91,12 +91,12 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (_versionResult == null)
+                if (_versionResult is null)
                 {
                     _versionResult = _externalHostRef.Value.Version;
 
 #pragma warning disable 56503
-                    if (_versionResult == null)
+                    if (_versionResult is null)
                     {
                         throw PSTraceSource.NewNotImplementedException();
                     }
@@ -290,7 +290,7 @@ namespace System.Management.Automation.Internal.Host
                 PSObject newValue = PSObject.AsPSObject(callingCommand);
 
                 commandInfoProperty = newValue.Properties["CommandInfo"];
-                if (commandInfoProperty == null)
+                if (commandInfoProperty is null)
                 {
                     newValue.Properties.Add(new PSNoteProperty("CommandInfo", callingCommand.CommandInfo));
                 }
@@ -301,7 +301,7 @@ namespace System.Management.Automation.Internal.Host
                 }
 
                 stackTraceProperty = newValue.Properties["StackTrace"];
-                if (stackTraceProperty == null)
+                if (stackTraceProperty is null)
                 {
                     newValue.Properties.Add(new PSNoteProperty("StackTrace", new System.Diagnostics.StackTrace()));
                 }
@@ -449,7 +449,7 @@ namespace System.Management.Automation.Internal.Host
         private IHostSupportsInteractiveSession GetIHostSupportsInteractiveSession()
         {
             IHostSupportsInteractiveSession host = _externalHostRef.Value as IHostSupportsInteractiveSession;
-            if (host == null)
+            if (host is null)
             {
                 throw new PSNotImplementedException();
             }

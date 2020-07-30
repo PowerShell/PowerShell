@@ -60,7 +60,7 @@ namespace System.Management.Automation.Runspaces
             startingWindowsPowerShell51 = (powerShellVersion != null) && (powerShellVersion.Major == 5) && (powerShellVersion.Minor == 1);
             if (startingWindowsPowerShell51)
             {
-                if (WinPwshExePath == null)
+                if (WinPwshExePath is null)
                 {
                     throw new PSInvalidOperationException(RemotingErrorIdStrings.WindowsPowerShellNotPresent);
                 }

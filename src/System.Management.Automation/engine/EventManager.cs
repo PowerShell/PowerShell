@@ -557,7 +557,7 @@ namespace System.Management.Automation
         private bool _timerInitialized = false;
         private bool _isTimerActive = false;
         /// <summary>
-        /// We sample every 100ms to check if the engine is idle (currentlyRunningPipeline == null). If it's "idle"
+        /// We sample every 100ms to check if the engine is idle (currentlyRunningPipeline is null). If it's "idle"
         /// in four consecutive samples, then we believe it's actually idle. In this way we can avoid capturing possible
         /// pipeline transitions.
         /// </summary>
@@ -574,14 +574,14 @@ namespace System.Management.Automation
         {
             var localRunspace = _context.CurrentRunspace as LocalRunspace;
 
-            if (localRunspace == null)
+            if (localRunspace is null)
             {
                 // This should never happen, the context should always reference to the local runspace
                 _consecutiveIdleSamples = 0;
                 return;
             }
 
-            if (localRunspace.GetCurrentlyRunningPipeline() == null)
+            if (localRunspace.GetCurrentlyRunningPipeline() is null)
             {
                 _consecutiveIdleSamples++;
             }
@@ -646,7 +646,7 @@ namespace System.Management.Automation
         {
             Delegate handlerDelegate = null;
 
-            if (_eventAssembly == null)
+            if (_eventAssembly is null)
             {
                 _eventAssembly = AssemblyBuilder.DefineDynamicAssembly(
                     new AssemblyName("PSEventHandler"),
@@ -684,7 +684,7 @@ namespace System.Management.Automation
                 eventInfo = sourceType.GetEvent(eventName, bindingFlags);
 
                 // If we can't find the event, throw an exception
-                if (eventInfo == null)
+                if (eventInfo is null)
                 {
                     string errorMessage = StringUtil.Format(EventingResources.CouldNotFindEvent, eventName);
                     throw new ArgumentException(errorMessage, nameof(eventName));
@@ -762,7 +762,7 @@ namespace System.Management.Automation
             lock (_eventSubscribers)
             {
                 _eventSubscribers[subscriber] = handlerDelegate;
-                if (engineEventSourceIdentifier == null)
+                if (engineEventSourceIdentifier is null)
                 {
                     return;
                 }
@@ -817,7 +817,7 @@ namespace System.Management.Automation
         /// </summary>
         private void UnsubscribeEvent(PSEventSubscriber subscriber, bool skipDraining)
         {
-            if (subscriber == null)
+            if (subscriber is null)
             {
                 throw new ArgumentNullException(nameof(subscriber));
             }
@@ -1628,7 +1628,7 @@ namespace System.Management.Automation
             // The computer name will be null the first time the event is forwarded; in this case we need to override with the
             // remote computer this event manager is associated to. If the event has travelled multiple hops then we do not
             // want to override this value since we want to preserve the original computer.
-            if (forwardedEvent.ComputerName == null || forwardedEvent.ComputerName.Length == 0)
+            if (forwardedEvent.ComputerName is null || forwardedEvent.ComputerName.Length == 0)
             {
                 forwardedEvent.ComputerName = _computerName;
                 forwardedEvent.RunspaceId = _runspaceId;
@@ -2048,7 +2048,7 @@ namespace System.Management.Automation
         /// </summary>
         public bool Equals(PSEventSubscriber other)
         {
-            if (other == null)
+            if (other is null)
             {
                 return false;
             }
@@ -2362,7 +2362,7 @@ namespace System.Management.Automation
         /// <remarks>Don't add events to the collection directly; use the EventManager instead</remarks>
         internal void Add(PSEventArgs eventToAdd)
         {
-            if (eventToAdd == null)
+            if (eventToAdd is null)
             {
                 throw new ArgumentNullException(nameof(eventToAdd));
             }
@@ -2478,11 +2478,11 @@ namespace System.Management.Automation
         /// </param>
         /// </summary>
         public PSEventJob(PSEventManager eventManager, PSEventSubscriber subscriber, ScriptBlock action, string name) :
-            base(action == null ? null : action.ToString(), name)
+            base(action is null ? null : action.ToString(), name)
         {
-            if (eventManager == null)
+            if (eventManager is null)
                 throw new ArgumentNullException(nameof(eventManager));
-            if (subscriber == null)
+            if (subscriber is null)
                 throw new ArgumentNullException(nameof(subscriber));
 
             UsesResultsCollection = true;

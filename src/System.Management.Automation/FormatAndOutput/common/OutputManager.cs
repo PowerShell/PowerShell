@@ -51,14 +51,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             PSObject so = this.ReadObject();
 
-            if (so == null || so == AutomationNull.Value)
+            if (so is null || so == AutomationNull.Value)
             {
                 return;
             }
 
             // on demand initialization when the first pipeline
             // object is initialized
-            if (_mgr == null)
+            if (_mgr is null)
             {
                 _mgr = new SubPipelineManager();
                 _mgr.Initialize(_lo, this.OuterCmdlet().Context);
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // unpack the object and process each member separately
             IEnumerable e = PSObjectHelper.GetEnumerable (so);
 
-            if (e == null)
+            if (e is null)
             {
                 this.mgr.Process (so);
             }
@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// </summary>
             public void Dispose()
             {
-                if (this.command == null)
+                if (this.command is null)
                     return;
 
                 this.command.Dispose();

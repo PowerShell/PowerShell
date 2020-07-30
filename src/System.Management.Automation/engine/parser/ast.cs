@@ -93,7 +93,7 @@ namespace System.Management.Automation.Language
         /// </exception>
         protected Ast(IScriptExtent extent)
         {
-            if (extent == null)
+            if (extent is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(extent));
             }
@@ -119,7 +119,7 @@ namespace System.Management.Automation.Language
         /// <returns>Returns the value returned by the visitor.</returns>
         public object Visit(ICustomAstVisitor astVisitor)
         {
-            if (astVisitor == null)
+            if (astVisitor is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(astVisitor));
             }
@@ -133,7 +133,7 @@ namespace System.Management.Automation.Language
         /// <param name="astVisitor">The visitor.</param>
         public void Visit(AstVisitor astVisitor)
         {
-            if (astVisitor == null)
+            if (astVisitor is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(astVisitor));
             }
@@ -149,7 +149,7 @@ namespace System.Management.Automation.Language
         /// <returns>A possibly empty collection of matching Ast nodes.</returns>
         public IEnumerable<Ast> FindAll(Func<Ast, bool> predicate, bool searchNestedScriptBlocks)
         {
-            if (predicate == null)
+            if (predicate is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(predicate));
             }
@@ -165,7 +165,7 @@ namespace System.Management.Automation.Language
         /// <returns>The first matching node, or null if there is no match.</returns>
         public Ast Find(Func<Ast, bool> predicate, bool searchNestedScriptBlocks)
         {
-            if (predicate == null)
+            if (predicate is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(predicate));
             }
@@ -220,7 +220,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         internal static T[] CopyElements<T>(ReadOnlyCollection<T> elements) where T : Ast
         {
-            if (elements == null || elements.Count == 0) { return null; }
+            if (elements is null || elements.Count == 0) { return null; }
 
             var result = new T[elements.Count];
             for (int i = 0; i < result.Length; i++)
@@ -239,7 +239,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         internal static T CopyElement<T>(T element) where T : Ast
         {
-            if (element == null) { return null; }
+            if (element is null) { return null; }
 
             return (T)element.Copy();
         }
@@ -276,7 +276,7 @@ namespace System.Management.Automation.Language
                 throw new InvalidOperationException(ParserStrings.AstIsReused);
             }
 
-            Diagnostics.Assert(child.Parent == null, "Parent can only be set once");
+            Diagnostics.Assert(child.Parent is null, "Parent can only be set once");
             child.Parent = this;
         }
 
@@ -449,7 +449,7 @@ namespace System.Management.Automation.Language
         internal ErrorStatementAst(IScriptExtent extent, Token kind, IEnumerable<Ast> nestedAsts = null)
             : base(extent)
         {
-            if (kind == null)
+            if (kind is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(kind));
             }
@@ -465,7 +465,7 @@ namespace System.Management.Automation.Language
         internal ErrorStatementAst(IScriptExtent extent, Token kind, IEnumerable<KeyValuePair<string, Tuple<Token, Ast>>> flags, IEnumerable<Ast> conditions, IEnumerable<Ast> bodies)
             : base(extent)
         {
-            if (kind == null)
+            if (kind is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(kind));
             }
@@ -538,7 +538,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public override Ast Copy()
         {
-            if (this.Kind == null)
+            if (this.Kind is null)
             {
                 var newNestedAst = CopyElements(this.NestedAst);
                 return new ErrorStatementAst(this.Extent, newNestedAst);
@@ -594,7 +594,7 @@ namespace System.Management.Automation.Language
             {
                 foreach (var tuple in Flags.Values)
                 {
-                    if (tuple.Item2 == null)
+                    if (tuple.Item2 is null)
                         continue;
 
                     action = tuple.Item2.InternalVisit(visitor);
@@ -1023,7 +1023,7 @@ namespace System.Management.Automation.Language
                 this.Attributes = s_emptyAttributeList;
             }
 
-            if (statements == null)
+            if (statements is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(statements));
             }
@@ -1481,7 +1481,7 @@ namespace System.Management.Automation.Language
             string scriptBlockText = GetWithInputHandlingForInvokeCommandImpl(usingVariablesTuple);
 
             string paramText = null;
-            if (ParamBlock == null)
+            if (ParamBlock is null)
             {
                 paramText = "param(" + additionalNewParams + ")" + Environment.NewLine;
             }
@@ -1495,9 +1495,9 @@ namespace System.Management.Automation.Language
             string unused1;
             string unused2;
             var pipelineAst = GetSimplePipeline(false, out unused1, out unused2);
-            if (pipelineAst == null)
+            if (pipelineAst is null)
             {
-                return (usingVariablesTuple == null)
+                return (usingVariablesTuple is null)
                     ? this.ToStringForSerialization()
                     : this.ToStringForSerialization(usingVariablesTuple, this.Extent.StartOffset, this.Extent.EndOffset);
             }
@@ -1505,7 +1505,7 @@ namespace System.Management.Automation.Language
             // do not add "$input |" to pipelines beginning with an expression
             if (pipelineAst.PipelineElements[0] is CommandExpressionAst)
             {
-                return (usingVariablesTuple == null)
+                return (usingVariablesTuple is null)
                     ? this.ToStringForSerialization()
                     : this.ToStringForSerialization(usingVariablesTuple, this.Extent.StartOffset, this.Extent.EndOffset);
             }
@@ -1513,7 +1513,7 @@ namespace System.Management.Automation.Language
             // do not add "$input |" to commands that reference $input in their arguments
             if (AstSearcher.IsUsingDollarInput(this))
             {
-                return (usingVariablesTuple == null)
+                return (usingVariablesTuple is null)
                     ? this.ToStringForSerialization()
                     : this.ToStringForSerialization(usingVariablesTuple, this.Extent.StartOffset, this.Extent.EndOffset);
             }
@@ -1522,14 +1522,14 @@ namespace System.Management.Automation.Language
             var sb = new StringBuilder();
             if (ParamBlock != null)
             {
-                string paramText = (usingVariablesTuple == null)
+                string paramText = (usingVariablesTuple is null)
                     ? ParamBlock.ToString()
                     : this.ToStringForSerialization(usingVariablesTuple, ParamBlock.Extent.StartOffset, ParamBlock.Extent.EndOffset);
                 sb.Append(paramText);
             }
 
             sb.Append("$input |");
-            string pipelineText = (usingVariablesTuple == null)
+            string pipelineText = (usingVariablesTuple is null)
                 ? pipelineAst.ToString()
                 : this.ToStringForSerialization(usingVariablesTuple, pipelineAst.Extent.StartOffset, pipelineAst.Extent.EndOffset);
             sb.Append(pipelineText);
@@ -1566,7 +1566,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            if (EndBlock == null || EndBlock.Statements.Count < 1)
+            if (EndBlock is null || EndBlock.Statements.Count < 1)
             {
                 errorId = "CantConvertEmptyPipeline";
                 errorMsg = AutomationExceptions.CantConvertEmptyPipeline;
@@ -1763,7 +1763,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentException(nameof(blockName));
             }
 
-            if (statementBlock == null)
+            if (statementBlock is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(statementBlock));
             }
@@ -1911,7 +1911,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentNullException(nameof(argumentName));
             }
 
-            if (argument == null)
+            if (argument is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(argument));
             }
@@ -1984,7 +1984,7 @@ namespace System.Management.Automation.Language
         protected AttributeBaseAst(IScriptExtent extent, ITypeName typeName)
             : base(extent)
         {
-            if (typeName == null)
+            if (typeName is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(typeName));
             }
@@ -2196,7 +2196,7 @@ namespace System.Management.Automation.Language
                             ExpressionAst defaultValue)
             : base(extent)
         {
-            if (name == null)
+            if (name is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -2291,7 +2291,7 @@ namespace System.Management.Automation.Language
             int endOffset = Extent.EndOffset - Extent.StartOffset;
 
             string paramText = ToString();
-            if (orderedUsingVar.Current == null && !orderedUsingVar.MoveNext())
+            if (orderedUsingVar.Current is null && !orderedUsingVar.MoveNext())
             {
                 return paramText;
             }
@@ -2636,7 +2636,7 @@ namespace System.Management.Automation.Language
                 // 2. TypeBuilder
                 // 3. RuntimeType
                 // We also allow wipe type (assign to null), because there could be errors.
-                Diagnostics.Assert(value == null || _type == null || _type is TypeBuilder, "Type must be assigned only once to RuntimeType");
+                Diagnostics.Assert(value is null || _type is null || _type is TypeBuilder, "Type must be assigned only once to RuntimeType");
                 _type = value;
             }
         }
@@ -2767,7 +2767,7 @@ namespace System.Management.Automation.Language
         public UsingStatementAst(IScriptExtent extent, UsingStatementKind kind, StringConstantExpressionAst name)
             : base(extent)
         {
-            if (name == null)
+            if (name is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -2791,7 +2791,7 @@ namespace System.Management.Automation.Language
         public UsingStatementAst(IScriptExtent extent, HashtableAst moduleSpecification)
             : base(extent)
         {
-            if (moduleSpecification == null)
+            if (moduleSpecification is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(moduleSpecification));
             }
@@ -2815,12 +2815,12 @@ namespace System.Management.Automation.Language
                                  StringConstantExpressionAst resolvedAliasAst)
             : base(extent)
         {
-            if (aliasName == null)
+            if (aliasName is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(aliasName));
             }
 
-            if (resolvedAliasAst == null)
+            if (resolvedAliasAst is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(resolvedAliasAst));
             }
@@ -2847,7 +2847,7 @@ namespace System.Management.Automation.Language
         public UsingStatementAst(IScriptExtent extent, StringConstantExpressionAst aliasName, HashtableAst moduleSpecification)
             : base(extent)
         {
-            if (moduleSpecification == null)
+            if (moduleSpecification is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(moduleSpecification));
             }
@@ -3214,7 +3214,7 @@ namespace System.Management.Automation.Language
         public FunctionMemberAst(IScriptExtent extent, FunctionDefinitionAst functionDefinitionAst, TypeConstraintAst returnType, IEnumerable<AttributeAst> attributes, MethodAttributes methodAttributes)
             : base(extent)
         {
-            if (functionDefinitionAst == null)
+            if (functionDefinitionAst is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(functionDefinitionAst));
             }
@@ -3441,15 +3441,15 @@ namespace System.Management.Automation.Language
         #region Internal helpers
         internal bool IsReturnTypeVoid()
         {
-            if (ReturnType == null)
+            if (ReturnType is null)
                 return true;
             var typeName = ReturnType.TypeName as TypeName;
-            return typeName == null ? false : typeName.IsType(typeof(void));
+            return typeName is null ? false : typeName.IsType(typeof(void));
         }
 
         internal Type GetReturnType()
         {
-            return ReturnType == null ? typeof(void) : ReturnType.TypeName.GetReflectionType();
+            return ReturnType is null ? typeof(void) : ReturnType.TypeName.GetReflectionType();
         }
         #endregion
     }
@@ -3473,7 +3473,7 @@ namespace System.Management.Automation.Language
                 statement = new CommandExpressionAst(extent, invokeMemberAst, null);
             }
 
-            Body = new ScriptBlockAst(extent, null, new StatementBlockAst(extent, statement == null ? null : new[] { statement }, null), false);
+            Body = new ScriptBlockAst(extent, null, new StatementBlockAst(extent, statement is null ? null : new[] { statement }, null), false);
             this.SetParent(Body);
             definingType.SetParent(this);
             DefiningType = definingType;
@@ -3596,7 +3596,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
-            if (body == null)
+            if (body is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(body));
             }
@@ -3696,7 +3696,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         public CommentHelpInfo GetHelpContent(Dictionary<Ast, Token[]> scriptBlockTokenCache)
         {
-            if (scriptBlockTokenCache == null)
+            if (scriptBlockTokenCache is null)
             {
                 throw new ArgumentNullException(nameof(scriptBlockTokenCache));
             }
@@ -3842,7 +3842,7 @@ namespace System.Management.Automation.Language
         string IParameterMetadataProvider.GetWithInputHandlingForInvokeCommand()
         {
             string result = ((IParameterMetadataProvider)Body).GetWithInputHandlingForInvokeCommand();
-            return Parameters == null ? result : (GetParamTextFromParameterList() + result);
+            return Parameters is null ? result : (GetParamTextFromParameterList() + result);
         }
 
         Tuple<string, string> IParameterMetadataProvider.GetWithInputHandlingForInvokeCommandWithUsingExpression(
@@ -3851,7 +3851,7 @@ namespace System.Management.Automation.Language
             Tuple<string, string> result =
                 ((IParameterMetadataProvider)Body).GetWithInputHandlingForInvokeCommandWithUsingExpression(usingVariablesTuple);
 
-            if (Parameters == null)
+            if (Parameters is null)
             {
                 return result;
             }
@@ -3899,7 +3899,7 @@ namespace System.Management.Automation.Language
         public IfStatementAst(IScriptExtent extent, IEnumerable<IfClause> clauses, StatementBlockAst elseClause)
             : base(extent)
         {
-            if (clauses == null || !clauses.Any())
+            if (clauses is null || !clauses.Any())
             {
                 throw PSTraceSource.NewArgumentException(nameof(clauses));
             }
@@ -4004,7 +4004,7 @@ namespace System.Management.Automation.Language
                                 StatementBlockAst body)
             : base(extent)
         {
-            if (body == null)
+            if (body is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(body));
             }
@@ -4146,7 +4146,7 @@ namespace System.Management.Automation.Language
         protected LoopStatementAst(IScriptExtent extent, string label, PipelineBaseAst condition, StatementBlockAst body)
             : base(extent, label, condition)
         {
-            if (body == null)
+            if (body is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(body));
             }
@@ -4209,9 +4209,9 @@ namespace System.Management.Automation.Language
                                    StatementBlockAst body)
             : base(extent, label, expression, body)
         {
-            if (expression == null || variable == null)
+            if (expression is null || variable is null)
             {
-                throw PSTraceSource.NewArgumentNullException(expression == null ? "expression" : "variablePath");
+                throw PSTraceSource.NewArgumentNullException(expression is null ? "expression" : "variablePath");
             }
 
             this.Flags = flags;
@@ -4413,7 +4413,7 @@ namespace System.Management.Automation.Language
         public DoWhileStatementAst(IScriptExtent extent, string label, PipelineBaseAst condition, StatementBlockAst body)
             : base(extent, label, condition, body)
         {
-            if (condition == null)
+            if (condition is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(condition));
             }
@@ -4469,7 +4469,7 @@ namespace System.Management.Automation.Language
         public DoUntilStatementAst(IScriptExtent extent, string label, PipelineBaseAst condition, StatementBlockAst body)
             : base(extent, label, condition, body)
         {
-            if (condition == null)
+            if (condition is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(condition));
             }
@@ -4525,7 +4525,7 @@ namespace System.Management.Automation.Language
         public WhileStatementAst(IScriptExtent extent, string label, PipelineBaseAst condition, StatementBlockAst body)
             : base(extent, label, condition, body)
         {
-            if (condition == null)
+            if (condition is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(condition));
             }
@@ -4643,7 +4643,7 @@ namespace System.Management.Automation.Language
                                   StatementBlockAst @default)
             : base(extent, label, condition)
         {
-            if ((clauses == null || !clauses.Any()) && @default == null)
+            if ((clauses is null || !clauses.Any()) && @default is null)
             {
                 // Must specify either clauses or default.  If neither, just complain about clauses as that's the most likely
                 // invalid argument.
@@ -4761,7 +4761,7 @@ namespace System.Management.Automation.Language
         public CatchClauseAst(IScriptExtent extent, IEnumerable<TypeConstraintAst> catchTypes, StatementBlockAst body)
             : base(extent)
         {
-            if (body == null)
+            if (body is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(body));
             }
@@ -4864,12 +4864,12 @@ namespace System.Management.Automation.Language
                                StatementBlockAst @finally)
             : base(extent)
         {
-            if (body == null)
+            if (body is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(body));
             }
 
-            if ((catchClauses == null || !catchClauses.Any()) && @finally == null)
+            if ((catchClauses is null || !catchClauses.Any()) && @finally is null)
             {
                 // If no catches and no finally, just complain about catchClauses as that's the most likely invalid argument.
                 throw PSTraceSource.NewArgumentException(nameof(catchClauses));
@@ -4973,7 +4973,7 @@ namespace System.Management.Automation.Language
         public TrapStatementAst(IScriptExtent extent, TypeConstraintAst trapType, StatementBlockAst body)
             : base(extent)
         {
-            if (body == null)
+            if (body is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(body));
             }
@@ -5389,12 +5389,12 @@ namespace System.Management.Automation.Language
             bool background = false)
             : base(extent)
         {
-            if (lhsChain == null)
+            if (lhsChain is null)
             {
                 throw new ArgumentNullException(nameof(lhsChain));
             }
 
-            if (rhsPipeline == null)
+            if (rhsPipeline is null)
             {
                 throw new ArgumentNullException(nameof(rhsPipeline));
             }
@@ -5529,7 +5529,7 @@ namespace System.Management.Automation.Language
         public PipelineAst(IScriptExtent extent, IEnumerable<CommandBaseAst> pipelineElements, bool background)
             : base(extent)
         {
-            if (pipelineElements == null || !pipelineElements.Any())
+            if (pipelineElements is null || !pipelineElements.Any())
             {
                 throw PSTraceSource.NewArgumentException(nameof(pipelineElements));
             }
@@ -5566,7 +5566,7 @@ namespace System.Management.Automation.Language
         public PipelineAst(IScriptExtent extent, CommandBaseAst commandAst, bool background)
             : base(extent)
         {
-            if (commandAst == null)
+            if (commandAst is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(commandAst));
             }
@@ -5709,9 +5709,9 @@ namespace System.Management.Automation.Language
         public CommandParameterAst(IScriptExtent extent, string parameterName, ExpressionAst argument, IScriptExtent errorPosition)
             : base(extent)
         {
-            if (errorPosition == null || string.IsNullOrEmpty(parameterName))
+            if (errorPosition is null || string.IsNullOrEmpty(parameterName))
             {
-                throw PSTraceSource.NewArgumentNullException(errorPosition == null ? "errorPosition" : "parameterName");
+                throw PSTraceSource.NewArgumentNullException(errorPosition is null ? "errorPosition" : "parameterName");
             }
 
             this.ParameterName = parameterName;
@@ -5839,7 +5839,7 @@ namespace System.Management.Automation.Language
                           IEnumerable<RedirectionAst> redirections)
             : base(extent, redirections)
         {
-            if (commandElements == null || !commandElements.Any())
+            if (commandElements is null || !commandElements.Any())
             {
                 throw PSTraceSource.NewArgumentException(nameof(commandElements));
             }
@@ -5960,7 +5960,7 @@ namespace System.Management.Automation.Language
                                     IEnumerable<RedirectionAst> redirections)
             : base(extent, redirections)
         {
-            if (expression == null)
+            if (expression is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(expression));
             }
@@ -6153,7 +6153,7 @@ namespace System.Management.Automation.Language
         public FileRedirectionAst(IScriptExtent extent, RedirectionStream stream, ExpressionAst file, bool append)
             : base(extent, stream)
         {
-            if (file == null)
+            if (file is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(file));
             }
@@ -6224,9 +6224,9 @@ namespace System.Management.Automation.Language
         public AssignmentStatementAst(IScriptExtent extent, ExpressionAst left, TokenKind @operator, StatementAst right, IScriptExtent errorPosition)
             : base(extent)
         {
-            if (left == null || right == null || errorPosition == null)
+            if (left is null || right is null || errorPosition is null)
             {
-                throw PSTraceSource.NewArgumentNullException(left == null ? "left" : right == null ? "right" : "errorPosition");
+                throw PSTraceSource.NewArgumentNullException(left is null ? "left" : right is null ? "right" : "errorPosition");
             }
 
             if ((@operator.GetTraits() & TokenFlags.AssignmentOperator) == 0)
@@ -6370,17 +6370,17 @@ namespace System.Management.Automation.Language
             ConfigurationType type,
             ExpressionAst instanceName) : base(extent)
         {
-            if (extent == null)
+            if (extent is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(extent));
             }
 
-            if (body == null)
+            if (body is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(body));
             }
 
-            if (instanceName == null)
+            if (instanceName is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instanceName));
             }
@@ -6422,7 +6422,7 @@ namespace System.Management.Automation.Language
             {
                 LCurlyToken = this.LCurlyToken,
                 ConfigurationToken = this.ConfigurationToken,
-                CustomAttributes = this.CustomAttributes == null ? null : this.CustomAttributes.Select(e => (AttributeAst)e.Copy())
+                CustomAttributes = this.CustomAttributes is null ? null : this.CustomAttributes.Select(e => (AttributeAst)e.Copy())
             };
         }
 
@@ -6521,7 +6521,7 @@ namespace System.Management.Automation.Language
             cea.Add(new CommandParameterAst(PositionUtilities.EmptyExtent, "ResourceModuleTuplesToImport", new ConstantExpressionAst(PositionUtilities.EmptyExtent, resourceModulePairsToImport), PositionUtilities.EmptyExtent));
 
             var scriptBlockBody = new ScriptBlockAst(Body.Extent,
-                CustomAttributes == null ? null : CustomAttributes.Select(att => (AttributeAst)att.Copy()).ToList(),
+                CustomAttributes is null ? null : CustomAttributes.Select(att => (AttributeAst)att.Copy()).ToList(),
                 null,
                 new StatementBlockAst(Body.Extent, resourceBody, null),
                 false, false);
@@ -6580,7 +6580,7 @@ namespace System.Management.Automation.Language
             var statmentBlockAst = new StatementBlockAst(this.Extent, funcStatements, null);
 
             var funcBody = new ScriptBlockAst(Body.Extent,
-                CustomAttributes == null ? null : CustomAttributes.Select(att => (AttributeAst)att.Copy()).ToList(),
+                CustomAttributes is null ? null : CustomAttributes.Select(att => (AttributeAst)att.Copy()).ToList(),
                 paramBlockAst, statmentBlockAst, false, true);
             var funcBodyExp = new ScriptBlockExpressionAst(this.Extent, funcBody);
 
@@ -6633,7 +6633,7 @@ namespace System.Management.Automation.Language
         private static bool IsImportCommand(StatementAst stmt, List<Tuple<string[], ModuleSpecification[], Version>> resourceModulePairsToImport)
         {
             var dkwsAst = stmt as DynamicKeywordStatementAst;
-            if (dkwsAst == null || !dkwsAst.Keyword.Keyword.Equals("Import-DscResource", StringComparison.OrdinalIgnoreCase))
+            if (dkwsAst is null || !dkwsAst.Keyword.Keyword.Equals("Import-DscResource", StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }
@@ -6741,7 +6741,7 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                if (s_configurationBuildInParameters == null)
+                if (s_configurationBuildInParameters is null)
                 {
                     s_configurationBuildInParameters = new List<ParameterAst>();
 
@@ -6767,7 +6767,7 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                if (s_configurationBuildInParameterAttrAsts == null)
+                if (s_configurationBuildInParameterAttrAsts is null)
                 {
                     s_configurationBuildInParameterAttrAsts = new List<AttributeAst>();
 
@@ -6776,7 +6776,7 @@ namespace System.Management.Automation.Language
                     var sba = Parser.ParseInput(ConfigurationBuildInParametersStr, out tokens, out errors);
                     if (sba != null)
                     {
-                        if (s_configurationBuildInParameters == null)
+                        if (s_configurationBuildInParameters is null)
                         {
                             s_configurationBuildInParameters = new List<ParameterAst>();
 
@@ -6803,7 +6803,7 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                if (s_configurationExtraParameterStatements == null)
+                if (s_configurationExtraParameterStatements is null)
                 {
                     s_configurationExtraParameterStatements = new List<StatementAst>();
                     Token[] tokens;
@@ -6852,7 +6852,7 @@ namespace System.Management.Automation.Language
         public DynamicKeywordStatementAst(IScriptExtent extent,
             IEnumerable<CommandElementAst> commandElements) : base(extent)
         {
-            if (commandElements == null || !commandElements.Any())
+            if (commandElements is null || !commandElements.Any())
             {
                 throw PSTraceSource.NewArgumentException(nameof(commandElements));
             }
@@ -7030,7 +7030,7 @@ namespace System.Management.Automation.Language
                     foreach (var keyValueTuple in hashtable.KeyValuePairs)
                     {
                         var propName = keyValueTuple.Item1 as StringConstantExpressionAst;
-                        if (propName == null)
+                        if (propName is null)
                         {
                             isHashtableValid = false;
                             break;
@@ -7208,19 +7208,19 @@ namespace System.Management.Automation.Language
             var parenExpr = this as ParenExpressionAst;
             var subExpr = this as SubExpressionAst;
 
-            if (parenExpr == null && subExpr == null)
+            if (parenExpr is null && subExpr is null)
             {
                 PSTraceSource.NewInvalidOperationException();
             }
 
             var commandExpr = this.Parent as CommandExpressionAst;
-            if (commandExpr == null)
+            if (commandExpr is null)
             {
                 return false;
             }
 
             var pipelineAst = commandExpr.Parent as PipelineAst;
-            if (pipelineAst == null || pipelineAst.PipelineElements.Count > 1)
+            if (pipelineAst is null || pipelineAst.PipelineElements.Count > 1)
             {
                 return false;
             }
@@ -7365,9 +7365,9 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentException(nameof(@operator));
             }
 
-            if (left == null || right == null || errorPosition == null)
+            if (left is null || right is null || errorPosition is null)
             {
-                throw PSTraceSource.NewArgumentNullException(left == null ? "left" : right == null ? "right" : "errorPosition");
+                throw PSTraceSource.NewArgumentNullException(left is null ? "left" : right is null ? "right" : "errorPosition");
             }
 
             this.Left = left;
@@ -7478,7 +7478,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentException(nameof(tokenKind));
             }
 
-            if (child == null)
+            if (child is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(child));
             }
@@ -7555,9 +7555,9 @@ namespace System.Management.Automation.Language
         public BlockStatementAst(IScriptExtent extent, Token kind, StatementBlockAst body)
             : base(extent)
         {
-            if (kind == null || body == null)
+            if (kind is null || body is null)
             {
-                throw PSTraceSource.NewArgumentNullException(kind == null ? "kind" : "body");
+                throw PSTraceSource.NewArgumentNullException(kind is null ? "kind" : "body");
             }
 
             if (kind.Kind != TokenKind.Sequence && kind.Kind != TokenKind.Parallel)
@@ -7629,9 +7629,9 @@ namespace System.Management.Automation.Language
         public AttributedExpressionAst(IScriptExtent extent, AttributeBaseAst attribute, ExpressionAst child)
             : base(extent)
         {
-            if (attribute == null || child == null)
+            if (attribute is null || child is null)
             {
-                throw PSTraceSource.NewArgumentNullException(attribute == null ? "attribute" : "child");
+                throw PSTraceSource.NewArgumentNullException(attribute is null ? "attribute" : "child");
             }
 
             this.Attribute = attribute;
@@ -7727,7 +7727,7 @@ namespace System.Management.Automation.Language
             var assignableValue = GetActualAssignableAst().GetAssignableValue();
 
             var variableExpr = assignableValue as VariableExpressionAst;
-            if (variableExpr == null)
+            if (variableExpr is null)
             {
                 return assignableValue.SetValue(compiler, Compiler.ConvertValue(rhs, attributes));
             }
@@ -7853,9 +7853,9 @@ namespace System.Management.Automation.Language
         public MemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst member, bool @static)
             : base(extent)
         {
-            if (expression == null || member == null)
+            if (expression is null || member is null)
             {
-                throw PSTraceSource.NewArgumentNullException(expression == null ? "expression" : "member");
+                throw PSTraceSource.NewArgumentNullException(expression is null ? "expression" : "member");
             }
 
             this.Expression = expression;
@@ -8185,9 +8185,9 @@ namespace System.Management.Automation.Language
         /// </exception>
         public TypeName(IScriptExtent extent, string name)
         {
-            if (extent == null || string.IsNullOrEmpty(name))
+            if (extent is null || string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentNullException(extent == null ? "extent" : "name");
+                throw PSTraceSource.NewArgumentNullException(extent is null ? "extent" : "name");
             }
 
             var c = name[0];
@@ -8261,10 +8261,10 @@ namespace System.Management.Automation.Language
 
         internal bool HasDefaultCtor()
         {
-            if (_typeDefinitionAst == null)
+            if (_typeDefinitionAst is null)
             {
                 Type reflectionType = GetReflectionType();
-                if (reflectionType == null)
+                if (reflectionType is null)
                 {
                     // we are pessimistic about default ctor presence.
                     return false;
@@ -8304,7 +8304,7 @@ namespace System.Management.Automation.Language
         /// </returns>
         public Type GetReflectionType()
         {
-            if (_type == null)
+            if (_type is null)
             {
                 Exception e;
                 Type type = _typeDefinitionAst != null ? _typeDefinitionAst.Type : TypeResolver.ResolveTypeName(this, out e);
@@ -8340,7 +8340,7 @@ namespace System.Management.Automation.Language
         public Type GetReflectionAttributeType()
         {
             var result = GetReflectionType();
-            if (result == null || !typeof(Attribute).IsAssignableFrom(result))
+            if (result is null || !typeof(Attribute).IsAssignableFrom(result))
             {
                 var attrTypeName = new TypeName(_extent, FullName + "Attribute");
                 result = attrTypeName.GetReflectionType();
@@ -8355,8 +8355,8 @@ namespace System.Management.Automation.Language
 
         internal void SetTypeDefinition(TypeDefinitionAst typeDefinitionAst)
         {
-            Diagnostics.Assert(_typeDefinitionAst == null, "Class definition is already set and cannot be changed");
-            Diagnostics.Assert(_type == null, "Cannot set class definition if type is already resolved");
+            Diagnostics.Assert(_typeDefinitionAst is null, "Class definition is already set and cannot be changed");
+            Diagnostics.Assert(_type is null, "Cannot set class definition if type is already resolved");
             _typeDefinitionAst = typeDefinitionAst;
         }
 
@@ -8372,16 +8372,16 @@ namespace System.Management.Automation.Language
         public override bool Equals(object obj)
         {
             var other = obj as TypeName;
-            if (other == null)
+            if (other is null)
                 return false;
 
             if (!_name.Equals(other._name, StringComparison.OrdinalIgnoreCase))
                 return false;
 
-            if (AssemblyName == null)
-                return other.AssemblyName == null;
+            if (AssemblyName is null)
+                return other.AssemblyName is null;
 
-            if (other.AssemblyName == null)
+            if (other.AssemblyName is null)
                 return false;
 
             return AssemblyName.Equals(other.AssemblyName, StringComparison.OrdinalIgnoreCase);
@@ -8392,7 +8392,7 @@ namespace System.Management.Automation.Language
         {
             var stringComparer = StringComparer.OrdinalIgnoreCase;
             var nameHashCode = stringComparer.GetHashCode(_name);
-            if (AssemblyName == null)
+            if (AssemblyName is null)
                 return nameHashCode;
 
             return Utils.CombineHashCodes(nameHashCode, stringComparer.GetHashCode(AssemblyName));
@@ -8456,12 +8456,12 @@ namespace System.Management.Automation.Language
         /// </exception>
         public GenericTypeName(IScriptExtent extent, ITypeName genericTypeName, IEnumerable<ITypeName> genericArguments)
         {
-            if (genericTypeName == null || extent == null)
+            if (genericTypeName is null || extent is null)
             {
-                throw PSTraceSource.NewArgumentNullException(extent == null ? "extent" : "genericTypeName");
+                throw PSTraceSource.NewArgumentNullException(extent is null ? "extent" : "genericTypeName");
             }
 
-            if (genericArguments == null)
+            if (genericArguments is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(genericArguments));
             }
@@ -8483,7 +8483,7 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                if (_cachedFullName == null)
+                if (_cachedFullName is null)
                 {
                     StringBuilder sb = new StringBuilder();
                     sb.Append(TypeName.Name);
@@ -8579,7 +8579,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public Type GetReflectionType()
         {
-            if (_cachedType == null)
+            if (_cachedType is null)
             {
                 Type generic = GetGenericType(TypeName.GetReflectionType());
 
@@ -8589,7 +8589,7 @@ namespace System.Management.Automation.Language
                     foreach (var arg in GenericArguments)
                     {
                         var type = arg.GetReflectionType();
-                        if (type == null)
+                        if (type is null)
                             return null;
                         argumentList.Add(type);
                     }
@@ -8632,7 +8632,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         internal Type GetGenericType(Type generic)
         {
-            if (generic == null || !generic.ContainsGenericParameters)
+            if (generic is null || !generic.ContainsGenericParameters)
             {
                 if (!TypeName.FullName.Contains('`'))
                 {
@@ -8656,10 +8656,10 @@ namespace System.Management.Automation.Language
         public Type GetReflectionAttributeType()
         {
             Type type = GetReflectionType();
-            if (type == null)
+            if (type is null)
             {
                 Type generic = TypeName.GetReflectionAttributeType();
-                if (generic == null || !generic.ContainsGenericParameters)
+                if (generic is null || !generic.ContainsGenericParameters)
                 {
                     if (!TypeName.FullName.Contains('`'))
                     {
@@ -8691,7 +8691,7 @@ namespace System.Management.Automation.Language
         public override bool Equals(object obj)
         {
             var other = obj as GenericTypeName;
-            if (other == null)
+            if (other is null)
                 return false;
 
             if (!TypeName.Equals(other.TypeName))
@@ -8753,9 +8753,9 @@ namespace System.Management.Automation.Language
         /// </exception>
         public ArrayTypeName(IScriptExtent extent, ITypeName elementType, int rank)
         {
-            if (extent == null || elementType == null)
+            if (extent is null || elementType is null)
             {
-                throw PSTraceSource.NewArgumentNullException(extent == null ? "extent" : "name");
+                throw PSTraceSource.NewArgumentNullException(extent is null ? "extent" : "name");
             }
 
             if (rank <= 0)
@@ -8808,7 +8808,7 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                if (_cachedFullName == null)
+                if (_cachedFullName is null)
                 {
                     Interlocked.CompareExchange(ref _cachedFullName, GetName(includeAssemblyName: true), null);
                 }
@@ -8863,7 +8863,7 @@ namespace System.Management.Automation.Language
             try
             {
                 RuntimeHelpers.EnsureSufficientExecutionStack();
-                if (_cachedType == null)
+                if (_cachedType is null)
                 {
                     Type elementType = ElementType.GetReflectionType();
                     if (elementType != null)
@@ -8917,7 +8917,7 @@ namespace System.Management.Automation.Language
         public override bool Equals(object obj)
         {
             var other = obj as ArrayTypeName;
-            if (other == null)
+            if (other is null)
                 return false;
 
             return ElementType.Equals(other.ElementType) && Rank == other.Rank;
@@ -8953,7 +8953,7 @@ namespace System.Management.Automation.Language
         /// </exception>
         public ReflectionTypeName(Type type)
         {
-            if (type == null)
+            if (type is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
@@ -9019,7 +9019,7 @@ namespace System.Management.Automation.Language
         public override bool Equals(object obj)
         {
             var other = obj as ReflectionTypeName;
-            if (other == null)
+            if (other is null)
                 return false;
             return _type == other._type;
         }
@@ -9054,7 +9054,7 @@ namespace System.Management.Automation.Language
         public TypeExpressionAst(IScriptExtent extent, ITypeName typeName)
             : base(extent)
         {
-            if (typeName == null)
+            if (typeName is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(typeName));
             }
@@ -9146,7 +9146,7 @@ namespace System.Management.Automation.Language
         public VariableExpressionAst(IScriptExtent extent, VariablePath variablePath, bool splatted)
             : base(extent)
         {
-            if (variablePath == null)
+            if (variablePath is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(variablePath));
             }
@@ -9441,7 +9441,7 @@ namespace System.Management.Automation.Language
         public StringConstantExpressionAst(IScriptExtent extent, string value, StringConstantType stringConstantType)
             : base(extent, value)
         {
-            if (value == null)
+            if (value is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(value));
             }
@@ -9541,7 +9541,7 @@ namespace System.Management.Automation.Language
                                              StringConstantType type)
             : base(extent)
         {
-            if (value == null)
+            if (value is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(value));
             }
@@ -9688,7 +9688,7 @@ namespace System.Management.Automation.Language
         public ScriptBlockExpressionAst(IScriptExtent extent, ScriptBlockAst scriptBlock)
             : base(extent)
         {
-            if (scriptBlock == null)
+            if (scriptBlock is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(scriptBlock));
             }
@@ -9760,7 +9760,7 @@ namespace System.Management.Automation.Language
         public ArrayLiteralAst(IScriptExtent extent, IList<ExpressionAst> elements)
             : base(extent)
         {
-            if (elements == null || elements.Count == 0)
+            if (elements is null || elements.Count == 0)
             {
                 throw PSTraceSource.NewArgumentException(nameof(elements));
             }
@@ -9933,7 +9933,7 @@ namespace System.Management.Automation.Language
         public ArrayExpressionAst(IScriptExtent extent, StatementBlockAst statementBlock)
             : base(extent)
         {
-            if (statementBlock == null)
+            if (statementBlock is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(statementBlock));
             }
@@ -9999,7 +9999,7 @@ namespace System.Management.Automation.Language
         public ParenExpressionAst(IScriptExtent extent, PipelineBaseAst pipeline)
             : base(extent)
         {
-            if (pipeline == null)
+            if (pipeline is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(pipeline));
             }
@@ -10065,7 +10065,7 @@ namespace System.Management.Automation.Language
         public SubExpressionAst(IScriptExtent extent, StatementBlockAst statementBlock)
             : base(extent)
         {
-            if (statementBlock == null)
+            if (statementBlock is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(statementBlock));
             }
@@ -10125,7 +10125,7 @@ namespace System.Management.Automation.Language
         public UsingExpressionAst(IScriptExtent extent, ExpressionAst expressionAst)
             : base(extent)
         {
-            if (expressionAst == null)
+            if (expressionAst is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(expressionAst));
             }
@@ -10175,7 +10175,7 @@ namespace System.Management.Automation.Language
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "We want to get the underlying variable only for the UsingExpressionAst.")]
         public static VariableExpressionAst ExtractUsingVariable(UsingExpressionAst usingExpressionAst)
         {
-            if (usingExpressionAst == null)
+            if (usingExpressionAst is null)
             {
                 throw new ArgumentNullException(nameof(usingExpressionAst));
             }
@@ -10271,9 +10271,9 @@ namespace System.Management.Automation.Language
         public IndexExpressionAst(IScriptExtent extent, ExpressionAst target, ExpressionAst index)
             : base(extent)
         {
-            if (target == null || index == null)
+            if (target is null || index is null)
             {
-                throw PSTraceSource.NewArgumentNullException(target == null ? "target" : "index");
+                throw PSTraceSource.NewArgumentNullException(target is null ? "target" : "index");
             }
 
             this.Target = target;

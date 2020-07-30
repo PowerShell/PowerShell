@@ -97,7 +97,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (this._user == null)
+                if (this._user is null)
                 {
                     // domain\user on Windows, just user on Unix
 #if UNIX

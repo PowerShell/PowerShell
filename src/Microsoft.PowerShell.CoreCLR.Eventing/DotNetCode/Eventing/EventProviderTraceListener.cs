@@ -41,7 +41,7 @@ namespace System.Diagnostics.Eventing
             [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
             set
             {
-                if (value == null)
+                if (value is null)
                     throw new ArgumentNullException("Delimiter");
 
                 if (value.Length == 0)
@@ -72,7 +72,7 @@ namespace System.Diagnostics.Eventing
         public EventProviderTraceListener(string providerId, string name, string delimiter)
             : base(name)
         {
-            if (delimiter == null)
+            if (delimiter is null)
                 throw new ArgumentNullException(nameof(delimiter));
 
             if (delimiter.Length == 0)
@@ -262,7 +262,7 @@ namespace System.Diagnostics.Eventing
                 return;
             }
 
-            if (args == null)
+            if (args is null)
             {
                 _provider.WriteMessageEvent(format,
                                 (byte)eventType,

@@ -534,7 +534,7 @@ namespace System.Management.Automation
         private void LookupMember(string name, HashSet<string> visitedAliases, out PSMemberInfo returnedMember, out bool hasCycle)
         {
             returnedMember = null;
-            if (this.instance == null)
+            if (this.instance is null)
             {
                 throw new ExtendedTypeSystemException("AliasLookupMemberOutsidePSObject",
                     null,
@@ -543,7 +543,7 @@ namespace System.Management.Automation
             }
 
             PSMemberInfo member = PSObject.AsPSObject(this.instance).Properties[name];
-            if (member == null)
+            if (member is null)
             {
                 throw new ExtendedTypeSystemException(
                     "AliasLookupMemberNotPresent",
@@ -654,7 +654,7 @@ namespace System.Management.Automation
                 // We will generate error below if we cannot find exactly one match method.
             }
 
-            if (methodAsMember == null)
+            if (methodAsMember is null)
             {
                 throw new ExtendedTypeSystemException(
                     "GetterFormatFromTypeTable",
@@ -682,7 +682,7 @@ namespace System.Management.Automation
                 // We will generate error below if we cannot find exactly one match method.
             }
 
-            if (methodAsMember == null)
+            if (methodAsMember is null)
             {
                 throw new ExtendedTypeSystemException(
                     "SetterFormatFromTypeTable",
@@ -698,7 +698,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void SetGetter(MethodInfo methodForGet)
         {
-            if (methodForGet == null)
+            if (methodForGet is null)
             {
                 GetterCodeReference = null;
                 return;
@@ -730,9 +730,9 @@ namespace System.Management.Automation
         /// </summary>
         private void SetSetter(MethodInfo methodForSet, MethodInfo methodForGet)
         {
-            if (methodForSet == null)
+            if (methodForSet is null)
             {
-                if (methodForGet == null)
+                if (methodForGet is null)
                 {
                     throw new ExtendedTypeSystemException(
                         "SetterAndGetterNullFormat",
@@ -763,7 +763,7 @@ namespace System.Management.Automation
                    && methodForSet.ReturnType == typeof(void)
                    && parameters.Length == 2
                    && parameters[0].ParameterType == typeof(PSObject)
-                   && (methodForGet == null || methodForGet.ReturnType == parameters[1].ParameterType);
+                   && (methodForGet is null || methodForGet.ReturnType == parameters[1].ParameterType);
         }
 
         /// <summary>
@@ -794,7 +794,7 @@ namespace System.Management.Automation
             }
 
             this.name = name;
-            if (getterCodeReference == null)
+            if (getterCodeReference is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(getterCodeReference));
             }
@@ -823,7 +823,7 @@ namespace System.Management.Automation
             }
 
             this.name = name;
-            if (getterCodeReference == null && setterCodeReference == null)
+            if (getterCodeReference is null && setterCodeReference is null)
             {
                 throw PSTraceSource.NewArgumentNullException("getterCodeReference setterCodeReference");
             }
@@ -879,7 +879,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (GetterCodeReference == null)
+                if (GetterCodeReference is null)
                 {
                     throw new GetValueException(
                         "GetWithoutGetterFromCodePropertyValue",
@@ -920,7 +920,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (SetterCodeReference == null)
+                if (SetterCodeReference is null)
                 {
                     throw new SetValueException(
                         "SetWithoutSetterFromCodeProperty",
@@ -968,7 +968,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (GetterCodeReference == null)
+                if (GetterCodeReference is null)
                 {
                     throw new GetValueException(
                         "GetWithoutGetterFromCodePropertyTypeOfValue",
@@ -1185,7 +1185,7 @@ namespace System.Management.Automation
             {
                 if (this.isDeserialized)
                 {
-                    if (serializedValue == null)
+                    if (serializedValue is null)
                     {
                         return string.Empty;
                     }
@@ -1277,7 +1277,7 @@ namespace System.Management.Automation
             returnValue.Append(" ");
             returnValue.Append(this.Name);
             returnValue.Append("=");
-            returnValue.Append(this.noteValue == null ? "null" : this.noteValue.ToString());
+            returnValue.Append(this.noteValue is null ? "null" : this.noteValue.ToString());
             return returnValue.ToString();
         }
 
@@ -1358,7 +1358,7 @@ namespace System.Management.Automation
             {
                 object val = this.Value;
 
-                if (val == null)
+                if (val is null)
                 {
                     return typeof(object).FullName;
                 }
@@ -1395,7 +1395,7 @@ namespace System.Management.Automation
 
             if (string.IsNullOrEmpty(displayTypeName))
             {
-                displayTypeName = val == null
+                displayTypeName = val is null
                     ? "object"
                     : ToStringCodeMethods.Type(val.GetType(), dropNamespaces: true);
             }
@@ -1501,7 +1501,7 @@ namespace System.Management.Automation
             {
                 object val = _variable.Value;
 
-                if (val == null)
+                if (val is null)
                 {
                     return typeof(object).FullName;
                 }
@@ -1579,7 +1579,7 @@ namespace System.Management.Automation
             {
                 // If we don't have a script block for the getter, see if we
                 // have the text for it (to support delayed script compilation).
-                if ((_getterScript == null) && (_getterScriptText != null))
+                if ((_getterScript is null) && (_getterScriptText != null))
                 {
                     _getterScript = ScriptBlock.Create(_getterScriptText);
 
@@ -1591,7 +1591,7 @@ namespace System.Management.Automation
                     _getterScript.DebuggerStepThrough = true;
                 }
 
-                if (_getterScript == null)
+                if (_getterScript is null)
                 {
                     return null;
                 }
@@ -1622,7 +1622,7 @@ namespace System.Management.Automation
             {
                 // If we don't have a script block for the setter, see if we
                 // have the text for it (to support delayed script compilation).
-                if ((_setterScript == null) && (_setterScriptText != null))
+                if ((_setterScript is null) && (_setterScriptText != null))
                 {
                     _setterScript = ScriptBlock.Create(_setterScriptText);
 
@@ -1634,7 +1634,7 @@ namespace System.Management.Automation
                     _setterScript.DebuggerStepThrough = true;
                 }
 
-                if (_setterScript == null)
+                if (_setterScript is null)
                 {
                     return null;
                 }
@@ -1690,7 +1690,7 @@ namespace System.Management.Automation
             }
 
             this.name = name;
-            if (getterScript == null && setterScript == null)
+            if (getterScript is null && setterScript is null)
             {
                 // we only do not allow both getterScript and setterScript to be null
                 throw PSTraceSource.NewArgumentException("getterScript setterScript");
@@ -1727,7 +1727,7 @@ namespace System.Management.Automation
             }
 
             this.name = name;
-            if (getterScript == null && setterScript == null)
+            if (getterScript is null && setterScript is null)
             {
                 // we only do not allow both getterScript and setterScript to be null
                 throw PSTraceSource.NewArgumentException("getterScript setterScript");
@@ -1790,7 +1790,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (this.GetterScript == null)
+                if (this.GetterScript is null)
                 {
                     throw new GetValueException("GetWithoutGetterFromScriptPropertyValue",
                         null,
@@ -1803,7 +1803,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (this.SetterScript == null)
+                if (this.SetterScript is null)
                 {
                     throw new SetValueException("SetWithoutSetterFromScriptProperty",
                         null,
@@ -1924,12 +1924,12 @@ namespace System.Management.Automation
 
         internal static bool EqualsForCollection<T>(ICollection<T> xs, ICollection<T> ys)
         {
-            if (xs == null)
+            if (xs is null)
             {
-                return ys == null;
+                return ys is null;
             }
 
-            if (ys == null)
+            if (ys is null)
             {
                 return false;
             }
@@ -2137,7 +2137,7 @@ namespace System.Management.Automation
                 // We will generate error below if we cannot find exactly one match method.
             }
 
-            if (methodAsMember == null)
+            if (methodAsMember is null)
             {
                 throw new ExtendedTypeSystemException("WrongMethodFormatFromTypeTable", null,
                     ExtendedTypeSystem.CodeMethodMethodFormat);
@@ -2177,7 +2177,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
-            if (codeReference == null)
+            if (codeReference is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(codeReference));
             }
@@ -2228,7 +2228,7 @@ namespace System.Management.Automation
         /// <exception cref="MethodInvocationException">For exceptions invoking the CodeReference.</exception>
         public override object Invoke(params object[] arguments)
         {
-            if (arguments == null)
+            if (arguments is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(arguments));
             }
@@ -2240,7 +2240,7 @@ namespace System.Management.Automation
                 newArguments[i + 1] = arguments[i];
             }
 
-            if (_codeReferenceMethodInformation == null)
+            if (_codeReferenceMethodInformation is null)
             {
                 _codeReferenceMethodInformation = DotNetAdapter.GetMethodInformationArray(new[] { CodeReference });
             }
@@ -2363,7 +2363,7 @@ namespace System.Management.Automation
         /// <exception cref="MethodInvocationException">For exceptions invoking the Script or if there is no Runspace to run the script.</exception>
         public override object Invoke(params object[] arguments)
         {
-            if (arguments == null)
+            if (arguments is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(arguments));
             }
@@ -2558,7 +2558,7 @@ namespace System.Management.Automation
         /// <exception cref="MethodInvocationException">For exceptions invoking the method.</exception>
         internal object Invoke(PSMethodInvocationConstraints invocationConstraints, params object[] arguments)
         {
-            if (arguments == null)
+            if (arguments is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(arguments));
             }
@@ -2596,7 +2596,7 @@ namespace System.Management.Automation
                 return new PSMethod(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
             }
 
-            if (method.PSMethodCtor == null)
+            if (method.PSMethodCtor is null)
             {
                 method.PSMethodCtor = CreatePSMethodConstructor(method.methodInformationStructures);
             }
@@ -2949,7 +2949,7 @@ namespace System.Management.Automation
         /// <exception cref="GetValueException">When getting the value of a property throws an exception.</exception>
         public override object Invoke(params object[] arguments)
         {
-            if (arguments == null)
+            if (arguments is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(arguments));
             }
@@ -2966,7 +2966,7 @@ namespace System.Management.Automation
         /// <exception cref="SetValueException">When setting the value of a property throws an exception.</exception>
         public void InvokeSet(object valueToSet, params object[] arguments)
         {
-            if (arguments == null)
+            if (arguments is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(arguments));
             }
@@ -3085,7 +3085,7 @@ namespace System.Management.Automation
             }
 
             this.name = name;
-            if (members == null)
+            if (members is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(members));
             }
@@ -3093,7 +3093,7 @@ namespace System.Management.Automation
             this.internalMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
             foreach (PSMemberInfo member in members)
             {
-                if (member == null)
+                if (member is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(members));
                 }
@@ -3177,7 +3177,7 @@ namespace System.Management.Automation
             }
 
             this.name = name;
-            if (mshObject == null)
+            if (mshObject is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(mshObject));
             }
@@ -3225,7 +3225,7 @@ namespace System.Management.Automation
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
         {
-            if (_constructorPSObject == null)
+            if (_constructorPSObject is null)
             {
                 PSMemberSet memberSet = new PSMemberSet(name);
                 foreach (PSMemberInfo member in this.Members)
@@ -3317,11 +3317,11 @@ namespace System.Management.Automation
                 }
 
                 // cache "psbase" and "psobject"
-                if (internalMembers == null)
+                if (internalMembers is null)
                 {
                     lock (_syncObject)
                     {
-                        if (internalMembers == null)
+                        if (internalMembers is null)
                         {
                             internalMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
 
@@ -3459,7 +3459,7 @@ namespace System.Management.Automation
             }
 
             this.name = name;
-            if (referencedPropertyNames == null)
+            if (referencedPropertyNames is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(referencedPropertyNames));
             }
@@ -3691,7 +3691,7 @@ namespace System.Management.Automation
             where T : PSMemberInfo
         {
             PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
-            if (memberList == null)
+            if (memberList is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(memberList));
             }
@@ -3701,7 +3701,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
-            if (nameMatch == null)
+            if (nameMatch is null)
             {
                 T member = memberList[name];
                 if (member != null && (member.MemberType & memberTypes) != 0)
@@ -3883,7 +3883,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         internal ReadOnlyPSMemberInfoCollection(PSMemberInfoInternalCollection<T> members)
         {
-            if (members == null)
+            if (members is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(members));
             }
@@ -3990,7 +3990,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_members == null)
+                if (_members is null)
                 {
                     System.Threading.Interlocked.CompareExchange(ref _members, new OrderedDictionary(StringComparer.OrdinalIgnoreCase), null);
                 }
@@ -4068,7 +4068,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         public override void Add(T member, bool preValidated)
         {
-            if (member == null)
+            if (member is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(member));
             }
@@ -4113,7 +4113,7 @@ namespace System.Management.Automation
                     name);
             }
 
-            if (_members == null)
+            if (_members is null)
             {
                 return;
             }
@@ -4147,7 +4147,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentException(nameof(name));
                 }
 
-                if (_members == null)
+                if (_members is null)
                 {
                     return null;
                 }
@@ -4215,7 +4215,7 @@ namespace System.Management.Automation
         {
             PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
 
-            if (_members == null)
+            if (_members is null)
             {
                 return returnValue;
             }
@@ -4241,7 +4241,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_members == null)
+                if (_members is null)
                 {
                     return 0;
                 }
@@ -4260,7 +4260,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_members == null)
+                if (_members is null)
                 {
                     return 0;
                 }
@@ -4281,7 +4281,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_members == null)
+                if (_members is null)
                 {
                     return null;
                 }
@@ -4301,7 +4301,7 @@ namespace System.Management.Automation
         /// <returns>The enumerator for this collection.</returns>
         public override IEnumerator<T> GetEnumerator()
         {
-            if (_members == null)
+            if (_members is null)
             {
                 return Enumerable.Empty<T>().GetEnumerator();
             }
@@ -4395,7 +4395,7 @@ namespace System.Management.Automation
         {
             PSObject mshOwner = PSObject.AsPSObject(obj);
             var memberSet = mshOwner.InstanceMembers[name];
-            if (memberSet == null)
+            if (memberSet is null)
             {
                 memberSet = new PSInternalMemberSet(name, mshOwner)
                 {
@@ -4429,7 +4429,7 @@ namespace System.Management.Automation
         {
             PSObject mshOwner = PSObject.AsPSObject(obj);
             var memberSet = mshOwner.InstanceMembers[PSObject.ExtendedMemberSetName];
-            if (memberSet == null)
+            if (memberSet is null)
             {
                 memberSet = new PSMemberSet(PSObject.ExtendedMemberSetName, mshOwner)
                 {
@@ -4499,19 +4499,19 @@ namespace System.Management.Automation
 
         internal PSMemberInfoIntegratingCollection(object owner, Collection<CollectionEntry<T>> collections)
         {
-            if (owner == null)
+            if (owner is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(owner));
             }
 
             _mshOwner = owner as PSObject;
             _memberSetOwner = owner as PSMemberSet;
-            if (_mshOwner == null && _memberSetOwner == null)
+            if (_mshOwner is null && _memberSetOwner is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(owner));
             }
 
-            if (collections == null)
+            if (collections is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(collections));
             }
@@ -4561,7 +4561,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         public override void Add(T member, bool preValidated)
         {
-            if (member == null)
+            if (member is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(member));
             }
@@ -4626,7 +4626,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         internal void AddToTypesXmlCache(T member, bool preValidated)
         {
-            if (member == null)
+            if (member is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(member));
             }
@@ -4812,7 +4812,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (delegateOwner == null)
+                    if (delegateOwner is null)
                         return null;
 
                     delegateOwner = PSObject.AsPSObject(delegateOwner);
@@ -4867,7 +4867,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (delegateOwner == null)
+                if (delegateOwner is null)
                     return returnValue;
 
                 delegateOwner = PSObject.AsPSObject(delegateOwner);
@@ -5000,7 +5000,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (delegateOwner == null)
+            if (delegateOwner is null)
             {
                 return null;
             }

@@ -223,13 +223,13 @@ namespace System.Management.Automation.Remoting
                 result = _dataToBeSent[(int)DataPriorityType.PromptResponse].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
                 priorityType = DataPriorityType.PromptResponse;
 
-                if (result == null)
+                if (result is null)
                 {
                     result = _dataToBeSent[(int)DataPriorityType.Default].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
                     priorityType = DataPriorityType.Default;
                 }
                 // no data to return..so register the callback.
-                if (result == null)
+                if (result is null)
                 {
                     // register callback.
                     _onDataAvailableCallback = callback;

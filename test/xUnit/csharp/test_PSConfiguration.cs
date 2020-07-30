@@ -124,7 +124,7 @@ namespace PSTests.Sequential
 
         internal void CompareScriptExecution(ScriptExecution a, ScriptExecution b)
         {
-            if (a == null)
+            if (a is null)
             {
                 Assert.Null(b);
             }
@@ -137,7 +137,7 @@ namespace PSTests.Sequential
 
         internal void CompareScriptBlockLogging(ScriptBlockLogging a, ScriptBlockLogging b)
         {
-            if (a == null)
+            if (a is null)
             {
                 Assert.Null(b);
             }
@@ -150,14 +150,14 @@ namespace PSTests.Sequential
 
         internal void CompareModuleLogging(ModuleLogging a, ModuleLogging b)
         {
-            if (a == null)
+            if (a is null)
             {
                 Assert.Null(b);
             }
             else
             {
                 Assert.Equal(a.EnableModuleLogging, b.EnableModuleLogging);
-                if (a.ModuleNames == null)
+                if (a.ModuleNames is null)
                 {
                     Assert.Null(b.ModuleNames);
                 }
@@ -174,14 +174,14 @@ namespace PSTests.Sequential
 
         internal void CompareProtectedEventLogging(ProtectedEventLogging a, ProtectedEventLogging b)
         {
-            if (a == null)
+            if (a is null)
             {
                 Assert.Null(b);
             }
             else
             {
                 Assert.Equal(a.EnableProtectedEventLogging, b.EnableProtectedEventLogging);
-                if (a.EncryptionCertificate == null)
+                if (a.EncryptionCertificate is null)
                 {
                     Assert.Null(b.EncryptionCertificate);
                 }
@@ -198,7 +198,7 @@ namespace PSTests.Sequential
 
         internal void CompareTranscription(Transcription a, Transcription b)
         {
-            if (a == null)
+            if (a is null)
             {
                 Assert.Null(b);
             }
@@ -212,7 +212,7 @@ namespace PSTests.Sequential
 
         internal void CompareUpdatableHelp(UpdatableHelp a, UpdatableHelp b)
         {
-            if (a == null)
+            if (a is null)
             {
                 Assert.Null(b);
             }
@@ -224,7 +224,7 @@ namespace PSTests.Sequential
 
         internal void CompareConsoleSessionConfiguration(ConsoleSessionConfiguration a, ConsoleSessionConfiguration b)
         {
-            if (a == null)
+            if (a is null)
             {
                 Assert.Null(b);
             }

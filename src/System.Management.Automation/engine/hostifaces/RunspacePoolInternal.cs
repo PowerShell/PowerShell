@@ -74,7 +74,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 PSHost host)
             : this(minRunspaces, maxRunspaces)
         {
-            if (host == null)
+            if (host is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
@@ -119,12 +119,12 @@ namespace System.Management.Automation.Runspaces.Internal
                 PSHost host)
             : this(minRunspaces, maxRunspaces)
         {
-            if (initialSessionState == null)
+            if (initialSessionState is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
-            if (host == null)
+            if (host is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
@@ -227,11 +227,11 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         internal virtual PSPrimitiveDictionary GetApplicationPrivateData()
         {
-            if (_applicationPrivateData == null)
+            if (_applicationPrivateData is null)
             {
                 lock (this.syncObject)
                 {
-                    if (_applicationPrivateData == null)
+                    if (_applicationPrivateData is null)
                     {
                         _applicationPrivateData = new PSPrimitiveDictionary();
                     }
@@ -616,14 +616,14 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         public void EndOpen(IAsyncResult asyncResult)
         {
-            if (asyncResult == null)
+            if (asyncResult is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
-            if ((rsAsyncResult == null) ||
+            if ((rsAsyncResult is null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (!rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
@@ -683,14 +683,14 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         public virtual void EndClose(IAsyncResult asyncResult)
         {
-            if (asyncResult == null)
+            if (asyncResult is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
-            if ((rsAsyncResult == null) ||
+            if ((rsAsyncResult is null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
@@ -752,7 +752,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </exception>
         public void ReleaseRunspace(Runspace runspace)
         {
-            if (runspace == null)
+            if (runspace is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(runspace));
             }
@@ -891,7 +891,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </param>
         internal void CancelGetRunspace(IAsyncResult asyncResult)
         {
-            if (asyncResult == null)
+            if (asyncResult is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
@@ -899,7 +899,7 @@ namespace System.Management.Automation.Runspaces.Internal
             GetRunspaceAsyncResult grsAsyncResult =
                 asyncResult as GetRunspaceAsyncResult;
 
-            if ((grsAsyncResult == null) || (grsAsyncResult.OwnerId != instanceId))
+            if ((grsAsyncResult is null) || (grsAsyncResult.OwnerId != instanceId))
             {
                 throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
@@ -930,7 +930,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         internal Runspace EndGetRunspace(IAsyncResult asyncResult)
         {
-            if (asyncResult == null)
+            if (asyncResult is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
@@ -938,7 +938,7 @@ namespace System.Management.Automation.Runspaces.Internal
             GetRunspaceAsyncResult grsAsyncResult =
                 asyncResult as GetRunspaceAsyncResult;
 
-            if ((grsAsyncResult == null) || (grsAsyncResult.OwnerId != instanceId))
+            if ((grsAsyncResult is null) || (grsAsyncResult.OwnerId != instanceId))
             {
                 throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,

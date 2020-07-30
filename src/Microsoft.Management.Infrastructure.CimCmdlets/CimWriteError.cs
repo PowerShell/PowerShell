@@ -155,7 +155,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 theTargetObject = cimResultContext.ErrorSource;
             }
 
-            if (theTargetObject == null)
+            if (theTargetObject is null)
             {
                 if (context != null)
                 {
@@ -172,7 +172,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 errorCategory: errorCategory,
                 targetObject: theTargetObject);
 
-            if (context == null)
+            if (context is null)
             {
                 return coreErrorRecord;
             }
@@ -284,13 +284,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         internal static ErrorCategory ConvertCimErrorToErrorCategory(CimInstance cimError)
         {
-            if (cimError == null)
+            if (cimError is null)
             {
                 return ErrorCategory.NotSpecified;
             }
 
             CimProperty errorCategoryProperty = cimError.CimInstanceProperties[@"Error_Category"];
-            if (errorCategoryProperty == null)
+            if (errorCategoryProperty is null)
             {
                 return ErrorCategory.NotSpecified;
             }

@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
                         "CannotInstantiateWinRTType", ErrorCategory.InvalidOperation, null));
                 }
 
-                if (ArgumentList == null || ArgumentList.Length == 0)
+                if (ArgumentList is null || ArgumentList.Length == 0)
                 {
                     ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
                     if (ci != null && ci.IsPublic)
@@ -413,7 +413,7 @@ namespace Microsoft.PowerShell.Commands
                 PSArgumentException mshArgE = null;
 
                 type = Type.GetTypeFromCLSID(_comObjectClsId);
-                if (type == null)
+                if (type is null)
                 {
                     mshArgE = PSTraceSource.NewArgumentException(
                         "ComObject",
@@ -443,7 +443,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 type = Marshal.GetTypeFromCLSID(_comObjectClsId);
-                if (type == null)
+                if (type is null)
                 {
                     mshArgE = PSTraceSource.NewArgumentException("ComObject", NewObjectStrings.CannotLoadComObjectType, ComObject);
                     ThrowTerminatingError(

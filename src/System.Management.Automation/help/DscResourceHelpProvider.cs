@@ -184,7 +184,7 @@ namespace System.Management.Automation
             if (helpFile.EndsWith(".maml", StringComparison.OrdinalIgnoreCase))
                 return true;
 
-            if (helpItemsNode.Attributes == null)
+            if (helpItemsNode.Attributes is null)
                 return false;
 
             foreach (XmlNode attribute in helpItemsNode.Attributes)
@@ -325,7 +325,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (helpItemsNode == null)
+            if (helpItemsNode is null)
             {
                 s_tracer.WriteLine("Unable to find 'helpItems' element in file {0}", helpFile);
                 return;

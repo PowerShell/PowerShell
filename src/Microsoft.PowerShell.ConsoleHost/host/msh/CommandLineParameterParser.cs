@@ -225,7 +225,7 @@ namespace Microsoft.PowerShell
 
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
         {
-            if (hostUI == null)
+            if (hostUI is null)
             {
                 throw new PSArgumentNullException(nameof(hostUI));
             }
@@ -544,7 +544,7 @@ namespace Microsoft.PowerShell
         /// </param>
         internal static void EarlyParse(string[] args)
         {
-            if (args == null)
+            if (args is null)
             {
                 Dbg.Assert(args != null, "Argument 'args' to EarlyParseHelper should never be null");
                 return;
@@ -897,7 +897,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "modules", "mod"))
                 {
-                    if (ConsoleHost.DefaultInitialSessionState == null)
+                    if (ConsoleHost.DefaultInitialSessionState is null)
                     {
                         WriteCommandLineError(
                             "The -module option can only be specified with the -iss option.",

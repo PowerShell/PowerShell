@@ -302,7 +302,7 @@ namespace Microsoft.PowerShell.Commands
             // Extract out the bytes and Base64 decode them
             int startIndex, endIndex;
             byte[] contentBytes = CmsUtils.RemoveAsciiArmor(actualContent, CmsUtils.BEGIN_CMS_SIGIL, CmsUtils.END_CMS_SIGIL, out startIndex, out endIndex);
-            if (contentBytes == null)
+            if (contentBytes is null)
             {
                 ErrorRecord error = new ErrorRecord(
                     new ArgumentException(CmsCommands.InputContainedNoEncryptedContent),
@@ -510,7 +510,7 @@ namespace Microsoft.PowerShell.Commands
             // Extract out the bytes and Base64 decode them
             int startIndex, endIndex;
             byte[] messageBytes = CmsUtils.RemoveAsciiArmor(actualContent, CmsUtils.BEGIN_CMS_SIGIL, CmsUtils.END_CMS_SIGIL, out startIndex, out endIndex);
-            if ((messageBytes == null) && (!IncludeContext))
+            if ((messageBytes is null) && (!IncludeContext))
             {
                 ErrorRecord error = new ErrorRecord(
                     new ArgumentException(

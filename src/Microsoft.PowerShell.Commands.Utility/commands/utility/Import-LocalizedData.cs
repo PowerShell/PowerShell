@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string path = GetFilePath();
 
-            if (path == null)
+            if (path is null)
             {
                 return;
             }
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             string script = GetScript(path);
-            if (script == null)
+            if (script is null)
             {
                 return;
             }
@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands
                     SessionStateScope scope = null;
                     PSVariable variable = SessionState.Internal.GetVariableItem(variablePath, out scope);
 
-                    if (variable == null)
+                    if (variable is null)
                     {
                         variable = new PSVariable(variablePath.UnqualifiedPath, result, ScopedItemOptions.None);
                         Context.EngineSessionState.SetVariable(variablePath, variable, false, CommandOrigin.Internal);
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(_fileName))
             {
-                if (InvocationExtent == null || string.IsNullOrEmpty(InvocationExtent.File))
+                if (InvocationExtent is null || string.IsNullOrEmpty(InvocationExtent.File))
                 {
                     throw PSTraceSource.NewInvalidOperationException(ImportLocalizedDataStrings.NotCalledFromAScriptFile);
                 }
@@ -283,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
             fileName = Path.GetFileNameWithoutExtension(fileName);
 
             CultureInfo culture = null;
-            if (_uiculture == null)
+            if (_uiculture is null)
             {
                 culture = CultureInfo.CurrentUICulture;
             }

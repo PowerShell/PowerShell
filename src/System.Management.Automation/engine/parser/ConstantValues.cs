@@ -34,7 +34,7 @@ namespace System.Management.Automation.Language
                         parent = parent.Parent;
                     }
 
-                    if (parent == null)
+                    if (parent is null)
                     {
                         constantValue = ast.Accept(new ConstantValueVisitor { AttributeArgument = forAttribute, RequiresArgument = forRequires });
                         return true;
@@ -161,13 +161,13 @@ namespace System.Management.Automation.Language
         private static bool IsNullDivisor(ExpressionAst operand)
         {
             var varExpr = operand as VariableExpressionAst;
-            if (varExpr == null)
+            if (varExpr is null)
             {
                 return false;
             }
 
             var parent = operand.Parent as BinaryExpressionAst;
-            if (parent == null || parent.Right != operand)
+            if (parent is null || parent.Right != operand)
             {
                 return false;
             }
@@ -209,7 +209,7 @@ namespace System.Management.Automation.Language
         public object VisitConvertExpression(ConvertExpressionAst convertExpressionAst)
         {
             var type = convertExpressionAst.Type.TypeName.GetReflectionType();
-            if (type == null)
+            if (type is null)
             {
                 return false;
             }
@@ -267,13 +267,13 @@ namespace System.Management.Automation.Language
             }
 
             var type = ((TypeExpressionAst)memberExpressionAst.Expression).TypeName.GetReflectionType();
-            if (type == null)
+            if (type is null)
             {
                 return false;
             }
 
             var member = memberExpressionAst.Member as StringConstantExpressionAst;
-            if (member == null)
+            if (member is null)
             {
                 return false;
             }

@@ -62,16 +62,16 @@ namespace Microsoft.PowerShell
         {
             Dbg.Assert(record != null, "record should not be null");
 
-            if (_pendingProgress == null)
+            if (_pendingProgress is null)
             {
-                Dbg.Assert(_progPane == null, "If there is no data struct, there shouldn't be a pane, either.");
+                Dbg.Assert(_progPane is null, "If there is no data struct, there shouldn't be a pane, either.");
 
                 _pendingProgress = new PendingProgress();
             }
 
             _pendingProgress.Update(sourceId, record);
 
-            if (_progPane == null)
+            if (_progPane is null)
             {
                 // This is the first time we've received a progress record
                 // Create a progress pane
@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell
 
                 _progPane = new ProgressPane(this);
 
-                if (_progPaneUpdateTimer == null)
+                if (_progPaneUpdateTimer is null)
                 {
                     // Show a progress pane at the first time we've received a progress record
                     progPaneUpdateFlag = 1;

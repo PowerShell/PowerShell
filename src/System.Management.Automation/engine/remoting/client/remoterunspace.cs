@@ -443,7 +443,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (RunspacePool.RemoteRunspacePoolInternal.ConnectCommands == null)
+                if (RunspacePool.RemoteRunspacePoolInternal.ConnectCommands is null)
                 {
                     return null;
                 }
@@ -910,7 +910,7 @@ namespace System.Management.Automation
         /// <returns>Pipeline object in disconnected state.</returns>
         public override Pipeline CreateDisconnectedPipeline()
         {
-            if (RemoteCommand == null)
+            if (RemoteCommand is null)
             {
                 throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.NoDisconnectedCommand);
             }
@@ -925,7 +925,7 @@ namespace System.Management.Automation
         /// <returns>PowerShell object in disconnected state.</returns>
         public override PowerShell CreateDisconnectedPowerShell()
         {
-            if (RemoteCommand == null)
+            if (RemoteCommand is null)
             {
                 throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.NoDisconnectedCommand);
             }
@@ -1027,7 +1027,7 @@ namespace System.Management.Automation
         /// </exception>
         public override Pipeline CreatePipeline(string command)
         {
-            if (command == null)
+            if (command is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
@@ -1048,7 +1048,7 @@ namespace System.Management.Automation
         /// </exception>
         public override Pipeline CreatePipeline(string command, bool addToHistory)
         {
-            if (command == null)
+            if (command is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
@@ -1083,7 +1083,7 @@ namespace System.Management.Automation
         /// scenarios</exception>
         public override Pipeline CreateNestedPipeline(string command, bool addToHistory)
         {
-            if (command == null)
+            if (command is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
@@ -1234,7 +1234,7 @@ namespace System.Management.Automation
                             // Application private data containing server debug state is updated on
                             // a *reconstruct* connect operation when _applicationPrivateData is null.
                             // Pass new information to the debugger.
-                            if (_applicationPrivateData == null)
+                            if (_applicationPrivateData is null)
                             {
                                 _applicationPrivateData = GetApplicationPrivateData();
                                 SetDebugInfo(_applicationPrivateData);
@@ -1340,7 +1340,7 @@ namespace System.Management.Automation
             {
                 // Server supports remote debugging.  Create Debugger object for
                 // this remote runspace.
-                Dbg.Assert(_remoteDebugger == null, "Remote runspace should not have a debugger yet.");
+                Dbg.Assert(_remoteDebugger is null, "Remote runspace should not have a debugger yet.");
                 _remoteDebugger = new RemoteDebugger(this);
 
                 // Set initial debugger state.
@@ -1672,7 +1672,7 @@ namespace System.Management.Automation
                 // this invoke command is running may be
                 // running in the same pipeline as another
                 // invoke command
-                if (_currentInvokeCommand == null)
+                if (_currentInvokeCommand is null)
                 {
                     // this is the first invoke-command, just
                     // set the reference
@@ -1839,7 +1839,7 @@ namespace System.Management.Automation
         /// <param name="runspace">Associated remote runspace.</param>
         public RemoteDebugger(RemoteRunspace runspace)
         {
-            if (runspace == null)
+            if (runspace is null)
             {
                 throw new PSArgumentNullException(nameof(runspace));
             }
@@ -1868,12 +1868,12 @@ namespace System.Management.Automation
             CheckForValidateState();
             _detachCommand = false;
 
-            if (command == null)
+            if (command is null)
             {
                 throw new PSArgumentNullException(nameof(command));
             }
 
-            if (output == null)
+            if (output is null)
             {
                 throw new PSArgumentNullException(nameof(output));
             }
@@ -1905,7 +1905,7 @@ namespace System.Management.Automation
                     {
                         foreach (var item in internalOutput.ReadAll())
                         {
-                            if (item == null) { return; }
+                            if (item is null) { return; }
 
                             DebuggerCommand dbgCmd = item.BaseObject as DebuggerCommand;
                             if (dbgCmd != null)
@@ -2177,7 +2177,7 @@ namespace System.Management.Automation
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.RemoveBreakpoint);
 
-            if (breakpoint == null)
+            if (breakpoint is null)
             {
                 return false;
             }
@@ -2206,7 +2206,7 @@ namespace System.Management.Automation
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.EnableBreakpoint);
 
-            if (breakpoint == null)
+            if (breakpoint is null)
             {
                 return null;
             }
@@ -2235,7 +2235,7 @@ namespace System.Management.Automation
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.DisableBreakpoint);
 
-            if (breakpoint == null)
+            if (breakpoint is null)
             {
                 return null;
             }
@@ -2295,7 +2295,7 @@ namespace System.Management.Automation
                     Collection<PSObject> output = ps.Invoke<PSObject>();
                     foreach (var item in output)
                     {
-                        if (item == null) { continue; }
+                        if (item is null) { continue; }
 
                         rtnArgs = item.BaseObject as DebuggerStopEventArgs;
                         if (rtnArgs != null) { break; }
@@ -2603,7 +2603,7 @@ namespace System.Management.Automation
             out Exception exception)
         {
             exception = null;
-            if (item == null)
+            if (item is null)
             {
                 return false;
             }
@@ -2910,7 +2910,7 @@ namespace System.Management.Automation
 
         private void CheckRemoteBreakpointManagementSupport(string breakpointCommandNameToCheck)
         {
-            if (_remoteBreakpointManagementIsSupported == null)
+            if (_remoteBreakpointManagementIsSupported is null)
             {
                 _remoteBreakpointManagementIsSupported = _remoteDebuggingCapability.IsCommandSupported(breakpointCommandNameToCheck);
             }
@@ -2965,7 +2965,7 @@ namespace System.Management.Automation
         /// </exception>
         public override void SetVariable(string name, object value)
         {
-            if (name == null)
+            if (name is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -3025,7 +3025,7 @@ namespace System.Management.Automation
         /// </exception>
         public override object GetVariable(string name)
         {
-            if (name == null)
+            if (name is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }

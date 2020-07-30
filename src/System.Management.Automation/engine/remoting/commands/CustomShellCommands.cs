@@ -837,7 +837,7 @@ else
                     ThrowTerminatingError(er);
                 }
 
-                if (configTable == null)
+                if (configTable is null)
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.InvalidPSSessionConfigurationFile, filePath);
                     InvalidOperationException ioe = new InvalidOperationException(message);
@@ -1197,7 +1197,7 @@ else
                                                     string.Empty));
             }
 
-            if (transportOption == null)
+            if (transportOption is null)
             {
                 transportOption = new WSManConfigurationOption();
             }
@@ -1460,7 +1460,7 @@ else
         /// <returns></returns>
         internal static string GetRunAsVirtualAccountGroupsString(string[] groups)
         {
-            if (groups == null) { return string.Empty; }
+            if (groups is null) { return string.Empty; }
 
             return string.Join(";", groups);
         }
@@ -1754,7 +1754,7 @@ else
 
             StringBuilder conditionalACE = new StringBuilder();
             Hashtable requiredGroupsHash = configTable[ConfigFileConstants.RequiredGroups] as Hashtable;
-            if (requiredGroupsHash == null)
+            if (requiredGroupsHash is null)
             {
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.RequiredGroupsNotHashTable);
             }
@@ -2209,7 +2209,7 @@ else
                     CommonSecurityDescriptor c = new CommonSecurityDescriptor(false, false, value);
                     // this will never be the case..as constructor either constructs or throws.
                     // this is used here to avoid FxCop violation.
-                    if (c == null)
+                    if (c is null)
                     {
                         throw new NotSupportedException();
                     }
@@ -3397,7 +3397,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 {
                     ps.AddScript(string.Format(CultureInfo.InvariantCulture, getSessionTypeFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
                     Collection<PSObject> psObjectCollection = ps.Invoke(new object[] { Name }) as Collection<PSObject>;
-                    if (psObjectCollection == null || psObjectCollection.Count != 1)
+                    if (psObjectCollection is null || psObjectCollection.Count != 1)
                     {
                         Dbg.Assert(false, "This should never happen. ps.Invoke always return a Collection<PSObject>");
                     }
@@ -3524,7 +3524,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
         private void SetRunAs()
         {
-            if (this.runAsCredential == null)
+            if (this.runAsCredential is null)
             {
                 if (string.IsNullOrEmpty(_gmsaAccount)) { return; }
 
@@ -3588,7 +3588,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                         {
                             ps.AddScript(string.Format(CultureInfo.InvariantCulture, getCurrentIdleTimeoutmsFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
                             Collection<PSObject> psObjectCollection = ps.Invoke(new object[] { Name }) as Collection<PSObject>;
-                            if (psObjectCollection == null || psObjectCollection.Count != 1)
+                            if (psObjectCollection is null || psObjectCollection.Count != 1)
                             {
                                 Dbg.Assert(false, "This should never happen. ps.Invoke always return a Collection<PSObject>");
                             }
@@ -3682,12 +3682,12 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 {
                     ps.AddScript(string.Format(CultureInfo.InvariantCulture, getSessionConfigurationDataSbFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
                     Collection<PSObject> psObjectCollection = ps.Invoke(new object[] { Name }) as Collection<PSObject>;
-                    if (psObjectCollection == null || psObjectCollection.Count != 1)
+                    if (psObjectCollection is null || psObjectCollection.Count != 1)
                     {
                         Dbg.Assert(false, "This should never happen.  Plugin must exist because caller code has already checked this.");
                     }
 
-                    PSSessionConfigurationData scd = PSSessionConfigurationData.Create(psObjectCollection[0] == null ? string.Empty : PSSessionConfigurationData.Unescape(psObjectCollection[0].BaseObject.ToString()));
+                    PSSessionConfigurationData scd = PSSessionConfigurationData.Create(psObjectCollection[0] is null ? string.Empty : PSSessionConfigurationData.Unescape(psObjectCollection[0].BaseObject.ToString()));
                     PSSessionTypeOption original = sessionTypeOption.ConstructObjectFromPrivateData(scd.PrivateData);
                     original.CopyUpdatedValuesFrom(sessionTypeOption);
 
@@ -3697,7 +3697,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                     bool unsetModulePath = false;
                     if (modulePathSpecified)
                     {
-                        if (modulesToImport == null ||
+                        if (modulesToImport is null ||
                             modulesToImport.Length == 0 ||
                             (modulesToImport.Length == 1 && modulesToImport[0] is string && ((string)modulesToImport[0]).Equals(string.Empty, StringComparison.OrdinalIgnoreCase)))
                         {
@@ -3713,7 +3713,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                     // we use the original module path
                     if (!unsetModulePath && string.IsNullOrEmpty(modulePathParameter))
                     {
-                        modulePathParameter = (scd.ModulesToImportInternal == null) ? null : PSSessionConfigurationCommandUtilities.GetModulePathAsString(scd.ModulesToImportInternal.ToArray()).Trim();
+                        modulePathParameter = (scd.ModulesToImportInternal is null) ? null : PSSessionConfigurationCommandUtilities.GetModulePathAsString(scd.ModulesToImportInternal.ToArray()).Trim();
                     }
 
                     // 1. unsetModulePath is true. In this case, modulePathParameter is definitely null
@@ -3856,12 +3856,12 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 result.Properties.Add(new PSNoteProperty(ConfigurationDataFromXML.MAXPSVERSIONTOKEN, PSSessionConfigurationCommandUtilities.ConstructVersionFormatForConfigXml(MaxPSVersion)));
             }
 
-            if (modulePathSpecified && sessionTypeOption == null)
+            if (modulePathSpecified && sessionTypeOption is null)
             {
                 bool unsetModulePath = false;
                 string modulePathParameter = null;
 
-                if (modulesToImport == null || modulesToImport.Length == 0 ||
+                if (modulesToImport is null || modulesToImport.Length == 0 ||
                     (modulesToImport.Length == 1 && modulesToImport[0] is string && ((string)modulesToImport[0]).Equals(string.Empty, StringComparison.OrdinalIgnoreCase)))
                 {
                     unsetModulePath = true;
@@ -3878,7 +3878,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                         // Get the SessionConfigurationDataFormat
                         ps.AddScript(string.Format(CultureInfo.InvariantCulture, getSessionConfigurationDataSbFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
                         Collection<PSObject> psObjectCollection = ps.Invoke(new object[] { Name }) as Collection<PSObject>;
-                        if (psObjectCollection == null || psObjectCollection.Count != 1)
+                        if (psObjectCollection is null || psObjectCollection.Count != 1)
                         {
                             Dbg.Assert(false, "This should never happen. ps.Invoke always return a Collection<PSObject>");
                         }
@@ -3886,7 +3886,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                         StringBuilder sessionConfigurationData = new StringBuilder();
 
                         // SessionConfigurationData doesn't exist in InitializationParameters
-                        if (psObjectCollection[0] == null)
+                        if (psObjectCollection[0] is null)
                         {
                             // if unsetModulePath is false, we set the new sessionConfigurationData to contain the specified module path
                             if (!unsetModulePath)
@@ -3975,7 +3975,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
                 foreach (object currentKey in configTable.Keys)
                 {
-                    if (result.Properties[currentKey.ToString()] == null)
+                    if (result.Properties[currentKey.ToString()] is null)
                     {
                         result.Properties.Add(new PSNoteProperty(currentKey.ToString(), configTable[currentKey]));
                     }
@@ -4289,7 +4289,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
                     CommonSecurityDescriptor c = new CommonSecurityDescriptor(false, false, value);
                     // this will never be the case..as constructor either constructs or throws.
                     // this is used here to avoid FxCop violation.
-                    if (c == null)
+                    if (c is null)
                     {
                         throw new NotSupportedException();
                     }
@@ -5328,7 +5328,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
 
                 // If we could not get the config file, throw an error that it's not a configuration created with
                 // config file-based session configurations.
-                if (configFilePath == null)
+                if (configFilePath is null)
                 {
                     string configurationName = (string)foundConfiguration.Properties["Name"].Value;
                     string message = StringUtil.Format(RemotingErrorIdStrings.SessionConfigurationMustBeFileBased, configurationName);

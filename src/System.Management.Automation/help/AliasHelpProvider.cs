@@ -258,7 +258,7 @@ namespace System.Management.Automation
 
         private static bool Match(HelpInfo helpInfo, HelpRequest helpRequest)
         {
-            if (helpRequest == null)
+            if (helpRequest is null)
                 return true;
 
             if (0 == (helpRequest.HelpCategory & helpInfo.HelpCategory))
@@ -288,7 +288,7 @@ namespace System.Management.Automation
         {
             // patterns should never be null as shell never accepts
             // empty inputs. Keeping this check as a safe measure.
-            if (patterns == null || patterns.Length == 0)
+            if (patterns is null || patterns.Length == 0)
                 return true;
 
             foreach (string pattern in patterns)

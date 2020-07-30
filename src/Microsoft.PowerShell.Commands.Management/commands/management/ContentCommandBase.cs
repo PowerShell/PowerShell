@@ -343,7 +343,7 @@ namespace Microsoft.PowerShell.Commands
                 IContentReader reader,
                 IContentWriter writer)
             {
-                if (pathInfo == null)
+                if (pathInfo is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(pathInfo));
                 }
@@ -365,7 +365,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal void CloseContent(List<ContentHolder> contentHolders, bool disposing)
         {
-            if (contentHolders == null)
+            if (contentHolders is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(contentHolders));
             }
@@ -662,7 +662,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (pathNotFoundErrorRecord == null)
+                        if (pathNotFoundErrorRecord is null)
                         {
                             // Detect if the path resolution failed to resolve to a file.
                             string error = StringUtil.Format(NavigationResources.ItemNotFound, Path);

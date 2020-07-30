@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // and it's not out of band
             FormatEntryData fed = o as FormatEntryData;
 
-            if (fed == null || fed.outOfBand)
+            if (fed is null || fed.outOfBand)
                 return;
 
             _currentObjectCount++;
@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private void Notify()
         {
-            if (_notificationCallBack == null)
+            if (_notificationCallBack is null)
                 return;
 
             // filter out the out of band data, since they do not participate in the
@@ -256,7 +256,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal List<PacketInfoData> Add(PacketInfoData o)
         {
             // if neither there, pass thru
-            if (_frontEndQueue == null && _groupQueue == null)
+            if (_frontEndQueue is null && _groupQueue is null)
             {
                 List<PacketInfoData> retVal = new List<PacketInfoData>();
                 retVal.Add(o);
@@ -281,7 +281,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal List<PacketInfoData> Drain()
         {
             // if neither there,we did not cache at all
-            if (_frontEndQueue == null && _groupQueue == null)
+            if (_frontEndQueue is null && _groupQueue is null)
             {
                 return null;
             }
@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (_frontEndQueue != null)
             {
-                if (_groupQueue == null)
+                if (_groupQueue is null)
                 {
                     // drain the front queue and return the data
                     while (_frontEndQueue.Count > 0)
@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 PacketInfoData obj = _groupQueue.Dequeue();
 
-                if (obj == null)
+                if (obj is null)
                     break;
 
                 retVal.Add(obj);

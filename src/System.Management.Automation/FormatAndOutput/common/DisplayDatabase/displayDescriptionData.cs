@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /*
             set
             {
-                if (_value == null)
+                if (_value is null)
                 {
                     this._value = value;
                 }
@@ -636,7 +636,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(typeName))
                 throw PSTraceSource.NewArgumentNullException(nameof(typeName));
-            if (viewDefinitions == null)
+            if (viewDefinitions is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(viewDefinitions));
 
             TypeNames.Add(typeName);
@@ -692,7 +692,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
-            if (control == null)
+            if (control is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(control));
 
             Name = name;
@@ -725,7 +725,7 @@ namespace System.Management.Automation
 
         internal virtual bool SafeForExport()
         {
-            return GroupBy == null || GroupBy.IsSafeForExport();
+            return GroupBy is null || GroupBy.IsSafeForExport();
         }
 
         internal virtual bool CompatibleWithOldPowerShell()
@@ -734,7 +734,7 @@ namespace System.Management.Automation
             // PowerShell, but that's still wrong.
             // OutOfBand is also ignored by old PowerShell, but it's of less importance.
 
-            return GroupBy == null;
+            return GroupBy is null;
         }
     }
 
@@ -761,8 +761,8 @@ namespace System.Management.Automation
 
         internal bool IsSafeForExport()
         {
-            return (Expression == null || Expression.SafeForExport()) &&
-                   (CustomControl == null || CustomControl.SafeForExport());
+            return (Expression is null || Expression.SafeForExport()) &&
+                   (CustomControl is null || CustomControl.SafeForExport());
         }
 
         internal static PSControlGroupBy Get(GroupBy groupBy)
@@ -799,7 +799,7 @@ namespace System.Management.Automation
         public DisplayEntry(string value, DisplayEntryValueType type)
         {
             if (string.IsNullOrEmpty(value))
-                if (value == null || type == DisplayEntryValueType.Property)
+                if (value is null || type == DisplayEntryValueType.Property)
                     throw PSTraceSource.NewArgumentNullException(nameof(value));
 
             Value = value;
@@ -818,7 +818,7 @@ namespace System.Management.Automation
             ValueType = expression.isScriptBlock ? DisplayEntryValueType.ScriptBlock : DisplayEntryValueType.Property;
 
             if (string.IsNullOrEmpty(Value))
-                if (Value == null || ValueType == DisplayEntryValueType.Property)
+                if (Value is null || ValueType == DisplayEntryValueType.Property)
                     throw PSTraceSource.NewArgumentNullException("value");
         }
 
@@ -886,7 +886,7 @@ namespace System.Management.Automation
                 {
                     if (tr.conditionToken != null)
                     {
-                        if (result.SelectionCondition == null) result.SelectionCondition = new List<DisplayEntry>();
+                        if (result.SelectionCondition is null) result.SelectionCondition = new List<DisplayEntry>();
 
                         result.SelectionCondition.Add(new DisplayEntry(tr.conditionToken));
                         continue;
@@ -895,7 +895,7 @@ namespace System.Management.Automation
                     if (tr is TypeGroupReference)
                         continue;
 
-                    if (result.TypeNames == null) result.TypeNames = new List<string>();
+                    if (result.TypeNames is null) result.TypeNames = new List<string>();
 
                     result.TypeNames.Add(tr.name);
                 }
@@ -906,7 +906,7 @@ namespace System.Management.Automation
 
         internal bool SafeForExport()
         {
-            if (SelectionCondition == null)
+            if (SelectionCondition is null)
                 return true;
 
             foreach (var cond in SelectionCondition)
@@ -921,7 +921,7 @@ namespace System.Management.Automation
         internal bool CompatibleWithOldPowerShell()
         {
             // Old versions of PowerShell know nothing about selection conditions.
-            return SelectionCondition == null || SelectionCondition.Count == 0;
+            return SelectionCondition is null || SelectionCondition.Count == 0;
         }
     }
 

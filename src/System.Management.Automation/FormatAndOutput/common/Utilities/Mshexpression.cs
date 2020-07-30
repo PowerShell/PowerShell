@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
         /// <exception cref="ArgumentNullException"></exception>
         public PSPropertyExpression(ScriptBlock scriptBlock)
         {
-            if (scriptBlock == null)
+            if (scriptBlock is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(scriptBlock));
             }
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
                 // we have no globbing: try an exact match, because this is quicker.
                 PSMemberInfo x = wrappedTarget.Members[_stringValue];
 
-                if (x == null)
+                if (x is null)
                 {
                     if (wasHashtable)
                     {
@@ -326,7 +326,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    if (_getValueDynamicSite == null)
+                    if (_getValueDynamicSite is null)
                     {
                         _getValueDynamicSite =
                             CallSite<Func<CallSite, object, object>>.Create(

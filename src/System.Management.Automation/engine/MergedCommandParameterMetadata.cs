@@ -79,7 +79,7 @@ namespace System.Management.Automation
             InternalParameterMetadata parameterMetadata,
             ParameterBinderAssociation binderAssociation)
         {
-            if (parameterMetadata == null)
+            if (parameterMetadata is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(parameterMetadata));
             }

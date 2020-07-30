@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             get
             {
-                if (_cmdletDefinitionContext == null)
+                if (_cmdletDefinitionContext is null)
                 {
                     _cmdletDefinitionContext = new CimCmdletDefinitionContext(
                             this.ClassName,
@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal override StartableJob CreateQueryJob(CimSession session, QueryBuilder baseQuery)
         {
             CimQuery query = baseQuery as CimQuery;
-            if (query == null)
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(baseQuery));
             }
@@ -374,7 +374,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private string GetDynamicNamespace()
         {
-            if (_dynamicParameters == null)
+            if (_dynamicParameters is null)
             {
                 return null;
             }
@@ -390,7 +390,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         object IDynamicParameters.GetDynamicParameters()
         {
-            if (_dynamicParameters == null)
+            if (_dynamicParameters is null)
             {
                 _dynamicParameters = new RuntimeDefinedParameterDictionary();
 

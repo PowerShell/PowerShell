@@ -108,7 +108,7 @@ namespace System.Management.Automation
         /// <param name="receivedData">Data received.</param>
         internal void ProcessReceivedData(RemoteDataObject<PSObject> receivedData)
         {
-            if (receivedData == null)
+            if (receivedData is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(receivedData));
             }
@@ -615,7 +615,7 @@ namespace System.Management.Automation
         /// <param name="receivedData">Data received.</param>
         internal void ProcessReceivedData(RemoteDataObject<PSObject> receivedData)
         {
-            if (receivedData == null)
+            if (receivedData is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(receivedData));
             }

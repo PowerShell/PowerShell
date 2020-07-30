@@ -301,7 +301,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="parameterName"></param>
         private void SetParameter(object value, string parameterName)
         {
-            if (value == null)
+            if (value is null)
             {
                 return;
             }

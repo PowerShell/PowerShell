@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal TerminatingErrorContext(PSCmdlet command)
         {
-            if (command == null)
+            if (command is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(command));
             _command = command;
         }
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns>Array of objects out of the success pipeline.</returns>
         internal Array Process(object o)
         {
-            if (_pp == null)
+            if (_pp is null)
             {
                 // if this is the first call, we need to initialize the
                 // pipeline underneath
@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns>Array of objects out of the success pipeline.</returns>
         internal Array ShutDown()
         {
-            if (_pp == null)
+            if (_pp is null)
             {
                 // if Process() never got called, no sub pipeline
                 // ever got created, hence we just return an empty array
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         public void Dispose()
         {
-            if (_pp == null)
+            if (_pp is null)
                 return;
 
             _pp.Dispose();
@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         protected virtual void InternalDispose()
         {
-            if (this.implementation == null)
+            if (this.implementation is null)
                 return;
 
             this.implementation.Dispose();

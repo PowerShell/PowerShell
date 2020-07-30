@@ -84,7 +84,7 @@ namespace System.Management.Automation.Language
                 try
                 {
                     Type targetType = LookForTypeInSingleAssembly(assembly, typeName.Name);
-                    if (targetType == null && alternateNameToFind != null)
+                    if (targetType is null && alternateNameToFind != null)
                     {
                         targetType = LookForTypeInSingleAssembly(assembly, alternateNameToFind);
                     }
@@ -199,7 +199,7 @@ namespace System.Management.Automation.Language
                 return result;
             }
 
-            if (!onlySearchInGivenAssemblies && result == null)
+            if (!onlySearchInGivenAssemblies && result is null)
             {
                 lock (TypeAccelerators.userTypeAccelerators)
                 {
@@ -233,7 +233,7 @@ namespace System.Management.Automation.Language
                                                             TypeResolutionState typeResolutionState,
                                                             out Exception exception)
         {
-            if (t_searchedAssemblies == null)
+            if (t_searchedAssemblies is null)
             {
                 t_searchedAssemblies = new HashSet<Assembly>();
             }
@@ -249,7 +249,7 @@ namespace System.Management.Automation.Language
                 var currentScope = context != null ? context.EngineSessionState.CurrentScope : null;
                 Type result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, t_searchedAssemblies, typeResolutionState,
                                                     /*onlySearchInGivenAssemblies*/ false, /* reportAmbiguousException */ true, out exception);
-                if (exception == null && result == null)
+                if (exception is null && result is null)
                 {
                     if (context != null && !isAssembliesExplicitlyPassedIn)
                     {
@@ -260,7 +260,7 @@ namespace System.Management.Automation.Language
                                                     /*onlySearchInGivenAssemblies*/ true, /* reportAmbiguousException */ false, out exception);
                     }
 
-                    if (result == null)
+                    if (result is null)
                     {
                         // Search from the assembly list passed in.
                         result = ResolveTypeNameWorker(typeName, currentScope, assemblies, t_searchedAssemblies, typeResolutionState,
@@ -309,7 +309,7 @@ namespace System.Management.Automation.Language
             ExecutionContext context = null;
             exception = null;
 
-            if (typeResolutionState == null)
+            if (typeResolutionState is null)
             {
                 // Usings from script scope (and if no script scope, fall back to default 'using namespace system')
                 context = LocalPipeline.GetExecutionContextFromTLS();
@@ -370,7 +370,7 @@ namespace System.Management.Automation.Language
                 return typeName._typeDefinitionAst.Type;
             }
 
-            if (context == null)
+            if (context is null)
             {
                 context = LocalPipeline.GetExecutionContextFromTLS();
             }
@@ -388,7 +388,7 @@ namespace System.Management.Automation.Language
                 return result;
             }
 
-            if (exception == null)
+            if (exception is null)
             {
                 foreach (var ns in typeResolutionState.namespaces)
                 {
@@ -413,7 +413,7 @@ namespace System.Management.Automation.Language
 
                     if (newResult != null)
                     {
-                        if (result == null)
+                        if (result is null)
                         {
                             result = newResult;
                         }
@@ -463,7 +463,7 @@ namespace System.Management.Automation.Language
         {
             exception = null;
             var typeName = iTypeName as TypeName;
-            if (typeName == null)
+            if (typeName is null)
             {
                 // The type is something more complicated - generic or array.
                 try
@@ -495,7 +495,7 @@ namespace System.Management.Automation.Language
             }
 
             var iTypeName = Parser.ScanType(strTypeName, ignoreErrors: false);
-            if (iTypeName == null)
+            if (iTypeName is null)
             {
                 return null;
             }
@@ -582,7 +582,7 @@ namespace System.Management.Automation.Language
 
         internal static TypeResolutionState GetDefaultUsingState(ExecutionContext context)
         {
-            if (context == null)
+            if (context is null)
             {
                 context = LocalPipeline.GetExecutionContextFromTLS();
             }
@@ -617,7 +617,7 @@ namespace System.Management.Automation.Language
 
             var other = obj as TypeResolutionState;
 
-            if (other == null)
+            if (other is null)
                 return false;
 
             if (this.attribute != other.attribute)
@@ -891,7 +891,7 @@ namespace System.Management.Automation
         {
             // Taking attributes as special case. In this case, we only want to return the
             // accelerator.
-            if (expectedKey == null || typeof(Attribute).IsAssignableFrom(type))
+            if (expectedKey is null || typeof(Attribute).IsAssignableFrom(type))
             {
                 foreach (KeyValuePair<string, Type> entry in builtinTypeAccelerators)
                 {
@@ -958,7 +958,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (s_allTypeAccelerators == null)
+                if (s_allTypeAccelerators is null)
                 {
                     s_allTypeAccelerators = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
                     FillCache(s_allTypeAccelerators);

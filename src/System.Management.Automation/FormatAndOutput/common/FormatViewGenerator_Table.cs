@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     ci.alignment = rowItem.alignment;
                 }
 
-                if (ci.label == null)
+                if (ci.label is null)
                 {
                     FormatToken token = null;
                     if (rowItem.formatTokenList.Count > 0)
@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ci.propertyName = (string)key;
                 }
 
-                if (ci.propertyName == null)
+                if (ci.propertyName is null)
                 {
                     ci.propertyName = this.activeAssociationList[k].ResolvedExpression.ToString();
                 }
@@ -320,7 +320,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return TextAlignment.Left;
 
             object val = rList[0].Result;
-            if (val == null)
+            if (val is null)
                 return TextAlignment.Left;
 
             PSObject soVal = PSObject.AsPSObject(val);
@@ -391,12 +391,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            if (matchingRowDefinition == null)
+            if (matchingRowDefinition is null)
             {
                 matchingRowDefinition = match.BestMatch as TableRowDefinition;
             }
 
-            if (matchingRowDefinition == null)
+            if (matchingRowDefinition is null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
                 if (typesWithoutPrefix != null)
@@ -412,14 +412,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                     }
 
-                    if (matchingRowDefinition == null)
+                    if (matchingRowDefinition is null)
                     {
                         matchingRowDefinition = match.BestMatch as TableRowDefinition;
                     }
                 }
             }
 
-            if (matchingRowDefinition == null)
+            if (matchingRowDefinition is null)
             {
                 // no matching override, use default
                 return tableBody.defaultDefinition.rowItemDefinitionList;

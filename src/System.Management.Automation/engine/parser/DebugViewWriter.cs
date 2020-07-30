@@ -96,7 +96,7 @@ namespace System.Management.Automation.Language {
         }
 
         private static int GetId<T>(T e, ref Dictionary<T, int> ids) {
-            if (ids == null) {
+            if (ids is null) {
                 ids = new Dictionary<T, int>();
                 ids.Add(e, 1);
                 return 1;
@@ -455,7 +455,7 @@ namespace System.Management.Automation.Language {
                 )
             );
 
-            if (_lambdas == null) {
+            if (_lambdas is null) {
                 _lambdas = new Queue<LambdaExpression>();
             }
 
@@ -503,7 +503,7 @@ namespace System.Management.Automation.Language {
         protected override Expression VisitConstant(ConstantExpression node) {
             object value = node.Value;
 
-            if (value == null) {
+            if (value is null) {
                 Out("null");
             } else if ((value is string) && node.Type == typeof(string)) {
                 Out(string.Format(
@@ -595,7 +595,7 @@ namespace System.Management.Automation.Language {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         private static bool NeedsParentheses(Expression parent, Expression child) {
             Debug.Assert(parent != null);
-            if (child == null) {
+            if (child is null) {
                 return false;
             }
 
@@ -925,7 +925,7 @@ namespace System.Management.Automation.Language {
                     Out("'");
                     break;
                 case ExpressionType.Throw:
-                    if (node.Operand == null) {
+                    if (node.Operand is null) {
                         Out(".Rethrow");
                     } else {
                         Out(".Throw", Flow.Space);

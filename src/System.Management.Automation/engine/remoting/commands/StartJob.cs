@@ -608,7 +608,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(errorRecord);
             }
 
-            if (WorkingDirectory == null)
+            if (WorkingDirectory is null)
             {
                 try
                 {

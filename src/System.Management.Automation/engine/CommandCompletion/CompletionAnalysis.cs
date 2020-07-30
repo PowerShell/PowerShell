@@ -35,7 +35,7 @@ namespace System.Management.Automation
 
         internal bool GetOption(string option, bool @default)
         {
-            if (Options == null || !Options.ContainsKey(option))
+            if (Options is null || !Options.ContainsKey(option))
             {
                 return @default;
             }
@@ -111,7 +111,7 @@ namespace System.Management.Automation
             IScriptPosition positionForAstSearch = _cursorPosition;
             var adjustLineAndColumn = false;
             var tokenAtCursor = InterstingTokenAtCursorOrDefault(_tokens, _cursorPosition);
-            if (tokenAtCursor == null)
+            if (tokenAtCursor is null)
             {
                 tokenBeforeCursor = InterstingTokenBeforeCursorOrDefault(_tokens, _cursorPosition);
                 if (tokenBeforeCursor != null)
@@ -131,9 +131,9 @@ namespace System.Management.Automation
 
             var asts = AstSearcher.FindAll(_ast, ast => IsCursorWithinOrJustAfterExtent(positionForAstSearch, ast.Extent), searchNestedScriptBlocks: true).ToList();
 
-            Diagnostics.Assert(tokenAtCursor == null || tokenBeforeCursor == null, "Only one of these tokens can be non-null");
+            Diagnostics.Assert(tokenAtCursor is null || tokenBeforeCursor is null, "Only one of these tokens can be non-null");
 
-            if (typeInferenceContext.CurrentTypeDefinitionAst == null)
+            if (typeInferenceContext.CurrentTypeDefinitionAst is null)
             {
                 typeInferenceContext.CurrentTypeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(asts.Last());
             }
@@ -193,13 +193,13 @@ namespace System.Management.Automation
             {
                 // Handle "switch -file m<tab>" or "switch -file *.ps1<tab>"
                 var pipeline = lastAst.Parent.Parent as PipelineAst;
-                if (pipeline == null)
+                if (pipeline is null)
                 {
                     return false;
                 }
 
                 errorStatement = pipeline.Parent as ErrorStatementAst;
-                if (errorStatement == null || errorStatement.Kind == null || errorStatement.Flags == null)
+                if (errorStatement is null || errorStatement.Kind is null || errorStatement.Flags is null)
                 {
                     return false;
                 }
@@ -730,7 +730,7 @@ namespace System.Management.Automation
                         //         DependsOn=''
                         //         |
                         result = GetResultForHashtable(completionContext);
-                        if (result == null || result.Count == 0)
+                        if (result is null || result.Count == 0)
                         {
                             DynamicKeywordStatementAst keywordAst;
                             ConfigurationDefinitionAst configAst = GetAncestorConfigurationAstAndKeywordAst(cursor, lastAst, out keywordAst);
@@ -741,7 +741,7 @@ namespace System.Management.Automation
                             }
                         }
                     }
-                    else if (completionContext.TokenAtCursor == null)
+                    else if (completionContext.TokenAtCursor is null)
                     {
                         if (tokenBeforeCursor != null)
                         {
@@ -828,7 +828,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (result == null || result.Count == 0)
+            if (result is null || result.Count == 0)
             {
                 var typeAst = completionContext.RelatedAsts.OfType<TypeExpressionAst>().FirstOrDefault();
                 TypeName typeNameToComplete = null;
@@ -856,12 +856,12 @@ namespace System.Management.Automation
                 }
             }
 
-            if (result == null || result.Count == 0)
+            if (result is null || result.Count == 0)
             {
                 result = GetResultForHashtable(completionContext);
             }
 
-            if (result == null || result.Count == 0)
+            if (result is null || result.Count == 0)
             {
                 // Handle special file completion scenarios: .\+file.txt -> +<tab>
                 string input = completionContext.RelatedAsts[0].Extent.Text;
@@ -895,7 +895,7 @@ namespace System.Management.Automation
                 else if (cursor.Offset == hashTableAst.Extent.EndOffset)
                 {
                     // Exclude the scenario that cursor at the end of hashtable, i.e. after '}'
-                    if (completionContext.TokenAtCursor == null ||
+                    if (completionContext.TokenAtCursor is null ||
                         completionContext.TokenAtCursor.Kind != TokenKind.RCurly)
                     {
                         tempHashtableAst = hashTableAst;
@@ -1116,7 +1116,7 @@ namespace System.Management.Automation
 
             PSVariable variable = completionContext.ExecutionContext.EngineSessionState.GetVariable(variableName);
 
-            if (variable == null || variable.Attributes.Count == 0)
+            if (variable is null || variable.Attributes.Count == 0)
             {
                 return false;
             }
@@ -1176,7 +1176,7 @@ namespace System.Management.Automation
             ValidateSetAttribute setConstraint = null;
             VariableExpressionAst variableAst = GetVariableFromExpressionAst(assignmentAst.Left, ref typeConstraint, ref setConstraint);
 
-            if (variableAst == null)
+            if (variableAst is null)
             {
                 return false;
             }
@@ -1386,7 +1386,7 @@ namespace System.Management.Automation
                                 {
                                     IEnumerable<string> orderedValues = property.ValueMap.Keys.OrderBy(x => x).Where(v => !existingValues.Contains(v, StringComparer.OrdinalIgnoreCase));
                                     var matchedResults = orderedValues.Where(v => wildcardPattern.IsMatch(v));
-                                    if (matchedResults == null || !matchedResults.Any())
+                                    if (matchedResults is null || !matchedResults.Any())
                                     {
                                         // Fallback to all allowed values
                                         matchedResults = orderedValues;
@@ -1437,7 +1437,7 @@ namespace System.Management.Automation
                                             }
 
                                             var matchedResults = allResources.Where(r => wildcardPattern.IsMatch(r));
-                                            if (matchedResults == null || !matchedResults.Any())
+                                            if (matchedResults is null || !matchedResults.Any())
                                             {
                                                 // Fallback to all allowed values
                                                 matchedResults = allResources;
@@ -1477,7 +1477,7 @@ namespace System.Management.Automation
             List<CompletionResult> result = null;
             var expandableString = lastAst as ExpandableStringExpressionAst;
             var constantString = lastAst as StringConstantExpressionAst;
-            if (constantString == null && expandableString == null) { return null; }
+            if (constantString is null && expandableString is null) { return null; }
 
             string strValue = constantString != null ? constantString.Value : expandableString.Value;
             StringConstantType strType = constantString != null ? constantString.StringConstantType : expandableString.StringConstantType;
@@ -1652,7 +1652,7 @@ namespace System.Management.Automation
 
                 // Filter by name
                 var matchedResults = keywords.Where(k => wildcardPattern.IsMatch(k.Keyword));
-                if (matchedResults == null || !matchedResults.Any())
+                if (matchedResults is null || !matchedResults.Any())
                 {
                     // Fallback to all legal keywords in the configuration statement
                     matchedResults = keywords;
@@ -1665,7 +1665,7 @@ namespace System.Management.Automation
                 foreach (var keyword in matchedResults)
                 {
                     string usageString = Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.GetDSCResourceUsageString(keyword);
-                    if (results == null)
+                    if (results is null)
                     {
                         results = new List<CompletionResult>();
                     }
@@ -1793,7 +1793,7 @@ namespace System.Management.Automation
                                         executionContext: completionContext.ExecutionContext)
                                     : null;
 
-                                if (fullPath == null) { return result; }
+                                if (fullPath is null) { return result; }
 
                                 // Continue trying the filename/commandname completion for scenarios like this: $aa\d<tab>
                                 completionContext.WordToComplete = fullPath;
@@ -2093,7 +2093,7 @@ namespace System.Management.Automation
             var result = new List<CompletionResult>();
             var clearLiteralPathsKey = false;
 
-            if (completionContext.Options == null)
+            if (completionContext.Options is null)
             {
                 completionContext.Options = new Hashtable { { "LiteralPaths", true } };
             }

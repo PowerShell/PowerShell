@@ -741,7 +741,7 @@ namespace System.Management.Automation.Runspaces
             {
                 lock (_syncObject)
                 {
-                    bool firstEntry = (InternalStateChanged == null);
+                    bool firstEntry = (InternalStateChanged is null);
                     InternalStateChanged += value;
                     if (firstEntry)
                     {
@@ -758,7 +758,7 @@ namespace System.Management.Automation.Runspaces
                 lock (_syncObject)
                 {
                     InternalStateChanged -= value;
-                    if (InternalStateChanged == null)
+                    if (InternalStateChanged is null)
                     {
                         _internalPool.StateChanged -= OnStateChanged;
                     }
@@ -799,7 +799,7 @@ namespace System.Management.Automation.Runspaces
             {
                 lock (_syncObject)
                 {
-                    bool firstEntry = InternalForwardEvent == null;
+                    bool firstEntry = InternalForwardEvent is null;
 
                     InternalForwardEvent += value;
 
@@ -816,7 +816,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     InternalForwardEvent -= value;
 
-                    if (InternalForwardEvent == null)
+                    if (InternalForwardEvent is null)
                     {
                         _internalPool.ForwardEvent -= OnInternalPoolForwardEvent;
                     }
@@ -854,7 +854,7 @@ namespace System.Management.Automation.Runspaces
             {
                 lock (_syncObject)
                 {
-                    bool firstEntry = (InternalRunspaceCreated == null);
+                    bool firstEntry = (InternalRunspaceCreated is null);
                     InternalRunspaceCreated += value;
                     if (firstEntry)
                     {
@@ -871,7 +871,7 @@ namespace System.Management.Automation.Runspaces
                 lock (_syncObject)
                 {
                     InternalRunspaceCreated -= value;
-                    if (InternalRunspaceCreated == null)
+                    if (InternalRunspaceCreated is null)
                     {
                         _internalPool.RunspaceCreated -= OnRunspaceCreated;
                     }

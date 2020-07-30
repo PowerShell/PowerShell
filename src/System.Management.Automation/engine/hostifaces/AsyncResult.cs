@@ -81,11 +81,11 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (_completedWaitHandle == null)
+                if (_completedWaitHandle is null)
                 {
                     lock (SyncObject)
                     {
-                        if (_completedWaitHandle == null)
+                        if (_completedWaitHandle is null)
                         {
                             _completedWaitHandle = new ManualResetEvent(IsCompleted);
                         }
@@ -239,7 +239,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="state">Callback state.</param>
         internal bool InvokeCallbackOnThread(WaitCallback callback, object state)
         {
-            if (callback == null)
+            if (callback is null)
             {
                 throw new PSArgumentNullException(nameof(callback));
             }

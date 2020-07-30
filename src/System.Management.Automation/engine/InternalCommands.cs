@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     _scripts.Add(null);
                 }
@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     _scripts.Add(null);
                 }
@@ -618,7 +618,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void EndBlockParameterSet()
         {
-            if (_endScript == null)
+            if (_endScript is null)
             {
                 return;
             }
@@ -781,7 +781,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string resolvedPropertyName = null;
                     bool isBlindDynamicAccess = false;
-                    if (member == null)
+                    if (member is null)
                     {
                         if ((_inputObject.BaseObject is IDynamicMetaObjectProvider) &&
                             !WildcardPattern.ContainsWildcardCharacters(_propertyOrMethodName))
@@ -992,7 +992,7 @@ namespace Microsoft.PowerShell.Commands
             if (_end < 2)
                 return;
 
-            if (_scripts[0] == null)
+            if (_scripts[0] is null)
                 return;
 
             var emptyArray = Array.Empty<object>();
@@ -1235,7 +1235,7 @@ namespace Microsoft.PowerShell.Commands
         internal static ErrorRecord GenerateNameParameterError(string paraName, string resourceString, string errorId, object target, params object[] args)
         {
             string message;
-            if (args == null || 0 == args.Length)
+            if (args is null || 0 == args.Length)
             {
                 // Don't format in case the string contains literal curly braces
                 message = resourceString;
@@ -2009,7 +2009,7 @@ namespace Microsoft.PowerShell.Commands
         private object GetLikeRHSOperand(object operand)
         {
             var val = operand as string;
-            if (val == null)
+            if (val is null)
             {
                 return operand;
             }
@@ -2688,7 +2688,7 @@ namespace Microsoft.PowerShell.Commands
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {
                 Version version = arguments as Version;
-                if (version == null || !PSVersionInfo.IsValidPSVersion(version))
+                if (version is null || !PSVersionInfo.IsValidPSVersion(version))
                 {
                     // No conversion succeeded so throw and exception...
                     throw new ValidationMetadataException(

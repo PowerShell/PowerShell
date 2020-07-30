@@ -70,7 +70,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         internal ServerRemoteSessionDSHandlerStateMachine(ServerRemoteSession session)
         {
-            if (session == null)
+            if (session is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(session));
             }
@@ -132,7 +132,7 @@ namespace System.Management.Automation.Remoting
             {
                 for (int j = 0; j < _stateMachineHandle.GetLength(1); j++)
                 {
-                    if (_stateMachineHandle[i, j] == null)
+                    if (_stateMachineHandle[i, j] is null)
                     {
                         _stateMachineHandle[i, j] += DoClose;
                     }
@@ -256,7 +256,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void RaiseEventPrivate(RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            if (fsmEventArg == null)
+            if (fsmEventArg is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
             }
@@ -290,7 +290,7 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (fsmEventArg == null)
+                if (fsmEventArg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
@@ -319,7 +319,7 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (fsmEventArg == null)
+                if (fsmEventArg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
@@ -351,7 +351,7 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (fsmEventArg == null)
+                if (fsmEventArg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
@@ -365,7 +365,7 @@ namespace System.Management.Automation.Remoting
                     throw PSTraceSource.NewArgumentException(nameof(fsmEventArg));
                 }
 
-                if (fsmEventArg.RemoteSessionCapability == null)
+                if (fsmEventArg.RemoteSessionCapability is null)
                 {
                     throw PSTraceSource.NewArgumentException(nameof(fsmEventArg));
                 }
@@ -389,7 +389,7 @@ namespace System.Management.Automation.Remoting
 
         private void DoNegotiationSending(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            if (fsmEventArg == null)
+            if (fsmEventArg is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
             }
@@ -418,7 +418,7 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (fsmEventArg == null)
+                if (fsmEventArg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
@@ -446,7 +446,7 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (fsmEventArg == null)
+                if (fsmEventArg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
@@ -486,12 +486,12 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (fsmEventArg == null)
+                if (fsmEventArg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
-                if (fsmEventArg.RemoteData == null)
+                if (fsmEventArg.RemoteData is null)
                 {
                     throw PSTraceSource.NewArgumentException(nameof(fsmEventArg));
                 }
@@ -591,7 +591,7 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (fsmEventArg == null)
+                if (fsmEventArg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
@@ -628,7 +628,7 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (fsmEventArg == null)
+                if (fsmEventArg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
@@ -673,7 +673,7 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (fsmEventArg == null)
+                if (fsmEventArg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
@@ -727,7 +727,7 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (fsmEventArg == null)
+                if (fsmEventArg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
@@ -757,7 +757,7 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (fsmEventArg == null)
+                if (fsmEventArg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
@@ -787,7 +787,7 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (fsmEventArg == null)
+                if (fsmEventArg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
@@ -816,7 +816,7 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (fsmEventArg == null)
+                if (fsmEventArg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
@@ -851,7 +851,7 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (fsmEventArg == null)
+                if (fsmEventArg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
@@ -880,7 +880,7 @@ namespace System.Management.Automation.Remoting
         {
             using (s_trace.TraceEventHandlers())
             {
-                if (fsmEventArg == null)
+                if (fsmEventArg is null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }

@@ -184,7 +184,7 @@ namespace System.Management.Automation.Language
             foreach (var statement in statementBlockAst.Statements)
             {
                 _visitCount++;
-                if (statement == null)
+                if (statement is null)
                 {
                     isSafe = false;
                     break;
@@ -237,7 +237,7 @@ namespace System.Management.Automation.Language
         public object VisitConvertExpression(ConvertExpressionAst convertExpressionAst)
         {
             var type = convertExpressionAst.Type.TypeName.GetReflectionType();
-            if (type == null)
+            if (type is null)
             {
                 return false;
             }
@@ -528,7 +528,7 @@ namespace System.Management.Automation.Language
             // Get the value of the index and value and call the compiler
             var index = indexExpressionAst.Index.Accept(this);
             var target = indexExpressionAst.Target.Accept(this);
-            if (index == null || target == null)
+            if (index is null || target is null)
             {
                 throw new ArgumentNullException(nameof(indexExpressionAst));
             }
@@ -546,7 +546,7 @@ namespace System.Management.Automation.Language
                 ofs = t_context.SessionState.PSVariable.GetValue("OFS") as string;
             }
 
-            if (ofs == null)
+            if (ofs is null)
             {
                 ofs = " ";
             }
@@ -651,7 +651,7 @@ namespace System.Management.Automation.Language
 
         public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
         {
-            if (t_context == null)
+            if (t_context is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(ternaryExpressionAst));
             }
@@ -669,7 +669,7 @@ namespace System.Management.Automation.Language
 
         public object VisitUnaryExpression(UnaryExpressionAst unaryExpressionAst)
         {
-            if (t_context == null)
+            if (t_context is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(unaryExpressionAst));
             }
@@ -681,7 +681,7 @@ namespace System.Management.Automation.Language
         {
             // at this point, we know we're safe because we checked both the type and the child,
             // so now we can just call the compiler and indicate that it's trusted (at this point)
-            if (t_context == null)
+            if (t_context is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(convertExpressionAst));
             }
@@ -731,7 +731,7 @@ namespace System.Management.Automation.Language
             if (name.Equals(SpecialVariables.PSScriptRoot, StringComparison.OrdinalIgnoreCase))
             {
                 var scriptFileName = variableExpressionAst.Extent.File;
-                if (scriptFileName == null)
+                if (scriptFileName is null)
                     return null;
 
                 return Path.GetDirectoryName(scriptFileName);

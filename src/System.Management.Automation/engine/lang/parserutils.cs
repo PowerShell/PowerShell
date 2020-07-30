@@ -329,7 +329,7 @@ namespace System.Management.Automation
         {
             obj = PSObject.Base(obj);
 
-            if (obj == null)
+            if (obj is null)
                 return 0;
             if (obj is int)
                 return (int)obj;
@@ -381,7 +381,7 @@ namespace System.Management.Automation
             Type lvalType = lval != null ? lval.GetType() : null;
             Type rvalType = rval != null ? rval.GetType() : null;
             Type opType;
-            if (lvalType == null || (lvalType.IsPrimitive))
+            if (lvalType is null || (lvalType.IsPrimitive))
             {
                 // Prefer the LHS type when looking for the operator, but attempt the right
                 // the lhs can't have an operator.
@@ -390,20 +390,20 @@ namespace System.Management.Automation
                 // would look for overloads in both types, but this logic covers the most common
                 // cases.
 
-                opType = (rvalType == null || rvalType.IsPrimitive) ? null : rvalType;
+                opType = (rvalType is null || rvalType.IsPrimitive) ? null : rvalType;
             }
             else
             {
                 opType = lvalType;
             }
 
-            if (opType == null)
+            if (opType is null)
             {
                 throw InterpreterError.NewInterpreterException(lval, typeof(RuntimeException), errorPosition,
                     "NotADefinedOperationForType", ParserStrings.NotADefinedOperationForType,
-                    lvalType == null ? "$null" : lvalType.FullName,
+                    lvalType is null ? "$null" : lvalType.FullName,
                     errorOp,
-                    rvalType == null ? "$null" : rvalType.FullName);
+                    rvalType is null ? "$null" : rvalType.FullName);
             }
 
             // None of the explicit conversions worked so try and invoke a method instead...
@@ -530,7 +530,7 @@ namespace System.Management.Automation
             if (args.Length >= 1)
             {
                 predicate = args[0] as ScriptBlock;
-                if (predicate == null)
+                if (predicate is null)
                 {
                     separatorPattern = PSObject.ToStringParser(context, args[0]);
                 }
@@ -547,7 +547,7 @@ namespace System.Management.Automation
             if (args.Length >= 3 && args[2] != null)
             {
                 string args2asString = args[2] as string;
-                if (args2asString == null || !string.IsNullOrEmpty(args2asString))
+                if (args2asString is null || !string.IsNullOrEmpty(args2asString))
                 {
                     options = ConvertTo<SplitOptions>(args[2], errorPosition);
                     if (predicate != null)
@@ -567,7 +567,7 @@ namespace System.Management.Automation
                 options |= SplitOptions.IgnoreCase;
             }
 
-            if (predicate == null)
+            if (predicate is null)
             {
                 return SplitWithPattern(context, errorPosition, content, separatorPattern, limit, options);
             }
@@ -952,7 +952,7 @@ namespace System.Management.Automation
             }
 
             Regex rr = pattern as Regex;
-            if (rr == null)
+            if (rr is null)
             {
                 try
                 {
@@ -966,7 +966,7 @@ namespace System.Management.Automation
             }
 
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
-            if (list == null)
+            if (list is null)
             {
                 string lvalString;
                 if (ExperimentalFeature.IsEnabled("PSCultureInvariantReplaceOperator"))
@@ -1049,11 +1049,11 @@ namespace System.Management.Automation
 
             Type rType = rval as Type;
 
-            if (rType == null)
+            if (rType is null)
             {
                 rType = ConvertTo<Type>(rval, errorPosition);
 
-                if (rType == null)
+                if (rType is null)
                 {
                     // "the right operand of '-is' must be a type"
                     throw InterpreterError.NewInterpreterException(rval, typeof(RuntimeException),
@@ -1090,11 +1090,11 @@ namespace System.Management.Automation
 
             Type rType = rval as Type;
 
-            if (rType == null)
+            if (rType is null)
             {
                 rType = ConvertTo<Type>(rval, errorPosition);
 
-                if (rType == null)
+                if (rType is null)
                 {
                     // "the right operand of '-is' must be a type"
                     throw InterpreterError.NewInterpreterException(rval, typeof(RuntimeException),
@@ -1128,7 +1128,7 @@ namespace System.Management.Automation
         internal static object LikeOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval, TokenKind @operator)
         {
             var wcp = rval as WildcardPattern;
-            if (wcp == null)
+            if (wcp is null)
             {
                 var ignoreCase = @operator == TokenKind.Ilike || @operator == TokenKind.Inotlike;
                 wcp = WildcardPattern.Get(PSObject.ToStringParser(context, rval),
@@ -1137,9 +1137,9 @@ namespace System.Management.Automation
 
             bool notLike = @operator == TokenKind.Inotlike || @operator == TokenKind.Cnotlike;
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
-            if (list == null)
+            if (list is null)
             {
-                string lvalString = lval == null ? string.Empty : PSObject.ToStringParser(context, lval);
+                string lvalString = lval is null ? string.Empty : PSObject.ToStringParser(context, lval);
 
                 return BoolToObject(wcp.IsMatch(lvalString) ^ notLike);
             }
@@ -1150,7 +1150,7 @@ namespace System.Management.Automation
             {
                 object val = ParserOps.Current(errorPosition, list);
 
-                string lvalString = val == null ? string.Empty : PSObject.ToStringParser(context, val);
+                string lvalString = val is null ? string.Empty : PSObject.ToStringParser(context, val);
 
                 if (wcp.IsMatch(lvalString) ^ notLike)
                 {
@@ -1183,9 +1183,9 @@ namespace System.Management.Automation
                 ?? NewRegex(PSObject.ToStringParser(context, rval), reOptions);
 
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
-            if (list == null)
+            if (list is null)
             {
-                string lvalString = lval == null ? string.Empty : PSObject.ToStringParser(context, lval);
+                string lvalString = lval is null ? string.Empty : PSObject.ToStringParser(context, lval);
 
                 // Find a match in the string.
                 Match m = r.Match(lvalString);
@@ -1228,7 +1228,7 @@ namespace System.Management.Automation
                     {
                         object val = list.Current;
 
-                        string lvalString = val == null ? string.Empty : PSObject.ToStringParser(context, val);
+                        string lvalString = val is null ? string.Empty : PSObject.ToStringParser(context, val);
 
                         // Find a single match in the string.
                         Match m = r.Match(lvalString);
@@ -1277,7 +1277,7 @@ namespace System.Management.Automation
                                                       object right)
         {
             IEnumerator list = getEnumeratorSite.Target.Invoke(getEnumeratorSite, left);
-            if (list == null || list is EnumerableOps.NonEnumerableObjectEnumerator)
+            if (list is null || list is EnumerableOps.NonEnumerableObjectEnumerator)
             {
                 return (bool)comparerSite.Target.Invoke(comparerSite, left, right);
             }
@@ -1307,7 +1307,7 @@ namespace System.Management.Automation
         internal static object ContainsOperator(ExecutionContext context, IScriptExtent errorPosition, object left, object right, bool contains, bool ignoreCase)
         {
             IEnumerator list = LanguagePrimitives.GetEnumerator(left);
-            if (list == null)
+            if (list is null)
             {
                 return
                     BoolToObject(contains ==
@@ -1332,7 +1332,7 @@ namespace System.Management.Automation
         internal static object CompareOperators(ExecutionContext context, IScriptExtent errorPosition, object left, object right, CompareDelegate compareDelegate, bool ignoreCase)
         {
             IEnumerator list = LanguagePrimitives.GetEnumerator(left);
-            if (list == null)
+            if (list is null)
             {
                 return BoolToObject(compareDelegate(left, right, ignoreCase));
             }
@@ -1461,13 +1461,13 @@ namespace System.Management.Automation
         /// <returns>The obj's type full name.</returns>
         internal static string GetTypeFullName(object obj)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 return string.Empty;
             }
 
             PSObject mshObj = obj as PSObject;
-            if (mshObj == null)
+            if (mshObj is null)
             {
                 return obj.GetType().FullName;
             }
@@ -1539,7 +1539,7 @@ namespace System.Management.Automation
                     targetMethod = targetAsPSObject.Members[methodName] as PSMethodInfo;
                 }
 
-                if (targetMethod == null)
+                if (targetMethod is null)
                 {
                     string typeFullName = null;
                     if (callStatic)
@@ -1573,7 +1573,7 @@ namespace System.Management.Automation
                 {
                     PSParameterizedProperty propertyToSet = targetMethod as PSParameterizedProperty;
 
-                    if (propertyToSet == null)
+                    if (propertyToSet is null)
                     {
                         throw InterpreterError.NewInterpreterException(methodName, typeof(RuntimeException), errorPosition,
                                                                        "ParameterizedPropertyAssignmentFailed", ParserStrings.ParameterizedPropertyAssignmentFailed, GetTypeFullName(target), methodName);
@@ -1597,13 +1597,13 @@ namespace System.Management.Automation
             }
             catch (MethodInvocationException mie)
             {
-                if (mie.ErrorRecord.InvocationInfo == null)
+                if (mie.ErrorRecord.InvocationInfo is null)
                     mie.ErrorRecord.SetInvocationInfo(new InvocationInfo(null, errorPosition));
                 throw;
             }
             catch (RuntimeException rte)
             {
-                if (rte.ErrorRecord.InvocationInfo == null)
+                if (rte.ErrorRecord.InvocationInfo is null)
                     rte.ErrorRecord.SetInvocationInfo(new InvocationInfo(null, errorPosition));
                 throw;
             }
@@ -1818,7 +1818,7 @@ namespace System.Management.Automation
             try
             {
                 string message;
-                if (args == null || 0 == args.Length)
+                if (args is null || 0 == args.Length)
                 {
                     // Don't format in case the string contains literal curly braces
                     message = resourceString;
@@ -1919,7 +1919,7 @@ namespace System.Management.Automation
             Exception innerException)
         {
             string message;
-            if (innerException == null)
+            if (innerException is null)
             {
                 // there is no reason this string lookup should fail
                 message = StringUtil.Format(ParserStrings.BackupParserMessage, errorId);
@@ -1935,7 +1935,7 @@ namespace System.Management.Automation
 
         internal static void UpdateExceptionErrorRecordPosition(Exception exception, IScriptExtent extent)
         {
-            if (extent == null || extent == PositionUtilities.EmptyExtent)
+            if (extent is null || extent == PositionUtilities.EmptyExtent)
             {
                 return;
             }
@@ -1945,11 +1945,11 @@ namespace System.Management.Automation
             {
                 var errorRecord = icer.ErrorRecord;
                 var invocationInfo = errorRecord.InvocationInfo;
-                if (invocationInfo == null)
+                if (invocationInfo is null)
                 {
                     errorRecord.SetInvocationInfo(new InvocationInfo(null, extent));
                 }
-                else if (invocationInfo.ScriptPosition == null || invocationInfo.ScriptPosition == PositionUtilities.EmptyExtent)
+                else if (invocationInfo.ScriptPosition is null || invocationInfo.ScriptPosition == PositionUtilities.EmptyExtent)
                 {
                     invocationInfo.ScriptPosition = extent;
                     errorRecord.LockScriptStackTrace();
@@ -1967,7 +1967,7 @@ namespace System.Management.Automation
             // Need access to the execution context to see if we should trace. If we
             // can't get it, then just return...
             ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
-            if (context == null)
+            if (context is null)
                 return;
             Trace(context, level, messageId, resourceString, args);
         }
@@ -1979,7 +1979,7 @@ namespace System.Management.Automation
             if (context.PSDebugTraceLevel > level)
             {
                 string message;
-                if (args == null || 0 == args.Length)
+                if (args is null || 0 == args.Length)
                 {
                     // Don't format in case the string contains literal curly braces
                     message = resourceString;

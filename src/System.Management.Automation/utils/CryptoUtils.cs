@@ -97,7 +97,7 @@ namespace System.Management.Automation.Internal
 
         private static RSA FromCapiPublicKeyBlob(byte[] blob, int offset)
         {
-            if (blob == null)
+            if (blob is null)
             {
                 throw new ArgumentNullException(nameof(blob));
             }
@@ -123,7 +123,7 @@ namespace System.Management.Automation.Internal
 
         private static RSAParameters GetParametersFromCapiPublicKeyBlob(byte[] blob, int offset)
         {
-            if (blob == null)
+            if (blob is null)
             {
                 throw new ArgumentNullException(nameof(blob));
             }
@@ -175,7 +175,7 @@ namespace System.Management.Automation.Internal
 
         internal static byte[] ToCapiPublicKeyBlob(RSA rsa)
         {
-            if (rsa == null)
+            if (rsa is null)
             {
                 throw new ArgumentNullException(nameof(rsa));
             }
@@ -221,7 +221,7 @@ namespace System.Management.Automation.Internal
 
         internal static byte[] FromCapiSimpleKeyBlob(byte[] blob)
         {
-            if (blob == null)
+            if (blob is null)
             {
                 throw new ArgumentNullException(nameof(blob));
             }
@@ -237,7 +237,7 @@ namespace System.Management.Automation.Internal
 
         internal static byte[] ToCapiSimpleKeyBlob(byte[] encryptedKey)
         {
-            if (encryptedKey == null)
+            if (encryptedKey is null)
             {
                 throw new ArgumentNullException(nameof(encryptedKey));
             }

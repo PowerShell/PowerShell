@@ -35,7 +35,7 @@ namespace System.Management.Automation
         /// </exception>
         internal CompiledCommandParameter(RuntimeDefinedParameter runtimeDefinedParameter, bool processingDynamicParameters)
         {
-            if (runtimeDefinedParameter == null)
+            if (runtimeDefinedParameter is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(runtimeDefinedParameter));
             }
@@ -77,7 +77,7 @@ namespace System.Management.Automation
 
             // If this is a PSCredential type and they haven't added any argument transformation attributes,
             // add one for credential transformation
-            if ((this.Type == typeof(PSCredential)) && argTransformationAttributes == null)
+            if ((this.Type == typeof(PSCredential)) && argTransformationAttributes is null)
             {
                 ProcessAttribute(runtimeDefinedParameter.Name, new CredentialAttribute(), ref validationAttributes, ref argTransformationAttributes, ref aliases);
             }
@@ -88,13 +88,13 @@ namespace System.Management.Automation
                 ProcessAttribute(runtimeDefinedParameter.Name, attribute, ref validationAttributes, ref argTransformationAttributes, ref aliases);
             }
 
-            this.ValidationAttributes = validationAttributes == null
+            this.ValidationAttributes = validationAttributes is null
                 ? Array.Empty<ValidateArgumentsAttribute>()
                 : validationAttributes.ToArray();
-            this.ArgumentTransformationAttributes = argTransformationAttributes == null
+            this.ArgumentTransformationAttributes = argTransformationAttributes is null
                 ? Array.Empty<ArgumentTransformationAttribute>()
                 : argTransformationAttributes.ToArray();
-            this.Aliases = aliases == null
+            this.Aliases = aliases is null
                 ? Array.Empty<string>()
                 : aliases.ToArray();
         }
@@ -121,7 +121,7 @@ namespace System.Management.Automation
         /// </exception>
         internal CompiledCommandParameter(MemberInfo member, bool processingDynamicParameters)
         {
-            if (member == null)
+            if (member is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(member));
             }
@@ -179,10 +179,10 @@ namespace System.Management.Automation
                 }
             }
 
-            this.ValidationAttributes = validationAttributes == null
+            this.ValidationAttributes = validationAttributes is null
                 ? Array.Empty<ValidateArgumentsAttribute>()
                 : validationAttributes.ToArray();
-            this.ArgumentTransformationAttributes = argTransformationAttributes == null
+            this.ArgumentTransformationAttributes = argTransformationAttributes is null
                 ? Array.Empty<ArgumentTransformationAttribute>()
                 : argTransformationAttributes.ToArray();
             this.Aliases = aliases ?? Array.Empty<string>();
@@ -425,7 +425,7 @@ namespace System.Management.Automation
             ref Collection<ArgumentTransformationAttribute> argTransformationAttributes,
             ref string[] aliases)
         {
-            if (attribute == null)
+            if (attribute is null)
                 return;
 
             CompiledAttributes.Add(attribute);
@@ -440,7 +440,7 @@ namespace System.Management.Automation
             ValidateArgumentsAttribute validateAttr = attribute as ValidateArgumentsAttribute;
             if (validateAttr != null)
             {
-                if (validationAttributes == null)
+                if (validationAttributes is null)
                     validationAttributes = new Collection<ValidateArgumentsAttribute>();
                 validationAttributes.Add(validateAttr);
                 if ((attribute is ValidateNotNullAttribute) || (attribute is ValidateNotNullOrEmptyAttribute))
@@ -454,7 +454,7 @@ namespace System.Management.Automation
             AliasAttribute aliasAttr = attribute as AliasAttribute;
             if (aliasAttr != null)
             {
-                if (aliases == null)
+                if (aliases is null)
                 {
                     aliases = aliasAttr.aliasNames;
                 }
@@ -473,7 +473,7 @@ namespace System.Management.Automation
             ArgumentTransformationAttribute argumentAttr = attribute as ArgumentTransformationAttribute;
             if (argumentAttr != null)
             {
-                if (argTransformationAttributes == null)
+                if (argTransformationAttributes is null)
                     argTransformationAttributes = new Collection<ArgumentTransformationAttribute>();
                 argTransformationAttributes.Add(argumentAttr);
                 return;

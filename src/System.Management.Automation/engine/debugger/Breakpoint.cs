@@ -104,7 +104,7 @@ namespace System.Management.Automation
         internal BreakpointAction Trigger()
         {
             ++HitCount;
-            if (Action == null)
+            if (Action is null)
             {
                 return BreakpointAction.Break;
             }
@@ -211,7 +211,7 @@ namespace System.Management.Automation
 
         private bool CommandInfoMatches(CommandInfo commandInfo)
         {
-            if (commandInfo == null)
+            if (commandInfo is null)
                 return false;
 
             if (CommandPattern.IsMatch(commandInfo.Name))
@@ -244,7 +244,7 @@ namespace System.Management.Automation
             // invocationInfo.MyCommand can be null when invoked via ScriptBlock.Invoke()
             if (CommandPattern.IsMatch(invocationInfo.InvocationName) || CommandInfoMatches(invocationInfo.MyCommand))
             {
-                return (Script == null || Script.Equals(invocationInfo.ScriptName, StringComparison.OrdinalIgnoreCase));
+                return (Script is null || Script.Equals(invocationInfo.ScriptName, StringComparison.OrdinalIgnoreCase));
             }
 
             return false;
@@ -338,7 +338,7 @@ namespace System.Management.Automation
             if (AccessMode != VariableAccessMode.ReadWrite && AccessMode != (read ? VariableAccessMode.Read : VariableAccessMode.Write))
                 return false;
 
-            if (Script == null || Script.Equals(currentScriptFile, StringComparison.OrdinalIgnoreCase))
+            if (Script is null || Script.Equals(currentScriptFile, StringComparison.OrdinalIgnoreCase))
             {
                 return Trigger() == BreakpointAction.Break;
             }
@@ -534,10 +534,10 @@ namespace System.Management.Automation
             {
                 var ast = scriptBlock.Ast;
                 var bodyAst = ((IParameterMetadataProvider)ast).Body;
-                if ((bodyAst.DynamicParamBlock == null || bodyAst.DynamicParamBlock.Extent.IsAfter(Line, Column)) &&
-                    (bodyAst.BeginBlock == null || bodyAst.BeginBlock.Extent.IsAfter(Line, Column)) &&
-                    (bodyAst.ProcessBlock == null || bodyAst.ProcessBlock.Extent.IsAfter(Line, Column)) &&
-                    (bodyAst.EndBlock == null || bodyAst.EndBlock.Extent.IsAfter(Line, Column)))
+                if ((bodyAst.DynamicParamBlock is null || bodyAst.DynamicParamBlock.Extent.IsAfter(Line, Column)) &&
+                    (bodyAst.BeginBlock is null || bodyAst.BeginBlock.Extent.IsAfter(Line, Column)) &&
+                    (bodyAst.ProcessBlock is null || bodyAst.ProcessBlock.Extent.IsAfter(Line, Column)) &&
+                    (bodyAst.EndBlock is null || bodyAst.EndBlock.Extent.IsAfter(Line, Column)))
                 {
                     SetBreakpoint(functionContext, 0);
                     return true;

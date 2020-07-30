@@ -120,12 +120,12 @@ namespace System.Management.Automation.Tracing
             /// <param name="callback"></param>
             public CorrelatedCallback(EtwActivity tracer, CallbackNoParameter callback)
             {
-                if (callback == null)
+                if (callback is null)
                 {
                     throw new ArgumentNullException(nameof(callback));
                 }
 
-                if (tracer == null)
+                if (tracer is null)
                 {
                     throw new ArgumentNullException(nameof(tracer));
                 }
@@ -142,12 +142,12 @@ namespace System.Management.Automation.Tracing
             /// <param name="callback"></param>
             public CorrelatedCallback(EtwActivity tracer, CallbackWithState callback)
             {
-                if (callback == null)
+                if (callback is null)
                 {
                     throw new ArgumentNullException(nameof(callback));
                 }
 
-                if (tracer == null)
+                if (tracer is null)
                 {
                     throw new ArgumentNullException(nameof(tracer));
                 }
@@ -164,12 +164,12 @@ namespace System.Management.Automation.Tracing
             /// <param name="callback"></param>
             public CorrelatedCallback(EtwActivity tracer, AsyncCallback callback)
             {
-                if (callback == null)
+                if (callback is null)
                 {
                     throw new ArgumentNullException(nameof(callback));
                 }
 
-                if (tracer == null)
+                if (tracer is null)
                 {
                     throw new ArgumentNullException(nameof(tracer));
                 }
@@ -191,12 +191,12 @@ namespace System.Management.Automation.Tracing
             /// <param name="callback"></param>
             public CorrelatedCallback(EtwActivity tracer, CallbackWithStateAndArgs callback)
             {
-                if (callback == null)
+                if (callback is null)
                 {
                     throw new ArgumentNullException(nameof(callback));
                 }
 
-                if (tracer == null)
+                if (tracer is null)
                 {
                     throw new ArgumentNullException(nameof(tracer));
                 }
@@ -378,7 +378,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public CallbackNoParameter Correlate(CallbackNoParameter callback)
         {
-            if (callback == null)
+            if (callback is null)
             {
                 throw new ArgumentNullException(nameof(callback));
             }
@@ -393,7 +393,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public CallbackWithState Correlate(CallbackWithState callback)
         {
-            if (callback == null)
+            if (callback is null)
             {
                 throw new ArgumentNullException(nameof(callback));
             }
@@ -408,7 +408,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public AsyncCallback Correlate(AsyncCallback callback)
         {
-            if (callback == null)
+            if (callback is null)
             {
                 throw new ArgumentNullException(nameof(callback));
             }
@@ -424,7 +424,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public CallbackWithStateAndArgs Correlate(CallbackWithStateAndArgs callback)
         {
-            if (callback == null)
+            if (callback is null)
             {
                 throw new ArgumentNullException(nameof(callback));
             }
@@ -473,7 +473,7 @@ namespace System.Management.Automation.Tracing
             {
                 for (int i = 0; i < payload.Length; i++)
                 {
-                    if (payload[i] == null)
+                    if (payload[i] is null)
                     {
                         payload[i] = string.Empty;
                     }

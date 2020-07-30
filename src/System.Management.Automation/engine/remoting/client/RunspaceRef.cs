@@ -127,7 +127,7 @@ namespace System.Management.Automation.Remoting
             PSCommand psCommand = ParsePsCommandUsingScriptBlock(line, useNewScope);
 
             // If that didn't work fall back to traditional approach.
-            if (psCommand == null)
+            if (psCommand is null)
             {
                 return CreatePsCommandNotOverridden(line, isScript, useNewScope);
             }
@@ -208,7 +208,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // If that didn't work out fall-back to the traditional approach.
-            if (pipeline == null)
+            if (pipeline is null)
             {
                 pipeline = useNestedPipelines ?
                     _runspaceRef.Value.CreateNestedPipeline(line, addToHistory) :

@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (s_contentHeaderSet == null)
+                if (s_contentHeaderSet is null)
                 {
                     s_contentHeaderSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 

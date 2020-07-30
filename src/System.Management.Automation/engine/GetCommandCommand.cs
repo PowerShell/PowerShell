@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     value = Array.Empty<string>();
                 }
@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     value = Array.Empty<string>();
                 }
@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     value = Array.Empty<string>();
                 }
@@ -284,7 +284,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     throw new ArgumentNullException("value");
                 }
@@ -314,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     throw new ArgumentNullException("value");
                 }
@@ -402,7 +402,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Initialize the module patterns
-            if (_modulePatterns == null)
+            if (_modulePatterns is null)
             {
                 _modulePatterns = SessionStateUtilities.CreateWildcardsFromStrings(Module, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
             }
@@ -432,7 +432,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // We do not show the pithy aliases (not of the format Verb-Noun) and applications by default.
             // We will show them only if the Name, All and totalCount are not specified.
-            if ((this.Name == null) && (!_all) && TotalCount == -1 && !UseFuzzyMatching)
+            if ((this.Name is null) && (!_all) && TotalCount == -1 && !UseFuzzyMatching)
             {
                 CommandTypes commandTypesToIgnore = 0;
 
@@ -481,7 +481,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Only sort if they didn't fully specify a name)
-            if ((_names == null) || (_nameContainsWildcard))
+            if ((_names is null) || (_nameContainsWildcard))
             {
                 // Use the stable sorting to sort the result list
                 _accumulatedResults = _accumulatedResults.OrderBy(a => a, new CommandInfoComparer()).ToList();
@@ -688,12 +688,12 @@ namespace Microsoft.PowerShell.Commands
 
             do // false loop
             {
-                if (_verbPatterns == null)
+                if (_verbPatterns is null)
                 {
                     _verbPatterns = SessionStateUtilities.CreateWildcardsFromStrings(Verb, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
                 }
 
-                if (_nounPatterns == null)
+                if (_nounPatterns is null)
                 {
                     _nounPatterns = SessionStateUtilities.CreateWildcardsFromStrings(Noun, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
                 }
@@ -1151,12 +1151,12 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsParameterMatch(CommandInfo commandInfo)
         {
-            if ((this.ParameterName == null) && (this.ParameterType == null))
+            if ((this.ParameterName is null) && (this.ParameterType is null))
             {
                 return true;
             }
 
-            if (_matchedParameterNames == null)
+            if (_matchedParameterNames is null)
             {
                 _matchedParameterNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             }
@@ -1176,7 +1176,7 @@ namespace Microsoft.PowerShell.Commands
                 // and proceed as if there was no parameter metadata
             }
 
-            if (commandParameters == null)
+            if (commandParameters is null)
             {
                 // do not match commands which have not been imported yet / for which we don't have parameter metadata yet
                 return false;
@@ -1227,7 +1227,7 @@ namespace Microsoft.PowerShell.Commands
             //
 
             bool typeIsMatching;
-            if ((_parameterTypes == null) || (_parameterTypes.Length == 0))
+            if ((_parameterTypes is null) || (_parameterTypes.Length == 0))
             {
                 typeIsMatching = true;
             }
@@ -1314,7 +1314,7 @@ namespace Microsoft.PowerShell.Commands
                         // there are situations where both ResolvedCommand and UnresolvedCommandName
                         // are both null (often due to multiple versions of modules with aliases)
                         // therefore we need to exit early.
-                        if (current == null)
+                        if (current is null)
                         {
                             return false;
                         }
@@ -1567,7 +1567,7 @@ namespace Microsoft.PowerShell.Commands
             catch (PSNotSupportedException) { }
             catch (PSNotImplementedException) { }
 
-            if (parameterSets == null)
+            if (parameterSets is null)
             {
                 return Array.Empty<PSObject>();
             }
@@ -1656,7 +1656,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public IEnumerable<CompletionResult> CompleteArgument(string commandName, string parameterName, string wordToComplete, CommandAst commandAst, IDictionary fakeBoundParameters)
         {
-            if (fakeBoundParameters == null)
+            if (fakeBoundParameters is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(fakeBoundParameters));
             }

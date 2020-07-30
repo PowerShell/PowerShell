@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private static bool IsWsManQuotaReached(Exception exception)
         {
             var cimException = exception as CimException;
-            if (cimException == null)
+            if (cimException is null)
             {
                 return false;
             }
@@ -96,13 +96,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
 
             CimInstance cimError = cimException.ErrorData;
-            if (cimError == null)
+            if (cimError is null)
             {
                 return false;
             }
 
             CimProperty errorCodeProperty = cimError.CimInstanceProperties["error_Code"];
-            if (errorCodeProperty == null)
+            if (errorCodeProperty is null)
             {
                 return false;
             }
@@ -219,7 +219,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
                 else
                 {
-                    Dbg.Assert(_sleepAndRetryTimer == null, "There should be only 1 active _sleepAndRetryTimer");
+                    Dbg.Assert(_sleepAndRetryTimer is null, "There should be only 1 active _sleepAndRetryTimer");
                     _sleepAndRetryTimer = new Timer(
                         state: null,
                         dueTime: delay,
@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 // this.JobContext is set in the constructor of CimChildJobBase,
                 // but the constructor of Job wants to access Location property
                 // before CimChildJobBase is fully initialized
-                if (this.JobContext == null)
+                if (this.JobContext is null)
                 {
                     return null;
                 }
@@ -1011,7 +1011,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             PSObject pso = PSObject.AsPSObject(cimInstance);
             PSPropertyInfo psShowComputerNameProperty = pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] as PSPropertyInfo;
-            if (psShowComputerNameProperty == null)
+            if (psShowComputerNameProperty is null)
             {
                 return false;
             }
@@ -1055,13 +1055,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             if (this.JobContext.ShowComputerName)
             {
-                if (pso == null)
+                if (pso is null)
                 {
                     pso = PSObject.AsPSObject(outputObject);
                 }
 
                 AddShowComputerNameMarker(pso);
-                if (cimInstance == null)
+                if (cimInstance is null)
                 {
                     pso.Properties.Add(new PSNoteProperty(RemotingConstants.ComputerNameNoteProperty, this.JobContext.Session.ComputerName));
                 }

@@ -273,7 +273,7 @@ namespace System.Management.Automation
         {
             Signature signature = null;
 
-            if (fileContent == null)
+            if (fileContent is null)
             {
                 // First, try to get the signature from the catalog signature APIs.
                 signature = GetSignatureFromCatalog(fileName);
@@ -281,7 +281,7 @@ namespace System.Management.Automation
 
             // If there is no signature or it is invalid, go by the file content
             // with the older WinVerifyTrust APIs
-            if ((signature == null) || (signature.Status != SignatureStatus.Valid))
+            if ((signature is null) || (signature.Status != SignatureStatus.Valid))
             {
                 signature = GetSignatureFromWinVerifyTrust(fileName, fileContent);
             }
@@ -438,7 +438,7 @@ namespace System.Management.Automation
             NativeMethods.WINTRUST_DATA wtd;
             DWORD error = Win32Errors.E_FAIL;
 
-            if (fileContent == null)
+            if (fileContent is null)
             {
                 Utils.CheckArgForNullOrEmpty(fileName, "fileName");
                 SecuritySupport.CheckIfFileExists(fileName);
@@ -492,7 +492,7 @@ namespace System.Management.Automation
 
                 NativeMethods.WINTRUST_DATA wtd;
 
-                if (fileContent == null)
+                if (fileContent is null)
                 {
                     NativeMethods.WINTRUST_FILE_INFO wfi = NativeMethods.InitWintrustFileInfoStruct(fileName);
                     wtd = NativeMethods.InitWintrustDataStructFromFile(wfi);
@@ -589,7 +589,7 @@ namespace System.Management.Automation
 
             Diagnostics.Assert(error != 0 || signature != null, "GetSignatureFromWintrustData: general crypto failure");
 
-            if ((signature == null) && (error != 0))
+            if ((signature is null) && (error != 0))
             {
                 signature = new Signature(filePath, error);
             }

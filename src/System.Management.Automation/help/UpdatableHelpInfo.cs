@@ -88,7 +88,7 @@ namespace System.Management.Automation.Help
 
             Debug.Assert(v1 != null);
 
-            if (v2 == null)
+            if (v2 is null)
             {
                 return true;
             }

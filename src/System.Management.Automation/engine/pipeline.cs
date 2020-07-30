@@ -148,7 +148,7 @@ namespace System.Management.Automation.Internal
 
         internal void LogExecutionError(InvocationInfo invocationInfo, ErrorRecord errorRecord)
         {
-            if (errorRecord == null)
+            if (errorRecord is null)
                 return;
 
             string message = StringUtil.Format(PipelineStrings.PipelineExecutionNonTerminatingError, GetCommand(invocationInfo), errorRecord.ToString());
@@ -167,7 +167,7 @@ namespace System.Management.Automation.Internal
 
             _terminatingErrorLogged = true;
 
-            if (exception == null)
+            if (exception is null)
                 return;
 
             string message = StringUtil.Format(PipelineStrings.PipelineExecutionTerminatingError, GetCommand(exception), exception.Message);
@@ -176,7 +176,7 @@ namespace System.Management.Automation.Internal
 
         private string GetCommand(InvocationInfo invocationInfo)
         {
-            if (invocationInfo == null)
+            if (invocationInfo is null)
                 return string.Empty;
 
             if (invocationInfo.MyCommand != null)
@@ -220,7 +220,7 @@ namespace System.Management.Automation.Internal
             }
 
             // Log the cmdlet invocation execution details if we didn't have an associated script line with it.
-            if ((invocation == null) || string.IsNullOrEmpty(invocation.Line))
+            if ((invocation is null) || string.IsNullOrEmpty(invocation.Line))
             {
                 if (hostInterface != null)
                 {
@@ -240,7 +240,7 @@ namespace System.Management.Automation.Internal
             {
                 // We check to see if the command is needs writing (or if there is anything in the buffer)
                 // before we flush it. Flushing the empty buffer causes a measurable performance degradation.
-                if (_commands == null || _commands.Count == 0 || _eventLogBuffer.Count == 0)
+                if (_commands is null || _commands.Count == 0 || _eventLogBuffer.Count == 0)
                     return;
 
                 MshLog.LogPipelineExecutionDetailEvent(_commands[0].Command.Context,
@@ -251,7 +251,7 @@ namespace System.Management.Automation.Internal
 
         private bool NeedToLog()
         {
-            if (_commands == null)
+            if (_commands is null)
                 return false;
 
             foreach (CommandProcessorBase commandProcessor in _commands)
@@ -286,8 +286,8 @@ namespace System.Management.Automation.Internal
 
         internal void AddRedirectionPipe(PipelineProcessor pipelineProcessor)
         {
-            if (pipelineProcessor == null) throw PSTraceSource.NewArgumentNullException(nameof(pipelineProcessor));
-            if (_redirectionPipes == null)
+            if (pipelineProcessor is null) throw PSTraceSource.NewArgumentNullException(nameof(pipelineProcessor));
+            if (_redirectionPipes is null)
                 _redirectionPipes = new List<PipelineProcessor>();
             _redirectionPipes.Add(pipelineProcessor);
         }
@@ -316,14 +316,14 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal int AddCommand(CommandProcessorBase commandProcessor, int readFromCommand, bool readErrorQueue)
         {
-            if (commandProcessor == null)
+            if (commandProcessor is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(commandProcessor));
             }
 
-            if (_commands == null)
+            if (_commands is null)
             {
-                // "_commands == null"
+                // "_commands is null"
                 throw PSTraceSource.NewInvalidOperationException();
             }
 
@@ -367,17 +367,17 @@ namespace System.Management.Automation.Internal
             else
             {
                 CommandProcessorBase prevcommandProcessor = _commands[readFromCommand - 1] as CommandProcessorBase;
-                if (prevcommandProcessor == null || prevcommandProcessor.CommandRuntime == null)
+                if (prevcommandProcessor is null || prevcommandProcessor.CommandRuntime is null)
                 {
-                    // "PipelineProcessor.AddCommand(): previous request object == null"
+                    // "PipelineProcessor.AddCommand(): previous request object is null"
                     throw PSTraceSource.NewInvalidOperationException();
                 }
 
                 Pipe UpstreamPipe = (readErrorQueue) ?
                     prevcommandProcessor.CommandRuntime.ErrorOutputPipe : prevcommandProcessor.CommandRuntime.OutputPipe;
-                if (UpstreamPipe == null)
+                if (UpstreamPipe is null)
                 {
-                    // "PipelineProcessor.AddCommand(): UpstreamPipe == null"
+                    // "PipelineProcessor.AddCommand(): UpstreamPipe is null"
                     throw PSTraceSource.NewInvalidOperationException();
                 }
 
@@ -400,9 +400,9 @@ namespace System.Management.Automation.Internal
                     for (int i = 0; i < _commands.Count; i++)
                     {
                         prevcommandProcessor = _commands[i];
-                        if (prevcommandProcessor == null || prevcommandProcessor.CommandRuntime == null)
+                        if (prevcommandProcessor is null || prevcommandProcessor.CommandRuntime is null)
                         {
-                            // "PipelineProcessor.AddCommand(): previous request object == null"
+                            // "PipelineProcessor.AddCommand(): previous request object is null"
                             throw PSTraceSource.NewInvalidOperationException();
                         }
                         // check whether the error output is already claimed
@@ -516,7 +516,7 @@ namespace System.Management.Automation.Internal
                         _firstTerminatingError != null
                             ? _firstTerminatingError.SourceException as StopUpstreamCommandsException
                             : null;
-                    if (stopUpstreamCommandsException == null)
+                    if (stopUpstreamCommandsException is null)
                     {
                         throw;
                     }
@@ -597,7 +597,7 @@ namespace System.Management.Automation.Internal
                 {
                     CommandProcessorBase commandProcessor = _commands[i];
 
-                    if (commandProcessor == null)
+                    if (commandProcessor is null)
                     {
                         // "null command " + i
                         throw PSTraceSource.NewInvalidOperationException();
@@ -624,7 +624,7 @@ namespace System.Management.Automation.Internal
                             _firstTerminatingError != null
                                 ? _firstTerminatingError.SourceException as StopUpstreamCommandsException
                                 : null;
-                        if (stopUpstreamCommandsException == null)
+                        if (stopUpstreamCommandsException is null)
                         {
                             throw;
                         }
@@ -660,7 +660,7 @@ namespace System.Management.Automation.Internal
             {
                 // Only log the pipeline completion if this wasn't a nested pipeline, as
                 // pipeline state in transcription is associated with the toplevel pipeline
-                if ((this.LocalPipeline == null) || (!this.LocalPipeline.IsNested))
+                if ((this.LocalPipeline is null) || (!this.LocalPipeline.IsNested))
                 {
                     lastCommandRuntime.PipelineProcessor.LogPipelineComplete();
                 }
@@ -794,7 +794,7 @@ namespace System.Management.Automation.Internal
 
             // Retain copy of _commands in case Dispose() is called
             List<CommandProcessorBase> commands = _commands;
-            if (commands == null)
+            if (commands is null)
                 return;
 
             // Call StopProcessing() for all the commands.
@@ -802,7 +802,7 @@ namespace System.Management.Automation.Internal
             {
                 CommandProcessorBase commandProcessor = commands[i];
 
-                if (commandProcessor == null)
+                if (commandProcessor is null)
                 {
                     throw PSTraceSource.NewInvalidOperationException();
                 }
@@ -945,32 +945,32 @@ namespace System.Management.Automation.Internal
             if (_executionStarted)
                 return;
 
-            if (_commands == null || 0 == _commands.Count)
+            if (_commands is null || 0 == _commands.Count)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                     PipelineStrings.PipelineExecuteRequiresAtLeastOneCommand);
             }
 
             CommandProcessorBase firstcommandProcessor = _commands[0];
-            if (firstcommandProcessor == null
-                || firstcommandProcessor.CommandRuntime == null)
+            if (firstcommandProcessor is null
+                || firstcommandProcessor.CommandRuntime is null)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                     PipelineStrings.PipelineExecuteRequiresAtLeastOneCommand);
             }
 
             // Set the execution scope using the current scope
-            if (_executionScope == null)
+            if (_executionScope is null)
             {
                 _executionScope = firstcommandProcessor.Context.EngineSessionState.CurrentScope;
             }
 
             // add ExternalSuccessOutput to the last command
             CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];
-            if (LastCommandProcessor == null
-                || LastCommandProcessor.CommandRuntime == null)
+            if (LastCommandProcessor is null
+                || LastCommandProcessor.CommandRuntime is null)
             {
-                // "PipelineProcessor.Start(): LastCommandProcessor == null"
+                // "PipelineProcessor.Start(): LastCommandProcessor is null"
                 throw PSTraceSource.NewInvalidOperationException();
             }
 
@@ -984,7 +984,7 @@ namespace System.Management.Automation.Internal
             // output is not yet claimed
             SetExternalErrorOutput();
 
-            if (ExternalInput == null && !incomingStream)
+            if (ExternalInput is null && !incomingStream)
             {
                 // no upstream cmdlet from the first command
                 firstcommandProcessor.CommandRuntime.IsClosed = true;
@@ -1008,7 +1008,7 @@ namespace System.Management.Automation.Internal
             for (int i = 0; i < _commands.Count; i++)
             {
                 CommandProcessorBase commandProcessor = _commands[i];
-                if (commandProcessor == null)
+                if (commandProcessor is null)
                 {
                     // "null command " + i
                     throw PSTraceSource.NewInvalidOperationException();
@@ -1104,7 +1104,7 @@ namespace System.Management.Automation.Internal
             for (int i = 0; i < _commands.Count; i++)
             {
                 CommandProcessorBase commandProcessor = _commands[i];
-                if (commandProcessor == null || commandProcessor.CommandRuntime == null)
+                if (commandProcessor is null || commandProcessor.CommandRuntime is null)
                 {
                     // "null command " + i
                     throw PSTraceSource.NewInvalidOperationException();
@@ -1147,8 +1147,8 @@ namespace System.Management.Automation.Internal
         {
             // Add any input to the first command.
             CommandProcessorBase firstcommandProcessor = _commands[0];
-            if (firstcommandProcessor == null
-                || firstcommandProcessor.CommandRuntime == null)
+            if (firstcommandProcessor is null
+                || firstcommandProcessor.CommandRuntime is null)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                     PipelineStrings.PipelineExecuteRequiresAtLeastOneCommand);
@@ -1199,15 +1199,15 @@ namespace System.Management.Automation.Internal
                 for (int i = 0; i < _commands.Count; i++)
                 {
                     CommandProcessorBase commandProcessor = _commands[i];
-                    if (commandProcessor == null
-                        || commandProcessor.CommandRuntime == null)
+                    if (commandProcessor is null
+                        || commandProcessor.CommandRuntime is null)
                     {
                         // "null command or request or ErrorOutputPipe " + i
                         throw PSTraceSource.NewInvalidOperationException();
                     }
 
                     Pipe ErrorPipe = commandProcessor.CommandRuntime.ErrorOutputPipe;
-                    if (ErrorPipe.DownstreamCmdlet == null && !ErrorPipe.Empty)
+                    if (ErrorPipe.DownstreamCmdlet is null && !ErrorPipe.Empty)
                     {
                         // 2003/10/02-JonN
                         // Do not return the same error results more than once
@@ -1222,10 +1222,10 @@ namespace System.Management.Automation.Internal
                 return MshCommandRuntime.StaticEmptyArray;
 
             CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];
-            if (LastCommandProcessor == null
-                || LastCommandProcessor.CommandRuntime == null)
+            if (LastCommandProcessor is null
+                || LastCommandProcessor.CommandRuntime is null)
             {
-                // "PipelineProcessor.RetrieveResults(): LastCommandProcessor == null"
+                // "PipelineProcessor.RetrieveResults(): LastCommandProcessor is null"
                 throw PSTraceSource.NewInvalidOperationException();
             }
 
@@ -1236,7 +1236,7 @@ namespace System.Management.Automation.Internal
             // Do not return the same results more than once
             LastCommandProcessor.CommandRuntime.OutputPipe.Clear();
 
-            if (results == null)
+            if (results is null)
                 return MshCommandRuntime.StaticEmptyArray;
             return results;
         }
@@ -1252,10 +1252,10 @@ namespace System.Management.Automation.Internal
             Dbg.Assert(pipeToUse != null, "Caller should verify pipeToUse != null");
 
             CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];
-            if (LastCommandProcessor == null
-                || LastCommandProcessor.CommandRuntime == null)
+            if (LastCommandProcessor is null
+                || LastCommandProcessor.CommandRuntime is null)
             {
-                // "PipelineProcessor.RetrieveResults(): LastCommandProcessor == null"
+                // "PipelineProcessor.RetrieveResults(): LastCommandProcessor is null"
                 throw PSTraceSource.NewInvalidOperationException();
             }
 
@@ -1270,14 +1270,14 @@ namespace System.Management.Automation.Internal
             for (int i = 0; i < _commands.Count; i++)
             {
                 CommandProcessorBase commandProcessor = _commands[i];
-                if (commandProcessor == null
-                    || commandProcessor.CommandRuntime == null)
+                if (commandProcessor is null
+                    || commandProcessor.CommandRuntime is null)
                 {
                     // "null command or request or ErrorOutputPipe " + i
                     throw PSTraceSource.NewInvalidOperationException();
                 }
 
-                if (commandProcessor.CommandRuntime.ErrorOutputPipe.DownstreamCmdlet == null)
+                if (commandProcessor.CommandRuntime.ErrorOutputPipe.DownstreamCmdlet is null)
                 {
                     commandProcessor.CommandRuntime.ErrorOutputPipe = pipeToUse;
                 }
@@ -1397,7 +1397,7 @@ namespace System.Management.Automation.Internal
             bool wasStopping = false;
             lock (_stopReasonLock)
             {
-                if (_firstTerminatingError == null)
+                if (_firstTerminatingError is null)
                 {
                     _firstTerminatingError = ExceptionDispatchInfo.Capture(e);
                 }

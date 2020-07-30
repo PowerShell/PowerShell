@@ -1084,7 +1084,7 @@ namespace System.Management.Automation
         {
             if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
             {
-                WriteLine("{0}", arg == null ? "null" : arg.ToString());
+                WriteLine("{0}", arg is null ? "null" : arg.ToString());
             }
         }
 

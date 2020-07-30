@@ -1292,7 +1292,7 @@ namespace System.Management.Automation.Remoting.Server
                                                                             data.Data);
                 if (_isSerializing)
                 {
-                    if (_dataToBeSentQueue == null)
+                    if (_dataToBeSentQueue is null)
                     {
                         _dataToBeSentQueue = new Queue<Tuple<RemoteDataObject, bool, bool>>();
                     }
@@ -1511,7 +1511,7 @@ namespace System.Management.Automation.Remoting.Server
         /// <returns>The extracted tag converted from a base-64 string.</returns>
         internal static byte[] ExtractEncodedXmlElement(string xmlBuffer, string xmlTag)
         {
-            if (xmlBuffer == null || xmlTag == null)
+            if (xmlBuffer is null || xmlTag is null)
                 return new byte[1];
 
             // the inboundShellInformation is in Xml format as per the SOAP WSMan spec.

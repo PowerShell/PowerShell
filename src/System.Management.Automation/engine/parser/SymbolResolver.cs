@@ -289,7 +289,7 @@ namespace System.Management.Automation.Language
             get
             {
                 // The goal is to re-use runspaces, because creating runspace is an expensive part in creating PowerShell instance.
-                if (t_usingStatementResolvePowerShell == null)
+                if (t_usingStatementResolvePowerShell is null)
                 {
                     if (Runspace.DefaultRunspace != null)
                     {
@@ -326,7 +326,7 @@ namespace System.Management.Automation.Language
 
         internal static void ResolveSymbols(Parser parser, ScriptBlockAst scriptBlockAst)
         {
-            Diagnostics.Assert(scriptBlockAst.Parent == null, "Can only resolve starting from the root");
+            Diagnostics.Assert(scriptBlockAst.Parent is null, "Can only resolve starting from the root");
 
             var usingState = scriptBlockAst.UsingStatements.Count > 0
                 ? new TypeResolutionState(TypeOps.GetNamespacesForTypeResolutionState(scriptBlockAst.UsingStatements), TypeResolutionState.emptyAssemblies)
@@ -381,7 +381,7 @@ namespace System.Management.Automation.Language
                 {
                     var expression = expressionAst;
                     var variableExpressionAst = expression as VariableExpressionAst;
-                    while (variableExpressionAst == null && expression != null)
+                    while (variableExpressionAst is null && expression != null)
                     {
                         var convertExpressionAst = expression as ConvertExpressionAst;
                         if (convertExpressionAst != null)
@@ -659,7 +659,7 @@ namespace System.Management.Automation.Language
                     : _typeResolutionState;
 
                 var type = TypeResolver.ResolveTypeNameWithContext(typeName, out e, null, trs);
-                if (type == null)
+                if (type is null)
                 {
                     if (_symbolTable.GetCurrentTypeDefinitionAst() != null)
                     {

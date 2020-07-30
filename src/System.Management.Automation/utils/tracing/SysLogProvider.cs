@@ -129,7 +129,7 @@ namespace System.Management.Automation.Tracing
         {
             get
             {
-                if (t_messageBuilder == null)
+                if (t_messageBuilder is null)
                 {
                     // NOTE: Thread static fields must be explicitly initialized for each thread.
                     t_messageBuilder = new StringBuilder(200);
@@ -252,7 +252,7 @@ namespace System.Management.Automation.Tracing
             int parameterCount;
             string resourceName = EventResource.GetMessage((int) eventId, out parameterCount);
 
-            if (resourceName == null)
+            if (resourceName is null)
             {
                 // If an event id was specified that is not found in the event resource lookup table,
                 // use a placeholder message that includes the event id.

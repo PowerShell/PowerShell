@@ -1333,7 +1333,7 @@ namespace Microsoft.PowerShell
 
         public override void WriteProgress(Int64 sourceId, ProgressRecord record)
         {
-            if (record == null)
+            if (record is null)
             {
                 Dbg.Assert(false, "WriteProgress called with null ProgressRecord");
             }
@@ -1849,7 +1849,7 @@ namespace Microsoft.PowerShell
             }
 
             Dbg.Assert(
-                       (s == null && result == ReadLineResult.endedOnBreak)
+                       (s is null && result == ReadLineResult.endedOnBreak)
                        || (s != null && result != ReadLineResult.endedOnBreak),
                        "s should only be null if input ended with a break");
 
@@ -1956,7 +1956,7 @@ namespace Microsoft.PowerShell
 
                 input = ReadLine(true, lastInput, out rlResult, false, false);
 
-                if (input == null)
+                if (input is null)
                 {
                     break;
                 }
@@ -1992,7 +1992,7 @@ namespace Microsoft.PowerShell
 
                     input = input.Remove(tabIndex);
 
-                    if (input != lastCompletion || commandCompletion == null)
+                    if (input != lastCompletion || commandCompletion is null)
                     {
                         completionInput = input;
                         commandCompletion = GetNewCompletionResults(input);

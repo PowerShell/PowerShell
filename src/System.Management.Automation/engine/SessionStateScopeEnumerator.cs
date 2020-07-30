@@ -33,7 +33,7 @@ namespace System.Management.Automation
             // the first scope in the lookup and then advance to the first
             // scope in the lookup
 
-            _currentEnumeratedScope = _currentEnumeratedScope == null ? _initialScope : _currentEnumeratedScope.Parent;
+            _currentEnumeratedScope = _currentEnumeratedScope is null ? _initialScope : _currentEnumeratedScope.Parent;
 
             // If the current scope is the global scope there is nowhere else
             // to do the lookup, so return false.
@@ -59,7 +59,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_currentEnumeratedScope == null)
+                if (_currentEnumeratedScope is null)
                 {
                     throw PSTraceSource.NewInvalidOperationException();
                 }

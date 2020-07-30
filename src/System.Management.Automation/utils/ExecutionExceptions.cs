@@ -31,7 +31,7 @@ namespace System.Management.Automation
         internal CmdletInvocationException(ErrorRecord errorRecord)
             : base(RetrieveMessage(errorRecord), RetrieveException(errorRecord))
         {
-            if (errorRecord == null)
+            if (errorRecord is null)
             {
                 throw new ArgumentNullException(nameof(errorRecord));
             }
@@ -56,7 +56,7 @@ namespace System.Management.Automation
                                            InvocationInfo invocationInfo)
             : base(RetrieveMessage(innerException), innerException)
         {
-            if (innerException == null)
+            if (innerException is null)
             {
                 throw new ArgumentNullException(nameof(innerException));
             }
@@ -140,7 +140,7 @@ namespace System.Management.Automation
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -163,7 +163,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
+                if (_errorRecord is null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
@@ -206,7 +206,7 @@ namespace System.Management.Automation
                     InvocationInfo myInvocation)
             : base(GetInnerException(innerException), myInvocation)
         {
-            if (innerException == null)
+            if (innerException is null)
             {
                 throw new ArgumentNullException(nameof(innerException));
             }
@@ -287,7 +287,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (_providerInvocationException == null)
+                return (_providerInvocationException is null)
                     ? null
                     : _providerInvocationException.ProviderInfo;
             }
@@ -298,7 +298,7 @@ namespace System.Management.Automation
         #region Internal
         private static Exception GetInnerException(Exception e)
         {
-            return (e == null) ? null : e.InnerException;
+            return (e is null) ? null : e.InnerException;
         }
         #endregion Internal
     }
@@ -471,7 +471,7 @@ namespace System.Management.Automation
         internal ActionPreferenceStopException(ErrorRecord error)
             : this(RetrieveMessage(error))
         {
-            if (error == null)
+            if (error is null)
             {
                 throw new ArgumentNullException(nameof(error));
             }
@@ -499,7 +499,7 @@ namespace System.Management.Automation
                                                string message)
             : this(invocationInfo, message)
         {
-            if (errorRecord == null)
+            if (errorRecord is null)
             {
                 throw new ArgumentNullException(nameof(errorRecord));
             }
@@ -723,7 +723,7 @@ namespace System.Management.Automation
         /// <param name="context">Context.</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -898,7 +898,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
+                if (_errorRecord is null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
@@ -1008,7 +1008,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
+                if (_errorRecord is null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),

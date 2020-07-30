@@ -261,9 +261,9 @@ namespace System.Management.Automation.Interpreter
                 case TypeCode.DateTime: return default(DateTime);
                 case TypeCode.Decimal: return default(Decimal);
                 // TypeCode.Empty:  null;
-                // TypeCode.Object: default(object) == null;
-                // TypeCode.DBNull: default(DBNull) == null;
-                // TypeCode.String: default(string) == null;
+                // TypeCode.Object: default(object) is null;
+                // TypeCode.DBNull: default(DBNull) is null;
+                // TypeCode.String: default(string) is null;
                 default: return null;
             }
         }
@@ -537,7 +537,7 @@ namespace System.Management.Automation.Interpreter
                                 _keysAndValues[i] = new KeyValuePair<TKey, TValue>(key, value);
                                 return;
                             }
-                            else if (_keysAndValues[i].Key == null)
+                            else if (_keysAndValues[i].Key is null)
                             {
                                 index = i;
                             }
@@ -725,7 +725,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Gets the current value if its not == null or calls the provided function
+        /// Gets the current value if its not is null or calls the provided function
         /// to create a new value.
         /// </summary>
         public T GetOrCreate(Func<T> func)
@@ -734,7 +734,7 @@ namespace System.Management.Automation.Interpreter
 
             StorageInfo si = GetStorageInfo();
             T res = si.Value;
-            if (res == null)
+            if (res is null)
             {
                 si.Value = res = func();
             }
@@ -841,7 +841,7 @@ namespace System.Management.Automation.Interpreter
                 }
 
                 // check and make sure we have a space in the array for our value
-                if (curStorage == null)
+                if (curStorage is null)
                 {
                     curStorage = new StorageInfo[threadId + 1];
                 }
@@ -862,7 +862,7 @@ namespace System.Management.Automation.Interpreter
 
                 // create our StorageInfo in the array, the empty check ensures we're only here
                 // when we need to create.
-                Debug.Assert(curStorage[threadId] == null || curStorage[threadId].Thread != Thread.CurrentThread);
+                Debug.Assert(curStorage[threadId] is null || curStorage[threadId].Thread != Thread.CurrentThread);
 
                 return curStorage[threadId] = newInfo;
             }

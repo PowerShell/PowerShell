@@ -26,7 +26,7 @@ namespace System.Management.Automation.Interpreter
 
         internal static InstructionFactory GetFactory(Type type)
         {
-            if (s_factories == null)
+            if (s_factories is null)
             {
                 var factories = new ConditionalWeakTable<Type, InstructionFactory>();
                 factories.Add(typeof(object), InstructionFactory<object>.Factory);
@@ -113,7 +113,7 @@ namespace System.Management.Automation.Interpreter
         {
             if (elementCount < MaxArrayInitElementCountCache)
             {
-                if (_newArrayInit == null)
+                if (_newArrayInit is null)
                 {
                     _newArrayInit = new Instruction[MaxArrayInitElementCountCache];
                 }

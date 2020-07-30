@@ -149,7 +149,7 @@ namespace System.Management.Automation.Interpreter
             for (int i = 0; i < count; i++)
             {
                 Expression box = GetClosureItem(node.Variables[i], false);
-                if (box == null)
+                if (box is null)
                 {
                     indexes[i] = vars.Count;
                     vars.Add(node.Variables[i]);
@@ -187,7 +187,7 @@ namespace System.Management.Automation.Interpreter
         protected override Expression VisitParameter(ParameterExpression node)
         {
             Expression closureItem = GetClosureItem(node, true);
-            if (closureItem == null)
+            if (closureItem is null)
             {
                 return node;
             }

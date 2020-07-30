@@ -713,7 +713,7 @@ namespace System.Management.Automation.Remoting
             object operationContext,
             bool timedOut)
         {
-            if (operationContext == null)
+            if (operationContext is null)
             {
                 return;
             }

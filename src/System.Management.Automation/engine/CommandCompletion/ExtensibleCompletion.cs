@@ -32,7 +32,7 @@ namespace System.Management.Automation
         /// <param name="type">The type must implement <see cref="IArgumentCompleter"/> and have a default constructor.</param>
         public ArgumentCompleterAttribute(Type type)
         {
-            if (type == null || (type.GetInterfaces().All(t => t != typeof(IArgumentCompleter))))
+            if (type is null || (type.GetInterfaces().All(t => t != typeof(IArgumentCompleter))))
             {
                 throw PSTraceSource.NewArgumentException(nameof(type));
             }
@@ -46,7 +46,7 @@ namespace System.Management.Automation
         /// <param name="scriptBlock"></param>
         public ArgumentCompleterAttribute(ScriptBlock scriptBlock)
         {
-            if (scriptBlock == null)
+            if (scriptBlock is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(scriptBlock));
             }
@@ -127,7 +127,7 @@ namespace System.Management.Automation
                                       (Context.NativeArgumentCompleters = new Dictionary<string, ScriptBlock>(StringComparer.OrdinalIgnoreCase));
             }
 
-            if (CommandName == null || CommandName.Length == 0)
+            if (CommandName is null || CommandName.Length == 0)
             {
                 CommandName = new[] { "" };
             }
@@ -174,7 +174,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentOutOfRangeException">For invalid arguments.</exception>
         public ArgumentCompletionsAttribute(params string[] completions)
         {
-            if (completions == null)
+            if (completions is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(completions));
             }

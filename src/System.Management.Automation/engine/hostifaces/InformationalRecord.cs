@@ -144,7 +144,7 @@ namespace System.Management.Automation
             // The invocation info may be null if the record was created via WriteVerbose/Warning/DebugLine instead of WriteVerbose/Warning/Debug, in that case
             // we set InformationalRecord_SerializeInvocationInfo to false.
             //
-            if (!this.SerializeExtendedInfo || _invocationInfo == null)
+            if (!this.SerializeExtendedInfo || _invocationInfo is null)
             {
                 RemotingEncoder.AddNoteProperty(psObject, "InformationalRecord_SerializeInvocationInfo", () => false);
             }

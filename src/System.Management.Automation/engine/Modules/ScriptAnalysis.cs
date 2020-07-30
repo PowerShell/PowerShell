@@ -212,7 +212,7 @@ namespace System.Management.Automation
 
             if (_forCompletion)
             {
-                if (Ast.GetAncestorAst<ScriptBlockAst>(functionDefinitionAst).Parent == null)
+                if (Ast.GetAncestorAst<ScriptBlockAst>(functionDefinitionAst).Parent is null)
                 {
                     DiscoveredExports.Add(functionName);
                 }
@@ -272,7 +272,7 @@ namespace System.Management.Automation
                 commandAst.GetCommandName() ??
                 GetSafeValueVisitor.GetSafeValue(commandAst.CommandElements[0], null, GetSafeValueVisitor.SafeValueContext.ModuleAnalysis) as string;
 
-            if (commandName == null)
+            if (commandName is null)
                 return AstVisitAction.SkipChildren;
 
             // They are trying to dot a script
@@ -427,7 +427,7 @@ namespace System.Management.Automation
 
         private void ProcessCmdletArguments(object value, Action<string> onEachArgument)
         {
-            if (value == null) return;
+            if (value is null) return;
 
             var commandName = value as string;
             if (commandName != null)
@@ -480,7 +480,7 @@ namespace System.Management.Automation
                             }
 
                             var argumentAst = specifiedParameter.Argument;
-                            if (argumentAst == null)
+                            if (argumentAst is null)
                             {
                                 argumentAst = commandAst.CommandElements[i] as ExpressionAst;
                                 if (argumentAst != null)

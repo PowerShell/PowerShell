@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Make sure at least one file was found...
-            if (filePaths == null || filePaths.Count < 1)
+            if (filePaths is null || filePaths.Count < 1)
             {
                 string message = StringUtil.Format(RemotingErrorIdStrings.PSSessionConfigurationFileNotFound, _path);
                 FileNotFoundException fnf = new FileNotFoundException(message);
@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                if (configTable == null)
+                if (configTable is null)
                 {
                     WriteObject(false);
                     return;

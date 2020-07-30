@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
             // If it's not a forwarded event, the user must specify
             // an action
             if (
-                (Action == null) &&
+                (Action is null) &&
                 (!(bool)Forward)
                )
             {

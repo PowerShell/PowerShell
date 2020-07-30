@@ -298,7 +298,7 @@ namespace System.Diagnostics.Eventing
                 return sRet;
             }
 
-            if (data == null)
+            if (data is null)
             {
                 dataDescriptor->Size = 0;
                 dataDescriptor->DataPointer = 0;
@@ -437,7 +437,7 @@ namespace System.Diagnostics.Eventing
         {
             int status = 0;
 
-            if (eventMessage == null)
+            if (eventMessage is null)
             {
                 throw new ArgumentNullException(nameof(eventMessage));
             }
@@ -508,7 +508,7 @@ namespace System.Diagnostics.Eventing
         {
             uint status = 0;
 
-            if (data == null)
+            if (data is null)
             {
                 throw new ArgumentNullException("dataString");
             }

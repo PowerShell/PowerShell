@@ -180,7 +180,7 @@ namespace System.Management.Automation.Interpreter
 
         internal void SaveTraceToException(Exception exception)
         {
-            if (exception.Data[typeof(InterpretedFrameInfo)] == null)
+            if (exception.Data[typeof(InterpretedFrameInfo)] is null)
             {
                 exception.Data[typeof(InterpretedFrameInfo)] = new List<InterpretedFrameInfo>(GetStackTraceDebugInfo()).ToArray();
             }

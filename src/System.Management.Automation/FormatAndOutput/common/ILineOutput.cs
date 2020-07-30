@@ -281,9 +281,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="displayCells">Helper object for manipulating strings.</param>
         internal WriteLineHelper(bool lineWrap, WriteCallback wlc, WriteCallback wc, DisplayCells displayCells)
         {
-            if (wlc == null)
+            if (wlc is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(wlc));
-            if (displayCells == null)
+            if (displayCells is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(displayCells));
 
             _displayCells = displayCells;
@@ -473,7 +473,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal StreamingTextWriter(WriteLineCallback writeCall, CultureInfo culture)
             : base(culture)
         {
-            if (writeCall == null)
+            if (writeCall is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(writeCall));
 
             _writeCall = writeCall;

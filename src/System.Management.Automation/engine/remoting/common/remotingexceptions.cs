@@ -473,7 +473,7 @@ namespace System.Management.Automation.Remoting
         protected PSRemotingTransportException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -492,7 +492,7 @@ namespace System.Management.Automation.Remoting
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -616,7 +616,7 @@ namespace System.Management.Automation.Remoting
         protected PSRemotingTransportRedirectException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -657,7 +657,7 @@ namespace System.Management.Automation.Remoting
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }

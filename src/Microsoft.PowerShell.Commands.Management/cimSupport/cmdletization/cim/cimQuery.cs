@@ -319,7 +319,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 throw new ArgumentNullException(nameof(optionName));
             }
 
-            if (optionValue == null)
+            if (optionValue is null)
             {
                 throw new ArgumentNullException(nameof(optionValue));
             }
@@ -333,7 +333,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal StartableJob GetQueryJob(CimJobContext jobContext)
         {
-            if (_associationName == null)
+            if (_associationName is null)
             {
                 return new QueryInstancesJob(jobContext, this, _wqlCondition.ToString());
             }

@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.MarkdownRender
             // If the next sibling is null, then this is the last line in the paragraph.
             // Add new line character at the end.
             // Else just write without newline at the end.
-            if (obj.NextSibling == null)
+            if (obj.NextSibling is null)
             {
                 renderer.WriteLine(obj.ToString());
             }

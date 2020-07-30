@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void RegisterModuleCleanUp(PSModuleInfo moduleInfo)
         {
-            if (moduleInfo == null)
+            if (moduleInfo is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(moduleInfo));
             }
@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     value = Array.Empty<string>();
                 }
@@ -703,7 +703,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(commandName));
             }
 
-            if (runtimeException == null)
+            if (runtimeException is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(runtimeException));
             }
@@ -830,7 +830,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (_existingCommands == null)
+                if (_existingCommands is null)
                 {
                     _existingCommands = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
                     CommandSearcher searcher = new CommandSearcher(
@@ -901,7 +901,7 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 // try to get the list from server's application private data
-                if (_commandSkipListFromServer == null)
+                if (_commandSkipListFromServer is null)
                 {
                     string[] serverDeclaredListOfCommandsToSkip;
                     if (PSPrimitiveDictionary.TryPathGet(
@@ -919,7 +919,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // fallback to the default list that hardcodes ...
-                if (_commandSkipListFromServer == null)
+                if (_commandSkipListFromServer is null)
                 {
                     _commandSkipListFromServer = new List<string>();
 
@@ -977,7 +977,7 @@ namespace Microsoft.PowerShell.Commands
 
         private T ConvertTo<T>(string commandName, object value, bool nullOk)
         {
-            if (value == null)
+            if (value is null)
             {
                 if (nullOk)
                 {
@@ -1006,7 +1006,7 @@ namespace Microsoft.PowerShell.Commands
         private T GetPropertyValue<T>(string commandName, PSObject pso, string propertyName, bool nullOk)
         {
             PSPropertyInfo property = pso.Properties[propertyName];
-            if (property == null)
+            if (property is null)
             {
                 this.ThrowTerminatingError(this.GetErrorMalformedDataFromRemoteCommand(commandName));
             }
@@ -1030,7 +1030,7 @@ namespace Microsoft.PowerShell.Commands
 
         private List<T> RehydrateList<T>(string commandName, object deserializedList, Func<PSObject, T> itemRehydrator)
         {
-            if (itemRehydrator == null)
+            if (itemRehydrator is null)
             {
                 itemRehydrator = delegate (PSObject pso) { return ConvertTo<T>(commandName, pso); };
             }
@@ -1057,7 +1057,7 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert(deserializedObject != null, "deserializedObject parameter != null");
             Dbg.Assert(!string.IsNullOrEmpty(propertyName), "propertyName parameter != null");
 
-            if (valueRehydrator == null)
+            if (valueRehydrator is null)
             {
                 valueRehydrator = delegate (PSObject pso) { return ConvertTo<V>(commandName, pso); };
             }
@@ -1125,7 +1125,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns><c>true</c> if the type is safe; <c>false</c> otherwise.</returns>
         private static bool IsSafeTypeConstraint(Type type)
         {
-            if (type == null)
+            if (type is null)
             {
                 return true; // no type constraint => safe
             }
@@ -1190,14 +1190,14 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            Dbg.Assert(commandMetadata.CommandType == null, "CommandType shouldn't get rehydrated");
+            Dbg.Assert(commandMetadata.CommandType is null, "CommandType shouldn't get rehydrated");
             Dbg.Assert(commandMetadata.ImplementsDynamicParameters == false, "Proxies shouldn't do dynamic parameters");
 
             if (commandMetadata.Parameters != null)
             {
                 foreach (ParameterMetadata parameter in commandMetadata.Parameters.Values)
                 {
-                    Dbg.Assert(parameter.Attributes == null || parameter.Attributes.Count == 0,
+                    Dbg.Assert(parameter.Attributes is null || parameter.Attributes.Count == 0,
                         "Attributes shouldn't get rehydrated");
 
                     // sanitize - remove type constraint that are not allowed
@@ -1269,7 +1269,7 @@ namespace Microsoft.PowerShell.Commands
 
         private ParameterMetadata RehydrateParameterMetadata(PSObject deserializedParameterMetadata)
         {
-            if (deserializedParameterMetadata == null)
+            if (deserializedParameterMetadata is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(deserializedParameterMetadata));
             }
@@ -1285,7 +1285,7 @@ namespace Microsoft.PowerShell.Commands
             parameterSets.Add(ParameterAttribute.AllParameterSets, parameterSetMetadata);
 
             return new ParameterMetadata(
-                aliases == null ? new Collection<string>() : new Collection<string>(aliases),
+                aliases is null ? new Collection<string>() : new Collection<string>(aliases),
                 isDynamic,
                 name,
                 parameterSets,
@@ -1310,7 +1310,7 @@ namespace Microsoft.PowerShell.Commands
 
         private CommandMetadata RehydrateCommandMetadata(PSObject deserializedCommandInfo, out string resolvedCommandName)
         {
-            if (deserializedCommandInfo == null)
+            if (deserializedCommandInfo is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(deserializedCommandInfo));
             }
@@ -1494,14 +1494,14 @@ namespace Microsoft.PowerShell.Commands
                     measurements = powerShell.Invoke();
                 }
 
-                if ((measurements == null) || (measurements.Count != 1))
+                if ((measurements is null) || (measurements.Count != 1))
                 {
                     _assumeMeasureObjectIsAvailable = false;
                     return -1;
                 }
 
                 PSPropertyInfo countProperty = measurements[0].Properties["Count"];
-                if (countProperty == null)
+                if (countProperty is null)
                 {
                     _assumeMeasureObjectIsAvailable = false;
                     return -1;
@@ -1584,7 +1584,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>(rehydrated) CommandMetadata objects.</returns>
         internal List<ExtendedTypeDefinition> GetRemoteFormatData()
         {
-            if ((this.FormatTypeName == null) || (this.FormatTypeName.Length == 0) ||
+            if ((this.FormatTypeName is null) || (this.FormatTypeName.Length == 0) ||
                 (_commandParameterSpecified && !_formatTypeNamesSpecified))
             {
                 return new List<ExtendedTypeDefinition>();
@@ -1691,7 +1691,7 @@ namespace Microsoft.PowerShell.Commands
                 this.Session.Runspace.GetRemoteProtocolVersion() == RemotingConstants.ProtocolVersionWin7RC;
 
             alias2resolvedCommandName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            if ((this.CommandName == null) || (this.CommandName.Length == 0) ||
+            if ((this.CommandName is null) || (this.CommandName.Length == 0) ||
                 (!_commandParameterSpecified && _formatTypeNamesSpecified))
             {
                 return new List<CommandMetadata>();
@@ -1963,7 +1963,7 @@ namespace Microsoft.PowerShell.Commands
 
         private string EscapeFunctionNameForRemoteHelp(string name)
         {
-            if (name == null)
+            if (name is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -2013,7 +2013,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void GenerateManifest(TextWriter writer, string psm1fileName, string formatPs1xmlFileName)
         {
-            if (writer == null)
+            if (writer is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(writer));
             }
@@ -2086,7 +2086,7 @@ $script:MyModule = $MyInvocation.MyCommand.ScriptBlock.Module
 
         private void GenerateModuleHeader(TextWriter writer)
         {
-            if (writer == null)
+            if (writer is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(writer));
             }
@@ -2123,7 +2123,7 @@ function Write-PSImplicitRemotingMessage
 
         private void GenerateHelperFunctionsWriteMessage(TextWriter writer)
         {
-            if (writer == null)
+            if (writer is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(writer));
             }
@@ -2178,7 +2178,7 @@ if ($PSSessionOverride) {{ Set-PSImplicitRemotingSession $PSSessionOverride }}
 
         private void GenerateHelperFunctionsSetImplicitRunspace(TextWriter writer)
         {
-            if (writer == null)
+            if (writer is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(writer));
             }
@@ -2210,7 +2210,7 @@ function Get-PSImplicitRemotingSessionOption
 
         private void GenerateHelperFunctionsGetSessionOption(TextWriter writer)
         {
-            if (writer == null)
+            if (writer is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(writer));
             }
@@ -2318,7 +2318,7 @@ function Get-PSImplicitRemotingSessionOption
 
         private string GenerateProxyCredentialParameter(WSManConnectionInfo wsmanConnectionInfo)
         {
-            if ((wsmanConnectionInfo == null) || (wsmanConnectionInfo.ProxyCredential == null))
+            if ((wsmanConnectionInfo is null) || (wsmanConnectionInfo.ProxyCredential is null))
             {
                 return string.Empty;
             }
@@ -2405,7 +2405,7 @@ function Get-PSImplicitRemotingSession
 
         private void GenerateHelperFunctionsGetImplicitRunspace(TextWriter writer)
         {
-            if (writer == null)
+            if (writer is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(writer));
             }
@@ -2564,7 +2564,7 @@ function Get-PSImplicitRemotingSession
         private string GenerateConnectionStringForNewRunspace()
         {
             WSManConnectionInfo connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
-            if (connectionInfo == null)
+            if (connectionInfo is null)
             {
                 VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
                 if (vmConnectionInfo != null)
@@ -2610,7 +2610,7 @@ function Get-PSImplicitRemotingSession
         private string GenerateAllowRedirectionParameter()
         {
             WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
-            if (wsmanConnectionInfo == null)
+            if (wsmanConnectionInfo is null)
             {
                 return string.Empty;
             }
@@ -2637,7 +2637,7 @@ function Get-PSImplicitRemotingSession
             }
 
             WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
-            if (wsmanConnectionInfo == null)
+            if (wsmanConnectionInfo is null)
             {
                 return string.Empty;
             }
@@ -2657,7 +2657,7 @@ function Get-PSImplicitRemotingSession
 
         private string GenerateCredentialParameter()
         {
-            if (_remoteRunspaceInfo.Runspace.ConnectionInfo.Credential == null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo.Credential is null)
             {
                 return string.Empty;
             }
@@ -2677,7 +2677,7 @@ function Get-PSImplicitRemotingSession
 
         private string GenerateCertificateThumbprintParameter()
         {
-            if (_remoteRunspaceInfo.Runspace.ConnectionInfo.CertificateThumbprint == null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo.CertificateThumbprint is null)
             {
                 return string.Empty;
             }
@@ -2757,7 +2757,7 @@ function Get-PSImplicitRemotingClientSideParameters
 
         private void GenerateHelperFunctionsClientSideParameters(TextWriter writer)
         {
-            if (writer == null)
+            if (writer is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(writer));
             }
@@ -2836,7 +2836,7 @@ function Get-PSImplicitRemotingClientSideParameters
 
         private void GenerateCommandProxy(TextWriter writer, CommandMetadata commandMetadata)
         {
-            if (writer == null)
+            if (writer is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(writer));
             }
@@ -2858,12 +2858,12 @@ function Get-PSImplicitRemotingClientSideParameters
 
         private void GenerateCommandProxy(TextWriter writer, IEnumerable<CommandMetadata> listOfCommandMetadata)
         {
-            if (writer == null)
+            if (writer is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(writer));
             }
 
-            if (listOfCommandMetadata == null)
+            if (listOfCommandMetadata is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(listOfCommandMetadata));
             }
@@ -2885,12 +2885,12 @@ function Get-PSImplicitRemotingClientSideParameters
 
         private void GenerateExportDeclaration(TextWriter writer, IEnumerable<CommandMetadata> listOfCommandMetadata)
         {
-            if (writer == null)
+            if (writer is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(writer));
             }
 
-            if (listOfCommandMetadata == null)
+            if (listOfCommandMetadata is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(listOfCommandMetadata));
             }
@@ -2904,7 +2904,7 @@ function Get-PSImplicitRemotingClientSideParameters
 
         private List<string> GetListOfCommandNames(IEnumerable<CommandMetadata> listOfCommandMetadata)
         {
-            if (listOfCommandMetadata == null)
+            if (listOfCommandMetadata is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(listOfCommandMetadata));
             }
@@ -2920,7 +2920,7 @@ function Get-PSImplicitRemotingClientSideParameters
 
         private string GenerateArrayString(IEnumerable<string> listOfStrings)
         {
-            if (listOfStrings == null)
+            if (listOfStrings is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(listOfStrings));
             }
@@ -2981,12 +2981,12 @@ function Get-PSImplicitRemotingClientSideParameters
 
         private void GenerateFormatFile(TextWriter writer, List<ExtendedTypeDefinition> listOfFormatData)
         {
-            if (writer == null)
+            if (writer is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(writer));
             }
 
-            if (listOfFormatData == null)
+            if (listOfFormatData is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(listOfFormatData));
             }
@@ -3043,7 +3043,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 FileShare.None);
             using (TextWriter writer = new StreamWriter(psm1, encoding))
             {
-                if (listOfCommandMetadata == null)
+                if (listOfCommandMetadata is null)
                 {
                     listOfCommandMetadata = new List<CommandMetadata>();
                 }
@@ -3064,7 +3064,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 FileShare.None);
             using (TextWriter writer = new StreamWriter(formatPs1xml, encoding))
             {
-                if (listOfFormatData == null)
+                if (listOfFormatData is null)
                 {
                     listOfFormatData = new List<ExtendedTypeDefinition>();
                 }
@@ -3079,7 +3079,7 @@ function Get-PSImplicitRemotingClientSideParameters
             ExecutionPolicy executionPolicy = SecuritySupport.GetExecutionPolicy(Utils.DefaultPowerShellShellID);
             if (executionPolicy == ExecutionPolicy.Restricted || executionPolicy == ExecutionPolicy.AllSigned)
             {
-                if (certificate == null)
+                if (certificate is null)
                 {
                     string message = ImplicitRemotingStrings.CertificateNeeded;
                     throw new PSInvalidOperationException(message);

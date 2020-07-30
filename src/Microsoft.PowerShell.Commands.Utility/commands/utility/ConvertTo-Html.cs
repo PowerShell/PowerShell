@@ -345,7 +345,7 @@ namespace Microsoft.PowerShell.Commands
             TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
             ParameterProcessor processor =
                 new ParameterProcessor(new ConvertHTMLExpressionParameterDefinition());
-            if (properties == null)
+            if (properties is null)
             {
                 properties = new object[] { "*" };
             }
@@ -422,7 +422,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private static string SafeToString(object obj)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 return string.Empty;
             }
@@ -689,7 +689,7 @@ namespace Microsoft.PowerShell.Commands
             // writes the table headers
             // it is not in BeginProcessing because the first inputObject is needed for
             // the number of columns and column name
-            if (_inputObject == null || _inputObject == AutomationNull.Value)
+            if (_inputObject is null || _inputObject == AutomationNull.Value)
             {
                 return;
             }
@@ -698,7 +698,7 @@ namespace Microsoft.PowerShell.Commands
             if (!_isTHWritten)
             {
                 InitializeResolvedNameMshParameters();
-                if (_resolvedNameMshParameters == null || _resolvedNameMshParameters.Count == 0)
+                if (_resolvedNameMshParameters is null || _resolvedNameMshParameters.Count == 0)
                 {
                     return;
                 }

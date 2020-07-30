@@ -70,7 +70,7 @@ namespace System.Management.Automation.Remoting
             foreach (FieldInfo fieldInfo in fieldInfos)
             {
                 object fieldValue = fieldInfo.GetValue(obj);
-                if (fieldValue == null)
+                if (fieldValue is null)
                 {
                     continue;
                 }
@@ -93,10 +93,10 @@ namespace System.Management.Automation.Remoting
             foreach (PSPropertyInfo propertyInfo in psObject.Properties)
             {
                 FieldInfo fieldInfo = type.GetField(propertyInfo.Name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                if (propertyInfo.Value == null) { throw RemoteHostExceptions.NewDecodingFailedException(); }
+                if (propertyInfo.Value is null) { throw RemoteHostExceptions.NewDecodingFailedException(); }
 
                 object fieldValue = DecodeObject(propertyInfo.Value, fieldInfo.FieldType);
-                if (fieldValue == null) { throw RemoteHostExceptions.NewDecodingFailedException(); }
+                if (fieldValue is null) { throw RemoteHostExceptions.NewDecodingFailedException(); }
 
                 fieldInfo.SetValue(obj, fieldValue);
             }
@@ -257,7 +257,7 @@ namespace System.Management.Automation.Remoting
 
             ErrorRecord errorRecord = null;
             IContainsErrorRecord containsErrorRecord = exception as IContainsErrorRecord;
-            if (containsErrorRecord == null)
+            if (containsErrorRecord is null)
             {
                 // If this is a .NET exception then wrap in an ErrorRecord.
                 errorRecord = new ErrorRecord(exception, "RemoteHostExecutionException", ErrorCategory.NotSpecified, null);
@@ -281,7 +281,7 @@ namespace System.Management.Automation.Remoting
         private static Exception DecodeException(PSObject psObject)
         {
             ErrorRecord errorRecord = ErrorRecord.FromPSObjectForRemoting(psObject);
-            if (errorRecord == null)
+            if (errorRecord is null)
             {
                 throw RemoteHostExceptions.NewDecodingErrorForErrorRecordException();
             }
@@ -318,7 +318,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal static object EncodeObject(object obj)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 return null;
             }
@@ -407,7 +407,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal static object DecodeObject(object obj, Type type)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 return null;
             }
@@ -512,7 +512,7 @@ namespace System.Management.Automation.Remoting
         {
             Dbg.Assert(psObject != null, "Expected psObject != null");
             Dbg.Assert(propertyName != null, "Expected propertyName != null");
-            if (propertyValue == null)
+            if (propertyValue is null)
             {
                 return;
             }
@@ -573,7 +573,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private static PSObject EncodeObjectWithType(object obj)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 return null;
             }
@@ -589,7 +589,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private static object DecodeObjectWithType(object obj)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 return null;
             }
@@ -744,7 +744,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private static T SafelyGetBaseObject<T>(PSObject psObject)
         {
-            if (psObject == null || psObject.BaseObject == null || !(psObject.BaseObject is T))
+            if (psObject is null || psObject.BaseObject is null || !(psObject.BaseObject is T))
             {
                 throw RemoteHostExceptions.NewDecodingFailedException();
             }
@@ -771,7 +771,7 @@ namespace System.Management.Automation.Remoting
         private static T SafelyGetPropertyValue<T>(PSObject psObject, string key)
         {
             PSPropertyInfo propertyInfo = psObject.Properties[key];
-            if (propertyInfo == null || propertyInfo.Value == null || !(propertyInfo.Value is T))
+            if (propertyInfo is null || propertyInfo.Value is null || !(propertyInfo.Value is T))
             {
                 throw RemoteHostExceptions.NewDecodingFailedException();
             }

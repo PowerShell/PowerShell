@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         // now read the columns header section
                         LoadHeadersSection(tableBody, n);
-                        if (tableBody.header.columnHeaderDefinitionList == null)
+                        if (tableBody.header.columnHeaderDefinitionList is null)
                         {
                             // if we have an empty list, it means there was a failure
                             return null; // fatal error
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         // now read the columns section
                         LoadRowEntriesSection(tableBody, n);
-                        if (tableBody.defaultDefinition == null)
+                        if (tableBody.defaultDefinition is null)
                         {
                             return null; // fatal error
                         }
@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                         labelNodeFound = true;
                         chd.label = LoadLabel(n);
-                        if (chd.label == null)
+                        if (chd.label is null)
                         {
                             return null; // fatal error
                         }
@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             val = -1;
             string text = GetMandatoryInnerText(n);
-            if (text == null)
+            if (text is null)
                 return false;
             bool isInteger = int.TryParse(text, out val);
             if (!isInteger || val <= 0)
@@ -269,7 +269,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             alignmentValue = TextAlignment.Undefined;
             string alignmentString = GetMandatoryInnerText(n);
-            if (alignmentString == null)
+            if (alignmentString is null)
             {
                 return false; // fatal error
             }
@@ -306,7 +306,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (MatchNodeName(n, XmlTags.TableRowEntryNode))
                     {
                         TableRowDefinition trd = LoadRowEntryDefinition(n, rowEntryIndex++);
-                        if (trd == null)
+                        if (trd is null)
                         {
                             // Error at XPath {0} in file {1}: {2} failed to load.
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.LoadTagFailed, ComputeCurrentXPath(), FilePath, XmlTags.TableRowEntryNode));
@@ -315,9 +315,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
 
                         // determine if we have a default entry and if it's already set
-                        if (trd.appliesTo == null)
+                        if (trd.appliesTo is null)
                         {
-                            if (tableBody.defaultDefinition == null)
+                            if (tableBody.defaultDefinition is null)
                             {
                                 tableBody.defaultDefinition = trd;
                             }
@@ -340,7 +340,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-                if (tableBody.defaultDefinition == null)
+                if (tableBody.defaultDefinition is null)
                 {
                     // Error at XPath {0} in file {1}: There must be at least one default {2}.
                     this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoDefaultShapeEntry, ComputeCurrentXPath(), FilePath, XmlTags.TableRowEntryNode));
@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
 
                         LoadColumnEntries(n, trd);
-                        if (trd.rowItemDefinitionList == null)
+                        if (trd.rowItemDefinitionList is null)
                         {
                             return null; // fatal error
                         }

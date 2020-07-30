@@ -132,7 +132,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (_errorRecord == null)
+                if (_errorRecord is null)
                 {
                     _isErrorRecordOriginallyNull = true;
                     _errorRecord = new ErrorRecord(
@@ -190,7 +190,7 @@ namespace System.Management.Automation.Runspaces
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }

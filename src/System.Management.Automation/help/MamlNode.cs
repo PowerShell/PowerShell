@@ -98,7 +98,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_mshObject == null)
+                if (_mshObject is null)
                 {
                     // There is no XSLT to convert docs to supported maml format
                     // We dont want comments etc to spoil our format.
@@ -192,7 +192,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private PSObject GetPSObject(XmlNode xmlNode)
         {
-            if (xmlNode == null)
+            if (xmlNode is null)
                 return new PSObject();
 
             PSObject mshObject = null;
@@ -300,7 +300,7 @@ namespace System.Management.Automation
         {
             Hashtable properties = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
-            if (xmlNode == null)
+            if (xmlNode is null)
                 return properties;
 
             if (xmlNode.ChildNodes != null)
@@ -378,14 +378,14 @@ namespace System.Management.Automation
         {
             ArrayList propertyValues = (ArrayList)properties[name];
 
-            if (propertyValues == null)
+            if (propertyValues is null)
             {
                 propertyValues = new ArrayList();
 
                 properties[name] = propertyValues;
             }
 
-            if (mshObject == null)
+            if (mshObject is null)
                 return;
 
             if (mshObject.BaseObject is PSCustomObject || !mshObject.BaseObject.GetType().Equals(typeof(PSObject[])))
@@ -417,7 +417,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static Hashtable SimplifyProperties(Hashtable properties)
         {
-            if (properties == null)
+            if (properties is null)
                 return null;
 
             Hashtable result = new Hashtable(StringComparer.OrdinalIgnoreCase);
@@ -427,7 +427,7 @@ namespace System.Management.Automation
             {
                 ArrayList propertyValues = (ArrayList)enumerator.Value;
 
-                if (propertyValues == null || propertyValues.Count == 0)
+                if (propertyValues is null || propertyValues.Count == 0)
                     continue;
 
                 if (propertyValues.Count == 1)
@@ -458,10 +458,10 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static bool IsAtomic(XmlNode xmlNode)
         {
-            if (xmlNode == null)
+            if (xmlNode is null)
                 return false;
 
-            if (xmlNode.ChildNodes == null)
+            if (xmlNode.ChildNodes is null)
                 return true;
 
             if (xmlNode.ChildNodes.Count > 1)
@@ -488,10 +488,10 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static bool IncludeMamlFormatting(XmlNode xmlNode)
         {
-            if (xmlNode == null)
+            if (xmlNode is null)
                 return false;
 
-            if (xmlNode.ChildNodes == null || xmlNode.ChildNodes.Count == 0)
+            if (xmlNode.ChildNodes is null || xmlNode.ChildNodes.Count == 0)
                 return false;
 
             foreach (XmlNode childNode in xmlNode.ChildNodes)
@@ -536,7 +536,7 @@ namespace System.Management.Automation
         {
             Collection<string> typeNames = mshObject.TypeNames;
 
-            if (typeNames == null || typeNames.Count == 0)
+            if (typeNames is null || typeNames.Count == 0)
                 return false;
 
             return typeNames[typeNames.Count - 1].Equals("MamlTextItem", StringComparison.OrdinalIgnoreCase);
@@ -693,10 +693,10 @@ namespace System.Management.Automation
 
         private static string GetNodePath(XmlNode xmlNode)
         {
-            if (xmlNode == null)
+            if (xmlNode is null)
                 return string.Empty;
 
-            if (xmlNode.ParentNode == null)
+            if (xmlNode.ParentNode is null)
                 return "\\" + xmlNode.LocalName;
 
             return GetNodePath(xmlNode.ParentNode) + "\\" + xmlNode.LocalName + GetNodeIndex(xmlNode);
@@ -704,7 +704,7 @@ namespace System.Management.Automation
 
         private static string GetNodeIndex(XmlNode xmlNode)
         {
-            if (xmlNode == null || xmlNode.ParentNode == null)
+            if (xmlNode is null || xmlNode.ParentNode is null)
                 return string.Empty;
 
             int index = 0;
@@ -748,7 +748,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static PSObject GetParaPSObject(XmlNode xmlNode, bool newLine, bool trim = true)
         {
-            if (xmlNode == null)
+            if (xmlNode is null)
                 return null;
 
             if (!xmlNode.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
@@ -810,13 +810,13 @@ namespace System.Management.Automation
         {
             ArrayList mshObjects = new ArrayList();
 
-            if (xmlNode == null)
+            if (xmlNode is null)
                 return mshObjects;
 
             if (!xmlNode.LocalName.Equals("list", StringComparison.OrdinalIgnoreCase))
                 return mshObjects;
 
-            if (xmlNode.ChildNodes == null || xmlNode.ChildNodes.Count == 0)
+            if (xmlNode.ChildNodes is null || xmlNode.ChildNodes.Count == 0)
                 return mshObjects;
 
             bool ordered = IsOrderedList(xmlNode);
@@ -848,10 +848,10 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static bool IsOrderedList(XmlNode xmlNode)
         {
-            if (xmlNode == null)
+            if (xmlNode is null)
                 return false;
 
-            if (xmlNode.Attributes == null || xmlNode.Attributes.Count == 0)
+            if (xmlNode.Attributes is null || xmlNode.Attributes.Count == 0)
                 return false;
 
             foreach (XmlNode attribute in xmlNode.Attributes)
@@ -875,7 +875,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private PSObject GetListItemPSObject(XmlNode xmlNode, bool ordered, ref int index)
         {
-            if (xmlNode == null)
+            if (xmlNode is null)
                 return null;
 
             if (!xmlNode.LocalName.Equals("listItem", StringComparison.OrdinalIgnoreCase))
@@ -941,13 +941,13 @@ namespace System.Management.Automation
         {
             ArrayList mshObjects = new ArrayList();
 
-            if (xmlNode == null)
+            if (xmlNode is null)
                 return mshObjects;
 
             if (!xmlNode.LocalName.Equals("definitionList", StringComparison.OrdinalIgnoreCase))
                 return mshObjects;
 
-            if (xmlNode.ChildNodes == null || xmlNode.ChildNodes.Count == 0)
+            if (xmlNode.ChildNodes is null || xmlNode.ChildNodes.Count == 0)
                 return mshObjects;
 
             foreach (XmlNode childNode in xmlNode.ChildNodes)
@@ -992,7 +992,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private PSObject GetDefinitionListItemPSObject(XmlNode xmlNode)
         {
-            if (xmlNode == null)
+            if (xmlNode is null)
                 return null;
 
             if (!xmlNode.LocalName.Equals("definitionListItem", StringComparison.OrdinalIgnoreCase))
@@ -1041,13 +1041,13 @@ namespace System.Management.Automation
         /// <returns></returns>
         private string GetDefinitionText(XmlNode xmlNode)
         {
-            if (xmlNode == null)
+            if (xmlNode is null)
                 return null;
 
             if (!xmlNode.LocalName.Equals("definition", StringComparison.OrdinalIgnoreCase))
                 return null;
 
-            if (xmlNode.ChildNodes == null || xmlNode.ChildNodes.Count == 0)
+            if (xmlNode.ChildNodes is null || xmlNode.ChildNodes.Count == 0)
                 return string.Empty;
 
             if (xmlNode.ChildNodes.Count > 1)
@@ -1112,7 +1112,7 @@ namespace System.Management.Automation
             string[] lines = noTabText.Split(Utils.Separators.Newline);
             string[] trimedLines = TrimLines(lines);
 
-            if (trimedLines == null || trimedLines.Length == 0)
+            if (trimedLines is null || trimedLines.Length == 0)
                 return string.Empty;
 
             int minIndentation = GetMinIndentation(trimedLines);
@@ -1146,7 +1146,7 @@ namespace System.Management.Automation
         /// <returns>An string array with empty lines trimed on either end.</returns>
         private static string[] TrimLines(string[] lines)
         {
-            if (lines == null || lines.Length == 0)
+            if (lines is null || lines.Length == 0)
                 return null;
 
             int i = 0;

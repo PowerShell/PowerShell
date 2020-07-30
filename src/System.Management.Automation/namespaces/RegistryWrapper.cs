@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
         public IRegistryWrapper CreateSubKey(string subkey)
         {
             RegistryKey newKey = _regKey.CreateSubKey(subkey);
-            if (newKey == null)
+            if (newKey is null)
                 return null;
             else
                 return new RegistryWrapper(newKey);
@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
         public IRegistryWrapper OpenSubKey(string name, bool writable)
         {
             RegistryKey newKey = _regKey.OpenSubKey(name, writable);
-            if (newKey == null)
+            if (newKey is null)
                 return null;
             else
                 return new RegistryWrapper(newKey);
@@ -305,7 +305,7 @@ namespace Microsoft.PowerShell.Commands
             using (_provider.CurrentPSTransaction)
             {
                 TransactedRegistryKey newKey = _txRegKey.CreateSubKey(subkey);
-                if (newKey == null)
+                if (newKey is null)
                     return null;
                 else
                     return new TransactedRegistryWrapper(newKey, _provider);
@@ -317,7 +317,7 @@ namespace Microsoft.PowerShell.Commands
             using (_provider.CurrentPSTransaction)
             {
                 TransactedRegistryKey newKey = _txRegKey.OpenSubKey(name, writable);
-                if (newKey == null)
+                if (newKey is null)
                     return null;
                 else
                     return new TransactedRegistryWrapper(newKey, _provider);

@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="wildcardPatternsStrings">Array of pattern strings to use.</param>
         internal PSPropertyExpressionFilter(string[] wildcardPatternsStrings)
         {
-            if (wildcardPatternsStrings == null)
+            if (wildcardPatternsStrings is null)
             {
                 throw new ArgumentNullException(nameof(wildcardPatternsStrings));
             }
@@ -361,7 +361,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _exclusionFilter = new PSPropertyExpressionFilter(ExcludeProperty);
                 // ExcludeProperty implies -Property * for better UX
-                if ((Property == null) || (Property.Length == 0))
+                if ((Property is null) || (Property.Length == 0))
                 {
                     Property = new object[] { "*" };
                     _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
@@ -371,7 +371,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessObject(PSObject inputObject)
         {
-            if ((Property == null || Property.Length == 0) && string.IsNullOrEmpty(ExpandProperty))
+            if ((Property is null || Property.Length == 0) && string.IsNullOrEmpty(ExpandProperty))
             {
                 FilteredWriteObject(inputObject, new List<PSNoteProperty>());
                 return;
@@ -430,10 +430,10 @@ namespace Microsoft.PowerShell.Commands
             List<PSPropertyExpressionResult> expressionResults = new List<PSPropertyExpressionResult>();
             foreach (PSPropertyExpression resolvedName in ex.ResolveNames(inputObject))
             {
-                if (_exclusionFilter == null || !_exclusionFilter.IsMatch(resolvedName))
+                if (_exclusionFilter is null || !_exclusionFilter.IsMatch(resolvedName))
                 {
                     List<PSPropertyExpressionResult> tempExprResults = resolvedName.GetValues(inputObject);
-                    if (tempExprResults == null) continue;
+                    if (tempExprResults is null) continue;
                     foreach (PSPropertyExpressionResult mshExpRes in tempExprResults)
                     {
                         expressionResults.Add(mshExpRes);
@@ -521,13 +521,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             PSPropertyExpressionResult r = expressionResults[0];
-            if (r.Exception == null)
+            if (r.Exception is null)
             {
                 // ignore the property value if it's null
-                if (r.Result == null) { return; }
+                if (r.Result is null) { return; }
 
                 System.Collections.IEnumerable results = LanguagePrimitives.GetEnumerable(r.Result);
-                if (results == null)
+                if (results is null)
                 {
                     // add NoteProperties if there is any
                     // If r.Result is a base object, we don't want to associate the NoteProperty
@@ -544,7 +544,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (object expandedValue in results)
                 {
                     // ignore the element if it's null
-                    if (expandedValue == null) { continue; }
+                    if (expandedValue is null) { continue; }
 
                     // add NoteProperties if there is any
                     // If expandedValue is a base object, we don't want to associate the NoteProperty
@@ -628,7 +628,7 @@ namespace Microsoft.PowerShell.Commands
                         foreach (PSNoteProperty note in addedNoteProperties)
                         {
                             PSMemberInfo prop = uniqueObj.WrittenObject.Properties[note.Name];
-                            if (prop == null || comparer.Compare(prop.Value, note.Value) != 0)
+                            if (prop is null || comparer.Compare(prop.Value, note.Value) != 0)
                             {
                                 found = false;
                                 break;
@@ -826,7 +826,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (UniquePSObjectHelper obj in _uniques)
                 {
-                    if (obj.WrittenObject == null || obj.WrittenObject == AutomationNull.Value)
+                    if (obj.WrittenObject is null || obj.WrittenObject == AutomationNull.Value)
                     {
                         continue;
                     }

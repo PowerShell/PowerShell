@@ -31,7 +31,7 @@ namespace System.Management.Automation
         internal ScriptInfo(string name, ScriptBlock script, ExecutionContext context)
             : base(name, CommandTypes.Script, context)
         {
-            if (script == null)
+            if (script is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(script));
             }

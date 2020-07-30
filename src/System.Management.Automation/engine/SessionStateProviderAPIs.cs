@@ -252,7 +252,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Provider.CmdletProvider GetProviderInstance(string providerId)
         {
-            if (providerId == null)
+            if (providerId is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(providerId));
             }
@@ -276,7 +276,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Provider.CmdletProvider GetProviderInstance(ProviderInfo provider)
         {
-            if (provider == null)
+            if (provider is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
@@ -345,7 +345,7 @@ namespace System.Management.Automation
         /// </exception>
         internal DriveCmdletProvider GetDriveProviderInstance(string providerId)
         {
-            if (providerId == null)
+            if (providerId is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(providerId));
             }
@@ -353,7 +353,7 @@ namespace System.Management.Automation
             DriveCmdletProvider driveCmdletProvider =
                 GetProviderInstance(providerId) as DriveCmdletProvider;
 
-            if (driveCmdletProvider == null)
+            if (driveCmdletProvider is null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.DriveCmdletProvider_NotSupported);
@@ -380,7 +380,7 @@ namespace System.Management.Automation
         /// </exception>
         internal DriveCmdletProvider GetDriveProviderInstance(ProviderInfo provider)
         {
-            if (provider == null)
+            if (provider is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
@@ -388,7 +388,7 @@ namespace System.Management.Automation
             DriveCmdletProvider driveCmdletProvider =
                 GetProviderInstance(provider) as DriveCmdletProvider;
 
-            if (driveCmdletProvider == null)
+            if (driveCmdletProvider is null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.DriveCmdletProvider_NotSupported);
@@ -415,7 +415,7 @@ namespace System.Management.Automation
         /// </exception>
         private static DriveCmdletProvider GetDriveProviderInstance(CmdletProvider providerInstance)
         {
-            if (providerInstance == null)
+            if (providerInstance is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
@@ -423,7 +423,7 @@ namespace System.Management.Automation
             DriveCmdletProvider driveCmdletProvider =
                 providerInstance as DriveCmdletProvider;
 
-            if (driveCmdletProvider == null)
+            if (driveCmdletProvider is null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.DriveCmdletProvider_NotSupported);
@@ -453,7 +453,7 @@ namespace System.Management.Automation
         /// </exception>
         internal ItemCmdletProvider GetItemProviderInstance(string providerId)
         {
-            if (providerId == null)
+            if (providerId is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(providerId));
             }
@@ -461,7 +461,7 @@ namespace System.Management.Automation
             ItemCmdletProvider itemCmdletProvider =
                 GetProviderInstance(providerId) as ItemCmdletProvider;
 
-            if (itemCmdletProvider == null)
+            if (itemCmdletProvider is null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.ItemCmdletProvider_NotSupported);
@@ -488,7 +488,7 @@ namespace System.Management.Automation
         /// </exception>
         internal ItemCmdletProvider GetItemProviderInstance(ProviderInfo provider)
         {
-            if (provider == null)
+            if (provider is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
@@ -496,7 +496,7 @@ namespace System.Management.Automation
             ItemCmdletProvider itemCmdletProvider =
                 GetProviderInstance(provider) as ItemCmdletProvider;
 
-            if (itemCmdletProvider == null)
+            if (itemCmdletProvider is null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.ItemCmdletProvider_NotSupported);
@@ -523,7 +523,7 @@ namespace System.Management.Automation
         /// </exception>
         private static ItemCmdletProvider GetItemProviderInstance(CmdletProvider providerInstance)
         {
-            if (providerInstance == null)
+            if (providerInstance is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
@@ -531,7 +531,7 @@ namespace System.Management.Automation
             ItemCmdletProvider itemCmdletProvider =
                 providerInstance as ItemCmdletProvider;
 
-            if (itemCmdletProvider == null)
+            if (itemCmdletProvider is null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.ItemCmdletProvider_NotSupported);
@@ -561,7 +561,7 @@ namespace System.Management.Automation
         /// </exception>
         internal ContainerCmdletProvider GetContainerProviderInstance(string providerId)
         {
-            if (providerId == null)
+            if (providerId is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(providerId));
             }
@@ -569,7 +569,7 @@ namespace System.Management.Automation
             ContainerCmdletProvider containerCmdletProvider =
                 GetProviderInstance(providerId) as ContainerCmdletProvider;
 
-            if (containerCmdletProvider == null)
+            if (containerCmdletProvider is null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.ContainerCmdletProvider_NotSupported);
@@ -596,7 +596,7 @@ namespace System.Management.Automation
         /// </exception>
         internal ContainerCmdletProvider GetContainerProviderInstance(ProviderInfo provider)
         {
-            if (provider == null)
+            if (provider is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
@@ -604,7 +604,7 @@ namespace System.Management.Automation
             ContainerCmdletProvider containerCmdletProvider =
                 GetProviderInstance(provider) as ContainerCmdletProvider;
 
-            if (containerCmdletProvider == null)
+            if (containerCmdletProvider is null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.ContainerCmdletProvider_NotSupported);
@@ -631,7 +631,7 @@ namespace System.Management.Automation
         /// </exception>
         private static ContainerCmdletProvider GetContainerProviderInstance(CmdletProvider providerInstance)
         {
-            if (providerInstance == null)
+            if (providerInstance is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
@@ -639,7 +639,7 @@ namespace System.Management.Automation
             ContainerCmdletProvider containerCmdletProvider =
                 providerInstance as ContainerCmdletProvider;
 
-            if (containerCmdletProvider == null)
+            if (containerCmdletProvider is null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.ContainerCmdletProvider_NotSupported);
@@ -666,7 +666,7 @@ namespace System.Management.Automation
         /// </exception>
         internal NavigationCmdletProvider GetNavigationProviderInstance(ProviderInfo provider)
         {
-            if (provider == null)
+            if (provider is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
@@ -674,7 +674,7 @@ namespace System.Management.Automation
             NavigationCmdletProvider navigationCmdletProvider =
                 GetProviderInstance(provider) as NavigationCmdletProvider;
 
-            if (navigationCmdletProvider == null)
+            if (navigationCmdletProvider is null)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.NavigationCmdletProvider_NotSupported);
@@ -705,7 +705,7 @@ namespace System.Management.Automation
         /// </exception>
         private static NavigationCmdletProvider GetNavigationProviderInstance(CmdletProvider providerInstance, bool acceptNonContainerProviders)
         {
-            if (providerInstance == null)
+            if (providerInstance is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
@@ -713,7 +713,7 @@ namespace System.Management.Automation
             NavigationCmdletProvider navigationCmdletProvider =
                 providerInstance as NavigationCmdletProvider;
 
-            if ((navigationCmdletProvider == null) && (!acceptNonContainerProviders))
+            if ((navigationCmdletProvider is null) && (!acceptNonContainerProviders))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.NavigationCmdletProvider_NotSupported);
@@ -785,7 +785,7 @@ namespace System.Management.Automation
 
             PSSnapinQualifiedName providerName = PSSnapinQualifiedName.GetInstance(name);
 
-            if (providerName == null)
+            if (providerName is null)
             {
                 ProviderNotFoundException e =
                  new ProviderNotFoundException(
@@ -848,7 +848,7 @@ namespace System.Management.Automation
         {
             Collection<ProviderInfo> result = new Collection<ProviderInfo>();
 
-            if (providerName == null)
+            if (providerName is null)
             {
                 ProviderNotFoundException e =
                     new ProviderNotFoundException(
@@ -939,7 +939,7 @@ namespace System.Management.Automation
         /// <param name="ss">The session state instance to copy from...</param>
         internal void CopyProviders(SessionStateInternal ss)
         {
-            if (ss == null || ss.Providers == null)
+            if (ss is null || ss.Providers is null)
                 return;
 
             // private Dictionary<string, List<ProviderInfo>> providers;
@@ -985,12 +985,12 @@ namespace System.Management.Automation
             ProviderInfo provider,
             CmdletProviderContext context)
         {
-            if (provider == null)
+            if (provider is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
-            if (context == null)
+            if (context is null)
             {
                 context = new CmdletProviderContext(this.ExecutionContext);
             }
@@ -1050,7 +1050,7 @@ namespace System.Management.Automation
 
                 foreach (PSDriveInfo newDrive in newDrives)
                 {
-                    if (newDrive == null)
+                    if (newDrive is null)
                     {
                         continue;
                     }
@@ -1103,7 +1103,7 @@ namespace System.Management.Automation
         /// </exception>
         internal ProviderInfo NewProvider(ProviderInfo provider)
         {
-            if (provider == null)
+            if (provider is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
@@ -1178,7 +1178,7 @@ namespace System.Management.Automation
 
             context.ThrowFirstErrorOrDoNothing(true);
 
-            if (newProviderInfo == null)
+            if (newProviderInfo is null)
             {
                 throw
                     PSTraceSource.NewInvalidOperationException(
@@ -1392,7 +1392,7 @@ namespace System.Management.Automation
             bool force,
             CmdletProviderContext context)
         {
-            if (context == null)
+            if (context is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
@@ -1420,7 +1420,7 @@ namespace System.Management.Automation
                 // First get an instance of the provider to make sure it exists
                 Provider.CmdletProvider providerBase = GetProviderInstance(provider);
 
-                if (providerBase == null)
+                if (providerBase is null)
                 {
                     ProviderNotFoundException e = new ProviderNotFoundException(
                         providerName,

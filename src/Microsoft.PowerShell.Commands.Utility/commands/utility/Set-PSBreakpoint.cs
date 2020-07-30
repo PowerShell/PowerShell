@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
             // Check whether we are executing on a remote session and if so
             // whether the RemoteScript debug option is selected.
             if (this.Context.InternalHost.ExternalHost is System.Management.Automation.Remoting.ServerRemoteHost &&
-                ((this.Context.CurrentRunspace == null) || (this.Context.CurrentRunspace.Debugger == null) ||
+                ((this.Context.CurrentRunspace is null) || (this.Context.CurrentRunspace.Debugger is null) ||
                  ((this.Context.CurrentRunspace.Debugger.DebugMode & DebugModes.RemoteScript) != DebugModes.RemoteScript) &&
                   (this.Context.CurrentRunspace.Debugger.DebugMode != DebugModes.None)))
             {

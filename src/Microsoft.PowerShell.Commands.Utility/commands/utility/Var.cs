@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     value = Array.Empty<string>();
                 }
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     value = Array.Empty<string>();
                 }
@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     value = new string[] { "*" };
                 }
@@ -745,7 +745,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (Value != AutomationNull.Value)
                 {
-                    if (_valueList == null)
+                    if (_valueList is null)
                     {
                         _valueList = new List<object>();
                     }
@@ -875,7 +875,7 @@ namespace Microsoft.PowerShell.Commands
                                 newVarValue,
                                 newOptions);
 
-                        if (Description == null)
+                        if (Description is null)
                         {
                             Description = string.Empty;
                         }
@@ -1107,7 +1107,7 @@ namespace Microsoft.PowerShell.Commands
             // Removal of variables only happens in the local scope if the
             // scope wasn't explicitly specified by the user.
 
-            if (Scope == null)
+            if (Scope is null)
             {
                 Scope = "local";
             }

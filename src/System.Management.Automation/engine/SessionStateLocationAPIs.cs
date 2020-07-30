@@ -31,7 +31,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (CurrentDrive == null)
+                if (CurrentDrive is null)
                 {
                     // We need the error handling, and moving to a method would be
                     // a breaking change
@@ -73,7 +73,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PathInfo GetNamespaceCurrentLocation(string namespaceID)
         {
-            if (namespaceID == null)
+            if (namespaceID is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(namespaceID));
             }
@@ -91,7 +91,7 @@ namespace System.Management.Automation
                 ProvidersCurrentWorkingDrive.TryGetValue(GetSingleProvider(namespaceID), out drive);
             }
 
-            if (drive == null)
+            if (drive is null)
             {
                 DriveNotFoundException e =
                     new DriveNotFoundException(
@@ -234,7 +234,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PathInfo SetLocation(string path, CmdletProviderContext context, bool literalPath)
         {
-            if (path == null)
+            if (path is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
@@ -316,7 +316,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (context == null)
+            if (context is null)
             {
                 context = new CmdletProviderContext(this.ExecutionContext);
             }
@@ -634,7 +634,7 @@ namespace System.Management.Automation
         {
             bool result = false;
 
-            if (path == null)
+            if (path is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }

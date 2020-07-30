@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (_runspace == null)
+            if (_runspace is null)
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             Runspace defaultRunspace = LocalRunspace.DefaultRunspace;
-            if (defaultRunspace == null || defaultRunspace.Debugger == null)
+            if (defaultRunspace is null || defaultRunspace.Debugger is null)
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
                     );
             }
 
-            if (this.Host == null || this.Host.UI == null)
+            if (this.Host is null || this.Host.UI is null)
             {
                 ThrowTerminatingError(
                     new ErrorRecord(

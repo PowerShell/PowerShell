@@ -278,12 +278,12 @@ namespace System.Management.Automation.Remoting
             }
 
             // assign defaults after parsing the xml content.
-            if (result.MaxReceivedObjectSizeMB == null)
+            if (result.MaxReceivedObjectSizeMB is null)
             {
                 result.MaxReceivedObjectSizeMB = BaseTransportManager.MaximumReceivedObjectSize;
             }
 
-            if (result.MaxReceivedCommandSizeMB == null)
+            if (result.MaxReceivedCommandSizeMB is null)
             {
                 result.MaxReceivedCommandSizeMB = BaseTransportManager.MaximumReceivedDataSize;
             }
@@ -526,7 +526,7 @@ namespace System.Management.Automation.Remoting
                     assemblyName, shellId);
 
                 assembly = LoadSsnStateProviderAssembly(applicationBase, assemblyName);
-                if (assembly == null)
+                if (assembly is null)
                 {
                     throw PSTraceSource.NewArgumentException(nameof(assemblyName), RemotingErrorIdStrings.UnableToLoadAssembly,
                         assemblyName, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
@@ -543,7 +543,7 @@ namespace System.Management.Automation.Remoting
                         typeToLoad, shellId);
 
                     Type type = assembly.GetType(typeToLoad, true, true);
-                    if (type == null)
+                    if (type is null)
                     {
                         throw PSTraceSource.NewArgumentException(nameof(typeToLoad), RemotingErrorIdStrings.UnableToLoadType,
                             typeToLoad, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
@@ -763,7 +763,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(registryKey != null, "Caller should validate the registryKey parameter");
 
             object value = registryKey.GetValue(name);
-            if (value == null && mandatory)
+            if (value is null && mandatory)
             {
                 s_tracer.TraceError("Mandatory property {0} not specified for registry key {1}",
                         name, registryKey.Name);
@@ -813,13 +813,13 @@ namespace System.Management.Automation.Remoting
 
         public override InitialSessionState GetInitialSessionState(PSSessionConfigurationData sessionConfigurationData, PSSenderInfo senderInfo, string configProviderId)
         {
-            if (sessionConfigurationData == null)
+            if (sessionConfigurationData is null)
                 throw new ArgumentNullException(nameof(sessionConfigurationData));
 
-            if (senderInfo == null)
+            if (senderInfo is null)
                 throw new ArgumentNullException(nameof(senderInfo));
 
-            if (configProviderId == null)
+            if (configProviderId is null)
                 throw new ArgumentNullException(nameof(configProviderId));
 
             InitialSessionState sessionState = InitialSessionState.CreateDefault2();
@@ -1122,7 +1122,7 @@ namespace System.Management.Automation.Remoting
         {
             Hashtable hash = obj as Hashtable;
 
-            if (hash == null)
+            if (hash is null)
             {
                 cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeHashtable, key, path));
                 return false;
@@ -1142,7 +1142,7 @@ namespace System.Management.Automation.Remoting
         {
             Hashtable[] hashtables = DISCPowerShellConfiguration.TryGetHashtableArray(obj);
 
-            if (hashtables == null)
+            if (hashtables is null)
             {
                 cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeHashtableArray, key, path));
                 return false;
@@ -1189,7 +1189,7 @@ namespace System.Management.Automation.Remoting
         {
             Hashtable[] hashtables = DISCPowerShellConfiguration.TryGetHashtableArray(obj);
 
-            if (hashtables == null)
+            if (hashtables is null)
             {
                 cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeHashtableArray, key, path));
                 return false;
@@ -1209,7 +1209,7 @@ namespace System.Management.Automation.Remoting
                     return false;
                 }
 
-                if ((hashtable[FunctionValueToken] as ScriptBlock) == null)
+                if ((hashtable[FunctionValueToken] as ScriptBlock) is null)
                 {
                     cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock, FunctionValueToken, key, path));
                     return false;
@@ -1241,7 +1241,7 @@ namespace System.Management.Automation.Remoting
         {
             Hashtable[] hashtables = DISCPowerShellConfiguration.TryGetHashtableArray(obj);
 
-            if (hashtables == null)
+            if (hashtables is null)
             {
                 cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeHashtableArray, key, path));
                 return false;
@@ -1304,7 +1304,7 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         private static bool StringArrayTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
-            if (DISCPowerShellConfiguration.TryGetStringArray(obj) == null)
+            if (DISCPowerShellConfiguration.TryGetStringArray(obj) is null)
             {
                 cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeStringArray, key, path));
                 return false;
@@ -1345,7 +1345,7 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         private static bool StringOrHashtableArrayTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
-            if (DISCPowerShellConfiguration.TryGetObjectsOfType<object>(obj, new Type[] { typeof(string), typeof(Hashtable) }) == null)
+            if (DISCPowerShellConfiguration.TryGetObjectsOfType<object>(obj, new Type[] { typeof(string), typeof(Hashtable) }) is null)
             {
                 cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeStringOrHashtableArrayInFile, key, path));
                 return false;
@@ -1498,7 +1498,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private static void ValidatePS1XMLExtension(string key, string[] paths, string filePath)
         {
-            if (paths == null)
+            if (paths is null)
             {
                 return;
             }
@@ -1525,7 +1525,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private static void ValidatePS1OrPSM1Extension(string key, string[] paths, string filePath)
         {
-            if (paths == null)
+            if (paths is null)
             {
                 return;
             }
@@ -1605,7 +1605,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="filePath"></param>
         internal static void ValidateAbsolutePath(SessionState state, string key, string[] paths, string filePath)
         {
-            if (paths == null)
+            if (paths is null)
             {
                 return;
             }
@@ -1647,7 +1647,7 @@ namespace System.Management.Automation.Remoting
                 //
 
                 IDictionary roleDefinition = roleDefinitions[roleKey] as IDictionary;
-                if (roleDefinition == null)
+                if (roleDefinition is null)
                 {
                     var invalidOperationEx = new PSInvalidOperationException(
                         StringUtil.Format(RemotingErrorIdStrings.InvalidRoleValue, roleKey));
@@ -1659,7 +1659,7 @@ namespace System.Management.Automation.Remoting
                 {
                     // Ensure each role capability key is valid.
                     string roleCapabilityKey = key as string;
-                    if (roleCapabilityKey == null)
+                    if (roleCapabilityKey is null)
                     {
                         var invalidOperationEx = new PSInvalidOperationException(
                             string.Format(RemotingErrorIdStrings.InvalidRoleCapabilityKeyType, key.GetType().FullName));
@@ -1709,7 +1709,7 @@ namespace System.Management.Automation.Remoting
         internal DISCPowerShellConfiguration(string configFile, Func<string, bool> roleVerifier)
         {
             _configFile = configFile;
-            if (roleVerifier == null)
+            if (roleVerifier is null)
             {
                 roleVerifier = (role) => false;
             }
@@ -1752,7 +1752,7 @@ namespace System.Management.Automation.Remoting
             {
                 // Extract the 'Roles' hashtable
                 IDictionary roleEntry = _configHash[ConfigFileConstants.RoleDefinitions] as IDictionary;
-                if (roleEntry == null)
+                if (roleEntry is null)
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleEntry, _configHash["Roles"].GetType().FullName);
                     PSInvalidOperationException ioe = new PSInvalidOperationException(message);
@@ -1772,7 +1772,7 @@ namespace System.Management.Automation.Remoting
                         // Extract their specific configuration
                         IDictionary roleCustomizations = roleEntry[role] as IDictionary;
 
-                        if (roleCustomizations == null)
+                        if (roleCustomizations is null)
                         {
                             string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleValue, role.ToString());
                             PSInvalidOperationException ioe = new PSInvalidOperationException(message);
@@ -2043,7 +2043,7 @@ namespace System.Management.Automation.Remoting
             {
                 object[] modules = TryGetObjectsOfType<object>(_configHash[ConfigFileConstants.ModulesToImport],
                                                                new Type[] { typeof(string), typeof(Hashtable) });
-                if ((_configHash[ConfigFileConstants.ModulesToImport] != null) && (modules == null))
+                if ((_configHash[ConfigFileConstants.ModulesToImport] != null) && (modules is null))
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeStringOrHashtableArray,
                         ConfigFileConstants.ModulesToImport);
@@ -2106,7 +2106,7 @@ namespace System.Management.Automation.Remoting
                 object[] cmdlets = TryGetObjectsOfType<object>(_configHash[ConfigFileConstants.VisibleCmdlets],
                                                                new Type[] { typeof(string), typeof(Hashtable) });
 
-                if (cmdlets == null)
+                if (cmdlets is null)
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeStringOrHashtableArray,
                         ConfigFileConstants.VisibleCmdlets);
@@ -2199,7 +2199,7 @@ namespace System.Management.Automation.Remoting
                 object[] functions = TryGetObjectsOfType<object>(_configHash[ConfigFileConstants.VisibleFunctions],
                                                                new Type[] { typeof(string), typeof(Hashtable) });
 
-                if (functions == null)
+                if (functions is null)
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeStringOrHashtableArray,
                         ConfigFileConstants.VisibleFunctions);
@@ -2460,7 +2460,7 @@ namespace System.Management.Automation.Remoting
 
             foreach (object commandObject in commands)
             {
-                if (commandObject == null)
+                if (commandObject is null)
                 {
                     continue;
                 }
@@ -2516,7 +2516,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // Validate that we got the Name and Parameters keys
-            if ((commandName == null) || (parameters == null))
+            if ((commandName is null) || (parameters is null))
             {
                 string hashtableKey = commandName;
                 if (string.IsNullOrEmpty(hashtableKey))
@@ -2547,7 +2547,7 @@ namespace System.Management.Automation.Remoting
                 // Ensure we have the hashtable representing the current parameter being modified
                 string parameterName = parameter["Name"].ToString();
                 Hashtable currentParameterModification = parameterModifications[parameterName] as Hashtable;
-                if (currentParameterModification == null)
+                if (currentParameterModification is null)
                 {
                     currentParameterModification = new Hashtable(StringComparer.OrdinalIgnoreCase);
                     parameterModifications[parameterName] = currentParameterModification;
@@ -2748,7 +2748,7 @@ namespace System.Management.Automation.Remoting
                 string[] commands =
                     DISCPowerShellConfiguration.TryGetStringArray(_configHash[configFileKey]);
 
-                if ((commands == null) || (commands.Length == 0))
+                if ((commands is null) || (commands.Length == 0))
                 {
                     return false;
                 }
@@ -2793,7 +2793,7 @@ namespace System.Management.Automation.Remoting
             // 1. Direct conversion
             Hashtable[] hashArray = hashObj as Hashtable[];
 
-            if (hashArray == null)
+            if (hashArray is null)
             {
                 // 2. Convert from object array
                 object[] objArray = hashObj as object[];
@@ -2806,7 +2806,7 @@ namespace System.Management.Automation.Remoting
                     {
                         Hashtable hash = objArray[i] as Hashtable;
 
-                        if (hash == null)
+                        if (hash is null)
                         {
                             return null;
                         }
@@ -2828,7 +2828,7 @@ namespace System.Management.Automation.Remoting
         {
             object[] objs = hashObj as object[];
 
-            if (objs == null)
+            if (objs is null)
             {
                 // Scalar case
                 object obj = hashObj as object;
@@ -2856,7 +2856,7 @@ namespace System.Management.Automation.Remoting
         internal static T[] TryGetObjectsOfType<T>(object hashObj, IEnumerable<Type> types) where T : class
         {
             object[] objs = hashObj as object[];
-            if (objs == null)
+            if (objs is null)
             {
                 // Scalar case
                 object obj = hashObj;

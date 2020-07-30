@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
             // Breakpoints retrieved from another runspace will have a RunspaceId note property of type Guid on them.
             var pso = new PSObject(breakpoint);
             var runspaceInstanceIdProperty = pso.Properties[RemotingConstants.RunspaceIdNoteProperty];
-            if (runspaceInstanceIdProperty == null)
+            if (runspaceInstanceIdProperty is null)
             {
                 Runspace = Context.CurrentRunspace;
                 return true;
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
         {
             breakpoint = Runspace.Debugger.GetBreakpoint(id);
 
-            if (breakpoint == null)
+            if (breakpoint is null)
             {
                 WriteError(
                     new ErrorRecord(

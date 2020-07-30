@@ -302,7 +302,7 @@ namespace System.Management.Automation
 
             if (string.IsNullOrEmpty(psDataFilePath)) { throw PSTraceSource.NewArgumentNullException(nameof(psDataFilePath)); }
 
-            if (context == null) { throw PSTraceSource.NewArgumentNullException(nameof(context)); }
+            if (context is null) { throw PSTraceSource.NewArgumentNullException(nameof(context)); }
 
             string resolvedPath;
             if (skipPathValidation)
@@ -327,7 +327,7 @@ namespace System.Management.Automation
                 var resolvedPaths = context.SessionState.Path.GetResolvedProviderPathFromPSPath(psDataFilePath, out provider);
 
                 // ConfigPath should be resolved as FileSystem provider
-                if (provider == null || !Microsoft.PowerShell.Commands.FileSystemProvider.ProviderName.Equals(provider.Name, StringComparison.OrdinalIgnoreCase))
+                if (provider is null || !Microsoft.PowerShell.Commands.FileSystemProvider.ProviderName.Equals(provider.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     isPathValid = false;
                 }
@@ -387,7 +387,7 @@ namespace System.Management.Automation
             }
 
             var retResult = evaluationResult as Hashtable;
-            if (retResult == null)
+            if (retResult is null)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                          ParserStrings.InvalidPowerShellDataFile,
@@ -485,7 +485,7 @@ namespace System.Management.Automation
         {
             // NTRAID#Windows Out Of Band Releases-926471-2005/12/27-JonN
             // shell crashes if you pass an empty script block to a native command
-            if (input == null)
+            if (input is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(input));
             }
@@ -540,7 +540,7 @@ namespace System.Management.Automation
             }
 
             PSObject mo = dso as PSObject;
-            if (mo == null)
+            if (mo is null)
             {
                 // This helper function should move the host. Provide appropriate error message.
                 // Format of args parameter is not correct.
@@ -548,7 +548,7 @@ namespace System.Management.Automation
             }
 
             var argsList = mo.BaseObject as ArrayList;
-            if (argsList == null)
+            if (argsList is null)
             {
                 // This helper function should move the host. Provide appropriate error message.
                 // Format of args parameter is not correct.

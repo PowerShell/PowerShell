@@ -121,7 +121,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void SetArgumentValue(Ast ast, object value)
         {
-            if (_argument == null)
+            if (_argument is null)
             {
                 _argument = new Argument();
             }

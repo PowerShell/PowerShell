@@ -38,7 +38,7 @@ namespace System.Management.Automation.Interpreter
 
         internal TryCatchFinallyHandler Parent = null;
 
-        public bool IsFault { get { return ExceptionType == null; } }
+        public bool IsFault { get { return ExceptionType is null; } }
 
         internal ExceptionHandler(int start, int end, int labelIndex, int handlerStartIndex, int handlerEndIndex, Type exceptionType)
         {
@@ -52,13 +52,13 @@ namespace System.Management.Automation.Interpreter
 
         internal void SetParent(TryCatchFinallyHandler tryHandler)
         {
-            Debug.Assert(Parent == null);
+            Debug.Assert(Parent is null);
             Parent = tryHandler;
         }
 
         public bool Matches(Type exceptionType)
         {
-            if (ExceptionType == null || ExceptionType.IsAssignableFrom(exceptionType))
+            if (ExceptionType is null || ExceptionType.IsAssignableFrom(exceptionType))
             {
                 return true;
             }
@@ -68,7 +68,7 @@ namespace System.Management.Automation.Interpreter
 
         public bool IsBetterThan(ExceptionHandler other)
         {
-            if (other == null) return true;
+            if (other is null) return true;
 
             Debug.Assert(StartIndex == other.StartIndex && EndIndex == other.EndIndex, "we only need to compare handlers for the same try block");
             return HandlerStartIndex < other.HandlerStartIndex;
@@ -168,7 +168,7 @@ namespace System.Management.Automation.Interpreter
         {
             Debug.Assert(_handlers != null, "we should have at least one handler if the method gets called");
             handler = Array.Find(_handlers, t => t.Matches(exception.GetType()));
-            if (handler == null) { return 0; }
+            if (handler is null) { return 0; }
 
             return frame.Goto(handler.LabelIndex, exception, gotoExceptionHandler: true);
         }
@@ -1123,7 +1123,7 @@ namespace System.Management.Automation.Interpreter
                 _labelBlock.TryGetLabelInfo(node.Target, out label);
 
                 // We're in a block but didn't find our label, try switch
-                if (label == null && _labelBlock.Parent.Kind == LabelScopeKind.Switch)
+                if (label is null && _labelBlock.Parent.Kind == LabelScopeKind.Switch)
                 {
                     _labelBlock.Parent.TryGetLabelInfo(node.Target, out label);
                 }
@@ -1132,7 +1132,7 @@ namespace System.Management.Automation.Interpreter
                 Debug.Assert(label != null);
             }
 
-            if (label == null)
+            if (label is null)
             {
                 label = DefineLabel(node.Target);
             }
@@ -1202,7 +1202,7 @@ namespace System.Management.Automation.Interpreter
 
         internal LabelInfo DefineLabel(LabelTarget node)
         {
-            if (node == null)
+            if (node is null)
             {
                 return new LabelInfo(null);
             }
@@ -1298,7 +1298,7 @@ namespace System.Management.Automation.Interpreter
         private void DefineBlockLabels(Expression node)
         {
             var block = node as BlockExpression;
-            if (block == null)
+            if (block is null)
             {
                 return;
             }
@@ -1330,7 +1330,7 @@ namespace System.Management.Automation.Interpreter
         {
             var node = (UnaryExpression)expr;
 
-            if (node.Operand == null)
+            if (node.Operand is null)
             {
                 CompileParameterExpression(_exceptionForRethrowStack.Peek());
                 if (asVoid)
@@ -1362,7 +1362,7 @@ namespace System.Management.Automation.Interpreter
             if (expr.NodeType == ExpressionType.Throw)
             {
                 var node = (UnaryExpression)expr;
-                return node.Operand == null;
+                return node.Operand is null;
             }
 
             BlockExpression block = expr as BlockExpression;
@@ -1381,7 +1381,7 @@ namespace System.Management.Automation.Interpreter
 
             if (expr.NodeType == ExpressionType.Throw)
             {
-                Debug.Assert(((UnaryExpression)expr).Operand == null);
+                Debug.Assert(((UnaryExpression)expr).Operand is null);
                 return;
             }
 
@@ -1434,10 +1434,10 @@ namespace System.Management.Automation.Interpreter
                 exHandlers = new List<ExceptionHandler>();
 
                 // TODO: emulates faults (replace by true fault support)
-                if (node.Finally == null && node.Handlers.Count == 1)
+                if (node.Finally is null && node.Handlers.Count == 1)
                 {
                     var handler = node.Handlers[0];
-                    if (handler.Filter == null && handler.Test == typeof(Exception) && handler.Variable == null)
+                    if (handler.Filter is null && handler.Test == typeof(Exception) && handler.Variable is null)
                     {
                         if (EndsWithRethrow(handler.Body))
                         {

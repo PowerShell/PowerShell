@@ -312,7 +312,7 @@ namespace System.Management.Automation
         ///<returns> Does not return a value.</returns>
         internal static void CheckKeyArg(byte[] arg, string argName)
         {
-            if (arg == null)
+            if (arg is null)
             {
                 throw PSTraceSource.NewArgumentNullException(argName);
             }
@@ -339,7 +339,7 @@ namespace System.Management.Automation
         ///<returns> Does not return a value.</returns>
         internal static void CheckArgForNullOrEmpty(string arg, string argName)
         {
-            if (arg == null)
+            if (arg is null)
             {
                 throw PSTraceSource.NewArgumentNullException(argName);
             }
@@ -358,7 +358,7 @@ namespace System.Management.Automation
         ///<returns> Does not return a value.</returns>
         internal static void CheckArgForNull(object arg, string argName)
         {
-            if (arg == null)
+            if (arg is null)
             {
                 throw PSTraceSource.NewArgumentNullException(argName);
             }
@@ -372,7 +372,7 @@ namespace System.Management.Automation
         ///<returns> Does not return a value.</returns>
         internal static void CheckSecureStringArg(SecureString arg, string argName)
         {
-            if (arg == null)
+            if (arg is null)
             {
                 throw PSTraceSource.NewArgumentNullException(argName);
             }
@@ -409,7 +409,7 @@ namespace System.Management.Automation
         internal static TypeTable GetTypeTableFromExecutionContextTLS()
         {
             ExecutionContext ecFromTLS = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-            if (ecFromTLS == null)
+            if (ecFromTLS is null)
             {
                 return null;
             }
@@ -497,7 +497,7 @@ namespace System.Management.Automation
 
         private static string[] GetProductFolderDirectories()
         {
-            if (s_productFolderDirectories == null)
+            if (s_productFolderDirectories is null)
             {
                 List<string> baseDirectories = new List<string>();
 
@@ -666,7 +666,7 @@ namespace System.Management.Automation
         /// <returns>True if supported, false otherwise.</returns>
         internal static bool IsPSVersionSupported(Version checkVersion)
         {
-            if (checkVersion == null)
+            if (checkVersion is null)
             {
                 return false;
             }
@@ -966,7 +966,7 @@ namespace System.Management.Automation
             using (RegistryKey gpoKey = rootKey.OpenSubKey(gpoKeyPath))
             {
                 // If the corresponding GPO key doesn't exist, return null
-                if (gpoKey == null) { return null; }
+                if (gpoKey is null) { return null; }
 
                 // The corresponding GPO key exists, then create an instance of T
                 // and populate its properties with the settings
@@ -986,7 +986,7 @@ namespace System.Management.Automation
                     using (RegistryKey winPowershellGpoKey = rootKey.OpenSubKey(winPowershellGpoKeyPath))
                     {
                         // If the corresponding Windows PS GPO key doesn't exist, return null
-                        if (winPowershellGpoKey == null) { return null; }
+                        if (winPowershellGpoKey is null) { return null; }
                         isAnyPropertySet = TrySetPolicySettingsFromRegistryKey(tInstance, tType, winPowershellGpoKey);
                     }
                 }
@@ -1037,7 +1037,7 @@ namespace System.Management.Automation
             {
                 List<PSModuleInfo> loadedModules = context.Modules.GetModules(new string[] { module }, false);
 
-                if ((loadedModules == null) || (loadedModules.Count == 0))
+                if ((loadedModules is null) || (loadedModules.Count == 0))
                 {
                     CommandInfo commandInfo = new CmdletInfo("Import-Module", typeof(Microsoft.PowerShell.Commands.ImportModuleCommand),
                                                              null, null, context);
@@ -1113,7 +1113,7 @@ namespace System.Management.Automation
                 Collection<PSModuleInfo> gmoOutPut = ps.Invoke<PSModuleInfo>();
                 if (gmoOutPut != null)
                 {
-                    if (result == null)
+                    if (result is null)
                     {
                         result = gmoOutPut.ToList<PSModuleInfo>();
                     }
@@ -1173,7 +1173,7 @@ namespace System.Management.Automation
                 Collection<PSModuleInfo> gmoOutput = ps.Invoke<PSModuleInfo>();
                 if (gmoOutput != null)
                 {
-                    if (result == null)
+                    if (result is null)
                     {
                         result = gmoOutput.ToList();
                     }
@@ -1675,7 +1675,7 @@ namespace System.Management.Automation
                 {
                     var scriptBlock = ScriptBlock.Create(command);
                     var scriptBlockAst = scriptBlock.Ast as ScriptBlockAst;
-                    if (scriptBlockAst == null)
+                    if (scriptBlockAst is null)
                     {
                         return false;
                     }
@@ -1721,7 +1721,7 @@ namespace System.Management.Automation
                         }
 
                         // Commands must be from implicit remoting module
-                        if (cmdInfo.Module == null || string.IsNullOrEmpty(cmdInfo.ModuleName))
+                        if (cmdInfo.Module is null || string.IsNullOrEmpty(cmdInfo.ModuleName))
                         {
                             WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingNotImplicitCommand, cmdInfo.Name));
                             success = false;
@@ -1780,7 +1780,7 @@ namespace System.Management.Automation
                         ps.Commands.Clear();
                         ps.Commands.AddCommand("Get-PSSession").AddParameter("InstanceId", psSessionId);
                         var psSession = ps.Invoke<System.Management.Automation.Runspaces.PSSession>().FirstOrDefault();
-                        if (psSession == null || (ps.Streams.Error.Count > 0) || (psSession.Availability != RunspaceAvailability.Available))
+                        if (psSession is null || (ps.Streams.Error.Count > 0) || (psSession.Availability != RunspaceAvailability.Available))
                         {
                             WriteVerbose(ps, ParserStrings.ImplicitRemotingPipelineBatchingNoPSSession);
                             return false;
@@ -1862,7 +1862,7 @@ namespace System.Management.Automation
             if (specialCaseWhereCommandAlias)
             {
                 var cmdInfo = ps.Runspace.ExecutionContext.SessionState.InvokeCommand.GetCommand(WhereObjectCommandAlias, CommandTypes.Alias);
-                if (cmdInfo == null)
+                if (cmdInfo is null)
                 {
                     return false;
                 }
@@ -1923,7 +1923,7 @@ namespace System.Management.Automation
                 // know that we have at least:
                 //     * a NamedBlockAst (the end block)
                 //     * a ScriptBlockAst (the ast we're comparing to)
-                if (pipelineAst.GetPureExpression() == null || pipelineAst.Parent.Parent == ScriptBeingConverted)
+                if (pipelineAst.GetPureExpression() is null || pipelineAst.Parent.Parent == ScriptBeingConverted)
                 {
                     ThrowError(
                         new ImplicitRemotingBatchingNotSupportedException(
@@ -2214,7 +2214,7 @@ namespace System.Management.Automation.Internal
         /// <returns></returns>
         internal T Pop()
         {
-            if (this.First == null)
+            if (this.First is null)
             {
                 throw new InvalidOperationException(SessionStateStrings.BoundedStackIsEmpty);
             }
@@ -2245,7 +2245,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal ReadOnlyBag(HashSet<T> hashset)
         {
-            if (hashset == null)
+            if (hashset is null)
             {
                 throw new ArgumentNullException(nameof(hashset));
             }

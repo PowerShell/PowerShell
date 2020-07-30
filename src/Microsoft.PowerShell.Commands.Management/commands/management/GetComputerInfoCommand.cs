@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
         private void UpdateProgress(string status)
         {
             ProgressRecord progress = new ProgressRecord(0, activity, status ?? ComputerResources.ProgressStatusCompleted);
-            progress.RecordType = status == null ? ProgressRecordType.Completed : ProgressRecordType.Processing;
+            progress.RecordType = status is null ? ProgressRecordType.Completed : ProgressRecordType.Processing;
 
             WriteProgress(progress);
         }
@@ -314,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
                                 };
 
                                 var status = EnumConverter<NetConnectionStatus>.Convert(adapter.NetConnectionStatus);
-                                nwAdapter.ConnectionStatus = status == null ? NetConnectionStatus.Other
+                                nwAdapter.ConnectionStatus = status is null ? NetConnectionStatus.Other
                                                                             : status.Value;
 
                                 if (nwAdapter.ConnectionStatus == NetConnectionStatus.Connected)
@@ -1130,7 +1130,7 @@ namespace Microsoft.PowerShell.Commands
                         culture = CultureInfo.GetCultureInfo((int)localeNum);
                     }
 
-                    if (culture == null)
+                    if (culture is null)
                     {
                         // If TryParse failed we'll try using the original string as culture name
                         culture = CultureInfo.GetCultureInfo(locale);
@@ -1142,7 +1142,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return culture == null ? null : culture.Name;
+            return culture is null ? null : culture.Name;
         }
 
         /// <summary>
@@ -1283,7 +1283,7 @@ namespace Microsoft.PowerShell.Commands
                         CurrentVersion = (string)key.GetValue("CurrentVersion"),
                         EditionId = (string)key.GetValue("EditionID"),
                         InstallationType = (string)key.GetValue("InstallationType"),
-                        InstallDate = temp == null ? (DateTime?)null
+                        InstallDate = temp is null ? (DateTime?)null
                                                                 : Conversion.UnixSecondsToDateTime((long)(int)temp),
                         ProductId = (string)key.GetValue("ProductId"),
                         ProductName = (string)key.GetValue("ProductName"),
@@ -1886,7 +1886,7 @@ namespace Microsoft.PowerShell.Commands
         #region Private Methods
         private OSProductSuite[] MakeProductSuites(uint? suiteMask)
         {
-            if (suiteMask == null)
+            if (suiteMask is null)
                 return null;
 
             var mask = suiteMask.Value;

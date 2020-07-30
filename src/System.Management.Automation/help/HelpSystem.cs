@@ -93,7 +93,7 @@ namespace System.Management.Automation
         /// <param name="context">Execution context for this help system.</param>
         internal HelpSystem(ExecutionContext context)
         {
-            if (context == null)
+            if (context is null)
             {
                 throw PSTraceSource.NewArgumentNullException("ExecutionContext");
             }
@@ -159,7 +159,7 @@ namespace System.Management.Automation
         /// <returns>An array of HelpInfo object.</returns>
         internal IEnumerable<HelpInfo> GetHelp(HelpRequest helpRequest)
         {
-            if (helpRequest == null)
+            if (helpRequest is null)
                 return null;
 
             helpRequest.Validate();
@@ -695,7 +695,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal IDisposable Trace(string helpFile)
         {
-            if (_helpErrorTracer == null)
+            if (_helpErrorTracer is null)
                 return null;
 
             return _helpErrorTracer.Trace(helpFile);
@@ -707,7 +707,7 @@ namespace System.Management.Automation
         /// <param name="errorRecord"></param>
         internal void TraceError(ErrorRecord errorRecord)
         {
-            if (_helpErrorTracer == null)
+            if (_helpErrorTracer is null)
                 return;
 
             _helpErrorTracer.TraceError(errorRecord);
@@ -720,7 +720,7 @@ namespace System.Management.Automation
         /// <param name="errorRecords"></param>
         internal void TraceErrors(Collection<ErrorRecord> errorRecords)
         {
-            if (_helpErrorTracer == null || errorRecords == null)
+            if (_helpErrorTracer is null || errorRecords is null)
                 return;
 
             _helpErrorTracer.TraceErrors(errorRecords);
@@ -741,7 +741,7 @@ namespace System.Management.Automation
         {
             CultureInfo culture = CultureInfo.CurrentUICulture;
 
-            if (_culture == null)
+            if (_culture is null)
             {
                 _culture = culture;
                 return;
@@ -764,7 +764,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void ResetHelpProviders()
         {
-            if (_helpProviders == null)
+            if (_helpProviders is null)
                 return;
 
             for (int i = 0; i < _helpProviders.Count; i++)

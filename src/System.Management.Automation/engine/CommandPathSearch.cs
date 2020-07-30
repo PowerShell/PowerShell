@@ -365,7 +365,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_currentDirectoryResults == null)
+                if (_currentDirectoryResults is null)
                 {
                     throw PSTraceSource.NewInvalidOperationException();
                 }
@@ -490,7 +490,7 @@ namespace System.Management.Automation
                         if (name.Equals(baseNames[i], StringComparison.OrdinalIgnoreCase)
                             || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(name)))
                         {
-                            if (result == null)
+                            if (result is null)
                                 result = new Collection<string>();
                             result.Add(fileNames[i]);
                             break;
@@ -517,7 +517,7 @@ namespace System.Management.Automation
                     if (fileName.EndsWith(allowedExt, StringComparison.OrdinalIgnoreCase)
                         || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(fileName)))
                     {
-                        if (result == null)
+                        if (result is null)
                             result = new Collection<string>();
                         result.Add(fileName);
                     }

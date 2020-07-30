@@ -105,7 +105,7 @@ namespace System.Management.Automation
             _parameterType = parameterType;
             _typeSpecified = typeSpecified;
 
-            if ((errorPosition == null) && (_invocationInfo != null))
+            if ((errorPosition is null) && (_invocationInfo != null))
             {
                 errorPosition = invocationInfo.ScriptPosition;
             }
@@ -192,7 +192,7 @@ namespace System.Management.Automation
             params object[] args)
             : base(errorCategory, invocationInfo, errorPosition, errorId, null, innerException)
         {
-            if (invocationInfo == null)
+            if (invocationInfo is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(invocationInfo));
             }
@@ -213,7 +213,7 @@ namespace System.Management.Automation
             _parameterType = parameterType;
             _typeSpecified = typeSpecified;
 
-            if (errorPosition == null)
+            if (errorPosition is null)
             {
                 errorPosition = invocationInfo.ScriptPosition;
             }
@@ -246,7 +246,7 @@ namespace System.Management.Automation
             params object[] args)
             : base(string.Empty, innerException)
         {
-            if (pbex == null)
+            if (pbex is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(pbex));
             }
@@ -325,7 +325,7 @@ namespace System.Management.Automation
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }

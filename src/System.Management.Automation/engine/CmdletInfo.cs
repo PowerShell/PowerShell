@@ -108,7 +108,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
-            if (implementingType == null)
+            if (implementingType is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
@@ -250,7 +250,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_version == null)
+                if (_version is null)
                 {
                     if (Module != null)
                     {
@@ -339,7 +339,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_outputType == null)
+                if (_outputType is null)
                 {
                     _outputType = new List<PSTypeName>();
 
@@ -380,7 +380,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (provider == null)
+                    if (provider is null)
                     {
                         // No path argument, so just use the current path to choose the provider.
                         provider = Context.SessionState.Path.CurrentLocation.Provider;
@@ -496,8 +496,8 @@ namespace System.Management.Automation
                 // Handle the case in one or both of the properties might not be defined.
                 PSPropertyInfo nameProperty = psObject.Properties["Name"];
                 PSPropertyInfo psSnapInProperty = psObject.Properties["PSSnapIn"];
-                string nameString = nameProperty == null ? string.Empty : (string)nameProperty.Value;
-                string psSnapInString = psSnapInProperty == null ? string.Empty : (string)psSnapInProperty.Value;
+                string nameString = nameProperty is null ? string.Empty : (string)nameProperty.Value;
+                string psSnapInString = psSnapInProperty is null ? string.Empty : (string)psSnapInProperty.Value;
                 return GetFullName(psSnapInString, nameString);
             }
         }

@@ -34,7 +34,7 @@ namespace System.Management.Automation
         /// </param>
         internal SecurityDescriptorCmdletProviderIntrinsics(Cmdlet cmdlet)
         {
-            if (cmdlet == null)
+            if (cmdlet is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(cmdlet));
             }
@@ -52,7 +52,7 @@ namespace System.Management.Automation
         /// </param>
         internal SecurityDescriptorCmdletProviderIntrinsics(SessionStateInternal sessionState)
         {
-            if (sessionState == null)
+            if (sessionState is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }

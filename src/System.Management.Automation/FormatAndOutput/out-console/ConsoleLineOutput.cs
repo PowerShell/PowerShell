@@ -251,9 +251,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="errorContext">Error context to throw exceptions.</param>
         internal ConsoleLineOutput(PSHostUserInterface hostConsole, bool paging, TerminatingErrorContext errorContext)
         {
-            if (hostConsole == null)
+            if (hostConsole is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(hostConsole));
-            if (errorContext == null)
+            if (errorContext is null)
                 throw PSTraceSource.NewArgumentNullException(nameof(errorContext));
 
             _console = hostConsole;
@@ -388,7 +388,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return;
 
             // if there is no prompting, we are done
-            if (_prompt == null)
+            if (_prompt is null)
                 return;
 
             // increment the count of lines written to the screen

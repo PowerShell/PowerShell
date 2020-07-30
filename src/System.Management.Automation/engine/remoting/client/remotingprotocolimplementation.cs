@@ -65,7 +65,7 @@ namespace System.Management.Automation.Remoting
         {
             Dbg.Assert(_maxUriRedirectionCount >= 0, "maxUriRedirectionCount cannot be less than 0.");
 
-            if (session == null)
+            if (session is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(session));
             }
@@ -277,7 +277,7 @@ namespace System.Management.Automation.Remoting
 
         private void HandleStateChanged(object sender, RemoteSessionStateEventArgs arg)
         {
-            if (arg == null)
+            if (arg is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(arg));
             }
@@ -539,14 +539,14 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal void DispatchInputQueueData(object sender, RemoteDataEventArgs dataArg)
         {
-            if (dataArg == null)
+            if (dataArg is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(dataArg));
             }
 
             RemoteDataObject<PSObject> rcvdData = dataArg.ReceivedData;
 
-            if (rcvdData == null)
+            if (rcvdData is null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(dataArg));
             }
@@ -609,7 +609,7 @@ namespace System.Management.Automation.Remoting
         /// </param>
         private void ProcessSessionMessages(RemoteDataEventArgs arg)
         {
-            if (arg == null || arg.ReceivedData == null)
+            if (arg is null || arg.ReceivedData is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(arg));
             }
@@ -683,7 +683,7 @@ namespace System.Management.Automation.Remoting
         internal void ProcessNonSessionMessages(RemoteDataObject<PSObject> rcvdData)
         {
             // TODO: Consider changing to Dbg.Assert()
-            if (rcvdData == null)
+            if (rcvdData is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(rcvdData));
             }

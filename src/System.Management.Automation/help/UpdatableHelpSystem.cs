@@ -1246,7 +1246,7 @@ namespace System.Management.Automation.Help
             {
                 if (string.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (xsd == null)
+                    if (xsd is null)
                     {
                         throw new ItemNotFoundException(StringUtil.Format(HelpDisplayStrings.HelpContentXsdNotFound, xsdPath));
                     }

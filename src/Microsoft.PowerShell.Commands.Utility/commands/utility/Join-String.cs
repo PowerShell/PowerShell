@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands.Utility
                 {
                     if (inputObject != null && inputObject != AutomationNull.Value)
                     {
-                        var inputValue = Property == null
+                        var inputValue = Property is null
                                             ? inputObject
                                             : Property.GetValues(inputObject, false, true).FirstOrDefault()?.Result;
 

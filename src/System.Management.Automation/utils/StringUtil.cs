@@ -76,7 +76,7 @@ namespace System.Management.Automation.Internal
 
             var result = IndentCache[countOfSpaces];
 
-            if (result == null)
+            if (result is null)
             {
                 Interlocked.CompareExchange(ref IndentCache[countOfSpaces], new string(' ', countOfSpaces), null);
                 result = IndentCache[countOfSpaces];
@@ -96,7 +96,7 @@ namespace System.Management.Automation.Internal
 
             var result = DashCache[count];
 
-            if (result == null)
+            if (result is null)
             {
                 Interlocked.CompareExchange(ref DashCache[count], new string('-', count), null);
                 result = DashCache[count];

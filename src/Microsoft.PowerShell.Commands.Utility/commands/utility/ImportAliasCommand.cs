@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (_existingCommands == null)
+                if (_existingCommands is null)
                 {
                     _existingCommands = new Dictionary<string, CommandTypes>(StringComparer.OrdinalIgnoreCase);
                     CommandSearcher searcher = new CommandSearcher(

@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.Commands
                 _orderByProperty.OrderMatrix != null &&
                 _orderByProperty.OrderMatrix.Count == ReferenceObject.Length,
                 "no OrderMatrix");
-            if (_orderByProperty.Comparer == null || _orderByProperty.OrderMatrix == null || _orderByProperty.OrderMatrix.Count == 0)
+            if (_orderByProperty.Comparer is null || _orderByProperty.OrderMatrix is null || _orderByProperty.OrderMatrix.Count == 0)
             {
                 return;
             }
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
             OrderByPropertyEntry match,
             List<OrderByPropertyEntry> list)
         {
-            if (match == null || list == null)
+            if (match is null || list is null)
                 return null;
             Diagnostics.Assert(_comparer != null, "null comparer");
             for (int i = 0; i < list.Count; i++)
@@ -325,7 +325,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 mshobj = new PSObject();
-                if (Property == null || 0 == Property.Length)
+                if (Property is null || 0 == Property.Length)
                 {
                     PSNoteProperty inputNote = new PSNoteProperty(
                         InputObjectPropertyName, entry.inputObject);
@@ -395,18 +395,18 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (ReferenceObject == null || ReferenceObject.Length == 0)
+            if (ReferenceObject is null || ReferenceObject.Length == 0)
             {
                 HandleDifferenceObjectOnly();
                 return;
             }
-            else if (DifferenceObject == null || DifferenceObject.Length == 0)
+            else if (DifferenceObject is null || DifferenceObject.Length == 0)
             {
                 HandleReferenceObjectOnly();
                 return;
             }
 
-            if (_comparer == null && 0 < DifferenceObject.Length)
+            if (_comparer is null && 0 < DifferenceObject.Length)
             {
                 InitComparer();
             }
@@ -454,7 +454,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void HandleDifferenceObjectOnly()
         {
-            if (DifferenceObject == null || DifferenceObject.Length == 0)
+            if (DifferenceObject is null || DifferenceObject.Length == 0)
             {
                 return;
             }
@@ -474,7 +474,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void HandleReferenceObjectOnly()
         {
-            if (ReferenceObject == null || ReferenceObject.Length == 0)
+            if (ReferenceObject is null || ReferenceObject.Length == 0)
             {
                 return;
             }

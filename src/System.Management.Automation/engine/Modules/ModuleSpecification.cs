@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="moduleSpecification">The module specification as a hashtable.</param>
         public ModuleSpecification(Hashtable moduleSpecification)
         {
-            if (moduleSpecification == null)
+            if (moduleSpecification is null)
             {
                 throw new ArgumentNullException(nameof(moduleSpecification));
             }
@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
                 return new MissingMemberException(message);
             }
 
-            if (moduleSpecification.RequiredVersion == null && moduleSpecification.Version == null && moduleSpecification.MaximumVersion == null)
+            if (moduleSpecification.RequiredVersion is null && moduleSpecification.Version is null && moduleSpecification.MaximumVersion is null)
             {
                 message = StringUtil.Format(Modules.RequiredModuleMissingModuleVersion);
                 return new MissingMemberException(message);
@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal ModuleSpecification(PSModuleInfo moduleInfo)
         {
-            if (moduleInfo == null)
+            if (moduleInfo is null)
             {
                 throw new ArgumentNullException(nameof(moduleInfo));
             }
@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         public override string ToString()
         {
-            if (Guid == null && Version == null && RequiredVersion == null && MaximumVersion == null)
+            if (Guid is null && Version is null && RequiredVersion is null && MaximumVersion is null)
             {
                 return Name;
             }
@@ -336,7 +336,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>A hashcode that is always the same for any module specification with the same properties.</returns>
         public int GetHashCode(ModuleSpecification obj)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 return 0;
             }

@@ -34,14 +34,14 @@ namespace System.Management.Automation
             bool shouldPrompt = false;
             bool confirmPassword = false;
 
-            if ((engineIntrinsics == null) ||
-               (engineIntrinsics.Host == null) ||
-               (engineIntrinsics.Host.UI == null))
+            if ((engineIntrinsics is null) ||
+               (engineIntrinsics.Host is null) ||
+               (engineIntrinsics.Host.UI is null))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(engineIntrinsics));
             }
 
-            if (inputData == null)
+            if (inputData is null)
             {
                 shouldPrompt = true;
             }
@@ -51,14 +51,14 @@ namespace System.Management.Automation
                 cred = LanguagePrimitives.FromObjectAs<PSCredential>(inputData);
 
                 // Try to coerce the username from the string
-                if (cred == null)
+                if (cred is null)
                 {
                     shouldPrompt = true;
                     userName = LanguagePrimitives.FromObjectAs<string>(inputData);
 
                     // If we couldn't get the username (as a string,)
                     // throw an exception
-                    if (userName == null)
+                    if (userName is null)
                     {
                         throw new PSArgumentException("userName");
                     }

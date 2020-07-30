@@ -99,7 +99,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static IEnumerable<LogProvider> GetLogProvider(ExecutionContext executionContext)
         {
-            if (executionContext == null)
+            if (executionContext is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(executionContext));
             }
@@ -203,13 +203,13 @@ namespace System.Management.Automation
                                                 Dictionary<string, string> additionalInfo,
                                                 EngineState newEngineState)
         {
-            if (executionContext == null)
+            if (executionContext is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
             }
 
-            if (exception == null)
+            if (exception is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(exception));
                 return;
@@ -318,13 +318,13 @@ namespace System.Management.Automation
                                                 Dictionary<string, string> additionalInfo
                                                 )
         {
-            if (logContext == null)
+            if (logContext is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(logContext));
                 return;
             }
 
-            if (exception == null)
+            if (exception is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(exception));
                 return;
@@ -357,7 +357,7 @@ namespace System.Management.Automation
                                                 EngineState engineState,
                                                 InvocationInfo invocationInfo)
         {
-            if (executionContext == null)
+            if (executionContext is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
@@ -405,13 +405,13 @@ namespace System.Management.Automation
                                                 Severity severity
                                                 )
         {
-            if (executionContext == null)
+            if (executionContext is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
             }
 
-            if (exception == null)
+            if (exception is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(exception));
                 return;
@@ -446,13 +446,13 @@ namespace System.Management.Automation
                                                 CommandState commandState,
                                                 InvocationInfo invocationInfo)
         {
-            if (executionContext == null)
+            if (executionContext is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
             }
 
-            if (invocationInfo == null)
+            if (invocationInfo is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(invocationInfo));
                 return;
@@ -488,7 +488,7 @@ namespace System.Management.Automation
                                                 CommandState commandState,
                                                 string commandName)
         {
-            if (executionContext == null)
+            if (executionContext is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
@@ -502,7 +502,7 @@ namespace System.Management.Automation
                     provider.LogCommandLifecycleEvent(
                         () =>
                         {
-                            if (logContext == null)
+                            if (logContext is null)
                             {
                                 logContext = GetLogContext(executionContext, null);
                                 logContext.CommandName = commandName;
@@ -529,7 +529,7 @@ namespace System.Management.Automation
                                                             InvocationInfo invocationInfo)
 
         {
-            if (executionContext == null)
+            if (executionContext is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
@@ -560,7 +560,7 @@ namespace System.Management.Automation
                                                             string scriptName,
                                                             string commandLine)
         {
-            if (executionContext == null)
+            if (executionContext is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
@@ -596,13 +596,13 @@ namespace System.Management.Automation
                                                 Severity severity
                                                 )
         {
-            if (executionContext == null)
+            if (executionContext is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
             }
 
-            if (exception == null)
+            if (exception is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(exception));
                 return;
@@ -637,7 +637,7 @@ namespace System.Management.Automation
                                                      string providerName,
                                                      ProviderState providerState)
         {
-            if (executionContext == null)
+            if (executionContext is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
@@ -673,7 +673,7 @@ namespace System.Management.Automation
                                             string previousValue,
                                             InvocationInfo invocationInfo)
         {
-            if (executionContext == null)
+            if (executionContext is null)
             {
                 PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
@@ -757,7 +757,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static LogContext GetLogContext(ExecutionContext executionContext, InvocationInfo invocationInfo, Severity severity)
         {
-            if (executionContext == null)
+            if (executionContext is null)
                 return null;
 
             LogContext logContext = new LogContext();
@@ -793,7 +793,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (executionContext.LogContextCache.User == null)
+                if (executionContext.LogContextCache.User is null)
                 {
                     logContext.User = Environment.UserDomainName + "\\" + Environment.UserName;
                     executionContext.LogContextCache.User = logContext.User;
@@ -817,7 +817,7 @@ namespace System.Management.Automation
 
             logContext.Time = DateTime.Now.ToString(CultureInfo.CurrentCulture);
 
-            if (invocationInfo == null)
+            if (invocationInfo is null)
                 return logContext;
 
             logContext.ScriptName = invocationInfo.ScriptName;

@@ -37,7 +37,7 @@ namespace System.Management.Automation.Remoting
             _supportedCommands.Add(RemoteDebuggingCommands.SetDebuggerAction);
             _supportedCommands.Add(RemoteDebuggingCommands.SetDebugMode);
 
-            if (PSVersion == null)
+            if (PSVersion is null)
             {
                 return;
             }

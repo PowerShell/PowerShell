@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
                 // cache MyParameterSet enum instead of doing string comparison every time
                 if (_effectiveParameterSet == MyParameterSet.Unknown)
                 {
-                    if ((MyInvocation.ExpectingInput) && (Maximum == null) && (Minimum == null))
+                    if ((MyInvocation.ExpectingInput) && (Maximum is null) && (Minimum is null))
                     {
                         _effectiveParameterSet = MyParameterSet.RandomListItem;
                     }
@@ -85,12 +85,12 @@ namespace Microsoft.PowerShell.Commands
 
         private void ThrowMinGreaterThanOrEqualMax(object minValue, object maxValue)
         {
-            if (minValue == null)
+            if (minValue is null)
             {
                 throw PSTraceSource.NewArgumentNullException("min");
             }
 
-            if (maxValue == null)
+            if (maxValue is null)
             {
                 throw PSTraceSource.NewArgumentNullException("max");
             }
@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (_generator == null)
+                if (_generator is null)
                 {
                     Guid runspaceId = Context.CurrentRunspace.InstanceId;
 
@@ -219,7 +219,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsInt(object o)
         {
-            if (o == null || o is int)
+            if (o is null || o is int)
             {
                 return true;
             }
@@ -229,7 +229,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsInt64(object o)
         {
-            if (o == null || o is Int64)
+            if (o is null || o is Int64)
             {
                 return true;
             }
@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
 
         private object ProcessOperand(object o)
         {
-            if (o == null)
+            if (o is null)
             {
                 return null;
             }
@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Commands
 
         private double ConvertToDouble(object o, double defaultIfNull)
         {
-            if (o == null)
+            if (o is null)
             {
                 return defaultIfNull;
             }
