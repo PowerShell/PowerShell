@@ -1805,7 +1805,7 @@ namespace System.Management.Automation
                             }
                         }
                         // Continue trying the filename/commandname completion for scenarios like this: $aa[get-<tab>
-                        else if (!(cursorAst is ErrorExpressionAst && cursorAst.Parent is IndexExpressionAst))
+                        else if (cursorAst is ErrorExpressionAst && cursorAst.Parent is not IndexExpressionAst)
                         {
                             return result;
                         }

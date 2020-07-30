@@ -953,7 +953,7 @@ namespace System.Management.Automation
 
                 _outVarList = oldValue ?? new ArrayList();
 
-                if (!(_thisCommand is PSScriptCmdlet))
+                if (_thisCommand is not PSScriptCmdlet)
                 {
                     this.OutputPipe.AddVariableList(VariableStreamKind.Output, _outVarList);
                 }
@@ -989,7 +989,7 @@ namespace System.Management.Automation
             // same scope.
             _pipelineVarReference = _state.PSVariable.Get(this.PipelineVariable);
 
-            if (!(_thisCommand is PSScriptCmdlet))
+            if (_thisCommand is not PSScriptCmdlet)
             {
                 this.OutputPipe.SetPipelineVariable(_pipelineVarReference);
             }
@@ -2574,7 +2574,7 @@ namespace System.Management.Automation
                 varList = new ArrayList();
             }
 
-            if (!(_thisCommand is PSScriptCmdlet))
+            if (_thisCommand is not PSScriptCmdlet)
             {
                 this.OutputPipe.AddVariableList(streamKind, varList);
             }

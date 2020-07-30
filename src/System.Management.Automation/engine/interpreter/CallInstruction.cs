@@ -104,7 +104,7 @@ namespace System.Management.Automation.Interpreter
             }
             catch (TargetInvocationException tie)
             {
-                if (!(tie.InnerException is NotSupportedException))
+                if (tie.InnerException is not NotSupportedException)
                 {
                     throw;
                 }

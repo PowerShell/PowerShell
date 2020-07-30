@@ -4206,7 +4206,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool ValidRemoteSessionForScripting(Runspace runspace)
         {
-            if (!(runspace is RemoteRunspace))
+            if (runspace is not RemoteRunspace)
             {
                 return false;
             }

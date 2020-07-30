@@ -906,7 +906,7 @@ namespace System.Management.Automation
                 formatProvider = CultureInfo.InvariantCulture;
             }
 
-            if (!(formatProvider is CultureInfo culture))
+            if (formatProvider is not CultureInfo culture)
             {
                 throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
@@ -936,7 +936,7 @@ namespace System.Management.Automation
 
             if (first is string firstString)
             {
-                if (!(second is string secondString))
+                if (second is not string secondString)
                 {
                     if (!TryConvertTo(second, culture, out secondString))
                     {
@@ -4283,7 +4283,7 @@ namespace System.Management.Automation
 
             public override bool Equals(object other)
             {
-                if (!(other is ConversionTypePair))
+                if (other is not ConversionTypePair)
                     return false;
 
                 var ctp = (ConversionTypePair)other;

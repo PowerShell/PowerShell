@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell
             if (obj == null)
                 return false;
 
-            if (!(obj is PropertyKey))
+            if (obj is not PropertyKey)
                 return false;
 
             PropertyKey other = (PropertyKey)obj;

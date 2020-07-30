@@ -1917,7 +1917,7 @@ namespace System.Management.Automation
             InterpreterError.UpdateExceptionErrorRecordPosition(rte, extent);
             ErrorRecord errRec = rte.ErrorRecord.WrapException(rte);
 
-            if (!(rte is PipelineStoppedException))
+            if (rte is not PipelineStoppedException)
             {
                 if (outputPipe != null)
                 {

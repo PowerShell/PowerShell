@@ -2191,7 +2191,7 @@ namespace System.Management.Automation.Runspaces
                     return;
                 }
 
-                if (!(value is NotePropertyData || value is ScriptPropertyData || value is CodePropertyData))
+                if (value is NotePropertyData || value is ScriptPropertyData || value is not CodePropertyData)
                 {
                     throw PSTraceSource.NewArgumentException("value");
                 }

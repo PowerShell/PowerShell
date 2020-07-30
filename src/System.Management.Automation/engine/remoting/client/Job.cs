@@ -4116,7 +4116,7 @@ namespace System.Management.Automation
         private Pipeline DrainAndBlockRemoteOutput()
         {
             // We only do this for remote runspaces.
-            if (!(_runspace is RemoteRunspace)) { return null; }
+            if (_runspace is not RemoteRunspace) { return null; }
 
             Pipeline runningCmd = _runspace.GetCurrentlyRunningPipeline();
             if (runningCmd != null)

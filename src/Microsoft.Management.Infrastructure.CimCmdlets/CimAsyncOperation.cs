@@ -404,7 +404,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     return null;
                 }
-                else if (!(cimReferenceArray[0] is PSReference))
+                else if (cimReferenceArray[0] is not PSReference)
                 {
                     return null;
                 }

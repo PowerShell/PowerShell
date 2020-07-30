@@ -2423,7 +2423,7 @@ namespace System.Management.Automation.Language
 
                     UngetToken(rParen);
                     // Don't bother reporting this error if we already reported an empty condition error.
-                    if (!(condition is ErrorStatementAst))
+                    if (condition is not ErrorStatementAst)
                     {
                         ReportIncompleteInput(rParen.Extent,
                             nameof(ParserStrings.MissingEndParenthesisAfterStatement),
@@ -3611,7 +3611,7 @@ namespace System.Management.Automation.Language
                 // so stop parsing the statement and try parsing something else if possible.
 
                 UngetToken(rParen);
-                if (!(condition is ErrorStatementAst))
+                if (condition is not ErrorStatementAst)
                 {
                     ReportIncompleteInput(After(condition),
                         nameof(ParserStrings.MissingEndParenthesisAfterStatement),
@@ -4966,7 +4966,7 @@ namespace System.Management.Automation.Language
                     {
                         htAst = (HashtableAst)aliasAst;
                     }
-                    else if (!(aliasAst is StringConstantExpressionAst))
+                    else if (aliasAst is not StringConstantExpressionAst)
                     {
                         return new ErrorStatementAst(ExtentOf(usingToken, aliasAst), new Ast[] { itemAst, aliasAst });
                     }
@@ -6703,7 +6703,7 @@ namespace System.Management.Automation.Language
                     UngetToken(token);
 
                     // Don't bother reporting this error if we already reported an empty 'IfTrue' operand error.
-                    if (!(ifTrue is ErrorExpressionAst))
+                    if (ifTrue is not ErrorExpressionAst)
                     {
                         componentAsts.Add(ifTrue);
                         ReportIncompleteInput(
@@ -7852,7 +7852,7 @@ namespace System.Management.Automation.Language
 
                 UngetToken(rBracket);
                 // Skip reporting the error if we've already reported a missing index.
-                if (!(indexExpr is ErrorExpressionAst))
+                if (indexExpr is not ErrorExpressionAst)
                 {
                     ReportIncompleteInput(After(indexExpr),
                         nameof(ParserStrings.MissingEndSquareBracket),

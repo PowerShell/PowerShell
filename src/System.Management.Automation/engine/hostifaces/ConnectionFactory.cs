@@ -454,11 +454,11 @@ namespace System.Management.Automation.Runspaces
         public static RunspacePool CreateRunspacePool(int minRunspaces,
             int maxRunspaces, RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable, PSPrimitiveDictionary applicationArguments)
         {
-            if ((!(connectionInfo is WSManConnectionInfo)) &&
-                (!(connectionInfo is NewProcessConnectionInfo)) &&
-                (!(connectionInfo is NamedPipeConnectionInfo)) &&
-                (!(connectionInfo is VMConnectionInfo)) &&
-                (!(connectionInfo is ContainerConnectionInfo)))
+            if ((connectionInfo is not WSManConnectionInfo) &&
+                (connectionInfo is not NewProcessConnectionInfo) &&
+                (connectionInfo is not NamedPipeConnectionInfo) &&
+                (connectionInfo is not VMConnectionInfo) &&
+                (connectionInfo is not ContainerConnectionInfo))
             {
                 throw new NotSupportedException();
             }
@@ -539,12 +539,12 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public static Runspace CreateRunspace(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable, PSPrimitiveDictionary applicationArguments, string name)
         {
-            if ((!(connectionInfo is WSManConnectionInfo)) &&
-                (!(connectionInfo is NewProcessConnectionInfo)) &&
-                (!(connectionInfo is NamedPipeConnectionInfo)) &&
-                (!(connectionInfo is SSHConnectionInfo)) &&
-                (!(connectionInfo is VMConnectionInfo)) &&
-                (!(connectionInfo is ContainerConnectionInfo)))
+            if ((connectionInfo is not WSManConnectionInfo) &&
+                (connectionInfo is not NewProcessConnectionInfo) &&
+                (connectionInfo is not NamedPipeConnectionInfo) &&
+                (connectionInfo is not SSHConnectionInfo) &&
+                (connectionInfo is not VMConnectionInfo) &&
+                (connectionInfo is not ContainerConnectionInfo))
             {
                 throw new NotSupportedException();
             }

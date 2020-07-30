@@ -1459,7 +1459,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     PSObject serializedPipelineState = pipelineState as PSObject;
                     object baseObject = serializedPipelineState.BaseObject;
-                    if (!(baseObject is int))
+                    if (baseObject is not int)
                     {
                         break;
                     }

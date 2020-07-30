@@ -1406,7 +1406,7 @@ namespace System.Management.Automation.Internal
                 // Note that the pipeline could have been stopped asynchronously
                 // before hitting the error, therefore we check whether
                 // firstTerminatingError is PipelineStoppedException.
-                else if ((!(_firstTerminatingError.SourceException is PipelineStoppedException))
+                else if ((_firstTerminatingError.SourceException is not PipelineStoppedException)
                     && command != null && command.Context != null)
                 {
                     Exception ex = e;
@@ -1416,7 +1416,7 @@ namespace System.Management.Automation.Internal
                         ex = ex.InnerException;
                     }
 
-                    if (!(ex is PipelineStoppedException))
+                    if (ex is not PipelineStoppedException)
                     {
                         string message = StringUtil.Format(PipelineStrings.SecondFailure,
                             _firstTerminatingError.GetType().Name,

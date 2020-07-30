@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
                 // Ignore errors and formatting records, as those can't be captured
                 if (
                     (inputObjectBase != null) &&
-                    (!(inputObjectBase is ErrorRecord)) &&
+                    (inputObjectBase is not ErrorRecord) &&
                     (!inputObjectBase.GetType().FullName.StartsWith(
                         "Microsoft.PowerShell.Commands.Internal.Format", StringComparison.OrdinalIgnoreCase)))
                 {
