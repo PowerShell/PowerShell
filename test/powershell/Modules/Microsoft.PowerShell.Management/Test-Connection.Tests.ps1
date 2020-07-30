@@ -34,6 +34,8 @@ function GetExternalHostAddress([string]$HostName)
 
 Describe "Test-Connection" -tags "CI" {
     BeforeAll {
+        $PSDefaultParameterValues["It:Pending"] = $true
+
         $hostName = [System.Net.Dns]::GetHostName()
         $gatewayAddress = GetGatewayAddress
         $publicHostAddress = GetExternalHostAddress -HostName $hostName
@@ -47,6 +49,10 @@ Describe "Test-Connection" -tags "CI" {
         # under some environments, we can't round trip this and retrieve the real name from the address
         # in this case we will simply use the hostname
         $jobContinues = Start-Job { Test-Connection $using:targetAddress -Repeat }
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues["It:Pending"] = $false
     }
 
     Context "Ping" {
