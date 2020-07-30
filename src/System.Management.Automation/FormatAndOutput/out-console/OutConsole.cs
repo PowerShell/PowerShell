@@ -109,11 +109,10 @@ namespace Microsoft.PowerShell.Commands
                 object inputObjectBase = PSObject.Base(InputObject);
 
                 // Ignore errors and formatting records, as those can't be captured
-                if (
-                    (inputObjectBase != null) &&
-                    (inputObjectBase is not ErrorRecord) &&
-                    (!inputObjectBase.GetType().FullName.StartsWith(
-                        "Microsoft.PowerShell.Commands.Internal.Format", StringComparison.OrdinalIgnoreCase)))
+                if (inputObjectBase != null &&
+                    inputObjectBase is not ErrorRecord &&
+                    !inputObjectBase.GetType().FullName.StartsWith(
+                        "Microsoft.PowerShell.Commands.Internal.Format", StringComparison.OrdinalIgnoreCase))
                 {
                     _outVarResults.Add(InputObject);
                 }
