@@ -268,7 +268,7 @@ Describe "Test-Connection" -tags "CI" {
             $result.MtuSize | Should -BeGreaterThan 0
         }
 
-        It "Quiet works" -Pending:($true -or $env:__INCONTAINER -eq 1) {
+        It "Quiet works" -Pending:($env:__INCONTAINER -eq 1) {
             $result = Test-Connection $gatewayAddress -MtuSize -Quiet
 
             $result | Should -BeOfType Int32
