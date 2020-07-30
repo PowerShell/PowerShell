@@ -1209,7 +1209,7 @@ namespace System.Management.Automation.Remoting
                     return false;
                 }
 
-                if (!(hashtable[FunctionValueToken] is ScriptBlock))
+                if (hashtable[FunctionValueToken] is not ScriptBlock)
                 {
                     cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock, FunctionValueToken, key, path));
                     return false;

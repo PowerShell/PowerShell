@@ -967,7 +967,7 @@ namespace Microsoft.PowerShell.Commands
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
-                            if (!(hashtable[ConfigFileConstants.FunctionValueToken] is ScriptBlock))
+                            if (hashtable[ConfigFileConstants.FunctionValueToken] is not ScriptBlock)
                             {
                                 PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock,
                                     ConfigFileConstants.FunctionValueToken, ConfigFileConstants.FunctionDefinitions, _path));
@@ -1714,7 +1714,7 @@ namespace Microsoft.PowerShell.Commands
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
-                            if (!(hashtable[ConfigFileConstants.FunctionValueToken] is ScriptBlock))
+                            if (hashtable[ConfigFileConstants.FunctionValueToken] is not ScriptBlock)
                             {
                                 PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock,
                                     ConfigFileConstants.FunctionValueToken, ConfigFileConstants.FunctionDefinitions, _path));
