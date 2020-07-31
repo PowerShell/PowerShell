@@ -20,11 +20,11 @@ Import-Module AzureRM.NetCore.Preview
 Login-AzureRmAccount
 
 ### Specify a name for Azure Resource Group
-$resourceGroupName = "PSAzDemo" + (New-Guid | ForEach-Object guid) -replace "-",""
+$resourceGroupName = 'PSAzDemo' + (New-Guid | ForEach-Object guid) -replace '-',''
 $resourceGroupName
 
 ### Create a new Azure Resource Group
-New-AzureRmResourceGroup -Name $resourceGroupName -Location "West US"
+New-AzureRmResourceGroup -Name $resourceGroupName -Location 'West US'
 
 ### Deploy an Ubuntu 14.04 VM using Resource Manager cmdlets
 ### Template is available at
@@ -33,7 +33,7 @@ $dnsLabelPrefix = $resourceGroupName | ForEach-Object tolower
 $dnsLabelPrefix
 
 #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc secret.")]
-$password = ConvertTo-SecureString -String "PowerShellRocks!" -AsPlainText -Force
+$password = ConvertTo-SecureString -String 'PowerShellRocks!' -AsPlainText -Force
 New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile ./Compute-Linux.json -adminUserName psuser -adminPassword $password -dnsLabelPrefix $dnsLabelPrefix
 
 ### Monitor the status of the deployment

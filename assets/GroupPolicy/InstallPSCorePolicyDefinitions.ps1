@@ -28,7 +28,7 @@ function Test-Elevated
     # if the current Powershell session was called with administrator privileges,
     # the Administrator Group's well-known SID will show up in the Groups for the current identity.
     # Note that the SID won't show up unless the process is elevated.
-    return (([Security.Principal.WindowsIdentity]::GetCurrent()).Groups -contains "S-1-5-32-544")
+    return (([Security.Principal.WindowsIdentity]::GetCurrent()).Groups -contains 'S-1-5-32-544')
 }
 $IsWindowsOs = $PSHOME.EndsWith('\WindowsPowerShell\v1.0', [System.StringComparison]::OrdinalIgnoreCase) -or $IsWindows
 
@@ -51,8 +51,8 @@ $admxName = 'PowerShellCoreExecutionPolicy.admx'
 $admlName = 'PowerShellCoreExecutionPolicy.adml'
 $admx = Get-Item -Path (Join-Path -Path $Path -ChildPath $admxName)
 $adml = Get-Item -Path (Join-Path -Path $Path -ChildPath $admlName)
-$admxTargetPath = Join-Path -Path $env:WINDIR -ChildPath "PolicyDefinitions"
-$admlTargetPath = Join-Path -Path $admxTargetPath -ChildPath "en-US"
+$admxTargetPath = Join-Path -Path $env:WINDIR -ChildPath 'PolicyDefinitions'
+$admlTargetPath = Join-Path -Path $admxTargetPath -ChildPath 'en-US'
 
 $files = @($admx, $adml)
 foreach ($file in $files)

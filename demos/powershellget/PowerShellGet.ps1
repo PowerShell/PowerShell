@@ -69,12 +69,12 @@ Get-InstalledScript
 Get-PSRepository
 
 # Register a new private feed
-Register-PSRepository -Name "myPrivateGallery" –SourceLocation "https://www.myget.org/F/powershellgetdemo/api/v2" -InstallationPolicy Trusted
+Register-PSRepository -Name 'myPrivateGallery' –SourceLocation 'https://www.myget.org/F/powershellgetdemo/api/v2' -InstallationPolicy Trusted
 
 # Change the trust level for a repositories
-Set-PSRepository -Name "myPrivateGallery" -InstallationPolicy "Untrusted"
+Set-PSRepository -Name 'myPrivateGallery' -InstallationPolicy 'Untrusted'
 
 # Remove a private feed
-Unregister-PSRepository -Name "myPrivateGallery"
+Unregister-PSRepository -Name 'myPrivateGallery'
 
 #endregion

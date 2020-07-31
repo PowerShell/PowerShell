@@ -4,10 +4,10 @@
 Function Get-SystemDJournal {
     [CmdletBinding()]
     param (
-        [Alias("args")][string]$journalctlParameters
+        [Alias('args')][string]$journalctlParameters
        )
-        $sudocmd = "sudo"
-        $cmd = "journalctl"
+        $sudocmd = 'sudo'
+        $cmd = 'journalctl'
         $Result = & $sudocmd $cmd $journalctlParameters -o json --no-pager
         Try
         {

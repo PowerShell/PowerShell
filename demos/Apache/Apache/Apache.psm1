@@ -3,26 +3,26 @@
 
 #Region utility functions
 
-$global:sudocmd = "sudo"
+$global:sudocmd = 'sudo'
 
 Function GetApacheCmd{
-    if (Test-Path "/usr/sbin/apache2ctl"){
-        $cmd = "/usr/sbin/apache2ctl"
-    }elseif(Test-Path "/usr/sbin/httpd"){
-        $cmd = "/usr/sbin/httpd"
+    if (Test-Path '/usr/sbin/apache2ctl'){
+        $cmd = '/usr/sbin/apache2ctl'
+    }elseif(Test-Path '/usr/sbin/httpd'){
+        $cmd = '/usr/sbin/httpd'
     }else{
-        Write-Error "Unable to find httpd or apache2ctl program. Unable to continue"
+        Write-Error 'Unable to find httpd or apache2ctl program. Unable to continue'
         exit -1
     }
     $cmd
 }
 
 Function GetApacheVHostDir{
-    if (Test-Path "/etc/httpd/conf.d"){
-        Return "/etc/httpd/conf.d/"
+    if (Test-Path '/etc/httpd/conf.d'){
+        Return '/etc/httpd/conf.d/'
     }
-    if (Test-Path "/etc/apache2/sites-enabled"){
-        Return "/etc/apache2/sites-enabled"
+    if (Test-Path '/etc/apache2/sites-enabled'){
+        Return '/etc/apache2/sites-enabled'
     }
 }
 
@@ -46,9 +46,9 @@ Class ApacheModule{
 Class ApacheVirtualHost{
         [string]$ServerName
         [string]$DocumentRoot
-        [string]$VirtualHostIPAddress = "*"
+        [string]$VirtualHostIPAddress = '*'
         [string[]]$ServerAliases
-        [int]$VirtualHostPort = "80"
+        [int]$VirtualHostPort = '80'
         [string]$ServerAdmin
         [string]$CustomLogPath
         [string]$ErrorLogPath
@@ -89,22 +89,22 @@ Class ApacheVirtualHost{
             }
             $VHostIPAddress = $this.VirtualHostIPAddress
             [string]$VhostPort = $this.VirtualHostPort
-            $VHostDef = "<VirtualHost " + "$VHostIPAddress" + ":" + $VHostPort + " >`n"
-            $vHostDef += "DocumentRoot " + $this.DocumentRoot + "`n"
+            $VHostDef = '<VirtualHost ' + "$VHostIPAddress" + ':' + $VHostPort + " >`n"
+            $vHostDef += 'DocumentRoot ' + $this.DocumentRoot + "`n"
             ForEach ($Alias in $this.ServerAliases){
-                if ($Alias.trim() -ne ""){
-                    $vHostDef += "ServerAlias " + $Alias + "`n"
+                if ($Alias.trim() -ne ''){
+                    $vHostDef += 'ServerAlias ' + $Alias + "`n"
                 }
             }
-            $vHostDef += "ServerName " + $this.ServerName +"`n"
-            if ($this.ServerAdmin.Length -gt 1){$vHostDef += "ServerAdmin " + $this.ServerAdmin +"`n"}
-            if ($this.CustomLogPath -like "*/*"){$vHostDef += "CustomLog " + $this.CustomLogPath +"`n"}
-            if ($this.ErrorLogPath -like "*/*"){$vHostDef += "ErrorLog " + $this.ErrorLogpath +"`n"}
-            $vHostDef += "</VirtualHost>"
+            $vHostDef += 'ServerName ' + $this.ServerName +"`n"
+            if ($this.ServerAdmin.Length -gt 1){$vHostDef += 'ServerAdmin ' + $this.ServerAdmin +"`n"}
+            if ($this.CustomLogPath -like '*/*'){$vHostDef += 'CustomLog ' + $this.CustomLogPath +"`n"}
+            if ($this.ErrorLogPath -like '*/*'){$vHostDef += 'ErrorLog ' + $this.ErrorLogpath +"`n"}
+            $vHostDef += '</VirtualHost>'
             $filName = $ConfigurationFile
             $VhostDef | Out-File "/tmp/${filName}" -Force -Encoding:ascii
-            & $global:sudocmd "mv" "/tmp/${filName}" "${VhostsDirectory}/${filName}"
-            Write-Information "Restarting Apache HTTP Server"
+            & $global:sudocmd 'mv' "/tmp/${filName}" "${VhostsDirectory}/${filName}"
+            Write-Information 'Restarting Apache HTTP Server'
             Restart-ApacheHTTPServer
         }
 
@@ -126,9 +126,9 @@ Function New-ApacheVHost {
         [string]$ErrorLogPath
         )
 
-        $NewConfFile = $VHostsDirectory + "/" + $ServerName + ".conf"
-        if(!($VirtualHostIPAddress)){$VirtualHostIPAddress = "*"}
-        if(!($VirtualHostPort)){$VirtualHostPort = "80"}
+        $NewConfFile = $VHostsDirectory + '/' + $ServerName + '.conf'
+        if(!($VirtualHostIPAddress)){$VirtualHostIPAddress = '*'}
+        if(!($VirtualHostPort)){$VirtualHostPort = '80'}
         $newVHost = [ApacheVirtualHost]::new("$ServerName","$DocumentRoot","$ServerAliases","$ServerAdmin","$CustomLogPath","$ErrorLogPath","$VirtualHostIPAddress",$VirtualHostPort,"$NewConfFile")
         $newVHost.Save("$ServerName.conf")
 }
@@ -136,28 +136,28 @@ Function New-ApacheVHost {
 Function GetVHostProps([string]$ConfFile,[string]$ServerName,[string]$Listener){
     $confContents = Get-Content $ConfFile
     [boolean]$Match = $false
-    $DocumentRoot = ""
-    $CustomLogPath = ""
-    $ErrorLogPath = ""
-    $ServerAdmin = ""
+    $DocumentRoot = ''
+    $CustomLogPath = ''
+    $ErrorLogPath = ''
+    $ServerAdmin = ''
     ForEach ($confline in $confContents){
         if ($confLine -like "<VirtualHost*${Listener}*"){
             $Match = $true
         }
         if($Match){
             Switch -wildcard  ($confline) {
-                "*DocumentRoot*"{$DocumentRoot = $confline.split()[1].trim()}
-                "*CustomLog*"{$CustomLogPath = $confline.split()[1].trim()}
-                "*ErrorLog*"{$ErrorLogPath = $confline.split()[1].trim()}
-                "*ServerAdmin*"{$ServerAdmin = $confline.split()[1].trim()}
+                '*DocumentRoot*'{$DocumentRoot = $confline.split()[1].trim()}
+                '*CustomLog*'{$CustomLogPath = $confline.split()[1].trim()}
+                '*ErrorLog*'{$ErrorLogPath = $confline.split()[1].trim()}
+                '*ServerAdmin*'{$ServerAdmin = $confline.split()[1].trim()}
                #Todo: Server aliases
             }
-            if($confline -like "*</VirtualHost>*"){
+            if($confline -like '*</VirtualHost>*'){
                 $Match = $false
             }
         }
     }
-    @{"DocumentRoot" = "$DocumentRoot"; "CustomLogPath" = "$CustomLogPath"; "ErrorLogPath" = "$ErrorLogPath"; "ServerAdmin" = $ServerAdmin}
+    @{'DocumentRoot' = "$DocumentRoot"; 'CustomLogPath' = "$CustomLogPath"; 'ErrorLogPath' = "$ErrorLogPath"; 'ServerAdmin' = $ServerAdmin}
 
 }
 
@@ -169,27 +169,27 @@ Function Get-ApacheVHost{
 
     ForEach ($line in $res){
         $ServerName = $null
-        if ($line -like "*:*.conf*"){
-            $RMatch = $line -match "(?<Listen>.*:[0-9]*)(?<ServerName>.*)\((?<ConfFile>.*)\)"
+        if ($line -like '*:*.conf*'){
+            $RMatch = $line -match '(?<Listen>.*:[0-9]*)(?<ServerName>.*)\((?<ConfFile>.*)\)'
             $ListenAddress = $Matches.Listen.trim()
             $ServerName = $Matches.ServerName.trim()
-            $ConfFile = $Matches.ConfFile.trim().split(":")[0].Replace('(','')
+            $ConfFile = $Matches.ConfFile.trim().split(':')[0].Replace('(','')
         }else{
-            if ($line.trim().split()[0] -like "*:*"){
+            if ($line.trim().split()[0] -like '*:*'){
                 $ListenAddress = $line.trim().split()[0]
-            }elseif($line -like "*.conf*"){
-                if ($line -like "*default*"){
-                    $ServerName = "_Default"
-                    $ConfFile = $line.trim().split()[3].split(":")[0].Replace('(','')
-                }elseif($line -like "*namevhost*"){
+            }elseif($line -like '*.conf*'){
+                if ($line -like '*default*'){
+                    $ServerName = '_Default'
+                    $ConfFile = $line.trim().split()[3].split(':')[0].Replace('(','')
+                }elseif($line -like '*namevhost*'){
                     $ServerName = $line.trim().split()[3]
-                    $ConfFile = $line.trim().split()[4].split(":")[0].Replace('(','')
+                    $ConfFile = $line.trim().split()[4].split(':')[0].Replace('(','')
                 }
             }
         }
 
         if ($null -ne $ServerName){
-            $vHost = [ApacheVirtualHost]::New($ServerName, $ConfFile, $ListenAddress.Split(":")[0],$ListenAddress.Split(":")[1])
+            $vHost = [ApacheVirtualHost]::New($ServerName, $ConfFile, $ListenAddress.Split(':')[0],$ListenAddress.Split(':')[1])
             $ExtProps = GetVHostProps $ConfFile $ServerName $ListenAddress
             $vHost.DocumentRoot = $ExtProps.DocumentRoot
             #Custom log requires additional handling. NYI

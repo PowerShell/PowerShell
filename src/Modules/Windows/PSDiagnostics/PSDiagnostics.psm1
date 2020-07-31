@@ -11,16 +11,16 @@
 $script:Logman="$env:windir\system32\logman.exe"
 $script:wsmanlogfile = "$env:windir\system32\wsmtraces.log"
 $script:wsmprovfile = "$env:windir\system32\wsmtraceproviders.txt"
-$script:wsmsession = "wsmlog"
-$script:pssession = "PSTrace"
-$script:psprovidername="Microsoft-Windows-PowerShell"
-$script:wsmprovidername = "Microsoft-Windows-WinRM"
-$script:oplog = "/Operational"
-$script:analyticlog="/Analytic"
-$script:debuglog="/Debug"
+$script:wsmsession = 'wsmlog'
+$script:pssession = 'PSTrace'
+$script:psprovidername='Microsoft-Windows-PowerShell'
+$script:wsmprovidername = 'Microsoft-Windows-WinRM'
+$script:oplog = '/Operational'
+$script:analyticlog='/Analytic'
+$script:debuglog='/Debug'
 $script:wevtutil="$env:windir\system32\wevtutil.exe"
-$script:slparam = "sl"
-$script:glparam = "gl"
+$script:slparam = 'sl'
+$script:glparam = 'gl'
 
 function Start-Trace
 {
@@ -41,7 +41,7 @@ function Start-Trace
     [Switch]
     $ETS,
     [Parameter()]
-    [ValidateSet("bin", "bincirc", "csv", "tsv", "sql")]
+    [ValidateSet('bin', 'bincirc', 'csv', 'tsv', 'sql')]
     $Format,
     [Parameter()]
     [int]
@@ -63,7 +63,7 @@ function Start-Trace
 
         if ($ETS)
         {
-            $executestring += " -ets"
+            $executestring += ' -ets'
         }
 
         if ($null -ne $OutputFilePath)
@@ -96,7 +96,7 @@ function Start-Trace
             $executestring += " -max $MaxLogFileSizeInMB"
         }
 
-        & $script:Logman $executestring.Split(" ")
+        & $script:Logman $executestring.Split(' ')
     }
 }
 
@@ -130,28 +130,28 @@ function Enable-WSManTrace
 {
 
     # winrm
-    "{04c6e16d-b99f-4a3a-9b3e-b8325bbc781e} 0xffffffff 0xff" | Out-File $script:wsmprovfile -Encoding ascii
+    '{04c6e16d-b99f-4a3a-9b3e-b8325bbc781e} 0xffffffff 0xff' | Out-File $script:wsmprovfile -Encoding ascii
 
     # winrsmgr
-    "{c0a36be8-a515-4cfa-b2b6-2676366efff7} 0xffffffff 0xff" | Out-File $script:wsmprovfile -Encoding ascii -Append
+    '{c0a36be8-a515-4cfa-b2b6-2676366efff7} 0xffffffff 0xff' | Out-File $script:wsmprovfile -Encoding ascii -Append
 
     # WinrsExe
-    "{f1cab2c0-8beb-4fa2-90e1-8f17e0acdd5d} 0xffffffff 0xff" | Out-File $script:wsmprovfile -Encoding ascii -Append
+    '{f1cab2c0-8beb-4fa2-90e1-8f17e0acdd5d} 0xffffffff 0xff' | Out-File $script:wsmprovfile -Encoding ascii -Append
 
     # WinrsCmd
-    "{03992646-3dfe-4477-80e3-85936ace7abb} 0xffffffff 0xff" | Out-File $script:wsmprovfile -Encoding ascii -Append
+    '{03992646-3dfe-4477-80e3-85936ace7abb} 0xffffffff 0xff' | Out-File $script:wsmprovfile -Encoding ascii -Append
 
     # IPMIPrv
-    "{651d672b-e11f-41b7-add3-c2f6a4023672} 0xffffffff 0xff" | Out-File $script:wsmprovfile -Encoding ascii -Append
+    '{651d672b-e11f-41b7-add3-c2f6a4023672} 0xffffffff 0xff' | Out-File $script:wsmprovfile -Encoding ascii -Append
 
     #IpmiDrv
-    "{D5C6A3E9-FA9C-434e-9653-165B4FC869E4} 0xffffffff 0xff" | Out-File $script:wsmprovfile -Encoding ascii -Append
+    '{D5C6A3E9-FA9C-434e-9653-165B4FC869E4} 0xffffffff 0xff' | Out-File $script:wsmprovfile -Encoding ascii -Append
 
     # WSManProvHost
-    "{6e1b64d7-d3be-4651-90fb-3583af89d7f1} 0xffffffff 0xff" | Out-File $script:wsmprovfile -Encoding ascii -Append
+    '{6e1b64d7-d3be-4651-90fb-3583af89d7f1} 0xffffffff 0xff' | Out-File $script:wsmprovfile -Encoding ascii -Append
 
     # Event Forwarding
-    "{6FCDF39A-EF67-483D-A661-76D715C6B008} 0xffffffff 0xff" | Out-File $script:wsmprovfile -Encoding ascii -Append
+    '{6FCDF39A-EF67-483D-A661-76D715C6B008} 0xffffffff 0xff' | Out-File $script:wsmprovfile -Encoding ascii -Append
 
     Start-Trace -SessionName $script:wsmsession -ETS -OutputFilePath $script:wsmanlogfile -Format bincirc -MinBuffers 16 -MaxBuffers 256 -BufferSizeInKB 64 -MaxLogFileSizeInMB 256 -ProviderFilePath $script:wsmprovfile
 }
@@ -174,11 +174,11 @@ function Enable-PSWSManCombinedTrace
         $fileName = [string][guid]::newguid()
         $logfile = $PSHOME + "\\Traces\\PSTrace_$fileName.etl"
     } else {
-        $logfile = $PSHOME + "\\Traces\\PSTrace.etl"
+        $logfile = $PSHOME + '\\Traces\\PSTrace.etl'
     }
 
-    "Microsoft-Windows-PowerShell 0 5" | Out-File $provfile -Encoding ascii
-    "Microsoft-Windows-WinRM 0 5" | Out-File $provfile -Encoding ascii -Append
+    'Microsoft-Windows-PowerShell 0 5' | Out-File $provfile -Encoding ascii
+    'Microsoft-Windows-WinRM 0 5' | Out-File $provfile -Encoding ascii -Append
 
     if (!(Test-Path $PSHOME\Traces))
     {
@@ -222,7 +222,7 @@ function Set-LogProperties
         $maxLogSize = $LogDetails.MaxLogSize.ToString()
         $osVersion = [Version] (Get-CimInstance Win32_OperatingSystem).Version
 
-        if (($LogDetails.Type -eq "Analytic") -or ($LogDetails.Type -eq "Debug"))
+        if (($LogDetails.Type -eq 'Analytic') -or ($LogDetails.Type -eq 'Debug'))
         {
             if ($LogDetails.Enabled)
             {
@@ -263,7 +263,7 @@ function Set-LogProperties
 
 function ConvertTo-Bool([string]$value)
 {
-    if ($value -ieq "true")
+    if ($value -ieq 'true')
     {
         return $true
     }
@@ -286,7 +286,7 @@ function Get-LogProperties
         $value = @()
         foreach($index in $indexes)
         {
-            $value += @(($details[$index].SubString($details[$index].IndexOf(":")+1)).Trim())
+            $value += @(($details[$index].SubString($details[$index].IndexOf(':')+1)).Trim())
         }
 
         $enabled = ConvertTo-Bool $value[0]
@@ -347,7 +347,7 @@ function Disable-PSTrace
 		}
 	}
 }
-Add-Type @"
+Add-Type @'
 using System;
 
 namespace Microsoft.PowerShell.Diagnostics
@@ -435,7 +435,7 @@ namespace Microsoft.PowerShell.Diagnostics
         }
     }
 }
-"@
+'@
 
 if (Get-Command logman.exe -Type Application -ErrorAction SilentlyContinue)
 {

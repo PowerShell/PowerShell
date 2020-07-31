@@ -20,10 +20,10 @@ Run-ContainerImage hello-world # Linux
 cls
 
 # List all containers that have exited
-Get-Container | Where-Object State -EQ "exited"
+Get-Container | Where-Object State -EQ 'exited'
 
 # That found the right one, so go ahead and remove it
-Get-Container | Where-Object State -EQ "exited" | Remove-Container
+Get-Container | Where-Object State -EQ 'exited' | Remove-Container
 
 # Now remove the container image
 Remove-ContainerImage hello-world

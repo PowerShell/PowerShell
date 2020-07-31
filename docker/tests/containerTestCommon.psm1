@@ -15,7 +15,7 @@ function Invoke-Docker
         [Parameter(Mandatory=$true)]
         [string[]]
         $Command,
-        [ValidateSet("error","warning",'ignore')]
+        [ValidateSet('error','warning','ignore')]
         $FailureAction = 'error',
 
         [Parameter(Mandatory=$true)]
@@ -151,7 +151,7 @@ function Get-TestContext
     {
         $ContainerTestDrive = 'C:\test'
     }
-    $resolvedTestDrive = (Resolve-Path "Testdrive:\").providerPath
+    $resolvedTestDrive = (Resolve-Path 'Testdrive:\').providerPath
 
     return @{
         ResolvedTestDrive = $resolvedTestDrive
@@ -186,7 +186,7 @@ function Get-ContainerPowerShellVersion
     if($TestContext.Type -ne 'Windows' -and $IsWindows)
     {
         # use a container volume on windows because host volumes are not automatic
-        $volumeName = "test-volume-" + (Get-Random -Minimum 100 -Maximum 999)
+        $volumeName = 'test-volume-' + (Get-Random -Minimum 100 -Maximum 999)
 
         # using alpine because it's tiny
         $null=Invoke-Docker -Command create -Params '-v', '/test', '--name', $volumeName, 'alpine' -SuppressHostOutput
@@ -285,9 +285,9 @@ function Test-PSPackage
         [Hashtable]
         $Config, # hashtable that maps packages to dockerfiles; for example see Get-DefaultConfigForPackageValidation
         [string]
-        $TestList = "/PowerShell/test/powershell/Modules/PackageManagement/PackageManagement.Tests.ps1,/PowerShell/test/powershell/engine/Module",
+        $TestList = '/PowerShell/test/powershell/Modules/PackageManagement/PackageManagement.Tests.ps1,/PowerShell/test/powershell/engine/Module',
         [string]
-        $TestDownloadCommand = "git clone --recursive https://github.com/PowerShell/PowerShell.git",
+        $TestDownloadCommand = 'git clone --recursive https://github.com/PowerShell/PowerShell.git',
         [switch]
         $Preview = $false
     )
@@ -330,7 +330,7 @@ function Test-PSPackage
         }
     }
 
-    Write-Verbose "Using configuration:" -Verbose
+    Write-Verbose 'Using configuration:' -Verbose
     Write-Verbose ($map | Format-List | Out-String) -Verbose
 
     $results = @{}
@@ -344,15 +344,15 @@ function Test-PSPackage
 
         $buildArgs = @()
 
-        $buildArgs += "--build-arg","PACKAGENAME=$packageFileName"
-        $buildArgs += "--build-arg","PACKAGELOCATION=$PSPackageLocation"
+        $buildArgs += '--build-arg',"PACKAGENAME=$packageFileName"
+        $buildArgs += '--build-arg',"PACKAGELOCATION=$PSPackageLocation"
         if ($Preview)
         {
-            $buildArgs += "--build-arg","PREVIEWSUFFIX=-preview"
+            $buildArgs += '--build-arg','PREVIEWSUFFIX=-preview'
         }
-        $buildArgs += "--build-arg","TESTLIST=$TestList"
-        $buildArgs += "--build-arg","TESTDOWNLOADCOMMAND=$TestDownloadCommand"
-        $buildArgs += "--no-cache"
+        $buildArgs += '--build-arg',"TESTLIST=$TestList"
+        $buildArgs += '--build-arg',"TESTDOWNLOADCOMMAND=$TestDownloadCommand"
+        $buildArgs += '--no-cache'
         $buildArgs += $dockerDirPath
 
         $dockerResult = Invoke-Docker -Command 'build' -Params $buildArgs -FailureAction warning
@@ -363,7 +363,7 @@ function Test-PSPackage
     }
 
     # in the end print results for all configurations
-    Write-Verbose "Package validation results:" -Verbose
+    Write-Verbose 'Package validation results:' -Verbose
     $results
 
     return $returnValue

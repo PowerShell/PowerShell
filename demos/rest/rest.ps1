@@ -40,6 +40,6 @@ foreach ($issue in $issues)
 {
     if ($issue.labels.name -contains 'bug' -and $issue.labels.name -contains 'vi mode')
     {
-        "{0} is a vi mode bug" -f $issue.url
+        '{0} is a vi mode bug' -f $issue.url
     }
 }

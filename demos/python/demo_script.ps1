@@ -14,13 +14,13 @@ $data = python -c "print('Hi!')"
 $data
 
 # Use in expressions
-5 + (python -c "print(2 + 3)") + 7
+5 + (python -c 'print(2 + 3)') + 7
 
 # Create a Python script using a PowerShell here-string, no extension
-@"
+@'
 #!/usr/bin/python3
 print('Hi!')
-"@ | Out-File -Encoding ascii hi
+'@ | Out-File -Encoding ascii hi
 
 # Make it executable
 chmod +x hi

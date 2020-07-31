@@ -4,7 +4,7 @@
 using namespace System.Collections.Generic
 using namespace System.Management.Automation
 
-$crontabcmd = "/usr/bin/crontab"
+$crontabcmd = '/usr/bin/crontab'
 
 class CronJob {
     [string] $Minute
@@ -16,7 +16,7 @@ class CronJob {
 
     [string] ToString()
     {
-        return "{0} {1} {2} {3} {4} {5}" -f
+        return '{0} {1} {2} {3} {4} {5}' -f
             $this.Minute, $this.Hour, $this.DayOfMonth, $this.Month, $this.DayOfWeek, $this.Command
     }
 }
@@ -24,9 +24,9 @@ class CronJob {
 # Internal helper functions
 
 function Get-CronTab ([String] $user) {
-    $crontab = Invoke-CronTab -user $user -arguments "-l" -noThrow
+    $crontab = Invoke-CronTab -user $user -arguments '-l' -noThrow
     if ($crontab -is [ErrorRecord]) {
-        if ($crontab.Exception.Message.StartsWith("no crontab for ")) {
+        if ($crontab.Exception.Message.StartsWith('no crontab for ')) {
             $crontab = @()
         }
         else {
@@ -37,7 +37,7 @@ function Get-CronTab ([String] $user) {
 }
 
 function ConvertTo-CronJob ([String] $crontab) {
-    $split = $crontab -split " ", 6
+    $split = $crontab -split ' ', 6
     $cronjob = [CronJob]@{
         Minute = $split[0];
         Hour = $split[1];
@@ -51,7 +51,7 @@ function ConvertTo-CronJob ([String] $crontab) {
 
 function Invoke-CronTab ([String] $user, [String[]] $arguments, [Switch] $noThrow) {
     If ($user -ne [String]::Empty) {
-        $arguments = Write-Output "-u" $UserName $arguments
+        $arguments = Write-Output '-u' $UserName $arguments
     }
 
     Write-Verbose "Running: $crontabcmd $arguments"
@@ -90,15 +90,15 @@ function Remove-CronJob {
 .PARAMETER Force
   Don't prompt when removing the cron job
 #>
-    [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact="High")]
+    [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='High')]
     param (
         [ArgumentCompleter( { $wordToComplete = $args[2]; Get-CronTabUser | Where-Object { $_ -like "$wordToComplete*" } | Sort-Object } )]
-        [Alias("u")]
+        [Alias('u')]
         [Parameter(Mandatory=$false)]
         [String]
         $UserName,
 
-        [Alias("j")]
+        [Alias('j')]
         [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
         [CronJob]
         $Job,
@@ -122,10 +122,10 @@ function Remove-CronJob {
         }
 
         if (-not $found) {
-            $e = New-Object System.Exception -ArgumentList "Job not found"
+            $e = New-Object System.Exception -ArgumentList 'Job not found'
             throw $e
         }
-        if ($Force -or $PSCmdlet.ShouldProcess($Job.Command,"Remove")) {
+        if ($Force -or $PSCmdlet.ShouldProcess($Job.Command,'Remove')) {
             Import-CronTab -user $UserName -crontab $newcrontab
         }
     }
@@ -163,22 +163,22 @@ function New-CronJob {
     [CmdletBinding()]
     param (
         [ArgumentCompleter( { $wordToComplete = $args[2]; Get-CronTabUser | Where-Object { $_ -like "$wordToComplete*" } | Sort-Object } )]
-        [Alias("u")]
+        [Alias('u')]
         [Parameter(Mandatory=$false)]
         [String]
         $UserName,
 
-        [Alias("mi")][Parameter(Position=1)][String[]] $Minute = "*",
-        [Alias("h")][Parameter(Position=2)][String[]] $Hour = "*",
-        [Alias("dm")][Parameter(Position=3)][String[]] $DayOfMonth = "*",
-        [Alias("mo")][Parameter(Position=4)][String[]] $Month = "*",
-        [Alias("dw")][Parameter(Position=5)][String[]] $DayOfWeek = "*",
-        [Alias("c")][Parameter(Mandatory=$true,Position=6)][String] $Command
+        [Alias('mi')][Parameter(Position=1)][String[]] $Minute = '*',
+        [Alias('h')][Parameter(Position=2)][String[]] $Hour = '*',
+        [Alias('dm')][Parameter(Position=3)][String[]] $DayOfMonth = '*',
+        [Alias('mo')][Parameter(Position=4)][String[]] $Month = '*',
+        [Alias('dw')][Parameter(Position=5)][String[]] $DayOfWeek = '*',
+        [Alias('c')][Parameter(Mandatory=$true,Position=6)][String] $Command
     )
     process {
         # TODO: validate parameters, note that different versions of crontab support different capabilities
-        $line = "{0} {1} {2} {3} {4} {5}" -f [String]::Join(",",$Minute), [String]::Join(",",$Hour),
-            [String]::Join(",",$DayOfMonth), [String]::Join(",",$Month), [String]::Join(",",$DayOfWeek), $Command
+        $line = '{0} {1} {2} {3} {4} {5}' -f [String]::Join(',',$Minute), [String]::Join(',',$Hour),
+            [String]::Join(',',$DayOfMonth), [String]::Join(',',$Month), [String]::Join(',',$DayOfWeek), $Command
         [string[]] $crontab = Get-CronTab -user $UserName
         $crontab += $line
         Import-CronTab -User $UserName -crontab $crontab
@@ -202,7 +202,7 @@ function Get-CronJob {
     [CmdletBinding()]
     [OutputType([CronJob])]
     param (
-        [Alias("u")][Parameter(Mandatory=$false)][String] $UserName
+        [Alias('u')][Parameter(Mandatory=$false)][String] $UserName
     )
     process {
         $crontab = Get-CronTab -user $UserName
