@@ -267,10 +267,10 @@ Describe "Test-Connection" -tags "CI" {
         # We skip the MtuSize detection tests when in containers, as the environments throw raw exceptions
         # instead of returning a PacketTooBig response cleanly.
         It "MTUSizeDetect works" -Pending:($env:__INCONTAINER -eq 1) {
-            $result = Test-Connection $hostName -MtuSize
+            $result = Test-Connection $testAddress -MtuSize
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
-            $result.Destination | Should -BeExactly $hostName
+            $result.Destination | Should -BeExactly $testAddress
             $result.Status | Should -BeExactly "Success"
             $result.MtuSize | Should -BeGreaterThan 0
         }
@@ -289,7 +289,7 @@ Describe "Test-Connection" -tags "CI" {
             $result = Test-Connection $testAddress -TraceRoute -IPv4
 
             $result[0] | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus
-            $result[0].Source | Should -BeExactly $hostName
+            $result[0].Source | Should -BeExactly $testAddress
             $result[0].TargetAddress | Should -BeExactly $testAddress
             $result[0].Target | Should -BeExactly $testAddress
             $result[0].Hop | Should -Be 1
