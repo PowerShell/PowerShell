@@ -68,7 +68,7 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Gets the tokens generated from parsing the user input.
         /// </summary>
-        public Token[] InputTokens { get; }
+        public IReadOnlyList<Token> InputTokens { get; }
 
         /// <summary>
         /// Gets the cursor position, which is assumed always at the end of the input line.

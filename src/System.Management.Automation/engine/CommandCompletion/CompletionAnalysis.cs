@@ -95,7 +95,23 @@ namespace System.Management.Automation
             return cursor.Offset < extent.StartOffset || cursor.Offset > extent.EndOffset;
         }
 
-        internal static (Token TokenAtCursor, Token TokenBeforeCursor, List<Ast> RelatedAsts, int ReplacementIndex) ExtractAstContext(Ast inputAst, Token[] inputTokens, IScriptPosition cursor)
+        internal struct AstAnalysisContext
+        {
+            internal AstAnalysisContext(Token tokenAtCursor, Token tokenBeforeCursor, List<Ast> relatedAsts, int replacementIndex)
+            {
+                TokenAtCursor = tokenAtCursor;
+                TokenBeforeCursor = tokenBeforeCursor;
+                RelatedAsts = relatedAsts;
+                ReplacementIndex = replacementIndex;
+            }
+
+            internal readonly Token TokenAtCursor;
+            internal readonly Token TokenBeforeCursor;
+            internal readonly List<Ast> RelatedAsts;
+            internal readonly int ReplacementIndex;
+        }
+
+        internal static AstAnalysisContext ExtractAstContext(Ast inputAst, Token[] inputTokens, IScriptPosition cursor)
         {
             bool adjustLineAndColumn = false;
             IScriptPosition positionForAstSearch = cursor;
@@ -121,14 +137,14 @@ namespace System.Management.Automation
             }
 
             int replacementIndex = adjustLineAndColumn ? cursor.Offset : 0;
-            var relatedAsts = AstSearcher.FindAll(
+            List<Ast> relatedAsts = AstSearcher.FindAll(
                 inputAst,
                 ast => IsCursorWithinOrJustAfterExtent(positionForAstSearch, ast.Extent),
                 searchNestedScriptBlocks: true).ToList();
 
             Diagnostics.Assert(tokenAtCursor == null || tokenBeforeCursor == null, "Only one of these tokens can be non-null");
 
-            return (tokenAtCursor, tokenBeforeCursor, relatedAsts, replacementIndex);
+            return new AstAnalysisContext(tokenAtCursor, tokenBeforeCursor, relatedAsts, replacementIndex);
         }
 
         internal CompletionContext CreateCompletionContext(PowerShell powerShell)
@@ -169,7 +185,7 @@ namespace System.Management.Automation
             };
         }
 
-        private static Token InterstingTokenAtCursorOrDefault(IList<Token> tokens, IScriptPosition cursorPosition)
+        private static Token InterstingTokenAtCursorOrDefault(IReadOnlyList<Token> tokens, IScriptPosition cursorPosition)
         {
             for (int i = tokens.Count - 1; i >= 0; --i)
             {
@@ -183,7 +199,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static Token InterstingTokenBeforeCursorOrDefault(IList<Token> tokens, IScriptPosition cursorPosition)
+        private static Token InterstingTokenBeforeCursorOrDefault(IReadOnlyList<Token> tokens, IScriptPosition cursorPosition)
         {
             for (int i = tokens.Count - 1; i >= 0; --i)
             {

@@ -20,13 +20,19 @@ namespace System.Management.Automation.Subsystem
         public Guid Id { get; }
 
         /// <summary>
+        /// Gets the name of the predictor.
+        /// </summary>
+        public string Name { get; }
+
+        /// <summary>
         /// Gets the suggestions.
         /// </summary>
-        public List<string> Suggestions { get; }
+        public IReadOnlyList<string> Suggestions { get; }
 
-        internal PredictionResult(Guid id, List<string> suggestions)
+        internal PredictionResult(Guid id, string name, List<string> suggestions)
         {
             Id = id;
+            Name = name;
             Suggestions = suggestions;
         }
     }
@@ -63,48 +69,44 @@ namespace System.Management.Automation.Subsystem
             }
 
             var context = new PredictionContext(ast, astTokens);
-            var cancellationSource = new CancellationTokenSource();
-            var cancellationToken = cancellationSource.Token;
             var tasks = new Task<PredictionResult>[predictors.Count];
+            using var cancellationSource = new CancellationTokenSource();
 
             for (int i = 0; i < predictors.Count; i++)
             {
-                var predictor = predictors[i];
+                IPredictor predictor = predictors[i];
 
                 tasks[i] = Task.Factory.StartNew(
                     state => {
                         var predictor = (IPredictor)state;
-                        List<string> texts = predictor.GetSuggestion(context, cancellationToken);
-                        return texts?.Count > 0 ? new PredictionResult(predictor.Id, texts) : null;
-                    }, predictor);
+                        List<string> texts = predictor.GetSuggestion(context, cancellationSource.Token);
+                        return texts?.Count > 0 ? new PredictionResult(predictor.Id, predictor.Name, texts) : null;
+                    },
+                    predictor,
+                    CancellationToken.None,
+                    TaskCreationOptions.DenyChildAttach,
+                    TaskScheduler.Default);
             }
 
-            try
-            {
-                await Task.WhenAny(
-                    Task.WhenAll(tasks),
-                    Task.Delay(millisecondsTimeout, cancellationToken)).ConfigureAwait(false);
-                cancellationSource.Cancel();
+            await Task.WhenAny(
+                Task.WhenAll(tasks),
+                Task.Delay(millisecondsTimeout, cancellationSource.Token)).ConfigureAwait(false);
+            cancellationSource.Cancel();
 
-                var results = new List<PredictionResult>(predictors.Count);
-                foreach (Task<PredictionResult> task in tasks)
+            var results = new List<PredictionResult>(predictors.Count);
+            foreach (Task<PredictionResult> task in tasks)
+            {
+                if (task.IsCompletedSuccessfully)
                 {
-                    if (task.IsCompletedSuccessfully)
+                    PredictionResult result = task.Result;
+                    if (result != null)
                     {
-                        var result = task.Result;
-                        if (result != null)
-                        {
-                            results.Add(result);
-                        }
+                        results.Add(result);
                     }
                 }
+            }
 
-                return results;
-            }
-            finally
-            {
-                cancellationSource.Dispose();
-            }
+            return results;
         }
 
         /// <summary>

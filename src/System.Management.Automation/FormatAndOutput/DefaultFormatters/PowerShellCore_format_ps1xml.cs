@@ -743,7 +743,7 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Left, label: "Implementations")
                     .StartRowDefinition()
                         .AddPropertyColumn("Kind")
-                        .AddScriptBlockColumn(@"$_.SubsystemType.Name")
+                        .AddScriptBlockColumn("$_.SubsystemType.Name")
                         .AddPropertyColumn("IsRegistered")
                         .AddPropertyColumn("Implementations")
                     .EndRowDefinition()

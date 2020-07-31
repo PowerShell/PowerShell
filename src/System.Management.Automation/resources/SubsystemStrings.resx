@@ -141,4 +141,7 @@
   <data name="ImplementationMismatch" xml:space="preserve">
     <value>The specified implementation instance implements the subsystem '{0}', which does not match the target subsystem '{1}'.</value>
   </data>
+  <data name="InvalidSubsystemInfo" xml:space="preserve">
+    <value>The declared metadata for subsystem kind '{0}' is invalid. A subsystem that requires cmdlets or functions to be defined cannot allow multiple registrations because that would result in one implementation overwriting the commands defined by another implementation.</value>
+  </data>
 </root>

@@ -51,7 +51,7 @@ namespace System.Management.Automation.Subsystem
         // /// This can be validated when registering a subsystem implementation,
         // /// to make sure its prerequisites have already been registered.
         // /// </summary>
-        // SubsystemKind[] DependsOn { get; }
+        // public ReadOnlyCollection<SubsystemKind> DependsOn { get; private set; }
 
         #endregion
 
@@ -128,6 +128,15 @@ namespace System.Management.Automation.Subsystem
             ReadOnlyCollection<string> requiredCmdlets,
             ReadOnlyCollection<string> requiredFunctions) where TConcreteSubsystem : class, ISubsystem
         {
+            if (allowMultipleRegistration &&
+                (requiredCmdlets.Count > 0 || requiredFunctions.Count > 0))
+            {
+                throw new ArgumentException(
+                    StringUtil.Format(
+                        SubsystemStrings.InvalidSubsystemInfo,
+                        kind.ToString()));
+            }
+
             return new SubsystemInfoImpl<TConcreteSubsystem>(kind) {
                 AllowUnregistration = allowUnregistration,
                 AllowMultipleRegistration = allowMultipleRegistration,
@@ -194,6 +203,15 @@ namespace System.Management.Automation.Subsystem
             _registeredImpls = Utils.EmptyReadOnlyCollection<TConcreteSubsystem>();
         }
 
+        /// <summary>
+        /// The 'add' and 'remove' operations are implemented in a way to optimize the 'reading' operation,
+        /// so that reading is lock-free and allocation-free, at the cost of O(n) copy in 'add' and 'remove'
+        /// ('n' is the number of registered implementations).
+        /// </summary>
+        /// <remarks>
+        /// In the subsystem scenario, registration operations will be minimum, and in most cases, the registered
+        /// implementation will never be unregistered, so optimization for reading is more important.
+        /// </remarks>
         private protected override void AddImplementation(ISubsystem rawImpl)
         {
             lock (_syncObj)
@@ -216,7 +234,7 @@ namespace System.Management.Automation.Subsystem
                 }
 
                 bool targetExists = false;
-                foreach (var item in _registeredImpls)
+                foreach (TConcreteSubsystem item in _registeredImpls)
                 {
                     if (item.Id == impl.Id)
                     {
@@ -243,6 +261,15 @@ namespace System.Management.Automation.Subsystem
             }
         }
 
+        /// <summary>
+        /// The 'add' and 'remove' operations are implemented in a way to optimize the 'reading' operation,
+        /// so that reading is lock-free and allocation-free, at the cost of O(n) copy in 'add' and 'remove'
+        /// ('n' is the number of registered implementations).
+        /// </summary>
+        /// <remarks>
+        /// In the subsystem scenario, registration operations will be minimum, and in most cases, the registered
+        /// implementation will never be unregistered, so optimization for reading is more important.
+        /// </remarks>
         private protected override ISubsystem RemoveImplementation(Guid id)
         {
             if (!AllowUnregistration)
