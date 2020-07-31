@@ -123,47 +123,6 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// See base class.
         /// </summary>
-        /// <returns>
-        /// The characters typed by the user.
-        /// </returns>
-        /// <exception cref="HostException">
-        /// If the UI property of the external host is null, possibly because the PSHostUserInterface is not
-        /// implemented by the external host.
-        /// </exception>
-        public override
-        string
-        ReadLineMaskedAsString()
-        {
-            if (_externalUI == null)
-            {
-                ThrowNotInteractive();
-            }
-
-            string result = null;
-
-            try
-            {
-                result = _externalUI.ReadLineMaskedAsString();
-            }
-            catch (PipelineStoppedException)
-            {
-                // PipelineStoppedException is thrown by host when it wants
-                // to stop the pipeline.
-                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
-                if (lpl == null)
-                {
-                    throw;
-                }
-
-                lpl.Stopper.Stop();
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// See base class.
-        /// </summary>
         /// <exception cref="HostException">
         /// if the UI property of the external host is null, possibly because the PSHostUserInterface is not
         /// implemented by the external host.

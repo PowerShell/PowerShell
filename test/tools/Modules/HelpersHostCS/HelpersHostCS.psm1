@@ -183,11 +183,6 @@ namespace TestHost
             return ReadLineData;
         }
 
-        public override string ReadLineMaskedAsString()
-        {
-            return ReadLineData;
-        }
-
         public override SecureString ReadLineAsSecureString()
         {
             SecureString ss = new SecureString();
