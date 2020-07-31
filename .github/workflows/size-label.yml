@@ -1,5 +1,7 @@
 name: size-label
-on: pull_request
+on: 
+  pull_request:
+    types: [opened, repopened, synchronize]
 jobs:
   size-label:
     runs-on: ubuntu-latest
