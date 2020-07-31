@@ -1407,7 +1407,7 @@ namespace System.Management.Automation.Internal
                 // before hitting the error, therefore we check whether
                 // firstTerminatingError is PipelineStoppedException.
                 else if (_firstTerminatingError.SourceException is not PipelineStoppedException
-                    && command != null && command.Context != null)
+                    && command?.Context is not null)
                 {
                     Exception ex = e;
                     while ((ex is TargetInvocationException || ex is CmdletInvocationException)
