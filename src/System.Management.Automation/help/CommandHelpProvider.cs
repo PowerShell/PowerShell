@@ -1178,7 +1178,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            if (!(helpInfo is BaseCommandHelpInfo))
+            if (helpInfo is not BaseCommandHelpInfo)
                 return false;
 
             if (!Match(helpInfo.Component, helpRequest.Component))

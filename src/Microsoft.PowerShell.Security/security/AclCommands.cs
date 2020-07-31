@@ -783,7 +783,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         customDescriptor = PSObject.Base(methodInfo.Invoke());
 
-                        if (!(customDescriptor is FileSystemSecurity))
+                        if (customDescriptor is not FileSystemSecurity)
                         {
                             customDescriptor = new CommonSecurityDescriptor(false, false, customDescriptor.ToString());
                         }

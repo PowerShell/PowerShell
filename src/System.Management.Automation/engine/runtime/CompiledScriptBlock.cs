@@ -729,7 +729,7 @@ namespace System.Management.Automation
                 resourceString => { throw PSTraceSource.NewInvalidOperationException(resourceString); });
             Diagnostics.Assert(pipelineAst != null, "This should be checked by GetSimplePipeline");
 
-            if (!(pipelineAst.PipelineElements[0] is CommandAst))
+            if (pipelineAst.PipelineElements[0] is not CommandAst)
             {
                 throw PSTraceSource.NewInvalidOperationException(AutomationExceptions.CantConvertEmptyPipeline);
             }

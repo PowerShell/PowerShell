@@ -372,7 +372,7 @@ namespace System.Management.Automation
                 // Bug Win7 737383: Win7 RTM shows both function and cmdlet help when there is
                 // function and cmdlet with the same name. So, ignoring the ScriptCommandHelpProvider's
                 // results and going to the CommandHelpProvider for further evaluation.
-                if (isHelpInfoFound && (!(helpProvider is ScriptCommandHelpProvider)))
+                if (isHelpInfoFound && helpProvider is not ScriptCommandHelpProvider)
                 {
                     // once helpInfo found from a provider..no need to traverse other providers.
                     yield break;

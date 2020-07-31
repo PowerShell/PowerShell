@@ -1195,7 +1195,7 @@ namespace Microsoft.PowerShell.Commands
                     // If the inner exception is not of that type
                     // then we need to rethrow
                     //
-                    if (!(e.InnerException is CertificateProviderItemNotFoundException))
+                    if (e.InnerException is not CertificateProviderItemNotFoundException)
                     {
                         throw;
                     }

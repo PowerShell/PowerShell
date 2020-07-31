@@ -268,7 +268,7 @@ namespace System.Management.Automation.Runspaces
             // sometimes there are many runspaces created - the callee ensures telemetry is only
             // reported once. Note that if the host implements IHostProvidesTelemetryData, we rely
             // on the host calling ReportStartupTelemetry.
-            if (!(this.Host is IHostProvidesTelemetryData))
+            if (this.Host is not IHostProvidesTelemetryData)
             {
                 TelemetryAPI.ReportStartupTelemetry(null);
             }

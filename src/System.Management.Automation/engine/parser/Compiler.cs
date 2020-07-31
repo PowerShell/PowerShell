@@ -3683,7 +3683,7 @@ namespace System.Management.Automation.Language
             var temps = new List<ParameterExpression>();
             var exprs = new List<Expression>();
 
-            if (!(pipelineAst.Parent is AssignmentStatementAst || pipelineAst.Parent is ParenExpressionAst))
+            if (pipelineAst.Parent is not AssignmentStatementAst && pipelineAst.Parent is not ParenExpressionAst)
             {
                 // If the parent is an assignment, we've already added a sequence point, don't add another.
                 exprs.Add(UpdatePosition(pipelineAst));

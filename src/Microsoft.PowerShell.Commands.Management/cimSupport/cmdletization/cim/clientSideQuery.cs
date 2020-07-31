@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             private object ConvertActualValueToExpectedType(object actualPropertyValue, object expectedPropertyValue)
             {
-                if ((actualPropertyValue is string) && (!(expectedPropertyValue is string)))
+                if (actualPropertyValue is string && expectedPropertyValue is not string)
                 {
                     actualPropertyValue = LanguagePrimitives.ConvertTo(actualPropertyValue, expectedPropertyValue.GetType(), CultureInfo.InvariantCulture);
                 }

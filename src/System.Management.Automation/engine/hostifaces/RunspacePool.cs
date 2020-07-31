@@ -638,7 +638,7 @@ namespace System.Management.Automation.Runspaces
             TypeTable typeTable)
         {
             // Disconnect-Connect semantics are currently only supported in WSMan transport.
-            if (!(connectionInfo is WSManConnectionInfo))
+            if (connectionInfo is not WSManConnectionInfo)
             {
                 throw new NotSupportedException();
             }

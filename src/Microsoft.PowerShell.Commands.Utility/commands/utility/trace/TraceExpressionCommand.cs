@@ -525,7 +525,7 @@ namespace Microsoft.PowerShell.Commands
             if (mshobj != null)
             {
                 object baseObject = mshobj.BaseObject;
-                if (!(baseObject is PSCustomObject))
+                if (baseObject is not PSCustomObject)
                 {
                     obj = baseObject;
                 }

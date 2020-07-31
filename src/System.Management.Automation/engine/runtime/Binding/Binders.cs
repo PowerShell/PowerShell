@@ -556,7 +556,7 @@ namespace System.Management.Automation.Language
 
         internal static Expression MaybeDebase(DynamicMetaObjectBinder binder, Func<Expression, Expression> generator, DynamicMetaObject target)
         {
-            if (!(target.Value is PSObject))
+            if (target.Value is not PSObject)
             {
                 return generator(target.Expression);
             }
@@ -7135,7 +7135,7 @@ namespace System.Management.Automation.Language
                 {
                     if (parameterType.IsByRef)
                     {
-                        if (!(args[i].Value is PSReference))
+                        if (args[i].Value is not PSReference)
                         {
                             return Compiler.CreateThrow(typeof(object), typeof(MethodException),
                                      new[] { typeof(string), typeof(Exception), typeof(string), typeof(object[]) },

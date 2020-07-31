@@ -69,7 +69,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (!(attribute is ArgumentTypeConverterAttribute))
+                if (attribute is not ArgumentTypeConverterAttribute)
                 {
                     ProcessAttribute(runtimeDefinedParameter.Name, attribute, ref validationAttributes, ref argTransformationAttributes, ref aliases);
                 }
