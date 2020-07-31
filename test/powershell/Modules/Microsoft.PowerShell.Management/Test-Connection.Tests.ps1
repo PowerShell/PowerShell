@@ -44,6 +44,12 @@ Describe "Test-Connection" -tags "CI" {
         $targetAddress = "127.0.0.1"
         $targetAddressIPv6 = "::1"
         $UnreachableAddress = "10.11.12.13"
+        # this resolves to an actual IP rather than 127.0.0.1
+        # this can also include both IPv4 and IPv6, so select InterNetwork rather than InterNetworkV6
+        $realAddress = [System.Net.Dns]::GetHostEntry($hostName).AddressList |
+            Where-Object { $_.AddressFamily -eq "InterNetwork" } |
+            Select-Object -First 1 |
+            ForEach-Object { $_.IPAddressToString }
         # under some environments, we can't round trip this and retrieve the real name from the address
         # in this case we will simply use the hostname
         $jobContinues = Start-Job { Test-Connection $using:targetAddress -Repeat }
@@ -105,10 +111,10 @@ Describe "Test-Connection" -tags "CI" {
             $error[0].Exception.InnerException.ErrorCode | Should -Be $code
         }
 
-        It "Force IPv4 with implicit PingOptions" -Pending {
+        It "Force IPv4 with implicit PingOptions" {
             $result = Test-Connection $testAddress -Count 1 -IPv4
 
-            $result[0].Address | Should -BeExactly $testAddress
+            $result[0].Address | Should -BeExactly $realAddress
             $result[0].Reply.Options.Ttl | Should -BeLessOrEqual 128
             if ($IsWindows) {
                 $result[0].Reply.Options.DontFragment | Should -BeFalse
@@ -116,14 +122,15 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         # In VSTS, address is 0.0.0.0
+        # This test is marked as PENDING as .NET Core does not return correct PingOptions from ping request
         It "Force IPv4 with explicit PingOptions" -Pending {
-            $result1 = Test-Connection $testAddress -Count 1 -IPv4 -MaxHops 10 -DontFragment
+            $result1 = Test-Connection $realAddress -Count 1 -IPv4 -MaxHops 10 -DontFragment
 
             # explicitly go to google dns. this test will pass even if the destination is unreachable
             # it's more about breaking out of the loop
             $result2 = Test-Connection 8.8.8.8 -Count 1 -IPv4 -MaxHops 1 -DontFragment
 
-            $result1.Address | Should -BeExactly $testAddress
+            $result1.Address | Should -BeExactly $realAddress
             $result1.Reply.Options.Ttl | Should -BeLessOrEqual 128
 
             if (!$IsWindows) {
@@ -259,11 +266,11 @@ Describe "Test-Connection" -tags "CI" {
     Context "MTUSizeDetect" {
         # We skip the MtuSize detection tests when in containers, as the environments throw raw exceptions
         # instead of returning a PacketTooBig response cleanly.
-        It "MTUSizeDetect works" -Pending:($true -or $env:__INCONTAINER -eq 1) {
-            $result = Test-Connection $testAddress -MtuSize
+        It "MTUSizeDetect works" -Pending:($env:__INCONTAINER -eq 1) {
+            $result = Test-Connection $hostName -MtuSize
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
-            $result.Destination | Should -BeExactly $testAddress
+            $result.Destination | Should -BeExactly $hostName
             $result.Status | Should -BeExactly "Success"
             $result.MtuSize | Should -BeGreaterThan 0
         }
