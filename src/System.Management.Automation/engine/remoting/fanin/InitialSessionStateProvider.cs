@@ -2221,7 +2221,7 @@ namespace System.Management.Automation.Remoting
                     foreach (Hashtable variable in variables)
                     {
                         if (variable.ContainsKey(ConfigFileConstants.VariableValueToken) &&
-                            (variable[ConfigFileConstants.VariableValueToken] is ScriptBlock))
+                            variable[ConfigFileConstants.VariableValueToken] is ScriptBlock)
                         {
                             iss.DynamicVariablesToDefine.Add(variable);
                             continue;
