@@ -3,7 +3,7 @@
   <Import Project="..\..\PowerShell.Common.props" />
 
   <ItemGroup>
-    <PackageReference Include="PowerShellGet" Version="3.0.0-beta7" />
+    <PackageReference Include="PowerShellGet" Version="3.0.0-beta8" />
     <PackageReference Include="CompatPowerShellGet" Version="0.0.1" />
     <PackageReference Include="Microsoft.PowerShell.Archive" Version="1.2.5" />
     <PackageReference Include="PSReadLine" Version="2.0.2" />
