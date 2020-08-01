@@ -532,7 +532,7 @@ namespace System.Management.Automation
             object dso;
             Deserializer deserializer = new Deserializer(reader);
             dso = deserializer.Deserialize();
-            if (deserializer.Done() == false)
+            if (!deserializer.Done())
             {
                 // This helper function should move to host and it should provide appropriate
                 // error message there.

@@ -348,7 +348,7 @@ namespace System.Management.Automation.Language
         {
             int count = 0;
             ITypeName type = typeName;
-            while ((type is TypeName) == false)
+            while ((!(type is TypeName)))
             {
                 count++;
                 if (count > 200)

@@ -569,7 +569,7 @@ namespace System.Management.Automation
 
         internal bool Done()
         {
-            if (_done == false)
+            if (!_done)
             {
                 if (DeserializationOptions.NoRootElement == (_context.options & DeserializationOptions.NoRootElement))
                 {
@@ -3622,7 +3622,7 @@ namespace System.Management.Automation
             PSObject dso = ReadAttributeAndCreatePSObject();
 
             // Read start element tag
-            if (ReadStartElementAndHandleEmpty(SerializationStrings.PSObjectTag) == false)
+            if (!ReadStartElementAndHandleEmpty(SerializationStrings.PSObjectTag))
             {
                 // Empty element.
                 return dso;
@@ -4762,7 +4762,7 @@ namespace System.Management.Automation
 
             // This takes care of the case: <tag></tag> or <tag>  </tag>. In
             // this case isEmpty is false.
-            if (isEmpty == false && _reader.NodeType == XmlNodeType.EndElement)
+            if (!isEmpty && _reader.NodeType == XmlNodeType.EndElement)
             {
                 ReadEndElement();
                 isEmpty = true;

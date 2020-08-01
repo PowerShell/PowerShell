@@ -755,7 +755,7 @@ namespace System.Management.Automation.Internal
 
                 lock (_monitorObject)
                 {
-                    endOfStream = (_objects.Count == 0 && _isOpen == false);
+                    endOfStream = (_objects.Count == 0 && !_isOpen);
                 }
 
                 return endOfStream;
@@ -824,7 +824,7 @@ namespace System.Management.Automation.Internal
         /// </remarks>
         private bool WaitRead()
         {
-            if (EndOfPipeline == false)
+            if (!EndOfPipeline)
             {
                 try
                 {
@@ -839,7 +839,7 @@ namespace System.Management.Automation.Internal
                 }
             }
 
-            return EndOfPipeline == false;
+            return !EndOfPipeline;
         }
 
         /// <summary>
@@ -1383,7 +1383,7 @@ namespace System.Management.Automation.Internal
 
                 // wait for buffer available
                 // false indicates EndOfPipeline
-                if (WaitWrite() == false)
+                if (!WaitWrite())
                 {
                     break;
                 }

@@ -1395,8 +1395,8 @@ namespace System.Management.Automation
             // We also skip the optimization if the number of arguments and parameters is different
             // so we let the loop deal with possible optional parameters.
             if ((methods.Length == 1) &&
-                (methods[0].hasVarArgs == false) &&
-                (methods[0].isGeneric == false) &&
+                (!methods[0].hasVarArgs) &&
+                (!methods[0].isGeneric) &&
                 (methods[0].method == null || !(methods[0].method.DeclaringType.IsGenericTypeDefinition)) &&
                 // generic methods need to be double checked in a loop below - generic methods can be rejected if type inference fails
                 (methods[0].parameters.Length == arguments.Length))

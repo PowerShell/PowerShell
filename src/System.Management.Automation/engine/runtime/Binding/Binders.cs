@@ -6764,7 +6764,7 @@ namespace System.Management.Automation.Language
                     // If we get here, then the target value should have 'isDeserialized == false', otherwise we cannot get a .NET methodInfo
                     // from _getMemberBinder.GetPSMemberInfo(). This is because when 'isDeserialized' is true, we use the PSObject to find the
                     // corresponding Adapter -- PSObjectAdapter, which cannot be optimized.
-                    Diagnostics.Assert(psObj.IsDeserialized == false,
+                    Diagnostics.Assert(!psObj.IsDeserialized,
                         "isDeserialized should be false, because if not, we cannot get a .NET method/parameterizedProperty from GetPSMemberInfo");
 
                     restrictions = restrictions.Merge(BindingRestrictions.GetExpressionRestriction(

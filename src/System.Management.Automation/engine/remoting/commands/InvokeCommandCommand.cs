@@ -972,7 +972,7 @@ namespace Microsoft.PowerShell.Commands
                         // of this bug in Win8 where not responding can occur during data piping.
                         // We are reverting to Win7 behavior for {icm | icm} and {proxycommand | proxycommand}
                         // cases. For ICM | % ICM case, we are using remote steppable pipeline.
-                        if ((MyInvocation != null) && (MyInvocation.PipelinePosition == 1) && (MyInvocation.ExpectingInput == false))
+                        if ((MyInvocation != null) && (MyInvocation.PipelinePosition == 1) && (!MyInvocation.ExpectingInput))
                         {
                             PSPrimitiveDictionary table = (object)runspaceInfo.ApplicationPrivateData[PSVersionInfo.PSVersionTableName] as PSPrimitiveDictionary;
                             if (table != null)

@@ -1925,7 +1925,7 @@ namespace System.Management.Automation
         /// </remarks>
         public bool MoveNext()
         {
-            return MoveNext(_neverBlock == false);
+            return MoveNext(!_neverBlock);
         }
 
         /// <summary>

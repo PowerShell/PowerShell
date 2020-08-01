@@ -1270,7 +1270,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 Guid shellId = Guid.Parse(pspShellId.Value.ToString());
 
                 // Filter returned items for PowerShell sessions.
-                if (strShellUri.StartsWith(WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase) == false)
+                if (!strShellUri.StartsWith(WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }

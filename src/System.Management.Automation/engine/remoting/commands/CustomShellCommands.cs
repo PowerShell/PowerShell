@@ -869,7 +869,7 @@ else
 
                     if (configTable.ContainsKey(ConfigFileConstants.PowerShellVersion))
                     {
-                        if (isPSVersionSpecified == false)
+                        if (!isPSVersionSpecified)
                         {
                             try
                             {
@@ -1071,7 +1071,7 @@ else
             }
 
             // Default value for PSVersion
-            if (isPSVersionSpecified == false)
+            if (!isPSVersionSpecified)
             {
                 psVersion = PSVersionInfo.PSVersion;
             }

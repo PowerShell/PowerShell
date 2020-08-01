@@ -198,7 +198,7 @@ namespace System.Management.Automation.Language
             }
             catch (InsufficientExecutionStackException)
             {
-                if (recursed == false)
+                if (!recursed)
                 {
                     // We'll try parsing once more, this time on a new thread.  The assumption here is
                     // that the stack was close to overflowing before we tried to parse, and that won't

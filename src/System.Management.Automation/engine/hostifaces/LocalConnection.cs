@@ -987,7 +987,7 @@ namespace System.Management.Automation.Runspaces
                 foreach (Job job in this.JobRepository.Jobs)
                 {
                     // Only stop or disconnect PowerShell jobs.
-                    if (job is PSRemotingJob == false)
+                    if (!(job is PSRemotingJob))
                     {
                         continue;
                     }

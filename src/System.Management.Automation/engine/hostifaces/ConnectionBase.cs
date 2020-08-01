@@ -829,7 +829,7 @@ namespace System.Management.Automation.Runspaces
 
             lock (_pipelineListLock)
             {
-                if (ByPassRunspaceStateCheck == false && RunspaceState != RunspaceState.Opened)
+                if (!ByPassRunspaceStateCheck && RunspaceState != RunspaceState.Opened)
                 {
                     InvalidRunspaceStateException e =
                         new InvalidRunspaceStateException
@@ -1002,7 +1002,7 @@ namespace System.Management.Automation.Runspaces
                 // first check if this pipeline is in the list of running
                 // pipelines. It is possible that pipeline has already
                 // completed.
-                if (RunningPipelines.Contains(pipeline) == false)
+                if (!RunningPipelines.Contains(pipeline))
                 {
                     return;
                 }
