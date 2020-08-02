@@ -1722,7 +1722,8 @@ namespace System.Management.Automation.Language
                 {
                     var members = attributeType.GetMember(name, MemberTypes.Field | MemberTypes.Property,
                         BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-                    if (members.Length != 1 || !(members[0] is PropertyInfo || members[0] is FieldInfo))
+                    if (members.Length != 1 ||
+                        (members[0] is not PropertyInfo && members[0] is not FieldInfo))
                     {
                         return target.ThrowRuntimeError(args, BindingRestrictions.Empty, "PropertyNotFoundForType",
                                                         ParserStrings.PropertyNotFoundForType, Expression.Constant(name),

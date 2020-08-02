@@ -1320,7 +1320,9 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (ArgumentList != null && !(current is CmdletInfo || current is IScriptCommandInfo))
+                    if (ArgumentList != null &&
+                        current is not CmdletInfo &&
+                        current is not IScriptCommandInfo)
                     {
                         // If current is not a cmdlet or script, we need to throw a terminating error.
                         ThrowTerminatingError(

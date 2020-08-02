@@ -650,7 +650,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return !(this is LocalRunspace || ConnectionInfo == null);
+                return this is not LocalRunspace && ConnectionInfo != null;
             }
         }
 
