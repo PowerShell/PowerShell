@@ -737,7 +737,11 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            if (obj is not PSObject && obj is not IEnumerable && obj is not IEnumerator && obj is not DataTable && !Marshal.IsComObject(obj))
+            if (obj is not PSObject &&
+                obj is not IEnumerable &&
+                obj is not IEnumerator &&
+                obj is not DataTable &&
+                !Marshal.IsComObject(obj))
             {
                 return null;
             }
@@ -4674,7 +4678,9 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (paramLength == 2 && setterParams[0].ParameterType == typeof(int) && target.Value is not IDictionary)
+            if (paramLength == 2 &&
+                setterParams[0].ParameterType == typeof(int) &&
+                target.Value is not IDictionary)
             {
                 // PowerShell supports negative indexing for some types (specifically, those with a single
                 // int parameter to the indexer, and also have either a Length or Count property.)  For

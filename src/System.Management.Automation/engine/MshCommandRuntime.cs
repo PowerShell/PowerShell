@@ -2384,7 +2384,10 @@ namespace System.Management.Automation
             // PipelineStoppedException should not get added to $Error
             // 2008/06/25 - narrieta: ExistNestedPromptException should not be added to $error either
             // 2019/10/18 - StopUpstreamCommandsException should not be added either
-            if (e is not HaltCommandException && e is not PipelineStoppedException && e is not ExitNestedPromptException && e is not StopUpstreamCommandsException)
+            if (e is not HaltCommandException &&
+                e is not PipelineStoppedException &&
+                e is not ExitNestedPromptException &&
+                e is not StopUpstreamCommandsException)
             {
                 try
                 {
