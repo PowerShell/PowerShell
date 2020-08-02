@@ -39,7 +39,7 @@ namespace System.Management.Automation.Internal.Host
         internal InternalHost(PSHost externalHost, ExecutionContext executionContext)
         {
             Dbg.Assert(externalHost != null, "must supply an PSHost");
-            Dbg.Assert(!(externalHost is InternalHost), "try to create an InternalHost from another InternalHost");
+            Dbg.Assert(externalHost is not InternalHost, "try to create an InternalHost from another InternalHost");
 
             Dbg.Assert(executionContext != null, "must supply an ExecutionContext");
 

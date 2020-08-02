@@ -5050,7 +5050,7 @@ namespace System.Management.Automation
                     memberName = memberNameAst.Value + "*";
                 }
             }
-            else if (!(lastAst is ErrorExpressionAst) && targetExpr == null)
+            else if (lastAst is not ErrorExpressionAst && targetExpr == null)
             {
                 // I don't think we can complete anything interesting
                 return results;
@@ -6567,7 +6567,7 @@ namespace System.Management.Automation
             object value;
             if (SafeExprEvaluator.TrySafeEval(targetExpr, context.ExecutionContext, out value) && value != null)
             {
-                if (targetExpr is ArrayExpressionAst && !(value is object[]))
+                if (targetExpr is ArrayExpressionAst && value is not object[])
                 {
                     // When the array contains only one element, the evaluation result would be that element. We wrap it into an array
                     value = new[] { value };

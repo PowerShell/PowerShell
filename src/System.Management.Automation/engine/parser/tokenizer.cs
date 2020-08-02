@@ -2110,7 +2110,7 @@ namespace System.Management.Automation.Language
                     return;
                 }
 
-                if (argumentValue is string || !(argumentValue is IEnumerable))
+                if (argumentValue is string || argumentValue is not IEnumerable)
                 {
                     requiredEditions = HandleRequiresPSEditionArgument(argumentAst, argumentValue, ref requiredEditions);
                 }
@@ -2165,7 +2165,7 @@ namespace System.Management.Automation.Language
             }
             else if (assemblyToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
-                if (argumentValue is string || !(argumentValue is IEnumerable))
+                if (argumentValue is string || argumentValue is not IEnumerable)
                 {
                     requiredAssemblies = HandleRequiresAssemblyArgument(argumentAst, argumentValue, requiredAssemblies);
                 }

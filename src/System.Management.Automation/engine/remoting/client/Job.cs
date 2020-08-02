@@ -3384,7 +3384,7 @@ namespace System.Management.Automation
             }
             else if ((pipeline.PipelineStateInfo.State == PipelineState.Failed) ||
                      ((pipeline.PipelineStateInfo.State == PipelineState.Stopped) &&
-                      (pipeline.PipelineStateInfo.Reason != null && !(pipeline.PipelineStateInfo.Reason is PipelineStoppedException))))
+                      (pipeline.PipelineStateInfo.Reason != null && pipeline.PipelineStateInfo.Reason is not PipelineStoppedException)))
             {
                 // Pipeline stopped state is also an error condition if the associated exception is not 'PipelineStoppedException'.
                 object targetObject = runspace.ConnectionInfo.ComputerName;

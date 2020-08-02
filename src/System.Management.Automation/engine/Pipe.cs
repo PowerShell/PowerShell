@@ -510,7 +510,7 @@ namespace System.Management.Automation.Internal
                 // If our object came from GetEnumerator (and hence is not IEnumerator), then we need to dispose
                 // Otherwise, we don't own the object, so don't dispose.
                 var disposable = ie as IDisposable;
-                if (disposable != null && !(objects is IEnumerator))
+                if (disposable != null && objects is not IEnumerator)
                 {
                     disposable.Dispose();
                 }
