@@ -277,6 +277,8 @@ namespace System.Management.Automation
                 }
             }
 
+            // Move the arguments from hashtable splatting to the end of the unbound args list, so that
+            // the explicitly specified named arguments can supersede those from a hashtable splatting.
             if (paramsFromSplatting != null)
             {
                 foreach (CommandParameterInternal argument in paramsFromSplatting)
@@ -473,7 +475,10 @@ namespace System.Management.Automation
         /// <returns>
         /// The arguments which are still not bound.
         /// </returns>
-        internal abstract Collection<CommandParameterInternal> BindParameters(Collection<CommandParameterInternal> parameters);
+        internal virtual Collection<CommandParameterInternal> BindParameters(Collection<CommandParameterInternal> parameters)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Bind the argument to the specified parameter.

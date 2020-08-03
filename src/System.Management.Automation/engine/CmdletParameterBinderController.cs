@@ -1176,17 +1176,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Binds the specified parameters to the cmdlet.
-        /// </summary>
-        /// <param name="parameters">
-        /// The parameters to bind.
-        /// </param>
-        internal override Collection<CommandParameterInternal> BindParameters(Collection<CommandParameterInternal> parameters)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
         /// Binds the specified argument to the specified parameter using the appropriate
         /// parameter binder. If the argument is of type ScriptBlock and the parameter takes
         /// pipeline input, then the ScriptBlock is saved off in the delay-bind ScriptBlock

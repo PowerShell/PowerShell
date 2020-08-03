@@ -131,17 +131,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Binds the specified parameters to the shell function.
-        /// </summary>
-        /// <param name="arguments">
-        /// The arguments to bind.
-        /// </param>
-        internal override Collection<CommandParameterInternal> BindParameters(Collection<CommandParameterInternal> arguments)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
         /// Takes the remaining arguments that haven't been bound, and binds
         /// them to $args.
         /// </summary>
