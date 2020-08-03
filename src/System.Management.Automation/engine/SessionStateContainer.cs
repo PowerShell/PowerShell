@@ -3459,48 +3459,44 @@ namespace System.Management.Automation
                                 out providerInstance);
                 }
 
+                // Don't support 'New-Item -Type Directory' on the Function provider
+                // if the runspace has ever been in constrained language mode, as the mkdir
+                // function can be abused
+                if (context.ExecutionContext.HasRunspaceEverUsedConstrainedLanguageMode &&
+                    (providerInstance is Microsoft.PowerShell.Commands.FunctionProvider) &&
+                    (string.Equals(type, "Directory", StringComparison.OrdinalIgnoreCase)))
+                {
+                    throw
+                        PSTraceSource.NewNotSupportedException(SessionStateStrings.DriveCmdletProvider_NotSupported);
+                }
+
+                // Symbolic link targets are allowed to not exist on both Windows and Linux
+                bool allowNonexistingPath = false;
+                bool isSymbolicJunctionOrHardLink = false;
+
+                if (type != null)
+                {
+                    WildcardPattern typeEvaluator = WildcardPattern.Get(type + "*", WildcardOptions.IgnoreCase | WildcardOptions.Compiled);
+
+                    allowNonexistingPath = typeEvaluator.IsMatch("symboliclink");
+                    isSymbolicJunctionOrHardLink = allowNonexistingPath || typeEvaluator.IsMatch("junction") || typeEvaluator.IsMatch("hardlink");
+                }
+
                 foreach (string providerPath in providerPaths)
                 {
                     // Compose the globbed container and the name together to get a path
                     // to pass on to the provider.
-
                     string composedPath = providerPath;
                     if (!string.IsNullOrEmpty(name))
                     {
                         composedPath = MakePath(providerInstance, providerPath, name, context);
                     }
 
-                    // Don't support 'New-Item -Type Directory' on the Function provider
-                    // if the runspace has ever been in constrained language mode, as the mkdir
-                    // function can be abused
-                    if (context.ExecutionContext.HasRunspaceEverUsedConstrainedLanguageMode &&
-                        (providerInstance is Microsoft.PowerShell.Commands.FunctionProvider) &&
-                        (string.Equals(type, "Directory", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        throw
-                            PSTraceSource.NewNotSupportedException(SessionStateStrings.DriveCmdletProvider_NotSupported);
-                    }
-
-                    bool isSymbolicJunctionOrHardLink = false;
-                    // Symbolic link targets are allowed to not exist on both Windows and Linux
-                    bool allowNonexistingPath = false;
-
-                    if (type != null)
-                    {
-                        WildcardPattern typeEvaluator = WildcardPattern.Get(type + "*", WildcardOptions.IgnoreCase | WildcardOptions.Compiled);
-
-                        if (typeEvaluator.IsMatch("symboliclink") || typeEvaluator.IsMatch("junction") || typeEvaluator.IsMatch("hardlink"))
-                        {
-                            isSymbolicJunctionOrHardLink = true;
-                            allowNonexistingPath = typeEvaluator.IsMatch("symboliclink");
-                        }
-                    }
+                    string targetPath = content?.ToString()?.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
 
                     if (isSymbolicJunctionOrHardLink)
                     {
-                        string targetPath;
-
-                        if (content is null || string.IsNullOrEmpty(targetPath = content.ToString()))
+                        if (string.IsNullOrEmpty(targetPath))
                         {
                             throw PSTraceSource.NewArgumentNullException(nameof(content), SessionStateStrings.NewLinkTargetNotSpecified, path);
                         }
@@ -3510,7 +3506,7 @@ namespace System.Management.Automation
                             ProviderInfo targetProvider = null;
                             CmdletProvider targetProviderInstance = null;
 
-                            var globbedTarget = Globber.GetGlobbedProviderPathsFromMonadPath(
+                            Collection<string> globbedTarget = Globber.GetGlobbedProviderPathsFromMonadPath(
                                 targetPath,
                                 allowNonexistingPath,
                                 context,
@@ -3522,21 +3518,9 @@ namespace System.Management.Automation
                                 throw PSTraceSource.NewNotSupportedException(SessionStateStrings.MustBeFileSystemPath);
                             }
 
-                            if (globbedTarget.Count > 1)
-                            {
-                                throw PSTraceSource.NewInvalidOperationException(SessionStateStrings.PathResolvedToMultiple, targetPath);
-                            }
-
                             if (globbedTarget.Count == 0)
                             {
                                 throw PSTraceSource.NewInvalidOperationException(SessionStateStrings.PathNotFound, targetPath);
-                            }
-
-                            // If the original target was a relative path, we want to leave it as relative if it did not require
-                            // globbing to resolve.
-                            if (WildcardPattern.ContainsWildcardCharacters(targetPath))
-                            {
-                                content = globbedTarget[0];
                             }
                         }
                         catch
@@ -3549,7 +3533,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    NewItemPrivate(providerInstance, composedPath, type, content, context);
+                    NewItemPrivate(providerInstance, composedPath, type, targetPath, context);
                 }
             }
         }
@@ -3585,7 +3569,7 @@ namespace System.Management.Automation
             CmdletProvider providerInstance,
             string path,
             string type,
-            object content,
+            string content,
             CmdletProviderContext context)
         {
             // All parameters should have been validated by caller
