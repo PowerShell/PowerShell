@@ -2114,40 +2114,37 @@ namespace Microsoft.PowerShell.Commands
                 Path = new string[] { string.Empty };
             }
 
-            foreach (string path in Path)
+            try
             {
-                try
-                {
-                    InvokeProvider.Item.New(path, Name, ItemType, Value, CmdletProviderContext);
-                }
-                catch (PSNotSupportedException notSupported)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            notSupported.ErrorRecord,
-                            notSupported));
-                }
-                catch (DriveNotFoundException driveNotFound)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            driveNotFound.ErrorRecord,
-                            driveNotFound));
-                }
-                catch (ProviderNotFoundException providerNotFound)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            providerNotFound.ErrorRecord,
-                            providerNotFound));
-                }
-                catch (ItemNotFoundException pathNotFound)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            pathNotFound.ErrorRecord,
-                            pathNotFound));
-                }
+                InvokeProvider.Item.New(Path, Name, ItemType, Value, CmdletProviderContext);
+            }
+            catch (PSNotSupportedException notSupported)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        notSupported.ErrorRecord,
+                        notSupported));
+            }
+            catch (DriveNotFoundException driveNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        driveNotFound.ErrorRecord,
+                        driveNotFound));
+            }
+            catch (ProviderNotFoundException providerNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        providerNotFound.ErrorRecord,
+                        providerNotFound));
+            }
+            catch (ItemNotFoundException pathNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        pathNotFound.ErrorRecord,
+                        pathNotFound));
             }
         }
 

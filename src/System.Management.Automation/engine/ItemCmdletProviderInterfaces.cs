@@ -1128,7 +1128,7 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal void New(
-            string path,
+            string[] path,
             string name,
             string type,
             object content,
@@ -1140,7 +1140,7 @@ namespace System.Management.Automation
 
             // Parameter validation is done in the session state object
 
-            _sessionState.NewItem(new string[] { path }, name, type, content, context);
+            _sessionState.NewItem(path, name, type, content, context);
         }
 
         /// <summary>
