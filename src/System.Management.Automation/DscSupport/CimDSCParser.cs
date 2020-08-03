@@ -73,8 +73,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     MemberInfo[] memberInfo = targetType.GetMember(property.Name, BindingFlags.Public | BindingFlags.Instance);
 
                     // verify property exists in corresponding class type
-                    if (memberInfo == null || memberInfo.Length > 1 ||
-                        (memberInfo[0] is not PropertyInfo && memberInfo[0] is not FieldInfo))
+                    if (memberInfo == null
+                        || memberInfo.Length > 1
+                        || (memberInfo[0] is not PropertyInfo && memberInfo[0] is not FieldInfo))
                     {
                         errorMessage = string.Format(CultureInfo.CurrentCulture, ParserStrings.PropertyNotDeclaredInPSClass, new object[] { property.Name, className });
                         var invalidOperationException = new InvalidOperationException(errorMessage);

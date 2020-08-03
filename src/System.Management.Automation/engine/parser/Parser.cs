@@ -4923,8 +4923,8 @@ namespace System.Management.Automation.Language
                 return new ErrorStatementAst(ExtentOf(usingToken, itemToken.Extent));
             }
 
-            if (itemAst is not StringConstantExpressionAst &&
-                (kind != UsingStatementKind.Module || itemAst is not HashtableAst))
+            if (itemAst is not StringConstantExpressionAst
+                && (kind != UsingStatementKind.Module || itemAst is not HashtableAst))
             {
                 ReportError(ExtentFromFirstOf(itemAst, itemToken),
                     nameof(ParserStrings.InvalidValueForUsingItemName),
