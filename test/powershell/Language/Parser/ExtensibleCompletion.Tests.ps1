@@ -236,7 +236,7 @@ function FactoryCompletionAdd {
     )
 }
 
-Describe "Factory based extensible completion" -Tags "CI","Factory" {
+Describe "Factory based extensible completion" -Tags "CI" {
     @{
         ExpectedResults = @(
             @{CompletionText = "5"; ResultType = "ParameterValue" }
