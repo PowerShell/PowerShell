@@ -113,7 +113,7 @@ namespace System.Management.Automation.Runspaces
                 ? new CommandParameter(name, internalParameter.ArgumentValue)
                 : name != null
                     ? new CommandParameter(name)
-                    : new CommandParameter(null, internalParameter.ArgumentValue);
+                    : new CommandParameter(name: null, internalParameter.ArgumentValue);
 
             result.FromHashtableSplatting = internalParameter.FromHashtableSplatting;
             return result;
