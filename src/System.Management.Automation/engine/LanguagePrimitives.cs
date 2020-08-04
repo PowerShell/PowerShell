@@ -2879,8 +2879,16 @@ namespace System.Management.Automation
         {
             try
             {
+                var parsedNumber = Parser.ScanNumber(strToConvert, resultType, shouldTryCoercion: false);
+                if (resultType == typeof(BigInteger) || parsedNumber is BigInteger)
+                {
+                    // Convert.ChangeType() cannot be used here as BigInteger is not IConvertible.
+                    result = ConvertTo(parsedNumber, resultType);
+                    return true;
+                }
+
                 result = Convert.ChangeType(
-                    Parser.ScanNumber(strToConvert, resultType, shouldTryCoercion: false),
+                    parsedNumber,
                     resultType,
                     System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
                 return true;
@@ -2893,41 +2901,61 @@ namespace System.Management.Automation
             }
         }
 
-        private static object ConvertStringToInteger(object valueToConvert,
-                                                     Type resultType,
-                                                     bool recursion,
-                                                     PSObject originalValueToConvert,
-                                                     IFormatProvider formatProvider,
-                                                     TypeTable backupTable)
+        private static object ConvertStringToInteger(
+            object valueToConvert,
+            Type resultType,
+            bool recursion,
+            PSObject originalValueToConvert,
+            IFormatProvider formatProvider,
+            TypeTable backupTable)
         {
             var strToConvert = valueToConvert as string;
             Diagnostics.Assert(strToConvert != null, "Value to convert must be a string");
-            Diagnostics.Assert(IsNumeric(GetTypeCode(resultType)), "Result type must be numeric");
+            Diagnostics.Assert(
+                IsNumeric(GetTypeCode(resultType)) || resultType == typeof(BigInteger),
+                "Result type must be numeric");
 
             if (strToConvert.Length == 0)
             {
                 typeConversion.WriteLine("Returning numeric zero.");
+
+                // BigInteger is not IConvertible and will throw from ChangeType; we know the value we're after is zero.
+                if (resultType == typeof(BigInteger))
+                {
+                    return BigInteger.Zero;
+                }
+
                 // This is not wrapped in a try/catch because it can't fail.
-                return System.Convert.ChangeType(0, resultType, CultureInfo.InvariantCulture);
+                return System.Convert.ChangeType(value: 0, resultType, CultureInfo.InvariantCulture);
             }
 
             typeConversion.WriteLine("Converting to integer.");
-            TypeConverter integerConverter = LanguagePrimitives.GetIntegerSystemConverter(resultType);
+
             try
             {
                 if (TryScanNumber(strToConvert, resultType, out object result))
                 {
                     return result;
                 }
-                else
+
+                if (resultType == typeof(BigInteger))
                 {
-                    return integerConverter.ConvertFrom(strToConvert);
+                    // Fallback for BigInteger: manual parsing using any common format.
+                    NumberStyles style = NumberStyles.AllowLeadingSign
+                        | NumberStyles.AllowDecimalPoint
+                        | NumberStyles.AllowExponent
+                        | NumberStyles.AllowHexSpecifier;
+
+                    return BigInteger.Parse(strToConvert, style, NumberFormatInfo.InvariantInfo);
                 }
+
+                // Fallback conversion for regular numeric types.
+                return GetIntegerSystemConverter(resultType).ConvertFrom(strToConvert);
             }
             catch (Exception e)
             {
                 // This catch has one extra reason to be generic (Exception e).
-                // integerConverter.ConvertFrom warps its exceptions in a System.Exception.
+                // TypeConverter.ConvertFrom wraps its exceptions in a System.Exception.
                 if (e.InnerException != null)
                 {
                     e = e.InnerException;
@@ -3219,6 +3247,24 @@ namespace System.Management.Automation
         {
             return ((Decimal)valueToConvert) != default(Decimal);
         }
+
+        private static bool ConvertBigIntegerToBool(
+            object valueToConvert,
+            Type resultType,
+            bool recursion,
+            PSObject originalValueToConvert,
+            IFormatProvider formatProvider,
+            TypeTable backupTable)
+                => ((BigInteger)valueToConvert) != BigInteger.Zero;
+
+        private static object ConvertBoolToBigInteger(
+            object valueToConvert,
+            Type resultType,
+            bool recursion,
+            PSObject originalValueToConvert,
+            IFormatProvider formatProvider,
+            TypeTable backupTable)
+                => (bool)valueToConvert ? BigInteger.One : BigInteger.Zero;
 
         private static PSConverter<bool> CreateNumericToBoolConverter(Type fromType)
         {
@@ -4132,14 +4178,22 @@ namespace System.Management.Automation
         }
 
         #region Delegates converting null
-        private static object ConvertNullToNumeric(object valueToConvert,
-                                                   Type resultType,
-                                                   bool recursion,
-                                                   PSObject originalValueToConvert,
-                                                   IFormatProvider formatProvider,
-                                                   TypeTable backupTable)
+        private static object ConvertNullToNumeric(
+            object valueToConvert,
+            Type resultType,
+            bool recursion,
+            PSObject originalValueToConvert,
+            IFormatProvider formatProvider,
+            TypeTable backupTable)
         {
             typeConversion.WriteLine("Converting null to zero.");
+
+            // Handle BigInteger first, as it is not IConvertible
+            if (resultType == typeof(BigInteger))
+            {
+                return BigInteger.Zero;
+            }
+
             // If the destination type is numeric, convert 0 to resultType
             return System.Convert.ChangeType(0, resultType, CultureInfo.InvariantCulture);
         }
@@ -4416,6 +4470,8 @@ namespace System.Management.Automation
                     CacheConversion<object>(typeofNull, type, LanguagePrimitives.ConvertNullToNumeric, ConversionRank.NullToValue);
                 }
 
+                CacheConversion<object>(typeofBool, typeof(BigInteger), ConvertBoolToBigInteger, ConversionRank.Language);
+
                 CacheConversion<bool>(typeof(Int16), typeofBool, ConvertInt16ToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(Int32), typeofBool, ConvertInt32ToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(Int64), typeofBool, ConvertInt64ToBool, ConversionRank.Language);
@@ -4427,6 +4483,7 @@ namespace System.Management.Automation
                 CacheConversion<bool>(typeof(Single), typeofBool, ConvertSingleToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(double), typeofBool, ConvertDoubleToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(decimal), typeofBool, ConvertDecimalToBool, ConversionRank.Language);
+                CacheConversion<bool>(typeof(BigInteger), typeofBool, ConvertBigIntegerToBool, ConversionRank.Language);
 
                 for (int i = 0; i < LanguagePrimitives.s_unsignedIntegerTypes.Length; i++)
                 {
@@ -4480,6 +4537,8 @@ namespace System.Management.Automation
                         CacheConversion<object>(realType, integerType, LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
                     }
                 }
+
+                CacheConversion<object>(typeofString, typeof(BigInteger), ConvertStringToInteger, ConversionRank.NumericString);
 
                 CacheConversion<object>(typeofFloat, typeofDouble, LanguagePrimitives.ConvertNumeric, ConversionRank.NumericImplicit);
                 CacheConversion<object>(typeofDouble, typeofFloat, LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
