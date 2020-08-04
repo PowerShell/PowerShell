@@ -33,6 +33,7 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
 
             $hash = @{ Name = "Hello" }
             SimpleTest @hash -Path "Yeah" | Should -BeExactly 'Key: Hello; Path: Yeah; Args: '
+            SimpleTest -Path "Yeah" @hash | Should -BeExactly 'Key: Hello; Path: Yeah; Args: '
 
             $hash = @{ Key = "Hello" }
             SimpleTest @hash | Should -BeExactly 'Key: Hello; Path: ; Args: '
@@ -79,6 +80,11 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
             $zoo | Should -BeOfType "System.Management.Automation.VerbInfo"
             $zoo.Verb | Should -BeExactly "Send"
 
+            $zoo = $null
+            Get-Verb -Verb "Send" @hash > $null
+            $zoo | Should -BeOfType "System.Management.Automation.VerbInfo"
+            $zoo.Verb | Should -BeExactly "Send"
+
             ## GetPowerShell
             $ps = { param($hash) Get-Verb @hash -Verb "Send"; Get-Variable zoo }.GetPowerShell($hash)
             try {
@@ -109,6 +115,7 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
             ## Regular use with simple function
             $hash = @{ Name = "Hello"; Path = "World" }
             SimpleTest @hash -Path "Yeah" | Should -BeExactly 'Key: Hello; Path: Yeah; Args: '
+            SimpleTest -Path "Yeah" @hash | Should -BeExactly 'Key: Hello; Path: Yeah; Args: '
 
             $hash = @{ Name = "Hello"; Blah = "World" }
             SimpleTest @hash -Name "Yeah" | Should -BeExactly 'Key: Yeah; Path: ; Args: -Blah: World'
