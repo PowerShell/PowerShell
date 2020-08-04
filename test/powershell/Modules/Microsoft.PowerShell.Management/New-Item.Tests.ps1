@@ -330,7 +330,7 @@ Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'Req
         $link = New-Item -Type SymbolicLink globbedAbsoluteLink1 -Target $absolutePath
         (Get-Item $link).Target | Should -BeExactly $absolutePath
 
-        $link = New-Item -Type SymbolicLink globbedRelativeLink1 -Target $fileName
+        $link = New-Item -Type SymbolicLink globbedRelativeLink1 -Target ./$fileName
         (Get-Item $link).Target | Should -BeExactly $fileName
     }
 
@@ -341,7 +341,7 @@ Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'Req
         $link = New-Item -Type SymbolicLink globbedAbsoluteLink2 -Target $absolutePath
         (Get-Item $link).Target | Should -BeExactly $absolutePath
 
-        $link = New-Item -Type SymbolicLink globbedRelativeLink2 -Target $fileName
+        $link = New-Item -Type SymbolicLink globbedRelativeLink2 -Target ./$fileName
         (Get-Item $link).Target | Should -BeExactly $fileName
     }
 }
