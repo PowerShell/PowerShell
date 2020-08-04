@@ -316,13 +316,34 @@ Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'Req
     It "Can create symlink with relative nonexistent target '<target>'" -TestCases @{ link = $links[0]; target = $targets[0] }, @{ link = $links[1]; target = $targets[1] } {
         param($link, $target)
 
-        $null = New-Item -Type SymbolicLink $link -Target $target -Force
+        $null = New-Item -Type SymbolicLink $link -Target $target
 
         # Make sure the relative target path was recorded as such and uses
         # the platform-appropriate separator.
         (Get-Item $link).Target | Should -Be ($target -replace '[\\/]', [IO.Path]::DirectorySeparatorChar)
+    }
 
-      }
+    It "Can create symlink with absolute/relative existent target as literal path" {
+        $fileName = 'file[1].txt'
+        $absolutePath = (New-Item -Type File $fileName).FullName
+
+        $link = New-Item -Type SymbolicLink globbedAbsoluteLink1 -Target $absolutePath
+        (Get-Item $link).Target | Should -BeExactly $absolutePath
+
+        $link = New-Item -Type SymbolicLink globbedRelativeLink1 -Target $fileName
+        (Get-Item $link).Target | Should -BeExactly $fileName
+    }
+
+    It "Can create symlink with absolute/relative nonexistent target as literal path" {
+        $fileName = 'noexist_file[2].txt'
+        $absolutePath = Join-Path $pwd $fileName
+
+        $link = New-Item -Type SymbolicLink globbedAbsoluteLink2 -Target $absolutePath
+        (Get-Item $link).Target | Should -BeExactly $absolutePath
+
+        $link = New-Item -Type SymbolicLink globbedRelativeLink2 -Target $fileName
+        (Get-Item $link).Target | Should -BeExactly $fileName
+    }
 }
 
 Describe "New-Item with links fails for non elevated user if developer mode not enabled on Windows." -Tags "CI" {
