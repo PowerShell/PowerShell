@@ -614,6 +614,20 @@ Describe 'get-help other tests' -Tags "CI" {
         It '$x.Parameters.parameter[2].defaultValue' { $x.Parameters.parameter[2].defaultValue | Should -BeExactly 'parameter is mandatory' }
     }
 
+    Context 'get-help helpFunc14' {
+        function helpFunc14
+        {
+            param(
+                [SupportsWildcards()]
+                $p1
+            )
+        }
+
+        $x = Get-Help helpFunc14
+
+        It '$x.Parameters.parameter[0].globbing' { $x.Parameters.parameter[0].globbing | Should -BeExactly 'true' }
+    }
+
     Context 'get-help -Examples prompt string should have trailing space' {
         function foo {
             <#
