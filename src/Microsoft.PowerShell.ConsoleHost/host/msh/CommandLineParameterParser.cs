@@ -541,8 +541,8 @@ namespace Microsoft.PowerShell
         /// </param>
         /// <returns>
         /// Returns a Tuple:
-        /// The first value is a String called switchKey with the word in a switch from the current argument or null.
-        /// The second value is a bool called shouldBreak, indicating if the parsing look should break.
+        /// The first value is a String called 'switchKey' with the word in a switch from the current argument or null.
+        /// The second value is a bool called 'shouldBreak', indicating if the parsing look should break.
         /// </returns>
         private (string switchKey, bool shouldBreak) GetSwitchKey(string[] args, ref int argIndex, ref bool noexitSeen)
         {
@@ -1353,4 +1353,3 @@ namespace Microsoft.PowerShell
 #endif
     }
 }   // namespace
-
