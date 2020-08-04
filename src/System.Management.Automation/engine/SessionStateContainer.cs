@@ -3505,39 +3505,6 @@ namespace System.Management.Automation
                         }
 
                         targetPath = targetPath?.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
-
-                        try
-                        {
-                            Collection<string> globbedTarget = Globber.GetGlobbedProviderPathsFromMonadPath(
-                                targetPath,
-                                allowNonexistingPath,
-                                context,
-                                out ProviderInfo targetProvider,
-                                out CmdletProvider targetProviderInstance);
-
-                            if (!string.Equals(targetProvider.Name, "filesystem", StringComparison.OrdinalIgnoreCase))
-                            {
-                                throw PSTraceSource.NewNotSupportedException(SessionStateStrings.MustBeFileSystemPath);
-                            }
-
-                            if (globbedTarget.Count > 1)
-                            {
-                                throw PSTraceSource.NewInvalidOperationException(SessionStateStrings.PathResolvedToMultiple, targetPath);
-                            }
-
-                            if (globbedTarget.Count == 0)
-                            {
-                                throw PSTraceSource.NewInvalidOperationException(SessionStateStrings.PathNotFound, targetPath);
-                            }
-                        }
-                        catch
-                        {
-                            // If Force switch presents we consider the 'content' target path literally otherwise throws.
-                            if (!context.Force)
-                            {
-                                throw;
-                            }
-                        }
                     }
 
                     NewItemPrivate(providerInstance, composedPath, type, targetPath, context);
