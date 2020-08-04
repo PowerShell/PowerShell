@@ -20,7 +20,7 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
         It "works on cmdlet" {
             $hash = @{ Verb = "Get"; OutVariable = "zoo" }
             Get-Verb @hash > $null
-            $zoo | Should -BeOfType 'System.Management.Automation.VerbInfo'
+            $zoo | Should -BeOfType System.Management.Automation.VerbInfo
             $zoo.Verb | Should -BeExactly 'Get'
         }
 
@@ -45,7 +45,7 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
 
             try {
                 $result = $ps.Invoke()
-                $result[0] | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $result[0] | Should -BeOfType System.Management.Automation.VerbInfo
                 $result[0].Verb | Should -BeExactly 'Get'
             } finally {
                 $ps.Dispose()
@@ -59,9 +59,9 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
                 $sp.Begin($false)
 
                 $result = $sp.Process()
-                $result | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $result | Should -BeOfType System.Management.Automation.VerbInfo
                 $result.Verb | Should -BeExactly 'Get'
-                $zoo | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $zoo | Should -BeOfType System.Management.Automation.VerbInfo
                 $zoo.Verb | Should -BeExactly 'Get'
 
                 $sp.End()
@@ -77,19 +77,19 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
             ## Regular use with cmdlet
             $hash = @{ Verb = "Get"; OutVariable = "zoo" }
             Get-Verb @hash -Verb "Send" > $null
-            $zoo | Should -BeOfType "System.Management.Automation.VerbInfo"
+            $zoo | Should -BeOfType System.Management.Automation.VerbInfo
             $zoo.Verb | Should -BeExactly "Send"
 
             $zoo = $null
             Get-Verb -Verb "Send" @hash > $null
-            $zoo | Should -BeOfType "System.Management.Automation.VerbInfo"
+            $zoo | Should -BeOfType System.Management.Automation.VerbInfo
             $zoo.Verb | Should -BeExactly "Send"
 
             ## GetPowerShell
             $ps = { param($hash) Get-Verb @hash -Verb "Send"; Get-Variable zoo }.GetPowerShell($hash)
             try {
                 $result = $ps.Invoke()
-                $result[0] | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $result[0] | Should -BeOfType System.Management.Automation.VerbInfo
                 $result[0].Verb | Should -BeExactly 'Send'
             } finally {
                 $ps.Dispose()
@@ -102,9 +102,9 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
                 $sp.Begin($false)
 
                 $result = $sp.Process()
-                $result | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $result | Should -BeOfType System.Management.Automation.VerbInfo
                 $result.Verb | Should -BeExactly 'Send'
-                $zoo | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $zoo | Should -BeOfType System.Management.Automation.VerbInfo
                 $zoo.Verb | Should -BeExactly 'Send'
 
                 $sp.End()
@@ -126,14 +126,14 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
             $hash = @{ Verb = "Get"; ov = "zoo" }
             Get-Verb @hash -Verb "Send" -ov "bar" > $null
             $zoo | Should -BeNullOrEmpty
-            $bar | Should -BeOfType "System.Management.Automation.VerbInfo"
+            $bar | Should -BeOfType System.Management.Automation.VerbInfo
             $bar.Verb | Should -BeExactly "Send"
 
             ## GetPowerShell
             $ps = { param($hash) Get-Verb @hash -Verb "Send" -ov "bar"; Get-Variable bar }.GetPowerShell($hash)
             try {
                 $result = $ps.Invoke()
-                $result[0] | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $result[0] | Should -BeOfType System.Management.Automation.VerbInfo
                 $result[0].Verb | Should -BeExactly 'Send'
             } finally {
                 $ps.Dispose()
@@ -146,10 +146,10 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
                 $sp.Begin($false)
 
                 $result = $sp.Process()
-                $result | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $result | Should -BeOfType System.Management.Automation.VerbInfo
                 $result.Verb | Should -BeExactly 'Send'
                 $zoo | Should -BeNullOrEmpty
-                $bar | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $bar | Should -BeOfType System.Management.Automation.VerbInfo
                 $bar.Verb | Should -BeExactly 'Send'
 
                 $sp.End()
@@ -167,14 +167,14 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
             $hash = @{ Verb = "Get"; OutVariable = "zoo" }
             Get-Verb @hash -Verb "Send" -ov "bar" > $null
             $zoo | Should -BeNullOrEmpty
-            $bar | Should -BeOfType "System.Management.Automation.VerbInfo"
+            $bar | Should -BeOfType System.Management.Automation.VerbInfo
             $bar.Verb | Should -BeExactly "Send"
 
             ## GetPowerShell
             $ps = { param($hash) Get-Verb @hash -Verb "Send" -ov "bar"; Get-Variable bar }.GetPowerShell($hash)
             try {
                 $result = $ps.Invoke()
-                $result[0] | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $result[0] | Should -BeOfType System.Management.Automation.VerbInfo
                 $result[0].Verb | Should -BeExactly 'Send'
             } finally {
                 $ps.Dispose()
@@ -187,10 +187,10 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
                 $sp.Begin($false)
 
                 $result = $sp.Process()
-                $result | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $result | Should -BeOfType System.Management.Automation.VerbInfo
                 $result.Verb | Should -BeExactly 'Send'
                 $zoo | Should -BeNullOrEmpty
-                $bar | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $bar | Should -BeOfType System.Management.Automation.VerbInfo
                 $bar.Verb | Should -BeExactly 'Send'
 
                 $sp.End()
@@ -208,14 +208,14 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
             $hash = @{ Verb = "Get"; OutVariable = "zoo" }
             Get-Verb @hash -Verb "Send" -outv "bar" > $null
             $zoo | Should -BeNullOrEmpty
-            $bar | Should -BeOfType "System.Management.Automation.VerbInfo"
+            $bar | Should -BeOfType System.Management.Automation.VerbInfo
             $bar.Verb | Should -BeExactly "Send"
 
             ## GetPowerShell
             $ps = { param($hash) Get-Verb @hash -Verb "Send" -outv "bar"; Get-Variable bar }.GetPowerShell($hash)
             try {
                 $result = $ps.Invoke()
-                $result[0] | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $result[0] | Should -BeOfType System.Management.Automation.VerbInfo
                 $result[0].Verb | Should -BeExactly 'Send'
             } finally {
                 $ps.Dispose()
@@ -228,10 +228,10 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
                 $sp.Begin($false)
 
                 $result = $sp.Process()
-                $result | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $result | Should -BeOfType System.Management.Automation.VerbInfo
                 $result.Verb | Should -BeExactly 'Send'
                 $zoo | Should -BeNullOrEmpty
-                $bar | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $bar | Should -BeOfType System.Management.Automation.VerbInfo
                 $bar.Verb | Should -BeExactly 'Send'
 
                 $sp.End()
@@ -249,14 +249,14 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
             $hash = @{ Verb = "Get"; outv = "zoo" }
             Get-Verb @hash -Verb "Send" -OutVariable "bar" > $null
             $zoo | Should -BeNullOrEmpty
-            $bar | Should -BeOfType "System.Management.Automation.VerbInfo"
+            $bar | Should -BeOfType System.Management.Automation.VerbInfo
             $bar.Verb | Should -BeExactly "Send"
 
             ## GetPowerShell
             $ps = { param($hash) Get-Verb @hash -Verb "Send" -OutVariable "bar"; Get-Variable bar }.GetPowerShell($hash)
             try {
                 $result = $ps.Invoke()
-                $result[0] | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $result[0] | Should -BeOfType System.Management.Automation.VerbInfo
                 $result[0].Verb | Should -BeExactly 'Send'
             } finally {
                 $ps.Dispose()
@@ -269,10 +269,10 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
                 $sp.Begin($false)
 
                 $result = $sp.Process()
-                $result | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $result | Should -BeOfType System.Management.Automation.VerbInfo
                 $result.Verb | Should -BeExactly 'Send'
                 $zoo | Should -BeNullOrEmpty
-                $bar | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $bar | Should -BeOfType System.Management.Automation.VerbInfo
                 $bar.Verb | Should -BeExactly 'Send'
 
                 $sp.End()
@@ -290,14 +290,14 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
             $hash = @{ Verb = "Get"; ov = "zoo" }
             Get-Verb @hash -Verb "Send" -outv "bar" > $null
             $zoo | Should -BeNullOrEmpty
-            $bar | Should -BeOfType "System.Management.Automation.VerbInfo"
+            $bar | Should -BeOfType System.Management.Automation.VerbInfo
             $bar.Verb | Should -BeExactly "Send"
 
             ## GetPowerShell
             $ps = { param($hash) Get-Verb @hash -Verb "Send" -outv "bar"; Get-Variable bar }.GetPowerShell($hash)
             try {
                 $result = $ps.Invoke()
-                $result[0] | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $result[0] | Should -BeOfType System.Management.Automation.VerbInfo
                 $result[0].Verb | Should -BeExactly 'Send'
             } finally {
                 $ps.Dispose()
@@ -310,10 +310,10 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
                 $sp.Begin($false)
 
                 $result = $sp.Process()
-                $result | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $result | Should -BeOfType System.Management.Automation.VerbInfo
                 $result.Verb | Should -BeExactly 'Send'
                 $zoo | Should -BeNullOrEmpty
-                $bar | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $bar | Should -BeOfType System.Management.Automation.VerbInfo
                 $bar.Verb | Should -BeExactly 'Send'
 
                 $sp.End()
@@ -331,14 +331,14 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
             $hash = @{ Verb = "Get"; outv = "zoo" }
             Get-Verb @hash -Verb "Send" -ov "bar" > $null
             $zoo | Should -BeNullOrEmpty
-            $bar | Should -BeOfType "System.Management.Automation.VerbInfo"
+            $bar | Should -BeOfType System.Management.Automation.VerbInfo
             $bar.Verb | Should -BeExactly "Send"
 
             ## GetPowerShell
             $ps = { param($hash) Get-Verb @hash -Verb "Send" -ov "bar"; Get-Variable bar }.GetPowerShell($hash)
             try {
                 $result = $ps.Invoke()
-                $result[0] | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $result[0] | Should -BeOfType System.Management.Automation.VerbInfo
                 $result[0].Verb | Should -BeExactly 'Send'
             } finally {
                 $ps.Dispose()
@@ -351,10 +351,10 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
                 $sp.Begin($false)
 
                 $result = $sp.Process()
-                $result | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $result | Should -BeOfType System.Management.Automation.VerbInfo
                 $result.Verb | Should -BeExactly 'Send'
                 $zoo | Should -BeNullOrEmpty
-                $bar | Should -BeOfType 'System.Management.Automation.VerbInfo'
+                $bar | Should -BeOfType System.Management.Automation.VerbInfo
                 $bar.Verb | Should -BeExactly 'Send'
 
                 $sp.End()
