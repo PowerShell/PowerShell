@@ -4191,7 +4191,7 @@ namespace System.Management.Automation
             // Handle BigInteger first, as it is not IConvertible
             if (resultType == typeof(BigInteger))
             {
-                return default(BigInteger);
+                return BigInteger.Zero;
             }
 
             // If the destination type is numeric, convert 0 to resultType
