@@ -75,6 +75,11 @@ The cross-platform host has built-in documentation via `--help`.
 
 You can run our cross-platform Pester tests with `Start-PSPester`.
 
+```powershell
+Import-Module ./build.psm1
+Start-PSPester
+```
+
 ## Building in Visual Studio
 
 We currently have the issue [#3400](https://github.com/PowerShell/PowerShell/issues/3400) tracking this task.
