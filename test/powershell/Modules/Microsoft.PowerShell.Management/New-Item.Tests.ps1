@@ -331,7 +331,7 @@ Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'Req
         (Get-Item $link).Target | Should -BeExactly $absolutePath
 
         $link = New-Item -Type SymbolicLink globbedRelativeLink1 -Target ./$fileName
-        (Get-Item $link).Target | Should -BeExactly ($fileName -replace '[\\/]', [IO.Path]::DirectorySeparatorChar)
+        (Get-Item $link).Target | Should -BeExactly (./$fileName -replace '[\\/]', [IO.Path]::DirectorySeparatorChar)
     }
 
     It "Can create symlink with absolute/relative nonexistent target as literal path" {
@@ -342,7 +342,7 @@ Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'Req
         (Get-Item $link).Target | Should -BeExactly $absolutePath
 
         $link = New-Item -Type SymbolicLink globbedRelativeLink2 -Target ./$fileName
-        (Get-Item $link).Target | Should -BeExactly ($fileName -replace '[\\/]', [IO.Path]::DirectorySeparatorChar)
+        (Get-Item $link).Target | Should -BeExactly (./$fileName -replace '[\\/]', [IO.Path]::DirectorySeparatorChar)
     }
 }
 
