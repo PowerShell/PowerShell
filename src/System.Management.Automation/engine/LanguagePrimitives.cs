@@ -3255,7 +3255,7 @@ namespace System.Management.Automation
             PSObject originalValueToConvert,
             IFormatProvider formatProvider,
             TypeTable backupTable)
-                => ((BigInteger)valueToConvert) != default(BigInteger);
+                => ((BigInteger)valueToConvert) != BigInteger.Zero;
 
         private static object ConvertBoolToBigInteger(
             object valueToConvert,
