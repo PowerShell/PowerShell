@@ -2380,6 +2380,8 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             GetFileSystemInfo(normalizedTargetPath, out isDirectory);
+
+                            strTargetPath = strTargetPath.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
                         }
                         else
                         {
