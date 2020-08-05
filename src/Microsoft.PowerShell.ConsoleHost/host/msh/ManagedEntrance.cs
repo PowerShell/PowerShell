@@ -54,6 +54,28 @@ namespace Microsoft.PowerShell
                 throw new ArgumentNullException(nameof(args));
             }
 
+#if DEBUG
+            if (args.Length > 0 && !string.IsNullOrEmpty(args[0]) && args[0]!.Equals("-isswait", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("Attach the debugger to continue...");
+                while (!System.Diagnostics.Debugger.IsAttached)
+                {
+                    Thread.Sleep(100);
+                }
+
+                System.Diagnostics.Debugger.Break();
+            }
+#endif
+            // Windows Vista and later support non-traditional UI fallback ie., a
+            // user on an Arabic machine can choose either French or English(US) as
+            // UI fallback language.
+            // CLR does not support this (non-traditional) fallback mechanism.
+            // The currentUICulture returned NativeCultureResolver supports this non
+            // traditional fallback on Vista. So it is important to set currentUICulture
+            // in the beginning before we do anything.
+            Thread.CurrentThread.CurrentUICulture = NativeCultureResolver.UICulture;
+            Thread.CurrentThread.CurrentCulture = NativeCultureResolver.Culture;
+
             // Warm up some components concurrently on background threads.
             EarlyStartup.Init();
 
@@ -69,28 +91,6 @@ namespace Microsoft.PowerShell
             // to allow overriding logging options.
             PSEtwLog.LogConsoleStartup();
 
-            // Windows Vista and later support non-traditional UI fallback ie., a
-            // user on an Arabic machine can choose either French or English(US) as
-            // UI fallback language.
-            // CLR does not support this (non-traditional) fallback mechanism.
-            // The currentUICulture returned NativeCultureResolver supports this non
-            // traditional fallback on Vista. So it is important to set currentUICulture
-            // in the beginning before we do anything.
-            Thread.CurrentThread.CurrentUICulture = NativeCultureResolver.UICulture;
-            Thread.CurrentThread.CurrentCulture = NativeCultureResolver.Culture;
-
-#if DEBUG
-            if (args.Length > 0 && !string.IsNullOrEmpty(args[0]) && args[0]!.Equals("-isswait", StringComparison.OrdinalIgnoreCase))
-            {
-                Console.WriteLine("Attach the debugger to continue...");
-                while (!System.Diagnostics.Debugger.IsAttached)
-                {
-                    Thread.Sleep(100);
-                }
-
-                System.Diagnostics.Debugger.Break();
-            }
-#endif
             int exitCode = 0;
             try
             {
