@@ -174,7 +174,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (cpi.ArgumentSplatted)
+                if (cpi.ArgumentToBeSplatted)
                 {
                     foreach (var splattedCpi in Splat(cpi.ArgumentValue, cpi.ArgumentAst))
                     {
@@ -338,8 +338,13 @@ namespace System.Management.Automation
                     }
 
                     yield return CommandParameterInternal.CreateParameterWithArgument(
-                        splatAst, parameterName, parameterText,
-                        splatAst, parameterValue, false);
+                        parameterAst: splatAst,
+                        parameterName: parameterName,
+                        parameterText: parameterText,
+                        argumentAst: splatAst,
+                        value: parameterValue,
+                        spaceAfterParameter: false,
+                        fromSplatting: true);
                 }
             }
             else

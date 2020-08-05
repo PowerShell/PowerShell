@@ -4241,7 +4241,8 @@ namespace System.Management.Automation.Language
                     Expression.Constant(errorPos.Text),
                     Expression.Constant(arg),
                     Expression.Convert(GetCommandArgumentExpression(arg), typeof(object)),
-                    ExpressionCache.Constant(spaceAfterParameter));
+                    ExpressionCache.Constant(spaceAfterParameter),
+                    ExpressionCache.Constant(false));
             }
 
             return Expression.Call(
