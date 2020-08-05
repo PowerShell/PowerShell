@@ -1130,9 +1130,9 @@ namespace Microsoft.PowerShell
                         if (possibleParameters.Length > 0)
                         {
                             SetCommandLineError(
-                                string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidArgument, args[i]) +
-                                Environment.NewLine +
-                                possibleParameters.ToString(),
+                                string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidArgument, args[i])
+                                    + Environment.NewLine
+                                    + possibleParameters.ToString(),
                                 showBanner: false);
                             return false;
                         }
