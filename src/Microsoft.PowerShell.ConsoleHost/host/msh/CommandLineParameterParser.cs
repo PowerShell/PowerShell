@@ -244,6 +244,7 @@ namespace Microsoft.PowerShell
             }
         }
 
+        // Added for using in xUnit tests
         internal string? SettingsFile { get; private set; }
 
         internal string? InitialCommand
@@ -366,10 +367,13 @@ namespace Microsoft.PowerShell
             }
         }
 
+        // Added for using in xUnit tests
         internal string? ErrorMessage => _error;
 
+        // Added for using in xUnit tests
         internal bool ShowShortHelp => _showHelp;
 
+        // Added for using in xUnit tests
         internal bool ShowExtendedHelp => _showExtendedHelp;
 
         internal bool ShowVersion
