@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell
     {
         private const int MaxPipePathLengthLinux = 108;
         private const int MaxPipePathLengthMacOS = 104;
-        internal static int MaxNameLength = Platform.IsWindows ? ushort.MaxValue : (Platform.IsLinux ? MaxPipePathLengthLinux : MaxPipePathLengthMacOS) - Path.GetTempPath().Length;
+        internal static int MaxNameLength() => Platform.IsWindows ? ushort.MaxValue : (Platform.IsLinux ? MaxPipePathLengthLinux : MaxPipePathLengthMacOS) - Path.GetTempPath().Length;
 
         internal bool? TestHookConsoleInputRedirected;
         internal bool TestHookNotIsWindowsDesktop;
@@ -781,12 +781,12 @@ namespace Microsoft.PowerShell
                         break;
                     }
 
-                    if (!Platform.IsWindows && args[i].Length > MaxNameLength)
+                    if (!Platform.IsWindows && args[i].Length > MaxNameLength())
                     {
                         SetCommandLineError(
                             string.Format(
                                 CommandLineParameterParserStrings.CustomPipeNameTooLong,
-                                MaxNameLength,
+                                MaxNameLength(),
                                 args[i],
                                 args[i].Length));
                         break;
