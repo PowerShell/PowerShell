@@ -48,7 +48,7 @@ jobs:
 
   - powershell: |
       $env:AZDEVOPSFEEDPAT = '$(AzDevOpsFeedPAT)'
-      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -ExtraPackage "tar" -location $(PowerShellRoot) -Build
+      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -Symbols -location $(PowerShellRoot) -Build -ArtifactName macosBinResults
       $env:AZDEVOPSFEEDPAT = $null
     displayName: 'Build and Package'
 

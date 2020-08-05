@@ -10,14 +10,17 @@ param (
     [string] $location = $env:BUILD_REPOSITORY_LOCALPATH,
 
     # Destination location of the package on docker host
+    [Parameter(Mandatory, ParameterSetName = 'IncludeSymbols')]
     [Parameter(Mandatory, ParameterSetName = 'Build')]
     [string] $destination = '/mnt',
 
+    [Parameter(Mandatory, ParameterSetName = 'IncludeSymbols')]
     [Parameter(Mandatory, ParameterSetName = 'Build')]
     [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
     [ValidateNotNullOrEmpty()]
     [string]$ReleaseTag,
 
+    [Parameter(ParameterSetName = 'IncludeSymbols')]
     [Parameter(ParameterSetName = 'Build')]
     [ValidateSet("zip", "tar")]
     [string[]]$ExtraPackage,
@@ -25,8 +28,18 @@ param (
     [Parameter(Mandatory, ParameterSetName = 'Bootstrap')]
     [switch] $BootStrap,
 
+    [Parameter(Mandatory, ParameterSetName = 'IncludeSymbols')]
     [Parameter(Mandatory, ParameterSetName = 'Build')]
-    [switch] $Build
+    [switch] $Build,
+
+    [Parameter(Mandatory, ParameterSetName = 'IncludeSymbols')]
+    [switch] $Symbols,
+
+    [Parameter(Mandatory, ParameterSetName = 'packageSigned')]
+    [ValidatePattern("-signed.zip$")]
+    [string]$BuildZip,
+
+    [string]$ArtifactName = 'result'
 )
 
 $repoRoot = $location
@@ -59,18 +72,47 @@ try {
         Start-PSBootstrap -Package
     }
 
+    if ($PSCmdlet.ParameterSetName -eq 'packageSigned') {
+        Write-Verbose "Expanding signed build..." -Verbose
+        Expand-PSSignedBuild -BuildZip $BuildZip
+
+        Remove-Item -Path $BuildZip
+    }
+
     if ($Build.IsPresent) {
-        Start-PSBuild -Configuration 'Release' -Crossgen -PSModuleRestore @releaseTagParam
-
-        Start-PSPackage @releaseTagParam
-        switch ($ExtraPackage) {
-            "tar" { Start-PSPackage -Type tar @releaseTagParam }
+        if ($Symbols.IsPresent) {
+            Start-PSBuild -Configuration 'Release' -Crossgen -NoPSModuleRestore @releaseTagParam
+            $pspackageParams = @{}
+            $pspackageParams['Type']='zip'
+            $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
+            Write-Verbose "Starting powershell packaging(zip)..." -Verbose
+            Start-PSPackage @pspackageParams @releaseTagParam
         }
-
-        if ($LTS) {
-            Start-PSPackage @releaseTagParam -LTS
+        elseif ($BuildZip) {
+            Start-PSPackage @releaseTagParam
             switch ($ExtraPackage) {
-                "tar" { Start-PSPackage -Type tar @releaseTagParam -LTS }
+                "tar" { Start-PSPackage -Type tar @releaseTagParam }
+            }
+
+            if ($LTS) {
+                Start-PSPackage @releaseTagParam -LTS
+                switch ($ExtraPackage) {
+                    "tar" { Start-PSPackage -Type tar @releaseTagParam -LTS }
+                }
+            }
+        }
+        else {
+            Start-PSBuild -Configuration 'Release' -Crossgen -PSModuleRestore @releaseTagParam
+            Start-PSPackage @releaseTagParam
+            switch ($ExtraPackage) {
+                "tar" { Start-PSPackage -Type tar @releaseTagParam }
+            }
+
+            if ($LTS) {
+                Start-PSPackage @releaseTagParam -LTS
+                switch ($ExtraPackage) {
+                    "tar" { Start-PSPackage -Type tar @releaseTagParam -LTS }
+                }
             }
         }
     }
@@ -79,13 +121,12 @@ try {
 }
 
 if ($Build.IsPresent) {
-    $macPackages = Get-ChildItem "$repoRoot/powershell*" -Include *.pkg, *.tar.gz
+    $macPackages = Get-ChildItem "$repoRoot/powershell*" -Include *.pkg, *.tar.gz, *.zip
     foreach ($macPackage in $macPackages) {
         $filePath = $macPackage.FullName
-        $name = Split-Path -Leaf -Path $filePath
         $extension = (Split-Path -Extension -Path $filePath).Replace('.', '')
         Write-Verbose "Copying $filePath to $destination" -Verbose
-        Write-Host "##vso[artifact.upload containerfolder=results;artifactname=results]$filePath"
+        Write-Host "##vso[artifact.upload containerfolder=$ArtifactName;artifactname=$ArtifactName]$filePath"
         Write-Host "##vso[task.setvariable variable=Package-$extension]$filePath"
         Copy-Item -Path $filePath -Destination $destination -Force
     }
