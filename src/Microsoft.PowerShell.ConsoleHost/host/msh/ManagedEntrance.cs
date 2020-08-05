@@ -79,17 +79,17 @@ namespace Microsoft.PowerShell
             // Warm up some components concurrently on background threads.
             EarlyStartup.Init();
 
-            var banner = string.Format(
-                CultureInfo.InvariantCulture,
-                ManagedEntranceStrings.ShellBannerNonWindowsPowerShell,
-                PSVersionInfo.GitCommitId);
-
             ConsoleHost.ParseCommandLine(args);
 
             // NOTE: On Unix, logging depends on a command line parsing
             // and must be just after ConsoleHost.ParseCommandLine(args)
             // to allow overriding logging options.
             PSEtwLog.LogConsoleStartup();
+
+            var banner = string.Format(
+                CultureInfo.InvariantCulture,
+                ManagedEntranceStrings.ShellBannerNonWindowsPowerShell,
+                PSVersionInfo.GitCommitId);
 
             int exitCode = 0;
             try
