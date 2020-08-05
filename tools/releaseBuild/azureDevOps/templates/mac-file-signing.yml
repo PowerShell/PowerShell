@@ -44,6 +44,10 @@ jobs:
         displayName: Expand symbols zip
 
       - powershell: |
+          Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+        displayName: 'Capture artifacts dir Binaries'
+
+      - powershell: |
           Get-ChildItem "$(System.ArtifactsDirectory)\$(SymbolsFolder)" -Recurse -Include pwsh, *.dylib
         displayName: 'Capture Expanded Binaries'
         # Diagnostics is not critical it passes every time it runs
