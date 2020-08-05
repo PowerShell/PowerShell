@@ -363,7 +363,7 @@ namespace PSTests.Parallel
         public static System.Collections.Generic.IEnumerable<object[]> Data =>
             new System.Collections.Generic.List<string[]>
             {
-                new string[] { "-custompipename", new string('q', CommandLineParameterParser.MaxNameLength + 1) }
+                new string[] { "-custompipename", new string('q', CommandLineParameterParser.MaxNameLength() + 1) }
             };
 
         [SkippableTheory]
@@ -384,7 +384,7 @@ namespace PSTests.Parallel
             Assert.Equal(
                 string.Format(
                     CommandLineParameterParserStrings.CustomPipeNameTooLong,
-                    CommandLineParameterParser.MaxNameLength,
+                    CommandLineParameterParser.MaxNameLength(),
                     commandLine[1],
                     commandLine[1].Length),
                 cpp.ErrorMessage);
