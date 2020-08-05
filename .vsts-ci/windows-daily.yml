@@ -55,6 +55,7 @@ stages:
     pool:
       vmImage: vs2017-win2016
     displayName: Windows Test
+    timeoutInMinutes: 90
 
     steps:
     - pwsh: |
