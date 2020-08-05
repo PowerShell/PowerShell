@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell
 #if UNIX
             AttemptExecPwshLogin(args);
 #endif
-            return UnmanagedPSEntry.Start(args);
+            return UnmanagedPSEntry.Start(args, args.Length);
         }
 
 #if UNIX
