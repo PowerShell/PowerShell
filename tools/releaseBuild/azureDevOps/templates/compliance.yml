@@ -3,6 +3,8 @@ parameters:
 
 jobs:
 - job: compliance
+  variables:
+    runCodesignValidationInjection: false
   displayName: Compliance
   dependsOn:
     ${{ parameters.parentJobs }}

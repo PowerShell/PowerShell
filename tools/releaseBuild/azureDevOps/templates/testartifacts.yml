@@ -1,5 +1,7 @@
 jobs:
 - job: build_testartifacts
+  variables:
+    runCodesignValidationInjection: false
   displayName: Build test artifacts
   condition: succeeded()
   pool: 'Hosted Ubuntu 1604'

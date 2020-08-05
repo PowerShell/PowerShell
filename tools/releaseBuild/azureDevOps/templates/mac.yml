@@ -11,6 +11,7 @@ jobs:
   variables:
     # Turn off Homebrew analytics
     HOMEBREW_NO_ANALYTICS: 1
+    runCodesignValidationInjection: false
   steps:
   #- task: <task type name>@<version>
   #  inputs:

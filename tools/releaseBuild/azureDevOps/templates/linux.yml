@@ -11,6 +11,7 @@ jobs:
   dependsOn: ${{ parameters.parentJob }}
   variables:
     build: ${{ parameters.buildName }}
+    runCodesignValidationInjection: false
   steps:
 
   - template: SetVersionVariables.yml
