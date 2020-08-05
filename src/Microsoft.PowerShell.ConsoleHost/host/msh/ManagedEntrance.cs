@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell
         [Obsolete("Callers should now use UnmanagedPSEntry.Start(string[])", error: true)]
         public static int Start(string consoleFilePath, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)]string[] args, int argc)
         {
-            return Start(args);
+            return Start(args, argc);
         }
 
         /// <summary>
@@ -44,7 +44,10 @@ namespace Microsoft.PowerShell
         /// <param name="args">
         /// Command line arguments to the managed MSH
         /// </param>
-        public static int Start(string[] args)
+        /// <param name="argc">
+        /// Length of the passed in argument array.
+        /// </param>
+        public static int Start([MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 1)]string[] args, int argc)
         {
             if (args == null)
             {
