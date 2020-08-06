@@ -32,7 +32,6 @@ namespace System.Management.Automation
             PSCredential cred = null;
             string userName = null;
             bool shouldPrompt = false;
-            bool confirmPassword = false;
 
             if ((engineIntrinsics == null) ||
                (engineIntrinsics.Host == null) ||
@@ -75,13 +74,10 @@ namespace System.Management.Automation
                 prompt = CredentialAttributeStrings.CredentialAttribute_Prompt;
 
                 cred = engineIntrinsics.Host.UI.PromptForCredential(
-                            caption,
-                            prompt,
-                            userName,
-                            confirmPassword,
-                            string.Empty,
-                            PSCredentialTypes.Default,
-                            PSCredentialUIOptions.Default);
+                           caption,
+                           prompt,
+                           userName,
+                           string.Empty);
             }
 
             return cred;
