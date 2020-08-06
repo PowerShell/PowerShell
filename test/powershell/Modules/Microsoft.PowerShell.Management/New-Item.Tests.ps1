@@ -330,6 +330,10 @@ Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'Req
         $link = New-Item -Type SymbolicLink globbedAbsoluteLink1 -Target $absolutePath
         (Get-Item $link).Target | Should -BeExactly $absolutePath
 
+        if (-not $IsWindows) {
+            Set-ItResilt -Pending -Because "On Unix the Target property is always resolved to an absolute path."
+        }
+
         $link = New-Item -Type SymbolicLink globbedRelativeLink1 -Target ./$fileName
         (Get-Item $link).Target | Should -BeExactly ("./$fileName" -replace '[\\/]', [IO.Path]::DirectorySeparatorChar)
     }
