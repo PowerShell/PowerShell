@@ -123,6 +123,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSNativePSPathResolution",
                     description: "Convert PSPath to filesystem path, if possible, for native commands"),
+                new ExperimentalFeature(
+                    name: "PSNotApplyErrorActionToStderr",
+                    description: "Don't have $ErrorActionPreference affect stderr output"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

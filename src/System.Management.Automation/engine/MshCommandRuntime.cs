@@ -2856,7 +2856,7 @@ namespace System.Management.Automation
                 preference = ActionPreference.Continue;
             }
 
-            if (!isNativeError)
+            if (!(ExperimentalFeature.IsEnabled("PSNotApplyErrorActionToStderr") && isNativeError))
             {
                 switch (preference)
                 {
