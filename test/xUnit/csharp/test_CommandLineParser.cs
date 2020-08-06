@@ -947,13 +947,12 @@ namespace PSTests.Parallel
         [InlineData("-sta")]
         public static void TestParameter_STA_Not_IsWindowsDesktop(params string[] commandLine)
         {
-            Skip.IfNot(Platform.IsWindows);
+            Skip.If(Platform.IsWindowsDesktop);
 
             var cpp = new CommandLineParameterParser();
 
             cpp.Parse(commandLine);
 
-            Assert.True(Platform.IsWindowsDesktop, "IsWindowsDesktop");
             Assert.True(cpp.AbortStartup);
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
@@ -1002,7 +1001,7 @@ namespace PSTests.Parallel
         [InlineData("-mta")]
         public static void TestParameter_MTA_Not_IsWindowsDesktop(params string[] commandLine)
         {
-            Skip.IfNot(Platform.IsWindows);
+            Skip.If(Platform.IsWindowsDesktop);
 
             var cpp = new CommandLineParameterParser();
 
