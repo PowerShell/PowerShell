@@ -33,9 +33,13 @@ stages:
         parameters:
           parentJob: build_macOS
 
-      - template: templates/mac-package-signing.yml
+      - template: templates/mac-package-build.yml
         parameters:
           parentJob: MacFileSigningJob
+
+      - template: templates/mac-package-signing.yml
+        parameters:
+          parentJob: package_macOS
 
   - stage: linux
     dependsOn: ['prep']

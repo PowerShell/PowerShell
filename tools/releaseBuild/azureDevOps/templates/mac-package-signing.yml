@@ -21,12 +21,10 @@ jobs:
       ReleaseTagVar: $(ReleaseTagVar)
 
   - task: DownloadBuildArtifacts@0
-    displayName: 'Download artifacts'
     inputs:
-      downloadType: specific
-      itemPattern: |
-        **/*.tar.gz
-        **/*.pkg
+      artifactName: 'macosPkgResults'
+      itemPattern: '**/*'
+      downloadPath: '$(System.ArtifactsDirectory)'
 
   - powershell: |
       dir "$(System.ArtifactsDirectory)\*" -Recurse

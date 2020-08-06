@@ -682,7 +682,11 @@ function Expand-PSSignedBuild
     }
     else
     {
-        $windowsExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh.exe')
+        if ($IsMacOS -or $IsLinux) {
+            $windowsExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh')
+        } else {
+            $windowsExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh.exe')
+        }
     }
 
     Restore-PSModuleToBuild -PublishPath $buildPath
