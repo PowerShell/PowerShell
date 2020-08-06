@@ -335,6 +335,7 @@ Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'Req
         $fileName = 'file[1].txt'
 
         if (-not $IsWindows) {
+            # Tracking issue https://github.com/PowerShell/PowerShell/issues/13365
             Set-ItResult -Pending -Because "On Unix the Target property is always resolved to an absolute path."
         }
 
