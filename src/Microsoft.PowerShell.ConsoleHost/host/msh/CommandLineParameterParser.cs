@@ -608,9 +608,12 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private void ShowHelp(PSHostUserInterface hostUI, string helpText)
+        private void ShowHelp(PSHostUserInterface hostUI, string? helpText)
         {
-            Dbg.Assert(helpText != null, "_helpText should not be null");
+            if (helpText is null)
+            {
+                return;
+            }
 
             if (_showHelp)
             {
@@ -973,7 +976,7 @@ namespace Microsoft.PowerShell
         }
 #endif
 
-        internal void ShowErrorHelpBanner(PSHostUserInterface hostUI, string? bannerText, string helpText, string[] args)
+        internal void ShowErrorHelpBanner(PSHostUserInterface hostUI, string? bannerText, string? helpText, string[] args)
         {
 #if DEBUG
             WaitingRemoteDebugger(hostUI);
