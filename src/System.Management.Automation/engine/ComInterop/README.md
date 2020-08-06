@@ -2,6 +2,8 @@
 
 The ComInterop code shipped in PowerShell comes from [dotnet/runtime](https://github.com/dotnet/runtime) with _a considerable amount of refactoring work_ to make it work properly with PowerShell.
 
+> **NOTE: Do not modify the ComInterop code unless for fixing a bug. We want to keep minimal diffs when comparing with the .NET 5.0 ComInterop code base.**
+
 There are 3 sources of the ComInterop code as our references:
 
 1. [The .NET Framework version](https://github.com/IronLanguages/main/tree/ipy-2.7-maint/Runtime/Microsoft.Dynamic/ComInterop).
