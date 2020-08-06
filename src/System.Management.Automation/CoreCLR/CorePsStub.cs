@@ -352,7 +352,7 @@ namespace System.Management.Automation.ComInterop
     /// Provides helper methods to bind COM objects dynamically.
     /// </summary>
     /// <remarks>
-    /// COM is not supported in core powershell. So this is a stub type.
+    /// COM is not supported on Unix platforms. So this is a stub type.
     /// </remarks>
     internal static class ComBinder
     {
