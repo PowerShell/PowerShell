@@ -203,7 +203,6 @@ namespace Microsoft.PowerShell
         internal static int MaxNameLength() => Platform.IsWindows ? ushort.MaxValue : (Platform.IsLinux ? MaxPipePathLengthLinux : MaxPipePathLengthMacOS) - Path.GetTempPath().Length;
 
         internal bool? TestHookConsoleInputRedirected;
-        internal bool TestHookNotIsWindowsDesktop;
 
         internal static readonly string[] validParameters = {
             "sta",
@@ -891,7 +890,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "sta", "sta"))
                 {
-                    if (!Platform.IsWindowsDesktop || TestHookNotIsWindowsDesktop)
+                    if (!Platform.IsWindowsDesktop)
                     {
                         SetCommandLineError(
                             CommandLineParameterParserStrings.STANotImplemented);
@@ -910,7 +909,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "mta", "mta"))
                 {
-                    if (!Platform.IsWindowsDesktop || TestHookNotIsWindowsDesktop)
+                    if (!Platform.IsWindowsDesktop)
                     {
                         SetCommandLineError(
                             CommandLineParameterParserStrings.MTANotImplemented);

@@ -951,8 +951,6 @@ namespace PSTests.Parallel
 
             var cpp = new CommandLineParameterParser();
 
-            cpp.TestHookNotIsWindowsDesktop = true;
-
             cpp.Parse(commandLine);
 
             Assert.True(cpp.AbortStartup);
@@ -1006,8 +1004,6 @@ namespace PSTests.Parallel
             Skip.IfNot(Platform.IsWindows);
 
             var cpp = new CommandLineParameterParser();
-
-            cpp.TestHookNotIsWindowsDesktop = true;
 
             cpp.Parse(commandLine);
 
