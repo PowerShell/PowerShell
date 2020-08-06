@@ -721,6 +721,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// will be determined using property sets, etc.
         /// </summary>
         [Parameter(Position = 0)]
+        [SupportsWildcards]
         public object[] Property { get; set; }
 
         #endregion
