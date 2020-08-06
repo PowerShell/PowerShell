@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                    Mandatory = true, ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string[] Path { get; set; }
 
         /// <summary>
@@ -47,6 +48,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string Filter
         {
             get { return base.Filter; }
@@ -58,6 +60,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the include property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Include
         {
             get { return base.Include; }
@@ -69,6 +72,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Exclude
         {
             get { return base.Exclude; }

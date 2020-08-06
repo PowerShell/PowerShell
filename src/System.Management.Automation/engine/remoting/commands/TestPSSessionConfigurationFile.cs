@@ -26,6 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// The output path for the generated file...
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0, ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string Path
         {
             get { return _path; }

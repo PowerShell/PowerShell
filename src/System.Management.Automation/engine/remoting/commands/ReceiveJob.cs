@@ -104,6 +104,7 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Cn")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public string[] ComputerName
         {
             get

@@ -30,6 +30,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         [Parameter(Position = 0)]
         public string[] TypeName
         {

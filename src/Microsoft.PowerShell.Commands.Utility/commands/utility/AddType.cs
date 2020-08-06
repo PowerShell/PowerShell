@@ -270,6 +270,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = FromAssemblyNameParameterSetName)]
         [Alias("AN")]
         [ValidateTrustedData]
+        [SupportsWildcards]
         public string[] AssemblyName { get; set; }
 
         private bool _loadAssembly = false;
@@ -310,6 +311,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = FromPathParameterSetName)]
         [Parameter(ParameterSetName = FromLiteralPathParameterSetName)]
         [Alias("OA")]
+        [SupportsWildcards]
         public string OutputAssembly
         {
             get

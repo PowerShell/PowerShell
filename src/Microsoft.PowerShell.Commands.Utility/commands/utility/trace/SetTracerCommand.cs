@@ -21,6 +21,7 @@ namespace Microsoft.PowerShell.Commands
         /// operation will take place on.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string[] Name
         {
             get { return base.NameInternal; }

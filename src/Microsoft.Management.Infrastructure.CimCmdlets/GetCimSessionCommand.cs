@@ -55,6 +55,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(Position = 0,
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = ComputerNameSet)]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ComputerName
         {
@@ -120,6 +121,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(Mandatory = true,
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = NameSet)]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name
         {

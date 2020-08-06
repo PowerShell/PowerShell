@@ -40,6 +40,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Parameter(Position = 0, Mandatory = true,
                    ValueFromPipelineByPropertyName = true, ParameterSetName = "Path")]
+        [SupportsWildcards]
         public string[] Path { get; set; }
 
         /// <summary>

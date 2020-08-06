@@ -39,6 +39,7 @@ namespace Microsoft.PowerShell.Commands
                 HelpMessageBaseName = "GetEventResources",
                 HelpMessageResourceId = "ListLogParamHelp")]
         [AllowEmptyCollection]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.ListLog",
@@ -63,6 +64,7 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = true,
                 HelpMessageBaseName = "GetEventResources",
                 HelpMessageResourceId = "GetLogParamHelp")]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.LogName",
@@ -88,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
                 HelpMessageBaseName = "GetEventResources",
                 HelpMessageResourceId = "ListProviderParamHelp")]
         [AllowEmptyCollection]
-
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.ListProvider",
@@ -113,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = true,
                 HelpMessageBaseName = "GetEventResources",
                 HelpMessageResourceId = "GetProviderParamHelp")]
-
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.ProviderName",
@@ -140,6 +142,7 @@ namespace Microsoft.PowerShell.Commands
                 HelpMessageResourceId = "PathParamHelp")]
 
         [Alias("PSPath")]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.Path",

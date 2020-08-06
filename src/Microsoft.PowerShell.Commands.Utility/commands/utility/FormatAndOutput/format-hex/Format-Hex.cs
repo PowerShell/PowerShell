@@ -48,6 +48,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Path")]
         [ValidateNotNullOrEmpty()]
+        [SupportsWildcards]
         public string[] Path { get; set; }
 
         /// <summary>

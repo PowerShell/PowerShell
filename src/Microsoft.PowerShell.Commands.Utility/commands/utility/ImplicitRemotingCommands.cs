@@ -343,6 +343,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 2)]
         [Alias("Name")]
+        [SupportsWildcards]
         public string[] CommandName
         {
             get

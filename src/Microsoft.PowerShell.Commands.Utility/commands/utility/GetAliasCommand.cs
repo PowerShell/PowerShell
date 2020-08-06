@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "Default", Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty()]
+        [SupportsWildcards]
         public string[] Name
         {
             get { return _names; }
@@ -37,6 +38,7 @@ namespace Microsoft.PowerShell.Commands
         /// The Exclude parameter for the command.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public string[] Exclude
         {
             get { return _excludes; }
@@ -58,6 +60,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "Definition")]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Definition { get; set; }
 

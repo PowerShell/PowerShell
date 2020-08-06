@@ -51,12 +51,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty()]
+        [SupportsWildcards]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Path to provider location that user is curious about.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public string Path { get; set; }
 
         /// <summary>
@@ -157,24 +159,28 @@ namespace Microsoft.PowerShell.Commands
         /// Support WildCard strings as supported by WildcardPattern class.
         /// </remarks>
         [Parameter(ParameterSetName = "Parameters", Mandatory = true)]
+        [SupportsWildcards]
         public string[] Parameter { get; set; }
 
         /// <summary>
         /// Gets and sets list of Component's to search on.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public string[] Component { get; set; }
 
         /// <summary>
         /// Gets and sets list of Functionality's to search on.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public string[] Functionality { get; set; }
 
         /// <summary>
         /// Gets and sets list of Role's to search on.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public string[] Role { get; set; }
 
         /// <summary>

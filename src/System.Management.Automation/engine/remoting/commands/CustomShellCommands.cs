@@ -2536,6 +2536,7 @@ else
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public string Name { get; set; }
 
         /// <summary>
@@ -2819,6 +2820,7 @@ $args[0] | ForEach-Object {{
         /// </summary>
         [Parameter(Position = 0, Mandatory = false)]
         [ValidateNotNullOrEmpty()]
+        [SupportsWildcards]
         public string[] Name { get; set; }
 
         /// <summary>
@@ -4194,6 +4196,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public string[] Name { get; set; }
 
         private Collection<string> _shellsToEnable = new Collection<string>();
@@ -4481,6 +4484,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public string[] Name { get; set; }
 
         private Collection<string> _shellsToDisable = new Collection<string>();

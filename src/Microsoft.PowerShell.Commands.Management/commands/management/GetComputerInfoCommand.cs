@@ -117,6 +117,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0,
                    ValueFromPipeline = true,
                    ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Property { get; set; }
         #endregion Parameters

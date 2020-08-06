@@ -195,6 +195,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = ForEachObjectCommand.PropertyAndMethodSet)]
         [ValidateTrustedData]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public string MemberName
         {
             get
@@ -1394,6 +1395,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, ParameterSetName = "CaseSensitiveNotInSet")]
         [Parameter(Position = 1, ParameterSetName = "IsSet")]
         [Parameter(Position = 1, ParameterSetName = "IsNotSet")]
+        [SupportsWildcards]
         public object Value
         {
             get

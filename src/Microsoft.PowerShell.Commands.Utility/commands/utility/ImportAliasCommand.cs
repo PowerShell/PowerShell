@@ -30,6 +30,7 @@ namespace Microsoft.PowerShell.Commands
         /// The path from which to import the aliases.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
+        [SupportsWildcards]
         public string Path { get; set; }
 
         /// <summary>

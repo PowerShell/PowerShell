@@ -31,6 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// digital signature.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
+        [SupportsWildcards]
         public string[] FilePath
         {
             get

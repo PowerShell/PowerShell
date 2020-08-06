@@ -40,6 +40,7 @@ namespace Microsoft.PowerShell.Commands
         /// A list of the local time zone names that the cmdlet should look up.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ParameterSetName = "Name")]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name { get; set; }
 

@@ -1625,6 +1625,7 @@ namespace Microsoft.PowerShell.Commands
 
         [Parameter(ParameterSetName = "CommandLineParameter", HelpMessage = "Specifies the name of a command in the session history")]
         [ValidateNotNullOrEmpty()]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] CommandLine
         {

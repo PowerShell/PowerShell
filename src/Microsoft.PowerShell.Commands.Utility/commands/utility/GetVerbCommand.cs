@@ -20,6 +20,7 @@ namespace Microsoft.PowerShell.Commands
         /// Optional Verb filter.
         /// </summary>
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, Position = 0)]
+        [SupportsWildcards]
         public string[] Verb
         {
             get; set;

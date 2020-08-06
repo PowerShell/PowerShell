@@ -242,6 +242,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         [Parameter(Position = 0)]
         public PSPropertyExpression[] Property { get; set; } = null;
 

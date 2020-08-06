@@ -19,6 +19,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the filter parameter.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string Filter
         {
             get
@@ -36,6 +37,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the include property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Include
         {
             get
@@ -53,6 +55,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Exclude
         {
             get

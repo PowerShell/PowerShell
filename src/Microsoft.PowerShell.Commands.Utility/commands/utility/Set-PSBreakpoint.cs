@@ -42,6 +42,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Alias("C")]
         [Parameter(ParameterSetName = CommandParameterSetName, Mandatory = true)]
+        [SupportsWildcards]
         public string[] Command { get; set; }
 
         /// <summary>

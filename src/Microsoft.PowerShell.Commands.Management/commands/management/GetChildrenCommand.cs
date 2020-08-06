@@ -35,6 +35,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = childrenSet,
                    ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string[] Path
         {
             get
@@ -72,6 +73,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the filter property.
         /// </summary>
         [Parameter(Position = 1)]
+        [SupportsWildcards]
         public override string Filter
         {
             get
@@ -89,6 +91,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the include property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Include
         {
             get
@@ -106,6 +109,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Exclude
         {
             get
@@ -188,6 +192,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the names switch.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public SwitchParameter Name
         {
             get

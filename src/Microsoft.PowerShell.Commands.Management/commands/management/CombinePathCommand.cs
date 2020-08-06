@@ -25,6 +25,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath")]
+        [SupportsWildcards]
         public string[] Path { get; set; }
 
         /// <summary>
@@ -33,6 +34,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [AllowNull]
         [AllowEmptyString]
+        [SupportsWildcards]
         public string ChildPath { get; set; }
 
         /// <summary>

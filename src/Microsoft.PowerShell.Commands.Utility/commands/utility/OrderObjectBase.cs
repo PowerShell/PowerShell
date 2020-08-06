@@ -123,6 +123,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or Sets the Properties that would be used for Grouping, Sorting and Comparison.
         /// </summary>
         [Parameter(Position = 0)]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] Property { get; set; }
 

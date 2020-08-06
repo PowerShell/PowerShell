@@ -31,6 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// property allows for provider-specific filtering of results.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public string Filter
         {
             get
@@ -49,6 +50,7 @@ namespace Microsoft.PowerShell.Commands
         /// specifies the items on which the command will act.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public string[] Include
         {
             get
@@ -67,6 +69,7 @@ namespace Microsoft.PowerShell.Commands
         /// specifies the items on which the command will not act.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public string[] Exclude
         {
             get
@@ -643,6 +646,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
         [ValidateNotNullOrEmpty()]
+        [SupportsWildcards]
         public string[] Path
         {
             get
@@ -911,6 +915,7 @@ namespace Microsoft.PowerShell.Commands
         /// security descriptor.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
+        [SupportsWildcards]
         public string[] Path
         {
             get

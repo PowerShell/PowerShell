@@ -21,6 +21,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty()]
+        [SupportsWildcards]
         public string[] Name
         {
             get

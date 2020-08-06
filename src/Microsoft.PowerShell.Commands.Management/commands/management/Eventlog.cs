@@ -43,6 +43,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "LogName")]
         [Alias("LN")]
+        [SupportsWildcards]
         public string LogName { get; set; }
 
         /// <summary>
@@ -104,6 +105,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "LogName")]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] UserName
         {
@@ -188,6 +190,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "LogName")]
         [ValidateNotNullOrEmpty()]
         [Alias("ABO")]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Source
         {
@@ -209,6 +212,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "LogName")]
         [ValidateNotNullOrEmpty()]
         [Alias("MSG")]
+        [SupportsWildcards]
         public string Message
         {
             get

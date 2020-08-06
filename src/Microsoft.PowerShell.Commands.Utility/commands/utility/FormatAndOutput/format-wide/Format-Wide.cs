@@ -31,6 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// The parameter is optional, since the defaults will be determined using property sets, etc.
         /// </summary>
         [Parameter(Position = 0)]
+        [SupportsWildcards]
         public object Property
         {
             get { return _prop; }

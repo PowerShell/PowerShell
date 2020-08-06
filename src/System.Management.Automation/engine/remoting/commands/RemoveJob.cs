@@ -608,6 +608,7 @@ namespace Microsoft.PowerShell.Commands
                   Mandatory = true,
                   ParameterSetName = JobCmdletBase.NameParameterSet)]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public string[] Name
         {
             get
@@ -705,6 +706,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true,
             ParameterSetName = RemoveJobCommand.CommandParameterSet)]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public virtual string[] Command
         {
             get

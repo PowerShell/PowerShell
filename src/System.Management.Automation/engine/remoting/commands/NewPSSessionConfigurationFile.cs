@@ -388,6 +388,7 @@ namespace Microsoft.PowerShell.Commands
         /// A list of visible aliases.
         /// </summary>
         [Parameter()]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] VisibleAliases
         {
@@ -408,6 +409,7 @@ namespace Microsoft.PowerShell.Commands
         /// A list of visible cmdlets.
         /// </summary>
         [Parameter()]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] VisibleCmdlets
         {
@@ -428,6 +430,7 @@ namespace Microsoft.PowerShell.Commands
         /// A list of visible functions.
         /// </summary>
         [Parameter()]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] VisibleFunctions
         {
@@ -448,6 +451,7 @@ namespace Microsoft.PowerShell.Commands
         /// A list of visible external commands (scripts and applications)
         /// </summary>
         [Parameter()]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] VisibleExternalCommands
         {
@@ -468,6 +472,7 @@ namespace Microsoft.PowerShell.Commands
         /// A list of providers.
         /// </summary>
         [Parameter()]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] VisibleProviders
         {
@@ -1277,6 +1282,7 @@ namespace Microsoft.PowerShell.Commands
         /// A list of visible aliases.
         /// </summary>
         [Parameter()]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] VisibleAliases
         {
@@ -1297,6 +1303,7 @@ namespace Microsoft.PowerShell.Commands
         /// A list of visible cmdlets.
         /// </summary>
         [Parameter()]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] VisibleCmdlets
         {
@@ -1317,6 +1324,7 @@ namespace Microsoft.PowerShell.Commands
         /// A list of visible functions.
         /// </summary>
         [Parameter()]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] VisibleFunctions
         {
@@ -1337,6 +1345,7 @@ namespace Microsoft.PowerShell.Commands
         /// A list of visible external commands (scripts and applications)
         /// </summary>
         [Parameter()]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] VisibleExternalCommands
         {
@@ -1357,6 +1366,7 @@ namespace Microsoft.PowerShell.Commands
         /// A list of providers.
         /// </summary>
         [Parameter()]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] VisibleProviders
         {

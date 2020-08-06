@@ -196,6 +196,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets/sets an array of display names for services.
         /// </summary>
         [Parameter(ParameterSetName = "DisplayName", Mandatory = true)]
+        [SupportsWildcards]
         public string[] DisplayName
         {
             get
@@ -220,6 +221,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public string[] Include
         {
             get
@@ -243,6 +245,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public string[] Exclude
         {
             get
@@ -584,6 +587,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, ParameterSetName = "Default", ValueFromPipelineByPropertyName = true, ValueFromPipeline = true)]
         [ValidateNotNullOrEmpty()]
         [Alias("ServiceName")]
+        [SupportsWildcards]
         public string[] Name
         {
             get
@@ -610,6 +614,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("SDO", "ServicesDependedOn")]
+        [SupportsWildcards]
         public SwitchParameter RequiredServices { get; set; }
 
         #endregion Parameters
@@ -779,6 +784,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(Position = 0, ParameterSetName = "Default", Mandatory = true, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true)]
         [Alias("ServiceName")]
+        [SupportsWildcards]
         public string[] Name
         {
             get

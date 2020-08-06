@@ -38,6 +38,7 @@ namespace Microsoft.PowerShell.Commands
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = "AllCommandSet")]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public string[] Name
         {
             get
@@ -71,6 +72,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the verb parameter to the cmdlet.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "CmdletSet")]
+        [SupportsWildcards]
         public string[] Verb
         {
             get
@@ -97,6 +99,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "CmdletSet")]
         [ArgumentCompleter(typeof(NounArgumentCompleter))]
+        [SupportsWildcards]
         public string[] Noun
         {
             get
@@ -278,6 +281,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public string[] ParameterName
         {
             get { return _parameterNames; }
@@ -305,6 +309,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public PSTypeName[] ParameterType
         {
             get

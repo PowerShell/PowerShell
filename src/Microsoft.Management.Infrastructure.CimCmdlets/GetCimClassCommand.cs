@@ -54,6 +54,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(
             Position = 0,
             ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string ClassName
         {
             get { return className; }
@@ -158,6 +159,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string MethodName
         {
             get { return methodName; }
@@ -192,6 +194,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string QualifierName
         {
             get { return qualifierName; }

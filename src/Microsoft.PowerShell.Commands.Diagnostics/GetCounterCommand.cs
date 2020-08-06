@@ -45,6 +45,7 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = false,
                 HelpMessageBaseName = "GetEventResources")]
         [AllowEmptyCollection]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetCounterCommand.ListSet",
@@ -69,6 +70,7 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = true,
                 HelpMessageBaseName = "GetEventResources")]
         [AllowEmptyCollection]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetCounterCommand.ListSet",

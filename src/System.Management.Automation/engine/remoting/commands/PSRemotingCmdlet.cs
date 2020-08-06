@@ -2508,6 +2508,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRunspaceCmdlet.NameParameterSet)]
         [ValidateNotNullOrEmpty()]
+        [SupportsWildcards]
         public virtual string[] Name
         {
             get

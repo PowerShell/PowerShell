@@ -478,6 +478,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, ParameterSetName = NameWithUserNameParameterSet, ValueFromPipelineByPropertyName = true)]
         [Alias("ProcessName")]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public string[] Name
         {
             get { return processNames; }

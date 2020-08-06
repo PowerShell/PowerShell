@@ -251,6 +251,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty()]
+        [SupportsWildcards]
         public string[] Name
         {
             get
@@ -294,6 +295,7 @@ namespace Microsoft.PowerShell.Commands
         /// The Include parameter for all the variable commands.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public string[] Include
         {
             get
@@ -311,6 +313,7 @@ namespace Microsoft.PowerShell.Commands
         /// The Exclude parameter for all the variable commands.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public string[] Exclude
         {
             get
@@ -592,6 +595,7 @@ namespace Microsoft.PowerShell.Commands
         /// The Include parameter for all the variable commands.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public string[] Include
         {
             get
@@ -609,6 +613,7 @@ namespace Microsoft.PowerShell.Commands
         /// The Exclude parameter for all the variable commands.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public string[] Exclude
         {
             get
@@ -1194,12 +1199,14 @@ namespace Microsoft.PowerShell.Commands
         /// Name of the PSVariable(s) to set.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true, Mandatory = true)]
+        [SupportsWildcards]
         public string[] Name { get; set; }
 
         /// <summary>
         /// The Include parameter for all the variable commands.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public string[] Include
         {
             get
@@ -1217,6 +1224,7 @@ namespace Microsoft.PowerShell.Commands
         /// The Exclude parameter for all the variable commands.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public string[] Exclude
         {
             get

@@ -39,6 +39,7 @@ namespace Microsoft.PowerShell.Commands
         /// The Path of the file to export the aliases to.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByPath")]
+        [SupportsWildcards]
         public string Path
         {
             get { return _path; }
@@ -77,6 +78,7 @@ namespace Microsoft.PowerShell.Commands
         /// The Name parameter for the command.
         /// </summary>
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string[] Name
         {
             get { return _names; }

@@ -337,6 +337,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
+        [SupportsWildcards]
         public string[] FunctionsToExport
         {
             get { return _exportedFunctions; }
@@ -351,6 +352,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
+        [SupportsWildcards]
         public string[] AliasesToExport
         {
             get { return _exportedAliases; }
@@ -365,6 +367,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
+        [SupportsWildcards]
         public string[] VariablesToExport
         {
             get { return _exportedVariables; }
@@ -379,6 +382,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
+        [SupportsWildcards]
         public string[] CmdletsToExport
         {
             get { return _exportedCmdlets; }
@@ -393,6 +397,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
+        [SupportsWildcards]
         public string[] DscResourcesToExport
         {
             get { return _dscResourcesToExport; }

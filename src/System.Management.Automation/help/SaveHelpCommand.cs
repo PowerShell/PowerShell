@@ -89,6 +89,7 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Name")]
         [ValidateNotNull]
         [ArgumentToModuleTransformationAttribute()]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public PSModuleInfo[] Module { get; set; }
 

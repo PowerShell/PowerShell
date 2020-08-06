@@ -43,6 +43,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, ParameterSetName = LiteralPathParameterSetName, ValueFromPipelineByPropertyName = true)]
         [Alias("Name")]
         [ValidateNotNull]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Module
         {

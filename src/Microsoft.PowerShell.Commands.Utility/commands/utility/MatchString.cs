@@ -1203,6 +1203,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ParameterSetFile)]
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ParameterSetFileRaw)]
         [FileinfoToString]
+        [SupportsWildcards]
         public string[] Path { get; set; }
 
         /// <summary>
@@ -1278,6 +1279,7 @@ namespace Microsoft.PowerShell.Commands
         /// <exception cref="WildcardPatternException">Invalid wildcard pattern was specified.</exception>
         [Parameter]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public string[] Include
         {
             get => _includeStrings;
@@ -1305,6 +1307,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public string[] Exclude
         {
             get => _excludeStrings;

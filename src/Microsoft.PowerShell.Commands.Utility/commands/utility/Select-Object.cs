@@ -83,6 +83,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(Position = 0, ParameterSetName = "DefaultParameter")]
         [Parameter(Position = 0, ParameterSetName = "SkipLastParameter")]
+        [SupportsWildcards]
         public object[] Property { get; set; }
 
         /// <summary>
@@ -90,6 +91,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
         [Parameter(ParameterSetName = "SkipLastParameter")]
+        [SupportsWildcards]
         public string[] ExcludeProperty { get; set; } = null;
 
         /// <summary>

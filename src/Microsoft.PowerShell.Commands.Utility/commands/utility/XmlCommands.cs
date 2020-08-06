@@ -812,6 +812,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "Path")]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public string[] Path { get; set; }
 
         /// <summary>

@@ -46,6 +46,7 @@ namespace Microsoft.PowerShell.Commands
         [AllowNull]
         [AllowEmptyCollection]
         [AllowEmptyString]
+        [SupportsWildcards]
         public string[] Path
         {
             get { return _paths; }
@@ -77,6 +78,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string Filter
         {
             get { return base.Filter; }
@@ -88,6 +90,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the include property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Include
         {
             get { return base.Include; }
@@ -99,6 +102,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Exclude
         {
             get { return base.Exclude; }

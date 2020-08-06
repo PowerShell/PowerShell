@@ -699,6 +699,7 @@ $result
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = RegularNameParameterSet, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name
         {
@@ -712,6 +713,7 @@ $result
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = CanonicalNameParameterSet)]
         [AllowNull]
+        [SupportsWildcards]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] CanonicalName
         {

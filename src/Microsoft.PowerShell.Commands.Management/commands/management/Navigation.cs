@@ -647,6 +647,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSet,
                    ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string Path
         {
             get => _path;
@@ -821,6 +822,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSet,
                    ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string Path
         {
             get => _path;
@@ -1495,6 +1497,7 @@ namespace Microsoft.PowerShell.Commands
                    Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [AllowNull]
         [AllowEmptyCollection]
+        [SupportsWildcards]
         public string[] Name
         {
             get => _names;
@@ -1677,6 +1680,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(Position = 0, ParameterSetName = NameParameterSet, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
+        [SupportsWildcards]
         public string[] Name
         {
             get => _name;
@@ -1854,6 +1858,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string[] Path
         {
             get => _paths;
@@ -1880,6 +1885,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string Filter
         {
             get => base.Filter;
@@ -1890,6 +1896,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the include property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Include
         {
             get => base.Include;
@@ -1900,6 +1907,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Exclude
         {
             get => base.Exclude;
@@ -2174,6 +2182,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSet,
                    Mandatory = true, ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string[] Path
         {
             get => _paths;
@@ -2237,6 +2246,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string Filter
         {
             get => base.Filter;
@@ -2247,6 +2257,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the include property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Include
         {
             get => base.Include;
@@ -2257,6 +2268,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Exclude
         {
             get => base.Exclude;
@@ -2377,6 +2389,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string[] Path
         {
             get => _paths;
@@ -2403,6 +2416,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string Filter
         {
             get => base.Filter;
@@ -2413,6 +2427,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the include property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Include
         {
             get => base.Include;
@@ -2423,6 +2438,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Exclude
         {
             get => base.Exclude;
@@ -2805,6 +2821,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string[] Path
         {
             get => _paths;
@@ -2856,6 +2873,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string Filter
         {
             get => base.Filter;
@@ -2866,6 +2884,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the include property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Include
         {
             get => base.Include;
@@ -2876,6 +2895,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Exclude
         {
             get => base.Exclude;
@@ -3180,6 +3200,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the path property.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ByPathParameterSet)]
+        [SupportsWildcards]
         public string Path
         {
             get => _path;
@@ -3522,6 +3543,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string[] Path
         {
             get => _paths;
@@ -3587,6 +3609,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string Filter
         {
             get => base.Filter;
@@ -3597,6 +3620,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the include property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Include
         {
             get => base.Include;
@@ -3607,6 +3631,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Exclude
         {
             get => base.Exclude;
@@ -3781,6 +3806,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string[] Path
         {
             get => _paths;
@@ -3826,6 +3852,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string Filter
         {
             get => base.Filter;
@@ -3836,6 +3863,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the include property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Include
         {
             get => base.Include;
@@ -3846,6 +3874,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Exclude
         {
             get => base.Exclude;
@@ -3970,6 +3999,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = PathParameterSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards]
         public string[] Path
         {
             get => _paths;
@@ -3996,6 +4026,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the filter property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string Filter
         {
             get => base.Filter;
@@ -4006,6 +4037,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the include property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Include
         {
             get => base.Include;
@@ -4016,6 +4048,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the exclude property.
         /// </summary>
         [Parameter]
+        [SupportsWildcards]
         public override string[] Exclude
         {
             get => base.Exclude;
@@ -4135,6 +4168,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty()]
+        [SupportsWildcards]
         public string[] PSProvider
         {
             get => _provider;
