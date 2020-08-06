@@ -628,6 +628,19 @@ Describe 'get-help other tests' -Tags "CI" {
         It '$x.Parameters.parameter[0].globbing' { $x.Parameters.parameter[0].globbing | Should -BeExactly 'true' }
     }
 
+    Context 'get-help helpFunc15' {
+        function helpFunc15
+        {
+            param(
+                $p1
+            )
+        }
+
+        $x = Get-Help helpFunc15
+
+        It '$x.Parameters.parameter[0].globbing' { $x.Parameters.parameter[0].globbing | Should -BeExactly 'false' }
+    }
+
     Context 'get-help -Examples prompt string should have trailing space' {
         function foo {
             <#
