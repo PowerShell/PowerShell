@@ -243,7 +243,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-        // Added for using in xUnit tests
         internal string? SettingsFile { get; private set; }
 
         internal string? InitialCommand
@@ -338,6 +337,13 @@ namespace Microsoft.PowerShell
         internal string? ConfigurationName
         {
             get { return _configurationName; }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    _configurationName = value;
+                }
+            }
         }
 
         internal bool SocketServerMode
@@ -516,11 +522,10 @@ namespace Microsoft.PowerShell
 
             SettingsFile = configFile;
 
-            PowerShellConfig.Instance.SetSystemConfigFilePath(configFile);
             return true;
         }
 
-        private static string GetConfigurationNameFromGroupPolicy()
+        internal static string GetConfigurationNameFromGroupPolicy()
         {
             // Current user policy takes precedence.
             var consoleSessionSetting = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
@@ -677,14 +682,6 @@ namespace Microsoft.PowerShell
             _dirty = true;
 
             ParseHelper(args);
-
-            // Check registry setting for a Group Policy ConfigurationName entry and
-            // use it to override anything set by the user.
-            var configurationName = GetConfigurationNameFromGroupPolicy();
-            if (!string.IsNullOrEmpty(configurationName))
-            {
-                _configurationName = configurationName;
-            }
         }
 
         private void ParseHelper(string[] args)

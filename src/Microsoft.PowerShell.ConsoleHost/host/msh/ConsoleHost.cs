@@ -272,6 +272,16 @@ namespace Microsoft.PowerShell
         internal static void ParseCommandLine(string[] args)
         {
             s_cpp.Parse(args);
+
+            if (s_cpp.SettingsFile is not null)
+            {
+                System.Management.Automation.Configuration.PowerShellConfig.Instance.SetSystemConfigFilePath(s_cpp.SettingsFile);
+            }
+
+            // Check registry setting for a Group Policy ConfigurationName entry and
+            // use it to override anything set by the user.
+            // It depends on setting file so 'SetSystemConfigFilePath()' should be called before.
+            s_cpp.ConfigurationName = CommandLineParameterParser.GetConfigurationNameFromGroupPolicy();
         }
 
         private static readonly CommandLineParameterParser s_cpp = new CommandLineParameterParser();
