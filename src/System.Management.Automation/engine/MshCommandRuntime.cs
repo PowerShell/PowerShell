@@ -2831,33 +2831,33 @@ namespace System.Management.Automation
                 this.PipelineProcessor.LogExecutionError(_thisCommand.MyInvocation, errorRecord);
             }
 
-            ActionPreference preference = ErrorAction;
-            if (actionPreference.HasValue)
-            {
-                preference = actionPreference.Value;
-            }
-
-            // No trace of the error in the 'Ignore' case
-            if (ActionPreference.Ignore == preference)
-            {
-                return; // do not write or record to output pipe
-            }
-
-            // 2004/05/26-JonN
-            // The object is not written in the SilentlyContinue case
-            if (ActionPreference.SilentlyContinue == preference)
-            {
-                AppendErrorToVariables(errorRecord);
-                return; // do not write to output pipe
-            }
-
-            if (ContinueStatus.YesToAll == lastErrorContinueStatus)
-            {
-                preference = ActionPreference.Continue;
-            }
-
             if (!(ExperimentalFeature.IsEnabled("PSNotApplyErrorActionToStderr") && isNativeError))
             {
+                ActionPreference preference = ErrorAction;
+                if (actionPreference.HasValue)
+                {
+                    preference = actionPreference.Value;
+                }
+
+                // No trace of the error in the 'Ignore' case
+                if (ActionPreference.Ignore == preference)
+                {
+                    return; // do not write or record to output pipe
+                }
+
+                // 2004/05/26-JonN
+                // The object is not written in the SilentlyContinue case
+                if (ActionPreference.SilentlyContinue == preference)
+                {
+                    AppendErrorToVariables(errorRecord);
+                    return; // do not write to output pipe
+                }
+
+                if (ContinueStatus.YesToAll == lastErrorContinueStatus)
+                {
+                    preference = ActionPreference.Continue;
+                }
+
                 switch (preference)
                 {
                     case ActionPreference.Stop:
