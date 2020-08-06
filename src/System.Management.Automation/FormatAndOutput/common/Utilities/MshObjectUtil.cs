@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Text;
@@ -290,17 +291,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // take care of the case there is no base object
                 return so.ToString();
             }
-            catch (ExtendedTypeSystemException e)
+            catch (Exception e)
             {
-                // NOTE: we catch all the exceptions, since we do not know
-                // what the underlying object access would throw
-                if (formatErrorObject != null)
+                if (e is ExtendedTypeSystemException || e is InvalidOperationException)
                 {
-                    formatErrorObject.sourceObject = so;
-                    formatErrorObject.exception = e;
+                    if (formatErrorObject != null)
+                    {
+                        formatErrorObject.sourceObject = so;
+                        formatErrorObject.exception = e;
+                    }
+
+                    return string.Empty;
                 }
 
-                return string.Empty;
+                throw;
             }
         }
 

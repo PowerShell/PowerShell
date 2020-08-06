@@ -179,4 +179,7 @@
   <data name="FormattingError" xml:space="preserve">
     <value>Failed to interpret format string "{0}".</value>
   </data>
+  <data name="SmartToStringError" xml:space="preserve">
+    <value>Object skipped: {0}.</value>
+  </data>
 </root>
