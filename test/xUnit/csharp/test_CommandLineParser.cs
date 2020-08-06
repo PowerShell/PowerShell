@@ -953,6 +953,7 @@ namespace PSTests.Parallel
 
             cpp.Parse(commandLine);
 
+            Assert.True(Platform.IsWindowsDesktop);
             Assert.True(cpp.AbortStartup);
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
