@@ -19,7 +19,7 @@ namespace PSTests.Parallel
         {
             var cpp = new CommandLineParameterParser();
 
-            cpp.Parse(string.Empty);
+            cpp.Parse(new string[0]);
 
             Assert.False(cpp.AbortStartup);
             Assert.Empty(cpp.Args);
