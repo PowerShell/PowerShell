@@ -687,7 +687,7 @@ namespace Microsoft.PowerShell
 
         private void ParseHelper(string[] args)
         {
-            if (args == null || args.Length == 0)
+            if (args.Length == 0)
             {
                 return;
             }
