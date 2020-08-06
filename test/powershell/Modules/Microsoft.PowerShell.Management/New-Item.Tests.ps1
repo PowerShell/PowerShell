@@ -323,27 +323,35 @@ Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'Req
         (Get-Item $link).Target | Should -Be ($target -replace '[\\/]', [IO.Path]::DirectorySeparatorChar)
     }
 
-    It "Can create symlink with absolute/relative existent target as literal path" {
+    It "Can create symlink with absolute existent target as literal path" {
         $fileName = 'file[1].txt'
         $absolutePath = (New-Item -Type File $fileName).FullName
 
         $link = New-Item -Type SymbolicLink globbedAbsoluteLink1 -Target $absolutePath
         (Get-Item $link).Target | Should -BeExactly $absolutePath
+    }
+
+    It "Can create symlink with relative existent target as literal path" {
+        $fileName = 'file[1].txt'
 
         if (-not $IsWindows) {
-            Set-ItResilt -Pending -Because "On Unix the Target property is always resolved to an absolute path."
+            Set-ItResult -Pending -Because "On Unix the Target property is always resolved to an absolute path."
         }
 
         $link = New-Item -Type SymbolicLink globbedRelativeLink1 -Target ./$fileName
         (Get-Item $link).Target | Should -BeExactly ("./$fileName" -replace '[\\/]', [IO.Path]::DirectorySeparatorChar)
     }
 
-    It "Can create symlink with absolute/relative nonexistent target as literal path" {
+    It "Can create symlink with absolute nonexistent target as literal path" {
         $fileName = 'noexist_file[2].txt'
         $absolutePath = Join-Path $pwd $fileName
 
         $link = New-Item -Type SymbolicLink globbedAbsoluteLink2 -Target $absolutePath
         (Get-Item $link).Target | Should -BeExactly $absolutePath
+    }
+
+    It "Can create symlink with relative nonexistent target as literal path" {
+        $fileName = 'noexist_file[2].txt'
 
         $link = New-Item -Type SymbolicLink globbedRelativeLink2 -Target ./$fileName
         (Get-Item $link).Target | Should -BeExactly ("./$fileName" -replace '[\\/]', [IO.Path]::DirectorySeparatorChar)
