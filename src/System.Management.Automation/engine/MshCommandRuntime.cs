@@ -2856,35 +2856,36 @@ namespace System.Management.Automation
                 preference = ActionPreference.Continue;
             }
 
-            switch (preference)
+            if (!isNativeError)
             {
-                case ActionPreference.Stop:
-                    ActionPreferenceStopException e =
-                        new ActionPreferenceStopException(
-                            MyInvocation,
-                            errorRecord,
-                            StringUtil.Format(CommandBaseStrings.ErrorPreferenceStop,
-                                              "ErrorActionPreference",
-                                              errorRecord.ToString()));
-                    throw ManageException(e);
+                switch (preference)
+                {
+                    case ActionPreference.Stop:
+                        ActionPreferenceStopException e =
+                            new ActionPreferenceStopException(
+                                MyInvocation,
+                                errorRecord,
+                                StringUtil.Format(CommandBaseStrings.ErrorPreferenceStop,
+                                                "ErrorActionPreference",
+                                                errorRecord.ToString()));
+                        throw ManageException(e);
 
-                case ActionPreference.Inquire:
-                    // ignore return value
-                    // this will throw if the user chooses not to continue
-                    lastErrorContinueStatus = InquireHelper(
-                        RuntimeException.RetrieveMessage(errorRecord),
-                        null,
-                        true,  // allowYesToAll
-                        false, // allowNoToAll
-                        true,  // replaceNoWithHalt
-                        false  // hasSecurityImpact
-                    );
-                    break;
+                    case ActionPreference.Inquire:
+                        // ignore return value
+                        // this will throw if the user chooses not to continue
+                        lastErrorContinueStatus = InquireHelper(
+                            RuntimeException.RetrieveMessage(errorRecord),
+                            null,
+                            true,  // allowYesToAll
+                            false, // allowNoToAll
+                            true,  // replaceNoWithHalt
+                            false  // hasSecurityImpact
+                        );
+                        break;
+                }
+
+                AppendErrorToVariables(errorRecord);
             }
-
-            // 2005/01/20 Do not write the object to $error if
-            // ManageException has already done so
-            AppendErrorToVariables(errorRecord);
 
             // Add this note property and set its value to true for F&O
             // to decide whether to call WriteErrorLine or WriteLine.
