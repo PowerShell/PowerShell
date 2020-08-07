@@ -230,8 +230,11 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
-        private Pager pager;
-        private string multiItemPagerBuffer;
+        private Microsoft.PowerShell.Pager Pager => _pager ??= new Microsoft.PowerShell.Pager();
+
+        private Pager _pager;
+
+        private string _multiItemPagerBuffer;
 
 #if !UNIX
         private GraphicalHostReflectionWrapper graphicalHostReflectionWrapper;
@@ -369,13 +372,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (Paged && countOfHelpInfos > 1)
                 {
-                    if (pager is null)
-                    {
-                        pager = new Pager();
-                    }
-
-                    pager.Write(multiItemPagerBuffer);
-
+                    Pager.Write(_multiItemPagerBuffer);
                 }
 
                 // show errors only if there is no wildcard search or VerboseHelpErrors is true.
@@ -537,7 +534,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (PSObject pInfo in pInfos)
                 {
-                    WriteObjectOrWritePaged(pInfo, bufferOutputWhenPaged: false);
+                    WriteObjectPaged(pInfo, bufferOutputWhenPaged: false);
                 }
             }
         }
@@ -638,7 +635,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             PSObject objectToReturn = TransformView(helpInfo.FullHelp);
                             objectToReturn.IsHelpObject = true;
-                            WriteObjectOrWritePaged(objectToReturn, bufferOutputWhenPaged: false);
+                            WriteObjectPaged(objectToReturn, bufferOutputWhenPaged: false);
                         }
                     }
                     else
@@ -653,30 +650,28 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        WriteObjectOrWritePaged(helpInfo.ShortHelp, bufferOutputWhenPaged: true);
+                        WriteObjectPaged(helpInfo.ShortHelp, bufferOutputWhenPaged: true);
                     }
                 }
             }
         }
 
-        private void WriteObjectOrWritePaged(object sendToPipeline, bool bufferOutputWhenPaged)
+        private void WriteObjectPaged(object sendToPipeline, bool bufferOutputWhenPaged)
         {
             if (Paged)
             {
-                if (pager is null)
-                {
-                    pager = new Pager();
-                }
-
                 var helpText = GetHelpOutput();
 
                 if (bufferOutputWhenPaged)
                 {
-                    multiItemPagerBuffer = helpText;
+                    // The output from GetHelpOutput has all the item in the output.
+                    // We just need to store it and then write to Pager later.
+                    // No need to append them.
+                    _multiItemPagerBuffer = helpText;
                 }
                 else
                 {
-                    pager.Write(helpText);
+                    Pager.Write(helpText);
                 }
             }
             else
@@ -687,65 +682,60 @@ namespace Microsoft.PowerShell.Commands
 
         private string GetHelpOutput()
         {
-            string helpContentAsString = null;
+            using PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
 
-            using (var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
+            ps.AddCommand(@"Microsoft.PowerShell.Core\Get-Help");
+
+            StringBuilder sb = new StringBuilder();
+
+            if (!string.IsNullOrEmpty(this.Name))
             {
-                ps.AddCommand(@"Microsoft.PowerShell.Core\Get-Help");
-
-                StringBuilder sb = new StringBuilder();
-
-                if (!string.IsNullOrEmpty(this.Name))
-                {
-                    ps.AddParameter(nameof(this.Name), this.Name);
-                }
-
-                if (this.Category is not null)
-                {
-                    ps.AddParameter(nameof(this.Category), this.Category);
-                }
-
-                if (this.Component is not null)
-                {
-                    ps.AddParameter(nameof(this.Component), this.Component);
-                }
-
-                if (this.Functionality is not null)
-                {
-                    ps.AddParameter(nameof(this.Functionality), this.Functionality);
-                }
-
-                if (!string.IsNullOrEmpty(this.Path))
-                {
-                    ps.AddParameter(nameof(this.Path), this.Path);
-                }
-
-                if (this.Role is not null)
-                {
-                    ps.AddParameter(nameof(this.Role), this.Role);
-                }
-
-                if (this.Examples)
-                {
-                    ps.AddParameter(nameof(this.Examples), this.Examples);
-                }
-
-                if (this.Full)
-                {
-                    ps.AddParameter(nameof(this.Full), this.Full);
-                }
-
-                if (this.Parameter is not null)
-                {
-                    ps.AddParameter(nameof(this.Parameter), this.Parameter);
-                }
-
-                ps.AddCommand(@"Microsoft.PowerShell.Utility\Out-String");
-
-                helpContentAsString = ps.Invoke<string>().FirstOrDefault();
+                ps.AddParameter(nameof(this.Name), this.Name);
             }
 
-            return helpContentAsString;
+            if (this.Category is not null)
+            {
+                ps.AddParameter(nameof(this.Category), this.Category);
+            }
+
+            if (this.Component is not null)
+            {
+                ps.AddParameter(nameof(this.Component), this.Component);
+            }
+
+            if (this.Functionality is not null)
+            {
+                ps.AddParameter(nameof(this.Functionality), this.Functionality);
+            }
+
+            if (!string.IsNullOrEmpty(this.Path))
+            {
+                ps.AddParameter(nameof(this.Path), this.Path);
+            }
+
+            if (this.Role is not null)
+            {
+                ps.AddParameter(nameof(this.Role), this.Role);
+            }
+
+            if (this.Examples)
+            {
+                ps.AddParameter(nameof(this.Examples), this.Examples);
+            }
+
+            if (this.Full)
+            {
+                ps.AddParameter(nameof(this.Full), this.Full);
+            }
+
+            if (this.Parameter is not null)
+            {
+                ps.AddParameter(nameof(this.Parameter), this.Parameter);
+            }
+
+            ps.AddCommand(@"Microsoft.PowerShell.Utility\Out-String");
+
+            return ps.Invoke<string>().FirstOrDefault();
         }
 
         /// <summary>
