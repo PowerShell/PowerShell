@@ -3,8 +3,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Threading;
+
+#nullable enable
 
 namespace System.Management.Automation.Subsystem
 {
@@ -16,7 +19,7 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Default implementation. No function is required for a predictor.
         /// </summary>
-        Dictionary<string, string> ISubsystem.FunctionsToDefine => null;
+        Dictionary<string, string>? ISubsystem.FunctionsToDefine => null;
 
         /// <summary>
         /// Default implementation for `ISubsystem.Kind`.
@@ -52,7 +55,7 @@ namespace System.Management.Automation.Subsystem
         /// <param name="context">The <see cref="PredictionContext"/> object to be used for prediction.</param>
         /// <param name="cancellationToken">The cancellation token to cancel the prediction.</param>
         /// <returns>A list of predictive suggestions.</returns>
-        List<PredictiveSuggestion> GetSuggestion(PredictionContext context, CancellationToken cancellationToken);
+        List<PredictiveSuggestion>? GetSuggestion(PredictionContext context, CancellationToken cancellationToken);
     }
 
     /// <summary>
@@ -78,7 +81,7 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Gets the token at the cursor.
         /// </summary>
-        public Token TokenAtCursor { get; }
+        public Token? TokenAtCursor { get; }
 
         /// <summary>
         /// Gets all ASTs that are related to the cursor position,
@@ -93,6 +96,9 @@ namespace System.Management.Automation.Subsystem
         /// <param name="inputTokens">The <see cref="Token"/> objects from parsing the current command line input.</param>
         public PredictionContext(Ast inputAst, Token[] inputTokens)
         {
+            Requires.NotNull(inputAst, nameof(inputAst));
+            Requires.NotNull(inputTokens, nameof(inputTokens));
+
             var cursor = inputAst.Extent.EndScriptPosition;
             var astContext = CompletionAnalysis.ExtractAstContext(inputAst, inputTokens, cursor);
 
@@ -110,6 +116,8 @@ namespace System.Management.Automation.Subsystem
         /// <returns>A <see cref="PredictionContext"/> object.</returns>
         public static PredictionContext Create(string input)
         {
+            Requires.NotNullOrEmpty(input, nameof(input));
+
             Ast ast = Parser.ParseInput(input, out Token[] tokens, out _);
             return new PredictionContext(ast, tokens);
         }
@@ -128,7 +136,7 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Gets the tooltip of the suggestion.
         /// </summary>
-        public string ToolTip { get; }
+        public string? ToolTip { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PredictiveSuggestion"/> class.
@@ -144,8 +152,10 @@ namespace System.Management.Automation.Subsystem
         /// </summary>
         /// <param name="suggestion">The predictive suggestion text.</param>
         /// <param name="toolTip">The tooltip of the suggestion.</param>
-        public PredictiveSuggestion(string suggestion, string toolTip)
+        public PredictiveSuggestion(string suggestion, string? toolTip)
         {
+            Requires.NotNullOrEmpty(suggestion, nameof(suggestion));
+
             SuggestionText = suggestion;
             ToolTip = toolTip;
         }

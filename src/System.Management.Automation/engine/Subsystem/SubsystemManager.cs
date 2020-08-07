@@ -4,9 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Internal;
+
+#nullable enable
 
 namespace System.Management.Automation.Subsystem
 {
@@ -55,10 +56,10 @@ namespace System.Management.Automation.Subsystem
         /// </remarks>
         /// <typeparam name="TConcreteSubsystem">The concrete subsystem base type.</typeparam>
         /// <returns>The most recently registered implmentation object of the concrete subsystem.</returns>
-        internal static TConcreteSubsystem GetSubsystem<TConcreteSubsystem>()
+        internal static TConcreteSubsystem? GetSubsystem<TConcreteSubsystem>()
             where TConcreteSubsystem : class, ISubsystem
         {
-            if (s_subSystemTypeMap.TryGetValue(typeof(TConcreteSubsystem), out SubsystemInfo subsystemInfo))
+            if (s_subSystemTypeMap.TryGetValue(typeof(TConcreteSubsystem), out SubsystemInfo? subsystemInfo))
             {
                 var subsystemInfoImpl = (SubsystemInfoImpl<TConcreteSubsystem>)subsystemInfo;
                 return subsystemInfoImpl.GetImplementation();
@@ -79,7 +80,7 @@ namespace System.Management.Automation.Subsystem
         internal static ReadOnlyCollection<TConcreteSubsystem> GetSubsystems<TConcreteSubsystem>()
             where TConcreteSubsystem : class, ISubsystem
         {
-            if (s_subSystemTypeMap.TryGetValue(typeof(TConcreteSubsystem), out SubsystemInfo subsystemInfo))
+            if (s_subSystemTypeMap.TryGetValue(typeof(TConcreteSubsystem), out SubsystemInfo? subsystemInfo))
             {
                 var subsystemInfoImpl = (SubsystemInfoImpl<TConcreteSubsystem>)subsystemInfo;
                 return subsystemInfoImpl.GetAllImplementations();
@@ -111,7 +112,9 @@ namespace System.Management.Automation.Subsystem
         /// <returns>The <see cref="SubsystemInfo"/> object that represents the concrete subsystem.</returns>
         public static SubsystemInfo GetSubsystemInfo(Type subsystemType)
         {
-            if (s_subSystemTypeMap.TryGetValue(subsystemType, out SubsystemInfo subsystemInfo))
+            Requires.NotNull(subsystemType, nameof(subsystemType));
+
+            if (s_subSystemTypeMap.TryGetValue(subsystemType, out SubsystemInfo? subsystemInfo))
             {
                 return subsystemInfo;
             }
@@ -129,7 +132,7 @@ namespace System.Management.Automation.Subsystem
         /// <returns>The <see cref="SubsystemInfo"/> object that represents the concrete subsystem.</returns>
         public static SubsystemInfo GetSubsystemInfo(SubsystemKind kind)
         {
-            if (s_subSystemKindMap.TryGetValue(kind, out SubsystemInfo subsystemInfo))
+            if (s_subSystemKindMap.TryGetValue(kind, out SubsystemInfo? subsystemInfo))
             {
                 return subsystemInfo;
             }
@@ -154,10 +157,7 @@ namespace System.Management.Automation.Subsystem
             where TConcreteSubsystem : class, ISubsystem
             where TImplementation : class, TConcreteSubsystem
         {
-            if (proxy == null)
-            {
-                throw new ArgumentNullException(nameof(proxy));
-            }
+            Requires.NotNull(proxy, nameof(proxy));
 
             RegisterSubsystem(GetSubsystemInfo(typeof(TConcreteSubsystem)), proxy);
         }
@@ -169,10 +169,7 @@ namespace System.Management.Automation.Subsystem
         /// <param name="proxy">An instance of the implementation.</param>
         public static void RegisterSubsystem(SubsystemKind kind, ISubsystem proxy)
         {
-            if (proxy == null)
-            {
-                throw new ArgumentNullException(nameof(proxy));
-            }
+            Requires.NotNull(proxy, nameof(proxy));
 
             if (kind != proxy.Kind)
             {

@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 
+#nullable enable
+
 namespace System.Management.Automation.Subsystem
 {
     /// <summary>
@@ -50,7 +52,7 @@ namespace System.Management.Automation.Subsystem
         /// Gets a dictionary that contains the functions to define at the global scope.
         /// Key: function name; Value: function script.
         /// </summary>
-        Dictionary<string, string> FunctionsToDefine { get; }
+        Dictionary<string, string>? FunctionsToDefine { get; }
 
         /// <summary>
         /// Gets the subsystem kind.

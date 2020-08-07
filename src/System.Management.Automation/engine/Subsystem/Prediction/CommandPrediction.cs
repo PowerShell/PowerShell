@@ -3,9 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Threading;
 using System.Threading.Tasks;
+
+#nullable enable
 
 namespace System.Management.Automation.Subsystem
 {
@@ -48,7 +51,7 @@ namespace System.Management.Automation.Subsystem
         /// <param name="ast">The <see cref="Ast"/> object from parsing the current command line input.</param>
         /// <param name="astTokens">The <see cref="Token"/> objects from parsing the current command line input.</param>
         /// <returns>A list of <see cref="PredictionResult"/> objects.</returns>
-        public static Task<List<PredictionResult>> PredictInput(Ast ast, Token[] astTokens)
+        public static Task<List<PredictionResult>?> PredictInput(Ast ast, Token[] astTokens)
         {
             return PredictInput(ast, astTokens, millisecondsTimeout: 20);
         }
@@ -60,8 +63,10 @@ namespace System.Management.Automation.Subsystem
         /// <param name="astTokens">The <see cref="Token"/> objects from parsing the current command line input.</param>
         /// <param name="millisecondsTimeout">The milliseconds to timeout.</param>
         /// <returns>A list of <see cref="PredictionResult"/> objects.</returns>
-        public static async Task<List<PredictionResult>> PredictInput(Ast ast, Token[] astTokens, int millisecondsTimeout)
+        public static async Task<List<PredictionResult>?> PredictInput(Ast ast, Token[] astTokens, int millisecondsTimeout)
         {
+            Requires.Condition(millisecondsTimeout > 0, nameof(millisecondsTimeout));
+
             var predictors = SubsystemManager.GetSubsystems<IPredictor>();
             if (predictors.Count == 0)
             {
@@ -69,7 +74,7 @@ namespace System.Management.Automation.Subsystem
             }
 
             var context = new PredictionContext(ast, astTokens);
-            var tasks = new Task<PredictionResult>[predictors.Count];
+            var tasks = new Task<PredictionResult?>[predictors.Count];
             using var cancellationSource = new CancellationTokenSource();
 
             for (int i = 0; i < predictors.Count; i++)
@@ -78,8 +83,8 @@ namespace System.Management.Automation.Subsystem
 
                 tasks[i] = Task.Factory.StartNew(
                     state => {
-                        var predictor = (IPredictor)state;
-                        List<PredictiveSuggestion> texts = predictor.GetSuggestion(context, cancellationSource.Token);
+                        var predictor = (IPredictor)state!;
+                        List<PredictiveSuggestion>? texts = predictor.GetSuggestion(context, cancellationSource.Token);
                         return texts?.Count > 0 ? new PredictionResult(predictor.Id, predictor.Name, texts) : null;
                     },
                     predictor,
@@ -94,11 +99,11 @@ namespace System.Management.Automation.Subsystem
             cancellationSource.Cancel();
 
             var results = new List<PredictionResult>(predictors.Count);
-            foreach (Task<PredictionResult> task in tasks)
+            foreach (Task<PredictionResult?> task in tasks)
             {
                 if (task.IsCompletedSuccessfully)
                 {
-                    PredictionResult result = task.Result;
+                    PredictionResult? result = task.Result;
                     if (result != null)
                     {
                         results.Add(result);
@@ -115,6 +120,8 @@ namespace System.Management.Automation.Subsystem
         /// <param name="history">History command lines provided as references for prediction.</param>
         public static void OnCommandLineAccepted(IReadOnlyList<string> history)
         {
+            Requires.NotNull(history, nameof(history));
+
             var predictors = SubsystemManager.GetSubsystems<IPredictor>();
             if (predictors.Count == 0)
             {
@@ -140,10 +147,7 @@ namespace System.Management.Automation.Subsystem
         /// <param name="suggestionText">The accepted suggestion text.</param>
         public static void OnSuggestionAccepted(Guid predictorId, string suggestionText)
         {
-            if (string.IsNullOrEmpty(suggestionText))
-            {
-                throw new ArgumentNullException(nameof(suggestionText));
-            }
+            Requires.NotNullOrEmpty(suggestionText, nameof(suggestionText));
 
             var predictors = SubsystemManager.GetSubsystems<IPredictor>();
             if (predictors.Count == 0)

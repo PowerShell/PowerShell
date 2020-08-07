@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 namespace System.Management.Automation.Subsystem
 {
     /// <summary>
@@ -18,14 +20,14 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Gets or sets a concrete subsystem kind.
         /// </summary>
-        [Parameter(ParameterSetName = KindSet, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ParameterSetName = KindSet, ValueFromPipeline = true)]
         public SubsystemKind Kind { get; set; }
 
         /// <summary>
         /// Gets or sets the interface or abstract class type of a concrete subsystem.
         /// </summary>
-        [Parameter(ParameterSetName = TypeSet, ValueFromPipeline = true)]
-        public Type SubsystemType { get; set; }
+        [Parameter(Mandatory = true, ParameterSetName = TypeSet, ValueFromPipeline = true)]
+        public Type? SubsystemType { get; set; }
 
         /// <summary>
         /// ProcessRecord implementation.
@@ -41,7 +43,7 @@ namespace System.Management.Automation.Subsystem
                     WriteObject(SubsystemManager.GetSubsystemInfo(Kind));
                     break;
                 case TypeSet:
-                    WriteObject(SubsystemManager.GetSubsystemInfo(SubsystemType));
+                    WriteObject(SubsystemManager.GetSubsystemInfo(SubsystemType!));
                     break;
 
                 default:

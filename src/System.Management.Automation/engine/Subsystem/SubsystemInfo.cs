@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 
+#nullable enable
+
 namespace System.Management.Automation.Subsystem
 {
     /// <summary>
@@ -328,7 +330,7 @@ namespace System.Management.Automation.Subsystem
             }
         }
 
-        internal TConcreteSubsystem GetImplementation()
+        internal TConcreteSubsystem? GetImplementation()
         {
             var localRef = _registeredImpls;
             return localRef.Count > 0 ? localRef[localRef.Count - 1] : null;
