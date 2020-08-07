@@ -682,7 +682,7 @@ namespace Microsoft.PowerShell.Commands
 
         private string GetHelpOutput()
         {
-            using PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
+            using System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
 
             ps.AddCommand(@"Microsoft.PowerShell.Core\Get-Help");
 
