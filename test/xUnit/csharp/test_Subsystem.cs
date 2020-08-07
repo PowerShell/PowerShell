@@ -97,8 +97,8 @@ namespace PSTests.Sequential
 
                 var predCxt = PredictionContext.Create("Hello world");
                 var results = impl.GetSuggestion(predCxt, CancellationToken.None);
-                Assert.Equal($"Hello world TEST-1 from {impl.Name}", results[0]);
-                Assert.Equal($"Hello world TeSt-2 from {impl.Name}", results[1]);
+                Assert.Equal($"Hello world TEST-1 from {impl.Name}", results[0].SuggestionText);
+                Assert.Equal($"Hello world TeSt-2 from {impl.Name}", results[1].SuggestionText);
 
                 // Now validate the all-subsystem-implementation collection.
                 ReadOnlyCollection<IPredictor> impls = SubsystemManager.GetSubsystems<IPredictor>();

@@ -27,9 +27,9 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Gets the suggestions.
         /// </summary>
-        public IReadOnlyList<string> Suggestions { get; }
+        public IReadOnlyList<PredictiveSuggestion> Suggestions { get; }
 
-        internal PredictionResult(Guid id, string name, List<string> suggestions)
+        internal PredictionResult(Guid id, string name, List<PredictiveSuggestion> suggestions)
         {
             Id = id;
             Name = name;
@@ -79,7 +79,7 @@ namespace System.Management.Automation.Subsystem
                 tasks[i] = Task.Factory.StartNew(
                     state => {
                         var predictor = (IPredictor)state;
-                        List<string> texts = predictor.GetSuggestion(context, cancellationSource.Token);
+                        List<PredictiveSuggestion> texts = predictor.GetSuggestion(context, cancellationSource.Token);
                         return texts?.Count > 0 ? new PredictionResult(predictor.Id, predictor.Name, texts) : null;
                     },
                     predictor,
@@ -113,7 +113,7 @@ namespace System.Management.Automation.Subsystem
         /// Allow registered predictors to do early processing when a command line is accepted.
         /// </summary>
         /// <param name="history">History command lines provided as references for prediction.</param>
-        public static void LineAccepted(IReadOnlyList<string> history)
+        public static void OnCommandLineAccepted(IReadOnlyList<string> history)
         {
             var predictors = SubsystemManager.GetSubsystems<IPredictor>();
             if (predictors.Count == 0)
@@ -126,7 +126,7 @@ namespace System.Management.Automation.Subsystem
                 if (predictor.SupportEarlyProcessing)
                 {
                     ThreadPool.QueueUserWorkItem<IPredictor>(
-                        state => state.EarlyProcessWithHistory(history),
+                        state => state.StartEarlyProcessing(history),
                         predictor,
                         preferLocal: false);
                 }
@@ -138,7 +138,7 @@ namespace System.Management.Automation.Subsystem
         /// </summary>
         /// <param name="predictorId">The identifier of the predictor whose prediction result was accepted.</param>
         /// <param name="suggestionText">The accepted suggestion text.</param>
-        public static void SuggestionAccepted(Guid predictorId, string suggestionText)
+        public static void OnSuggestionAccepted(Guid predictorId, string suggestionText)
         {
             if (string.IsNullOrEmpty(suggestionText))
             {
@@ -156,7 +156,7 @@ namespace System.Management.Automation.Subsystem
                 if (predictor.AcceptFeedback && predictor.Id == predictorId)
                 {
                     ThreadPool.QueueUserWorkItem<IPredictor>(
-                        state => state.LastSuggestionAccepted(suggestionText),
+                        state => state.OnSuggestionAccepted(suggestionText),
                         predictor,
                         preferLocal: false);
                 }

@@ -5391,8 +5391,13 @@ end {
                 // Not exported, but are added via reflection so added here as well, though maybe they shouldn't be
                 { "Out-LineOutput",                    new SessionStateCmdletEntry("Out-LineOutput", typeof(OutLineOutputCommand), helpFile) },
                 { "Format-Default",                    new SessionStateCmdletEntry("Format-Default", typeof(FormatDefaultCommand), helpFile) },
-                { "Get-Subsystem",                     new SessionStateCmdletEntry("Get-Subsystem", typeof(Subsystem.GetSubsystemCommand), helpFile) },
             };
+
+            if (ExperimentalFeature.IsEnabled("PSSubsystemPluginModel"))
+            {
+                cmdlets.Add("Get-Subsystem", new SessionStateCmdletEntry("Get-Subsystem", typeof(Subsystem.GetSubsystemCommand), helpFile));
+            }
+
             foreach (var val in cmdlets.Values)
             {
                 val.SetPSSnapIn(psSnapInInfo);
@@ -5409,6 +5414,7 @@ end {
                 { "Function",    new SessionStateProviderEntry("Function", typeof(FunctionProvider), helpFile) },
                 { "Variable",    new SessionStateProviderEntry("Variable", typeof(VariableProvider), helpFile) },
             };
+
             foreach (var val in providers.Values)
             {
                 val.SetPSSnapIn(psSnapInInfo);

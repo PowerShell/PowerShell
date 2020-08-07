@@ -233,23 +233,16 @@ namespace System.Management.Automation.Subsystem
                             Kind.ToString()));
                 }
 
-                bool targetExists = false;
                 foreach (TConcreteSubsystem item in _registeredImpls)
                 {
                     if (item.Id == impl.Id)
                     {
-                        targetExists = true;
-                        break;
+                        throw new InvalidOperationException(
+                            StringUtil.Format(
+                                SubsystemStrings.ImplementationAlreadyRegistered,
+                                impl.Id,
+                                Kind.ToString()));
                     }
-                }
-
-                if (targetExists)
-                {
-                    throw new InvalidOperationException(
-                        StringUtil.Format(
-                            SubsystemStrings.ImplementationAlreadyRegistered,
-                            impl.Id,
-                            Kind.ToString()));
                 }
 
                 var list = new List<TConcreteSubsystem>(_registeredImpls.Count + 1);

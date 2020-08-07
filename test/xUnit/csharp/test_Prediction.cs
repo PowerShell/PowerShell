@@ -60,17 +60,17 @@ namespace PSTests.Sequential
 
         bool IPredictor.AcceptFeedback => true;
 
-        public void EarlyProcessWithHistory(IReadOnlyList<string> history)
+        public void StartEarlyProcessing(IReadOnlyList<string> history)
         {
             History.AddRange(history);
         }
 
-        public void LastSuggestionAccepted(string acceptedSuggestion)
+        public void OnSuggestionAccepted(string acceptedSuggestion)
         {
             AcceptedSuggestions.Add(acceptedSuggestion);
         }
 
-        public List<string> GetSuggestion(PredictionContext context, CancellationToken cancellationToken)
+        public List<PredictiveSuggestion> GetSuggestion(PredictionContext context, CancellationToken cancellationToken)
         {
             if (_delay)
             {
@@ -81,9 +81,9 @@ namespace PSTests.Sequential
 
             // You can get the user input from the AST.
             var userInput = context.InputAst.Extent.Text;
-            return new List<string> {
-                $"{userInput} TEST-1 from {Name}",
-                $"{userInput} TeSt-2 from {Name}",
+            return new List<PredictiveSuggestion> {
+                new PredictiveSuggestion($"{userInput} TEST-1 from {Name}"),
+                new PredictiveSuggestion($"{userInput} TeSt-2 from {Name}"),
             };
         }
     }
@@ -117,8 +117,8 @@ namespace PSTests.Sequential
                 PredictionResult res = results[0];
                 Assert.Equal(fast.Id, res.Id);
                 Assert.Equal(2, res.Suggestions.Count);
-                Assert.Equal($"Hello world TEST-1 from {fast.Name}", res.Suggestions[0]);
-                Assert.Equal($"Hello world TeSt-2 from {fast.Name}", res.Suggestions[1]);
+                Assert.Equal($"Hello world TEST-1 from {fast.Name}", res.Suggestions[0].SuggestionText);
+                Assert.Equal($"Hello world TeSt-2 from {fast.Name}", res.Suggestions[1].SuggestionText);
 
                 // Expect the results from both 'slow' and 'fast' predictors
                 // Same here -- the specified timeout is exaggerated to make the test reliable.
@@ -129,14 +129,14 @@ namespace PSTests.Sequential
                 PredictionResult res1 = results[0];
                 Assert.Equal(slow.Id, res1.Id);
                 Assert.Equal(2, res1.Suggestions.Count);
-                Assert.Equal($"Hello world TEST-1 from {slow.Name}", res1.Suggestions[0]);
-                Assert.Equal($"Hello world TeSt-2 from {slow.Name}", res1.Suggestions[1]);
+                Assert.Equal($"Hello world TEST-1 from {slow.Name}", res1.Suggestions[0].SuggestionText);
+                Assert.Equal($"Hello world TeSt-2 from {slow.Name}", res1.Suggestions[1].SuggestionText);
 
                 PredictionResult res2 = results[1];
                 Assert.Equal(fast.Id, res2.Id);
                 Assert.Equal(2, res2.Suggestions.Count);
-                Assert.Equal($"Hello world TEST-1 from {fast.Name}", res2.Suggestions[0]);
-                Assert.Equal($"Hello world TeSt-2 from {fast.Name}", res2.Suggestions[1]);
+                Assert.Equal($"Hello world TEST-1 from {fast.Name}", res2.Suggestions[0].SuggestionText);
+                Assert.Equal($"Hello world TeSt-2 from {fast.Name}", res2.Suggestions[1].SuggestionText);
             }
             finally
             {
@@ -160,8 +160,8 @@ namespace PSTests.Sequential
                 var history = new[] { "hello", "world" };
                 var ids = new HashSet<Guid> { slow.Id, fast.Id };
 
-                CommandPrediction.LineAccepted(history);
-                CommandPrediction.SuggestionAccepted(slow.Id, "Yeah");
+                CommandPrediction.OnCommandLineAccepted(history);
+                CommandPrediction.OnSuggestionAccepted(slow.Id, "Yeah");
 
                 // The calls to 'EarlyProcessWithHistory' and the feedback methods are queued in thread pool,
                 // so we wait a bit to make sure the calls are done.
