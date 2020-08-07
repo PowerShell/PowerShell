@@ -1,17 +1,14 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT // ComObject
-#if !CLR2
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Management.Automation.InteropServices;
 using System.Runtime.InteropServices;
 
 namespace System.Management.Automation.ComInterop
@@ -93,18 +90,14 @@ namespace System.Management.Automation.ComInterop
 
         private static Type CreateCustomType(int size)
         {
-            var attrs = TypeAttributes.NotPublic | TypeAttributes.SequentialLayout;
+            TypeAttributes attrs = TypeAttributes.NotPublic | TypeAttributes.SequentialLayout;
             TypeBuilder type = UnsafeMethods.DynamicModule.DefineType("VariantArray" + size, attrs, typeof(ValueType));
-            var T = type.DefineGenericParameters(new string[] { "T" })[0];
+            GenericTypeParameterBuilder T = type.DefineGenericParameters(new string[] { "T" })[0];
             for (int i = 0; i < size; i++)
             {
                 type.DefineField("Element" + i, T, FieldAttributes.Public);
             }
-
             return type.CreateType();
         }
     }
 }
-
-#endif
-

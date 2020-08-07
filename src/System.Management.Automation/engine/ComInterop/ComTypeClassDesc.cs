@@ -1,14 +1,10 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT // ComObject
-#if !CLR2
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq.Expressions;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
 
 namespace System.Management.Automation.ComInterop
@@ -23,27 +19,22 @@ namespace System.Management.Automation.ComInterop
         {
             if (_typeObj == null)
             {
-                _typeObj = System.Type.GetTypeFromCLSID(Guid);
+                _typeObj = Type.GetTypeFromCLSID(Guid);
             }
-
-            return System.Activator.CreateInstance(System.Type.GetTypeFromCLSID(Guid));
+            return Activator.CreateInstance(Type.GetTypeFromCLSID(Guid));
         }
 
         internal ComTypeClassDesc(ComTypes.ITypeInfo typeInfo, ComTypeLibDesc typeLibDesc) :
-            base(typeInfo, ComType.Class, typeLibDesc)
+            base(typeInfo, typeLibDesc)
         {
             ComTypes.TYPEATTR typeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(typeInfo);
             Guid = typeAttr.guid;
 
             for (int i = 0; i < typeAttr.cImplTypes; i++)
             {
-                int hRefType;
-                typeInfo.GetRefTypeOfImplType(i, out hRefType);
-                ComTypes.ITypeInfo currentTypeInfo;
-                typeInfo.GetRefTypeInfo(hRefType, out currentTypeInfo);
-
-                ComTypes.IMPLTYPEFLAGS implTypeFlags;
-                typeInfo.GetImplTypeFlags(i, out implTypeFlags);
+                typeInfo.GetRefTypeOfImplType(i, out int hRefType);
+                typeInfo.GetRefTypeInfo(hRefType, out ComTypes.ITypeInfo currentTypeInfo);
+                typeInfo.GetImplTypeFlags(i, out ComTypes.IMPLTYPEFLAGS implTypeFlags);
 
                 bool isSourceItf = (implTypeFlags & ComTypes.IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE) != 0;
                 AddInterface(currentTypeInfo, isSourceItf);
@@ -60,7 +51,6 @@ namespace System.Management.Automation.ComInterop
                 {
                     _sourceItfs = new LinkedList<string>();
                 }
-
                 _sourceItfs.AddLast(itfName);
             }
             else
@@ -78,8 +68,8 @@ namespace System.Management.Automation.ComInterop
         {
             if (isSourceItf)
                 return _sourceItfs.Contains(itfName);
-            else
-                return _itfs.Contains(itfName);
+
+            return _itfs.Contains(itfName);
         }
 
         #region IDynamicMetaObjectProvider Members
@@ -92,6 +82,3 @@ namespace System.Management.Automation.ComInterop
         #endregion
     }
 }
-
-#endif
-
