@@ -121,7 +121,7 @@ try {
     Pop-Location
 }
 
-if ($Build.IsPresent) {
+if ($Build.IsPresent -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
     $macPackages = Get-ChildItem "$repoRoot/powershell*" -Include *.pkg, *.tar.gz, *.zip
     foreach ($macPackage in $macPackages) {
         $filePath = $macPackage.FullName

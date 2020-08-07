@@ -35,10 +35,10 @@ jobs:
   - powershell: |
       $null = new-item -type directory -path "$(Build.StagingDirectory)\macos"
       $zipFile = "$(Build.StagingDirectory)\macos\powershell-$(Version)-osx-x64.zip"
-      Compress-Archive -Path "$(System.ArtifactsDirectory)\results\powershell-$(Version)-osx-x64.pkg" -Destination $zipFile
+      Compress-Archive -Path "$(System.ArtifactsDirectory)\macosPkgResults\powershell-$(Version)-osx-x64.pkg" -Destination $zipFile
       Write-Host $zipFile
 
-      $ltsPkgPath = "$(System.ArtifactsDirectory)\results\powershell-lts-$(Version)-osx-x64.pkg"
+      $ltsPkgPath = "$(System.ArtifactsDirectory)\macosPkgResults\powershell-lts-$(Version)-osx-x64.pkg"
 
       if(Test-Path $ltsPkgPath)
       {
@@ -72,7 +72,7 @@ jobs:
 
   - template: upload-final-results.yml
     parameters:
-      artifactPath: $(System.ArtifactsDirectory)\results
+      artifactPath: $(System.ArtifactsDirectory)\macosPkgResults
       artifactFilter: "*.tar.gz"
 
   - powershell: |
