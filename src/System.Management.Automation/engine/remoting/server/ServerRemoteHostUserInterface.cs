@@ -222,15 +222,5 @@ namespace System.Management.Automation.Remoting
             return _serverMethodExecutor.ExecuteMethod<PSCredential>(RemoteHostMethodId.PromptForCredential2,
                     new object[] { caption, message, userName, targetName, allowedCredentialTypes, options });
         }
-
-        /// <summary>
-        /// Prompt for credential.
-        /// </summary>
-        public override PSCredential PromptForCredential(string caption, string message, string userName, bool confirmPassword, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
-        {
-            return _serverMethodExecutor.ExecuteMethod<PSCredential>(
-                RemoteHostMethodId.PromptForCredential2,
-                new object[] { caption, message, userName, confirmPassword, targetName, allowedCredentialTypes, options });
-        }
     }
 }
