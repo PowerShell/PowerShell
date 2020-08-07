@@ -1970,7 +1970,6 @@ function Start-DevPowerShell {
         {
             Remove-Item env:DEVPATH
         }
-
     }
 }
 
