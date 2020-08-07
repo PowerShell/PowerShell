@@ -14,6 +14,8 @@ using System.Management.Automation.Help;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Runtime.InteropServices;
+using System.Text;
+using Microsoft.PowerShell;
 #if !UNIX
 using Microsoft.Win32;
 #endif
@@ -115,14 +117,20 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "AllUsersView")]
         public SwitchParameter Full
         {
+            private get => _full;
+
             set
             {
-                if (value.ToBool())
+                _full = value.ToBool();
+
+                if (_full)
                 {
                     _viewTokenToAdd = HelpView.FullView;
                 }
             }
         }
+
+        private bool _full;
 
         /// <summary>
         /// Changes the view of HelpObject returned.
@@ -141,14 +149,23 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Examples", Mandatory = true)]
         public SwitchParameter Examples
         {
+            private get
+            {
+                return _examples;
+            }
+
             set
             {
-                if (value.ToBool())
+                _examples = value.ToBool();
+
+                if (_examples)
                 {
                     _viewTokenToAdd = HelpView.ExamplesView;
                 }
             }
         }
+
+        private bool _examples;
 
         /// <summary>
         /// Parameter name.
@@ -201,6 +218,20 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _showOnlineHelp;
+
+        /// <summary>
+        /// This parameter,if true, will direct get-help cmdlet to
+        /// display the help content using Microsoft.PowerShell.Pager on alternate screen buffer.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Paged
+        {
+            get;
+            set;
+        }
+
+        private Pager pager;
+        private string multiItemPagerBuffer;
 
 #if !UNIX
         private GraphicalHostReflectionWrapper graphicalHostReflectionWrapper;
@@ -335,6 +366,16 @@ namespace Microsoft.PowerShell.Commands
                 else if (_showOnlineHelp && (countOfHelpInfos > 1))
                 {
                     throw PSTraceSource.NewInvalidOperationException(HelpErrors.MultipleOnlineTopicsNotSupported, "Online");
+                }
+                else if (Paged && countOfHelpInfos > 1)
+                {
+                    if (pager is null)
+                    {
+                        pager = new Pager();
+                    }
+
+                    pager.Write(multiItemPagerBuffer);
+
                 }
 
                 // show errors only if there is no wildcard search or VerboseHelpErrors is true.
@@ -496,7 +537,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (PSObject pInfo in pInfos)
                 {
-                    WriteObject(pInfo);
+                    WriteObjectOrWritePaged(pInfo, bufferOutputWhenPaged: false);
                 }
             }
         }
@@ -597,7 +638,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             PSObject objectToReturn = TransformView(helpInfo.FullHelp);
                             objectToReturn.IsHelpObject = true;
-                            WriteObject(objectToReturn);
+                            WriteObjectOrWritePaged(objectToReturn, bufferOutputWhenPaged: false);
                         }
                     }
                     else
@@ -612,10 +653,99 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        WriteObject(helpInfo.ShortHelp);
+                        WriteObjectOrWritePaged(helpInfo.ShortHelp, bufferOutputWhenPaged: true);
                     }
                 }
             }
+        }
+
+        private void WriteObjectOrWritePaged(object sendToPipeline, bool bufferOutputWhenPaged)
+        {
+            if (Paged)
+            {
+                if (pager is null)
+                {
+                    pager = new Pager();
+                }
+
+                var helpText = GetHelpOutput();
+
+                if (bufferOutputWhenPaged)
+                {
+                    multiItemPagerBuffer = helpText;
+                }
+                else
+                {
+                    pager.Write(helpText);
+                }
+            }
+            else
+            {
+                WriteObject(sendToPipeline);
+            }
+        }
+
+        private string GetHelpOutput()
+        {
+            string helpContentAsString = null;
+
+            using (var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
+            {
+                ps.AddCommand(@"Microsoft.PowerShell.Core\Get-Help");
+
+                StringBuilder sb = new StringBuilder();
+
+                if (!string.IsNullOrEmpty(this.Name))
+                {
+                    ps.AddParameter(nameof(this.Name), this.Name);
+                }
+
+                if (this.Category is not null)
+                {
+                    ps.AddParameter(nameof(this.Category), this.Category);
+                }
+
+                if (this.Component is not null)
+                {
+                    ps.AddParameter(nameof(this.Component), this.Component);
+                }
+
+                if (this.Functionality is not null)
+                {
+                    ps.AddParameter(nameof(this.Functionality), this.Functionality);
+                }
+
+                if (!string.IsNullOrEmpty(this.Path))
+                {
+                    ps.AddParameter(nameof(this.Path), this.Path);
+                }
+
+                if (this.Role is not null)
+                {
+                    ps.AddParameter(nameof(this.Role), this.Role);
+                }
+
+                if (this.Examples)
+                {
+                    ps.AddParameter(nameof(this.Examples), this.Examples);
+                }
+
+                if (this.Full)
+                {
+                    ps.AddParameter(nameof(this.Full), this.Full);
+                }
+
+                if (this.Parameter is not null)
+                {
+                    ps.AddParameter(nameof(this.Parameter), this.Parameter);
+                }
+
+                ps.AddCommand(@"Microsoft.PowerShell.Utility\Out-String");
+
+                helpContentAsString = ps.Invoke<string>().FirstOrDefault();
+            }
+
+            return helpContentAsString;
         }
 
         /// <summary>
