@@ -1971,9 +1971,6 @@ function Start-DevPowerShell {
             Remove-Item env:DEVPATH
         }
 
-        if (Get-Variable -Name ZapDisable -ValueOnly -ErrorAction SilentlyContinue) {
-            Remove-Item env:COMPLUS_ZapDisable
-        }
     }
 }
 
