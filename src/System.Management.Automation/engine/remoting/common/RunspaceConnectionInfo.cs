@@ -3443,15 +3443,24 @@ namespace System.Management.Automation.Runspaces
                     //
                     if (RuntimeId == Guid.Empty)
                     {
-                        var pi = computeSystemPropertiesType.GetProperty("ObRoot");
-                        ContainerObRoot = pi?.GetValue(computeSystemPropertiesHandle) as string;
-                        if (ContainerObRoot == null)
+                        var obRootfieldInfo = computeSystemPropertiesType.GetField("ObRoot");
+                        if (obRootfieldInfo != null)
                         {
-                            var fi = computeSystemPropertiesType.GetField("ObRoot");
-                            ContainerObRoot = fi?.GetValue(computeSystemPropertiesHandle) as string;
+                            ContainerObRoot = obRootfieldInfo.GetValue(computeSystemPropertiesHandle) as string;
                         }
-                        if (ContainerObRoot == null)
+                        else
+                        {
+                            var obRootPropertyInfo = computeSystemPropertiesType.GetProperty("ObRoot");
+                            if (obRootPropertyInfo != null)
+                            {
+                                ContainerObRoot = obRootPropertyInfo.GetValue(computeSystemPropertiesHandle) as string;
+                            }
+                        }
+
+                        if (ContainerObRoot == null) 
+                        {
                             throw new ArgumentNullException(nameof(ContainerObRoot));
+                        }
                     }
                 }
             }
