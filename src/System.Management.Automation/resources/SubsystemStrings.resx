@@ -144,4 +144,13 @@
   <data name="InvalidSubsystemInfo" xml:space="preserve">
     <value>The declared metadata for subsystem kind '{0}' is invalid. A subsystem that requires cmdlets or functions to be defined cannot allow multiple registrations because that would result in one implementation overwriting the commands defined by another implementation.</value>
   </data>
+  <data name="EmptyImplementationId" xml:space="preserve">
+    <value>The 'Id' property of an implementation for the subsystem '{0}' cannot be an empty GUID.</value>
+  </data>
+  <data name="NullOrEmptyImplementationName" xml:space="preserve">
+    <value>The 'Name' property of an implementation for the subsystem '{0}' cannot be null or an empty string.</value>
+  </data>
+  <data name="NullOrEmptyImplementationDescription" xml:space="preserve">
+    <value>The 'Description' property of an implementation for the subsystem '{0}' cannot be null or an empty string.</value>
+  </data>
 </root>

@@ -186,6 +186,33 @@ namespace System.Management.Automation.Subsystem
 
         private static void RegisterSubsystem(SubsystemInfo subsystemInfo, ISubsystem proxy)
         {
+            if (proxy.Id == Guid.Empty)
+            {
+                throw new ArgumentException(
+                    StringUtil.Format(
+                        SubsystemStrings.EmptyImplementationId,
+                        subsystemInfo.Kind.ToString()),
+                    nameof(proxy));
+            }
+
+            if (string.IsNullOrEmpty(proxy.Name))
+            {
+                throw new ArgumentException(
+                    StringUtil.Format(
+                        SubsystemStrings.NullOrEmptyImplementationName,
+                        subsystemInfo.Kind.ToString()),
+                    nameof(proxy));
+            }
+
+            if (string.IsNullOrEmpty(proxy.Description))
+            {
+                throw new ArgumentException(
+                    StringUtil.Format(
+                        SubsystemStrings.NullOrEmptyImplementationDescription,
+                        subsystemInfo.Kind.ToString()),
+                    nameof(proxy));
+            }
+
             if (subsystemInfo.RequiredCmdlets.Any() || subsystemInfo.RequiredFunctions.Any())
             {
                 // Process 'proxy.CmdletImplementationAssembly' and 'proxy.FunctionsToDefine'
