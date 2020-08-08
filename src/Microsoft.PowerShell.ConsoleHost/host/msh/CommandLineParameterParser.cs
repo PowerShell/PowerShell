@@ -787,12 +787,13 @@ namespace Microsoft.PowerShell
                         break;
                     }
 
-                    if (!Platform.IsWindows && args[i].Length > MaxNameLength())
+                    int maxNameLength = MaxNameLength();
+                    if (!Platform.IsWindows && args[i].Length > maxNameLength)
                     {
                         SetCommandLineError(
                             string.Format(
                                 CommandLineParameterParserStrings.CustomPipeNameTooLong,
-                                MaxNameLength(),
+                                maxNameLength,
                                 args[i],
                                 args[i].Length));
                         break;
