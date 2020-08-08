@@ -944,7 +944,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             WideControlBody wideBody = new WideControlBody
             {
-
                 // Contains:
                 //   Columns --- ColumnNumbers  cardinality 0..1
                 //   Entries --- WideEntries    cardinality 1

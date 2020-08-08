@@ -299,7 +299,6 @@ namespace System.Management.Automation.Remoting
             // Create a new field description object.
             FieldDescription fieldDescription2 = new FieldDescription(fieldDescription1.Name)
             {
-
                 // Copy the fields not initialized during construction.
                 Label = fieldDescription1.Label,
                 HelpMessage = fieldDescription1.HelpMessage,

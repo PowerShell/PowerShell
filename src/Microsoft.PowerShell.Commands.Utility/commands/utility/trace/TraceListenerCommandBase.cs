@@ -199,7 +199,6 @@ namespace Microsoft.PowerShell.Commands
                     _defaultListener =
                         new DefaultTraceListener
                         {
-
                             // Note, this is not meant to be localized.
                             Name = "Debug"
                         };
@@ -215,7 +214,6 @@ namespace Microsoft.PowerShell.Commands
                     ((MshCommandRuntime)this.CommandRuntime).DebugPreference = ActionPreference.Continue;
                     _hostListener = new PSHostTraceListener(this)
                     {
-
                         // Note, this is not meant to be localized.
                         Name = "Host"
                     };

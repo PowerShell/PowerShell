@@ -258,7 +258,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // finally build the item to return
                 ListControlItemDefinition lvid = new ListControlItemDefinition
                 {
-
                     // add the label
                     label = labelToken,
 

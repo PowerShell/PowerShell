@@ -235,7 +235,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         frameInfo = new FrameInfo
                         {
-
                             // add the frame info
                             firstLine = ft.frameInfoDefinition.firstLine,
                             leftIndentation = ft.frameInfoDefinition.leftIndentation,
@@ -773,7 +772,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 frameInfo = new FrameInfo
                 {
-
                     // add the frame info
                     firstLine = 0,
                     leftIndentation = _indentationStep,
