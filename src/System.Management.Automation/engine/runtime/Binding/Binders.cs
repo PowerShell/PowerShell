@@ -2040,8 +2040,9 @@ namespace System.Management.Automation.Language
 
             // If the builtin attribute is not present, check for a custom attribute from by the compiler. If the
             // library targets netstandard2.0, the compiler can't be sure the attribute will be provided by the runtime,
-            // and defines its own attribute of the same name during compilation.
-            foreach (var attribute in type.GetCustomAttributes(inherit: false))
+            // and defines its own attribute of the same name during compilation. To account for this, we must check the
+            // type by name, not by reference.
+            foreach (object attribute in type.GetCustomAttributes(inherit: false))
             {
                 if (attribute.GetType().FullName.Equals(
                     "System.Runtime.CompilerServices.IsReadOnlyAttribute",
