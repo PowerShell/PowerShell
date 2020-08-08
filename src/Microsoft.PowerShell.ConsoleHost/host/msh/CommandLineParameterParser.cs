@@ -976,7 +976,7 @@ namespace Microsoft.PowerShell
         }
 #endif
 
-        internal void ShowErrorHelpBanner(PSHostUserInterface hostUI, string? bannerText, string? helpText, string[] args)
+        internal void ShowErrorHelpBanner(PSHostUserInterface hostUI, string? bannerText, string? helpText)
         {
 #if DEBUG
             WaitingRemoteDebugger(hostUI);

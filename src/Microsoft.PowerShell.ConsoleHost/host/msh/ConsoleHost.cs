@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell
                 }
 
                 PSHostUserInterface hostUI = s_theConsoleHost?.UI ?? new NullHostUserInterface();
-                s_cpp.ShowErrorHelpBanner(hostUI, bannerText, helpText, args);
+                s_cpp.ShowErrorHelpBanner(hostUI, bannerText, helpText);
 
                 if (s_cpp.ShowVersion)
                 {
