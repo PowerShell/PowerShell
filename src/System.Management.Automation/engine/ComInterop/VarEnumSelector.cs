@@ -142,7 +142,7 @@ namespace System.Management.Automation.ComInterop
 
         private static Dictionary<VarEnum, Type> CreateComToManagedPrimitiveTypes()
         {
-            Dictionary<VarEnum, Type> dict = new Dictionary<VarEnum, Type>()
+            Dictionary<VarEnum, Type> dict = new Dictionary<VarEnum, Type>
             {
                 { VarEnum.VT_I1,        typeof(sbyte) },
                 { VarEnum.VT_I2,        typeof(Int16) },
