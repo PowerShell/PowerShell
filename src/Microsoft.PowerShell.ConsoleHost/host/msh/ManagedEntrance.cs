@@ -66,6 +66,9 @@ namespace Microsoft.PowerShell
                 System.Diagnostics.Debugger.Break();
             }
 #endif
+            // Warm up some components concurrently on background threads.
+            EarlyStartup.Init();
+
             // Windows Vista and later support non-traditional UI fallback ie., a
             // user on an Arabic machine can choose either French or English(US) as
             // UI fallback language.
@@ -75,9 +78,6 @@ namespace Microsoft.PowerShell
             // in the beginning before we do anything.
             Thread.CurrentThread.CurrentUICulture = NativeCultureResolver.UICulture;
             Thread.CurrentThread.CurrentCulture = NativeCultureResolver.Culture;
-
-            // Warm up some components concurrently on background threads.
-            EarlyStartup.Init();
 
             ConsoleHost.ParseCommandLine(args);
 
