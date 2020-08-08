@@ -200,7 +200,10 @@ namespace Microsoft.PowerShell
     {
         private const int MaxPipePathLengthLinux = 108;
         private const int MaxPipePathLengthMacOS = 104;
-        internal static int MaxNameLength() => Platform.IsWindows ? ushort.MaxValue : (Platform.IsLinux ? MaxPipePathLengthLinux : MaxPipePathLengthMacOS) - Path.GetTempPath().Length;
+        internal static int MaxNameLength() =>
+            Platform.IsWindows ? ushort.MaxValue :
+            (Platform.IsLinux ? MaxPipePathLengthLinux :
+            MaxPipePathLengthMacOS) - Path.GetTempPath().Length;
 
         internal bool? TestHookConsoleInputRedirected;
 
