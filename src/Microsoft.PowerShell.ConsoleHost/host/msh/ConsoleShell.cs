@@ -33,14 +33,21 @@ namespace Microsoft.PowerShell
         /// <returns>An integer value which should be used as exit code for the process.</returns>
         public static int Start(InitialSessionState initialSessionState, string? bannerText, string? helpText, string?[] args)
         {
-            if (initialSessionState == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
-            }
-
             if (args == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(args));
+            }
+
+            ConsoleHost.ParseCommandLine(args);
+
+            return InternalStart(initialSessionState, bannerText, helpText, args);
+        }
+
+        internal static int InternalStart(InitialSessionState initialSessionState, string? bannerText, string? helpText, string?[] args)
+        {
+            if (initialSessionState == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
             ConsoleHost.DefaultInitialSessionState = initialSessionState;

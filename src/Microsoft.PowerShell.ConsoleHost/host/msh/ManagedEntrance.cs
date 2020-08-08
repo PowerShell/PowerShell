@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell
             int exitCode = 0;
             try
             {
-                exitCode = ConsoleShell.Start(banner, ManagedEntranceStrings.UsageHelp, args);
+                exitCode = ConsoleShell.InternalStart(InitialSessionState.CreateDefault2(), banner, ManagedEntranceStrings.UsageHelp, args);
             }
             catch (HostException e)
             {
