@@ -410,9 +410,10 @@ namespace Microsoft.PowerShell.Commands
                 e,
                 "FileOpenFailure",
                 ErrorCategory.OpenError,
-                pathWithError);
-
-            errorRecord.ErrorDetails = new ErrorDetails(message);
+                pathWithError)
+            {
+                ErrorDetails = new ErrorDetails(message)
+            };
             this.ThrowTerminatingError(errorRecord);
         }
 

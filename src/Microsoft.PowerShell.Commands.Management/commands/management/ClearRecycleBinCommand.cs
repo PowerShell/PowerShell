@@ -221,9 +221,11 @@ namespace Microsoft.PowerShell.Commands
                     statusDescription = string.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.ClearRecycleBinStatusDescriptionByDrive, drivePath);
                 }
 
-                ProgressRecord progress = new ProgressRecord(0, activity, statusDescription);
-                progress.PercentComplete = 30;
-                progress.RecordType = ProgressRecordType.Processing;
+                ProgressRecord progress = new ProgressRecord(0, activity, statusDescription)
+                {
+                    PercentComplete = 30,
+                    RecordType = ProgressRecordType.Processing
+                };
                 WriteProgress(progress);
 
                 // no need to check result as a failure is returned only if recycle bin is already empty

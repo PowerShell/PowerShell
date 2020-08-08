@@ -39,9 +39,10 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                CmdletProviderContext coreCommandContext = new CmdletProviderContext(this);
-
-                coreCommandContext.Force = Force;
+                CmdletProviderContext coreCommandContext = new CmdletProviderContext(this)
+                {
+                    Force = Force
+                };
 
                 Collection<string> includeFilter =
                     SessionStateUtilities.ConvertArrayToCollection<string>(Include);
@@ -301,8 +302,10 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                CmdletProviderContext coreCommandContext = new CmdletProviderContext(this, Credential);
-                coreCommandContext.Force = Force;
+                CmdletProviderContext coreCommandContext = new CmdletProviderContext(this, Credential)
+                {
+                    Force = Force
+                };
 
                 Collection<string> includeFilter =
                     SessionStateUtilities.ConvertArrayToCollection<string>(Include);

@@ -87,9 +87,11 @@ namespace System.Management.Automation
         /// </summary>
         internal override CommandInfo CreateGetCommandCopy(object[] arguments)
         {
-            CmdletInfo copy = new CmdletInfo(this);
-            copy.IsGetCommandCopy = true;
-            copy.Arguments = arguments;
+            CmdletInfo copy = new CmdletInfo(this)
+            {
+                IsGetCommandCopy = true,
+                Arguments = arguments
+            };
             return copy;
         }
 

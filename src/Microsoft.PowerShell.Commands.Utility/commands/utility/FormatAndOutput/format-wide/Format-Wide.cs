@@ -115,9 +115,10 @@ namespace Microsoft.PowerShell.Commands
                         new InvalidDataException(),
                         "FormatCannotSpecifyAutosizeAndColumns",
                         ErrorCategory.InvalidArgument,
-                        null);
-
-                    errorRecord.ErrorDetails = new ErrorDetails(msg);
+                        null)
+                    {
+                        ErrorDetails = new ErrorDetails(msg)
+                    };
                     this.ThrowTerminatingError(errorRecord);
                 }
             }

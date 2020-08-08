@@ -237,12 +237,14 @@ namespace System.Management.Automation.Remoting
                 return result;
             }
 
-            XmlReaderSettings readerSettings = new XmlReaderSettings();
-            readerSettings.CheckCharacters = false;
-            readerSettings.IgnoreComments = true;
-            readerSettings.IgnoreProcessingInstructions = true;
-            readerSettings.MaxCharactersInDocument = 10000;
-            readerSettings.ConformanceLevel = ConformanceLevel.Fragment;
+            XmlReaderSettings readerSettings = new XmlReaderSettings
+            {
+                CheckCharacters = false,
+                IgnoreComments = true,
+                IgnoreProcessingInstructions = true,
+                MaxCharactersInDocument = 10000,
+                ConformanceLevel = ConformanceLevel.Fragment
+            };
 
             using (XmlReader reader = XmlReader.Create(new StringReader(initializationParameters), readerSettings))
             {

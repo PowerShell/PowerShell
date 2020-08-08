@@ -304,8 +304,10 @@ namespace Microsoft.PowerShell.Commands
 
                         foreach (PSPropertyExpression expandedExpression in expandedPropertyNames.Values)
                         {
-                            MshParameter expandedParameter = new MshParameter();
-                            expandedParameter.hash = (Hashtable)unexpandedParameter.hash.Clone();
+                            MshParameter expandedParameter = new MshParameter
+                            {
+                                hash = (Hashtable)unexpandedParameter.hash.Clone()
+                            };
                             expandedParameter.hash[FormatParameterDefinitionKeys.ExpressionEntryKey] = expandedExpression;
 
                             expandedParameterList.Add(expandedParameter);
@@ -340,8 +342,10 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (PSPropertyExpression expandedExpression in expandedPropertyNames.Values)
                     {
-                        MshParameter expandedParameter = new MshParameter();
-                        expandedParameter.hash = (Hashtable)unexpandedParameter.hash.Clone();
+                        MshParameter expandedParameter = new MshParameter
+                        {
+                            hash = (Hashtable)unexpandedParameter.hash.Clone()
+                        };
                         expandedParameter.hash[FormatParameterDefinitionKeys.ExpressionEntryKey] = expandedExpression;
 
                         expandedParameterList.Add(expandedParameter);
@@ -545,9 +549,11 @@ namespace Microsoft.PowerShell.Commands
         {
             Diagnostics.Assert(errors != null, "errors cannot be null!");
             Diagnostics.Assert(propertyNotFoundMsgs != null, "propertyNotFoundMsgs cannot be null!");
-            OrderByPropertyEntry entry = new OrderByPropertyEntry();
-            entry.inputObject = inputObject;
-            entry.originalIndex = originalIndex;
+            OrderByPropertyEntry entry = new OrderByPropertyEntry
+            {
+                inputObject = inputObject,
+                originalIndex = originalIndex
+            };
 
             if (mshParameterList == null || mshParameterList.Count == 0)
             {

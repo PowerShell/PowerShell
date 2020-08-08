@@ -103,9 +103,11 @@ namespace Microsoft.PowerShell.Commands
         {
             string result = ProcessObject(Object) ?? string.Empty;
 
-            HostInformationMessage informationMessage = new HostInformationMessage();
-            informationMessage.Message = result;
-            informationMessage.NoNewLine = NoNewline.IsPresent;
+            HostInformationMessage informationMessage = new HostInformationMessage
+            {
+                Message = result,
+                NoNewLine = NoNewline.IsPresent
+            };
 
             try
             {

@@ -450,9 +450,11 @@ namespace System.Management.Automation.Host
 
         internal void StartTranscribing(string path, System.Management.Automation.Remoting.PSSenderInfo senderInfo, bool includeInvocationHeader, bool useMinimalHeader)
         {
-            TranscriptionOption transcript = new TranscriptionOption();
-            transcript.Path = path;
-            transcript.IncludeInvocationHeader = includeInvocationHeader;
+            TranscriptionOption transcript = new TranscriptionOption
+            {
+                Path = path,
+                IncludeInvocationHeader = includeInvocationHeader
+            };
             TranscriptionData.Transcripts.Add(transcript);
 
             LogTranscriptHeader(senderInfo, transcript, useMinimalHeader);

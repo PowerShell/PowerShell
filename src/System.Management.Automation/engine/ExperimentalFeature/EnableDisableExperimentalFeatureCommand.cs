@@ -75,8 +75,10 @@ namespace Microsoft.PowerShell.Commands
         internal static void UpdateConfig(PSCmdlet cmdlet, string[] name, ConfigScope scope, bool enable)
         {
             IEnumerable<WildcardPattern> namePatterns = SessionStateUtilities.CreateWildcardsFromStrings(name, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
-            GetExperimentalFeatureCommand getExperimentalFeatureCommand = new GetExperimentalFeatureCommand();
-            getExperimentalFeatureCommand.Context = cmdlet.Context;
+            GetExperimentalFeatureCommand getExperimentalFeatureCommand = new GetExperimentalFeatureCommand
+            {
+                Context = cmdlet.Context
+            };
             bool foundFeature = false;
             foreach (ExperimentalFeature feature in getExperimentalFeatureCommand.GetAvailableExperimentalFeatures(namePatterns))
             {

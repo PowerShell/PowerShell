@@ -983,8 +983,10 @@ namespace System.Management.Automation.Remoting
         /// <param name="args"></param>
         private void HandleResourceClosing(object sender, EventArgs args)
         {
-            RemoteSessionStateMachineEventArgs closeSessionArgs = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
-            closeSessionArgs.RemoteData = null;
+            RemoteSessionStateMachineEventArgs closeSessionArgs = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close)
+            {
+                RemoteData = null
+            };
             SessionDataStructureHandler.StateMachine.RaiseEvent(closeSessionArgs);
         }
 

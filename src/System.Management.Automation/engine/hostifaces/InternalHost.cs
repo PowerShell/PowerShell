@@ -267,12 +267,14 @@ namespace System.Management.Automation.Internal.Host
 
             // On entering a subshell, save and reset values of certain bits of session state
 
-            PromptContextData contextData = new PromptContextData();
-            contextData.SavedContextData = Context.SaveContextData();
-            contextData.SavedCurrentlyExecutingCommandVarValue = Context.GetVariableValue(SpecialVariables.CurrentlyExecutingCommandVarPath);
-            contextData.SavedPSBoundParametersVarValue = Context.GetVariableValue(SpecialVariables.PSBoundParametersVarPath);
-            contextData.RunspaceAvailability = this.Context.CurrentRunspace.RunspaceAvailability;
-            contextData.LanguageMode = Context.LanguageMode;
+            PromptContextData contextData = new PromptContextData
+            {
+                SavedContextData = Context.SaveContextData(),
+                SavedCurrentlyExecutingCommandVarValue = Context.GetVariableValue(SpecialVariables.CurrentlyExecutingCommandVarPath),
+                SavedPSBoundParametersVarValue = Context.GetVariableValue(SpecialVariables.PSBoundParametersVarPath),
+                RunspaceAvailability = this.Context.CurrentRunspace.RunspaceAvailability,
+                LanguageMode = Context.LanguageMode
+            };
 
             PSPropertyInfo commandInfoProperty = null;
             PSPropertyInfo stackTraceProperty = null;

@@ -723,8 +723,10 @@ namespace System.Management.Automation
         {
             ExtraCommands = new Collection<PSCommand>();
             RunningExtraCommands = false;
-            _psCommand = new PSCommand();
-            _psCommand.Owner = this;
+            _psCommand = new PSCommand
+            {
+                Owner = this
+            };
             _runspacePool = runspacePool;
 
             AddCommand(connectCmdInfo.Command);
@@ -750,8 +752,10 @@ namespace System.Management.Automation
         {
             Dbg.Assert(command != null, "A command collection need to be specified");
 
-            _psCommand = new PSCommand(command[0]);
-            _psCommand.Owner = this;
+            _psCommand = new PSCommand(command[0])
+            {
+                Owner = this
+            };
 
             for (int i = 1; i < command.Count; i++)
             {
@@ -847,11 +851,13 @@ namespace System.Management.Automation
                         throw new InvalidOperationException(PowerShellStrings.NoDefaultRunspaceForPSCreate);
                     }
 
-                    result = new PowerShell(new PSCommand(), null, Runspace.DefaultRunspace);
-                    result.IsChild = true;
-                    result.IsNested = true;
-                    result.IsRunspaceOwner = false;
-                    result._runspace = Runspace.DefaultRunspace;
+                    result = new PowerShell(new PSCommand(), null, Runspace.DefaultRunspace)
+                    {
+                        IsChild = true,
+                        IsNested = true,
+                        IsRunspaceOwner = false,
+                        _runspace = Runspace.DefaultRunspace
+                    };
                     break;
                 case RunspaceMode.NewRunspace:
                     result = new PowerShell(new PSCommand(), null, null);
@@ -925,8 +931,10 @@ namespace System.Management.Automation
             if ((_worker != null) && (_worker.CurrentlyRunningPipeline != null))
             {
                 PowerShell result = new PowerShell(new PSCommand(),
-                    null, _worker.CurrentlyRunningPipeline.Runspace);
-                result.IsNested = true;
+                    null, _worker.CurrentlyRunningPipeline.Runspace)
+                {
+                    IsNested = true
+                };
                 return result;
             }
 
@@ -941,8 +949,10 @@ namespace System.Management.Automation
         /// <param name="extraCommands">Extra commands to run.</param>
         private static PowerShell Create(bool isNested, PSCommand psCommand, Collection<PSCommand> extraCommands)
         {
-            PowerShell powerShell = new PowerShell(psCommand, extraCommands, null);
-            powerShell.IsNested = isNested;
+            PowerShell powerShell = new PowerShell(psCommand, extraCommands, null)
+            {
+                IsNested = isNested
+            };
             return powerShell;
         }
 
@@ -3588,8 +3598,10 @@ namespace System.Management.Automation
             _backupPSCommand = _psCommand.Clone();
             ExtraCommands.Clear();
 
-            PSCommand currentPipe = new PSCommand();
-            currentPipe.Owner = this;
+            PSCommand currentPipe = new PSCommand
+            {
+                Owner = this
+            };
 
             foreach (Command command in _psCommand.Commands)
             {
@@ -3597,8 +3609,10 @@ namespace System.Management.Automation
                 {
                     currentPipe.Commands.Add(command);
                     ExtraCommands.Add(currentPipe);
-                    currentPipe = new PSCommand();
-                    currentPipe.Owner = this;
+                    currentPipe = new PSCommand
+                    {
+                        Owner = this
+                    };
                 }
                 else
                 {
@@ -5555,9 +5569,10 @@ namespace System.Management.Automation
                             _inputStream,
                             _outputStream,
                             _errorStream,
-                            _shell.InformationalBuffers);
-
-                        localPipeline.IsChild = _shell.IsChild;
+                            _shell.InformationalBuffers)
+                        {
+                            IsChild = _shell.IsChild
+                        };
 
                         if (!string.IsNullOrEmpty(_shell.HistoryString))
                         {

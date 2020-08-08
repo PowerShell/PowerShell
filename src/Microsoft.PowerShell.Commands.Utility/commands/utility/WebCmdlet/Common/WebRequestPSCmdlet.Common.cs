@@ -637,8 +637,10 @@ namespace Microsoft.PowerShell.Commands
 
             if (Proxy != null)
             {
-                WebProxy webProxy = new WebProxy(Proxy);
-                webProxy.BypassProxyOnLocal = false;
+                WebProxy webProxy = new WebProxy(Proxy)
+                {
+                    BypassProxyOnLocal = false
+                };
                 if (ProxyCredential != null)
                 {
                     webProxy.Credentials = ProxyCredential.GetNetworkCredential();
@@ -982,8 +984,10 @@ namespace Microsoft.PowerShell.Commands
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
             // By default the HttpClientHandler will automatically decompress GZip and Deflate content
-            HttpClientHandler handler = new HttpClientHandler();
-            handler.CookieContainer = WebSession.Cookies;
+            HttpClientHandler handler = new HttpClientHandler
+            {
+                CookieContainer = WebSession.Cookies
+            };
 
             // set the credentials used by this request
             if (WebSession.UseDefaultCredentials)
@@ -1586,8 +1590,10 @@ namespace Microsoft.PowerShell.Commands
                                         response.StatusCode == HttpStatusCode.Moved ||
                                         response.StatusCode == HttpStatusCode.MovedPermanently)
                                     {
-                                        ErrorRecord er = new ErrorRecord(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
-                                        er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
+                                        ErrorRecord er = new ErrorRecord(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request)
+                                        {
+                                            ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded)
+                                        };
                                         WriteError(er);
                                     }
                                 }
@@ -1916,9 +1922,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent" /></param>
         private StringContent GetMultipartStringContent(object fieldName, object fieldValue)
         {
-            var contentDisposition = new ContentDispositionHeaderValue("form-data");
-            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
+            var contentDisposition = new ContentDispositionHeaderValue("form-data")
+            {
+                // .NET does not enclose field names in quotes, however, modern browsers and curl do.
+                Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\""
+            };
 
             var result = new StringContent(LanguagePrimitives.ConvertTo<string>(fieldValue));
             result.Headers.ContentDisposition = contentDisposition;
@@ -1933,9 +1941,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="stream">The <see cref="Stream" /> to use for the <see cref="StreamContent" /></param>
         private StreamContent GetMultipartStreamContent(object fieldName, Stream stream)
         {
-            var contentDisposition = new ContentDispositionHeaderValue("form-data");
-            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
+            var contentDisposition = new ContentDispositionHeaderValue("form-data")
+            {
+                // .NET does not enclose field names in quotes, however, modern browsers and curl do.
+                Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\""
+            };
 
             var result = new StreamContent(stream);
             result.Headers.ContentDisposition = contentDisposition;

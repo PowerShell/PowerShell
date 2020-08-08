@@ -1547,8 +1547,10 @@ namespace System.Management.Automation
             // Assign the invocationInfo
             if (invocationInfo != null)
             {
-                _invocationInfo = new InvocationInfo(invocationInfo.MyCommand, invocationInfo.ScriptPosition);
-                _invocationInfo.InvocationName = invocationInfo.InvocationName;
+                _invocationInfo = new InvocationInfo(invocationInfo.MyCommand, invocationInfo.ScriptPosition)
+                {
+                    InvocationName = invocationInfo.InvocationName
+                };
                 if (invocationInfo.MyCommand == null)
                 {
                     // Pass the history id to new InvocationInfo object of command info is null since history

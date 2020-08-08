@@ -174,8 +174,10 @@ namespace Microsoft.PowerShell.Commands
             // validate the range.
             Collection<Attribute> attrs = new Collection<Attribute>();
             attrs.Add(new ValidateRangeAttribute(1, (int)Int16.MaxValue));
-            PSVariable historySizeVar = new PSVariable(SpecialVariables.HistorySize, DefaultHistorySize, ScopedItemOptions.None, attrs);
-            historySizeVar.Description = SessionStateStrings.MaxHistoryCountDescription;
+            PSVariable historySizeVar = new PSVariable(SpecialVariables.HistorySize, DefaultHistorySize, ScopedItemOptions.None, attrs)
+            {
+                Description = SessionStateStrings.MaxHistoryCountDescription
+            };
 
             context.EngineSessionState.SetVariable(historySizeVar, false, CommandOrigin.Internal);
 

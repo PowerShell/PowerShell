@@ -1026,8 +1026,10 @@ namespace Microsoft.PowerShell
 
                     // add a nl word
 
-                    Word w = new Word();
-                    w.Flags = WordFlags.IsNewline;
+                    Word w = new Word
+                    {
+                        Flags = WordFlags.IsNewline
+                    };
                     result.Add(w);
 
                     // skip the nl
@@ -2065,23 +2067,31 @@ namespace Microsoft.PowerShell
             var inputs = new ConsoleControl.INPUT[length * 2];
             for (int i = 0; i < length; i++)
             {
-                var down = new ConsoleControl.INPUT();
-                down.Type = (UInt32)ConsoleControl.InputType.Keyboard;
-                down.Data.Keyboard = new ConsoleControl.KeyboardInput();
-                down.Data.Keyboard.Vk = (UInt16)ConsoleControl.VirtualKeyCode.Left;
-                down.Data.Keyboard.Scan = 0;
-                down.Data.Keyboard.Flags = 0;
-                down.Data.Keyboard.Time = 0;
-                down.Data.Keyboard.ExtraInfo = IntPtr.Zero;
+                var down = new ConsoleControl.INPUT
+                {
+                    Type = (UInt32)ConsoleControl.InputType.Keyboard
+                };
+                down.Data.Keyboard = new ConsoleControl.KeyboardInput
+                {
+                    Vk = (UInt16)ConsoleControl.VirtualKeyCode.Left,
+                    Scan = 0,
+                    Flags = 0,
+                    Time = 0,
+                    ExtraInfo = IntPtr.Zero
+                };
 
-                var up = new ConsoleControl.INPUT();
-                up.Type = (UInt32)ConsoleControl.InputType.Keyboard;
-                up.Data.Keyboard = new ConsoleControl.KeyboardInput();
-                up.Data.Keyboard.Vk = (UInt16)ConsoleControl.VirtualKeyCode.Left;
-                up.Data.Keyboard.Scan = 0;
-                up.Data.Keyboard.Flags = (UInt32)ConsoleControl.KeyboardFlag.KeyUp;
-                up.Data.Keyboard.Time = 0;
-                up.Data.Keyboard.ExtraInfo = IntPtr.Zero;
+                var up = new ConsoleControl.INPUT
+                {
+                    Type = (UInt32)ConsoleControl.InputType.Keyboard
+                };
+                up.Data.Keyboard = new ConsoleControl.KeyboardInput
+                {
+                    Vk = (UInt16)ConsoleControl.VirtualKeyCode.Left,
+                    Scan = 0,
+                    Flags = (UInt32)ConsoleControl.KeyboardFlag.KeyUp,
+                    Time = 0,
+                    ExtraInfo = IntPtr.Zero
+                };
 
                 inputs[2 * i] = down;
                 inputs[2 * i + 1] = up;

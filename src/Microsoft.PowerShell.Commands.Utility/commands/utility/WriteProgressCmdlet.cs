@@ -98,12 +98,14 @@ namespace Microsoft.PowerShell.Commands
         void
         ProcessRecord()
         {
-            ProgressRecord pr = new ProgressRecord(Id, Activity, Status);
-            pr.ParentActivityId = ParentId;
-            pr.PercentComplete = PercentComplete;
-            pr.SecondsRemaining = SecondsRemaining;
-            pr.CurrentOperation = CurrentOperation;
-            pr.RecordType = this.Completed ? ProgressRecordType.Completed : ProgressRecordType.Processing;
+            ProgressRecord pr = new ProgressRecord(Id, Activity, Status)
+            {
+                ParentActivityId = ParentId,
+                PercentComplete = PercentComplete,
+                SecondsRemaining = SecondsRemaining,
+                CurrentOperation = CurrentOperation,
+                RecordType = this.Completed ? ProgressRecordType.Completed : ProgressRecordType.Processing
+            };
 
             WriteProgress(SourceId, pr);
         }

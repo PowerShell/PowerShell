@@ -29,8 +29,10 @@ namespace System.Management.Automation
         internal void AddSessionStateEntry(SessionStateVariableEntry entry)
         {
             PSVariable v = new PSVariable(entry.Name, entry.Value,
-                    entry.Options, entry.Attributes, entry.Description);
-            v.Visibility = entry.Visibility;
+                    entry.Options, entry.Attributes, entry.Description)
+            {
+                Visibility = entry.Visibility
+            };
             this.SetVariableAtScope(v, "global", true, CommandOrigin.Internal);
         }
 
@@ -319,9 +321,10 @@ namespace System.Management.Automation
 
                 // Create a new CmdletProviderContext and set the drive data
 
-                context = new CmdletProviderContext(this.ExecutionContext, origin);
-
-                context.Drive = drive;
+                context = new CmdletProviderContext(this.ExecutionContext, origin)
+                {
+                    Drive = drive
+                };
 
 #if true
                 // PSVariable get/set is the get/set of content in the provider
@@ -709,8 +712,10 @@ namespace System.Management.Automation
 
                 if (drive != null)
                 {
-                    CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-                    context.Drive = drive;
+                    CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+                    {
+                        Drive = drive
+                    };
 
 #if true
                     // PSVariable get/set is the get/set of content in the provider
@@ -1579,8 +1584,10 @@ namespace System.Management.Automation
             }
             else
             {
-                CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-                context.Force = force;
+                CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+                {
+                    Force = force
+                };
 
                 RemoveItem(new string[] { variablePath.QualifiedName }, false, context);
                 context.ThrowFirstErrorOrDoNothing();
@@ -1720,9 +1727,11 @@ namespace System.Management.Automation
 
                 if (drive != null)
                 {
-                    CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-                    context.Drive = drive;
-                    context.Force = force;
+                    CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+                    {
+                        Drive = drive,
+                        Force = force
+                    };
 
                     RemoveItem(new string[] { variablePath.QualifiedName }, false, context);
                     context.ThrowFirstErrorOrDoNothing();

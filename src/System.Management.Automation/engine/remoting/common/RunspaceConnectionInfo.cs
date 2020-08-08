@@ -1026,40 +1026,42 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public WSManConnectionInfo Copy()
         {
-            WSManConnectionInfo result = new WSManConnectionInfo();
-            result._connectionUri = _connectionUri;
-            result._computerName = _computerName;
-            result._scheme = _scheme;
-            result.PortSetting = PortSetting;
-            result._appName = _appName;
-            result._shellUri = _shellUri;
-            result._credential = _credential;
-            result.UseDefaultWSManPort = UseDefaultWSManPort;
-            result.WSManAuthenticationMechanism = WSManAuthenticationMechanism;
-            result.MaximumConnectionRedirectionCount = MaximumConnectionRedirectionCount;
-            result.MaximumReceivedDataSizePerCommand = MaximumReceivedDataSizePerCommand;
-            result.MaximumReceivedObjectSize = MaximumReceivedObjectSize;
-            result.OpenTimeout = this.OpenTimeout;
-            result.IdleTimeout = this.IdleTimeout;
-            result.MaxIdleTimeout = this.MaxIdleTimeout;
-            result.CancelTimeout = this.CancelTimeout;
-            result.OperationTimeout = base.OperationTimeout;
-            result.Culture = this.Culture;
-            result.UICulture = this.UICulture;
-            result._thumbPrint = _thumbPrint;
-            result.AllowImplicitCredentialForNegotiate = AllowImplicitCredentialForNegotiate;
-            result.UseCompression = UseCompression;
-            result.NoMachineProfile = NoMachineProfile;
-            result.ProxyAccessType = this.ProxyAccessType;
-            result._proxyAuthentication = this.ProxyAuthentication;
-            result._proxyCredential = this.ProxyCredential;
-            result.SkipCACheck = this.SkipCACheck;
-            result.SkipCNCheck = this.SkipCNCheck;
-            result.SkipRevocationCheck = this.SkipRevocationCheck;
-            result.NoEncryption = this.NoEncryption;
-            result.UseUTF16 = this.UseUTF16;
-            result.IncludePortInSPN = this.IncludePortInSPN;
-            result.EnableNetworkAccess = this.EnableNetworkAccess;
+            WSManConnectionInfo result = new WSManConnectionInfo
+            {
+                _connectionUri = _connectionUri,
+                _computerName = _computerName,
+                _scheme = _scheme,
+                PortSetting = PortSetting,
+                _appName = _appName,
+                _shellUri = _shellUri,
+                _credential = _credential,
+                UseDefaultWSManPort = UseDefaultWSManPort,
+                WSManAuthenticationMechanism = WSManAuthenticationMechanism,
+                MaximumConnectionRedirectionCount = MaximumConnectionRedirectionCount,
+                MaximumReceivedDataSizePerCommand = MaximumReceivedDataSizePerCommand,
+                MaximumReceivedObjectSize = MaximumReceivedObjectSize,
+                OpenTimeout = this.OpenTimeout,
+                IdleTimeout = this.IdleTimeout,
+                MaxIdleTimeout = this.MaxIdleTimeout,
+                CancelTimeout = this.CancelTimeout,
+                OperationTimeout = base.OperationTimeout,
+                Culture = this.Culture,
+                UICulture = this.UICulture,
+                _thumbPrint = _thumbPrint,
+                AllowImplicitCredentialForNegotiate = AllowImplicitCredentialForNegotiate,
+                UseCompression = UseCompression,
+                NoMachineProfile = NoMachineProfile,
+                ProxyAccessType = this.ProxyAccessType,
+                _proxyAuthentication = this.ProxyAuthentication,
+                _proxyCredential = this.ProxyCredential,
+                SkipCACheck = this.SkipCACheck,
+                SkipCNCheck = this.SkipCNCheck,
+                SkipRevocationCheck = this.SkipRevocationCheck,
+                NoEncryption = this.NoEncryption,
+                UseUTF16 = this.UseUTF16,
+                IncludePortInSPN = this.IncludePortInSPN,
+                EnableNetworkAccess = this.EnableNetworkAccess
+            };
             result.UseDefaultWSManPort = this.UseDefaultWSManPort;
             result.OutputBufferingMode = OutputBufferingMode;
             result.DisconnectedOn = this.DisconnectedOn;
@@ -1593,13 +1595,15 @@ namespace System.Management.Automation.Runspaces
 
         public NewProcessConnectionInfo Copy()
         {
-            NewProcessConnectionInfo result = new NewProcessConnectionInfo(_credential);
-            result.AuthenticationMechanism = this.AuthenticationMechanism;
-            result.InitializationScript = this.InitializationScript;
-            result.WorkingDirectory = this.WorkingDirectory;
-            result.RunAs32 = this.RunAs32;
-            result.PSVersion = this.PSVersion;
-            result.Process = Process;
+            NewProcessConnectionInfo result = new NewProcessConnectionInfo(_credential)
+            {
+                AuthenticationMechanism = this.AuthenticationMechanism,
+                InitializationScript = this.InitializationScript,
+                WorkingDirectory = this.WorkingDirectory,
+                RunAs32 = this.RunAs32,
+                PSVersion = this.PSVersion,
+                Process = Process
+            };
             return result;
         }
 
@@ -1826,13 +1830,15 @@ namespace System.Management.Automation.Runspaces
         /// <returns>NamedPipeConnectionInfo.</returns>
         internal override RunspaceConnectionInfo InternalCopy()
         {
-            NamedPipeConnectionInfo newCopy = new NamedPipeConnectionInfo();
-            newCopy._authMechanism = this.AuthenticationMechanism;
-            newCopy._credential = this.Credential;
-            newCopy.ProcessId = this.ProcessId;
-            newCopy._appDomainName = _appDomainName;
-            newCopy.OpenTimeout = this.OpenTimeout;
-            newCopy.CustomPipeName = this.CustomPipeName;
+            NamedPipeConnectionInfo newCopy = new NamedPipeConnectionInfo
+            {
+                _authMechanism = this.AuthenticationMechanism,
+                _credential = this.Credential,
+                ProcessId = this.ProcessId,
+                _appDomainName = _appDomainName,
+                OpenTimeout = this.OpenTimeout,
+                CustomPipeName = this.CustomPipeName
+            };
 
             return newCopy;
         }
@@ -2011,12 +2017,14 @@ namespace System.Management.Automation.Runspaces
         /// <returns>NamedPipeConnectionInfo.</returns>
         internal override RunspaceConnectionInfo InternalCopy()
         {
-            SSHConnectionInfo newCopy = new SSHConnectionInfo();
-            newCopy.ComputerName = this.ComputerName;
-            newCopy.UserName = this.UserName;
-            newCopy.KeyFilePath = this.KeyFilePath;
-            newCopy.Port = this.Port;
-            newCopy.Subsystem = this.Subsystem;
+            SSHConnectionInfo newCopy = new SSHConnectionInfo
+            {
+                ComputerName = this.ComputerName,
+                UserName = this.UserName,
+                KeyFilePath = this.KeyFilePath,
+                Port = this.Port,
+                Subsystem = this.Subsystem
+            };
 
             return newCopy;
         }

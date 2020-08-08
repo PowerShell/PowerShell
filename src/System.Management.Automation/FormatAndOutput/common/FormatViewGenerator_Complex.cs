@@ -208,8 +208,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 TextToken tt = t as TextToken;
                 if (tt != null)
                 {
-                    FormatTextField ftf = new FormatTextField();
-                    ftf.text = _db.displayResourceManagerCache.GetTextTokenString(tt);
+                    FormatTextField ftf = new FormatTextField
+                    {
+                        text = _db.displayResourceManagerCache.GetTextTokenString(tt)
+                    };
                     fe.formatValueList.Add(ftf);
                     continue;
                 }
@@ -229,13 +231,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (ft != null)
                 {
                     // instantiate a new entry and attach a frame info object
-                    FormatEntry feFrame = new FormatEntry();
-                    feFrame.frameInfo = new FrameInfo();
+                    FormatEntry feFrame = new FormatEntry
+                    {
+                        frameInfo = new FrameInfo
+                        {
 
-                    // add the frame info
-                    feFrame.frameInfo.firstLine = ft.frameInfoDefinition.firstLine;
-                    feFrame.frameInfo.leftIndentation = ft.frameInfoDefinition.leftIndentation;
-                    feFrame.frameInfo.rightIndentation = ft.frameInfoDefinition.rightIndentation;
+                            // add the frame info
+                            firstLine = ft.frameInfoDefinition.firstLine,
+                            leftIndentation = ft.frameInfoDefinition.leftIndentation,
+                            rightIndentation = ft.frameInfoDefinition.rightIndentation
+                        }
+                    };
 
                     // execute the list inside the frame
                     ExecuteFormatTokenList(level, so, ft.itemDefinition.formatTokenList, feFrame.formatValueList);
@@ -311,17 +317,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                     continue;
                                 }
 
-                                fpf = new FormatPropertyField();
-
-                                fpf.propertyValue = PSObjectHelper.FormatField(fieldFormattingDirective, x, _enumerationLimit, formatErrorObject, _expressionFactory);
+                                fpf = new FormatPropertyField
+                                {
+                                    propertyValue = PSObjectHelper.FormatField(fieldFormattingDirective, x, _enumerationLimit, formatErrorObject, _expressionFactory)
+                                };
                                 fe.formatValueList.Add(fpf);
                             }
                         }
                         else
                         {
-                            fpf = new FormatPropertyField();
-
-                            fpf.propertyValue = PSObjectHelper.FormatField(fieldFormattingDirective, val, _enumerationLimit, formatErrorObject, _expressionFactory);
+                            fpf = new FormatPropertyField
+                            {
+                                propertyValue = PSObjectHelper.FormatField(fieldFormattingDirective, val, _enumerationLimit, formatErrorObject, _expressionFactory)
+                            };
                             fe.formatValueList.Add(fpf);
                         }
 
@@ -542,9 +550,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             foreach (MshResolvedExpressionParameterAssociation a in activeAssociationList)
             {
-                FormatTextField ftf = new FormatTextField();
-
-                ftf.text = a.ResolvedExpression.ToString() + " = ";
+                FormatTextField ftf = new FormatTextField
+                {
+                    text = a.ResolvedExpression.ToString() + " = "
+                };
                 formatValueList.Add(ftf);
 
                 // compute the value of the entry
@@ -672,9 +681,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="formatValueList">List of format tokens to add to.</param>
         private void DisplayLeaf(object val, List<FormatValue> formatValueList)
         {
-            FormatPropertyField fpf = new FormatPropertyField();
-
-            fpf.propertyValue = PSObjectHelper.FormatField(null, PSObjectHelper.AsPSObject(val), _enumerationLimit, null, _expressionFactory);
+            FormatPropertyField fpf = new FormatPropertyField
+            {
+                propertyValue = PSObjectHelper.FormatField(null, PSObjectHelper.AsPSObject(val), _enumerationLimit, null, _expressionFactory)
+            };
             formatValueList.Add(fpf);
             formatValueList.Add(new FormatNewLine());
         }
@@ -729,14 +739,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (label != null)
             {
-                FormatTextField ftfLabel = new FormatTextField();
-                ftfLabel.text = label;
+                FormatTextField ftfLabel = new FormatTextField
+                {
+                    text = label
+                };
                 formatValueList.Add(ftfLabel);
                 formatValueList.Add(new FormatNewLine());
             }
 
-            FormatTextField ftf = new FormatTextField();
-            ftf.text = openTag;
+            FormatTextField ftf = new FormatTextField
+            {
+                text = openTag
+            };
             formatValueList.Add(ftf);
 
             formatValueList.Add(new FormatNewLine());
@@ -744,9 +758,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static void AddEpilogue(List<FormatValue> formatValueList, string closeTag)
         {
-            FormatTextField ftf = new FormatTextField();
-
-            ftf.text = closeTag;
+            FormatTextField ftf = new FormatTextField
+            {
+                text = closeTag
+            };
             formatValueList.Add(ftf);
 
             formatValueList.Add(new FormatNewLine());
@@ -754,13 +769,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private List<FormatValue> AddIndentationLevel(List<FormatValue> formatValueList)
         {
-            FormatEntry feFrame = new FormatEntry();
-            feFrame.frameInfo = new FrameInfo();
+            FormatEntry feFrame = new FormatEntry
+            {
+                frameInfo = new FrameInfo
+                {
 
-            // add the frame info
-            feFrame.frameInfo.firstLine = 0;
-            feFrame.frameInfo.leftIndentation = _indentationStep;
-            feFrame.frameInfo.rightIndentation = 0;
+                    // add the frame info
+                    firstLine = 0,
+                    leftIndentation = _indentationStep,
+                    rightIndentation = 0
+                }
+            };
             formatValueList.Add(feFrame);
 
             return feFrame.formatValueList;

@@ -2093,8 +2093,10 @@ namespace System.Management.Automation
                 RemoveEventCallback();
 
                 // Cannot stop a connect attempt.
-                OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs();
-                operationStateEventArgs.OperationState = OperationState.StopComplete;
+                OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs
+                {
+                    OperationState = OperationState.StopComplete
+                };
                 OperationComplete.SafeInvoke(this, operationStateEventArgs);
             }
 
@@ -2113,8 +2115,10 @@ namespace System.Management.Automation
 
             private void SendStartComplete()
             {
-                OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs();
-                operationStateEventArgs.OperationState = OperationState.StartComplete;
+                OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs
+                {
+                    OperationState = OperationState.StartComplete
+                };
                 OperationComplete.SafeInvoke(this, operationStateEventArgs);
             }
 
@@ -2734,9 +2738,11 @@ namespace System.Management.Automation
 
         private void SendStopComplete(EventArgs eventArgs = null)
         {
-            OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs();
-            operationStateEventArgs.BaseEvent = eventArgs;
-            operationStateEventArgs.OperationState = OperationState.StopComplete;
+            OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs
+            {
+                BaseEvent = eventArgs,
+                OperationState = OperationState.StopComplete
+            };
             OperationComplete.SafeInvoke(this, operationStateEventArgs);
         }
     }
@@ -3096,8 +3102,10 @@ namespace System.Management.Automation
                     OriginInfo originInfo = new OriginInfo(reader.ComputerName, reader.RunspaceId);
 
                     RemotingErrorRecord errorRecord =
-                        new RemotingErrorRecord(er, originInfo);
-                    errorRecord.PreserveInvocationInfoOnce = true;
+                        new RemotingErrorRecord(er, originInfo)
+                        {
+                            PreserveInvocationInfoOnce = true
+                        };
 
                     // ISSUE: Add an Assert for ErrorRecord.
                     // Add to the PSRemotingChild jobs streams

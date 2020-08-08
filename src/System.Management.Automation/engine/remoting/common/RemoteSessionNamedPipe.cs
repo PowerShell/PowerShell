@@ -258,8 +258,10 @@ namespace System.Management.Automation.Remoting
 
         internal static SECURITY_ATTRIBUTES GetSecurityAttributes(GCHandle securityDescriptorPinnedHandle, bool inheritHandle = false)
         {
-            SECURITY_ATTRIBUTES securityAttributes = new NamedPipeNative.SECURITY_ATTRIBUTES();
-            securityAttributes.InheritHandle = inheritHandle;
+            SECURITY_ATTRIBUTES securityAttributes = new NamedPipeNative.SECURITY_ATTRIBUTES
+            {
+                InheritHandle = inheritHandle
+            };
             securityAttributes.NLength = (int)Marshal.SizeOf(securityAttributes);
             securityAttributes.LPSecurityDescriptor = securityDescriptorPinnedHandle.AddrOfPinnedObject();
             return securityAttributes;
@@ -694,9 +696,11 @@ namespace System.Management.Automation.Remoting
                 IsListenerRunning = true;
 
                 // Create listener thread.
-                Thread listenerThread = new Thread(ProcessListeningThread);
-                listenerThread.Name = _threadName;
-                listenerThread.IsBackground = true;
+                Thread listenerThread = new Thread(ProcessListeningThread)
+                {
+                    Name = _threadName,
+                    IsBackground = true
+                };
                 listenerThread.Start(clientConnectCallback);
             }
         }
@@ -793,8 +797,10 @@ namespace System.Management.Automation.Remoting
 
                 // Create reader/writer streams.
                 TextReader = new StreamReader(Stream);
-                TextWriter = new StreamWriter(Stream);
-                TextWriter.AutoFlush = true;
+                TextWriter = new StreamWriter(Stream)
+                {
+                    AutoFlush = true
+                };
             }
             catch (Exception e)
             {
@@ -1100,8 +1106,10 @@ namespace System.Management.Automation.Remoting
 
             // Create reader/writer streams.
             TextReader = new StreamReader(_clientPipeStream);
-            TextWriter = new StreamWriter(_clientPipeStream);
-            TextWriter.AutoFlush = true;
+            TextWriter = new StreamWriter(_clientPipeStream)
+            {
+                AutoFlush = true
+            };
 
             _tracer.WriteMessage("NamedPipeClientBase", "Connect", Guid.Empty,
                 "Connection started on pipe: {0}", _pipeName);

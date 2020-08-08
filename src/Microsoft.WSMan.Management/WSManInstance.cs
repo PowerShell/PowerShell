@@ -520,8 +520,10 @@ namespace Microsoft.WSMan.Management
         {
             IWSManSession m_session = null;
             IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
-            helper = new WSManHelper(this);
-            helper.WSManOp = "Get";
+            helper = new WSManHelper(this)
+            {
+                WSManOp = "Get"
+            };
             string connectionStr = null;
             connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
             if (connectionuri != null)
@@ -886,8 +888,10 @@ namespace Microsoft.WSMan.Management
         protected override void ProcessRecord()
         {
             IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
-            helper = new WSManHelper(this);
-            helper.WSManOp = "set";
+            helper = new WSManHelper(this)
+            {
+                WSManOp = "set"
+            };
             IWSManSession m_session = null;
 
             if (dialect != null)
@@ -1484,8 +1488,10 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void BeginProcessing()
         {
-            helper = new WSManHelper(this);
-            helper.WSManOp = "new";
+            helper = new WSManHelper(this)
+            {
+                WSManOp = "new"
+            };
             connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
             if (connectionuri != null)
             {

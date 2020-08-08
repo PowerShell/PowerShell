@@ -129,18 +129,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // now set the run time data structures
-            _si = new ScreenInfo();
-            _si.screenColumns = screenColumns;
-            _si.screenRows = screenRows;
-            _si.columnInfo = new ColumnInfo[columnWidths.Length];
+            _si = new ScreenInfo
+            {
+                screenColumns = screenColumns,
+                screenRows = screenRows,
+                columnInfo = new ColumnInfo[columnWidths.Length]
+            };
 
             int startCol = _startColumn;
             for (int k = 0; k < columnWidths.Length; k++)
             {
-                _si.columnInfo[k] = new ColumnInfo();
-                _si.columnInfo[k].startCol = startCol;
-                _si.columnInfo[k].width = columnWidths[k];
-                _si.columnInfo[k].alignment = alignment[k];
+                _si.columnInfo[k] = new ColumnInfo
+                {
+                    startCol = startCol,
+                    width = columnWidths[k],
+                    alignment = alignment[k]
+                };
                 startCol += columnWidths[k] + ScreenInfo.separatorCharacterCount;
             }
         }

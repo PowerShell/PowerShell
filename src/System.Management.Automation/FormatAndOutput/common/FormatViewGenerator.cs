@@ -246,9 +246,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 fe.formatValueList.Add(ftf);
 
-                FormatPropertyField fpf = new FormatPropertyField();
-
-                fpf.propertyValue = currentGroupingValueDisplay;
+                FormatPropertyField fpf = new FormatPropertyField
+                {
+                    propertyValue = currentGroupingValueDisplay
+                };
                 fe.formatValueList.Add(fpf);
             }
             else

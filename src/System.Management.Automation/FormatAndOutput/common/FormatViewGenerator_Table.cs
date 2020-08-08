@@ -96,17 +96,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _tableBody = (TableControlBody)this.dataBaseInfo.view.mainControl.Copy();
 
                 TableRowItemDefinition cnRowDefinition = new TableRowItemDefinition();
-                PropertyTokenBase propToken = new FieldPropertyToken();
-                propToken.expression = new ExpressionToken(RemotingConstants.ComputerNameNoteProperty, false);
+                PropertyTokenBase propToken = new FieldPropertyToken
+                {
+                    expression = new ExpressionToken(RemotingConstants.ComputerNameNoteProperty, false)
+                };
                 cnRowDefinition.formatTokenList.Add(propToken);
                 _tableBody.defaultDefinition.rowItemDefinitionList.Add(cnRowDefinition);
 
                 // add header only if there are other header definitions
                 if (_tableBody.header.columnHeaderDefinitionList.Count > 0)
                 {
-                    TableColumnHeaderDefinition cnHeaderDefinition = new TableColumnHeaderDefinition();
-                    cnHeaderDefinition.label = new TextToken();
-                    cnHeaderDefinition.label.text = RemotingConstants.ComputerNameNoteProperty;
+                    TableColumnHeaderDefinition cnHeaderDefinition = new TableColumnHeaderDefinition
+                    {
+                        label = new TextToken
+                        {
+                            text = RemotingConstants.ComputerNameNoteProperty
+                        }
+                    };
                     _tableBody.header.columnHeaderDefinitionList.Add(cnHeaderDefinition);
                 }
             }
@@ -216,9 +222,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private TableHeaderInfo GenerateTableHeaderInfoFromProperties(PSObject so)
         {
-            TableHeaderInfo thi = new TableHeaderInfo();
-
-            thi.hideHeader = this.HideHeaders;
+            TableHeaderInfo thi = new TableHeaderInfo
+            {
+                hideHeader = this.HideHeaders
+            };
 
             for (int k = 0; k < this.activeAssociationList.Count; k++)
             {

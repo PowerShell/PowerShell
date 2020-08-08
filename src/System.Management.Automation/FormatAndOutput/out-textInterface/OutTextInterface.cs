@@ -67,9 +67,10 @@ namespace Microsoft.PowerShell.Commands
                 PSTraceSource.NewArgumentNullException("LineOutput"),
                 "OutLineOutputNullLineOutputParameter",
                 ErrorCategory.InvalidArgument,
-                null);
-
-            errorRecord.ErrorDetails = new ErrorDetails(msg);
+                null)
+            {
+                ErrorDetails = new ErrorDetails(msg)
+            };
             this.ThrowTerminatingError(errorRecord);
         }
 
@@ -83,9 +84,10 @@ namespace Microsoft.PowerShell.Commands
                 new InvalidCastException(),
                 "OutLineOutputInvalidLineOutputParameterType",
                 ErrorCategory.InvalidArgument,
-                null);
-
-            errorRecord.ErrorDetails = new ErrorDetails(msg);
+                null)
+            {
+                ErrorDetails = new ErrorDetails(msg)
+            };
             this.ThrowTerminatingError(errorRecord);
         }
     }

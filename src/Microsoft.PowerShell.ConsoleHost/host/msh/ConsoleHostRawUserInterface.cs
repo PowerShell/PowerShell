@@ -1124,9 +1124,11 @@ namespace Microsoft.PowerShell
 
             // contentsRegion indicates the area in contents (declared below) in which
             // the data read from ReadConsoleOutput is stored.
-            Rectangle contentsRegion = new Rectangle();
-            contentsRegion.Left = Math.Max(0, 0 - region.Left);
-            contentsRegion.Top = Math.Max(0, 0 - region.Top);
+            Rectangle contentsRegion = new Rectangle
+            {
+                Left = Math.Max(0, 0 - region.Left),
+                Top = Math.Max(0, 0 - region.Top)
+            };
             contentsRegion.Right = contentsRegion.Left + (colEnd - colStart);
             contentsRegion.Bottom = contentsRegion.Top + (rowEnd - rowStart);
 

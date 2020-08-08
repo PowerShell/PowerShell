@@ -830,8 +830,10 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.NoCommandInPipeline);
             }
 
-            PipelineProcessor pipelineProcessor = new PipelineProcessor();
-            pipelineProcessor.TopLevel = true;
+            PipelineProcessor pipelineProcessor = new PipelineProcessor
+            {
+                TopLevel = true
+            };
 
             bool failed = false;
 

@@ -841,8 +841,10 @@ namespace System.Management.Automation
                     {
                         context.CommandDiscovery.RegisterLookupCommandInfoAction("ActivePostCommand", originalCommandName);
 
-                        eventArgs = new CommandLookupEventArgs(originalCommandName, commandOrigin, context);
-                        eventArgs.Command = result;
+                        eventArgs = new CommandLookupEventArgs(originalCommandName, commandOrigin, context)
+                        {
+                            Command = result
+                        };
                         postAction.Invoke(originalCommandName, eventArgs);
 
                         if (eventArgs != null)
@@ -918,8 +920,10 @@ namespace System.Management.Automation
         {
             exception = null;
             Collection<PSModuleInfo> matchingModules = null;
-            CommandInfo commandInfo = new CmdletInfo("Import-Module", typeof(ImportModuleCommand), null, null, context);
-            commandInfo.Visibility = visibility;
+            CommandInfo commandInfo = new CmdletInfo("Import-Module", typeof(ImportModuleCommand), null, null, context)
+            {
+                Visibility = visibility
+            };
             Command importModuleCommand = new Command(commandInfo);
 
             discoveryTracer.WriteLine("Attempting to load module: {0}", moduleName);
@@ -987,8 +991,10 @@ namespace System.Management.Automation
                     commandName,
                     searchResolutionOptions,
                     commandTypes,
-                    context);
-            searcher.CommandOrigin = commandOrigin;
+                    context)
+                {
+                    CommandOrigin = commandOrigin
+                };
 
             try
             {

@@ -146,10 +146,11 @@ namespace System.Management.Automation.Remoting.Client
                                                    wsmanSessionTM.ConnectionInfo.ComputerName);
 
                 e = new PSRemotingTransportException(PSRemotingErrorId.InvalidConfigurationName,
-                                                   RemotingErrorIdStrings.ConnectExCallBackError, wsmanSessionTM.ConnectionInfo.ComputerName, errorMessage);
-
-                e.TransportMessage = ParseEscapeWSManErrorMessage(
-                   WSManNativeApi.WSManGetErrorMessage(wsmanAPIHandle, errorStruct.errorCode));
+                                                   RemotingErrorIdStrings.ConnectExCallBackError, wsmanSessionTM.ConnectionInfo.ComputerName, errorMessage)
+                {
+                    TransportMessage = ParseEscapeWSManErrorMessage(
+                   WSManNativeApi.WSManGetErrorMessage(wsmanAPIHandle, errorStruct.errorCode))
+                };
             }
             else
             {
@@ -159,10 +160,11 @@ namespace System.Management.Automation.Remoting.Client
                 string wsManErrorMessage = PSRemotingErrorInvariants.FormatResourceString(resourceString, resourceArgs);
                 e = new PSRemotingTransportException(PSRemotingErrorId.TroubleShootingHelpTopic,
                     RemotingErrorIdStrings.TroubleShootingHelpTopic,
-                    wsManErrorMessage);
-
-                e.TransportMessage = ParseEscapeWSManErrorMessage(
-                    WSManNativeApi.WSManGetErrorMessage(wsmanAPIHandle, errorStruct.errorCode));
+                    wsManErrorMessage)
+                {
+                    TransportMessage = ParseEscapeWSManErrorMessage(
+                    WSManNativeApi.WSManGetErrorMessage(wsmanAPIHandle, errorStruct.errorCode))
+                };
             }
 
             e.ErrorCode = errorStruct.errorCode;
@@ -1044,10 +1046,12 @@ namespace System.Management.Automation.Remoting.Client
             {
                 string newProtocolVersion = (string)s_protocolVersionRedirect.DynamicInvoke();
                 shellOptions.Clear();
-                WSManNativeApi.WSManOption newPrtVOption = new WSManNativeApi.WSManOption();
-                newPrtVOption.name = RemoteDataNameStrings.PS_STARTUP_PROTOCOL_VERSION_NAME;
-                newPrtVOption.value = newProtocolVersion;
-                newPrtVOption.mustComply = true;
+                WSManNativeApi.WSManOption newPrtVOption = new WSManNativeApi.WSManOption
+                {
+                    name = RemoteDataNameStrings.PS_STARTUP_PROTOCOL_VERSION_NAME,
+                    value = newProtocolVersion,
+                    mustComply = true
+                };
                 shellOptions.Add(newPrtVOption);
             }
 
@@ -1136,10 +1140,12 @@ namespace System.Management.Automation.Remoting.Client
 
                     if (_noMachineProfile)
                     {
-                        WSManNativeApi.WSManOption noProfile = new WSManNativeApi.WSManOption();
-                        noProfile.name = WSManNativeApi.NoProfile;
-                        noProfile.mustComply = true;
-                        noProfile.value = "1";
+                        WSManNativeApi.WSManOption noProfile = new WSManNativeApi.WSManOption
+                        {
+                            name = WSManNativeApi.NoProfile,
+                            mustComply = true,
+                            value = "1"
+                        };
                         shellOptions.Add(noProfile);
                     }
 
@@ -2691,10 +2697,12 @@ namespace System.Management.Automation.Remoting.Client
                     new string[] { WSManNativeApi.WSMAN_STREAM_ID_STDOUT });
 
                 // startup options common to all connections
-                WSManNativeApi.WSManOption protocolStartupOption = new WSManNativeApi.WSManOption();
-                protocolStartupOption.name = RemoteDataNameStrings.PS_STARTUP_PROTOCOL_VERSION_NAME;
-                protocolStartupOption.value = RemotingConstants.ProtocolVersion.ToString();
-                protocolStartupOption.mustComply = true;
+                WSManNativeApi.WSManOption protocolStartupOption = new WSManNativeApi.WSManOption
+                {
+                    name = RemoteDataNameStrings.PS_STARTUP_PROTOCOL_VERSION_NAME,
+                    value = RemotingConstants.ProtocolVersion.ToString(),
+                    mustComply = true
+                };
 
                 CommonOptionSet = new List<WSManNativeApi.WSManOption>();
                 CommonOptionSet.Add(protocolStartupOption);

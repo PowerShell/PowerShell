@@ -493,8 +493,10 @@ namespace System.Management.Automation.Remoting
                     PSRemotingTransportException newException =
                         new PSRemotingTransportException(PSRemotingErrorId.RedirectedURINotWellFormatted, RemotingErrorIdStrings.RedirectedURINotWellFormatted,
                             _session.Context.RemoteAddress.OriginalString,
-                            redirectException.RedirectLocation);
-                    newException.TransportMessage = e.Exception.TransportMessage;
+                            redirectException.RedirectLocation)
+                        {
+                            TransportMessage = e.Exception.TransportMessage
+                        };
                     e.Exception = newException;
                 }
             }
@@ -643,8 +645,10 @@ namespace System.Management.Automation.Remoting
                             dse.Message, PSVersionInfo.GitCommitId, RemotingConstants.ProtocolVersion);
                     }
 
-                    RemoteSessionStateMachineEventArgs capabilityArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationReceived);
-                    capabilityArg.RemoteSessionCapability = capability;
+                    RemoteSessionStateMachineEventArgs capabilityArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationReceived)
+                    {
+                        RemoteSessionCapability = capability
+                    };
                     _stateMachine.RaiseEvent(capabilityArg);
 
                     RemoteSessionNegotiationEventArgs negotiationArg = new RemoteSessionNegotiationEventArgs(capability);

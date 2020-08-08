@@ -1056,22 +1056,26 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(obj != null, "Cannot serialize a null object");
             Dbg.Assert(streamToWriteTo != null, "Stream to write to cannot be null");
 
-            XmlWriterSettings xmlSettings = new XmlWriterSettings();
-            xmlSettings.CheckCharacters = false;
-            xmlSettings.Indent = false;
-            // we dont want the underlying stream to be closed as we expect
-            // the stream to be usable after this call.
-            xmlSettings.CloseOutput = false;
-            xmlSettings.Encoding = UTF8Encoding.UTF8;
-            xmlSettings.NewLineHandling = NewLineHandling.None;
+            XmlWriterSettings xmlSettings = new XmlWriterSettings
+            {
+                CheckCharacters = false,
+                Indent = false,
+                // we dont want the underlying stream to be closed as we expect
+                // the stream to be usable after this call.
+                CloseOutput = false,
+                Encoding = UTF8Encoding.UTF8,
+                NewLineHandling = NewLineHandling.None,
 
-            xmlSettings.OmitXmlDeclaration = true;
-            xmlSettings.ConformanceLevel = ConformanceLevel.Fragment;
+                OmitXmlDeclaration = true,
+                ConformanceLevel = ConformanceLevel.Fragment
+            };
 
             using (XmlWriter xmlWriter = XmlWriter.Create(streamToWriteTo, xmlSettings))
             {
-                Serializer serializer = new Serializer(xmlWriter, _serializationContext);
-                serializer.TypeTable = TypeTable;
+                Serializer serializer = new Serializer(xmlWriter, _serializationContext)
+                {
+                    TypeTable = TypeTable
+                };
                 serializer.Serialize(obj);
                 serializer.Done();
                 xmlWriter.Flush();
@@ -1100,8 +1104,10 @@ namespace System.Management.Automation.Remoting
             object result = null;
             using (XmlReader xmlReader = XmlReader.Create(serializedDataStream, InternalDeserializer.XmlReaderSettingsForCliXml))
             {
-                Deserializer deserializer = new Deserializer(xmlReader, DeserializationContext);
-                deserializer.TypeTable = TypeTable;
+                Deserializer deserializer = new Deserializer(xmlReader, DeserializationContext)
+                {
+                    TypeTable = TypeTable
+                };
                 result = deserializer.Deserialize();
                 deserializer.Done();
             }

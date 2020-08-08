@@ -211,10 +211,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WriteHashResult(string Algorithm, string hash, string path)
         {
-            FileHashInfo result = new FileHashInfo();
-            result.Algorithm = Algorithm;
-            result.Hash = hash;
-            result.Path = path;
+            FileHashInfo result = new FileHashInfo
+            {
+                Algorithm = Algorithm,
+                Hash = hash,
+                Path = path
+            };
             WriteObject(result);
         }
 

@@ -128,8 +128,10 @@ namespace System.Management.Automation
 
             if (!noInput)
             {
-                InputCollection = new PSDataCollection<object>();
-                InputCollection.ReleaseOnEnumeration = true;
+                InputCollection = new PSDataCollection<object>
+                {
+                    ReleaseOnEnumeration = true
+                };
                 InputCollection.IdleEvent += HandleIdleEvent;
             }
 
@@ -232,9 +234,11 @@ namespace System.Management.Automation
                 DataStructureHandler.Prepare();
             }
 
-            PSInvocationSettings settings = new PSInvocationSettings();
-            settings.ApartmentState = apartmentState;
-            settings.Host = _remoteHost;
+            PSInvocationSettings settings = new PSInvocationSettings
+            {
+                ApartmentState = apartmentState,
+                Host = _remoteHost
+            };
 
             // Flow the impersonation policy to pipeline execution thread
             // only if the current thread is impersonated (Delegation is

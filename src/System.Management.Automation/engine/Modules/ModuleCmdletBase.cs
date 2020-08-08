@@ -1233,8 +1233,10 @@ namespace Microsoft.PowerShell.Commands
                 // return fake PSModuleInfo if can't read the file for any reason
                 if (moduleInfo == null)
                 {
-                    moduleInfo = new PSModuleInfo(file, context: null, sessionState: null);
-                    moduleInfo.HadErrorsLoading = true;     // Prevent analysis cache from caching a bad module.
+                    moduleInfo = new PSModuleInfo(file, context: null, sessionState: null)
+                    {
+                        HadErrorsLoading = true     // Prevent analysis cache from caching a bad module.
+                    };
                 }
 
                 if (extension.Equals(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
@@ -1303,8 +1305,10 @@ namespace Microsoft.PowerShell.Commands
                 // return fake PSModuleInfo if can't read the file for any reason
                 if (moduleInfo == null)
                 {
-                    moduleInfo = new PSModuleInfo(file, null, null);
-                    moduleInfo.HadErrorsLoading = true;     // Prevent analysis cache from caching a bad module.
+                    moduleInfo = new PSModuleInfo(file, null, null)
+                    {
+                        HadErrorsLoading = true     // Prevent analysis cache from caching a bad module.
+                    };
                 }
             }
 
@@ -2904,12 +2908,14 @@ namespace Microsoft.PowerShell.Commands
                 // Load all of the nested modules, which may have relative or absolute paths...
 
                 // For nested modules, we need to set importmoduleoptions to false as they should not use the options set for parent module
-                ImportModuleOptions nestedModuleOptions = new ImportModuleOptions();
+                ImportModuleOptions nestedModuleOptions = new ImportModuleOptions
+                {
 
-                // If the nested manifest explicitly (no wildcards) specifies functions to be exported then allow all functions to be exported
-                // into the session state function table (regardless of language boundaries), because the manifest will filter them later to the
-                // specified function list.
-                nestedModuleOptions.AllowNestedModuleFunctionsToExport = ((exportedFunctions != null) && !exportedFunctionsContainsWildcards);
+                    // If the nested manifest explicitly (no wildcards) specifies functions to be exported then allow all functions to be exported
+                    // into the session state function table (regardless of language boundaries), because the manifest will filter them later to the
+                    // specified function list.
+                    AllowNestedModuleFunctionsToExport = ((exportedFunctions != null) && !exportedFunctionsContainsWildcards)
+                };
 
                 foreach (ModuleSpecification nestedModuleSpecification in nestedModules)
                 {

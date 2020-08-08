@@ -425,9 +425,10 @@ namespace System.Management.Automation
                     this,
                     string.Empty,
                     string.Empty,
-                    null);
-
-            _hiddenDrive.Hidden = true;
+                    null)
+                {
+                    Hidden = true
+                };
 
             // TODO:PSL
             // this is probably not right here

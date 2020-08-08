@@ -178,13 +178,14 @@ namespace System.Management.Automation
 
         internal static InformationRecord FromPSObjectForRemoting(PSObject inputObject)
         {
-            InformationRecord informationRecord = new InformationRecord();
+            InformationRecord informationRecord = new InformationRecord
+            {
+                MessageData = RemotingDecoder.GetPropertyValue<object>(inputObject, "MessageData"),
+                Source = RemotingDecoder.GetPropertyValue<string>(inputObject, "Source"),
+                TimeGenerated = RemotingDecoder.GetPropertyValue<DateTime>(inputObject, "TimeGenerated"),
 
-            informationRecord.MessageData = RemotingDecoder.GetPropertyValue<object>(inputObject, "MessageData");
-            informationRecord.Source = RemotingDecoder.GetPropertyValue<string>(inputObject, "Source");
-            informationRecord.TimeGenerated = RemotingDecoder.GetPropertyValue<DateTime>(inputObject, "TimeGenerated");
-
-            informationRecord.Tags = new List<string>();
+                Tags = new List<string>()
+            };
             System.Collections.ArrayList tagsArrayList = RemotingDecoder.GetPropertyValue<System.Collections.ArrayList>(inputObject, "Tags");
             foreach (string tag in tagsArrayList)
             {

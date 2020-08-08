@@ -21,13 +21,15 @@ namespace Microsoft.PowerShell.Commands.Internal
             string args,
             string stdin = "")
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.UseShellExecute = false;
-            startInfo.RedirectStandardInput = true;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.RedirectStandardError = true;
-            startInfo.FileName = tool;
-            startInfo.Arguments = args;
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                UseShellExecute = false,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                FileName = tool,
+                Arguments = args
+            };
             string stdout;
 
             using (Process process = new Process())

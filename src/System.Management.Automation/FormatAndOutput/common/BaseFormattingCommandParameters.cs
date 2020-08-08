@@ -386,8 +386,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // we expect a string and we build a field formatting directive
-            FieldFormattingDirective directive = new FieldFormattingDirective();
-            directive.formatString = s;
+            FieldFormattingDirective directive = new FieldFormattingDirective
+            {
+                formatString = s
+            };
             return directive;
         }
     }

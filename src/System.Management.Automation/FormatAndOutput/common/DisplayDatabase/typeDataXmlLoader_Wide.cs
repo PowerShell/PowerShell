@@ -235,8 +235,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else
                 {
-                    FieldPropertyToken fpt = new FieldPropertyToken();
-                    fpt.expression = match.Expression;
+                    FieldPropertyToken fpt = new FieldPropertyToken
+                    {
+                        expression = match.Expression
+                    };
                     fpt.fieldFormattingDirective.formatString = match.FormatString;
                     formatTokenList.Add(fpt);
                 }

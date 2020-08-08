@@ -354,8 +354,10 @@ namespace Microsoft.PowerShell.Commands
                     throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
                 }
 
-                _storeHandle = new CertificateStoreHandle();
-                _storeHandle.Handle = hCertStore;
+                _storeHandle = new CertificateStoreHandle
+                {
+                    Handle = hCertStore
+                };
 
                 // we only do CertControlStore for stores other than UserDS
                 if (!string.Equals(
@@ -1513,9 +1515,10 @@ namespace Microsoft.PowerShell.Commands
                 new ErrorRecord(e,
                                 "CertProviderItemNotFound",
                                 ErrorCategory.ObjectNotFound,
-                                null);
-
-            er.ErrorDetails = ed;
+                                null)
+                {
+                    ErrorDetails = ed
+                };
 
             return er;
         }
@@ -1549,8 +1552,10 @@ namespace Microsoft.PowerShell.Commands
                             new InvalidOperationException(message),
                             errorId,
                             ErrorCategory.InvalidOperation,
-                            null);
-            errorRecord.ErrorDetails = new ErrorDetails(message);
+                            null)
+            {
+                ErrorDetails = new ErrorDetails(message)
+            };
             ThrowTerminatingError(errorRecord);
 
             return;
@@ -2671,8 +2676,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (dp.CodeSigningCert)
                     {
-                        filter = new CertificateFilterInfo();
-                        filter.Purpose = CertificatePurpose.CodeSigning;
+                        filter = new CertificateFilterInfo
+                        {
+                            Purpose = CertificatePurpose.CodeSigning
+                        };
                     }
 
                     if (dp.DocumentEncryptionCert)
@@ -2934,8 +2941,10 @@ namespace Microsoft.PowerShell.Commands
                     this.ProviderInfo.ApplicationBase,
                     currentUICulture.ToString(),
                     this.ProviderInfo.HelpFile);
-                XmlReaderSettings settings = new XmlReaderSettings();
-                settings.XmlResolver = null;
+                XmlReaderSettings settings = new XmlReaderSettings
+                {
+                    XmlResolver = null
+                };
                 using (XmlReader reader = XmlReader.Create(fullHelpPath, settings))
                 {
                     document.Load(reader);
@@ -3204,9 +3213,11 @@ namespace Microsoft.PowerShell.Commands
             if (DownLevelHelper.TrustedIssuerSupported())
             {
                 IntPtr propertyPtr = IntPtr.Zero;
-                Security.NativeMethods.CRYPT_DATA_BLOB dataBlob = new Security.NativeMethods.CRYPT_DATA_BLOB();
-                dataBlob.cbData = 0;
-                dataBlob.pbData = IntPtr.Zero;
+                Security.NativeMethods.CRYPT_DATA_BLOB dataBlob = new Security.NativeMethods.CRYPT_DATA_BLOB
+                {
+                    cbData = 0,
+                    pbData = IntPtr.Zero
+                };
                 X509Certificate certFromStore = null;
 
                 try

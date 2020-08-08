@@ -5543,8 +5543,10 @@ namespace System.Management.Automation
                 // WF functions do not have functionContext.  Use InvocationInfo.
                 this.InvocationInfo = invocationInfo;
                 this.Position = invocationInfo.ScriptPosition;
-                FunctionContext = new FunctionContext();
-                FunctionContext._functionName = invocationInfo.ScriptName;
+                FunctionContext = new FunctionContext
+                {
+                    _functionName = invocationInfo.ScriptName
+                };
             }
         }
 

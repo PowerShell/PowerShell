@@ -181,8 +181,10 @@ namespace System.Management.Automation.Remoting.Client
                 Marshal.StructureToPtr(obj, ptr, false);
 
                 // Now create the MarshalledObject and return.
-                MarshalledObject result = new MarshalledObject();
-                result._dataPtr = ptr;
+                MarshalledObject result = new MarshalledObject
+                {
+                    _dataPtr = ptr
+                };
 
                 return result;
             }
@@ -341,9 +343,11 @@ namespace System.Management.Automation.Remoting.Client
             internal WSManUserNameAuthenticationCredentials(string name,
                 System.Security.SecureString pwd, WSManAuthenticationMechanism authMechanism)
             {
-                _cred = new WSManUserNameCredentialStruct();
-                _cred.authenticationMechanism = authMechanism;
-                _cred.userName = name;
+                _cred = new WSManUserNameCredentialStruct
+                {
+                    authenticationMechanism = authMechanism,
+                    userName = name
+                };
                 if (pwd != null)
                 {
                     _cred.password = Marshal.SecureStringToCoTaskMemUnicode(pwd);
@@ -418,10 +422,12 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="thumbPrint"></param>
             internal WSManCertificateThumbprintCredentials(string thumbPrint)
             {
-                WSManThumbprintStruct cred = new WSManThumbprintStruct();
-                cred.authenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_CLIENT_CERTIFICATE;
-                cred.certificateThumbprint = thumbPrint;
-                cred.reserved = IntPtr.Zero;
+                WSManThumbprintStruct cred = new WSManThumbprintStruct
+                {
+                    authenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_CLIENT_CERTIFICATE,
+                    certificateThumbprint = thumbPrint,
+                    reserved = IntPtr.Zero
+                };
 
                 _data = MarshalledObject.Create<WSManThumbprintStruct>(cred);
             }
@@ -652,10 +658,14 @@ namespace System.Management.Automation.Remoting.Client
             {
                 Dbg.Assert(data != null, "Data cannot be null");
 
-                _internalData = new WSManDataStruct();
-                _internalData.binaryOrTextData = new WSManBinaryOrTextDataStruct();
-                _internalData.binaryOrTextData.bufferLength = data.Length;
-                _internalData.type = (uint)WSManDataType.WSMAN_DATA_TYPE_BINARY;
+                _internalData = new WSManDataStruct
+                {
+                    binaryOrTextData = new WSManBinaryOrTextDataStruct
+                    {
+                        bufferLength = data.Length
+                    },
+                    type = (uint)WSManDataType.WSMAN_DATA_TYPE_BINARY
+                };
 
                 IntPtr dataToSendPtr = Marshal.AllocHGlobal(_internalData.binaryOrTextData.bufferLength);
                 _internalData.binaryOrTextData.data = dataToSendPtr;
@@ -675,10 +685,14 @@ namespace System.Management.Automation.Remoting.Client
             {
                 Dbg.Assert(data != null, "Data cannot be null");
 
-                _internalData = new WSManDataStruct();
-                _internalData.binaryOrTextData = new WSManBinaryOrTextDataStruct();
-                _internalData.binaryOrTextData.bufferLength = data.Length;
-                _internalData.type = (uint)WSManDataType.WSMAN_DATA_TYPE_TEXT;
+                _internalData = new WSManDataStruct
+                {
+                    binaryOrTextData = new WSManBinaryOrTextDataStruct
+                    {
+                        bufferLength = data.Length
+                    },
+                    type = (uint)WSManDataType.WSMAN_DATA_TYPE_TEXT
+                };
 
                 // marshal text data
                 _internalData.binaryOrTextData.data = Marshal.StringToHGlobalUni(data);
@@ -824,10 +838,11 @@ namespace System.Management.Automation.Remoting.Client
             /// <returns></returns>
             internal static WSManData_UnToMan UnMarshal(WSManDataStruct dataStruct)
             {
-                WSManData_UnToMan newData = new WSManData_UnToMan();
-
-                newData._type = dataStruct.type;
-                newData._bufferLength = dataStruct.binaryOrTextData.bufferLength;
+                WSManData_UnToMan newData = new WSManData_UnToMan
+                {
+                    _type = dataStruct.type,
+                    _bufferLength = dataStruct.binaryOrTextData.bufferLength
+                };
 
                 switch (dataStruct.type)
                 {
@@ -894,8 +909,10 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="data"></param>
             internal WSManDataDWord(int data)
             {
-                _dwordData = new WSManDWordDataInternal();
-                _dwordData.number = data;
+                _dwordData = new WSManDWordDataInternal
+                {
+                    number = data
+                };
                 _type = WSManDataType.WSMAN_DATA_TYPE_DWORD;
             }
 
@@ -955,9 +972,11 @@ namespace System.Management.Automation.Remoting.Client
                 Dbg.Assert(streamIds != null, "stream ids cannot be null or empty");
 
                 int sizeOfIntPtr = Marshal.SizeOf<IntPtr>();
-                _streamSetInfo = new WSManStreamIDSetStruct();
-                _streamSetInfo.streamIDsCount = streamIds.Length;
-                _streamSetInfo.streamIDs = Marshal.AllocHGlobal(sizeOfIntPtr * streamIds.Length);
+                _streamSetInfo = new WSManStreamIDSetStruct
+                {
+                    streamIDsCount = streamIds.Length,
+                    streamIDs = Marshal.AllocHGlobal(sizeOfIntPtr * streamIds.Length)
+                };
                 for (int index = 0; index < streamIds.Length; index++)
                 {
                     IntPtr streamAddress = Marshal.StringToHGlobalUni(streamIds[index]);
@@ -1115,10 +1134,12 @@ namespace System.Management.Automation.Remoting.Client
                 Dbg.Assert(options != null, "options cannot be null");
 
                 int sizeOfOption = Marshal.SizeOf<WSManOption>();
-                _optionSet = new WSManOptionSetStruct();
-                _optionSet.optionsCount = options.Length;
-                _optionSet.optionsMustUnderstand = true;
-                _optionSet.options = Marshal.AllocHGlobal(sizeOfOption * options.Length);
+                _optionSet = new WSManOptionSetStruct
+                {
+                    optionsCount = options.Length,
+                    optionsMustUnderstand = true,
+                    options = Marshal.AllocHGlobal(sizeOfOption * options.Length)
+                };
 
                 for (int index = 0; index < options.Length; index++)
                 {
@@ -1207,10 +1228,12 @@ namespace System.Management.Automation.Remoting.Client
                     }
                 }
 
-                WSManOptionSet result = new WSManOptionSet();
-                result.optionsCount = resultInternal.optionsCount;
-                result.options = tempOptions;
-                result.optionsMustUnderstand = resultInternal.optionsMustUnderstand;
+                WSManOptionSet result = new WSManOptionSet
+                {
+                    optionsCount = resultInternal.optionsCount,
+                    options = tempOptions,
+                    optionsMustUnderstand = resultInternal.optionsMustUnderstand
+                };
 
                 return result;
             }
@@ -1240,9 +1263,11 @@ namespace System.Management.Automation.Remoting.Client
 
             internal WSManCommandArgSet(byte[] firstArgument)
             {
-                _internalData = new WSManCommandArgSetInternal();
-                _internalData.argsCount = 1;
-                _internalData.args = Marshal.AllocHGlobal(Marshal.SizeOf<IntPtr>());
+                _internalData = new WSManCommandArgSetInternal
+                {
+                    argsCount = 1,
+                    args = Marshal.AllocHGlobal(Marshal.SizeOf<IntPtr>())
+                };
 
                 // argument set takes only strings..but powershell's serialized pipeline might contain
                 // \0 (null characters) which are unacceptable in WSMan. So we are converting to Base64
@@ -1345,8 +1370,10 @@ namespace System.Management.Automation.Remoting.Client
             #region Constructor / Other methods
             internal WSManShellDisconnectInfo(uint serverIdleTimeOut)
             {
-                _internalInfo = new WSManShellDisconnectInfoInternal();
-                _internalInfo.idleTimeoutMs = serverIdleTimeOut;
+                _internalInfo = new WSManShellDisconnectInfoInternal
+                {
+                    idleTimeoutMs = serverIdleTimeOut
+                };
                 data = MarshalledObject.Create<WSManShellDisconnectInfoInternal>(_internalInfo);
             }
 
@@ -1431,14 +1458,16 @@ namespace System.Management.Automation.Remoting.Client
             /// </param>
             internal WSManShellStartupInfo_ManToUn(WSManStreamIDSet_ManToUn inputStreamSet, WSManStreamIDSet_ManToUn outputStreamSet, uint serverIdleTimeOut, string name)
             {
-                _internalInfo = new WSManShellStartupInfoStruct();
-                _internalInfo.inputStreamSet = inputStreamSet;
-                _internalInfo.outputStreamSet = outputStreamSet;
-                _internalInfo.idleTimeoutMs = serverIdleTimeOut;
-                // WSMan uses %USER_PROFILE% as the default working directory.
-                _internalInfo.workingDirectory = null;
-                _internalInfo.environmentVariableSet = IntPtr.Zero;
-                _internalInfo.name = name;
+                _internalInfo = new WSManShellStartupInfoStruct
+                {
+                    inputStreamSet = inputStreamSet,
+                    outputStreamSet = outputStreamSet,
+                    idleTimeoutMs = serverIdleTimeOut,
+                    // WSMan uses %USER_PROFILE% as the default working directory.
+                    workingDirectory = null,
+                    environmentVariableSet = IntPtr.Zero,
+                    name = name
+                };
 
                 data = MarshalledObject.Create<WSManShellStartupInfoStruct>(_internalInfo);
             }
@@ -1490,13 +1519,15 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     WSManShellStartupInfoStruct resultInternal = Marshal.PtrToStructure<WSManShellStartupInfoStruct>(unmanagedData);
 
-                    result = new WSManShellStartupInfo_UnToMan();
-                    result.inputStreamSet = WSManStreamIDSet_UnToMan.UnMarshal(resultInternal.inputStreamSet);
-                    result.outputStreamSet = WSManStreamIDSet_UnToMan.UnMarshal(resultInternal.outputStreamSet);
-                    result.idleTimeoutMS = resultInternal.idleTimeoutMs;
-                    result.workingDirectory = resultInternal.workingDirectory; // TODO: Special marshaling required here?
-                    result.environmentVariableSet = WSManEnvironmentVariableSet.UnMarshal(resultInternal.environmentVariableSet);
-                    result.name = resultInternal.name;
+                    result = new WSManShellStartupInfo_UnToMan
+                    {
+                        inputStreamSet = WSManStreamIDSet_UnToMan.UnMarshal(resultInternal.inputStreamSet),
+                        outputStreamSet = WSManStreamIDSet_UnToMan.UnMarshal(resultInternal.outputStreamSet),
+                        idleTimeoutMS = resultInternal.idleTimeoutMs,
+                        workingDirectory = resultInternal.workingDirectory, // TODO: Special marshaling required here?
+                        environmentVariableSet = WSManEnvironmentVariableSet.UnMarshal(resultInternal.environmentVariableSet),
+                        name = resultInternal.name
+                    };
                 }
 
                 return result;
@@ -1587,10 +1618,14 @@ namespace System.Management.Automation.Remoting.Client
             internal WSManProxyInfo(ProxyAccessType proxyAccessType,
                 WSManUserNameAuthenticationCredentials authCredentials)
             {
-                WSManProxyInfoInternal internalInfo = new WSManProxyInfoInternal();
-                internalInfo.proxyAccessType = (int)proxyAccessType;
-                internalInfo.proxyAuthCredentialsStruct = new WSManUserNameAuthenticationCredentials.WSManUserNameCredentialStruct();
-                internalInfo.proxyAuthCredentialsStruct.authenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION;
+                WSManProxyInfoInternal internalInfo = new WSManProxyInfoInternal
+                {
+                    proxyAccessType = (int)proxyAccessType,
+                    proxyAuthCredentialsStruct = new WSManUserNameAuthenticationCredentials.WSManUserNameCredentialStruct
+                    {
+                        authenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION
+                    }
+                };
 
                 if (authCredentials != null)
                 {
@@ -1774,10 +1809,12 @@ namespace System.Management.Automation.Remoting.Client
 
             internal WSManShellAsync(IntPtr context, WSManShellAsyncCallback callback)
             {
-                _internalData = new WSManShellAsyncInternal();
-                _internalData.operationContext = context;
+                _internalData = new WSManShellAsyncInternal
+                {
+                    operationContext = context,
 
-                _internalData.asyncCallback = callback;
+                    asyncCallback = callback
+                };
                 _data = MarshalledObject.Create<WSManShellAsyncInternal>(_internalData);
             }
 
@@ -1894,8 +1931,10 @@ namespace System.Management.Automation.Remoting.Client
                     connectData = Marshal.PtrToStringUni(resultInternal.data.textData.text, resultInternal.data.textData.textLength);
                 }
 
-                WSManConnectDataResult result = new WSManConnectDataResult();
-                result.data = connectData;
+                WSManConnectDataResult result = new WSManConnectDataResult
+                {
+                    data = connectData
+                };
 
                 return result;
             }
@@ -1962,9 +2001,11 @@ namespace System.Management.Automation.Remoting.Client
                     "ReceiveDataResult can receive only binary data");
 #endif
 
-                WSManReceiveDataResult result = new WSManReceiveDataResult();
-                result.data = dataRecvd;
-                result.stream = result1.streamId;
+                WSManReceiveDataResult result = new WSManReceiveDataResult
+                {
+                    data = dataRecvd,
+                    stream = result1.streamId
+                };
 
                 return result;
             }
@@ -2062,13 +2103,15 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     WSManPluginRequestInternal resultInternal = Marshal.PtrToStructure<WSManPluginRequestInternal>(unmanagedData);
 
-                    result = new WSManPluginRequest();
-                    result.senderDetails = WSManSenderDetails.UnMarshal(resultInternal.senderDetails);
-                    result.locale = resultInternal.locale;
-                    result.resourceUri = resultInternal.resourceUri;
-                    result.operationInfo = WSManOperationInfo.UnMarshal(resultInternal.operationInfo);
-                    result._internalDetails = resultInternal;
-                    result.unmanagedHandle = unmanagedData;
+                    result = new WSManPluginRequest
+                    {
+                        senderDetails = WSManSenderDetails.UnMarshal(resultInternal.senderDetails),
+                        locale = resultInternal.locale,
+                        resourceUri = resultInternal.resourceUri,
+                        operationInfo = WSManOperationInfo.UnMarshal(resultInternal.operationInfo),
+                        _internalDetails = resultInternal,
+                        unmanagedHandle = unmanagedData
+                    };
                 }
 
                 return result;
@@ -2120,12 +2163,14 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     WSManSenderDetailsInternal resultInternal = Marshal.PtrToStructure<WSManSenderDetailsInternal>(unmanagedData);
 
-                    result = new WSManSenderDetails();
-                    result.senderName = resultInternal.senderName;
-                    result.authenticationMechanism = resultInternal.authenticationMechanism;
-                    result.certificateDetails = WSManCertificateDetails.UnMarshal(resultInternal.certificateDetails);
-                    result.clientToken = resultInternal.clientToken; // TODO: UnMarshaling needed here!!!!
-                    result.httpUrl = resultInternal.httpUrl;
+                    result = new WSManSenderDetails
+                    {
+                        senderName = resultInternal.senderName,
+                        authenticationMechanism = resultInternal.authenticationMechanism,
+                        certificateDetails = WSManCertificateDetails.UnMarshal(resultInternal.certificateDetails),
+                        clientToken = resultInternal.clientToken, // TODO: UnMarshaling needed here!!!!
+                        httpUrl = resultInternal.httpUrl
+                    };
                 }
 
                 return result;
@@ -2173,11 +2218,13 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     WSManCertificateDetailsInternal resultInternal = Marshal.PtrToStructure<WSManCertificateDetailsInternal>(unmanagedData);
 
-                    result = new WSManCertificateDetails();
-                    result.subject = resultInternal.subject;
-                    result.issuerName = resultInternal.issuerName;
-                    result.issuerThumbprint = resultInternal.issuerThumbprint;
-                    result.subjectName = resultInternal.subjectName;
+                    result = new WSManCertificateDetails
+                    {
+                        subject = resultInternal.subject,
+                        issuerName = resultInternal.issuerName,
+                        issuerThumbprint = resultInternal.issuerThumbprint,
+                        subjectName = resultInternal.subjectName
+                    };
                 }
 
                 return result;
@@ -2222,11 +2269,13 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     WSManOperationInfoInternal resultInternal = Marshal.PtrToStructure<WSManOperationInfoInternal>(unmanagedData);
 
-                    result = new WSManOperationInfo();
-                    result.fragment = resultInternal.fragment;
-                    result.filter = resultInternal.filter;
-                    result.selectorSet = WSManSelectorSet.UnMarshal(resultInternal.selectorSet);
-                    result.optionSet = WSManOptionSet.UnMarshal(resultInternal.optionSet);
+                    result = new WSManOperationInfo
+                    {
+                        fragment = resultInternal.fragment,
+                        filter = resultInternal.filter,
+                        selectorSet = WSManSelectorSet.UnMarshal(resultInternal.selectorSet),
+                        optionSet = WSManOptionSet.UnMarshal(resultInternal.optionSet)
+                    };
                 }
 
                 return result;
@@ -2298,9 +2347,11 @@ namespace System.Management.Automation.Remoting.Client
                     }
                 }
 
-                WSManSelectorSet result = new WSManSelectorSet();
-                result.numberKeys = resultInternal.numberKeys;
-                result.keys = tempKeys;
+                WSManSelectorSet result = new WSManSelectorSet
+                {
+                    numberKeys = resultInternal.numberKeys,
+                    keys = tempKeys
+                };
 
                 return result;
             }

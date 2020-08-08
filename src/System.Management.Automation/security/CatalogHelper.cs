@@ -745,9 +745,11 @@ namespace System.Management.Automation
             if (!string.IsNullOrEmpty(hashAlgorithm))
             {
                 Dictionary<string, string> fileHashes = CalculateHashesFromPath(catalogFolders, catalogFilePath, hashAlgorithm, excludedPatterns);
-                CatalogInformation catalog = new CatalogInformation();
-                catalog.CatalogItems = catalogHashes;
-                catalog.PathItems = fileHashes;
+                CatalogInformation catalog = new CatalogInformation
+                {
+                    CatalogItems = catalogHashes,
+                    PathItems = fileHashes
+                };
                 bool status = CompareDictionaries(catalogHashes, fileHashes);
                 if (status)
                 {

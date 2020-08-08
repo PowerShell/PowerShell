@@ -153,8 +153,10 @@ namespace System.Management.Automation.Internal
                 int bitLen = ToInt32LE(blob, offset + 12);
 
                 // DWORD public exponent
-                RSAParameters rsap = new RSAParameters();
-                rsap.Exponent = new byte[3];
+                RSAParameters rsap = new RSAParameters
+                {
+                    Exponent = new byte[3]
+                };
                 rsap.Exponent[0] = blob[offset + 18];
                 rsap.Exponent[1] = blob[offset + 17];
                 rsap.Exponent[2] = blob[offset + 16];
@@ -1008,8 +1010,10 @@ namespace System.Management.Automation.Internal
         /// <remarks>To be used only for testing</remarks>
         internal static PSRemotingCryptoHelperServer GetTestRemotingCryptHelperServer()
         {
-            PSRemotingCryptoHelperServer helper = new PSRemotingCryptoHelperServer();
-            helper.Session = new TestHelperSession();
+            PSRemotingCryptoHelperServer helper = new PSRemotingCryptoHelperServer
+            {
+                Session = new TestHelperSession()
+            };
 
             return helper;
         }
@@ -1128,8 +1132,10 @@ namespace System.Management.Automation.Internal
         /// <remarks>To be used only for testing</remarks>
         internal static PSRemotingCryptoHelperClient GetTestRemotingCryptHelperClient()
         {
-            PSRemotingCryptoHelperClient helper = new PSRemotingCryptoHelperClient();
-            helper.Session = new TestHelperSession();
+            PSRemotingCryptoHelperClient helper = new PSRemotingCryptoHelperClient
+            {
+                Session = new TestHelperSession()
+            };
 
             return helper;
         }

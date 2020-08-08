@@ -369,8 +369,10 @@ namespace Microsoft.PowerShell.Commands
                     currentUICulture.ToString(),
                     string.IsNullOrEmpty(this.ProviderInfo.HelpFile) ? string.Empty : this.ProviderInfo.HelpFile);
 
-                XmlReaderSettings settings = new XmlReaderSettings();
-                settings.XmlResolver = null;
+                XmlReaderSettings settings = new XmlReaderSettings
+                {
+                    XmlResolver = null
+                };
                 reader = XmlReader.Create(fullHelpPath, settings);
                 document.Load(reader);
 
@@ -652,15 +654,17 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    NetResource resource = new NetResource();
-                    resource.Comment = null;
-                    resource.DisplayType = RESOURCEDISPLAYTYPE_GENERIC;
-                    resource.LocalName = driveName;
-                    resource.Provider = null;
-                    resource.RemoteName = drive.Root;
-                    resource.Scope = RESOURCE_GLOBALNET;
-                    resource.Type = RESOURCETYPE_ANY;
-                    resource.Usage = RESOURCEUSAGE_CONNECTABLE;
+                    NetResource resource = new NetResource
+                    {
+                        Comment = null,
+                        DisplayType = RESOURCEDISPLAYTYPE_GENERIC,
+                        LocalName = driveName,
+                        Provider = null,
+                        RemoteName = drive.Root,
+                        Scope = RESOURCE_GLOBALNET,
+                        Type = RESOURCETYPE_ANY,
+                        Usage = RESOURCEUSAGE_CONNECTABLE
+                    };
 
                     int code = ERROR_NO_NETWORK;
 
@@ -1296,8 +1300,10 @@ namespace Microsoft.PowerShell.Commands
                                 path = path.Remove(secondColon);
 
                                 retrieveStreams = true;
-                                dynamicParameters = new FileSystemProviderGetItemDynamicParameters();
-                                dynamicParameters.Stream = new string[] { streamName };
+                                dynamicParameters = new FileSystemProviderGetItemDynamicParameters
+                                {
+                                    Stream = new string[] { streamName }
+                                };
                             }
                         }
                     }
@@ -2962,8 +2968,10 @@ namespace Microsoft.PowerShell.Commands
                                 path = path.Remove(secondColon);
 
                                 removeStreams = true;
-                                dynamicParameters = new FileSystemProviderRemoveItemDynamicParameters();
-                                dynamicParameters.Stream = new string[] { streamName };
+                                dynamicParameters = new FileSystemProviderRemoveItemDynamicParameters
+                                {
+                                    Stream = new string[] { streamName }
+                                };
                             }
                         }
                     }
@@ -3250,8 +3258,10 @@ namespace Microsoft.PowerShell.Commands
                         fileSystemInfo.FullName,
                         e.Message);
 
-                ErrorRecord errorRecord = new ErrorRecord(e, "RemoveFileSystemItemUnAuthorizedAccess", ErrorCategory.PermissionDenied, fileSystemInfo);
-                errorRecord.ErrorDetails = errorDetails;
+                ErrorRecord errorRecord = new ErrorRecord(e, "RemoveFileSystemItemUnAuthorizedAccess", ErrorCategory.PermissionDenied, fileSystemInfo)
+                {
+                    ErrorDetails = errorDetails
+                };
 
                 WriteError(errorRecord);
                 return;
@@ -3289,15 +3299,19 @@ namespace Microsoft.PowerShell.Commands
                 if ((fsException is System.Security.SecurityException) ||
                     (fsException is UnauthorizedAccessException))
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(fsException, "RemoveFileSystemItemUnAuthorizedAccess", ErrorCategory.PermissionDenied, fileSystemInfo);
-                    errorRecord.ErrorDetails = errorDetails;
+                    ErrorRecord errorRecord = new ErrorRecord(fsException, "RemoveFileSystemItemUnAuthorizedAccess", ErrorCategory.PermissionDenied, fileSystemInfo)
+                    {
+                        ErrorDetails = errorDetails
+                    };
 
                     WriteError(errorRecord);
                 }
                 else if (fsException is ArgumentException)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(fsException, "RemoveFileSystemItemArgumentError", ErrorCategory.InvalidArgument, fileSystemInfo);
-                    errorRecord.ErrorDetails = errorDetails;
+                    ErrorRecord errorRecord = new ErrorRecord(fsException, "RemoveFileSystemItemArgumentError", ErrorCategory.InvalidArgument, fileSystemInfo)
+                    {
+                        ErrorDetails = errorDetails
+                    };
 
                     WriteError(errorRecord);
                 }
@@ -3305,8 +3319,10 @@ namespace Microsoft.PowerShell.Commands
                     (fsException is FileNotFoundException) ||
                     (fsException is DirectoryNotFoundException))
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(fsException, "RemoveFileSystemItemIOError", ErrorCategory.WriteError, fileSystemInfo);
-                    errorRecord.ErrorDetails = errorDetails;
+                    ErrorRecord errorRecord = new ErrorRecord(fsException, "RemoveFileSystemItemIOError", ErrorCategory.WriteError, fileSystemInfo)
+                    {
+                        ErrorDetails = errorDetails
+                    };
 
                     WriteError(errorRecord);
                 }
@@ -3340,8 +3356,10 @@ namespace Microsoft.PowerShell.Commands
                                     fileSystemInfo.FullName,
                                     attributeException.Message);
 
-                            ErrorRecord errorRecord = new ErrorRecord(attributeException, "RemoveFileSystemItemCannotRestoreAttributes", ErrorCategory.PermissionDenied, fileSystemInfo);
-                            errorRecord.ErrorDetails = attributeDetails;
+                            ErrorRecord errorRecord = new ErrorRecord(attributeException, "RemoveFileSystemItemCannotRestoreAttributes", ErrorCategory.PermissionDenied, fileSystemInfo)
+                            {
+                                ErrorDetails = attributeDetails
+                            };
 
                             WriteError(errorRecord);
                         }
@@ -4346,9 +4364,11 @@ namespace Microsoft.PowerShell.Commands
                                                         ps.Runspace.ConnectionInfo.ComputerName,
                                                         "localhost");
 
-            ProgressRecord progress = new ProgressRecord(0, activity, statusDescription);
-            progress.PercentComplete = 0;
-            progress.RecordType = ProgressRecordType.Processing;
+            ProgressRecord progress = new ProgressRecord(0, activity, statusDescription)
+            {
+                PercentComplete = 0,
+                RecordType = ProgressRecordType.Processing
+            };
             WriteProgress(progress);
             FileStream wStream = null;
             bool errorWhileCopyRemoteFile = false;
@@ -4619,9 +4639,11 @@ namespace Microsoft.PowerShell.Commands
                                                      "localhost",
                                                      ps.Runspace.ConnectionInfo.ComputerName);
 
-            ProgressRecord progress = new ProgressRecord(0, activity, statusDescription);
-            progress.PercentComplete = 0;
-            progress.RecordType = ProgressRecordType.Processing;
+            ProgressRecord progress = new ProgressRecord(0, activity, statusDescription)
+            {
+                PercentComplete = 0,
+                RecordType = ProgressRecordType.Processing
+            };
             WriteProgress(progress);
 
             // 4MB gives the best results without spiking the resources on the remote connection.
@@ -8465,14 +8487,16 @@ namespace Microsoft.PowerShell.Commands
                     {
                         byte[] mountPointBytes = Encoding.Unicode.GetBytes(NonInterpretedPathPrefix + Path.GetFullPath(target));
 
-                        REPARSE_DATA_BUFFER_MOUNTPOINT mountPoint = new REPARSE_DATA_BUFFER_MOUNTPOINT();
-                        mountPoint.ReparseTag = IO_REPARSE_TAG_MOUNT_POINT;
-                        mountPoint.ReparseDataLength = (ushort)(mountPointBytes.Length + 12); // Added space for the header and null endo
-                        mountPoint.SubstituteNameOffset = 0;
-                        mountPoint.SubstituteNameLength = (ushort)mountPointBytes.Length;
-                        mountPoint.PrintNameOffset = (ushort)(mountPointBytes.Length + 2); // 2 as unicode null take 2 bytes.
-                        mountPoint.PrintNameLength = 0;
-                        mountPoint.PathBuffer = new byte[0x3FF0]; // Buffer for max size.
+                        REPARSE_DATA_BUFFER_MOUNTPOINT mountPoint = new REPARSE_DATA_BUFFER_MOUNTPOINT
+                        {
+                            ReparseTag = IO_REPARSE_TAG_MOUNT_POINT,
+                            ReparseDataLength = (ushort)(mountPointBytes.Length + 12), // Added space for the header and null endo
+                            SubstituteNameOffset = 0,
+                            SubstituteNameLength = (ushort)mountPointBytes.Length,
+                            PrintNameOffset = (ushort)(mountPointBytes.Length + 2), // 2 as unicode null take 2 bytes.
+                            PrintNameLength = 0,
+                            PathBuffer = new byte[0x3FF0] // Buffer for max size.
+                        };
                         Array.Copy(mountPointBytes, mountPoint.PathBuffer, mountPointBytes.Length);
 
                         int nativeBufferSize = Marshal.SizeOf(mountPoint);
@@ -8616,9 +8640,11 @@ namespace System.Management.Automation.Internal
                         findStreamData.Name = findStreamData.Name.Replace(dataStream, string.Empty);
                     }
 
-                    AlternateStreamData data = new AlternateStreamData();
-                    data.Stream = findStreamData.Name;
-                    data.Length = findStreamData.Length;
+                    AlternateStreamData data = new AlternateStreamData
+                    {
+                        Stream = findStreamData.Name,
+                        Length = findStreamData.Length
+                    };
                     data.FileName = path.Replace(data.Stream, string.Empty);
                     data.FileName = data.FileName.Trim(Utils.Separators.Colon);
 

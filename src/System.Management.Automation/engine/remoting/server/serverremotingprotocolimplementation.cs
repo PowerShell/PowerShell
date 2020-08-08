@@ -213,14 +213,18 @@ namespace System.Management.Automation.Remoting
                             dse.Message, PSVersionInfo.GitCommitId, RemotingConstants.ProtocolVersion);
                     }
 
-                    RemoteSessionStateMachineEventArgs capabilityArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationReceived);
-                    capabilityArg.RemoteSessionCapability = capability;
+                    RemoteSessionStateMachineEventArgs capabilityArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationReceived)
+                    {
+                        RemoteSessionCapability = capability
+                    };
                     _stateMachine.RaiseEvent(capabilityArg);
 
                     if (NegotiationReceived != null)
                     {
-                        RemoteSessionNegotiationEventArgs negotiationArg = new RemoteSessionNegotiationEventArgs(capability);
-                        negotiationArg.RemoteData = rcvdData;
+                        RemoteSessionNegotiationEventArgs negotiationArg = new RemoteSessionNegotiationEventArgs(capability)
+                        {
+                            RemoteData = rcvdData
+                        };
                         NegotiationReceived.SafeInvoke(this, negotiationArg);
                     }
 

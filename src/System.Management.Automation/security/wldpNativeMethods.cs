@@ -129,9 +129,11 @@ namespace System.Management.Automation.Security
 
             try
             {
-                WLDP_HOST_INFORMATION hostInformation = new WLDP_HOST_INFORMATION();
-                hostInformation.dwRevision = WldpNativeConstants.WLDP_HOST_INFORMATION_REVISION;
-                hostInformation.dwHostId = WLDP_HOST_ID.WLDP_HOST_ID_POWERSHELL;
+                WLDP_HOST_INFORMATION hostInformation = new WLDP_HOST_INFORMATION
+                {
+                    dwRevision = WldpNativeConstants.WLDP_HOST_INFORMATION_REVISION,
+                    dwHostId = WLDP_HOST_ID.WLDP_HOST_ID_POWERSHELL
+                };
 
                 if (!string.IsNullOrEmpty(path))
                 {
@@ -411,9 +413,11 @@ namespace System.Management.Automation.Security
         {
             try
             {
-                WLDP_HOST_INFORMATION hostInformation = new WLDP_HOST_INFORMATION();
-                hostInformation.dwRevision = WldpNativeConstants.WLDP_HOST_INFORMATION_REVISION;
-                hostInformation.dwHostId = WLDP_HOST_ID.WLDP_HOST_ID_POWERSHELL;
+                WLDP_HOST_INFORMATION hostInformation = new WLDP_HOST_INFORMATION
+                {
+                    dwRevision = WldpNativeConstants.WLDP_HOST_INFORMATION_REVISION,
+                    dwHostId = WLDP_HOST_ID.WLDP_HOST_ID_POWERSHELL
+                };
 
                 int pIsApproved = 0;
                 int result = WldpNativeMethods.WldpIsClassInApprovedList(ref clsid, ref hostInformation, ref pIsApproved, 0);

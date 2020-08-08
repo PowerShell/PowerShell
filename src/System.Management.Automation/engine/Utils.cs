@@ -2122,8 +2122,10 @@ namespace System.Management.Automation.Internal
         public static PSSenderInfo GetCustomPSSenderInfo(string url, Version clientVersion)
         {
             var dummyPrincipal = new PSPrincipal(new PSIdentity("none", true, "someuser", null), null);
-            var pssi = new PSSenderInfo(dummyPrincipal, url);
-            pssi.ApplicationArguments = new PSPrimitiveDictionary();
+            var pssi = new PSSenderInfo(dummyPrincipal, url)
+            {
+                ApplicationArguments = new PSPrimitiveDictionary()
+            };
             pssi.ApplicationArguments.Add("PSVersionTable", new PSObject(new PSPrimitiveDictionary()));
             ((PSPrimitiveDictionary)PSObject.Base(pssi.ApplicationArguments["PSVersionTable"])).Add("PSVersion", new PSObject(clientVersion));
             return pssi;

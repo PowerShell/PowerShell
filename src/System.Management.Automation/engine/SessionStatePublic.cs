@@ -75,8 +75,10 @@ namespace System.Management.Automation
             if (ecFromTLS == null)
                 throw new InvalidOperationException("ExecutionContext");
 
-            _sessionState = new SessionStateInternal(ecFromTLS);
-            _sessionState.PublicSessionState = this;
+            _sessionState = new SessionStateInternal(ecFromTLS)
+            {
+                PublicSessionState = this
+            };
         }
 
         #endregion Constructors

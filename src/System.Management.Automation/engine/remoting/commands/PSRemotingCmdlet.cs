@@ -1381,12 +1381,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
-                    connectionInfo.Scheme = scheme;
-                    connectionInfo.ComputerName = ResolvedComputerNames[i];
-                    connectionInfo.Port = Port;
-                    connectionInfo.AppName = ApplicationName;
-                    connectionInfo.ShellUri = ConfigurationName;
+                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo
+                    {
+                        Scheme = scheme,
+                        ComputerName = ResolvedComputerNames[i],
+                        Port = Port,
+                        AppName = ApplicationName,
+                        ShellUri = ConfigurationName
+                    };
                     if (CertificateThumbprint != null)
                     {
                         connectionInfo.CertificateThumbprint = CertificateThumbprint;
@@ -1520,10 +1522,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
-
-                    connectionInfo.ConnectionUri = ConnectionUri[i];
-                    connectionInfo.ShellUri = ConfigurationName;
+                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo
+                    {
+                        ConnectionUri = ConnectionUri[i],
+                        ShellUri = ConfigurationName
+                    };
 
                     if (CertificateThumbprint != null)
                     {
@@ -3441,10 +3444,12 @@ namespace Microsoft.PowerShell.Commands
             }
 
             OperationStateEventArgs operationStateEventArgs =
-                    new OperationStateEventArgs();
-            operationStateEventArgs.OperationState =
-                    OperationState.StopComplete;
-            operationStateEventArgs.BaseEvent = baseEventArgs;
+                    new OperationStateEventArgs
+                    {
+                        OperationState =
+                    OperationState.StopComplete,
+                        BaseEvent = baseEventArgs
+                    };
 
             if (OperationComplete != null)
             {
@@ -3685,10 +3690,12 @@ namespace Microsoft.PowerShell.Commands
             }
 
             OperationStateEventArgs operationStateEventArgs =
-                    new OperationStateEventArgs();
-            operationStateEventArgs.OperationState =
-                    OperationState.StopComplete;
-            operationStateEventArgs.BaseEvent = baseEventArgs;
+                    new OperationStateEventArgs
+                    {
+                        OperationState =
+                    OperationState.StopComplete,
+                        BaseEvent = baseEventArgs
+                    };
             OperationComplete.SafeInvoke(this, operationStateEventArgs);
         }
     }
@@ -3749,8 +3756,10 @@ namespace Microsoft.PowerShell.Commands
             PSCmdlet cmdlet)
         {
             // Construct cmdletprovidercontext
-            CmdletProviderContext cmdContext = new CmdletProviderContext(cmdlet);
-            cmdContext.SuppressWildcardExpansion = isLiteralPath;
+            CmdletProviderContext cmdContext = new CmdletProviderContext(cmdlet)
+            {
+                SuppressWildcardExpansion = isLiteralPath
+            };
 
             Collection<PathInfo> results = new Collection<PathInfo>();
 

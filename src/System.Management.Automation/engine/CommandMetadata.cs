@@ -1140,9 +1140,10 @@ end
                          supportsPaging: false,
                    supportsTransactions: false,
                       positionalBinding: true,
-                             parameters: parametersDictionary);
-
-            metadata.HelpUri = helpUri;
+                             parameters: parametersDictionary)
+            {
+                HelpUri = helpUri
+            };
 
             return metadata;
         }

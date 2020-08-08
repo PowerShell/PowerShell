@@ -841,8 +841,10 @@ namespace Microsoft.PowerShell.Commands
                         {
                             currentPath = rp;
 
-                            CmdletProviderContext context = new CmdletProviderContext(this.Context);
-                            context.SuppressWildcardExpansion = true;
+                            CmdletProviderContext context = new CmdletProviderContext(this.Context)
+                            {
+                                SuppressWildcardExpansion = true
+                            };
 
                             if (!InvokeProvider.Item.Exists(rp, false, _isLiteralPath))
                             {
@@ -1297,8 +1299,10 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Enable the privilege.
-                NativeMethods.TOKEN_PRIVILEGE newState = new NativeMethods.TOKEN_PRIVILEGE();
-                newState.PrivilegeCount = 1;
+                NativeMethods.TOKEN_PRIVILEGE newState = new NativeMethods.TOKEN_PRIVILEGE
+                {
+                    PrivilegeCount = 1
+                };
                 newState.Privilege.Attributes = NativeMethods.SE_PRIVILEGE_ENABLED;
                 newState.Privilege.Luid = luid;
                 uint previousSize = 0;

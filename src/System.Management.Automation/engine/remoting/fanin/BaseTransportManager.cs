@@ -701,10 +701,12 @@ namespace System.Management.Automation.Remoting.Client
             {
                 if ((remoteObject != null) || (transportErrorArgs != null) || (privateData != null))
                 {
-                    CallbackNotificationInformation rcvdDataInfo = new CallbackNotificationInformation();
-                    rcvdDataInfo.remoteObject = remoteObject;
-                    rcvdDataInfo.transportError = transportErrorArgs;
-                    rcvdDataInfo.privateData = privateData;
+                    CallbackNotificationInformation rcvdDataInfo = new CallbackNotificationInformation
+                    {
+                        remoteObject = remoteObject,
+                        transportError = transportErrorArgs,
+                        privateData = privateData
+                    };
 
                     if (remoteObject != null && (remoteObject.DataType == RemotingDataType.PublicKey ||
                                                  remoteObject.DataType == RemotingDataType.EncryptedSessionKey ||
@@ -1385,8 +1387,10 @@ namespace System.Management.Automation.Remoting.Server
             string errorMessage = string.Format(CultureInfo.InvariantCulture,
                 messageResource, new object[] { errorCode, methodName });
 
-            PSRemotingTransportException e = new PSRemotingTransportException(errorMessage);
-            e.ErrorCode = errorCode;
+            PSRemotingTransportException e = new PSRemotingTransportException(errorMessage)
+            {
+                ErrorCode = errorCode
+            };
 
             // Use thread-pool thread to raise the error handler..see explanation
             // in the method summary
@@ -1516,14 +1520,16 @@ namespace System.Management.Automation.Remoting.Server
 
             // the inboundShellInformation is in Xml format as per the SOAP WSMan spec.
             // Retrieve the string (Base64 encoded) we are interested in.
-            XmlReaderSettings readerSettings = new XmlReaderSettings();
-            readerSettings.CheckCharacters = false;
-            readerSettings.IgnoreComments = true;
-            readerSettings.IgnoreProcessingInstructions = true;
-            readerSettings.XmlResolver = null;
-            readerSettings.ConformanceLevel = ConformanceLevel.Fragment;
-            readerSettings.MaxCharactersFromEntities = 1024;
-            readerSettings.DtdProcessing = System.Xml.DtdProcessing.Prohibit;
+            XmlReaderSettings readerSettings = new XmlReaderSettings
+            {
+                CheckCharacters = false,
+                IgnoreComments = true,
+                IgnoreProcessingInstructions = true,
+                XmlResolver = null,
+                ConformanceLevel = ConformanceLevel.Fragment,
+                MaxCharactersFromEntities = 1024,
+                DtdProcessing = System.Xml.DtdProcessing.Prohibit
+            };
             XmlReader reader = XmlReader.Create(new StringReader(xmlBuffer), readerSettings);
 
             string additionalData;

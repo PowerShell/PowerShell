@@ -52,11 +52,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 _listBody = (ListControlBody)this.dataBaseInfo.view.mainControl.Copy();
                 // build up the definition for computer name.
-                ListControlItemDefinition cnListItemDefinition = new ListControlItemDefinition();
-                cnListItemDefinition.label = new TextToken();
-                cnListItemDefinition.label.text = RemotingConstants.ComputerNameNoteProperty;
-                FieldPropertyToken fpt = new FieldPropertyToken();
-                fpt.expression = new ExpressionToken(RemotingConstants.ComputerNameNoteProperty, false);
+                ListControlItemDefinition cnListItemDefinition = new ListControlItemDefinition
+                {
+                    label = new TextToken
+                    {
+                        text = RemotingConstants.ComputerNameNoteProperty
+                    }
+                };
+                FieldPropertyToken fpt = new FieldPropertyToken
+                {
+                    expression = new ExpressionToken(RemotingConstants.ComputerNameNoteProperty, false)
+                };
                 cnListItemDefinition.formatTokenList.Add(fpt);
 
                 _listBody.defaultEntryDefinition.itemDefinitionList.Add(cnListItemDefinition);

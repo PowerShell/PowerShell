@@ -106,8 +106,10 @@ namespace Microsoft.PowerShell.Commands
                 displayName,
                 (innerException == null) ? string.Empty : innerException.Message);
 
-            var exception = new ServiceCommandException(message, innerException);
-            exception.ServiceName = serviceName;
+            var exception = new ServiceCommandException(message, innerException)
+            {
+                ServiceName = serviceName
+            };
 
             WriteError(new ErrorRecord(exception, errorId, category, targetObject));
         }
@@ -1817,8 +1819,10 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    NativeMethods.SERVICE_DESCRIPTIONW sd = new NativeMethods.SERVICE_DESCRIPTIONW();
-                    sd.lpDescription = Description;
+                    NativeMethods.SERVICE_DESCRIPTIONW sd = new NativeMethods.SERVICE_DESCRIPTIONW
+                    {
+                        lpDescription = Description
+                    };
                     int size = Marshal.SizeOf(sd);
                     IntPtr buffer = Marshal.AllocCoTaskMem(size);
                     Marshal.StructureToPtr(sd, buffer, false);
@@ -1841,8 +1845,10 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // Set the delayed auto start
-                    NativeMethods.SERVICE_DELAYED_AUTO_START_INFO ds = new NativeMethods.SERVICE_DELAYED_AUTO_START_INFO();
-                    ds.fDelayedAutostart = StartupType == ServiceStartupType.AutomaticDelayedStart;
+                    NativeMethods.SERVICE_DELAYED_AUTO_START_INFO ds = new NativeMethods.SERVICE_DELAYED_AUTO_START_INFO
+                    {
+                        fDelayedAutostart = StartupType == ServiceStartupType.AutomaticDelayedStart
+                    };
                     size = Marshal.SizeOf(ds);
                     delayedAutoStartInfoBuffer = Marshal.AllocCoTaskMem(size);
                     Marshal.StructureToPtr(ds, delayedAutoStartInfoBuffer, false);
@@ -2227,8 +2233,10 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Set the service description
-                NativeMethods.SERVICE_DESCRIPTIONW sd = new NativeMethods.SERVICE_DESCRIPTIONW();
-                sd.lpDescription = Description;
+                NativeMethods.SERVICE_DESCRIPTIONW sd = new NativeMethods.SERVICE_DESCRIPTIONW
+                {
+                    lpDescription = Description
+                };
                 int size = Marshal.SizeOf(sd);
                 IntPtr buffer = Marshal.AllocCoTaskMem(size);
                 Marshal.StructureToPtr(sd, buffer, false);
@@ -2255,8 +2263,10 @@ namespace Microsoft.PowerShell.Commands
                 // Set the delayed auto start
                 if (StartupType == ServiceStartupType.AutomaticDelayedStart)
                 {
-                    NativeMethods.SERVICE_DELAYED_AUTO_START_INFO ds = new NativeMethods.SERVICE_DELAYED_AUTO_START_INFO();
-                    ds.fDelayedAutostart = true;
+                    NativeMethods.SERVICE_DELAYED_AUTO_START_INFO ds = new NativeMethods.SERVICE_DELAYED_AUTO_START_INFO
+                    {
+                        fDelayedAutostart = true
+                    };
                     size = Marshal.SizeOf(ds);
                     delayedAutoStartInfoBuffer = Marshal.AllocCoTaskMem(size);
                     Marshal.StructureToPtr(ds, delayedAutoStartInfoBuffer, false);

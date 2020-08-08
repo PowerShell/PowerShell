@@ -167,9 +167,11 @@ namespace System.Management.Automation
             _applicationInfo = applicationInfo;
             this._context = context;
 
-            this.Command = new NativeCommand();
-            this.Command.CommandInfo = applicationInfo;
-            this.Command.Context = context;
+            this.Command = new NativeCommand
+            {
+                CommandInfo = applicationInfo,
+                Context = context
+            };
             this.Command.commandRuntime = this.commandRuntime = new MshCommandRuntime(context, applicationInfo, this.Command);
 
             this.CommandScope = context.EngineSessionState.CurrentScope;
@@ -1101,8 +1103,10 @@ namespace System.Management.Automation
         /// <returns></returns>
         private ProcessStartInfo GetProcessStartInfo(bool redirectOutput, bool redirectError, bool redirectInput, bool soloCommand)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = this.Path;
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = this.Path
+            };
 
             if (IsExecutable(this.Path))
             {
@@ -1815,8 +1819,10 @@ namespace System.Management.Automation
             Encoding pipeEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as System.Text.Encoding ??
                                     Utils.utf8NoBom;
 
-            _streamWriter = new StreamWriter(process.StandardInput.BaseStream, pipeEncoding);
-            _streamWriter.AutoFlush = true;
+            _streamWriter = new StreamWriter(process.StandardInput.BaseStream, pipeEncoding)
+            {
+                AutoFlush = true
+            };
 
             _inputFormat = inputFormat;
 

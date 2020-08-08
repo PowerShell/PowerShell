@@ -3123,8 +3123,10 @@ namespace System.Management.Automation.Language
                         {
                             foreach (var parm in pList.Parameters)
                             {
-                                var keywordProp = new DynamicKeywordProperty();
-                                keywordProp.Name = parm.Name.VariablePath.UserPath;
+                                var keywordProp = new DynamicKeywordProperty
+                                {
+                                    Name = parm.Name.VariablePath.UserPath
+                                };
                                 if (parm.Attributes != null)
                                 {
                                     foreach (var attr in parm.Attributes)
@@ -7350,8 +7352,10 @@ namespace System.Management.Automation.Language
                 endExtent = rCurly.Extent;
             }
 
-            var hashAst = new HashtableAst(ExtentOf(atCurlyToken, endExtent), keyValuePairs);
-            hashAst.IsSchemaElement = parsingSchemaElement;
+            var hashAst = new HashtableAst(ExtentOf(atCurlyToken, endExtent), keyValuePairs)
+            {
+                IsSchemaElement = parsingSchemaElement
+            };
             return hashAst;
         }
 

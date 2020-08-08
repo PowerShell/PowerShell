@@ -860,13 +860,15 @@ namespace System.Management.Automation
             /// <returns>A managed common stat class instance.</returns>
             private static CommonStat CopyStatStruct(NativeMethods.CommonStatStruct css)
             {
-                CommonStat cs = new CommonStat();
-                cs.Inode = css.Inode;
-                cs.Mode = css.Mode;
-                cs.UserId = css.UserId;
-                cs.GroupId = css.GroupId;
-                cs.HardlinkCount = css.HardlinkCount;
-                cs.Size = css.Size;
+                CommonStat cs = new CommonStat
+                {
+                    Inode = css.Inode,
+                    Mode = css.Mode,
+                    UserId = css.UserId,
+                    GroupId = css.GroupId,
+                    HardlinkCount = css.HardlinkCount,
+                    Size = css.Size
+                };
 
                 // These can sometime throw if we get too large a number back (seen on Raspbian).
                 // As a fallback, set the time to UnixEpoch.

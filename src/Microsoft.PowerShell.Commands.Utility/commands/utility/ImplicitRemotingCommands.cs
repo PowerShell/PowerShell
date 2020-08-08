@@ -553,8 +553,10 @@ namespace Microsoft.PowerShell.Commands
                 new ArgumentException(details.Message),
                 errorId,
                 ErrorCategory.InvalidResult,
-                null);
-            errorRecord.ErrorDetails = details;
+                null)
+            {
+                ErrorDetails = details
+            };
 
             return errorRecord;
         }
@@ -574,8 +576,10 @@ namespace Microsoft.PowerShell.Commands
                 new ArgumentException(details.Message),
                 errorId,
                 ErrorCategory.InvalidResult,
-                null);
-            errorRecord.ErrorDetails = details;
+                null)
+            {
+                ErrorDetails = details
+            };
 
             return errorRecord;
         }
@@ -595,8 +599,10 @@ namespace Microsoft.PowerShell.Commands
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.InvalidData,
-                null);
-            errorRecord.ErrorDetails = details;
+                null)
+            {
+                ErrorDetails = details
+            };
 
             return errorRecord;
         }
@@ -616,8 +622,10 @@ namespace Microsoft.PowerShell.Commands
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.ResourceExists,
-                null);
-            errorRecord.ErrorDetails = details;
+                null)
+            {
+                ErrorDetails = details
+            };
 
             return errorRecord;
         }
@@ -637,8 +645,10 @@ namespace Microsoft.PowerShell.Commands
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.ResourceExists,
-                null);
-            errorRecord.ErrorDetails = details;
+                null)
+            {
+                ErrorDetails = details
+            };
 
             return errorRecord;
         }
@@ -658,8 +668,10 @@ namespace Microsoft.PowerShell.Commands
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.InvalidData,
-                null);
-            errorRecord.ErrorDetails = details;
+                null)
+            {
+                ErrorDetails = details
+            };
 
             return errorRecord;
         }
@@ -690,8 +702,10 @@ namespace Microsoft.PowerShell.Commands
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.InvalidData,
-                null);
-            errorRecord.ErrorDetails = details;
+                null)
+            {
+                ErrorDetails = details
+            };
 
             return errorRecord;
         }
@@ -727,8 +741,10 @@ namespace Microsoft.PowerShell.Commands
                         new RuntimeException(errorDetails.Message, runtimeException),
                         errorId,
                         ErrorCategory.ObjectNotFound,
-                        null);
-                    errorRecord.ErrorDetails = errorDetails;
+                        null)
+                    {
+                        ErrorDetails = errorDetails
+                    };
 
                     return errorRecord;
                 }
@@ -744,8 +760,10 @@ namespace Microsoft.PowerShell.Commands
                 new RuntimeException(errorDetails.Message, runtimeException),
                 errorId,
                 ErrorCategory.InvalidResult,
-                null);
-            errorRecord.ErrorDetails = errorDetails;
+                null)
+            {
+                ErrorDetails = errorDetails
+            };
 
             return errorRecord;
         }
@@ -765,8 +783,10 @@ namespace Microsoft.PowerShell.Commands
                 new ArgumentException(details.Message),
                 errorId,
                 ErrorCategory.OperationTimeout,
-                null);
-            errorRecord.ErrorDetails = details;
+                null)
+            {
+                ErrorDetails = details
+            };
 
             return errorRecord;
         }
@@ -786,8 +806,10 @@ namespace Microsoft.PowerShell.Commands
                 new ArgumentException(details.Message),
                 errorId,
                 ErrorCategory.InvalidResult,
-                null);
-            errorRecord.ErrorDetails = details;
+                null)
+            {
+                ErrorDetails = details
+            };
 
             return errorRecord;
         }
@@ -2991,11 +3013,13 @@ function Get-PSImplicitRemotingClientSideParameters
                 throw PSTraceSource.NewArgumentNullException(nameof(listOfFormatData));
             }
 
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.CloseOutput = false;
-            settings.ConformanceLevel = ConformanceLevel.Document;
-            settings.Encoding = writer.Encoding;
-            settings.Indent = true;
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                CloseOutput = false,
+                ConformanceLevel = ConformanceLevel.Document,
+                Encoding = writer.Encoding,
+                Indent = true
+            };
             using (XmlWriter xmlWriter = XmlWriter.Create(writer, settings))
             {
                 FormatXmlWriter.WriteToXml(xmlWriter, listOfFormatData, false);

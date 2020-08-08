@@ -911,9 +911,11 @@ namespace System.Management.Automation.Help
 
             using (FileStream file = new FileStream(destHelpInfo, FileMode.Create, FileAccess.Write))
             {
-                XmlWriterSettings settings = new XmlWriterSettings();
-                settings.Encoding = Encoding.UTF8;
-                settings.Indent = true; // Default indentation is two spaces
+                XmlWriterSettings settings = new XmlWriterSettings
+                {
+                    Encoding = Encoding.UTF8,
+                    Indent = true // Default indentation is two spaces
+                };
                 using (XmlWriter writer = XmlWriter.Create(file, settings))
                 {
                     writer.WriteStartDocument();

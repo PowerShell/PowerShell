@@ -362,8 +362,10 @@ namespace Microsoft.PowerShell.Commands
                 processId,
                 (innerException == null) ? string.Empty : innerException.Message);
             ProcessCommandException exception =
-                new ProcessCommandException(message, innerException);
-            exception.ProcessName = processName;
+                new ProcessCommandException(message, innerException)
+                {
+                    ProcessName = processName
+                };
 
             WriteError(new ErrorRecord(
                 exception, errorId, category, targetObject));
@@ -1848,9 +1850,11 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            // Use ShellExecute by default if we are running on full windows SKUs
-            startInfo.UseShellExecute = Platform.IsWindowsDesktop;
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                // Use ShellExecute by default if we are running on full windows SKUs
+                UseShellExecute = Platform.IsWindowsDesktop
+            };
 
             // Path = Mandatory parameter -> Will not be empty.
             try

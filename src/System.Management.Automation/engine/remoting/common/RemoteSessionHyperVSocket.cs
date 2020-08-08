@@ -246,8 +246,10 @@ namespace System.Management.Automation.Remoting
 
                 // Create reader/writer streams.
                 TextReader = new StreamReader(Stream);
-                TextWriter = new StreamWriter(Stream);
-                TextWriter.AutoFlush = true;
+                TextWriter = new StreamWriter(Stream)
+                {
+                    AutoFlush = true
+                };
 
                 //
                 // listenSocket is not closed when it goes out of scope here. Sometimes it is
@@ -608,8 +610,10 @@ namespace System.Management.Automation.Remoting
                 }
 
                 TextReader = new StreamReader(Stream);
-                TextWriter = new StreamWriter(Stream);
-                TextWriter.AutoFlush = true;
+                TextWriter = new StreamWriter(Stream)
+                {
+                    AutoFlush = true
+                };
 
                 result = true;
             }

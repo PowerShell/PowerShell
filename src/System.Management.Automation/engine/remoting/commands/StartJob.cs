@@ -654,11 +654,13 @@ namespace Microsoft.PowerShell.Commands
                             Context.LanguageMode));
             }
 
-            NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(this.Credential);
-            connectionInfo.InitializationScript = _initScript;
-            connectionInfo.AuthenticationMechanism = this.Authentication;
-            connectionInfo.PSVersion = this.PSVersion;
-            connectionInfo.WorkingDirectory = this.WorkingDirectory;
+            NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(this.Credential)
+            {
+                InitializationScript = _initScript,
+                AuthenticationMechanism = this.Authentication,
+                PSVersion = this.PSVersion,
+                WorkingDirectory = this.WorkingDirectory
+            };
 
             RemoteRunspace remoteRunspace = (RemoteRunspace)RunspaceFactory.CreateRunspace(connectionInfo, this.Host,
                         Utils.GetTypeTableFromExecutionContextTLS());
@@ -757,9 +759,10 @@ namespace Microsoft.PowerShell.Commands
                 _firstProcessRecord = false;
 
                 PSRemotingJob job = new PSRemotingJob(ResolvedComputerNames, Operations,
-                        ScriptBlock.ToString(), ThrottleLimit, _name);
-
-                job.PSJobTypeName = s_startJobType;
+                        ScriptBlock.ToString(), ThrottleLimit, _name)
+                {
+                    PSJobTypeName = s_startJobType
+                };
 
                 this.JobRepository.Add(job);
                 WriteObject(job);

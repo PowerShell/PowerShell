@@ -465,15 +465,19 @@ namespace Microsoft.PowerShell.Commands
 
             private void SendStartComplete()
             {
-                OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs();
-                operationStateEventArgs.OperationState = OperationState.StartComplete;
+                OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs
+                {
+                    OperationState = OperationState.StartComplete
+                };
                 OperationComplete.SafeInvoke(this, operationStateEventArgs);
             }
 
             private void SendStopComplete()
             {
-                OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs();
-                operationStateEventArgs.OperationState = OperationState.StopComplete;
+                OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs
+                {
+                    OperationState = OperationState.StopComplete
+                };
                 OperationComplete.SafeInvoke(this, operationStateEventArgs);
             }
 

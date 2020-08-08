@@ -433,12 +433,14 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (string computerName in ComputerName)
                 {
-                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
-                    connectionInfo.Scheme = scheme;
-                    connectionInfo.ComputerName = ResolveComputerName(computerName);
-                    connectionInfo.AppName = ApplicationName;
-                    connectionInfo.ShellUri = ConfigurationName;
-                    connectionInfo.Port = Port;
+                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo
+                    {
+                        Scheme = scheme,
+                        ComputerName = ResolveComputerName(computerName),
+                        AppName = ApplicationName,
+                        ShellUri = ConfigurationName,
+                        Port = Port
+                    };
                     if (CertificateThumbprint != null)
                     {
                         connectionInfo.CertificateThumbprint = CertificateThumbprint;
@@ -459,9 +461,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (var connectionUri in ConnectionUri)
                 {
-                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
-                    connectionInfo.ConnectionUri = connectionUri;
-                    connectionInfo.ShellUri = ConfigurationName;
+                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo
+                    {
+                        ConnectionUri = connectionUri,
+                        ShellUri = ConfigurationName
+                    };
                     if (CertificateThumbprint != null)
                     {
                         connectionInfo.CertificateThumbprint = CertificateThumbprint;

@@ -253,17 +253,18 @@ namespace Microsoft.WSMan.Management
             }
 
             // Creating the Session Object
-            SessionOption objSessionOption = new SessionOption();
-
-            objSessionOption.SPNPort = spnport;
-            objSessionOption.UseUtf16 = useutf16;
-            objSessionOption.SkipCNCheck = skipcncheck;
-            objSessionOption.SkipCACheck = skipcacheck;
-            objSessionOption.OperationTimeout = operationtimeout;
-            objSessionOption.SkipRevocationCheck = skiprevocationcheck;
-            // Proxy Settings
-            objSessionOption.ProxyAccessType = _proxyaccesstype;
-            objSessionOption.ProxyAuthentication = proxyauthentication;
+            SessionOption objSessionOption = new SessionOption
+            {
+                SPNPort = spnport,
+                UseUtf16 = useutf16,
+                SkipCNCheck = skipcncheck,
+                SkipCACheck = skipcacheck,
+                OperationTimeout = operationtimeout,
+                SkipRevocationCheck = skiprevocationcheck,
+                // Proxy Settings
+                ProxyAccessType = _proxyaccesstype,
+                ProxyAuthentication = proxyauthentication
+            };
 
             if (noencryption)
             {

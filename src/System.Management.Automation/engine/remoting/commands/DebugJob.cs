@@ -250,8 +250,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void WaitAndReceiveJobOutput()
         {
-            _debugCollection = new PSDataCollection<PSStreamObject>();
-            _debugCollection.BlockingEnumerator = true;
+            _debugCollection = new PSDataCollection<PSStreamObject>
+            {
+                BlockingEnumerator = true
+            };
 
             try
             {

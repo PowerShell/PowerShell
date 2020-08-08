@@ -751,10 +751,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 if (lastProgressRecord.RecordType != ProgressRecordType.Completed)
                 {
-                    var newProgressRecord = new ProgressRecord(lastProgressRecord.ActivityId, lastProgressRecord.Activity, lastProgressRecord.StatusDescription);
-                    newProgressRecord.RecordType = ProgressRecordType.Completed;
-                    newProgressRecord.PercentComplete = 100;
-                    newProgressRecord.SecondsRemaining = 0;
+                    var newProgressRecord = new ProgressRecord(lastProgressRecord.ActivityId, lastProgressRecord.Activity, lastProgressRecord.StatusDescription)
+                    {
+                        RecordType = ProgressRecordType.Completed,
+                        PercentComplete = 100,
+                        SecondsRemaining = 0
+                    };
                     this.WriteProgress(newProgressRecord);
                 }
             }

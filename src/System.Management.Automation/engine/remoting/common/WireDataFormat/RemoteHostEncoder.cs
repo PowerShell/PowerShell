@@ -297,13 +297,15 @@ namespace System.Management.Automation.Remoting
             // Upcasts derived types back to FieldDescription type and throws away attributes.
 
             // Create a new field description object.
-            FieldDescription fieldDescription2 = new FieldDescription(fieldDescription1.Name);
+            FieldDescription fieldDescription2 = new FieldDescription(fieldDescription1.Name)
+            {
 
-            // Copy the fields not initialized during construction.
-            fieldDescription2.Label = fieldDescription1.Label;
-            fieldDescription2.HelpMessage = fieldDescription1.HelpMessage;
-            fieldDescription2.IsMandatory = fieldDescription1.IsMandatory;
-            fieldDescription2.DefaultValue = fieldDescription1.DefaultValue;
+                // Copy the fields not initialized during construction.
+                Label = fieldDescription1.Label,
+                HelpMessage = fieldDescription1.HelpMessage,
+                IsMandatory = fieldDescription1.IsMandatory,
+                DefaultValue = fieldDescription1.DefaultValue
+            };
 
             // Set the type related fields.
             fieldDescription2.SetParameterTypeName(fieldDescription1.ParameterTypeName);

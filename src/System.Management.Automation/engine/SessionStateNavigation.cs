@@ -1343,9 +1343,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             MoveItem(paths, destination, context);
 

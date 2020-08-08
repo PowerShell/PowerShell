@@ -63,9 +63,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             bool result = ItemExists(path, context);
 
@@ -792,9 +794,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             RemoveItem(paths, recurse, context);
 
@@ -1243,9 +1247,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             foreach (string path in paths)
             {
@@ -2232,9 +2238,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             foreach (string path in paths)
             {
@@ -2982,8 +2990,10 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force
+            };
 
             RenameItem(path, newName, context);
 
@@ -3348,8 +3358,10 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force
+            };
 
             NewItem(paths, name, type, content, context);
 
@@ -3817,9 +3829,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             bool result = HasChildItems(path, context);
 
@@ -4100,9 +4114,11 @@ namespace System.Management.Automation
                 copyPath = string.Empty;
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             CopyItem(paths, copyPath, recurse, copyContainers, context);
 

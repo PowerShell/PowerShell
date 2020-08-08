@@ -278,8 +278,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private void WriteNewLineObject()
         {
-            FormatEntryData fed = new FormatEntryData();
-            fed.outOfBand = true;
+            FormatEntryData fed = new FormatEntryData
+            {
+                outOfBand = true
+            };
 
             ComplexViewEntry cve = new ComplexViewEntry();
             FormatEntry fe = new FormatEntry();
@@ -367,8 +369,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         protected void WriteInternalErrorMessage(string message)
         {
-            FormatEntryData fed = new FormatEntryData();
-            fed.outOfBand = true;
+            FormatEntryData fed = new FormatEntryData
+            {
+                outOfBand = true
+            };
 
             ComplexViewEntry cve = new ComplexViewEntry();
             FormatEntry fe = new FormatEntry();
@@ -377,8 +381,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             fe.formatValueList.Add(new FormatNewLine());
 
             // get a field for the message
-            FormatTextField ftf = new FormatTextField();
-            ftf.text = message;
+            FormatTextField ftf = new FormatTextField
+            {
+                text = message
+            };
             fe.formatValueList.Add(ftf);
 
             fe.formatValueList.Add(new FormatNewLine());
@@ -701,9 +707,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 new InvalidDataException(),
                 "FormatCannotSpecifyViewAndProperty",
                 ErrorCategory.InvalidArgument,
-                null);
-
-            errorRecord.ErrorDetails = new ErrorDetails(msg);
+                null)
+            {
+                ErrorDetails = new ErrorDetails(msg)
+            };
             this.ThrowTerminatingError(errorRecord);
         }
     }

@@ -733,8 +733,10 @@ namespace System.Management.Automation
             Collection<string> formats = ReadMultiStringValue(mshsnapinKey, RegistryStrings.MshSnapin_BuiltInFormats, false);
 
             s_mshsnapinTracer.WriteLine("Successfully read registry values for mshsnapin {0}. Constructing PSSnapInInfo object.", mshsnapinId);
-            PSSnapInInfo mshSnapinInfo = new PSSnapInInfo(mshsnapinId, false, applicationBase, assemblyName, moduleName, monadVersion, version, types, formats, description, vendor);
-            mshSnapinInfo.LogPipelineExecutionDetails = logPipelineExecutionDetails;
+            PSSnapInInfo mshSnapinInfo = new PSSnapInInfo(mshsnapinId, false, applicationBase, assemblyName, moduleName, monadVersion, version, types, formats, description, vendor)
+            {
+                LogPipelineExecutionDetails = logPipelineExecutionDetails
+            };
 
             return mshSnapinInfo;
         }

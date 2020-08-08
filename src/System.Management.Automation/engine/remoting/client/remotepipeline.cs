@@ -79,8 +79,10 @@ namespace System.Management.Automation
             _runspaceId = _runspace.InstanceId;
 
             // Initialize streams
-            _inputCollection = new PSDataCollection<object>();
-            _inputCollection.ReleaseOnEnumeration = true;
+            _inputCollection = new PSDataCollection<object>
+            {
+                ReleaseOnEnumeration = true
+            };
 
             _inputStream = new PSDataCollectionStream<object>(Guid.Empty, _inputCollection);
             _outputCollection = new PSDataCollection<PSObject>();
@@ -886,9 +888,11 @@ namespace System.Management.Automation
 
             ((RemoteRunspace)_runspace).DoConcurrentCheckAndAddToRunningPipelines(this, syncCall);
 
-            PSInvocationSettings settings = new PSInvocationSettings();
-            settings.AddToHistory = _addToHistory;
-            settings.InvokeAndDisconnect = invokeAndDisconnect;
+            PSInvocationSettings settings = new PSInvocationSettings
+            {
+                AddToHistory = _addToHistory,
+                InvokeAndDisconnect = invokeAndDisconnect
+            };
 
             _powershell.InitForRemotePipeline(_commands, _inputStream, _outputStream, _errorStream, settings, RedirectShellErrorOutputPipe);
 
@@ -923,8 +927,10 @@ namespace System.Management.Automation
             // Initialize the PowerShell object if it hasn't been initialized before.
             if ((_powershell.RemotePowerShell) == null || !_powershell.RemotePowerShell.Initialized)
             {
-                PSInvocationSettings settings = new PSInvocationSettings();
-                settings.AddToHistory = _addToHistory;
+                PSInvocationSettings settings = new PSInvocationSettings
+                {
+                    AddToHistory = _addToHistory
+                };
 
                 _powershell.InitForRemotePipelineConnect(_inputStream, _outputStream, _errorStream, settings, RedirectShellErrorOutputPipe);
 

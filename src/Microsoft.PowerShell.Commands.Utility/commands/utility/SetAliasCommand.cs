@@ -28,9 +28,10 @@ namespace Microsoft.PowerShell.Commands
                     Name,
                     Value,
                     Context,
-                    Option);
-
-            aliasToSet.Description = Description;
+                    Option)
+                {
+                    Description = Description
+                };
 
             string action = AliasCommandStrings.SetAliasAction;
 

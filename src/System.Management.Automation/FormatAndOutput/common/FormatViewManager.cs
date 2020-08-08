@@ -351,9 +351,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                             new PipelineStoppedException(),
                                             "FormatViewNotFound",
                                             ErrorCategory.ObjectNotFound,
-                                            viewName);
-
-            errorRecord.ErrorDetails = new ErrorDetails(msg);
+                                            viewName)
+            {
+                ErrorDetails = new ErrorDetails(msg)
+            };
             errorContext.ThrowTerminatingError(errorRecord);
         }
 
@@ -538,11 +539,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal static FormatEntryData GenerateOutOfBandObjectAsToString(PSObject so)
         {
-            FormatEntryData fed = new FormatEntryData();
-            fed.outOfBand = true;
+            FormatEntryData fed = new FormatEntryData
+            {
+                outOfBand = true
+            };
 
-            RawTextFormatEntry rawTextEntry = new RawTextFormatEntry();
-            rawTextEntry.text = so.ToString();
+            RawTextFormatEntry rawTextEntry = new RawTextFormatEntry
+            {
+                text = so.ToString()
+            };
             fed.formatEntryInfo = rawTextEntry;
 
             return fed;
@@ -573,9 +578,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (!_formatErrorPolicy.ShowErrorsAsMessages)
                 return;
-            PSPropertyExpressionError error = new PSPropertyExpressionError();
-            error.result = result;
-            error.sourceObject = sourceObject;
+            PSPropertyExpressionError error = new PSPropertyExpressionError
+            {
+                result = result,
+                sourceObject = sourceObject
+            };
             _formattingErrorList.Add(error);
         }
 

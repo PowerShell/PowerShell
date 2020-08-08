@@ -153,8 +153,10 @@ namespace Microsoft.PowerShell.Commands
 
                         foreach (var message in errorMessages)
                         {
-                            ErrorRecord errorRecord = new ErrorRecord(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
-                            errorRecord.ErrorDetails = new ErrorDetails(message.ToString());
+                            ErrorRecord errorRecord = new ErrorRecord(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null)
+                            {
+                                ErrorDetails = new ErrorDetails(message.ToString())
+                            };
                             WriteError(errorRecord);
                         }
                     }

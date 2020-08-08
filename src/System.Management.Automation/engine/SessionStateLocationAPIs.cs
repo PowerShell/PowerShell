@@ -101,8 +101,10 @@ namespace System.Management.Automation
                 throw e;
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Drive = drive;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Drive = drive
+            };
 
             // Now make the namespace specific path
             string path = null;
@@ -474,8 +476,10 @@ namespace System.Management.Automation
                 bool isContainer = false;
 
                 CmdletProviderContext itemContainerContext =
-                    new CmdletProviderContext(context);
-                itemContainerContext.SuppressWildcardExpansion = true;
+                    new CmdletProviderContext(context)
+                    {
+                        SuppressWildcardExpansion = true
+                    };
 
                 try
                 {

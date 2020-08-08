@@ -555,8 +555,10 @@ function __cmdletization_BindCommonParameters
                 parameterName = objectModelParameterName;
             }
 
-            ParameterMetadata parameterMetadata = new ParameterMetadata(parameterName);
-            parameterMetadata.ParameterType = GetDotNetType(parameterTypeMetadata);
+            ParameterMetadata parameterMetadata = new ParameterMetadata(parameterName)
+            {
+                ParameterType = GetDotNetType(parameterTypeMetadata)
+            };
             if (typeof(PSCredential).Equals(parameterMetadata.ParameterType))
             {
                 parameterMetadata.Attributes.Add(new CredentialAttribute());
@@ -2042,9 +2044,11 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
             }
             else
             {
-                cmdletMetadata = new CommonCmdletMetadata();
-                cmdletMetadata.Noun = _cmdletizationMetadata.Class.DefaultNoun;
-                cmdletMetadata.Verb = VerbsCommon.Get;
+                cmdletMetadata = new CommonCmdletMetadata
+                {
+                    Noun = _cmdletizationMetadata.Class.DefaultNoun,
+                    Verb = VerbsCommon.Get
+                };
             }
 
             Dbg.Assert(cmdletMetadata != null, "xsd should ensure that cmdlet metadata element is always present");

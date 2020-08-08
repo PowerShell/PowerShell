@@ -212,11 +212,13 @@ namespace Microsoft.PowerShell.Commands
                 );
 
             // create xml writer
-            XmlWriterSettings xmlSettings = new XmlWriterSettings();
-            xmlSettings.CloseOutput = true;
-            xmlSettings.Encoding = sw.Encoding;
-            xmlSettings.Indent = true;
-            xmlSettings.OmitXmlDeclaration = true;
+            XmlWriterSettings xmlSettings = new XmlWriterSettings
+            {
+                CloseOutput = true,
+                Encoding = sw.Encoding,
+                Indent = true,
+                OmitXmlDeclaration = true
+            };
             _xw = XmlWriter.Create(sw, xmlSettings);
             if (Depth == 0)
             {
@@ -549,10 +551,12 @@ namespace Microsoft.PowerShell.Commands
             // xml writer created by calling XmlWriter.Create(Stream, XmlWriterSettings) will write out the xml
             // declaration even without calling WriteStartDocument().
 
-            var xmlSettings = new XmlWriterSettings();
-            xmlSettings.Encoding = Encoding.UTF8;
-            xmlSettings.CloseOutput = true;
-            xmlSettings.Indent = true;
+            var xmlSettings = new XmlWriterSettings
+            {
+                Encoding = Encoding.UTF8,
+                CloseOutput = true,
+                Indent = true
+            };
 
             if (As.Equals("Stream", StringComparison.OrdinalIgnoreCase))
             {
@@ -878,10 +882,12 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (XmlNode foundXmlNode in foundXmlNodes)
             {
-                SelectXmlInfo selectXmlInfo = new SelectXmlInfo();
-                selectXmlInfo.Node = foundXmlNode;
-                selectXmlInfo.Pattern = XPath;
-                selectXmlInfo.Path = filePath;
+                SelectXmlInfo selectXmlInfo = new SelectXmlInfo
+                {
+                    Node = foundXmlNode,
+                    Pattern = XPath,
+                    Path = filePath
+                };
 
                 this.WriteObject(selectXmlInfo);
             }

@@ -508,12 +508,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void ReportLogEntryHelper(string message, XmlLoaderLoggerEntry.EntryType entryType, bool failToLoadFile = false)
         {
             string currentPath = ComputeCurrentXPath();
-            XmlLoaderLoggerEntry entry = new XmlLoaderLoggerEntry();
-
-            entry.entryType = entryType;
-            entry.filePath = this.FilePath;
-            entry.xPath = currentPath;
-            entry.message = message;
+            XmlLoaderLoggerEntry entry = new XmlLoaderLoggerEntry
+            {
+                entryType = entryType,
+                filePath = this.FilePath,
+                xPath = currentPath,
+                message = message
+            };
 
             if (failToLoadFile)
             {
@@ -531,21 +532,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // we have to log a last error and then bail
                     if (_maxNumberOfErrors > 1)
                     {
-                        XmlLoaderLoggerEntry lastEntry = new XmlLoaderLoggerEntry();
-
-                        lastEntry.entryType = XmlLoaderLoggerEntry.EntryType.Error;
-                        lastEntry.filePath = this.FilePath;
-                        lastEntry.xPath = currentPath;
-                        lastEntry.message = StringUtil.Format(FormatAndOutXmlLoadingStrings.TooManyErrors, FilePath);
+                        XmlLoaderLoggerEntry lastEntry = new XmlLoaderLoggerEntry
+                        {
+                            entryType = XmlLoaderLoggerEntry.EntryType.Error,
+                            filePath = this.FilePath,
+                            xPath = currentPath,
+                            message = StringUtil.Format(FormatAndOutXmlLoadingStrings.TooManyErrors, FilePath)
+                        };
                         _logger.LogEntry(lastEntry);
                         _currentErrorCount++;
                     }
 
                     // NOTE: this exception is an internal one, and it is caught
                     // internally by the calling code.
-                    TooManyErrorsException e = new TooManyErrorsException();
-
-                    e.errorCount = _currentErrorCount;
+                    TooManyErrorsException e = new TooManyErrorsException
+                    {
+                        errorCount = _currentErrorCount
+                    };
                     throw e;
                 }
             }
@@ -558,10 +561,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="typeName"></param>
         protected void ReportErrorForLoadingFromObjectModel(string message, string typeName)
         {
-            XmlLoaderLoggerEntry entry = new XmlLoaderLoggerEntry();
-
-            entry.entryType = XmlLoaderLoggerEntry.EntryType.Error;
-            entry.message = message;
+            XmlLoaderLoggerEntry entry = new XmlLoaderLoggerEntry
+            {
+                entryType = XmlLoaderLoggerEntry.EntryType.Error,
+                message = message
+            };
             _logger.LogEntry(entry);
 
             _currentErrorCount++;
@@ -570,19 +574,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we have to log a last error and then bail
                 if (_maxNumberOfErrors > 1)
                 {
-                    XmlLoaderLoggerEntry lastEntry = new XmlLoaderLoggerEntry();
-
-                    lastEntry.entryType = XmlLoaderLoggerEntry.EntryType.Error;
-                    lastEntry.message = StringUtil.Format(FormatAndOutXmlLoadingStrings.TooManyErrorsInFormattingData, typeName);
+                    XmlLoaderLoggerEntry lastEntry = new XmlLoaderLoggerEntry
+                    {
+                        entryType = XmlLoaderLoggerEntry.EntryType.Error,
+                        message = StringUtil.Format(FormatAndOutXmlLoadingStrings.TooManyErrorsInFormattingData, typeName)
+                    };
                     _logger.LogEntry(lastEntry);
                     _currentErrorCount++;
                 }
 
                 // NOTE: this exception is an internal one, and it is caught
                 // internally by the calling code.
-                TooManyErrorsException e = new TooManyErrorsException();
-
-                e.errorCount = _currentErrorCount;
+                TooManyErrorsException e = new TooManyErrorsException
+                {
+                    errorCount = _currentErrorCount
+                };
                 throw e;
             }
         }
@@ -696,11 +702,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                DatabaseLoadingInfo info = new DatabaseLoadingInfo();
-                info.filePath = _loadingInfo.filePath;
-                info.fileDirectory = _loadingInfo.fileDirectory;
-                info.isFullyTrusted = _loadingInfo.isFullyTrusted;
-                info.isProductCode = _loadingInfo.isProductCode;
+                DatabaseLoadingInfo info = new DatabaseLoadingInfo
+                {
+                    filePath = _loadingInfo.filePath,
+                    fileDirectory = _loadingInfo.fileDirectory,
+                    isFullyTrusted = _loadingInfo.isFullyTrusted,
+                    isProductCode = _loadingInfo.isProductCode
+                };
                 return info;
             }
         }

@@ -468,9 +468,11 @@ $result
         /// <param name="progressRecordType"></param>
         private void WriteProgress(string activity, string status, int percent, ProgressRecordType progressRecordType)
         {
-            ProgressRecord progress = new ProgressRecord(_activityId, activity, status);
-            progress.PercentComplete = percent;
-            progress.RecordType = progressRecordType;
+            ProgressRecord progress = new ProgressRecord(_activityId, activity, status)
+            {
+                PercentComplete = percent,
+                RecordType = progressRecordType
+            };
             WriteProgress(progress);
         }
 
@@ -1956,8 +1958,10 @@ $result
 
         internal static ComputerChangeInfo GetComputerStatusObject(int errorcode, string computername)
         {
-            ComputerChangeInfo computerchangeinfo = new ComputerChangeInfo();
-            computerchangeinfo.ComputerName = computername;
+            ComputerChangeInfo computerchangeinfo = new ComputerChangeInfo
+            {
+                ComputerName = computername
+            };
             if (errorcode != 0)
             {
                 computerchangeinfo.HasSucceeded = false;
@@ -1972,9 +1976,11 @@ $result
 
         internal static RenameComputerChangeInfo GetRenameComputerStatusObject(int errorcode, string newcomputername, string oldcomputername)
         {
-            RenameComputerChangeInfo renamecomputerchangeinfo = new RenameComputerChangeInfo();
-            renamecomputerchangeinfo.OldComputerName = oldcomputername;
-            renamecomputerchangeinfo.NewComputerName = newcomputername;
+            RenameComputerChangeInfo renamecomputerchangeinfo = new RenameComputerChangeInfo
+            {
+                OldComputerName = oldcomputername,
+                NewComputerName = newcomputername
+            };
             if (errorcode != 0)
             {
                 renamecomputerchangeinfo.HasSucceeded = false;

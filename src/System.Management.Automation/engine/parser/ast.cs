@@ -7159,8 +7159,10 @@ namespace System.Management.Automation.Language
             // Build the final statement - a pipeline containing a single element with is a CommandAst
             // containing the command we've built up.
             //
-            var cmdAst = new CommandAst(FunctionName.Extent, cea, TokenKind.Unknown, null);
-            cmdAst.DefiningKeyword = Keyword;
+            var cmdAst = new CommandAst(FunctionName.Extent, cea, TokenKind.Unknown, null)
+            {
+                DefiningKeyword = Keyword
+            };
             _commandCallPipelineAst = new PipelineAst(FunctionName.Extent, cmdAst, background: false);
             return _commandCallPipelineAst;
         }
@@ -10154,8 +10156,10 @@ namespace System.Management.Automation.Language
         public override Ast Copy()
         {
             var newExpression = CopyElement(this.SubExpression);
-            var newUsingExpression = new UsingExpressionAst(this.Extent, newExpression);
-            newUsingExpression.RuntimeUsingIndex = this.RuntimeUsingIndex;
+            var newUsingExpression = new UsingExpressionAst(this.Extent, newExpression)
+            {
+                RuntimeUsingIndex = this.RuntimeUsingIndex
+            };
             return newUsingExpression;
         }
 

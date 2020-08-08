@@ -273,17 +273,18 @@ namespace Microsoft.PowerShell.Commands
                 // Validate input parameters
                 ValidateAndThrowIfError(helpCategory);
 
-                HelpRequest helpRequest = new HelpRequest(this.Name, helpCategory);
-
-                helpRequest.Provider = _provider;
-                helpRequest.Component = Component;
-                helpRequest.Role = Role;
-                helpRequest.Functionality = Functionality;
-                helpRequest.ProviderContext = new ProviderContext(
+                HelpRequest helpRequest = new HelpRequest(this.Name, helpCategory)
+                {
+                    Provider = _provider,
+                    Component = Component,
+                    Role = Role,
+                    Functionality = Functionality,
+                    ProviderContext = new ProviderContext(
                     this.Path,
                     this.Context.Engine.Context,
-                    this.SessionState.Path);
-                helpRequest.CommandOrigin = this.MyInvocation.CommandOrigin;
+                    this.SessionState.Path),
+                    CommandOrigin = this.MyInvocation.CommandOrigin
+                };
 
                 // the idea is to use yield statement in the help lookup to speed up
                 // perceived user experience....So HelpSystem.GetHelp returns an
@@ -826,12 +827,14 @@ namespace Microsoft.PowerShell.Commands
                 var currentContext = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
                 if ((currentContext != null) && (currentContext.HelpSystem != null))
                 {
-                    HelpRequest helpRequest = new HelpRequest(cmdName, cmdInfo.HelpCategory);
-                    helpRequest.ProviderContext = new ProviderContext(
+                    HelpRequest helpRequest = new HelpRequest(cmdName, cmdInfo.HelpCategory)
+                    {
+                        ProviderContext = new ProviderContext(
                         string.Empty,
                         currentContext,
-                        currentContext.SessionState.Path);
-                    helpRequest.CommandOrigin = CommandOrigin.Runspace;
+                        currentContext.SessionState.Path),
+                        CommandOrigin = CommandOrigin.Runspace
+                    };
                     foreach (
                         Uri result in
                             currentContext.HelpSystem.ExactMatchHelp(helpRequest).Select(

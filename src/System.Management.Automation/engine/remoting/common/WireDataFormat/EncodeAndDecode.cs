@@ -615,10 +615,12 @@ namespace System.Management.Automation
 
         internal static PSObject CreateEmptyPSObject()
         {
-            PSObject pso = new PSObject();
-            // we don't care about serializing/deserializing TypeNames in remoting objects/messages
-            // so we just omit TypeNames info to lower packet size and improve performance
-            pso.InternalTypeNames = ConsolidatedString.Empty;
+            PSObject pso = new PSObject
+            {
+                // we don't care about serializing/deserializing TypeNames in remoting objects/messages
+                // so we just omit TypeNames info to lower packet size and improve performance
+                InternalTypeNames = ConsolidatedString.Empty
+            };
 
             return pso;
         }
@@ -1105,8 +1107,10 @@ namespace System.Management.Automation
 
             if (settings == null)
             {
-                hostInfo = new HostInfo(null);
-                hostInfo.UseRunspaceHost = true;
+                hostInfo = new HostInfo(null)
+                {
+                    UseRunspaceHost = true
+                };
 
                 ApartmentState passedApartmentState = rsPool.ApartmentState;
                 dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ApartmentState, passedApartmentState));
@@ -1924,9 +1928,10 @@ namespace System.Management.Automation
                 sourceIdentifier,
                 sender,
                 sourceArgs.ToArray(),
-                messageData == null ? null : PSObject.AsPSObject(messageData));
-
-            eventArgs.TimeGenerated = GetPropertyValue<DateTime>(dataAsPSObject, RemoteDataNameStrings.PSEventArgsTimeGenerated);
+                messageData == null ? null : PSObject.AsPSObject(messageData))
+            {
+                TimeGenerated = GetPropertyValue<DateTime>(dataAsPSObject, RemoteDataNameStrings.PSEventArgsTimeGenerated)
+            };
 
             return eventArgs;
         }

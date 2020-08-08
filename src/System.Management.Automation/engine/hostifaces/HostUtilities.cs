@@ -753,9 +753,11 @@ namespace System.Management.Automation
             // Create a loop-back remote runspace with network access enabled, and
             // with the provided endpoint configurationname.
             TypeTable typeTable = TypeTable.LoadDefaultTypeFiles();
-            var connectInfo = new WSManConnectionInfo();
-            connectInfo.ShellUri = configurationName.Trim();
-            connectInfo.EnableNetworkAccess = true;
+            var connectInfo = new WSManConnectionInfo
+            {
+                ShellUri = configurationName.Trim(),
+                EnableNetworkAccess = true
+            };
 
             RemoteRunspace remoteRunspace = null;
             try

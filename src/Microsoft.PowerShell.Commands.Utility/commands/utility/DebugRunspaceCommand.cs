@@ -339,8 +339,10 @@ namespace Microsoft.PowerShell.Commands
 
             if (_debugAccumulateCollection != null) { _debugAccumulateCollection.Dispose(); }
 
-            _debugBlockingCollection = new PSDataCollection<PSStreamObject>();
-            _debugBlockingCollection.BlockingEnumerator = true;
+            _debugBlockingCollection = new PSDataCollection<PSStreamObject>
+            {
+                BlockingEnumerator = true
+            };
             _debugAccumulateCollection = new PSDataCollection<PSStreamObject>();
 
             _runningPowerShell = _runspace.GetCurrentBasePowerShell();

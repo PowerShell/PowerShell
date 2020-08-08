@@ -312,8 +312,10 @@ namespace System.Management.Automation
 
         internal static PSObject WrappedNumber(object data, string text)
         {
-            PSObject wrapped = new PSObject(data);
-            wrapped.TokenText = text;
+            PSObject wrapped = new PSObject(data)
+            {
+                TokenText = text
+            };
             return wrapped;
         }
 

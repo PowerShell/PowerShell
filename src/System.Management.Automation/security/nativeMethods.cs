@@ -1006,14 +1006,15 @@ namespace System.Management.Automation.Security
         [ArchitectureSensitive]
         internal static WINTRUST_DATA InitWintrustDataStructFromBlob(WINTRUST_BLOB_INFO wbi)
         {
-            WINTRUST_DATA wtd = new WINTRUST_DATA();
-
-            wtd.cbStruct = (DWORD)Marshal.SizeOf(wbi);
-            wtd.pPolicyCallbackData = IntPtr.Zero;
-            wtd.pSIPClientData = IntPtr.Zero;
-            wtd.dwUIChoice = (DWORD)WintrustUIChoice.WTD_UI_NONE;
-            wtd.fdwRevocationChecks = 0;
-            wtd.dwUnionChoice = (DWORD)WintrustUnionChoice.WTD_CHOICE_BLOB;
+            WINTRUST_DATA wtd = new WINTRUST_DATA
+            {
+                cbStruct = (DWORD)Marshal.SizeOf(wbi),
+                pPolicyCallbackData = IntPtr.Zero,
+                pSIPClientData = IntPtr.Zero,
+                dwUIChoice = (DWORD)WintrustUIChoice.WTD_UI_NONE,
+                fdwRevocationChecks = 0,
+                dwUnionChoice = (DWORD)WintrustUnionChoice.WTD_CHOICE_BLOB
+            };
 
             IntPtr pBlob = Marshal.AllocCoTaskMem(Marshal.SizeOf(wbi));
             Marshal.StructureToPtr(wbi, pBlob, false);

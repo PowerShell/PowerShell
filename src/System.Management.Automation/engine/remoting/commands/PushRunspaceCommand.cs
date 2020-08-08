@@ -715,9 +715,11 @@ namespace Microsoft.PowerShell.Commands
             RemoteRunspace remoteRunspace = null;
             try
             {
-                WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
-                connectionInfo.ConnectionUri = ConnectionUri;
-                connectionInfo.ShellUri = ConfigurationName;
+                WSManConnectionInfo connectionInfo = new WSManConnectionInfo
+                {
+                    ConnectionUri = ConnectionUri,
+                    ShellUri = ConfigurationName
+                };
                 if (CertificateThumbprint != null)
                 {
                     connectionInfo.CertificateThumbprint = CertificateThumbprint;

@@ -1063,9 +1063,11 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         {
             uint res = 0;
 
-            PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
-            pathElts.MachineName = machineName;
-            pathElts.ObjectName = objectName;
+            PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS
+            {
+                MachineName = machineName,
+                ObjectName = objectName
+            };
 
             foreach (string counterName in counters)
             {
@@ -1116,9 +1118,11 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 res = PdhAddCounter(_hQuery, counterPath, IntPtr.Zero, out counterHandle);
                 if (res == 0)
                 {
-                    CounterHandleNInstance chi = new CounterHandleNInstance();
-                    chi.hCounter = counterHandle;
-                    chi.InstanceName = null;
+                    CounterHandleNInstance chi = new CounterHandleNInstance
+                    {
+                        hCounter = counterHandle,
+                        InstanceName = null
+                    };
 
                     PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
                     res = ParsePath(counterPath, ref pathElts);

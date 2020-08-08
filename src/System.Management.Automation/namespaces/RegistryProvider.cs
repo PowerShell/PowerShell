@@ -1041,8 +1041,10 @@ namespace Microsoft.PowerShell.Commands
                                 exception,
                                 exception.GetType().FullName,
                                 ErrorCategory.WriteError,
-                                newKey);
-                            rec.ErrorDetails = new ErrorDetails(StringUtil.Format(RegistryProviderStrings.KeyCreatedValueFailed, childName));
+                                newKey)
+                            {
+                                ErrorDetails = new ErrorDetails(StringUtil.Format(RegistryProviderStrings.KeyCreatedValueFailed, childName))
+                            };
                             WriteError(rec);
                         }
                         else

@@ -61,12 +61,14 @@ namespace System.Management.Automation.Remoting
             // data coming from inputs stream is in Xml format. create appropriate
             // xml reader settings only once and reuse the same settings for all
             // the reads from StdIn stream.
-            XmlReaderSettings = new XmlReaderSettings();
-            XmlReaderSettings.CheckCharacters = false;
-            XmlReaderSettings.IgnoreComments = true;
-            XmlReaderSettings.IgnoreProcessingInstructions = true;
-            XmlReaderSettings.XmlResolver = null;
-            XmlReaderSettings.ConformanceLevel = ConformanceLevel.Fragment;
+            XmlReaderSettings = new XmlReaderSettings
+            {
+                CheckCharacters = false,
+                IgnoreComments = true,
+                IgnoreProcessingInstructions = true,
+                XmlResolver = null,
+                ConformanceLevel = ConformanceLevel.Fragment
+            };
         }
 
         #endregion
@@ -512,16 +514,20 @@ namespace System.Management.Automation.Remoting.Client
 
             // Session message processing
             _sessionMessageQueue = new BlockingCollection<string>();
-            var sessionThread = new Thread(ProcessMessageProc);
-            sessionThread.Name = "SessionMessageProcessing";
-            sessionThread.IsBackground = true;
+            var sessionThread = new Thread(ProcessMessageProc)
+            {
+                Name = "SessionMessageProcessing",
+                IsBackground = true
+            };
             sessionThread.Start(_sessionMessageQueue);
 
             // Command message processing
             _commandMessageQueue = new BlockingCollection<string>();
-            var commandThread = new Thread(ProcessMessageProc);
-            commandThread.Name = "CommandMessageProcessing";
-            commandThread.IsBackground = true;
+            var commandThread = new Thread(ProcessMessageProc)
+            {
+                Name = "CommandMessageProcessing",
+                IsBackground = true
+            };
             commandThread.Start(_commandMessageQueue);
 
             _tracer = PowerShellTraceSourceFactory.GetTraceSource();
@@ -1133,8 +1139,10 @@ namespace System.Management.Automation.Remoting.Client
             catch (System.ComponentModel.Win32Exception w32e)
             {
                 PSRemotingTransportException psrte = new PSRemotingTransportException(w32e, RemotingErrorIdStrings.IPCExceptionLaunchingProcess,
-                    w32e.Message);
-                psrte.ErrorCode = w32e.HResult;
+                    w32e.Message)
+                {
+                    ErrorCode = w32e.HResult
+                };
                 TransportErrorOccuredEventArgs eventargs = new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CreateShellEx);
                 RaiseErrorHandler(eventargs);
                 return;
@@ -1155,13 +1163,17 @@ namespace System.Management.Automation.Remoting.Client
 
         private void StartRedirectionReaderThreads(Process serverProcess)
         {
-            Thread outputThread = new Thread(ProcessOutputData);
-            outputThread.IsBackground = true;
-            outputThread.Name = "Out-of-Proc Job Output Thread";
+            Thread outputThread = new Thread(ProcessOutputData)
+            {
+                IsBackground = true,
+                Name = "Out-of-Proc Job Output Thread"
+            };
 
-            Thread errorThread = new Thread(ProcessErrorData);
-            errorThread.IsBackground = true;
-            errorThread.Name = "Out-of-Proc Job Error Thread";
+            Thread errorThread = new Thread(ProcessErrorData)
+            {
+                IsBackground = true,
+                Name = "Out-of-Proc Job Error Thread"
+            };
 
             outputThread.Start(serverProcess.StandardOutput);
             errorThread.Start(serverProcess.StandardError);
@@ -1351,9 +1363,11 @@ namespace System.Management.Automation.Remoting.Client
         protected void StartReaderThread(
             StreamReader reader)
         {
-            Thread readerThread = new Thread(ProcessReaderThread);
-            readerThread.Name = _threadName;
-            readerThread.IsBackground = true;
+            Thread readerThread = new Thread(ProcessReaderThread)
+            {
+                Name = _threadName,
+                IsBackground = true
+            };
             readerThread.Start(reader);
         }
 
@@ -1686,9 +1700,11 @@ namespace System.Management.Automation.Remoting.Client
         private void StartErrorThread(
             StreamReader stdErrReader)
         {
-            Thread errorThread = new Thread(ProcessErrorThread);
-            errorThread.Name = "SSH Transport Error Thread";
-            errorThread.IsBackground = true;
+            Thread errorThread = new Thread(ProcessErrorThread)
+            {
+                Name = "SSH Transport Error Thread",
+                IsBackground = true
+            };
             errorThread.Start(stdErrReader);
         }
 
@@ -1792,9 +1808,11 @@ namespace System.Management.Automation.Remoting.Client
         private void StartReaderThread(
             StreamReader reader)
         {
-            Thread readerThread = new Thread(ProcessReaderThread);
-            readerThread.Name = _threadName;
-            readerThread.IsBackground = true;
+            Thread readerThread = new Thread(ProcessReaderThread)
+            {
+                Name = _threadName,
+                IsBackground = true
+            };
             readerThread.Start(reader);
         }
 
@@ -1914,9 +1932,11 @@ namespace System.Management.Automation.Remoting.Client
         protected void StartReaderThread(
             StreamReader reader)
         {
-            Thread readerThread = new Thread(ProcessReaderThread);
-            readerThread.Name = _threadName;
-            readerThread.IsBackground = true;
+            Thread readerThread = new Thread(ProcessReaderThread)
+            {
+                Name = _threadName,
+                IsBackground = true
+            };
             readerThread.Start(reader);
         }
 

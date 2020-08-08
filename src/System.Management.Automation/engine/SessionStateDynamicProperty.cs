@@ -78,9 +78,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(property));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             NewProperty(paths, property, type, value, context);
 
@@ -475,9 +477,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(property));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             RemoveProperty(paths, property, context);
 
@@ -858,9 +862,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationProperty));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             CopyProperty(sourcePaths, sourceProperty, destinationPath, destinationProperty, context);
 
@@ -1345,9 +1351,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationProperty));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             MoveProperty(sourcePaths, sourceProperty, destinationPath, destinationProperty, context);
 
@@ -1818,9 +1826,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationProperty));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             RenameProperty(sourcePaths, sourceProperty, destinationProperty, context);
 

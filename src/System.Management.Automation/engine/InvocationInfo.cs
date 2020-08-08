@@ -355,8 +355,10 @@ namespace System.Management.Automation
             CommandInfo commandInfo,
             IScriptExtent scriptPosition)
         {
-            var invocationInfo = new InvocationInfo(commandInfo, scriptPosition);
-            invocationInfo.DisplayScriptPosition = scriptPosition;
+            var invocationInfo = new InvocationInfo(commandInfo, scriptPosition)
+            {
+                DisplayScriptPosition = scriptPosition
+            };
 
             return invocationInfo;
         }
@@ -480,9 +482,11 @@ namespace System.Management.Automation
                 CommandTypes type = RemotingDecoder.GetPropertyValue<CommandTypes>(psObject, "CommandInfo_CommandType");
                 string name = RemotingDecoder.GetPropertyValue<string>(psObject, "CommandInfo_Name");
 
-                commandInfo = new RemoteCommandInfo(name, type);
-                commandInfo._definition = RemotingDecoder.GetPropertyValue<string>(psObject, "CommandInfo_Definition");
-                commandInfo.Visibility = RemotingDecoder.GetPropertyValue<SessionStateEntryVisibility>(psObject, "CommandInfo_Visibility");
+                commandInfo = new RemoteCommandInfo(name, type)
+                {
+                    _definition = RemotingDecoder.GetPropertyValue<string>(psObject, "CommandInfo_Definition"),
+                    Visibility = RemotingDecoder.GetPropertyValue<SessionStateEntryVisibility>(psObject, "CommandInfo_Visibility")
+                };
             }
 
             return commandInfo;

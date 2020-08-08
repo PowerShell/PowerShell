@@ -2545,8 +2545,10 @@ namespace System.Management.Automation
                         settings.IgnoreComments = false;
 
                         XmlReader xmlReader = XmlReader.Create(textReader, settings);
-                        XmlDocument xmlDocument = new XmlDocument();
-                        xmlDocument.PreserveWhitespace = false;
+                        XmlDocument xmlDocument = new XmlDocument
+                        {
+                            PreserveWhitespace = false
+                        };
                         xmlDocument.Load(xmlReader);
                         return xmlDocument;
                     }
@@ -5260,8 +5262,10 @@ namespace System.Management.Automation
 
                 if (parse != null)
                 {
-                    ConvertViaParseMethod converter = new ConvertViaParseMethod();
-                    converter.parse = parse;
+                    ConvertViaParseMethod converter = new ConvertViaParseMethod
+                    {
+                        parse = parse
+                    };
                     return converter.ConvertWithCulture;
                 }
 
@@ -5280,8 +5284,10 @@ namespace System.Management.Automation
 
                 if (parse != null)
                 {
-                    ConvertViaParseMethod converter = new ConvertViaParseMethod();
-                    converter.parse = parse;
+                    ConvertViaParseMethod converter = new ConvertViaParseMethod
+                    {
+                        parse = parse
+                    };
                     return converter.ConvertWithoutCulture;
                 }
             }
@@ -5552,8 +5558,10 @@ namespace System.Management.Automation
             {
                 rank = castOperator.Name.Equals("op_Implicit", StringComparison.OrdinalIgnoreCase)
                     ? ConversionRank.ImplicitCast : ConversionRank.ExplicitCast;
-                ConvertViaCast converter = new ConvertViaCast();
-                converter.cast = castOperator;
+                ConvertViaCast converter = new ConvertViaCast
+                {
+                    cast = castOperator
+                };
                 return converter.Convert;
             }
 
@@ -5756,9 +5764,11 @@ namespace System.Management.Automation
             if (TypeConverterPossiblyExists(fromType) || TypeConverterPossiblyExists(toType)
                 || (converter != null && valueDependentConversion != null))
             {
-                ConvertCheckingForCustomConverter customConverter = new ConvertCheckingForCustomConverter();
-                customConverter.tryfirstConverter = valueDependentConversion;
-                customConverter.fallbackConverter = converter;
+                ConvertCheckingForCustomConverter customConverter = new ConvertCheckingForCustomConverter
+                {
+                    tryfirstConverter = valueDependentConversion,
+                    fallbackConverter = converter
+                };
                 converter = customConverter.Convert;
                 if (valueDependentRank > rank)
                 {
