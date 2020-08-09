@@ -351,13 +351,34 @@ namespace Microsoft.PowerShell
         }
 
         // Added for using in xUnit tests
-        internal string? ErrorMessage => _error;
+        internal string? ErrorMessage
+        {
+            get
+            {
+                InsureParsing();
+                return _error;
+            }
+        }
 
         // Added for using in xUnit tests
-        internal bool ShowShortHelp => _showHelp;
+        internal bool ShowShortHelp
+        {
+            get
+            {
+                InsureParsing();
+                return _showHelp;
+            }
+        }
 
         // Added for using in xUnit tests
-        internal bool ShowExtendedHelp => _showExtendedHelp;
+        internal bool ShowExtendedHelp
+        {
+            get
+            {
+                InsureParsing();
+                return _showExtendedHelp;
+            }
+        }
 
         internal bool ShowVersion
         {
