@@ -1057,27 +1057,19 @@ namespace Microsoft.PowerShell
             executionPolicy = args[i];
         }
 
+        // Process file execution. We don't need to worry about checking -command
+        // since if -command comes before -file, -file will be treated as part
+        // of the script to evaluate. If -file comes before -command, it will
+        // treat -command as an argument to the script...
         private bool ParseFile(string[] args, ref int i, bool noexitSeen)
         {
-            // Process file execution. We don't need to worry about checking -command
-            // since if -command comes before -file, -file will be treated as part
-            // of the script to evaluate. If -file comes before -command, it will
-            // treat -command as an argument to the script...
-            bool TryGetBoolValue(string arg, out bool boolValue)
+            // Try parse '$true', 'true', '$false' and 'false' values.
+            object ConvertToBoolIfPossible(string arg)
             {
-                if (arg.Equals("$true", StringComparison.OrdinalIgnoreCase) || arg.Equals("true", StringComparison.OrdinalIgnoreCase))
-                {
-                    boolValue = true;
-                    return true;
-                }
-                else if (arg.Equals("$false", StringComparison.OrdinalIgnoreCase) || arg.Equals("false", StringComparison.OrdinalIgnoreCase))
-                {
-                    boolValue = false;
-                    return true;
-                }
-
-                boolValue = false;
-                return false;
+                // Before parsing we skip '$' if present.
+                return arg.Length > 0 && bool.TryParse(arg.AsSpan().Slice(arg[0] == '$' ? 1 : 0), out bool boolValue)
+                    ? (object)boolValue
+                    : (object)arg;
             }
 
             ++i;
@@ -1186,14 +1178,7 @@ namespace Microsoft.PowerShell
                             {
                                 string argValue = arg.Substring(offset + 1);
                                 string argName = arg.Substring(0, offset);
-                                if (TryGetBoolValue(argValue, out bool boolValue))
-                                {
-                                    _collectedArgs.Add(new CommandParameter(argName, boolValue));
-                                }
-                                else
-                                {
-                                    _collectedArgs.Add(new CommandParameter(argName, argValue));
-                                }
+                                _collectedArgs.Add(new CommandParameter(argName, ConvertToBoolIfPossible(argValue)));
                             }
                         }
                         else
