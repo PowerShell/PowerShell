@@ -187,7 +187,7 @@ namespace Microsoft.PowerShell
 
         internal bool? TestHookConsoleInputRedirected;
 
-        internal static readonly string[] validParameters = {
+        private static readonly string[] _validParameters = {
             "sta",
             "mta",
             "command",
@@ -211,6 +211,14 @@ namespace Microsoft.PowerShell
             "workingdirectory"
         };
 
+        private void InsureParsing()
+        {
+            if (!_dirty)
+            {
+                throw new InvalidOperationException("Parse has not been called yet");
+            }
+        }
+
         internal CommandLineParameterParser()
         {
         }
@@ -220,20 +228,25 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(_dirty, "Parse has not been called yet");
-
+                InsureParsing();
                 return _abortStartup;
             }
         }
 
-        internal string? SettingsFile { get; private set; }
+        internal string? SettingsFile
+        {
+            get
+            {
+                InsureParsing();
+                return _settingsFile;
+            }
+        }
 
         internal string? InitialCommand
         {
             get
             {
-                Dbg.Assert(_dirty, "Parse has not been called yet");
-
+                InsureParsing();
                 return _commandLineCommand;
             }
         }
@@ -242,8 +255,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(_dirty, "Parse has not been called yet");
-
+                InsureParsing();
                 return _wasCommandEncoded;
             }
         }
@@ -252,7 +264,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(_dirty, "Parse has not been called yet");
+                InsureParsing();
                 return _showBanner;
             }
         }
@@ -261,8 +273,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(_dirty, "Parse has not been called yet");
-
+                InsureParsing();
                 return _noExit;
             }
         }
@@ -271,8 +282,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(_dirty, "Parse has not been called yet");
-
+                InsureParsing();
                 return _skipUserInit;
             }
         }
@@ -281,8 +291,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(_dirty, "Parse has not been called yet");
-
+                InsureParsing();
                 return _exitCode;
             }
         }
@@ -291,8 +300,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(_dirty, "Parse has not been called yet");
-
+                InsureParsing();
                 return _explicitReadCommandsFromStdin;
             }
         }
@@ -301,8 +309,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(_dirty, "Parse has not been called yet");
-
+                InsureParsing();
                 return _noPrompt;
             }
         }
@@ -311,8 +318,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(_dirty, "Parse has not been called yet");
-
+                InsureParsing();
                 return _collectedArgs;
             }
         }
@@ -333,24 +339,34 @@ namespace Microsoft.PowerShell
         {
             get
             {
+                InsureParsing();
                 return _socketServerMode;
             }
         }
 
         internal bool NamedPipeServerMode
         {
-            get { return _namedPipeServerMode; }
+            get
+            {
+                InsureParsing();
+                return _namedPipeServerMode;
+            }
         }
 
         internal bool SSHServerMode
         {
-            get { return _sshServerMode; }
+            get
+            {
+                InsureParsing();
+                return _sshServerMode;
+            }
         }
 
         internal bool ServerMode
         {
             get
             {
+                InsureParsing();
                 return _serverMode;
             }
         }
@@ -368,6 +384,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
+                InsureParsing();
                 return _showVersion;
             }
         }
@@ -376,6 +393,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
+                InsureParsing();
                 return _customPipeName;
             }
         }
@@ -384,8 +402,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(_dirty, "Parse has not been called yet");
-
+                InsureParsing();
                 return _outFormat;
             }
         }
@@ -394,8 +411,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(_dirty, "Parse has not been called yet");
-
+                InsureParsing();
                 return _outputFormatSpecified;
             }
         }
@@ -404,7 +420,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(_dirty, "Parse has not been called yet");
+                InsureParsing();
                 return _inFormat;
             }
         }
@@ -413,7 +429,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(_dirty, "Parse has not been called yet");
+                InsureParsing();
                 return _file;
             }
         }
@@ -422,8 +438,24 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(_dirty, "Parse has not been called yet");
+                InsureParsing();
                 return _executionPolicy;
+            }
+        }
+
+        internal bool StaMode
+        {
+            get
+            {
+                InsureParsing();
+                if (_staMode.HasValue)
+                {
+                    return _staMode.Value;
+                }
+                else
+                {
+                    return true;
+                }
             }
         }
 
@@ -431,19 +463,25 @@ namespace Microsoft.PowerShell
         {
             get
             {
+                InsureParsing();
                 return _noInteractive;
             }
         }
 
         internal bool NonInteractive
         {
-            get { return _noInteractive; }
+            get
+            {
+                InsureParsing();
+                return _noInteractive;
+            }
         }
 
         internal string? WorkingDirectory
         {
             get
             {
+                InsureParsing();
 #if !UNIX
                 if (_removeWorkingDirectoryTrailingCharacter && _workingDirectory?.Length > 0)
                 {
@@ -457,7 +495,11 @@ namespace Microsoft.PowerShell
 #if !UNIX
         internal bool RemoveWorkingDirectoryTrailingCharacter
         {
-            get { return _removeWorkingDirectoryTrailingCharacter; }
+            get
+            {
+                InsureParsing();
+                return _removeWorkingDirectoryTrailingCharacter;
+            }
         }
 #endif
 
@@ -503,7 +545,7 @@ namespace Microsoft.PowerShell
                 return false;
             }
 
-            SettingsFile = configFile;
+            _settingsFile = configFile;
 
             return true;
         }
@@ -568,8 +610,9 @@ namespace Microsoft.PowerShell
         internal static string NormalizeFilePath(string path)
         {
             // Normalize slashes
-            path = path.Replace(StringLiterals.AlternatePathSeparator,
-                                StringLiterals.DefaultPathSeparator);
+            path = path.Replace(
+                StringLiterals.AlternatePathSeparator,
+                StringLiterals.DefaultPathSeparator);
 
             return Path.GetFullPath(path);
         }
@@ -633,21 +676,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal bool StaMode
-        {
-            get
-            {
-                if (_staMode.HasValue)
-                {
-                    return _staMode.Value;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-        }
-
         /// <summary>
         /// Processes all the command line parameters to ConsoleHost.  Returns the exit code to be used to terminate the process, or
         /// Success to indicate that the program should continue running.
@@ -655,10 +683,12 @@ namespace Microsoft.PowerShell
         /// <param name="args">
         /// The command line parameters to be processed.
         /// </param>
-
         internal void Parse(string[] args)
         {
-            Dbg.Assert(!_dirty, "This instance has already been used. Create a new instance.");
+            if (_dirty)
+            {
+                throw new InvalidOperationException("This instance has already been used. Create a new instance.");
+            }
 
             // Indicates that we've called this method on this instance, and that when it's done, the state variables
             // will reflect the parse.
@@ -945,7 +975,7 @@ namespace Microsoft.PowerShell
 #if DEBUG
         private void WaitingRemoteDebugger(PSHostUserInterface hostUI)
         {
-            // this option is useful when debugging ConsoleHost remotely using VS remote debugging, as you can only
+            // This option is useful when debugging ConsoleHost remotely using VS remote debugging, as you can only
             // attach to an already running process with that debugger.
             if (_wait)
             {
@@ -1101,7 +1131,7 @@ namespace Microsoft.PowerShell
                     {
                         string param = args[i].Substring(1, args[i].Length - 1).ToLower();
                         StringBuilder possibleParameters = new StringBuilder();
-                        foreach (string validParameter in validParameters)
+                        foreach (string validParameter in _validParameters)
                         {
                             if (validParameter.Contains(param))
                             {
@@ -1330,6 +1360,7 @@ namespace Microsoft.PowerShell
         private Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
         private string? _file;
         private string? _executionPolicy;
+        private string? _settingsFile;
         private string? _workingDirectory;
 #if DEBUG
         private bool _wait;

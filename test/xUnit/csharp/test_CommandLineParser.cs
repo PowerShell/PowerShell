@@ -55,6 +55,16 @@ namespace PSTests.Parallel
             Assert.False(cpp.NonInteractive);
         }
 
+        [Fact]
+        public static void Test_Throws_On_Reuse()
+        {
+            var cpp = new CommandLineParameterParser();
+
+            cpp.Parse(new string[0]);
+
+            Assert.Throws<System.InvalidOperationException>(() => cpp.Parse(new string[0]));
+        }
+
         [Theory]
         [InlineData("noexistfilename")]
         public static void TestDefaultParameterIsFileName_Not_Exist(params string[] commandLine)
