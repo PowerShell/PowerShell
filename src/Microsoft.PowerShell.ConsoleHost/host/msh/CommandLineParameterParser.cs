@@ -190,10 +190,12 @@ namespace Microsoft.PowerShell
 
         private void InsureParsing()
         {
+#if DEBUG
             if (!_dirty)
             {
                 throw new InvalidOperationException("Parse has not been called yet");
             }
+#endif
         }
 
         internal CommandLineParameterParser()
