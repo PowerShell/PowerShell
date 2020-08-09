@@ -32,9 +32,7 @@ namespace Microsoft.PowerShell
         /// RawUI.
         /// </summary>
         public override PSHostRawUserInterface? RawUI
-        {
-            get { return null; }
-        }
+            => null;
 
         /// <summary>
         /// Prompt.
@@ -44,9 +42,7 @@ namespace Microsoft.PowerShell
         /// <param name="descriptions"></param>
         /// <returns></returns>
         public override Dictionary<string, PSObject> Prompt(string caption, string message, Collection<FieldDescription> descriptions)
-        {
-            throw new PSNotImplementedException();
-        }
+            => throw new PSNotImplementedException();
 
         /// <summary>
         /// Prompt for choice.
@@ -57,9 +53,7 @@ namespace Microsoft.PowerShell
         /// <param name="defaultChoice"></param>
         /// <returns></returns>
         public override int PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices, int defaultChoice)
-        {
-            throw new PSNotImplementedException();
-        }
+            => throw new PSNotImplementedException();
 
         /// <summary>
         /// Prompt for credential.
@@ -70,9 +64,7 @@ namespace Microsoft.PowerShell
         /// <param name="targetName"></param>
         /// <returns></returns>
         public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName)
-        {
-            throw new PSNotImplementedException();
-        }
+            => throw new PSNotImplementedException();
 
         /// <summary>
         /// Prompt for credential.
@@ -85,9 +77,7 @@ namespace Microsoft.PowerShell
         /// <param name="options"></param>
         /// <returns></returns>
         public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
-        {
-            throw new PSNotImplementedException();
-        }
+            => throw new PSNotImplementedException();
 
         /// <summary>
         /// Prompt for credential.
@@ -101,18 +91,14 @@ namespace Microsoft.PowerShell
         /// <param name="options"></param>
         /// <returns></returns>
         public override PSCredential PromptForCredential(string caption, string message, string userName, bool confirmPassword, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
-        {
-            throw new PSNotImplementedException();
-        }
+            => throw new PSNotImplementedException();
 
         /// <summary>
         /// Read line.
         /// </summary>
         /// <returns></returns>
         public override string ReadLine()
-        {
-            throw new PSNotImplementedException();
-        }
+            => throw new PSNotImplementedException();
 
         /// <summary>
         /// Null implementation of ReadLineMaskedAsString.
@@ -121,18 +107,14 @@ namespace Microsoft.PowerShell
         /// It throws an exception.
         /// </returns>
         public override string ReadLineMaskedAsString()
-        {
-            throw new PSNotImplementedException();
-        }
+            => throw new PSNotImplementedException();
 
         /// <summary>
         /// ReadLineAsSecureString.
         /// </summary>
         /// <returns></returns>
         public override SecureString ReadLineAsSecureString()
-        {
-            throw new PSNotImplementedException();
-        }
+            => throw new PSNotImplementedException();
 
         /// <summary>
         /// Write.
@@ -162,9 +144,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="value"></param>
         public override void WriteErrorLine(string value)
-        {
-            Console.Out.WriteLine(value);
-        }
+            => Console.Out.WriteLine(value);
 
         /// <summary>
         /// WriteLine.
