@@ -679,7 +679,6 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"Description")
                         .AddItemProperty(@"Capabilities")
                         .AddItemProperty(@"ImplementingType")
-                        .AddItemProperty(@"AssemblyInfo")
                     .EndEntry()
                 .EndList());
         }
@@ -693,7 +692,6 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"CommandType")
                         .AddItemProperty(@"Definition")
                         .AddItemProperty(@"Path")
-                        .AddItemProperty(@"AssemblyInfo")
                         .AddItemProperty(@"DLL")
                         .AddItemProperty(@"HelpFile")
                         .AddItemProperty(@"ParameterSets")

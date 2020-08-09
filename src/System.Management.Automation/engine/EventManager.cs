@@ -2597,7 +2597,7 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 // Catch-all OK. This is a third-party call-out.
-                if (!(e is PipelineStoppedException))
+                if (e is not PipelineStoppedException)
                 {
                     LogErrorsAndOutput(results, actionState);
                     SetJobState(JobState.Failed);

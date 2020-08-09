@@ -4945,7 +4945,7 @@ namespace System.Management.Automation
         private object DrainAndBlockRemoteOutput()
         {
             // We only do this for remote runspaces.
-            if (!(_runspace is RemoteRunspace)) { return null; }
+            if (_runspace is not RemoteRunspace) { return null; }
 
             try
             {

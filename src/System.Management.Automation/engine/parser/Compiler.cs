@@ -3683,7 +3683,7 @@ namespace System.Management.Automation.Language
             var temps = new List<ParameterExpression>();
             var exprs = new List<Expression>();
 
-            if (!(pipelineAst.Parent is AssignmentStatementAst || pipelineAst.Parent is ParenExpressionAst))
+            if (pipelineAst.Parent is not AssignmentStatementAst && pipelineAst.Parent is not ParenExpressionAst)
             {
                 // If the parent is an assignment, we've already added a sequence point, don't add another.
                 exprs.Add(UpdatePosition(pipelineAst));
@@ -4241,7 +4241,8 @@ namespace System.Management.Automation.Language
                     Expression.Constant(errorPos.Text),
                     Expression.Constant(arg),
                     Expression.Convert(GetCommandArgumentExpression(arg), typeof(object)),
-                    ExpressionCache.Constant(spaceAfterParameter));
+                    ExpressionCache.Constant(spaceAfterParameter),
+                    ExpressionCache.Constant(false));
             }
 
             return Expression.Call(

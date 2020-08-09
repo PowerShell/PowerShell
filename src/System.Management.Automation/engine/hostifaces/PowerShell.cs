@@ -1267,6 +1267,24 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Adds a <see cref="CommandParameter"/> instance to the last added command.
+        /// </summary>
+        internal PowerShell AddParameter(CommandParameter parameter)
+        {
+            lock (_syncObject)
+            {
+                if (_psCommand.Commands.Count == 0)
+                {
+                    throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.ParameterRequiresCommand);
+                }
+
+                AssertChangesAreAccepted();
+                _psCommand.AddParameter(parameter);
+                return this;
+            }
+        }
+
+        /// <summary>
         /// Adds a set of parameters to the last added command.
         /// </summary>
         /// <param name="parameters">

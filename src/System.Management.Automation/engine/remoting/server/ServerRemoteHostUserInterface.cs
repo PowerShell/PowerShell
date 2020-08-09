@@ -198,17 +198,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Read line as string masked.
-        /// </summary>
-        /// <returns>
-        /// Not implemented. It throws an exception.
-        /// </returns>
-        public override string ReadLineMaskedAsString()
-        {
-            throw new PSNotImplementedException();
-        }
-
-        /// <summary>
         /// Read line as secure string.
         /// </summary>
         public override SecureString ReadLineAsSecureString()
@@ -232,16 +221,6 @@ namespace System.Management.Automation.Remoting
         {
             return _serverMethodExecutor.ExecuteMethod<PSCredential>(RemoteHostMethodId.PromptForCredential2,
                     new object[] { caption, message, userName, targetName, allowedCredentialTypes, options });
-        }
-
-        /// <summary>
-        /// Prompt for credential.
-        /// </summary>
-        public override PSCredential PromptForCredential(string caption, string message, string userName, bool confirmPassword, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
-        {
-            return _serverMethodExecutor.ExecuteMethod<PSCredential>(
-                RemoteHostMethodId.PromptForCredential2,
-                new object[] { caption, message, userName, confirmPassword, targetName, allowedCredentialTypes, options });
         }
     }
 }

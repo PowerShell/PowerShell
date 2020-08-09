@@ -10,7 +10,6 @@ using System.Globalization;
 using System.Collections.ObjectModel;
 using System.Security;
 using System.Collections;
-using System.Runtime.InteropServices;
 
 namespace TestHost
 {
@@ -146,44 +145,21 @@ namespace TestHost
 
         public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName)
         {
-            return PromptForCredential(caption,
-                                        message,
-                                        userName,
-                                        confirmPassword: false,
-                                        targetName,
-                                        PSCredentialTypes.Default,
-                                        PSCredentialUIOptions.Default);
+            Streams.Prompt.Add("Credential:" + caption + ":" + message);
+            SecureString ss = ReadLineAsSecureString();
+            string userNameToUse = string.IsNullOrEmpty(userName) ? UserNameForCredential : userName;
+            return new PSCredential(userNameToUse, ss);
         }
 
         public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
         {
-            return PromptForCredential(caption,
-                                         message,
-                                         userName,
-                                         confirmPassword: false,
-                                         targetName,
-                                         allowedCredentialTypes,
-                                         options);
-        }
-
-        public override PSCredential PromptForCredential(string caption, string message, string userName, bool confirmPassword, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
-        {
             Streams.Prompt.Add("Credential:" + caption + ":" + message);
-            SecureString password = ReadLineAsSecureString();
-            if(confirmPassword)
-            {
-                Streams.Prompt.Add("Credential@" + caption + "@" + message);
-            }
+            SecureString ss = ReadLineAsSecureString();
             string userNameToUse = string.IsNullOrEmpty(userName) ? UserNameForCredential : userName;
-            return new PSCredential(userNameToUse, password);
+            return new PSCredential(userNameToUse, ss);
         }
 
         public override string ReadLine()
-        {
-            return ReadLineData;
-        }
-
-        public override string ReadLineMaskedAsString()
         {
             return ReadLineData;
         }

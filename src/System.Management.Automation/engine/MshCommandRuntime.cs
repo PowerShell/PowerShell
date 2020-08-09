@@ -953,7 +953,7 @@ namespace System.Management.Automation
 
                 _outVarList = oldValue ?? new ArrayList();
 
-                if (!(_thisCommand is PSScriptCmdlet))
+                if (_thisCommand is not PSScriptCmdlet)
                 {
                     this.OutputPipe.AddVariableList(VariableStreamKind.Output, _outVarList);
                 }
@@ -989,7 +989,7 @@ namespace System.Management.Automation
             // same scope.
             _pipelineVarReference = _state.PSVariable.Get(this.PipelineVariable);
 
-            if (!(_thisCommand is PSScriptCmdlet))
+            if (_thisCommand is not PSScriptCmdlet)
             {
                 this.OutputPipe.SetPipelineVariable(_pipelineVarReference);
             }
@@ -2574,7 +2574,7 @@ namespace System.Management.Automation
                 varList = new ArrayList();
             }
 
-            if (!(_thisCommand is PSScriptCmdlet))
+            if (_thisCommand is not PSScriptCmdlet)
             {
                 this.OutputPipe.AddVariableList(streamKind, varList);
             }
@@ -2831,60 +2831,61 @@ namespace System.Management.Automation
                 this.PipelineProcessor.LogExecutionError(_thisCommand.MyInvocation, errorRecord);
             }
 
-            ActionPreference preference = ErrorAction;
-            if (actionPreference.HasValue)
+            if (!(ExperimentalFeature.IsEnabled("PSNotApplyErrorActionToStderr") && isNativeError))
             {
-                preference = actionPreference.Value;
-            }
+                ActionPreference preference = ErrorAction;
+                if (actionPreference.HasValue)
+                {
+                    preference = actionPreference.Value;
+                }
 
-            // No trace of the error in the 'Ignore' case
-            if (ActionPreference.Ignore == preference)
-            {
-                return; // do not write or record to output pipe
-            }
+                // No trace of the error in the 'Ignore' case
+                if (ActionPreference.Ignore == preference)
+                {
+                    return; // do not write or record to output pipe
+                }
 
-            // 2004/05/26-JonN
-            // The object is not written in the SilentlyContinue case
-            if (ActionPreference.SilentlyContinue == preference)
-            {
+                // 2004/05/26-JonN
+                // The object is not written in the SilentlyContinue case
+                if (ActionPreference.SilentlyContinue == preference)
+                {
+                    AppendErrorToVariables(errorRecord);
+                    return; // do not write to output pipe
+                }
+
+                if (ContinueStatus.YesToAll == lastErrorContinueStatus)
+                {
+                    preference = ActionPreference.Continue;
+                }
+
+                switch (preference)
+                {
+                    case ActionPreference.Stop:
+                        ActionPreferenceStopException e =
+                            new ActionPreferenceStopException(
+                                MyInvocation,
+                                errorRecord,
+                                StringUtil.Format(CommandBaseStrings.ErrorPreferenceStop,
+                                                "ErrorActionPreference",
+                                                errorRecord.ToString()));
+                        throw ManageException(e);
+
+                    case ActionPreference.Inquire:
+                        // ignore return value
+                        // this will throw if the user chooses not to continue
+                        lastErrorContinueStatus = InquireHelper(
+                            RuntimeException.RetrieveMessage(errorRecord),
+                            null,
+                            true,  // allowYesToAll
+                            false, // allowNoToAll
+                            true,  // replaceNoWithHalt
+                            false  // hasSecurityImpact
+                        );
+                        break;
+                }
+
                 AppendErrorToVariables(errorRecord);
-                return; // do not write to output pipe
             }
-
-            if (ContinueStatus.YesToAll == lastErrorContinueStatus)
-            {
-                preference = ActionPreference.Continue;
-            }
-
-            switch (preference)
-            {
-                case ActionPreference.Stop:
-                    ActionPreferenceStopException e =
-                        new ActionPreferenceStopException(
-                            MyInvocation,
-                            errorRecord,
-                            StringUtil.Format(CommandBaseStrings.ErrorPreferenceStop,
-                                              "ErrorActionPreference",
-                                              errorRecord.ToString()));
-                    throw ManageException(e);
-
-                case ActionPreference.Inquire:
-                    // ignore return value
-                    // this will throw if the user chooses not to continue
-                    lastErrorContinueStatus = InquireHelper(
-                        RuntimeException.RetrieveMessage(errorRecord),
-                        null,
-                        true,  // allowYesToAll
-                        false, // allowNoToAll
-                        true,  // replaceNoWithHalt
-                        false  // hasSecurityImpact
-                    );
-                    break;
-            }
-
-            // 2005/01/20 Do not write the object to $error if
-            // ManageException has already done so
-            AppendErrorToVariables(errorRecord);
 
             // Add this note property and set its value to true for F&O
             // to decide whether to call WriteErrorLine or WriteLine.

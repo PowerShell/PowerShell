@@ -628,7 +628,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (object spec in moduleSpecs)
                 {
-                    if (!(spec is Hashtable))
+                    if (spec is not Hashtable)
                     {
                         yield return spec.ToString();
                     }

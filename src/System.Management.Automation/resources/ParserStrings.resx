@@ -1221,13 +1221,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Cannot perform call.</value>
   </data>
   <data name="CannotRetrieveTypeInformation" xml:space="preserve">
-    <value>ResolveComReference.CannotRetrieveTypeInformation.</value>
-  </data>
-  <data name="COMObjectDoesNotSupportEvents" xml:space="preserve">
-    <value>COM object does not support events.</value>
-  </data>
-  <data name="COMObjectDoesNotSupportSourceInterface" xml:space="preserve">
-    <value>COM object does not support specified source interface.</value>
+    <value>Cannot retrieve type information.</value>
   </data>
   <data name="CouldNotGetDispId" xml:space="preserve">
     <value>Could not get dispatch ID for {0} (error: {1}).</value>
@@ -1253,23 +1247,14 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="GetIDsOfNamesInvalid" xml:space="preserve">
     <value>IDispatch::GetIDsOfNames behaved unexpectedly for {0}.</value>
   </data>
-  <data name="MethodShouldNotBeCalled" xml:space="preserve">
-    <value>This method should not be called.</value>
-  </data>
   <data name="SetComObjectDataFailed" xml:space="preserve">
     <value>Marshal.SetComObjectData failed.</value>
   </data>
   <data name="UnexpectedVarEnum" xml:space="preserve">
     <value>Unexpected VarEnum {0}.</value>
   </data>
-  <data name="UnsupportedEnumType" xml:space="preserve">
-    <value>Attempting to wrap an unsupported enum type.</value>
-  </data>
   <data name="UnsupportedHandlerType" xml:space="preserve">
     <value>Attempting to pass an event handler of an unsupported type.</value>
-  </data>
-  <data name="VariantGetAccessorNYI" xml:space="preserve">
-    <value>Variant.GetAccessor cannot handle {0}.</value>
   </data>
   <data name="ConfigurationNotSupportedInPowerShellCore" xml:space="preserve">
     <value>Configuration keyword is not supported in PowerShell 6+.</value>

@@ -2056,7 +2056,7 @@ namespace System.Management.Automation.Language
                     return;
                 }
 
-                if (!(argumentValue is string))
+                if (argumentValue is not string)
                 {
                     ReportError(argumentAst.Extent,
                         nameof(ParserStrings.RequiresInvalidStringArgument),
@@ -2069,7 +2069,7 @@ namespace System.Management.Automation.Language
             }
             else if (PSSnapinToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
-                if (!(argumentValue is string))
+                if (argumentValue is not string)
                 {
                     ReportError(argumentAst.Extent,
                         nameof(ParserStrings.RequiresInvalidStringArgument),
@@ -2219,7 +2219,7 @@ namespace System.Management.Automation.Language
 
         private List<string> HandleRequiresAssemblyArgument(Ast argumentAst, object arg, List<string> requiredAssemblies)
         {
-            if (!(arg is string))
+            if (arg is not string)
             {
                 ReportError(argumentAst.Extent,
                     nameof(ParserStrings.RequiresInvalidStringArgument),
@@ -2242,7 +2242,7 @@ namespace System.Management.Automation.Language
 
         private List<string> HandleRequiresPSEditionArgument(Ast argumentAst, object arg, ref List<string> requiredEditions)
         {
-            if (!(arg is string))
+            if (arg is not string)
             {
                 ReportError(argumentAst.Extent,
                     nameof(ParserStrings.RequiresInvalidStringArgument),

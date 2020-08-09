@@ -130,9 +130,9 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 FieldDescription fd = new FieldDescription(promptString);
-                if (AsSecureString)
+                if (AsSecureString || MaskInput)
                 {
-                    fd.SetParameterType(typeof(System.Security.SecureString));
+                    fd.SetParameterType(typeof(SecureString));
                 }
                 else
                 {
@@ -149,27 +149,37 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (PSObject o in result.Values)
                     {
-                        WriteObject(o);
+                        if (MaskInput && o?.BaseObject is SecureString secureString)
+                        {
+                            WriteObject(Utils.GetStringFromSecureString(secureString));
+                        }
+                        else
+                        {
+                            WriteObject(o);
+                        }
                     }
                 }
             }
             else
             {
                 object result;
-                if (AsSecureString)
+                if (AsSecureString || MaskInput)
                 {
                     result = Host.UI.ReadLineAsSecureString();
-                }
-                else if (MaskInput)
-                {
-                    result = Host.UI.ReadLineMaskedAsString();
                 }
                 else
                 {
                     result = Host.UI.ReadLine();
                 }
 
-                WriteObject(result);
+                if (MaskInput)
+                {
+                    WriteObject(Utils.GetStringFromSecureString((SecureString)result));
+                }
+                else
+                {
+                    WriteObject(result);
+                }
             }
         }
 

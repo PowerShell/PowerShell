@@ -100,19 +100,6 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             { & $powershell -outp blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
         }
 
-        It "Verify Validate Dollar Error Populated should throw exception" {
-            $origEA = $ErrorActionPreference
-            $ErrorActionPreference = "Stop"
-            $a = 1,2,3
-            $e = {
-                $a | & $powershell -noprofile -command { wgwg-wrwrhqwrhrh35h3h3}
-            } | Should -Throw -ErrorId "CommandNotFoundException" -PassThru
-
-            $e.ToString() | Should -Match "wgwg-wrwrhqwrhrh35h3h3"
-
-            $ErrorActionPreference = $origEA
-        }
-
         It "Verify Validate Output Format As Text Explicitly Child Single Shell does not throw" {
             {
                 "blahblah" | & $powershell -noprofile -out text -com { $input }

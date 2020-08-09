@@ -29,14 +29,17 @@ namespace System.Management.Automation
         private Parameter _parameter;
         private Argument _argument;
         private bool _spaceAfterParameter;
+        private bool _fromHashtableSplatting;
 
-        internal bool SpaceAfterParameter { get { return _spaceAfterParameter; } }
+        internal bool SpaceAfterParameter => _spaceAfterParameter;
 
-        internal bool ParameterNameSpecified { get { return _parameter != null; } }
+        internal bool ParameterNameSpecified => _parameter != null;
 
-        internal bool ArgumentSpecified { get { return _argument != null; } }
+        internal bool ArgumentSpecified => _argument != null;
 
-        internal bool ParameterAndArgumentSpecified { get { return ParameterNameSpecified && ArgumentSpecified; } }
+        internal bool ParameterAndArgumentSpecified => ParameterNameSpecified && ArgumentSpecified;
+
+        internal bool FromHashtableSplatting => _fromHashtableSplatting;
 
         /// <summary>
         /// Gets and sets the string that represents parameter name, which does not include the '-' (dash).
@@ -111,7 +114,7 @@ namespace System.Management.Automation
         /// <summary>
         /// If an argument was specified and is to be splatted, returns true, otherwise false.
         /// </summary>
-        internal bool ArgumentSplatted
+        internal bool ArgumentToBeSplatted
         {
             get { return _argument != null ? _argument.splatted : false; }
         }
@@ -201,19 +204,22 @@ namespace System.Management.Automation
         /// <param name="argumentAst">The ast of the argument value in the script.</param>
         /// <param name="value">The argument value.</param>
         /// <param name="spaceAfterParameter">Used in native commands to correctly handle -foo:bar vs. -foo: bar.</param>
+        /// <param name="fromSplatting">Indicate if this parameter-argument pair comes from splatting.</param>
         internal static CommandParameterInternal CreateParameterWithArgument(
             Ast parameterAst,
             string parameterName,
             string parameterText,
             Ast argumentAst,
             object value,
-            bool spaceAfterParameter)
+            bool spaceAfterParameter,
+            bool fromSplatting = false)
         {
             return new CommandParameterInternal
             {
                 _parameter = new Parameter { ast = parameterAst, parameterName = parameterName, parameterText = parameterText },
                 _argument = new Argument { ast = argumentAst, value = value },
-                _spaceAfterParameter = spaceAfterParameter
+                _spaceAfterParameter = spaceAfterParameter,
+                _fromHashtableSplatting = fromSplatting,
             };
         }
 

@@ -783,7 +783,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         customDescriptor = PSObject.Base(methodInfo.Invoke());
 
-                        if (!(customDescriptor is FileSystemSecurity))
+                        if (customDescriptor is not FileSystemSecurity)
                         {
                             customDescriptor = new CommonSecurityDescriptor(false, false, customDescriptor.ToString());
                         }
@@ -825,7 +825,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (_isLiteralPath)
                         {
-                            pathsToProcess.Add(SessionState.Path.GetUnresolvedProviderPathFromPSPath(p));
+                            pathsToProcess.Add(p);
                         }
                         else
                         {

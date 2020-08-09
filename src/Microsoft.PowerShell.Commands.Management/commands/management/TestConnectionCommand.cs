@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
         /// With this switch, standard ping and -Traceroute returns only true / false, and -MtuSize returns an integer.
         /// </summary>
         [Parameter]
-        public SwitchParameter Quiet;
+        public SwitchParameter Quiet { get; set; }
 
         /// <summary>
         /// Gets or sets the timeout value for an individual ping in seconds.

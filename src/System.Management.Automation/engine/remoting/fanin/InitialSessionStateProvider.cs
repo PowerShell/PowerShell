@@ -1285,7 +1285,7 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         private static bool StringTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
-            if (!(obj is string))
+            if (obj is not string)
             {
                 cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeString, key, path));
                 return false;
@@ -1315,7 +1315,7 @@ namespace System.Management.Automation.Remoting
 
         private static bool BooleanTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
-            if (!(obj is bool))
+            if (obj is not bool)
             {
                 cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeBoolean, key, path));
                 return false;
@@ -1634,7 +1634,7 @@ namespace System.Management.Automation.Remoting
         {
             foreach (var roleKey in roleDefinitions.Keys)
             {
-                if (!(roleKey is string))
+                if (roleKey is not string)
                 {
                     var invalidOperationEx = new PSInvalidOperationException(
                         string.Format(RemotingErrorIdStrings.InvalidRoleKeyType, roleKey.GetType().FullName));

@@ -56,33 +56,9 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLineAsSecureString"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, bool, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
         public abstract string ReadLine();
-
-        /// <summary>
-        /// Same as ReadLine except that the input is not echoed to the user while it is collected
-        /// or is echoed in some obfuscated way, such as showing a dot for each character.
-        /// </summary>
-        /// <returns>
-        /// The characters typed by the user.
-        /// </returns>
-        /// <remarks>
-        /// Note that credentials (a user name and password) should be gathered with
-        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
-        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        /// </remarks>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLine"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
-        public virtual string ReadLineMaskedAsString()
-        {
-            // Default implementation of the function to maintain backwards compatibility of the base class.
-            throw new PSNotImplementedException();
-        }
 
         /// <summary>
         /// Same as ReadLine, except that the result is a SecureString, and that the input is not echoed to the user while it is
@@ -95,12 +71,10 @@ namespace System.Management.Automation.Host
         /// Note that credentials (a user name and password) should be gathered with
         /// <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
         /// <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, bool, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
         /// </remarks>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLine"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, bool, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
         public abstract SecureString ReadLineAsSecureString();
@@ -828,9 +802,8 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLine"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLineAsSecureString"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string,string)"/>
+        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, bool, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
         public abstract Dictionary<string, PSObject> Prompt(string caption, string message, Collection<FieldDescription> descriptions);
 
         /// <summary>
@@ -863,12 +836,9 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, bool, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        public abstract PSCredential PromptForCredential(
-            string caption,
-            string message,
-            string userName,
-            string targetName);
+        public abstract PSCredential PromptForCredential(string caption, string message,
+            string userName, string targetName
+        );
 
         /// <summary>
         /// Prompt for credential.
@@ -890,7 +860,7 @@ namespace System.Management.Automation.Host
         /// Types of credential can be supplied by the user.
         /// </param>
         /// <param name="options">
-        /// Options that control the credential gathering UI behavior.
+        /// Options that control the credential gathering UI behavior
         /// </param>
         /// <returns>
         /// User input credential.
@@ -900,57 +870,10 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, bool, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        public abstract PSCredential PromptForCredential(
-            string caption,
-            string message,
-            string userName,
-            string targetName,
-            PSCredentialTypes allowedCredentialTypes,
-            PSCredentialUIOptions options);
-
-        /// <summary>
-        /// Prompt for credential.
-        /// </summary>
-        /// <param name="caption">
-        /// Caption for the message.
-        /// </param>
-        /// <param name="message">
-        /// Text description for the credential to be prompt.
-        /// </param>
-        /// <param name="userName">
-        /// Name of the user whose credential is to be prompted for. If set to null or empty
-        /// string, the function will prompt for user name first.
-        /// </param>
-        /// <param name="confirmPassword">
-        /// Prompts user to re-enter the password for confirmation.
-        /// </param>
-        /// <param name="targetName">
-        /// Name of the target for which the credential is being collected.
-        /// </param>
-        /// <param name="allowedCredentialTypes">
-        /// Types of credential can be supplied by the user.
-        /// </param>
-        /// <param name="options">
-        /// Options that control the credential gathering UI behavior.
-        /// </param>
-        /// <returns>
-        /// User input credential.
-        /// </returns>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLine"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLineAsSecureString"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        public abstract PSCredential PromptForCredential(
-            string caption,
-            string message,
-            string userName,
-            bool confirmPassword,
-            string targetName,
-            PSCredentialTypes allowedCredentialTypes,
-            PSCredentialUIOptions options);
+        public abstract PSCredential PromptForCredential(string caption, string message,
+            string userName, string targetName, PSCredentialTypes allowedCredentialTypes,
+            PSCredentialUIOptions options
+        );
 
         /// <summary>
         /// Presents a dialog allowing the user to choose an option from a set of options.
@@ -976,7 +899,6 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, bool, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
         public abstract int PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices, int defaultChoice);
 
         #endregion Dialog-oriented interaction

@@ -208,6 +208,9 @@ function Start-PSPackage {
         # Copy the ThirdPartyNotices.txt so it's part of the package
         Copy-Item "$RepoRoot/ThirdPartyNotices.txt" -Destination $Source -Force
 
+        # Copy the default.help.txt so it's part of the package
+        Copy-Item "$RepoRoot/assets/default.help.txt" -Destination "$Source/en-US" -Force
+
         # If building a symbols package, we add a zip of the parent to publish
         if ($IncludeSymbols.IsPresent)
         {
@@ -3251,7 +3254,7 @@ function New-MSIXPackage
     # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
     # cp-459155 is 'CN=Microsoft Windows Store Publisher (Store EKU), O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
     # authenticodeFormer is 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
-    $releasePublisher = 'CN=Microsoft Windows Store Publisher (Store EKU), O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+    $releasePublisher = 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
 
     $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
     $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion).Replace('$ARCH$', $Architecture).Replace('$PRODUCTNAME$', $productName).Replace('$DISPLAYNAME$', $displayName).Replace('$PUBLISHER$', $releasePublisher)

@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell
             => throw new PSNotImplementedException();
 
         /// <summary>
-        /// Prompt for choice.
+        /// PromptForChoice.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell
             => throw new PSNotImplementedException();
 
         /// <summary>
-        /// Prompt for credential.
+        /// PromptForCredential.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell
             => throw new PSNotImplementedException();
 
         /// <summary>
-        /// Prompt for credential.
+        /// PromptForCredential.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -80,33 +80,10 @@ namespace Microsoft.PowerShell
             => throw new PSNotImplementedException();
 
         /// <summary>
-        /// Prompt for credential.
-        /// </summary>
-        /// <param name="caption"></param>
-        /// <param name="message"></param>
-        /// <param name="userName"></param>
-        /// <param name="confirmPassword"></param>
-        /// <param name="targetName"></param>
-        /// <param name="allowedCredentialTypes"></param>
-        /// <param name="options"></param>
-        /// <returns></returns>
-        public override PSCredential PromptForCredential(string caption, string message, string userName, bool confirmPassword, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
-            => throw new PSNotImplementedException();
-
-        /// <summary>
-        /// Read line.
+        /// ReadLine.
         /// </summary>
         /// <returns></returns>
         public override string ReadLine()
-            => throw new PSNotImplementedException();
-
-        /// <summary>
-        /// Null implementation of ReadLineMaskedAsString.
-        /// </summary>
-        /// <returns>
-        /// It throws an exception.
-        /// </returns>
-        public override string ReadLineMaskedAsString()
             => throw new PSNotImplementedException();
 
         /// <summary>

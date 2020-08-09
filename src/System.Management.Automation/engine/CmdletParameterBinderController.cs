@@ -207,13 +207,7 @@ namespace System.Management.Automation
                 psCompiledScriptCmdlet.PrepareForBinding(this.CommandLineParameters);
             }
 
-            // Add the passed in arguments to the unboundArguments collection
-
-            foreach (CommandParameterInternal argument in arguments)
-            {
-                UnboundArguments.Add(argument);
-            }
-
+            InitUnboundArguments(arguments);
             CommandMetadata cmdletMetadata = _commandMetadata;
             // Clear the warningSet at the beginning.
             _warningSet.Clear();
@@ -232,7 +226,7 @@ namespace System.Management.Automation
                 _commandMetadata.Name))
             {
                 // Bind the actual arguments
-                UnboundArguments = BindParameters(_currentParameterSetFlag, this.UnboundArguments);
+                UnboundArguments = BindNamedParameters(_currentParameterSetFlag, this.UnboundArguments);
             }
 
             ParameterBindingException reportedBindingException;
@@ -1064,134 +1058,56 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Binds the actual arguments to only the formal parameters
-        /// for only the parameters in the specified parameter set.
+        /// Validate the given named parameter against the specified parameter set,
+        /// and then bind the argument to the parameter.
         /// </summary>
-        /// <param name="parameterSets">
-        ///     The parameter set used to bind the arguments.
-        /// </param>
-        /// <param name="arguments">
-        ///     The arguments that should be attempted to bind to the parameters of the specified
-        ///     parameter binder.
-        /// </param>
-        /// <exception cref="ParameterBindingException">
-        /// if multiple parameters are found matching the name.
-        /// or
-        /// if no match could be found.
-        /// or
-        /// If argument transformation fails.
-        /// or
-        /// The argument could not be coerced to the appropriate type for the parameter.
-        /// or
-        /// The parameter argument transformation, prerequisite, or validation failed.
-        /// or
-        /// If the binding to the parameter fails.
-        /// </exception>
-        private Collection<CommandParameterInternal> BindParameters(uint parameterSets, Collection<CommandParameterInternal> arguments)
+        protected override void BindNamedParameter(
+            uint parameterSets,
+            CommandParameterInternal argument,
+            MergedCompiledCommandParameter parameter)
         {
-            Collection<CommandParameterInternal> result = new Collection<CommandParameterInternal>();
-
-            foreach (CommandParameterInternal argument in arguments)
+            if ((parameter.Parameter.ParameterSetFlags & parameterSets) == 0 &&
+                !parameter.Parameter.IsInAllSets)
             {
-                if (!argument.ParameterNameSpecified)
-                {
-                    result.Add(argument);
-                    continue;
-                }
+                string parameterSetName = BindableParameters.GetParameterSetName(parameterSets);
 
-                // We don't want to throw an exception yet because
-                // the parameter might be a positional argument or it
-                // might match up to a dynamic parameter
-
-                MergedCompiledCommandParameter parameter =
-                    BindableParameters.GetMatchingParameter(
+                ParameterBindingException bindingException =
+                    new ParameterBindingException(
+                        ErrorCategory.InvalidArgument,
+                        this.Command.MyInvocation,
+                        errorPosition: null,
                         argument.ParameterName,
-                        false, true,
-                        new InvocationInfo(this.InvocationInfo.MyCommand, argument.ParameterExtent));
+                        parameterType: null,
+                        typeSpecified: null,
+                        ParameterBinderStrings.ParameterNotInParameterSet,
+                        "ParameterNotInParameterSet",
+                        parameterSetName);
 
-                // If the parameter is not in the specified parameter set,
-                // throw a binding exception
-
-                if (parameter != null)
+                // Might be caused by default parameter binding
+                if (!DefaultParameterBindingInUse)
                 {
-                    // Now check to make sure it hasn't already been
-                    // bound by looking in the boundParameters collection
-
-                    if (BoundParameters.ContainsKey(parameter.Parameter.Name))
-                    {
-                        ParameterBindingException bindingException =
-                            new ParameterBindingException(
-                                ErrorCategory.InvalidArgument,
-                                this.InvocationInfo,
-                                GetParameterErrorExtent(argument),
-                                argument.ParameterName,
-                                null,
-                                null,
-                                ParameterBinderStrings.ParameterAlreadyBound,
-                                nameof(ParameterBinderStrings.ParameterAlreadyBound));
-
-                        // Multiple values assigned to the same parameter.
-                        // Not caused by default parameter binding
-                        throw bindingException;
-                    }
-
-                    if ((parameter.Parameter.ParameterSetFlags & parameterSets) == 0 &&
-                        !parameter.Parameter.IsInAllSets)
-                    {
-                        string parameterSetName = BindableParameters.GetParameterSetName(parameterSets);
-
-                        ParameterBindingException bindingException =
-                            new ParameterBindingException(
-                                ErrorCategory.InvalidArgument,
-                                this.Command.MyInvocation,
-                                null,
-                                argument.ParameterName,
-                                null,
-                                null,
-                                ParameterBinderStrings.ParameterNotInParameterSet,
-                                "ParameterNotInParameterSet",
-                                parameterSetName);
-
-                        // Might be caused by default parameter binding
-                        if (!DefaultParameterBindingInUse)
-                        {
-                            throw bindingException;
-                        }
-                        else
-                        {
-                            ThrowElaboratedBindingException(bindingException);
-                        }
-                    }
-
-                    try
-                    {
-                        BindParameter(parameterSets, argument, parameter,
-                            ParameterBindingFlags.ShouldCoerceType | ParameterBindingFlags.DelayBindScriptBlock);
-                    }
-                    catch (ParameterBindingException pbex)
-                    {
-                        if (!DefaultParameterBindingInUse)
-                        {
-                            throw;
-                        }
-
-                        ThrowElaboratedBindingException(pbex);
-                    }
-                }
-                else if (argument.ParameterName.Equals(Parser.VERBATIM_PARAMETERNAME, StringComparison.Ordinal))
-                {
-                    // We sometimes send a magic parameter from a remote machine with the values referenced via
-                    // a using expression ($using:x).  We then access these values via PSBoundParameters, so
-                    // "bind" them here.
-                    DefaultParameterBinder.CommandLineParameters.SetImplicitUsingParameters(argument.ArgumentValue);
+                    throw bindingException;
                 }
                 else
                 {
-                    result.Add(argument);
+                    ThrowElaboratedBindingException(bindingException);
                 }
             }
 
-            return result;
+            try
+            {
+                BindParameter(parameterSets, argument, parameter,
+                    ParameterBindingFlags.ShouldCoerceType | ParameterBindingFlags.DelayBindScriptBlock);
+            }
+            catch (ParameterBindingException pbex)
+            {
+                if (!DefaultParameterBindingInUse)
+                {
+                    throw;
+                }
+
+                ThrowElaboratedBindingException(pbex);
+            }
         }
 
         /// <summary>
@@ -1257,17 +1173,6 @@ namespace System.Management.Automation
 
             s_tracer.WriteLine("IsParameterScriptBlockBindable: result = {0}", result);
             return result;
-        }
-
-        /// <summary>
-        /// Binds the specified parameters to the cmdlet.
-        /// </summary>
-        /// <param name="parameters">
-        /// The parameters to bind.
-        /// </param>
-        internal override Collection<CommandParameterInternal> BindParameters(Collection<CommandParameterInternal> parameters)
-        {
-            return BindParameters(uint.MaxValue, parameters);
         }
 
         /// <summary>
@@ -1815,7 +1720,7 @@ namespace System.Management.Automation
 
                                 ReparseUnboundArguments();
 
-                                UnboundArguments = BindParameters(_currentParameterSetFlag, UnboundArguments);
+                                UnboundArguments = BindNamedParameters(_currentParameterSetFlag, UnboundArguments);
                             }
 
                             using (ParameterBinderBase.bindingTracer.TraceScope(

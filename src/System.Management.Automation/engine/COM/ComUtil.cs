@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Collections;
 using System.Collections.ObjectModel;
 using System.Management.Automation.ComInterop;
 using System.Runtime.InteropServices;
@@ -363,55 +362,6 @@ namespace System.Management.Automation
             }
 
             return returnValue;
-        }
-    }
-
-    /// <summary>
-    /// Defines an enumerator that represent a COM collection object.
-    /// </summary>
-    internal class ComEnumerator : IEnumerator
-    {
-        private COM.IEnumVARIANT _enumVariant;
-        private object[] _element;
-
-        private ComEnumerator(COM.IEnumVARIANT enumVariant)
-        {
-            _enumVariant = enumVariant;
-            _element = new object[1];
-        }
-
-        public object Current
-        {
-            get { return _element[0]; }
-        }
-
-        public bool MoveNext()
-        {
-            _element[0] = null;
-            int result = _enumVariant.Next(1, _element, IntPtr.Zero);
-            return result == 0;
-        }
-
-        public void Reset()
-        {
-            _element[0] = null;
-            _enumVariant.Reset();
-        }
-
-        /// <summary>
-        /// Try to create an enumerator for a COM object.
-        /// </summary>
-        /// <returns>
-        /// A 'ComEnumerator' instance, or null if we cannot create an enumerator for the COM object.
-        /// </returns>
-        internal static ComEnumerator Create(object comObject)
-        {
-            if (comObject == null || !comObject.GetType().IsCOMObject) { return null; }
-
-            // The passed-in COM object could already be a IEnumVARIANT interface.
-            // e.g. user call '_NewEnum()' on a COM collection interface.
-            var enumVariant = comObject as COM.IEnumVARIANT;
-            return enumVariant != null ? new ComEnumerator(enumVariant) : null;
         }
     }
 }

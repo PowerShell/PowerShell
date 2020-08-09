@@ -667,7 +667,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // null is not valid value for header.
                     // We silently ignore header if value is null.
-                    if (!(value is null))
+                    if (value is not null)
                     {
                         // add the header value (or overwrite it if already present)
                         WebSession.Headers[key] = value.ToString();

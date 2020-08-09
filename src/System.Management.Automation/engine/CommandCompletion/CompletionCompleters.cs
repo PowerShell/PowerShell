@@ -1895,7 +1895,7 @@ namespace System.Management.Automation
                             yield return new PSTypeName(pso.TypeNames[0]);
                         }
 
-                        if (!(pso.BaseObject is PSCustomObject))
+                        if (pso.BaseObject is not PSCustomObject)
                         {
                             yield return new PSTypeName(pso.BaseObject.GetType());
                         }
@@ -7140,7 +7140,7 @@ namespace System.Management.Automation
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
         {
-            if (!(commandAst.Parent is PipelineAst pipelineAst))
+            if (commandAst.Parent is not PipelineAst pipelineAst)
             {
                 return null;
             }

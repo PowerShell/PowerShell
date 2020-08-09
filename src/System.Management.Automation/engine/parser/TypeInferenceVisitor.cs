@@ -2416,7 +2416,7 @@ namespace System.Management.Automation
                 lhs = convertExpr.Child;
             }
 
-            if (!(lhs is VariableExpressionAst varExpr))
+            if (lhs is not VariableExpressionAst varExpr)
             {
                 return false;
             }

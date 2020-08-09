@@ -80,12 +80,6 @@ namespace Microsoft.PowerShell.Commands
         private string _title = UtilsStrings.PromptForCredential_DefaultCaption;
 
         /// <summary>
-        /// Gets or sets the confirm password prompt.
-        /// </summary>
-        [Parameter(ParameterSetName = messageSet)]
-        public SwitchParameter ConfirmPassword { get; set; }
-
-        /// <summary>
         /// Initializes a new instance of the GetCredentialCommand
         /// class.
         /// </summary>
@@ -106,14 +100,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                Credential = this.Host.UI.PromptForCredential(
-                    _title,
-                    _message,
-                    _userName,
-                    ConfirmPassword,
-                    string.Empty,
-                    PSCredentialTypes.Default,
-                    PSCredentialUIOptions.Default);
+                Credential = this.Host.UI.PromptForCredential(_title, _message, _userName, string.Empty);
             }
             catch (ArgumentException exception)
             {

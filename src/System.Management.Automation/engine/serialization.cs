@@ -3372,7 +3372,7 @@ namespace System.Management.Automation
                     hashCodeObject = ((PSObject)hashCodeObject).BaseObject;
                 }
 
-                if (!(hashCodeObject is int))
+                if (hashCodeObject is not int)
                 {
                     return null;
                 }
@@ -3426,7 +3426,7 @@ namespace System.Management.Automation
 
         private PSObject RehydrateCimInstance(PSObject deserializedObject)
         {
-            if (!(deserializedObject.BaseObject is PSCustomObject))
+            if (deserializedObject.BaseObject is not PSCustomObject)
             {
                 return deserializedObject;
             }
