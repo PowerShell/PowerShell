@@ -101,6 +101,23 @@ namespace PSTests.Parallel
         }
 
         [Theory]
+        [InlineData("-file", "-")]
+        public static void TestDefaultParameterIsFileName_Dash(params string[] commandLine)
+        {
+            var cpp = new CommandLineParameterParser();
+
+            cpp.Parse(commandLine);
+
+            Assert.False(cpp.AbortStartup);
+            Assert.True(cpp.NoExit);
+            Assert.False(cpp.ShowShortHelp);
+            Assert.False(cpp.ShowBanner);
+            Assert.False(cpp.NoPrompt);
+            Assert.True(cpp.ExplicitReadCommandsFromStdin);
+            Assert.Null(cpp.ErrorMessage);
+        }
+
+        [Theory]
         [InlineData("-Version")]
         [InlineData("-V")]
         [InlineData("-Version", "abbra")] // Ignore all after the parameter
