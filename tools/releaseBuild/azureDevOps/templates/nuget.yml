@@ -12,6 +12,7 @@ jobs:
   timeoutInMinutes: 90
 
   variables:
+    runCodesignValidationInjection: false
     GenAPIToolPath: '$(System.ArtifactsDirectory)/GenAPI'
     PackagePath: '$(System.ArtifactsDirectory)/UnifiedPackagePath'
     winFxdPath: '$(System.ArtifactsDirectory)/winFxd'

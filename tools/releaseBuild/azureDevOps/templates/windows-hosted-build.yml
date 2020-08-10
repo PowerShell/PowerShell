@@ -11,6 +11,7 @@ jobs:
   pool:
     vmImage: windows-latest
   variables:
+    runCodesignValidationInjection: false
     BuildConfiguration: ${{ parameters.BuildConfiguration }}
     BuildPlatform: ${{ parameters.BuildPlatform }}
     Architecture: ${{ parameters.Architecture }}

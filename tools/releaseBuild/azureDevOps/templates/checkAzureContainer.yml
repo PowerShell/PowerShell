@@ -1,5 +1,7 @@
 jobs:
 - job: DeleteBlob
+  variables:
+    runCodesignValidationInjection: false
   displayName: Delete blob is exists
   pool:
     vmImage: windows-latest
