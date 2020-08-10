@@ -2051,7 +2051,7 @@ function Find-Dotnet() {
     if (precheck dotnet) {
         # Must run from within repo to ensure global.json can specify the required SDK version
         Push-Location $PSScriptRoot
-        $dotnetCLIInstalledVersion = Start-NativeExecution -sb { dotnet --version } -IgnoreExitcode
+        $dotnetCLIInstalledVersion = Start-NativeExecution -sb { dotnet --version } -IgnoreExitcode 2> $null
         Pop-Location
         if ($dotnetCLIInstalledVersion -ne $dotnetCLIRequiredVersion) {
             Write-Warning "The 'dotnet' in the current path can't find SDK version ${dotnetCLIRequiredVersion}, prepending $dotnetPath to PATH."
