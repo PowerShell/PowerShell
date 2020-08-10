@@ -967,7 +967,7 @@ namespace Microsoft.PowerShell.Commands
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
-                            if ((hashtable[ConfigFileConstants.FunctionValueToken] as ScriptBlock) == null)
+                            if (hashtable[ConfigFileConstants.FunctionValueToken] is not ScriptBlock)
                             {
                                 PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock,
                                     ConfigFileConstants.FunctionValueToken, ConfigFileConstants.FunctionDefinitions, _path));
@@ -1714,7 +1714,7 @@ namespace Microsoft.PowerShell.Commands
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
-                            if ((hashtable[ConfigFileConstants.FunctionValueToken] as ScriptBlock) == null)
+                            if (hashtable[ConfigFileConstants.FunctionValueToken] is not ScriptBlock)
                             {
                                 PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock,
                                     ConfigFileConstants.FunctionValueToken, ConfigFileConstants.FunctionDefinitions, _path));
@@ -1951,7 +1951,7 @@ namespace Microsoft.PowerShell.Commands
                 sb.AppendFormat("{0," + (4 * (indent + 1)) + "}", string.Empty);
                 sb.Append(QuoteName(key));
                 sb.Append(" = ");
-                if ((table[key] as ScriptBlock) != null)
+                if (table[key] is ScriptBlock)
                 {
                     sb.Append(WrapScriptBlock(table[key].ToString()));
                     continue;
