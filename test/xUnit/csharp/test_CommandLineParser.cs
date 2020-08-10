@@ -102,7 +102,7 @@ namespace PSTests.Parallel
 
         [Theory]
         [InlineData("-file", "-")]
-        public static void TestDefaultParameterIsFileName_Dash(params string[] commandLine)
+        public static void TestParameterIsFileName_Dash(params string[] commandLine)
         {
             var cpp = new CommandLineParameterParser();
 
@@ -115,6 +115,23 @@ namespace PSTests.Parallel
             Assert.False(cpp.NoPrompt);
             Assert.True(cpp.ExplicitReadCommandsFromStdin);
             Assert.Null(cpp.ErrorMessage);
+        }
+
+        [Theory]
+        [InlineData("-prof")]
+        public static void TestParameterIs_Wrong_Value(params string[] commandLine)
+        {
+            var cpp = new CommandLineParameterParser();
+
+            cpp.Parse(commandLine);
+
+            Assert.True(cpp.AbortStartup);
+            Assert.False(cpp.NoExit);
+            Assert.False(cpp.ShowShortHelp);
+            Assert.False(cpp.ShowBanner);
+            Assert.False(cpp.NoPrompt);
+            Assert.Contains(commandLine[0], cpp.ErrorMessage);
+            Assert.Contains("-noprofile", cpp.ErrorMessage);
         }
 
         [Theory]
