@@ -1436,6 +1436,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     break;
                 }
+
                 // Read CommandLine property
                 string commandLine = GetPropertyValue(mshObject, "CommandLine") as string;
                 if (commandLine == null)
@@ -1445,109 +1446,32 @@ namespace Microsoft.PowerShell.Commands
 
                 // Read ExecutionStatus property
                 object pipelineState = GetPropertyValue(mshObject, "ExecutionStatus");
-                if (pipelineState == null)
-                {
-                    break;
-                }
-
-                PipelineState executionStatus;
-                if (pipelineState is PipelineState)
-                {
-                    executionStatus = (PipelineState)pipelineState;
-                }
-                else if (pipelineState is PSObject)
-                {
-                    PSObject serializedPipelineState = pipelineState as PSObject;
-                    object baseObject = serializedPipelineState.BaseObject;
-                    if (baseObject is not int)
-                    {
-                        break;
-                    }
-
-                    executionStatus = (PipelineState)baseObject;
-                    if (executionStatus < PipelineState.NotStarted || executionStatus > PipelineState.Failed)
-                    {
-                        break;
-                    }
-                }
-                else if (pipelineState is string)
-                {
-                    try
-                    {
-                        executionStatus = (PipelineState)Enum.Parse(typeof(PipelineState), (string)pipelineState);
-                    }
-                    catch (ArgumentException)
-                    {
-                        break;
-                    }
-                }
-                else
+                if (pipelineState == null || !LanguagePrimitives.TryConvertTo<PipelineState>(pipelineState, out PipelineState executionStatus))
                 {
                     break;
                 }
 
                 // Read StartExecutionTime property
-                DateTime startExecutionTime;
                 object temp = GetPropertyValue(mshObject, "StartExecutionTime");
-                if (temp == null)
-                {
-                    break;
-                }
-                else if (temp is DateTime)
-                {
-                    startExecutionTime = (DateTime)temp;
-                }
-                else if (temp is string)
-                {
-                    try
-                    {
-                        startExecutionTime = DateTime.Parse((string)temp, System.Globalization.CultureInfo.CurrentCulture);
-                    }
-                    catch (FormatException)
-                    {
-                        break;
-                    }
-                }
-                else
+                if (temp == null || !LanguagePrimitives.TryConvertTo<DateTime>(temp, out DateTime startExecutionTime))
                 {
                     break;
                 }
 
                 // Read EndExecutionTime property
-                DateTime endExecutionTime;
                 temp = GetPropertyValue(mshObject, "EndExecutionTime");
-                if (temp == null)
-                {
-                    break;
-                }
-                else if (temp is DateTime)
-                {
-                    endExecutionTime = (DateTime)temp;
-                }
-                else if (temp is string)
-                {
-                    try
-                    {
-                        endExecutionTime = DateTime.Parse((string)temp, System.Globalization.CultureInfo.CurrentCulture);
-                    }
-                    catch (FormatException)
-                    {
-                        break;
-                    }
-                }
-                else
+                if (temp == null || !LanguagePrimitives.TryConvertTo<DateTime>(temp, out DateTime endExecutionTime))
                 {
                     break;
                 }
 
-                return new HistoryInfo
-                            (
-                                0,
-                                commandLine,
-                                executionStatus,
-                                startExecutionTime,
-                                endExecutionTime
-                            );
+                return new HistoryInfo(
+                    pipelineId: 0,
+                    commandLine,
+                    executionStatus,
+                    startExecutionTime,
+                    endExecutionTime
+                );
             } while (false);
 
             // If we are here, an error has occured.
@@ -1988,4 +1912,3 @@ namespace Microsoft.PowerShell.Commands
         #endregion Private
     }
 }
-
