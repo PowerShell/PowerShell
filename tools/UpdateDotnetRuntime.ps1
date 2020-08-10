@@ -7,7 +7,16 @@ param (
     [string]$SDKVersionOverride,
 
     [Parameter()]
-    [switch]$UpdateMSIPackaging
+    [switch]$UpdateMSIPackaging,
+
+    [Parameter()]
+    [string]$RuntimeSourceFeed,
+
+    [Parameter()]
+    [string]$RuntimeSourceFeedKey,
+
+    [Parameter()]
+    [switch]$InteractiveAuth
 )
 
 <#
@@ -130,24 +139,29 @@ function Update-CsprojFile([string] $path, $values) {
 }
 
 function Get-DotnetUpdate {
-    try {
-        $dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
-        $nextChannel = (Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json).sdk.nextChannel
-        $latestSDKversion = [System.Management.Automation.SemanticVersion] (Invoke-RestMethod -Uri "http://aka.ms/dotnet/$nextChannel/Sdk/productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() })
-        $currentVersion = [System.Management.Automation.SemanticVersion] (( Get-Content -Path "$PSScriptRoot/../global.json" -Raw | ConvertFrom-Json).sdk.version)
+    if ($SDKVersionOverride) {
+        $shouldUpdate = $true
+        $newVersion = $SDKVersionOverride
+    } else {
+        try {
+            $dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
+            $nextChannel = (Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json).sdk.nextChannel
+            $latestSDKversion = [System.Management.Automation.SemanticVersion] (Invoke-RestMethod -Uri "http://aka.ms/dotnet/$nextChannel/Sdk/productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() })
+            $currentVersion = [System.Management.Automation.SemanticVersion] (( Get-Content -Path "$PSScriptRoot/../global.json" -Raw | ConvertFrom-Json).sdk.version)
 
-        if ($latestSDKversion -gt $currentVersion) {
-            $shouldUpdate = $true
-            $newVersion = $latestSDKversion
-        } else {
+            if ($latestSDKversion -gt $currentVersion) {
+                $shouldUpdate = $true
+                $newVersion = $latestSDKversion
+            } else {
+                $shouldUpdate = $false
+                $newVersion = $null
+            }
+        } catch {
+            Write-Verbose -Verbose "Error occured: $_.message"
             $shouldUpdate = $false
             $newVersion = $null
+            Write-Error "Error while checking .NET SDK update: $($_.message)"
         }
-    } catch {
-        Write-Verbose -Verbose "Error occured: $_.message"
-        $shouldUpdate = $false
-        $newVersion = $null
-        Write-Error "Error while checking .NET SDK update: $($_.message)"
     }
 
     return @{
@@ -186,11 +200,22 @@ if ($dotnetUpdate.ShouldUpdate) {
         Write-Verbose -Message "Register new package source 'dotnet5'" -verbose
     }
 
+    if (-not (Get-PackageSource -Name 'dotnet5-internal' -ErrorAction SilentlyContinue)) {
+        $nugetFeed = ([xml](Get-Content .\nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet5' } | Select-Object -ExpandProperty Value
+        Register-PackageSource -Name 'dotnet5-internal' -Location $nugetFeed -ProviderName NuGet
+        Write-Verbose -Message "Register new package source 'dotnet5-internal'" -verbose
+    }
+
     ## Install latest version from the channel
 
     $sdkVersion = if ($SDKVersionOverride) { $SDKVersionOverride } else { $dotnetUpdate.NewVersion }
 
-    Install-Dotnet -Channel "$Channel" -Version $sdkVersion
+    if (-not $RuntimeSourceFeed) {
+        Install-Dotnet -Channel "$Channel" -Version $sdkVersion
+    }
+    else {
+        Install-Dotnet -Channel "$Channel" -Version $sdkVersion -AzureFeed $RuntimeSourceFeed -FeedCredential $RuntimeSourceFeedKey
+    }
 
     Write-Verbose -Message "Installing .NET SDK completed." -Verbose
 
@@ -224,7 +249,7 @@ if ($dotnetUpdate.ShouldUpdate) {
         Import-Module "$PSScriptRoot/../build.psm1" -Force
         Import-Module "$PSScriptRoot/packaging" -Force
         Start-PSBootstrap -Package
-        Start-PSBuild -Clean -Configuration Release -CrossGen
+        Start-PSBuild -Clean -Configuration Release -CrossGen -InteractiveAuth:($InteractiveAuth.IsPresent)
 
         try {
             Start-PSPackage -Type msi -SkipReleaseChecks -InformationVariable wxsData

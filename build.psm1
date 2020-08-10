@@ -303,7 +303,8 @@ function Start-PSBuild {
         [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag,
-        [switch]$Detailed
+        [switch]$Detailed,
+        [switch]$InteractiveAuth
     )
 
     if ($PSCmdlet.ParameterSetName -eq "Default" -and !$NoPSModuleRestore)
@@ -426,7 +427,7 @@ Fix steps:
     }
 
     # handle Restore
-    Restore-PSPackage -Options $Options -Force:$Restore
+    Restore-PSPackage -Options $Options -Force:$Restore -InteractiveAuth:($InteractiveAuth.IsPresent)
 
     # handle ResGen
     # Heuristic to run ResGen on the fresh machine
@@ -618,7 +619,9 @@ function Restore-PSPackage
         [Parameter()]
         $Options = (Get-PSOptions -DefaultToNew),
 
-        [switch] $Force
+        [switch] $Force,
+
+        [switch] $InteractiveAuth
     )
 
     if (-not $ProjectDirs)
@@ -652,6 +655,10 @@ function Restore-PSPackage
             $RestoreArguments += "detailed"
         } else {
             $RestoreArguments += "quiet"
+        }
+
+        if ($InteractiveAuth) {
+            $RestoreArguments += "--interactive"
         }
 
         $ProjectDirs | ForEach-Object {
@@ -1639,7 +1646,9 @@ function Install-Dotnet {
         [string]$Channel = $dotnetCLIChannel,
         [string]$Version = $dotnetCLIRequiredVersion,
         [switch]$NoSudo,
-        [string]$InstallDir
+        [string]$InstallDir,
+        [string]$AzureFeed,
+        [string]$FeedCredential
     )
 
     # This allows sudo install to be optional; needed when running in containers / as root
@@ -1675,9 +1684,19 @@ function Install-Dotnet {
             & $curl -sO $installObtainUrl/$installScript
 
             if (-not $InstallDir) {
-                bash ./$installScript -c $Channel -v $Version
+                if (-not $AzureFeed) {
+                    bash ./$installScript -c $Channel -v $Version
+                }
+                else {
+                    bash ./$installScript -c $Channel -v $Version -AzureFeed $AzureFeed -FeedCredential $FeedCredential
+                }
             } else {
-                bash ./$installScript -c $Channel -v $Version -i $InstallDir
+                if (-not $AzureFeed) {
+                    bash ./$installScript -c $Channel -v $Version -i $InstallDir
+                }
+                else {
+                    bash ./$installScript -c $Channel -v $Version -i $InstallDir -AzureFeed $AzureFeed -FeedCredential $FeedCredential
+                }
             }
         }
     } elseif ($environment.IsWindows) {
@@ -1687,9 +1706,19 @@ function Install-Dotnet {
 
         if (-not $environment.IsCoreCLR) {
             if (-not $InstallDir) {
-                & ./$installScript -Channel $Channel -Version $Version
+                if (-not $AzureFeed) {
+                    & ./$installScript -Channel $Channel -Version $Version
+                }
+                else {
+                    & ./$installScript -Channel $Channel -Version $Version -AzureFeed $AzureFeed -FeedCredential $FeedCredential
+                }
             } else {
-                & ./$installScript -Channel $Channel -Version $Version -InstallDir $InstallDir
+                if (-not $AzureFeed) {
+                    & ./$installScript -Channel $Channel -Version $Version -InstallDir $InstallDir
+                }
+                else {
+                    & ./$installScript -Channel $Channel -Version $Version -InstallDir $InstallDir -AzureFeed $AzureFeed -FeedCredential $FeedCredential
+                }
             }
         } else {
             # dotnet-install.ps1 uses APIs that are not supported in .NET Core, so we run it with Windows PowerShell
@@ -1697,9 +1726,19 @@ function Install-Dotnet {
             $fullDotnetInstallPath = Join-Path -Path $PWD.Path -ChildPath $installScript
             Start-NativeExecution {
                 if (-not $InstallDir) {
-                    & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version
+                    if (-not $AzureFeed) {
+                        & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version
+                    }
+                    else {
+                        & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version -AzureFeed $AzureFeed -FeedCredential $FeedCredential
+                    }
                 } else {
-                    & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version  -InstallDir $InstallDir
+                    if (-not $AzureFeed) {
+                        & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version  -InstallDir $InstallDir
+                    }
+                    else {
+                        & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version  -InstallDir $InstallDir -AzureFeed $AzureFeed -FeedCredential $FeedCredential
+                    }
                 }
             }
         }
