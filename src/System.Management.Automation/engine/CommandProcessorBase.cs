@@ -369,7 +369,10 @@ namespace System.Management.Automation
         {
             OnRestorePreviousScope();
 
-            Context.EngineSessionState = _previousCommandSessionState;
+            if (_previousCommandSessionState != null)
+            {
+                Context.EngineSessionState = _previousCommandSessionState;
+            }
 
             if (_previousScope != null)
             {
@@ -662,6 +665,58 @@ namespace System.Management.Automation
                 {
                     Context.EngineSessionState = _previousCommandSessionState;
                 }
+            }
+        }
+
+        protected virtual void HandleScopedAction(Action action, string traceMessage)
+        {
+            Pipe oldErrorOutputPipe = Context.ShellFunctionErrorOutputPipe;
+            CommandProcessorBase oldCurrentCommandProcessor = Context.CurrentCommandProcessor;
+
+            try
+            {
+                // On V1 the output pipe was redirected to the command's output pipe only when it
+                // was already redirected. This is the original comment explaining this behaviour:
+                //
+                //      NTRAID#Windows Out of Band Releases-926183-2005-12-15
+                //      MonadTestHarness has a bad dependency on an artifact of the current implementation
+                //      The following code only redirects the output pipe if it's already redirected
+                //      to preserve the artifact. The test suites need to be fixed and then this
+                //      the check can be removed and the assignment always done.
+                //
+                // However, this makes the hosting APIs behave differently than commands executed
+                // from the command-line host (for example, see bugs Win7:415915 and Win7:108670).
+                // The RedirectShellErrorOutputPipe flag is used by the V2 hosting API to force the
+                // redirection.
+                if (this.RedirectShellErrorOutputPipe || Context.ShellFunctionErrorOutputPipe != null)
+                {
+                    Context.ShellFunctionErrorOutputPipe = CommandRuntime.ErrorOutputPipe;
+                }
+
+                Context.CurrentCommandProcessor = this;
+                using (CommandRuntime.AllowThisCommandToWrite(permittedToWriteToPipeline: true))
+                using (ParameterBinderBase.bindingTracer.TraceScope(traceMessage))
+                {
+                    SetCurrentScopeToExecutionScope();
+                    action();
+                }
+            }
+            catch (Exception e)
+            {
+                throw ManageInvocationException(e);
+            }
+            finally
+            {
+                Context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
+                Context.CurrentCommandProcessor = oldCurrentCommandProcessor;
+
+                // Destroy the local scope at this point if there is one...
+                if (_useLocalScope && CommandScope != null)
+                {
+                    CommandSessionState.RemoveScope(CommandScope);
+                }
+
+                RestorePreviousScope();
             }
         }
 
@@ -968,57 +1023,13 @@ namespace System.Management.Automation
                         if (Command is PSScriptCmdlet scriptCmdlet)
                         {
                             bool isStopping = ExceptionHandlingOps.SuspendStoppingPipeline(Context);
-                            Pipe oldErrorOutputPipe = Context.ShellFunctionErrorOutputPipe;
-                            CommandProcessorBase oldCurrentCommandProcessor = Context.CurrentCommandProcessor;
-
                             try
                             {
-                                if (this.RedirectShellErrorOutputPipe || Context.ShellFunctionErrorOutputPipe != null)
-                                {
-                                    Context.ShellFunctionErrorOutputPipe = CommandRuntime.ErrorOutputPipe;
-                                }
-
-                                Context.CurrentCommandProcessor = this;
-                                SetCurrentScopeToExecutionScope();
-
-                                using (CommandRuntime.AllowThisCommandToWrite(permittedToWriteToPipeline: true))
-                                using (ParameterBinderBase.bindingTracer.TraceScope("CALLING Cleanup"))
-                                {
-                                    scriptCmdlet.Dispose();
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                throw ManageInvocationException(e);
+                                HandleScopedAction(() => scriptCmdlet.Dispose(), traceMessage: "CALLING Cleanup");
                             }
                             finally
                             {
-                                OnRestorePreviousScope();
-
-                                Context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
-                                Context.CurrentCommandProcessor = oldCurrentCommandProcessor;
                                 ExceptionHandlingOps.RestoreStoppingPipeline(Context, isStopping);
-
-                                // Destroy the local scope at this point if there is one...
-                                if (_useLocalScope && CommandScope != null)
-                                {
-                                    CommandSessionState.RemoveScope(CommandScope);
-                                }
-
-                                // and restore the previous scope...
-                                if (_previousScope != null)
-                                {
-                                    // Restore the scope but use the same session state instance we
-                                    // got it from because the command may have changed the execution context
-                                    // session state...
-                                    CommandSessionState.CurrentScope = _previousScope;
-                                }
-
-                                // Restore the previous session state
-                                if (_previousCommandSessionState != null)
-                                {
-                                    Context.EngineSessionState = _previousCommandSessionState;
-                                }
                             }
                         }
                         else if (Command is IDisposable disposableCommand)
