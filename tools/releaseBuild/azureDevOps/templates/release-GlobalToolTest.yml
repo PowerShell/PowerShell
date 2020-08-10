@@ -16,17 +16,17 @@ jobs:
       artifact: finalResults
       patterns: '**/*.nupkg'
 
-    #- task: DownloadBuildArtifacts@0
-    #  inputs:
-    #    buildType: specific
-    #    project: PowerShellCore
-    #    pipeline: Co-ordinated Build Test
-    #    specificBuildWithTriggering: true
-    #    buildVersionToDownload: latest
-    #    downloadType: single
-    #    artifactName: finalResults
-    #    downloadPath: '$(Pipeline.Workspace)'
-    #    itemPattern: '*.nupkg'
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        buildType: specific
+        project: PowerShellCore
+        pipeline: Co-ordinated Build Test
+        specificBuildWithTriggering: true
+        buildVersionToDownload: latest
+        downloadType: single
+        artifactName: finalResults
+        downloadPath: '$(Pipeline.Workspace)'
+        itemPattern: '*.nupkg'
 
     - pwsh: |
         $dotnetMetadataPath = "$(Build.SourcesDirectory)/DotnetRuntimeMetadata.json"

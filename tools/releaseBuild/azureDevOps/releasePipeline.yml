@@ -211,13 +211,10 @@ stages:
   dependsOn: GitHubManualTasks
   displayName: Release VPack
   jobs:
-  - job: VPackRelease
-    pool:
-     vmImage: windows-latest
-    steps:
-    - pwsh: |
-        Write-Host "Release VPack"
-      displayName: Release VPack
+  - deployment: ReleaseVPackManual
+    displayName: Release VPack
+    pool: server
+    environment: PSReleaseVpack
 
 - stage: ReleaseClose
   displayName: Finish Release

@@ -49,21 +49,21 @@ steps:
     }
   displayName: Download and Capture NuPkgs
 
-#- task: AzureFileCopy@2
-#  displayName: 'AzureBlob build info JSON file Copy'
-#  inputs:
-#    SourcePath: '$(BuildInfoJsonFile)'
-#    azureSubscription: '$(AzureFileCopySubscription)'
-#    Destination: AzureBlob
-#    storage: '$(StorageAccount)'
-#    ContainerName: BuildInfo
+- task: AzureFileCopy@2
+  displayName: 'AzureBlob build info JSON file Copy'
+  inputs:
+    SourcePath: '$(BuildInfoJsonFile)'
+    azureSubscription: '$(AzureFileCopySubscription)'
+    Destination: AzureBlob
+    storage: '$(StorageAccount)'
+    ContainerName: BuildInfo
 
-#- task: AzureFileCopy@2
-#  displayName: 'AzureBlob build info ''lts.json'' Copy when needed'
-#  inputs:
-#    SourcePath: '$(LtsBuildInfoJsonFile)'
-#    azureSubscription: '$(AzureFileCopySubscription)'
-#    Destination: AzureBlob
-#    storage: '$(StorageAccount)'
-#    ContainerName: BuildInfo
-#  condition: and(succeeded(), eq(variables['CopyLTSBuildInfo'], 'YES'))
+- task: AzureFileCopy@2
+  displayName: 'AzureBlob build info ''lts.json'' Copy when needed'
+  inputs:
+    SourcePath: '$(LtsBuildInfoJsonFile)'
+    azureSubscription: '$(AzureFileCopySubscription)'
+    Destination: AzureBlob
+    storage: '$(StorageAccount)'
+    ContainerName: BuildInfo
+  condition: and(succeeded(), eq(variables['CopyLTSBuildInfo'], 'YES'))
