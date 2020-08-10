@@ -1295,8 +1295,12 @@ namespace System.Management.Automation.Runspaces
 
         internal void EnterCriticalSection()
         {
-            Interlocked.Increment(ref _criticalSectionDepth);
-            _criticalSectionSemaphore.Wait(millisecondsTimeout: 0);
+            // Increment the depth value. If we were not previously in a critical section (depth is now 1),
+            // also take out the semaphore.
+            if (Interlocked.Increment(ref _criticalSectionDepth) == 1)
+            {
+                _criticalSectionSemaphore.Wait();
+            }
         }
 
         internal void ExitCriticalSection()

@@ -408,7 +408,9 @@ namespace System.Management.Automation
 
             if (_scriptBlock.HasEndBlock)
             {
-                var endBlock = _runOptimizedCode ? _scriptBlock.EndBlock : _scriptBlock.UnoptimizedEndBlock;
+                Action<FunctionContext> endBlock = _runOptimizedCode
+                    ? _scriptBlock.EndBlock
+                    : _scriptBlock.UnoptimizedEndBlock;
                 if (this.CommandRuntime.InputPipe.ExternalReader == null)
                 {
                     if (IsPipelineInputExpected())
@@ -697,6 +699,7 @@ namespace System.Management.Automation
             if (!_scriptBlock.HasCleanupBlock)
             {
                 ScriptBlock.LogScriptBlockEnd(_scriptBlock, Context.CurrentRunspace.InstanceId);
+                _cleanupCompleted = true;
                 return;
             }
 
