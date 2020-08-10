@@ -796,7 +796,7 @@ namespace Microsoft.PowerShell.Commands
                     null)
             {
                 ErrorDetails = new ErrorDetails(
-                this, "MeasureObjectStrings", "PropertyNotFound", propertyName)
+                    this, "MeasureObjectStrings", "PropertyNotFound", propertyName)
             };
             WriteError(errorRecord);
         }

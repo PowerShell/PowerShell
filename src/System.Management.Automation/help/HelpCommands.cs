@@ -280,9 +280,9 @@ namespace Microsoft.PowerShell.Commands
                     Role = Role,
                     Functionality = Functionality,
                     ProviderContext = new ProviderContext(
-                    this.Path,
-                    this.Context.Engine.Context,
-                    this.SessionState.Path),
+                        this.Path,
+                        this.Context.Engine.Context,
+                        this.SessionState.Path),
                     CommandOrigin = this.MyInvocation.CommandOrigin
                 };
 
@@ -830,9 +830,9 @@ namespace Microsoft.PowerShell.Commands
                     HelpRequest helpRequest = new HelpRequest(cmdName, cmdInfo.HelpCategory)
                     {
                         ProviderContext = new ProviderContext(
-                        string.Empty,
-                        currentContext,
-                        currentContext.SessionState.Path),
+                            string.Empty,
+                            currentContext,
+                            currentContext.SessionState.Path),
                         CommandOrigin = CommandOrigin.Runspace
                     };
                     foreach (

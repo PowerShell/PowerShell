@@ -146,11 +146,11 @@ namespace System.Management.Automation
                         e, "NoClobber", ErrorCategory.ResourceExists, resolvedPath)
                     {
                         ErrorDetails = new ErrorDetails(
-                        cmdlet,
-                        "PathUtilsStrings",
-                        "UtilityFileExistsNoClobber",
-                        filePath,
-                        "NoClobber") // prevents localization
+                            cmdlet,
+                            "PathUtilsStrings",
+                            "UtilityFileExistsNoClobber",
+                            filePath,
+                            "NoClobber") // prevents localization
                     };
 
                     // NOTE: this call will throw
