@@ -668,7 +668,7 @@ namespace System.Management.Automation
             }
         }
 
-        protected virtual void HandleScopedAction(Action action, string traceMessage)
+        protected virtual void HandleScopedAction<T>(Action<T> action, T state, string traceMessage)
         {
             Pipe oldErrorOutputPipe = Context.ShellFunctionErrorOutputPipe;
             CommandProcessorBase oldCurrentCommandProcessor = Context.CurrentCommandProcessor;
@@ -698,7 +698,7 @@ namespace System.Management.Automation
                 using (ParameterBinderBase.bindingTracer.TraceScope(traceMessage))
                 {
                     SetCurrentScopeToExecutionScope();
-                    action();
+                    action(state);
                 }
             }
             catch (Exception e)
@@ -1025,7 +1025,10 @@ namespace System.Management.Automation
                             bool isStopping = ExceptionHandlingOps.SuspendStoppingPipeline(Context);
                             try
                             {
-                                HandleScopedAction(() => scriptCmdlet.Dispose(), traceMessage: "CALLING Cleanup");
+                                HandleScopedAction(
+                                    (cmdlet) => cmdlet.Dispose(),
+                                    scriptCmdlet,
+                                    traceMessage: "CALLING Cleanup");
                             }
                             finally
                             {
