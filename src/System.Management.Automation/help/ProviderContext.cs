@@ -110,6 +110,7 @@ namespace System.Management.Automation
             CmdletProvider cmdletProvider = providerInfo.CreateInstance();
             if (!(cmdletProvider is ICmdletProviderSupportsHelp provider))
             {
+                // Under JEA sessions the resolvedProviderPath will be null, we should allow get-help to continue.
                 return null;
             }
 

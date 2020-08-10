@@ -1239,6 +1239,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (!(connectionInfo is WSManConnectionInfo wsmanConnectionInfoParam))
             {
+                // Disconnect-Connect currently only supported by WSMan.
                 throw new NotSupportedException();
             }
 
