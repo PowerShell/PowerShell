@@ -635,57 +635,13 @@ namespace System.Management.Automation
         protected override void CleanupScriptCommand()
         {
             bool isStopping = ExceptionHandlingOps.SuspendStoppingPipeline(Context);
-            Pipe oldErrorOutputPipe = Context.ShellFunctionErrorOutputPipe;
-            CommandProcessorBase oldCurrentCommandProcessor = Context.CurrentCommandProcessor;
-
             try
             {
-                if (this.RedirectShellErrorOutputPipe || Context.ShellFunctionErrorOutputPipe != null)
-                {
-                    Context.ShellFunctionErrorOutputPipe = CommandRuntime.ErrorOutputPipe;
-                }
-
-                Context.CurrentCommandProcessor = this;
-                SetCurrentScopeToExecutionScope();
-
-                using (CommandRuntime.AllowThisCommandToWrite(permittedToWriteToPipeline: true))
-                using (ParameterBinderBase.bindingTracer.TraceScope("CALLING Cleanup"))
-                {
-                    InvokeCleanupBlock();
-                }
-            }
-            catch (Exception e)
-            {
-                throw ManageInvocationException(e);
+                HandleScopedAction(() => InvokeCleanupBlock(), traceMessage: "CALLING Cleanup");
             }
             finally
             {
-                OnRestorePreviousScope();
-
-                Context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
-                Context.CurrentCommandProcessor = oldCurrentCommandProcessor;
                 ExceptionHandlingOps.RestoreStoppingPipeline(Context, isStopping);
-
-                // Destroy the local scope at this point if there is one...
-                if (_useLocalScope && CommandScope != null)
-                {
-                    CommandSessionState.RemoveScope(CommandScope);
-                }
-
-                // and restore the previous scope...
-                if (_previousScope != null)
-                {
-                    // Restore the scope but use the same session state instance we
-                    // got it from because the command may have changed the execution context
-                    // session state...
-                    CommandSessionState.CurrentScope = _previousScope;
-                }
-
-                // Restore the previous session state
-                if (_previousCommandSessionState != null)
-                {
-                    Context.EngineSessionState = _previousCommandSessionState;
-                }
             }
         }
 
