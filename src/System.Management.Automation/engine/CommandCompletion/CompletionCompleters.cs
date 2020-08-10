@@ -120,7 +120,7 @@ namespace System.Management.Automation
                     foreach (var defn in findFunctionsVisitor.FunctionDefinitions)
                     {
                         if (commandNamePattern.IsMatch(defn.Name)
-                            && !commandResults.Where(cr => cr.CompletionText.Equals(defn.Name, StringComparison.OrdinalIgnoreCase)).Any())
+                            && !commandResults.Any(cr => cr.CompletionText.Equals(defn.Name, StringComparison.OrdinalIgnoreCase)))
                         {
                             // Results found in the current script are prepended to show up at the top of the list.
                             commandResults.Insert(0, GetCommandNameCompletionResult(defn.Name, defn, addAmpersandIfNecessary, quote));
@@ -1603,7 +1603,7 @@ namespace System.Management.Automation
                         if (parameterSetData.ParameterSetFlag == defaultParameterSetFlag)
                         {
                             ProcessParameter(commandName, commandAst, context, result, param, boundArguments);
-                            isProcessedAsPositional = result.Any();
+                            isProcessedAsPositional = result.Count > 0;
                             break;
                         }
                         else
@@ -1895,7 +1895,7 @@ namespace System.Management.Automation
                             yield return new PSTypeName(pso.TypeNames[0]);
                         }
 
-                        if (!(pso.BaseObject is PSCustomObject))
+                        if (pso.BaseObject is not PSCustomObject)
                         {
                             yield return new PSTypeName(pso.BaseObject.GetType());
                         }
@@ -2458,7 +2458,7 @@ namespace System.Management.Automation
             {
             }
 
-            if (customResults == null || !customResults.Any())
+            if (customResults == null || customResults.Count == 0)
             {
                 return false;
             }
@@ -5409,7 +5409,7 @@ namespace System.Management.Automation
 
             var memberInfo = member as MemberInfo;
             if (memberInfo != null)
-                return memberInfo.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
+                return memberInfo.GetCustomAttributes(typeof(HiddenAttribute), false).Length > 0;
 
             var propertyMemberAst = member as PropertyMemberAst;
             if (propertyMemberAst != null)
@@ -7140,7 +7140,7 @@ namespace System.Management.Automation
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
         {
-            if (!(commandAst.Parent is PipelineAst pipelineAst))
+            if (commandAst.Parent is not PipelineAst pipelineAst)
             {
                 return null;
             }

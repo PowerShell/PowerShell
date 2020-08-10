@@ -667,7 +667,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // null is not valid value for header.
                     // We silently ignore header if value is null.
-                    if (!(value is null))
+                    if (value is not null)
                     {
                         // add the header value (or overwrite it if already present)
                         WebSession.Headers[key] = value.ToString();
@@ -1737,7 +1737,7 @@ namespace Microsoft.PowerShell.Commands
 
             byte[] bytes = null;
             XmlDocument doc = xmlNode as XmlDocument;
-            if (doc != null && (doc.FirstChild as XmlDeclaration) != null)
+            if (doc?.FirstChild is XmlDeclaration)
             {
                 XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
                 Encoding encoding = Encoding.GetEncoding(decl.Encoding);

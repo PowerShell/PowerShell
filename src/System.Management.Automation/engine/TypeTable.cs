@@ -2191,7 +2191,7 @@ namespace System.Management.Automation.Runspaces
                     return;
                 }
 
-                if (!(value is NotePropertyData || value is ScriptPropertyData || value is CodePropertyData))
+                if (value is not NotePropertyData && value is not ScriptPropertyData && value is not CodePropertyData)
                 {
                     throw PSTraceSource.NewArgumentException("value");
                 }
@@ -2328,7 +2328,7 @@ namespace System.Management.Automation.Runspaces
                         newTypeData.StringSerializationSource = this.StringSerializationSource;
                         break;
                     default:
-                        Dbg.Assert(false, "Standard members should at most contain six kinds of elements");
+                        Dbg.Fail("Standard members should at most contain six kinds of elements");
                         break;
                 }
             }
@@ -2948,7 +2948,7 @@ namespace System.Management.Automation.Runspaces
             for (int i = 0; i < members.Count; i++)
             {
                 PSMemberInfo member = members[i];
-                if (string.Compare(member.Name, noteName, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals(member.Name, noteName, StringComparison.OrdinalIgnoreCase))
                 {
                     noteAsMemberInfo = member;
                 }
@@ -2978,7 +2978,7 @@ namespace System.Management.Automation.Runspaces
                     }
                     else
                     {
-                        note.noteValue = string.Compare(sourceValueAsString, "false", StringComparison.OrdinalIgnoreCase) != 0;
+                        note.noteValue = !string.Equals(sourceValueAsString, "false", StringComparison.OrdinalIgnoreCase);
                     }
 
                     return true;
@@ -3003,7 +3003,7 @@ namespace System.Management.Automation.Runspaces
             for (int i = 0; i < members.Count; i++)
             {
                 PSMemberInfo member = members[i];
-                if (string.Compare(member.Name, memberName, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals(member.Name, memberName, StringComparison.OrdinalIgnoreCase))
                 {
                     AddError(errors, typeName, TypesXmlStrings.MemberShouldNotBePresent, member.Name);
                     return false;
@@ -3019,7 +3019,7 @@ namespace System.Management.Automation.Runspaces
             for (int i = 0; i < members.Count; i++)
             {
                 PSMemberInfo m = members[i];
-                if (string.Compare(m.Name, noteName, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals(m.Name, noteName, StringComparison.OrdinalIgnoreCase))
                 {
                     member = m;
                 }

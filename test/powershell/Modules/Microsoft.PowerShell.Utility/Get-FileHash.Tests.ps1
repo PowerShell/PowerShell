@@ -24,14 +24,14 @@ Describe "Get-FileHash" -Tags "CI" {
         }
 
         It "Should write non-terminating error if argument is a folder" {
-            $result = $PSHOME, "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable
+            $result = $PSHOME, "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable -ErrorAction SilentlyContinue
             $result.Count | Should -Be 1
             $errorVariable.FullyQualifiedErrorId | Should -BeExactly "UnauthorizedAccessError,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
 
         It "Should write non-terminating error if a file is locked" -Skip:(-not $IsWindows) {
             $pagefilePath = (Get-CimInstance -ClassName Win32_PageFileusage).Name
-            $result = $pagefilePath, "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable
+            $result = $pagefilePath, "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable -ErrorAction SilentlyContinue
             $result.Count | Should -Be 1
             $errorVariable.FullyQualifiedErrorId | Should -BeExactly "FileReadError,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
@@ -89,7 +89,7 @@ Describe "Get-FileHash" -Tags "CI" {
             $newPath = Get-FileHash -Path $testDocumentCopy | Rename-Item -NewName {$_.Hash} -PassThru
             $newPath.FullName | Should -Exist
 
-            Remove-Item -Path $testDocumentCopy -Force
+            Remove-Item -Path $testDocumentCopy -Force -ErrorAction SilentlyContinue
         }
     }
 }

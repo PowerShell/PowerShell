@@ -61,29 +61,6 @@ namespace System.Management.Automation.Host
         public abstract string ReadLine();
 
         /// <summary>
-        /// Same as ReadLine except that the input is not echoed to the user while it is collected
-        /// or is echoed in some obfuscated way, such as showing a dot for each character.
-        /// </summary>
-        /// <returns>
-        /// The characters typed by the user.
-        /// </returns>
-        /// <remarks>
-        /// Note that credentials (a user name and password) should be gathered with
-        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
-        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        /// </remarks>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLine"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
-        public virtual string ReadLineMaskedAsString()
-        {
-            // Default implementation of the function to maintain backwards compatibility of the base class.
-            throw new PSNotImplementedException();
-        }
-
-        /// <summary>
         /// Same as ReadLine, except that the result is a SecureString, and that the input is not echoed to the user while it is
         /// collected (or is echoed in some obfuscated way, such as showing a dot for each character).
         /// </summary>
@@ -1288,7 +1265,7 @@ namespace System.Management.Automation.Host
                 #endregion SplitLabel
 
                 // ? is not localizable
-                if (string.Compare(hotkeysAndPlainLabels[0, i], "?", StringComparison.Ordinal) == 0)
+                if (string.Equals(hotkeysAndPlainLabels[0, i], "?", StringComparison.Ordinal))
                 {
                     Exception e = PSTraceSource.NewArgumentException(
                         string.Format(Globalization.CultureInfo.InvariantCulture, "choices[{0}].Label", i),
@@ -1320,7 +1297,7 @@ namespace System.Management.Automation.Host
             for (int i = 0; i < choices.Count; ++i)
             {
                 // pick the one that matches either the hot key or the full label
-                if (string.Compare(response, hotkeysAndPlainLabels[1, i], StringComparison.CurrentCultureIgnoreCase) == 0)
+                if (string.Equals(response, hotkeysAndPlainLabels[1, i], StringComparison.CurrentCultureIgnoreCase))
                 {
                     result = i;
                     break;
@@ -1335,7 +1312,7 @@ namespace System.Management.Automation.Host
                     // Ignore labels with empty hotkeys
                     if (hotkeysAndPlainLabels[0, i].Length > 0)
                     {
-                        if (string.Compare(response, hotkeysAndPlainLabels[0, i], StringComparison.CurrentCultureIgnoreCase) == 0)
+                        if (string.Equals(response, hotkeysAndPlainLabels[0, i], StringComparison.CurrentCultureIgnoreCase))
                         {
                             result = i;
                             break;

@@ -167,7 +167,7 @@ namespace System.Management.Automation.Interpreter
         internal int GotoHandler(InterpretedFrame frame, object exception, out ExceptionHandler handler)
         {
             Debug.Assert(_handlers != null, "we should have at least one handler if the method gets called");
-            handler = _handlers.FirstOrDefault(t => t.Matches(exception.GetType()));
+            handler = Array.Find(_handlers, t => t.Matches(exception.GetType()));
             if (handler == null) { return 0; }
 
             return frame.Goto(handler.LabelIndex, exception, gotoExceptionHandler: true);

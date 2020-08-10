@@ -183,7 +183,7 @@ namespace System.Management.Automation
 
         internal void SetValueNoConversion(object setValue)
         {
-            if (!(this is PSProperty thisAsProperty))
+            if (this is not PSProperty thisAsProperty)
             {
                 this.Value = setValue;
                 return;
@@ -552,7 +552,7 @@ namespace System.Management.Automation
                     name);
             }
 
-            if (!(member is PSAliasProperty aliasMember))
+            if (member is not PSAliasProperty aliasMember)
             {
                 hasCycle = false;
                 returnedMember = member;
@@ -1946,7 +1946,7 @@ namespace System.Management.Automation
 
         public bool Equals(PSMethodInvocationConstraints other)
         {
-            if (ReferenceEquals(null, other))
+            if (other is null)
             {
                 return false;
             }

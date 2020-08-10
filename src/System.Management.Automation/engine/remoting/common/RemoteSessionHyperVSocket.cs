@@ -268,7 +268,7 @@ namespace System.Management.Automation.Remoting
 
             if (ex != null)
             {
-                Dbg.Assert(false, "Unexpected error in RemoteSessionHyperVSocketServer.");
+                Dbg.Fail("Unexpected error in RemoteSessionHyperVSocketServer.");
 
                 // Unexpected error.
                 string errorMessage = !string.IsNullOrEmpty(ex.Message) ? ex.Message : string.Empty;
@@ -575,7 +575,7 @@ namespace System.Management.Automation.Remoting
                     //
                     // Credential is invalid.
                     //
-                    if (string.Compare(responseString, "FAIL", StringComparison.Ordinal) == 0)
+                    if (string.Equals(responseString, "FAIL", StringComparison.Ordinal))
                     {
                         HyperVSocket.Send(response);
 
@@ -586,7 +586,7 @@ namespace System.Management.Automation.Remoting
                     //
                     // If PowerShell Direct in VM supports configuration, send configuration name.
                     //
-                    if (string.Compare(responseString, "CONF", StringComparison.Ordinal) == 0)
+                    if (string.Equals(responseString, "CONF", StringComparison.Ordinal))
                     {
                         if (emptyConfiguration)
                         {

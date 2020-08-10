@@ -562,7 +562,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 default:
-                    Debug.Assert(false, "Unknown parameter set.");
+                    Debug.Fail("Unknown parameter set.");
                     processAppDomainInfo = new ReadOnlyCollection<PSHostProcessInfo>(new Collection<PSHostProcessInfo>());
                     break;
             }

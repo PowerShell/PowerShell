@@ -396,7 +396,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Extract the first CAPID from the SACL that does not have INHERIT_ONLY_ACE flag set.
                 IntPtr pAce = pSacl + Marshal.SizeOf(new NativeMethods.ACL());
-                for (uint aceIdx = 0; aceIdx < sacl.AceCount; aceIdx++)
+                for (ushort aceIdx = 0; aceIdx < sacl.AceCount; aceIdx++)
                 {
                     NativeMethods.ACE_HEADER ace = new NativeMethods.ACE_HEADER();
                     ace = Marshal.PtrToStructure<NativeMethods.ACE_HEADER>(pAce);
@@ -783,7 +783,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         customDescriptor = PSObject.Base(methodInfo.Invoke());
 
-                        if (!(customDescriptor is FileSystemSecurity))
+                        if (customDescriptor is not FileSystemSecurity)
                         {
                             customDescriptor = new CommonSecurityDescriptor(false, false, customDescriptor.ToString());
                         }
@@ -825,7 +825,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (_isLiteralPath)
                         {
-                            pathsToProcess.Add(SessionState.Path.GetUnresolvedProviderPathFromPSPath(p));
+                            pathsToProcess.Add(p);
                         }
                         else
                         {

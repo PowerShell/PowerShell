@@ -26,6 +26,7 @@ They have [write access](https://help.github.com/articles/repository-permission-
 - Andrew Menagarishvili ([anmenaga](https://github.com/anmenaga))
 - Dongbo Wang ([daxian-dbw](https://github.com/daxian-dbw))
 - Ilya Sazonov ([iSazonov](https://github.com/iSazonov))
+- Robert Holt ([rjmholt](https://github.com/rjmholt))
 - Travis Plunk ([TravisEz13](https://github.com/TravisEz13))
 
 ## Former Repository Maintainers

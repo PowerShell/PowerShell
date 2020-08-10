@@ -110,7 +110,7 @@ namespace System.Management.Automation.Language
                 // This inconsistent behavior affects OneCore powershell because we are using the extension method here when compiling
                 // against CoreCLR. So we need to add a null check until this is fixed in CLR.
                 var paramArrayAttrs = parameterInfo[argIndex].GetCustomAttributes(typeof(ParamArrayAttribute), true);
-                if (paramArrayAttrs != null && paramArrayAttrs.Any() && expandParamsOnBest)
+                if (paramArrayAttrs != null && paramArrayAttrs.Length > 0 && expandParamsOnBest)
                 {
                     var elementType = parameterInfo[argIndex].ParameterType.GetElementType();
                     var paramsArray = Array.CreateInstance(elementType, positionalArgCount - argIndex);
@@ -323,7 +323,7 @@ namespace System.Management.Automation.Language
 
                 // Default base class is System.Object and it has a default ctor.
                 _baseClassHasDefaultCtor = true;
-                if (typeDefinitionAst.BaseTypes.Any())
+                if (typeDefinitionAst.BaseTypes.Count > 0)
                 {
                     // base class
                     var baseTypeAsts = typeDefinitionAst.BaseTypes;
@@ -550,7 +550,7 @@ namespace System.Management.Automation.Language
 
                 if (needDefaultCtor)
                 {
-                    needDefaultCtor = !instanceCtors.Any();
+                    needDefaultCtor = instanceCtors.Count == 0;
                 }
 
                 //// Now we can decide to create explicit default ctors or report error.
@@ -571,7 +571,7 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    if (!instanceCtors.Any())
+                    if (instanceCtors.Count == 0)
                     {
                         _parser.ReportError(_typeDefinitionAst.Extent,
                             nameof(ParserStrings.BaseClassNoDefaultCtor),
@@ -838,7 +838,7 @@ namespace System.Management.Automation.Language
                         var parameters = functionMemberAst.Parameters;
                         if (parameters.Count > 0)
                         {
-                            IScriptExtent errorExtent = Parser.ExtentOf(parameters.First(), parameters.Last());
+                            IScriptExtent errorExtent = Parser.ExtentOf(parameters[0], parameters.Last());
                             _parser.ReportError(errorExtent,
                                 nameof(ParserStrings.StaticConstructorCantHaveParameters),
                                 ParserStrings.StaticConstructorCantHaveParameters);
@@ -888,7 +888,7 @@ namespace System.Management.Automation.Language
                 }
 
                 var ilGenerator = method.GetILGenerator();
-                DefineMethodBody(functionMemberAst, ilGenerator, GetMetaDataName(method.Name, parameterTypes.Count()), functionMemberAst.IsStatic, parameterTypes, returnType,
+                DefineMethodBody(functionMemberAst, ilGenerator, GetMetaDataName(method.Name, parameterTypes.Length), functionMemberAst.IsStatic, parameterTypes, returnType,
                     (i, n) => method.DefineParameter(i, ParameterAttributes.None, n));
             }
 
@@ -917,7 +917,7 @@ namespace System.Management.Automation.Language
                     ilGenerator.Emit(OpCodes.Stfld, _sessionStateField);
                 }
 
-                DefineMethodBody(ipmp, ilGenerator, GetMetaDataName(ctor.Name, parameterTypes.Count()), isStatic, parameterTypes, typeof(void),
+                DefineMethodBody(ipmp, ilGenerator, GetMetaDataName(ctor.Name, parameterTypes.Length), isStatic, parameterTypes, typeof(void),
                     (i, n) => ctor.DefineParameter(i, ParameterAttributes.None, n));
             }
 

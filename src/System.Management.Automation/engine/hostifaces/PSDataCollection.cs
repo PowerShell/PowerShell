@@ -1634,7 +1634,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentNullException(nameof(value), PSDataBufferStrings.ValueNullReference);
                 }
             }
-            else if (!(value is T))
+            else if (value is not T)
             {
                 throw PSTraceSource.NewArgumentException(nameof(value), PSDataBufferStrings.CannotConvertToGenericType,
                                                          value.GetType().FullName,
@@ -1940,7 +1940,7 @@ namespace System.Management.Automation
         {
             lock (_collToEnumerate.SyncObject)
             {
-                do
+                while (true)
                 {
                     if (_index < _collToEnumerate.Count)
                     {
@@ -1979,7 +1979,7 @@ namespace System.Management.Automation
                     {
                         return false;
                     }
-                } while (true);
+                }
             }
         }
 

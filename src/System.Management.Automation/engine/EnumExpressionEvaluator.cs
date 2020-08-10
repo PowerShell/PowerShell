@@ -131,7 +131,7 @@ namespace System.Management.Automation
                         Text = "NOT";
                         break;
                     default:
-                        Debug.Assert(false, "Invalid token kind passed in.");
+                        Debug.Fail("Invalid token kind passed in.");
                         break;
                 }
             }

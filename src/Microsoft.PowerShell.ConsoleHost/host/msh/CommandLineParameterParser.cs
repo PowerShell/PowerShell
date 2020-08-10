@@ -97,17 +97,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Null implementation of ReadLineMaskedAsString.
-        /// </summary>
-        /// <returns>
-        /// It throws an exception.
-        /// </returns>
-        public override string ReadLineMaskedAsString()
-        {
-            throw new PSNotImplementedException();
-        }
-
-        /// <summary>
         /// ReadLineAsSecureString.
         /// </summary>
         /// <returns></returns>
@@ -858,7 +847,7 @@ namespace Microsoft.PowerShell
 #if DEBUG
                 // this option is useful when debugging ConsoleHost remotely using VS remote debugging, as you can only
                 // attach to an already running process with that debugger.
-                else if (MatchSwitch(switchKey, "wait", "w"))
+                else if (MatchSwitch(switchKey, "wait", "wa"))
                 {
                     // This does not need to be localized: its chk only
 
@@ -921,7 +910,7 @@ namespace Microsoft.PowerShell
                     ParseFormat(args, ref i, ref _outFormat, CommandLineParameterParserStrings.MissingOutputFormatParameter);
                     _outputFormatSpecified = true;
                 }
-                else if (MatchSwitch(switchKey, "inputformat", "in") || MatchSwitch(switchKey, "if", "if"))
+                else if (MatchSwitch(switchKey, "inputformat", "inp") || MatchSwitch(switchKey, "if", "if"))
                 {
                     ParseFormat(args, ref i, ref _inFormat, CommandLineParameterParserStrings.MissingInputFormatParameter);
                 }
@@ -952,7 +941,7 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-                else if (MatchSwitch(switchKey, "sta", "s"))
+                else if (MatchSwitch(switchKey, "sta", "sta"))
                 {
                     if (!Platform.IsWindowsDesktop)
                     {

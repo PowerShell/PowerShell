@@ -182,39 +182,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// See base class.
         /// </summary>
-        /// <returns>
-        /// The characters typed by the user.
-        /// </returns>
-        /// <exception cref="HostException">
-        /// If obtaining a handle to the active screen buffer failed
-        ///    OR
-        ///    Win32's setting input buffer mode to disregard window and mouse input failed.
-        ///    OR
-        ///    Win32's ReadConsole failed.
-        /// </exception>
-        /// <exception cref="PipelineStoppedException">
-        /// If Ctrl-C is entered by user.
-        /// </exception>
-        public override string ReadLineMaskedAsString()
-        {
-            HandleThrowOnReadAndPrompt();
-
-            // we lock here so that multiple threads won't interleave the various reads and writes here.
-            object result = null;
-            lock (_instanceLock)
-            {
-                result = ReadLineSafe(false, PrintToken);
-            }
-
-            StringBuilder resultSb = result as StringBuilder;
-            Dbg.Assert(resultSb != null, "ReadLineMaskedAsString did not return a stringBuilder");
-
-            return resultSb.ToString();
-        }
-
-        /// <summary>
-        /// See base class.
-        /// </summary>
         /// <returns></returns>
         /// <exception cref="HostException">
         /// If obtaining a handle to the active screen buffer failed
@@ -335,7 +302,7 @@ namespace Microsoft.PowerShell
 
                 Coordinates originalCursorPos = _rawui.CursorPosition;
 
-                do
+                while (true)
                 {
                     //
                     // read one char at a time so that we don't
@@ -426,7 +393,6 @@ namespace Microsoft.PowerShell
                         }
                     }
                 }
-                while (true);
             }
 #if UNIX
             catch (InvalidOperationException)
@@ -1149,7 +1115,7 @@ namespace Microsoft.PowerShell
                     w.Flags = WordFlags.IsWhitespace;
                 }
 
-                do
+                while (true)
                 {
                     w.Text = text.Substring(startIndex, i - startIndex);
                     w.CellCount = RawUI.LengthInBufferCells(w.Text);
@@ -1165,7 +1131,7 @@ namespace Microsoft.PowerShell
 
                         --i;
                     }
-                } while (true);
+                }
 
                 Dbg.Assert(RawUI.LengthInBufferCells(w.Text) <= maxWidthInBufferCells, "word should not exceed max");
                 result.Add(w);
@@ -1621,7 +1587,7 @@ namespace Microsoft.PowerShell
             }
 
 #endif
-            do
+            while (true)
             {
 #if UNIX
                     keyInfo = Console.ReadKey(true);
@@ -1848,7 +1814,6 @@ namespace Microsoft.PowerShell
                     Console.CursorLeft = cursorCurrent + 1;
 #endif
             }
-            while (true);
 
             Dbg.Assert(
                        (s == null && result == ReadLineResult.endedOnBreak)
@@ -1949,7 +1914,7 @@ namespace Microsoft.PowerShell
             string completionInput = null;
 #endif
 
-            do
+            while (true)
             {
                 if (TryInvokeUserDefinedReadLine(out input))
                 {
@@ -2081,7 +2046,6 @@ namespace Microsoft.PowerShell
                 }
 #endif
             }
-            while (true);
 
             // Since we did not transcribe any call to ReadLine, transcribe the results here.
 

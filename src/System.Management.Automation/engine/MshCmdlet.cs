@@ -388,7 +388,7 @@ namespace System.Management.Automation
                     SearchResolutionOptions.None,
                     CommandTypes.Cmdlet,
                     context);
-            do
+            while (true)
             {
                 try
                 {
@@ -419,7 +419,7 @@ namespace System.Management.Automation
                 }
 
                 current = ((IEnumerator)searcher).Current as CmdletInfo;
-            } while (true);
+            }
 
             return current;
         }
@@ -497,7 +497,7 @@ namespace System.Management.Automation
                     SearchResolutionOptions.CommandNameIsPattern,
                     CommandTypes.Cmdlet,
                     _context);
-            do
+            while (true)
             {
                 try
                 {
@@ -530,7 +530,7 @@ namespace System.Management.Automation
                 current = ((IEnumerator)searcher).Current as CmdletInfo;
                 if (current != null)
                     cmdlets.Add(current);
-            } while (true);
+            }
 
             return cmdlets;
         }
@@ -631,7 +631,7 @@ namespace System.Management.Automation
                 searcher.CommandOrigin = commandOrigin.Value;
             }
 
-            do
+            while (true)
             {
                 try
                 {
@@ -666,7 +666,7 @@ namespace System.Management.Automation
                 {
                     yield return commandInfo;
                 }
-            } while (true);
+            }
         }
 
         /// <summary>

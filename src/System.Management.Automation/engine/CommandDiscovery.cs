@@ -375,7 +375,7 @@ namespace System.Management.Automation
             {
                 IEnumerable<PSSnapInInfo> loadedPSSnapIns = null;
                 loadedPSSnapIns = context.InitialSessionState.GetPSSnapIn(requiresPSSnapIn.Name);
-                if (loadedPSSnapIns == null || loadedPSSnapIns.Count() == 0)
+                if (loadedPSSnapIns == null || !loadedPSSnapIns.Any())
                 {
                     if (requiresMissingPSSnapIns == null)
                     {
@@ -865,7 +865,7 @@ namespace System.Management.Automation
             if (result == null)
             {
                 discoveryTracer.TraceError(
-                    "'{0}' is not recognized as a cmdlet, function, operable program or script file.",
+                    "'{0}' is not recognized as a cmdlet, function, executable program or script file.",
                     commandName);
 
                 CommandNotFoundException e =

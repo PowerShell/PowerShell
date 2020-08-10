@@ -69,7 +69,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (!(attribute is ArgumentTypeConverterAttribute))
+                if (attribute is not ArgumentTypeConverterAttribute)
                 {
                     ProcessAttribute(runtimeDefinedParameter.Name, attribute, ref validationAttributes, ref argTransformationAttributes, ref aliases);
                 }
@@ -649,7 +649,7 @@ namespace System.Management.Automation
             // to an ICollection<T> is via reflected calls to Add(T),
             // but the advantage over plain IList is that we can typecast the elements.
             Type interfaceICollection =
-                interfaces.FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICollection<>));
+                Array.Find(interfaces, i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICollection<>));
             if (interfaceICollection != null)
             {
                 // We only deal with the first type for which ICollection<T> is implemented

@@ -38,24 +38,6 @@ namespace System.Management.Automation
         #endregion ctor
 
         /// <summary>
-        /// Override of parent class which should not be used.
-        /// </summary>
-        /// <param name="parameters">
-        /// The parameters to bind.
-        /// </param>
-        /// <remarks>
-        /// For any parameters that do not have a name, they are added to the command
-        /// line arguments for the command
-        /// </remarks>
-        internal override
-        Collection<CommandParameterInternal>
-        BindParameters(Collection<CommandParameterInternal> parameters)
-        {
-            Dbg.Assert(false, "this method should be used");
-            return null;
-        }
-
-        /// <summary>
         /// Value of input format. This property should be read after binding of parameters.
         /// </summary>
         internal NativeCommandIOFormat InputFormat { get; private set; }

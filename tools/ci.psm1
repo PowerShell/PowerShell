@@ -468,7 +468,7 @@ function Invoke-CIFinish
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
-            if (Test-Path $package)
+            if (Test-Path $package -ErrorAction Ignore)
             {
                 Write-Log "Package found: $package"
             }

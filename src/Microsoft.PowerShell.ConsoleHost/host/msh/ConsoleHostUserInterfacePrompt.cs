@@ -516,13 +516,13 @@ namespace Microsoft.PowerShell
 
             if (command.Length == 2)
             {
-                if (0 == string.Compare(command, "\"\"", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(command, "\"\"", StringComparison.OrdinalIgnoreCase))
                 {
                     return string.Empty;
                 }
             }
 
-            if (0 == string.Compare(command, "$null", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(command, "$null", StringComparison.OrdinalIgnoreCase))
             {
                 return null;
             }

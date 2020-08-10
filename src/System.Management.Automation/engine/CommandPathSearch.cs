@@ -278,9 +278,9 @@ namespace System.Management.Automation
                 GetNewDirectoryResults(_patternEnumerator.Current, _lookupPathsEnumerator.Current);
             }
 
-            do // while lookupPathsEnumerator is valid
+            while (true) // while lookupPathsEnumerator is valid
             {
-                do // while patternEnumerator is valid
+                while (true) // while patternEnumerator is valid
                 {
                     // Try moving to the next path in the current results
 
@@ -309,7 +309,7 @@ namespace System.Management.Automation
                     }
 
                     // Since we have reset the results, loop again to find the next result.
-                } while (true);
+                }
 
                 if (result)
                 {
@@ -336,7 +336,7 @@ namespace System.Management.Automation
                 }
 
                 GetNewDirectoryResults(_patternEnumerator.Current, _lookupPathsEnumerator.Current);
-            } while (true);
+            }
 
             return result;
         }

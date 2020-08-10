@@ -1,4 +1,7 @@
-// Copyright (c) Microsoft Corporation. Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+// Code in this file was copied from https://github.com/dotnet/roslyn
 
 using System;
 using System.Collections.Generic;

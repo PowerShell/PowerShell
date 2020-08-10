@@ -432,10 +432,10 @@ namespace System.Management.Automation.Provider
                 // Check to see if the path is equal to the root
                 // of the virtual drive
 
-                if (string.Compare(
+                if (string.Equals(
                     path,
                     rootPath,
-                    StringComparison.OrdinalIgnoreCase) == 0)
+                    StringComparison.OrdinalIgnoreCase))
                 {
                     parentPath = string.Empty;
                 }

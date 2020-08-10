@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell.Commands
                 // Case sensitive duplicates should normally not occur since JsonConvert.DeserializeObject
                 // does not throw when encountering duplicates and just uses the last entry.
                 if (memberHashTracker.TryGetValue(entry.Key, out var maybePropertyName)
-                    && string.Compare(entry.Key, maybePropertyName, StringComparison.Ordinal) == 0)
+                    && string.Equals(entry.Key, maybePropertyName, StringComparison.Ordinal))
                 {
                     var errorMsg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.DuplicateKeysInJsonString, entry.Key);
                     error = new ErrorRecord(

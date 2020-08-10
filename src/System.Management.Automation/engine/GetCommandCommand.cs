@@ -716,7 +716,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    if (_modulePatterns.Count > 0 || _moduleSpecifications.Any())
+                    if (_modulePatterns.Count > 0 || _moduleSpecifications.Length > 0)
                     {
                         // Its not a match if we are filtering on a PSSnapin/Module name but the cmdlet doesn't have one.
                         break;
@@ -950,7 +950,7 @@ namespace Microsoft.PowerShell.Commands
             bool resultFound = false;
             isDuplicate = false;
 
-            do
+            while (true)
             {
                 try
                 {
@@ -1057,7 +1057,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
                 }
-            } while (true);
+            }
 
             if (All)
             {
@@ -1491,10 +1491,10 @@ namespace Microsoft.PowerShell.Commands
             foreach (CommandInfo commandInfo in _accumulatedResults)
             {
                 if ((command.CommandType == commandInfo.CommandType &&
-                     (string.Compare(command.Name, commandInfo.Name, StringComparison.OrdinalIgnoreCase) == 0 ||
+                     (string.Equals(command.Name, commandInfo.Name, StringComparison.OrdinalIgnoreCase) ||
                       // If the command has been imported with a prefix, then just checking the names for duplication will not be enough.
                       // Hence, an additional check is done with the prefix information
-                      string.Compare(ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix), command.Name, StringComparison.OrdinalIgnoreCase) == 0)
+                      string.Equals(ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix), command.Name, StringComparison.OrdinalIgnoreCase))
                     ) && commandInfo.Module != null && commandHasModule &&
                     ( // We do reference equal comparison if both command are imported. If either one is not imported, we compare the module path
                      (commandInfo.IsImported && command.IsImported && commandInfo.Module.Equals(command.Module)) ||
@@ -1601,7 +1601,7 @@ namespace Microsoft.PowerShell.Commands
 
                 bool hasParameterSet = false;
                 IList<string> validValues = new List<string>();
-                var validateSetAttribute = parameter.Attributes.Where(x => (x is ValidateSetAttribute)).Cast<ValidateSetAttribute>().LastOrDefault();
+                var validateSetAttribute = parameter.Attributes.OfType<ValidateSetAttribute>().LastOrDefault();
                 if (validateSetAttribute != null)
                 {
                     hasParameterSet = true;
@@ -1631,7 +1631,7 @@ namespace Microsoft.PowerShell.Commands
             returnParameterType.Properties.Add(new PSNoteProperty("EnumValues", enumValues));
 
             bool hasFlagAttribute = (isArray) ?
-                ((parameterType.GetCustomAttributes(typeof(FlagsAttribute), true)).Count() > 0) : false;
+                ((parameterType.GetCustomAttributes(typeof(FlagsAttribute), true)).Length > 0) : false;
             returnParameterType.Properties.Add(new PSNoteProperty("HasFlagAttribute", hasFlagAttribute));
 
             // Recurse into array elements.
