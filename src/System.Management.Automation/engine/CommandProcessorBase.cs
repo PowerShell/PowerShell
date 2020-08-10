@@ -666,82 +666,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Executes the appropriate disposal methods for script commands.
-        /// <see cref="DlrScriptCommandProcessor"/> is itself a command processor, so interpreted functions cannot be
-        /// reliably disposed without also disposing the entire command processor. Instead, it implements its own
-        /// <see cref="DlrScriptCommandProcessor.InvokeCleanupBlock"/> method to perform the same function as its
-        /// compiled counterpart <see cref="PSScriptCmdlet.Dispose"/>, which is a proper IDisposable implementation.
+        /// Virtual method to be overridden by a command processor type that handles script functions, such as
+        /// <see cref="DlrScriptCommandProcessor"/>.
+        /// The base implementation does nothing.
         /// </summary>
-        internal virtual void CleanupScriptCommand()
+        protected virtual void CleanupScriptCommand()
         {
-            var scriptCmdlet = Command as PSScriptCmdlet;
-            var scriptProcessor = this as DlrScriptCommandProcessor;
-
-            if (scriptCmdlet == null && scriptProcessor == null)
-            {
-                return;
-            }
-
-            bool isStopping = ExceptionHandlingOps.SuspendStoppingPipeline(Context);
-            Pipe oldErrorOutputPipe = Context.ShellFunctionErrorOutputPipe;
-            CommandProcessorBase oldCurrentCommandProcessor = Context.CurrentCommandProcessor;
-
-            try
-            {
-                if (this.RedirectShellErrorOutputPipe || Context.ShellFunctionErrorOutputPipe != null)
-                {
-                    Context.ShellFunctionErrorOutputPipe = CommandRuntime.ErrorOutputPipe;
-                }
-
-                Context.CurrentCommandProcessor = this;
-                SetCurrentScopeToExecutionScope();
-
-                using (CommandRuntime.AllowThisCommandToWrite(true))
-                using (ParameterBinderBase.bindingTracer.TraceScope("CALLING Cleanup"))
-                {
-                    if (scriptCmdlet != null)
-                    {
-                        scriptCmdlet.Dispose();
-                    }
-                    else if (scriptProcessor != null)
-                    {
-                        scriptProcessor.InvokeCleanupBlock();
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                throw ManageInvocationException(e);
-            }
-            finally
-            {
-                OnRestorePreviousScope();
-
-                Context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
-                Context.CurrentCommandProcessor = oldCurrentCommandProcessor;
-                ExceptionHandlingOps.RestoreStoppingPipeline(Context, isStopping);
-
-                // Destroy the local scope at this point if there is one...
-                if (_useLocalScope && CommandScope != null)
-                {
-                    CommandSessionState.RemoveScope(CommandScope);
-                }
-
-                // and restore the previous scope...
-                if (_previousScope != null)
-                {
-                    // Restore the scope but use the same session state instance we
-                    // got it from because the command may have changed the execution context
-                    // session state...
-                    CommandSessionState.CurrentScope = _previousScope;
-                }
-
-                // Restore the previous session state
-                if (_previousCommandSessionState != null)
-                {
-                    Context.EngineSessionState = _previousCommandSessionState;
-                }
-            }
+            // Do nothing -- subclasses may use.
         }
 
         /// <summary>
@@ -1034,7 +965,63 @@ namespace System.Management.Automation
                     }
                     finally
                     {
-                        if (Command is IDisposable disposableCommand)
+                        if (Command is PSScriptCmdlet scriptCmdlet)
+                        {
+                            bool isStopping = ExceptionHandlingOps.SuspendStoppingPipeline(Context);
+                            Pipe oldErrorOutputPipe = Context.ShellFunctionErrorOutputPipe;
+                            CommandProcessorBase oldCurrentCommandProcessor = Context.CurrentCommandProcessor;
+
+                            try
+                            {
+                                if (this.RedirectShellErrorOutputPipe || Context.ShellFunctionErrorOutputPipe != null)
+                                {
+                                    Context.ShellFunctionErrorOutputPipe = CommandRuntime.ErrorOutputPipe;
+                                }
+
+                                Context.CurrentCommandProcessor = this;
+                                SetCurrentScopeToExecutionScope();
+
+                                using (CommandRuntime.AllowThisCommandToWrite(permittedToWriteToPipeline: true))
+                                using (ParameterBinderBase.bindingTracer.TraceScope("CALLING Cleanup"))
+                                {
+                                    scriptCmdlet.Dispose();
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                throw ManageInvocationException(e);
+                            }
+                            finally
+                            {
+                                OnRestorePreviousScope();
+
+                                Context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
+                                Context.CurrentCommandProcessor = oldCurrentCommandProcessor;
+                                ExceptionHandlingOps.RestoreStoppingPipeline(Context, isStopping);
+
+                                // Destroy the local scope at this point if there is one...
+                                if (_useLocalScope && CommandScope != null)
+                                {
+                                    CommandSessionState.RemoveScope(CommandScope);
+                                }
+
+                                // and restore the previous scope...
+                                if (_previousScope != null)
+                                {
+                                    // Restore the scope but use the same session state instance we
+                                    // got it from because the command may have changed the execution context
+                                    // session state...
+                                    CommandSessionState.CurrentScope = _previousScope;
+                                }
+
+                                // Restore the previous session state
+                                if (_previousCommandSessionState != null)
+                                {
+                                    Context.EngineSessionState = _previousCommandSessionState;
+                                }
+                            }
+                        }
+                        else if (Command is IDisposable disposableCommand)
                         {
                             disposableCommand.Dispose();
                         }
