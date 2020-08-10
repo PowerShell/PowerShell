@@ -2825,7 +2825,6 @@ namespace System.Management.Automation
                     Severity.Warning);
             }
 
-            this.PipelineProcessor.ExecutionFailed = true;
             if (LogPipelineExecutionDetail)
             {
                 this.PipelineProcessor.LogExecutionError(_thisCommand.MyInvocation, errorRecord);
@@ -2833,6 +2832,8 @@ namespace System.Management.Automation
 
             if (!(ExperimentalFeature.IsEnabled("PSNotApplyErrorActionToStderr") && isNativeError))
             {
+                this.PipelineProcessor.ExecutionFailed = true;
+
                 ActionPreference preference = ErrorAction;
                 if (actionPreference.HasValue)
                 {

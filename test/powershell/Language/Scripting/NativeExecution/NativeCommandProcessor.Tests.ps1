@@ -142,7 +142,7 @@ Describe "Native Command Processor" -tags "Feature" {
     }
 
     It '$ErrorActionPreference does not apply to redirected stderr output' -Skip:(!$EnabledExperimentalFeatures.Contains('PSNotApplyErrorActionToStderr')) {
-        pwsh -noprofile -command '$ErrorActionPreference = ''Stop''; testexe -stderr stop 2>$null; ''hello''; $error' | Should -BeExactly 'hello'
+        pwsh -noprofile -command '$ErrorActionPreference = ''Stop''; testexe -stderr stop 2>$null; ''hello''; $error; $?' | Should -BeExactly 'hello','True'
     }
 }
 
