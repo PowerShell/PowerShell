@@ -637,7 +637,7 @@ namespace System.Management.Automation
             bool isStopping = ExceptionHandlingOps.SuspendStoppingPipeline(Context);
             try
             {
-                HandleScopedAction(() => InvokeCleanupBlock(), traceMessage: "CALLING Cleanup");
+                HandleScopedAction((processor) => processor.InvokeCleanupBlock(), this, traceMessage: "CALLING Cleanup");
             }
             finally
             {

@@ -1272,8 +1272,15 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     internal class PipelineStopper
     {
-        private readonly SemaphoreSlim _criticalSectionSemaphore = new SemaphoreSlim(1, 1);
+        /// <summary>
+        /// Object used to lock critical sections where script execution must occur even in stopping pipelines.
+        /// </summary>
+        private readonly object _criticalSectionLock = new object();
 
+        /// <summary>
+        /// The current depth of nested critical sections. If this is above zero, the pipeline execution
+        /// is currently in a critical code section.
+        /// </summary>
         private int _criticalSectionDepth;
 
         /// <summary>
@@ -1289,31 +1296,37 @@ namespace System.Management.Automation.Runspaces
 
         internal void AwaitPipelineCriticalSection()
         {
-            _criticalSectionSemaphore.Wait();
-            _criticalSectionSemaphore.Release();
+            Monitor.Enter(_criticalSectionLock);
+            Monitor.Exit(_criticalSectionLock);
         }
 
         internal void EnterCriticalSection()
         {
             // Increment the depth value. If we were not previously in a critical section (depth is now 1),
-            // also take out the semaphore.
+            // also enter the critical section lock.
             if (Interlocked.Increment(ref _criticalSectionDepth) == 1)
             {
-                _criticalSectionSemaphore.Wait();
+                Monitor.Enter(_criticalSectionLock);
             }
         }
 
         internal void ExitCriticalSection()
         {
+            // Decrement the depth value. If we are now at depth 0, we should no longer be in a critical section,
+            // so it is safe to exit the critical section lock.
             if (Interlocked.Decrement(ref _criticalSectionDepth) == 0)
             {
-                _criticalSectionSemaphore.Release();
+                Monitor.Exit(_criticalSectionLock);
             }
         }
 
+        /// <summary>
+        /// Gets whether the currently running pipeline is in a critical code section.
+        /// </summary>
+        /// <value></value>
         internal bool InCriticalSection
         {
-            get => Interlocked.CompareExchange(ref _criticalSectionDepth, value: 0, comparand: 0) != 0;
+            get => _criticalSectionDepth != 0;
         }
 
         /// <summary>
@@ -1329,6 +1342,11 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private bool _stopping;
 
+        /// <summary>
+        /// Whether the pipeline is currently stopping. This will indicate true when the pipeline is stopping, unless
+        /// it is currently running in a critical code section where stopping is not permitted until the critical
+        /// section is exited.
+        /// </summary>
         internal bool IsStopping
         {
             get => _stopping && !InCriticalSection;
