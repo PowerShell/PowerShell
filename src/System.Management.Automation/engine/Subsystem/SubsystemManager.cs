@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation.Internal;
-
-#nullable enable
 
 namespace System.Management.Automation.Subsystem
 {
@@ -22,7 +22,8 @@ namespace System.Management.Automation.Subsystem
 
         static SubsystemManager()
         {
-            var subsystems = new SubsystemInfo[] {
+            var subsystems = new SubsystemInfo[]
+            {
                 SubsystemInfo.Create<IPredictor>(SubsystemKind.CommandPredictor, allowUnregistration: true, allowMultipleRegistration: true),
             };
 

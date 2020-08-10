@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Threading;
 using System.Threading.Tasks;
-
-#nullable enable
 
 namespace System.Management.Automation.Subsystem
 {

@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
-
-#nullable enable
 
 namespace System.Management.Automation.Subsystem
 {
@@ -49,7 +49,7 @@ namespace System.Management.Automation.Subsystem
         string Description { get; }
 
         /// <summary>
-        /// Gets a dictionary that contains the functions to define at the global scope.
+        /// Gets a dictionary that contains the functions to be defined at the global scope of a PowerShell session.
         /// Key: function name; Value: function script.
         /// </summary>
         Dictionary<string, string>? FunctionsToDefine { get; }

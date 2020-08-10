@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
-
-#nullable enable
 
 namespace System.Management.Automation.Subsystem
 {
@@ -117,7 +117,8 @@ namespace System.Management.Automation.Subsystem
             bool allowUnregistration,
             bool allowMultipleRegistration) where TConcreteSubsystem : class, ISubsystem
         {
-            return new SubsystemInfoImpl<TConcreteSubsystem>(kind) {
+            return new SubsystemInfoImpl<TConcreteSubsystem>(kind)
+            {
                 AllowUnregistration = allowUnregistration,
                 AllowMultipleRegistration = allowMultipleRegistration,
             };
@@ -139,7 +140,8 @@ namespace System.Management.Automation.Subsystem
                         kind.ToString()));
             }
 
-            return new SubsystemInfoImpl<TConcreteSubsystem>(kind) {
+            return new SubsystemInfoImpl<TConcreteSubsystem>(kind)
+            {
                 AllowUnregistration = allowUnregistration,
                 AllowMultipleRegistration = allowMultipleRegistration,
                 RequiredCmdlets = requiredCmdlets,

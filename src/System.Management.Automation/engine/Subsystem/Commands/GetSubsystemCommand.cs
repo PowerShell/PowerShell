@@ -47,7 +47,7 @@ namespace System.Management.Automation.Subsystem
                     break;
 
                 default:
-                    throw new InvalidOperationException("Unreachable code");
+                    throw new InvalidOperationException("New parameter set is added but the switch statement is not updated.");
             }
         }
     }

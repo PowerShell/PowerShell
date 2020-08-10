@@ -2300,7 +2300,7 @@ namespace System.Management.Automation.Internal
             }
         }
 
-        internal static void Condition(bool precondition, string paramName)
+        internal static void Condition([DoesNotReturnIf(false)] bool precondition, string paramName)
         {
             if (!precondition)
             {
