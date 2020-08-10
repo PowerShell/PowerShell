@@ -1116,12 +1116,12 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Class for Verbs and Groups.
+    /// Provides information about a verb used to name commands defined in PowerShell.
     /// </summary>
     public class VerbInfo
     {
         /// <summary>
-        /// Verb Name.
+        /// The verb name, used to begin command names.
         /// </summary>
         public string Verb
         {
@@ -1129,7 +1129,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Alias Prefix.
+        /// The alias prefix, recommended for aliases to commands that begin with this verb.
         /// </summary>
         public string AliasPrefix
         {
@@ -1137,7 +1137,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Group Name.
+        /// The name of the functional category of commands that begin with this verb.
         /// </summary>
         public string Group
         {
@@ -1145,7 +1145,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Description.
+        /// Explains what the verb is meant to do with its object.
         /// </summary>
         public string Description
         {
