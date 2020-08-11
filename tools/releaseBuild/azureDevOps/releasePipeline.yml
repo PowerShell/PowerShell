@@ -212,6 +212,21 @@ stages:
     pool: server
     environment: PSReleaseVpack
 
+- stage: ReleaseDeps
+  dependsOn: GitHubManualTasks
+  displayName: Update pwsh.deps.json links
+  jobs:
+  - job: UpdateDepsFiles
+    displayName: Update deps files
+    pool:
+      vmImage: windows-latest
+    steps:
+    - download: releasePipeline
+      artifact: finalResults
+      patterns: '**/PowerShell*-win-x64.zip'
+
+
+
 - stage: ReleaseClose
   displayName: Finish Release
   dependsOn:
