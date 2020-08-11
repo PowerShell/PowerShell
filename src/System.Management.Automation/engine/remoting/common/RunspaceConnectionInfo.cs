@@ -3443,10 +3443,12 @@ namespace System.Management.Automation.Runspaces
                     //
                     if (RuntimeId == Guid.Empty)
                     {
-                        var obRootfieldInfo = computeSystemPropertiesType.GetField("ObRoot");
-                        if (obRootfieldInfo != null)
+                        // Since Hyper-V changed this from a property to a field, we can optimize for newest Windows to see if it's a field,
+                        // otherwise we fall back to old code to be compatible with older versions of Windows
+                        var obRootFieldInfo = computeSystemPropertiesType.GetField("ObRoot");
+                        if (obRootFieldInfo != null)
                         {
-                            ContainerObRoot = obRootfieldInfo.GetValue(computeSystemPropertiesHandle) as string;
+                            ContainerObRoot = obRootFieldInfo.GetValue(computeSystemPropertiesHandle) as string;
                         }
                         else
                         {
