@@ -210,7 +210,7 @@ function RunUpdateHelpTests
                 $updateScope = @{Scope = 'AllUsers'}
             }
 
-            It "Validate Update-Help for module '$moduleName' in '$updateScope'" -Skip:(!(Test-CanWriteToPsHome) -and $userscope -eq $false) {
+            It ('Validate Update-Help for module ''{0}'' in {1}' -F $moduleName, [PSCustomObject] $updateScope) -Skip:(!(Test-CanWriteToPsHome) -and $userscope -eq $false) {
 
                 $commonParam = @{
                     Include = @("*help.xml")
