@@ -224,7 +224,7 @@ function RunUpdateHelpTests
                     ErrorAction = [System.Management.Automation.ActionPreference]:: Stop
                 }
 
-                $params += $commonParam
+                # $params += $commonParam
 
                 # If the help file is already installed, delete it.
                 [string] $path = $params['Path']
