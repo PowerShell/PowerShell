@@ -66,7 +66,7 @@ else
         HelpFiles            = "Microsoft.PowerShell.Archive-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Archive_eb74e8da-9ae2-482a-a648-e96550fb8733_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Archive_eb74e8da-9ae2-482a-a648-e96550fb8733_en-US_HelpContent$extension"
-        HelpInstallationPath = Join-Path -Path:$PSHOME -ChildPath:Modules Microsoft.PowerShell.Archive -AdditionalChildPath:$myUICulture
+        HelpInstallationPath = Join-Path -Path:$PSHOME -ChildPath:Modules -AdditionalChildPath:Microsoft.PowerShell.Archive, $myUICulture
     }
 
     "Microsoft.PowerShell.Core" = @{
