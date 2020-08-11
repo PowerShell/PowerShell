@@ -1,13 +1,11 @@
 parameters:
   jobName: 'build_macOS'
-  parentJob: ''
 
 jobs:
 - job: ${{ parameters.jobName }}
   displayName: Build macOS
   condition: succeeded()
   pool: Hosted Mac Internal
-  dependsOn: ${{ parameters.parentJob }}
   variables:
     # Turn off Homebrew analytics
     HOMEBREW_NO_ANALYTICS: 1
@@ -20,7 +18,7 @@ jobs:
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
 
-  - powershell: |
+  - pwsh: |
       # create folder
       sudo mkdir /PowerShell
 
@@ -28,16 +26,16 @@ jobs:
       sudo chown $env:USER /PowerShell
     displayName: 'Create /PowerShell'
 
-  - powershell: |
+  - pwsh: |
       Write-Host "##vso[task.setvariable variable=PowerShellRoot]/PowerShell"
       git clone $env:BUILD_REPOSITORY_LOCALPATH /PowerShell
     displayName: Clone PowerShell Repo to /PowerShell
 
-  - powershell: |
+  - pwsh: |
       tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
     displayName: 'Bootstrap VM'
 
-  - powershell: |
+  - pwsh: |
       Import-Module $(Build.SourcesDirectory)/build.psm1 -Force
       New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT) -FeedName AzDevOpsFeed -Destination "$(PowerShellRoot)/src/Modules"
 
@@ -47,11 +45,11 @@ jobs:
       }
     displayName: 'Add nuget.config for AzDevOps feed for PSGallery modules '
 
-  - powershell: |
+  - pwsh: |
       $env:AZDEVOPSFEEDPAT = '$(AzDevOpsFeedPAT)'
-      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -ExtraPackage "tar" -location $(PowerShellRoot) -Build
+      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -Symbols -location $(PowerShellRoot) -Build -ArtifactName macosBinResults
       $env:AZDEVOPSFEEDPAT = $null
-    displayName: 'Build and Package'
+    displayName: 'Build'
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'

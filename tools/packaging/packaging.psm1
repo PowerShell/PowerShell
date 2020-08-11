@@ -664,13 +664,14 @@ function Expand-PSSignedBuild
     # That zip file is used for compliance scan.
     Remove-Item -Path (Join-Path -Path $buildPath -ChildPath '*.zip') -Recurse
 
-    if ($SkipPwshExeCheck)
-    {
-        $windowsExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh.dll')
-    }
-    else
-    {
-        $windowsExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh.exe')
+    if ($SkipPwshExeCheck) {
+        $executablePath = (Join-Path $buildPath -ChildPath 'pwsh.dll')
+    } else {
+        if ($IsMacOS -or $IsLinux) {
+            $executablePath = (Join-Path $buildPath -ChildPath 'pwsh')
+        } else {
+            $executablePath = (Join-Path $buildPath -ChildPath 'pwsh.exe')
+        }
     }
 
     Restore-PSModuleToBuild -PublishPath $buildPath
@@ -682,12 +683,9 @@ function Expand-PSSignedBuild
 
     $options.PSModuleRestore = $true
 
-    if (Test-Path -Path $windowsExecutablePath)
-    {
-        $options.Output = $windowsExecutablePath
-    }
-    else
-    {
+    if (Test-Path -Path $executablePath) {
+        $options.Output = $executablePath
+    } else {
         throw 'Could not find pwsh'
     }
 
