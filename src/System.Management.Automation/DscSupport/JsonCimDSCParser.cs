@@ -64,14 +64,5 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
                 throw e;
             }
         }
-
-        /// <summary>
-        /// Make sure that the instance conforms to the the schema.
-        /// </summary>
-        /// <param name="classText"></param>
-        internal void ValidateInstanceText(string classText)
-        {
-            throw new NotImplementedException("Instance parsing/validation is not yet suported by JSON-based parser");
-        }
     }
 }

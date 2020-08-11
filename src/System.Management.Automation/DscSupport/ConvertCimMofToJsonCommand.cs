@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// </summary>
         protected override void ProcessRecord()
         {
-            // Mof parser uses DSC_HOME env var which is normally set by PSDesiredStateConfiguration module
+            // Mof parser uses DSC_HOME env var which is usually set by PSDesiredStateConfiguration module
             // Because this cmlet can be run without loading PSDesiredStateConfiguration module, we are setting this env var here.
             string varName = "DSC_HOME";
             if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(varName, EnvironmentVariableTarget.Process)))

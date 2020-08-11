@@ -231,7 +231,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (Platform.IsLinux || Platform.IsMacOS)
             {
-                //WriteVerbose("Initialize / Platform.IsLinux || Platform.IsMacOS");
                 //
                 // Load the base schema files.
                 //
@@ -244,10 +243,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     throw new DirectoryNotFoundException("Unable to find DSC schema store at " + dscConfigurationDirectory + ". Please ensure PS DSC for Linux is installed.");
                 }
 
-                //WriteVerbose("ImportClasses : BaseRegistration/BaseResource.schema.json");
                 var resourceBaseFile = Path.Combine(dscConfigurationDirectory, "BaseRegistration/BaseResource.schema.json");
                 ImportClasses(resourceBaseFile, s_defaultModuleInfoForResource, errors);
-                //WriteVerbose("ImportClasses : BaseRegistration/MSFT_DSCMetaConfiguration.json");
                 var metaConfigFile = Path.Combine(dscConfigurationDirectory, "BaseRegistration/MSFT_DSCMetaConfiguration.json");
                 ImportClasses(metaConfigFile, s_defaultModuleInfoForResource, errors);
 
@@ -267,7 +264,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                     foreach (var schemaFile in Directory.EnumerateDirectories(resources).SelectMany(d => Directory.EnumerateFiles(d, "*.schema.json")))
                     {
-                        WriteVerbose("ImportClasses : " + schemaFile);
                         ImportClasses(schemaFile, s_defaultModuleInfoForResource, errors);
                     }
                 }
@@ -471,12 +467,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
 
-        private static void WriteVerbose(string warning)
+        private static void WriteWarning(string warning)
         {
             var executionContext = System.Management.Automation.Runspaces.Runspace.DefaultRunspace.ExecutionContext;
             if (executionContext != null && executionContext.InternalHost != null && executionContext.InternalHost.UI != null)
             {
-                executionContext.InternalHost.UI.WriteVerboseLine(warning);
+                executionContext.InternalHost.UI.WriteWarningLine(warning);
             }
         }
 
@@ -489,7 +485,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             if (! jsonFilePath.EndsWith(".json", StringComparison.InvariantCultureIgnoreCase))
             {
-                WriteVerbose(string.Format("Cannot parse non-JSON file {0}", jsonFilePath));
+                WriteWarning(string.Format("Cannot parse non-JSON file {0}", jsonFilePath));
                 return null;
             }
 
@@ -515,7 +511,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (! path.EndsWith(".json", StringComparison.InvariantCultureIgnoreCase))
             {
-                WriteVerbose(string.Format("Cannot parse non-JSON file {0}", path));
+                WriteWarning(string.Format("Cannot parse non-JSON file {0}", path));
                 return null;
             }
 
@@ -678,8 +674,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
+        /// Returns cached classes
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Returns cached classes</returns>
         private static List<DscClassCacheEntry> GetCachedClasses()
         {
             return ClassCache.Values.ToList();
@@ -773,67 +770,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             var moduleFileName = moduleName + ".schema.json";
             return (from filename in ByFileClassCache.Keys where string.Equals(Path.GetFileName(filename), moduleFileName, StringComparison.OrdinalIgnoreCase) select GetCachedClassByFileName(filename)).FirstOrDefault();
-        }
-
-/*TODO-AM: 
-        /// <summary>
-        /// Routine used to load a set of CIM instances from a .mof file using the
-        /// current set of cached classes for schema validation.
-        /// </summary>
-        /// <param name="path">The file to load the classes from.</param>
-        /// <returns></returns>
-        public static List<CimInstance> ImportInstances(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(path));
-            }
-
-            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser();
-
-            return parser.ParseInstanceMof(path);
-        }
-
-        /// <summary>
-        /// Routine used to load a set of CIM instances from a .mof file using the
-        /// current set of cached classes for schema validation.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="schemaValidationOption"></param>
-        /// <returns></returns>
-        public static List<CimInstance> ImportInstances(string path, int schemaValidationOption)
-        {
-            if (string.IsNullOrEmpty(path))
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(path));
-            }
-
-            if (schemaValidationOption < (int)Microsoft.Management.Infrastructure.Serialization.MofDeserializerSchemaValidationOption.Default ||
-                schemaValidationOption > (int)Microsoft.Management.Infrastructure.Serialization.MofDeserializerSchemaValidationOption.Ignore)
-            {
-                throw new IndexOutOfRangeException("schemaValidationOption");
-            }
-
-            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser(MyClassCallback, (Microsoft.Management.Infrastructure.Serialization.MofDeserializerSchemaValidationOption)schemaValidationOption);
-
-            return parser.ParseInstanceMof(path);
-        }*/
-
-        /// <summary>
-        /// A routine that validates a string containing MOF instances against the
-        /// current set of cached classes.
-        /// </summary>
-        /// <param name="instanceText"></param>
-        public static void ValidateInstanceText(string instanceText)
-        {
-            if (string.IsNullOrEmpty(instanceText))
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(instanceText));
-            }
-
-            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser();
-
-            parser.ValidateInstanceText(instanceText);
         }
 
         private static bool IsMagicProperty(string propertyName)
@@ -975,6 +911,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             // code above is the only place that references CimSuperClass
             // so to simplify things we just check superclass to be OMI_BaseResource
             // with assumption that current code will not work for multi-level class inheritance (which is never used in practice according to DSC team)
+            // this simplification allows us to avoid linking objects together using CimSuperClass field during deserialization from json schema
             if ((!string.IsNullOrEmpty(cimClass.CimSuperClassName)) && string.Equals("OMI_BaseResource", cimClass.CimSuperClassName, StringComparison.OrdinalIgnoreCase))
             {
                 isResourceType = true;
@@ -1270,8 +1207,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
         // This function is called after parsing the Import-DscResource keyword and it's arguments, but before parsing
         // anything else.
-        //
-        //
         private static ParseError[] ImportResourcePostParse(DynamicKeywordStatementAst kwAst)
         {
             var elements = Ast.CopyElements(kwAst.CommandElements);
@@ -1802,7 +1737,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     // Ignore the module if we can't find the assembly.
                     if (assembly != null)
                     {
-                        ImportKeywordsFromAssembly(moduleInfo, resourcesToImport, resourcesFound, functionsToDefine, assembly);
+                        throw new NotImplementedException("ModuleType.Binary / ImportKeywordsFromAssembly not supported yet");
                     }
                 }
                 finally
@@ -1873,17 +1808,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             return resourcesImported;
         }
 
-        internal static PSObject[] GenerateJsonForAst(TypeDefinitionAst typeAst)
+        internal static PSObject[] GenerateJsonClassesForAst(TypeDefinitionAst typeAst)
         {
             var embeddedInstanceTypes = new List<object>();
-            var sb = new StringBuilder();
 
-            var result = GenerateJsonForAst(typeAst, sb, embeddedInstanceTypes);
+            var result = GenerateJsonClassesForAst(typeAst, embeddedInstanceTypes);
             var visitedInstances = new List<object>();
             visitedInstances.Add(typeAst);
-
-            /*TODO-AM: add support for embeddedInstanceTypes
-            ProcessEmbeddedInstanceTypes(embeddedInstanceTypes, visitedInstances, sb);*/
 
             return result;
         }
@@ -1932,73 +1863,18 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             return "string";
         }
 
-        /*private static void GenerateJsonForAst(TypeDefinitionAst typeAst, StringBuilder sb, List<object> embeddedInstanceTypes)
+        private static PSObject[] GenerateJsonClassesForAst(TypeDefinitionAst typeAst, List<object> embeddedInstanceTypes)
         {
-            var className = typeAst.Name;
-            sb.AppendFormat(CultureInfo.InvariantCulture, "[ClassVersion(\"1.0.0\"), FriendlyName(\"{0}\")]\nclass {0}", className);
+            // MOF-based implementation of this used to generate MOF string representing classes/typeAst and pass it to MMI/MOF deserializer to get CimClass array
+            // Here we are avoiding that roundtrip just constructing the resulting PSObjects
 
+            var className = typeAst.Name;
+
+            string cimSuperClassName = null;
             if (typeAst.Attributes.Any(a => a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute)))
             {
-                sb.Append(" : OMI_BaseResource");
+                cimSuperClassName = "OMI_BaseResource";
             }
-
-            sb.Append("\n{\n");
-
-            ProcessMembers(sb, embeddedInstanceTypes, typeAst, className);
-
-            Queue<object> bases = new Queue<object>();
-            foreach (var b in typeAst.BaseTypes)
-            {
-                bases.Enqueue(b);
-            }
-
-            while (bases.Count > 0)
-            {
-                var b = bases.Dequeue();
-                var tc = b as TypeConstraintAst;
-
-                if (tc != null)
-                {
-                    b = tc.TypeName.GetReflectionType();
-                    if (b == null)
-                    {
-                        var td = tc.TypeName as TypeName;
-                        if (td != null && td._typeDefinitionAst != null)
-                        {
-                            ProcessMembers(sb, embeddedInstanceTypes, td._typeDefinitionAst, className);
-                            foreach (var b1 in td._typeDefinitionAst.BaseTypes)
-                            {
-                                bases.Enqueue(b1);
-                            }
-                        }
-
-                        continue;
-                    }
-                }
-
-                var type = b as Type;
-                if (type != null)
-                {
-                    ProcessMembers(type, sb, embeddedInstanceTypes, className);
-                    var t = type.BaseType;
-                    if (t != null)
-                    {
-                        bases.Enqueue(t);
-                    }
-                }
-            }
-
-            sb.Append("};");
-        }*/
-
-        private static PSObject[] GenerateJsonForAst(TypeDefinitionAst typeAst, StringBuilder sb, List<object> embeddedInstanceTypes)
-        {
-            var className = typeAst.Name;
-            /*TODO-AM: add base classes:
-            if (typeAst.Attributes.Any(a => a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute)))
-            {
-                sb.Append(" : OMI_BaseResource");
-            }*/
 
             var _ClassVersion = new PSObject();
             _ClassVersion.Properties.Add(new PSNoteProperty("Name", "ClassVersion"));
@@ -2020,15 +1896,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             _CimSystemProperties.Properties.Add(new PSNoteProperty("ClassName", className));
             _CimSystemProperties.Properties.Add(new PSNoteProperty("Path", null));
 
-            var _CimClassProperties = ProcessMembers(sb, embeddedInstanceTypes, typeAst, className).ToArray();
-
+            var _CimClassProperties = ProcessMembers(embeddedInstanceTypes, typeAst, className).ToArray();
 
             var result = new PSObject();
-            result.Properties.Add(new PSNoteProperty("CimSuperClassName", null)); //TODO-AM: this has to change based on parent class
-            result.Properties.Add(new PSNoteProperty("CimSuperClass", null)); //TODO-AM: this has to change based on parent class
+            result.Properties.Add(new PSNoteProperty("CimSuperClassName", cimSuperClassName));
             result.Properties.Add(new PSNoteProperty("CimClassProperties", _CimClassProperties));
             result.Properties.Add(new PSNoteProperty("CimClassQualifiers", _CimClassQualifiers));
-            result.Properties.Add(new PSNoteProperty("CimClassMethods", new PSObject[0])); //TODO-AM: this has to change
             result.Properties.Add(new PSNoteProperty("CimSystemProperties", _CimSystemProperties));
 
             Queue<object> bases = new Queue<object>();
@@ -2039,7 +1912,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (bases.Count > 0)
             {
-                WriteVerbose(string.Format("BaseTypes count for type {0} is {1} and not implemented yet", className, bases.Count));
+                WriteWarning(string.Format("BaseTypes count for type {0} is {1} and not implemented yet", className, bases.Count));
             }
 
             return new PSObject[] {result};
@@ -2136,64 +2009,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             return false;
         }
 
-        /*private static void ProcessMembers(StringBuilder sb, List<object> embeddedInstanceTypes, TypeDefinitionAst typeDefinitionAst, string className)
-        {
-            foreach (var member in typeDefinitionAst.Members)
-            {
-                var property = member as PropertyMemberAst;
-
-                if (property == null || property.IsStatic ||
-                    property.Attributes.All(a => a.TypeName.GetReflectionAttributeType() != typeof(DscPropertyAttribute)))
-                {
-                    continue;
-                }
-
-                var memberType = property.PropertyType == null
-                    ? typeof(object)
-                    : property.PropertyType.TypeName.GetReflectionType();
-
-                var attributes = new List<object>();
-                for (int i = 0; i < property.Attributes.Count; i++)
-                {
-                    attributes.Add(property.Attributes[i].GetAttribute());
-                }
-
-                string mofType;
-                bool isArrayType;
-                string embeddedInstanceType;
-                string[] enumNames = null;
-
-                if (memberType != null)
-                {
-                    // TODO - validate type and name
-                    mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType,
-                        out embeddedInstanceType,
-                        embeddedInstanceTypes);
-                    if (memberType.IsEnum)
-                    {
-                        enumNames = Enum.GetNames(memberType);
-                    }
-                }
-                else
-                {
-                    // PropertyType can't be null, we used typeof(object) above in that case so we don't get here.
-                    mofType = MapTypeNameToMofType(property.PropertyType.TypeName, member.Name, className,
-                        out isArrayType,
-                        out embeddedInstanceType, embeddedInstanceTypes, ref enumNames);
-                }
-
-                string arrayAffix = isArrayType ? "[]" : string.Empty;
-
-                sb.AppendFormat(CultureInfo.InvariantCulture,
-                    "    {0}{1} {2}{3};\n",
-                    MapAttributesToMof(enumNames, attributes, embeddedInstanceType),
-                    mofType,
-                    member.Name,
-                    arrayAffix);
-            }
-        }*/
-
-        private static List<PSObject> ProcessMembers(StringBuilder sb, List<object> embeddedInstanceTypes, TypeDefinitionAst typeDefinitionAst, string className)
+        private static List<PSObject> ProcessMembers(List<object> embeddedInstanceTypes, TypeDefinitionAst typeDefinitionAst, string className)
         {
             List<PSObject> result = new List<PSObject>();
 
@@ -2241,41 +2057,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         out embeddedInstanceType, embeddedInstanceTypes, ref enumNames);
                 }
 
-                string arrayAffix = isArrayType ? "[]" : string.Empty;
-
-                sb.AppendFormat(CultureInfo.InvariantCulture,
-                    "    {0}{1} {2}{3};\n",
-                    MapAttributesToMof(enumNames, attributes, embeddedInstanceType),
-                    mofType,
-                    member.Name,
-                    arrayAffix);
-
                 var propertyObject = new PSObject();
                 propertyObject.Properties.Add(new PSNoteProperty(@"Name", member.Name));
                 propertyObject.Properties.Add(new PSNoteProperty(@"Value", "null"));
                 propertyObject.Properties.Add(new PSNoteProperty(@"CimType", mofType + (isArrayType ? "Array" : "")));
-                //TODO-AM: fill-in rest of attributes
                 propertyObject.Properties.Add(new PSNoteProperty(@"Flags", "Property, NullValue"));
-                propertyObject.Properties.Add(new PSNoteProperty(@"Qualifiers", new PSObject[0]));
+                propertyObject.Properties.Add(new PSNoteProperty(@"Qualifiers", new PSObject[0])); //TODO: mark Keys
 
                 result.Add(propertyObject);
-                /*
-                {
-                    "Name": "Path",
-                    "Value": null,
-                    "CimType": "String",
-                    "Flags": "Property, Key, NullValue",
-                    "Qualifiers": [
-                    {
-                        "Name": "Key",
-                        "Value": true,
-                        "CimType": "Boolean",
-                        "Flags": "DisableOverride, ToSubclass"
-                    }
-                    ],
-                    "ReferenceClassName": null
-                }
-                */
             }
 
             return result;
@@ -2417,7 +2206,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
                 }
 
-                var classes = GenerateJsonForAst(resourceDefnAst);
+                var classes = GenerateJsonClassesForAst(resourceDefnAst);
 
                 ProcessJsonForDynamicKeywords(module, resourcesFound, functionsToDefine, classes, runAsBehavior);
             }
@@ -2444,73 +2233,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             { typeof(char), "char16" },
         };
 
-        /*TODO-AM: private static bool AreQualifiersSame(CimReadOnlyKeyedCollection<CimQualifier> oldQualifier, CimReadOnlyKeyedCollection<CimQualifier> newQualifiers)
-        {
-            if (oldQualifier.Count != newQualifiers.Count)
-            {
-                return false;
-            }
-
-            foreach (var qual in oldQualifier)
-            {
-                // Find the qualifier in new class
-                var newQual = newQualifiers[qual.Name];
-                if (newQual == null)
-                {
-                    return false;
-                }
-
-                if ((qual.CimType != newQual.CimType) ||
-                    (qual.Flags != newQual.Flags))
-                {
-                    return false;
-                }
-
-                if ((qual.Value == null && newQual.Value != null) ||
-                    (qual.Value != null && newQual.Value == null) ||
-                    (qual.Value != null && newQual.Value != null &&
-                        !string.Equals(qual.Value.ToString(), newQual.Value.ToString(), StringComparison.OrdinalIgnoreCase)
-                    )
-                  )
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private static bool ArePropertiesSame(CimReadOnlyKeyedCollection<CimPropertyDeclaration> oldProperties, CimReadOnlyKeyedCollection<CimPropertyDeclaration> newProperties)
-        {
-            if (oldProperties.Count != newProperties.Count)
-            {
-                return false;
-            }
-
-            foreach (var prop in oldProperties)
-            {
-                // Find the property in new class
-                var newProp = newProperties[prop.Name];
-                if (newProp == null)
-                {
-                    return false;
-                }
-                // flags and type should match
-                if ((prop.CimType != newProp.CimType) ||
-                    (prop.Flags != newProp.Flags))
-                {
-                    return false;
-                }
-
-                if (!AreQualifiersSame(prop.Qualifiers, newProp.Qualifiers))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }*/
-
         private static bool IsSameNestedObject(dynamic oldClass, dynamic newClass)
         {
             // #1 both the classes should be nested class and not DSC resource
@@ -2519,17 +2241,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 return false;
             }
-            // #2 qualifier count, names, values and types should be same
-            /*TODO-AM: if (!AreQualifiersSame(oldClass.CimClassQualifiers, newClass.CimClassQualifiers))
-            {
-                return false;
-            }
-
-            // #3 property count, names, values, qualifiers and types should be same
-            if (!ArePropertiesSame(oldClass.CimClassProperties, newClass.CimClassProperties))
-            {
-                return false;
-            }*/
 
             return true;
         }
@@ -2637,250 +2348,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
         }
 
-        private static string MapAttributesToMof(string[] enumNames, IEnumerable<object> customAttributes, string embeddedInstanceType)
-        {
-            var sb = new StringBuilder();
-
-            sb.Append("[");
-            bool needComma = false;
-            foreach (var attr in customAttributes)
-            {
-                var dscProperty = attr as DscPropertyAttribute;
-                if (dscProperty != null)
-                {
-                    if (dscProperty.Key)
-                    {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}key", needComma ? ", " : string.Empty);
-                        needComma = true;
-                    }
-
-                    if (dscProperty.Mandatory)
-                    {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}required", needComma ? ", " : string.Empty);
-                        needComma = true;
-                    }
-
-                    if (dscProperty.NotConfigurable)
-                    {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}read", needComma ? ", " : string.Empty);
-                        needComma = true;
-                    }
-
-                    continue;
-                }
-
-                var validateSet = attr as ValidateSetAttribute;
-                if (validateSet != null)
-                {
-                    bool valueMapComma = false;
-                    StringBuilder sbValues = new StringBuilder(", Values{");
-                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
-                    needComma = true;
-
-                    foreach (var value in validateSet.ValidValues)
-                    {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : string.Empty, value);
-                        sbValues.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : string.Empty, value);
-                        valueMapComma = true;
-                    }
-
-                    sb.Append("}");
-                    sb.Append(sbValues);
-                    sb.Append("}");
-                }
-            }
-
-            // Default is write - skipped if we already have some attributes
-            if (sb.Length == 1)
-            {
-                sb.Append("write");
-                needComma = true;
-            }
-
-            if (enumNames != null)
-            {
-                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
-                needComma = false;
-                foreach (var name in enumNames)
-                {
-                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : string.Empty, name);
-                    needComma = true;
-                }
-
-                sb.Append("}, Values{");
-                needComma = false;
-                foreach (var name in enumNames)
-                {
-                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : string.Empty, name);
-                    needComma = true;
-                }
-
-                sb.Append("}");
-            }
-            else if (embeddedInstanceType != null)
-            {
-                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}EmbeddedInstance(\"{1}\")", needComma ? ", " : string.Empty, embeddedInstanceType);
-            }
-
-            sb.Append("]");
-            return sb.ToString();
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static string GenerateMofForType(Type type)
-        {
-            var embeddedInstanceTypes = new List<object>();
-            var sb = new StringBuilder();
-
-            GenerateMofForType(type, sb, embeddedInstanceTypes);
-            var visitedInstances = new List<object>();
-            visitedInstances.Add(type);
-            ProcessEmbeddedInstanceTypes(embeddedInstanceTypes, visitedInstances, sb);
-
-            return sb.ToString();
-        }
-
-        private static void ProcessEmbeddedInstanceTypes(List<object> embeddedInstanceTypes, List<object> visitedInstances, StringBuilder sb)
-        {
-            StringBuilder nestedSb = null;
-
-            while (embeddedInstanceTypes.Count > 0)
-            {
-                if (nestedSb == null)
-                {
-                    nestedSb = new StringBuilder();
-                }
-                else
-                {
-                    nestedSb.Clear();
-                }
-
-                var batchedTypes = embeddedInstanceTypes.Where(x => !visitedInstances.Contains(x)).ToArray();
-                embeddedInstanceTypes.Clear();
-
-                for (int i = batchedTypes.Length - 1; i >= 0; i--)
-                {
-                    visitedInstances.Add(batchedTypes[i]);
-                    var type = batchedTypes[i] as Type;
-                    if (type != null)
-                    {
-                        GenerateMofForType(type, nestedSb, embeddedInstanceTypes);
-                    }
-                    else
-                    {
-                        GenerateJsonForAst((TypeDefinitionAst)batchedTypes[i], nestedSb, embeddedInstanceTypes);
-                    }
-
-                    nestedSb.Append('\n');
-                }
-
-                sb.Insert(0, nestedSb.ToString());
-            }
-        }
-
-        private static void GenerateMofForType(Type type, StringBuilder sb, List<object> embeddedInstanceTypes)
-        {
-            var className = type.Name;
-            // Friendly name is required by module validator to verify resource instance against the exclusive resource name list.
-            sb.AppendFormat(CultureInfo.InvariantCulture, "[ClassVersion(\"1.0.0\"), FriendlyName(\"{0}\")]\nclass {0}", className);
-
-            if (type.GetCustomAttributes<DscResourceAttribute>().Any())
-            {
-                sb.Append(" : OMI_BaseResource");
-            }
-
-            sb.Append("\n{\n");
-
-            ProcessMembers(type, sb, embeddedInstanceTypes, className);
-            sb.Append("};");
-        }
-
-        private static void ProcessMembers(Type type, StringBuilder sb, List<object> embeddedInstanceTypes, string className)
-        {
-            foreach (var member in type.GetMembers(BindingFlags.Instance | BindingFlags.Public).Where(m => m is PropertyInfo || m is FieldInfo))
-            {
-                if (member.CustomAttributes.All(cad => cad.AttributeType != typeof(DscPropertyAttribute)))
-                {
-                    continue;
-                }
-
-                Type memberType;
-                var propertyInfo = member as PropertyInfo;
-                if (propertyInfo == null)
-                {
-                    var fieldInfo = (FieldInfo)member;
-                    memberType = fieldInfo.FieldType;
-                }
-                else
-                {
-                    if (propertyInfo.GetSetMethod() == null)
-                    {
-                        continue;
-                    }
-
-                    memberType = propertyInfo.PropertyType;
-                }
-
-                // TODO - validate type and name
-                bool isArrayType;
-                string embeddedInstanceType;
-                string mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType, out embeddedInstanceType,
-                    embeddedInstanceTypes);
-                string arrayAffix = isArrayType ? "[]" : string.Empty;
-
-                var enumNames = memberType.IsEnum
-                    ? Enum.GetNames(memberType)
-                    : null;
-                sb.AppendFormat(CultureInfo.InvariantCulture,
-                    "    {0}{1} {2}{3};\n",
-                    MapAttributesToMof(enumNames, member.GetCustomAttributes(true), embeddedInstanceType),
-                    mofType,
-                    member.Name,
-                    arrayAffix);
-            }
-        }
-
-        private static bool ImportKeywordsFromAssembly(PSModuleInfo module,
-                                                       ICollection<string> resourcesToImport,
-                                                       ICollection<string> resourcesFound,
-                                                       Dictionary<string, ScriptBlock> functionsToDefine,
-                                                       Assembly assembly)
-        {
-            bool result = false;
-
-            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser();
-
-            IEnumerable<Type> resourceDefinitions =
-                assembly.GetTypes().Where(t => t.GetCustomAttributes<DscResourceAttribute>().Any());
-
-            foreach (var r in resourceDefinitions)
-            {
-                result = true;
-                bool skip = true;
-
-                foreach (var toImport in resourcesToImport)
-                {
-                    if ((WildcardPattern.Get(toImport, WildcardOptions.IgnoreCase)).IsMatch(r.Name))
-                    {
-                        skip = false;
-                        break;
-                    }
-                }
-
-                if (skip) continue;
-
-                var mof = GenerateMofForType(r);
-
-                /*TODO-AM: update and re-enable
-                ProcessJsonForDynamicKeywords(module, resourcesFound, functionsToDefine, parser, mof, DSCResourceRunAsCredential.Default);*/
-            }
-
-            return result;
-        }
-
         private static void ProcessJsonForDynamicKeywords(PSModuleInfo module, ICollection<string> resourcesFound,
             Dictionary<string, ScriptBlock> functionsToDefine, PSObject[] classes, DSCResourceRunAsCredential runAsBehavior)
         {
@@ -2915,7 +2382,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Import the CIM functions from a module...
+        /// Import the CIM keywords from a module...
         /// </summary>
         /// <param name="module"></param>
         /// <param name="resourceName"></param>
