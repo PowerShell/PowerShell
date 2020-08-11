@@ -175,7 +175,7 @@ function ValidateInstalledHelpContent
     )
 
     [string] $pathProperty = $(if ($UserScope) { 'HelpInstallationPathHome' } else { 'HelpInstallationPath' })
-    [System.Management.Automation.FileInfo[]] $helpFilesInstalled = Get-ChildItem -Path:($testCases[$moduleName]. $pathProperty) -Filter:*help.xml -Recurse
+    [System.IO.FileInfo[]] $helpFilesInstalled = Get-ChildItem -Path:($testCases[$moduleName]. $pathProperty) -Filter:*help.xml -Recurse
 
     [string[]] $expectedHelpFiles = $testCases[$moduleName].HelpFiles
     [string] $junct = "`t"
