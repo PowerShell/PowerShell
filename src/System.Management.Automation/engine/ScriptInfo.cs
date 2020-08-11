@@ -117,7 +117,7 @@ namespace System.Management.Automation
             get
             {
                 return _commandMetadata ??=
-                        new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS());
+                    new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS());
             }
         }
 
