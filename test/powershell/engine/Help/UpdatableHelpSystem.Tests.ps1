@@ -227,7 +227,9 @@ function RunUpdateHelpTests
                 $params += $commonParam
 
                 # If the help file is already installed, delete it.
-                Remove-Item ($params['Path'])
+                [string] $path = $params['Path']
+                $path | Should -Not -BeNull
+                Remove-Item $path
  
                 [hashtable] $UICultureParam = $(if ((Get-UICulture).Name -ne $myUICulture) { @{ UICulture = $myUICulture } } else { @{} })
                 [hashtable] $sourcePathParam = $(if ($useSourcePath) { @{ SourcePath = Join-Path $PSScriptRoot assets } } else { @{} })
