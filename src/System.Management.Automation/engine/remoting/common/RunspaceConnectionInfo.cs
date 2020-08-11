@@ -3459,7 +3459,7 @@ namespace System.Management.Automation.Runspaces
 
                         if (ContainerObRoot == null) 
                         {
-                            throw new ArgumentNullException(nameof(ContainerObRoot));
+                            throw new PSInvalidOperationException(RemotingErrorIdStrings.CannotGetHostInteropTypes);
                         }
                     }
                 }
