@@ -686,8 +686,6 @@ namespace Microsoft.PowerShell.Commands
 
             ps.AddCommand(@"Microsoft.PowerShell.Core\Get-Help");
 
-            StringBuilder sb = new StringBuilder();
-
             if (!string.IsNullOrEmpty(this.Name))
             {
                 ps.AddParameter(nameof(this.Name), this.Name);
