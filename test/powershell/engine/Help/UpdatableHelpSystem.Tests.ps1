@@ -175,7 +175,7 @@ function ValidateInstalledHelpContent
     )
 
     [string] $pathProperty = $(if ($UserScope) { 'HelpInstallationPathHome' } else { 'HelpInstallationPath' })
-    [System.IO.FileInfo[]] $helpFilesInstalled = Get-ChildItem -Path:($testCases[$moduleName]. $pathProperty) -Filter:*help.xml -Recurse
+    [System.IO.FileInfo[]] $helpFilesInstalled = Get-ChildItem -Path:($testCases[$moduleName][$pathProperty]) -Filter:*help.xml -Recurse
 
     [string[]] $expectedHelpFiles = $testCases[$moduleName].HelpFiles
     [string] $junct = "`t"
@@ -204,12 +204,12 @@ function RunUpdateHelpTests
             [hashtable] $updateScope = $null
             if($userscope)
             {
-                $params = @{Path = $testCases[$moduleName].HelpInstallationPathHome}
+                $params = @{Path = $testCases[$moduleName]['HelpInstallationPathHome']}
                 $updateScope = @{Scope = 'CurrentUser'}
             }
             else
             {
-                $params = @{Path = $testCases[$moduleName].HelpInstallationPath}
+                $params = @{Path = $testCases[$moduleName]['HelpInstallationPath']}
                 $updateScope = @{Scope = 'AllUsers'}
             }
 
