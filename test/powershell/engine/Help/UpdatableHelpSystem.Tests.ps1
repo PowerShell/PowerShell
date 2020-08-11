@@ -199,7 +199,7 @@ function RunUpdateHelpTests
         if ($powershellCoreModules -contains $moduleName)
         {
 
-            It "Validate Update-Help for module '$moduleName' with scope as '$userscope'" -Skip:(!(Test-CanWriteToPsHome) -and $userscope -eq $false) {
+            It "Validate Update-Help for module '$moduleName' with user scope as '$userscope'" -Skip:(!(Test-CanWriteToPsHome) -and $userscope -eq $false) {
 
                 if($userscope)
                 {
