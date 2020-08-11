@@ -952,7 +952,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public Collection<Attribute> Attributes
         {
-            get { return _attributes ?? (_attributes = new Collection<Attribute>()); }
+            get { return _attributes ??= new Collection<Attribute>(); }
         }
 
         private Collection<Attribute> _attributes;

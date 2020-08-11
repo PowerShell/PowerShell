@@ -666,7 +666,7 @@ namespace System.Management.Automation
         /// <value></value>
         internal HelpSystem HelpSystem
         {
-            get { return _helpSystem ?? (_helpSystem = new HelpSystem(this)); }
+            get { return _helpSystem ??= new HelpSystem(this); }
         }
 
         private HelpSystem _helpSystem;
@@ -744,7 +744,7 @@ namespace System.Management.Automation
         /// </summary>
         internal EngineIntrinsics EngineIntrinsics
         {
-            get { return _engineIntrinsics ?? (_engineIntrinsics = new EngineIntrinsics(this)); }
+            get { return _engineIntrinsics ??= new EngineIntrinsics(this); }
         }
 
         private EngineIntrinsics _engineIntrinsics;

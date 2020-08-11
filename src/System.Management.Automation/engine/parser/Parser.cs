@@ -7940,7 +7940,7 @@ namespace System.Management.Automation.Language
 
         private static object[] arrayOfOneArg
         {
-            get { return t_arrayOfOneArg ?? (t_arrayOfOneArg = new object[1]); }
+            get { return t_arrayOfOneArg ??= new object[1]; }
         }
 
         [ThreadStatic]
@@ -7948,7 +7948,7 @@ namespace System.Management.Automation.Language
 
         private static object[] arrayOfTwoArgs
         {
-            get { return t_arrayOfTwoArgs ?? (t_arrayOfTwoArgs = new object[2]); }
+            get { return t_arrayOfTwoArgs ??= new object[2]; }
         }
 
         [ThreadStatic]

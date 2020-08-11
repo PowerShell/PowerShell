@@ -1692,7 +1692,7 @@ namespace System.Management.Automation
         // performance degradation, so we use lazy initialization for all of them.
         private Dictionary<string, PSDriveInfo> GetDrives()
         {
-            return _drives ?? (_drives = new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase));
+            return _drives ??= new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase);
         }
 
         private Dictionary<string, PSDriveInfo> _drives;
@@ -1704,8 +1704,7 @@ namespace System.Management.Automation
         // performance degradation, so we use lazy initialization for all of them.
         private Dictionary<string, PSDriveInfo> GetAutomountedDrives()
         {
-            return _automountedDrives ??
-                   (_automountedDrives = new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase));
+            return _automountedDrives ??= new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase);
         }
 
         private Dictionary<string, PSDriveInfo> _automountedDrives;

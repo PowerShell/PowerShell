@@ -1348,7 +1348,7 @@ namespace System.Management.Automation
             }
 
             // Cache the new lookup paths
-            return _cachedLookupPaths ?? (_cachedLookupPaths = result);
+            return _cachedLookupPaths ??= result;
         }
 
         /// <summary>

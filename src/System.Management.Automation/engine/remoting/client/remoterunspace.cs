@@ -1201,7 +1201,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal override SessionStateProxy GetSessionStateProxy()
         {
-            return _sessionStateProxy ?? (_sessionStateProxy = new RemoteSessionStateProxy(this));
+            return _sessionStateProxy ??= new RemoteSessionStateProxy(this);
         }
 
         private RemoteSessionStateProxy _sessionStateProxy = null;

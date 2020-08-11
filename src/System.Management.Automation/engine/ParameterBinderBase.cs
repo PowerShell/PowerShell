@@ -175,7 +175,7 @@ namespace System.Management.Automation
             // Setter is needed to pass into RuntimeParameterBinder instances
             set { _commandLineParameters = value; }
 
-            get { return _commandLineParameters ?? (_commandLineParameters = new CommandLineParameters()); }
+            get { return _commandLineParameters ??= new CommandLineParameters(); }
         }
 
         private CommandLineParameters _commandLineParameters;

@@ -124,7 +124,7 @@ namespace System.Management.Automation
             try
             {
                 var setter = parameterMetadata != null
-                    ? (parameterMetadata.Setter ?? (parameterMetadata.Setter = GetSetter(Target.GetType(), name)))
+                    ? (parameterMetadata.Setter ??= GetSetter(Target.GetType(), name))
                     : GetSetter(Target.GetType(), name);
                 setter(Target, value);
             }

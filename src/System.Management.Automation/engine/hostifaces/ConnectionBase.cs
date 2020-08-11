@@ -1573,7 +1573,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal override SessionStateProxy GetSessionStateProxy()
         {
-            return _sessionStateProxy ?? (_sessionStateProxy = new SessionStateProxy(this));
+            return _sessionStateProxy ??= new SessionStateProxy(this);
         }
 
         #endregion session state proxy

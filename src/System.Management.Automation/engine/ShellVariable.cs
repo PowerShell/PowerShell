@@ -387,7 +387,7 @@ namespace System.Management.Automation
         /// </remarks>
         public Collection<Attribute> Attributes
         {
-            get { return _attributes ?? (_attributes = new PSVariableAttributeCollection(this)); }
+            get { return _attributes ??= new PSVariableAttributeCollection(this); }
         }
 
         private PSVariableAttributeCollection _attributes;
@@ -840,7 +840,7 @@ namespace System.Management.Automation
         /// </summary>
         public override string Description
         {
-            get { return _description ?? (_description = SessionStateStrings.DollarNullDescription); }
+            get { return _description ??= SessionStateStrings.DollarNullDescription; }
 
             set { /* Do nothing */ }
         }

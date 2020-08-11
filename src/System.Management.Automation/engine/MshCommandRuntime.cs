@@ -125,7 +125,7 @@ namespace System.Management.Automation
         /// <value>The invocation object for this command.</value>
         internal InvocationInfo MyInvocation
         {
-            get { return _myInvocation ?? (_myInvocation = _thisCommand.MyInvocation); }
+            get { return _myInvocation ??= _thisCommand.MyInvocation; }
         }
 
         /// <summary>
@@ -2206,7 +2206,7 @@ namespace System.Management.Automation
         /// </summary>
         internal Pipe InputPipe
         {
-            get { return _inputPipe ?? (_inputPipe = new Pipe()); }
+            get { return _inputPipe ??= new Pipe(); }
 
             set { _inputPipe = value; }
         }
@@ -2216,7 +2216,7 @@ namespace System.Management.Automation
         /// </summary>
         internal Pipe OutputPipe
         {
-            get { return _outputPipe ?? (_outputPipe = new Pipe()); }
+            get { return _outputPipe ??= new Pipe(); }
 
             set { _outputPipe = value; }
         }
@@ -2239,7 +2239,7 @@ namespace System.Management.Automation
         /// </summary>
         internal Pipe ErrorOutputPipe
         {
-            get { return _errorOutputPipe ?? (_errorOutputPipe = new Pipe()); }
+            get { return _errorOutputPipe ??= new Pipe(); }
 
             set { _errorOutputPipe = value; }
         }

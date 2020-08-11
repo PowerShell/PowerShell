@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
                     return s_inputStream;
                 }
 
-                return _filename ?? (_filename = System.IO.Path.GetFileName(_path));
+                return _filename ??= System.IO.Path.GetFileName(_path);
             }
         }
 

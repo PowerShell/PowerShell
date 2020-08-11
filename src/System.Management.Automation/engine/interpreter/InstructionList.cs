@@ -341,11 +341,11 @@ namespace System.Management.Automation.Interpreter
         {
             if ((bool)value)
             {
-                Emit(s_true ?? (s_true = new LoadObjectInstruction(value)));
+                Emit(s_true ??= new LoadObjectInstruction(value));
             }
             else
             {
-                Emit(s_false ?? (s_false = new LoadObjectInstruction(value)));
+                Emit(s_false ??= new LoadObjectInstruction(value));
             }
         }
 
@@ -353,7 +353,7 @@ namespace System.Management.Automation.Interpreter
         {
             if (value == null)
             {
-                Emit(s_null ?? (s_null = new LoadObjectInstruction(null)));
+                Emit(s_null ??= new LoadObjectInstruction(null));
                 return;
             }
 
