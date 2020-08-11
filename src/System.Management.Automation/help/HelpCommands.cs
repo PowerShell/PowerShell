@@ -220,7 +220,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _showOnlineHelp;
 
         /// <summary>
-        /// This parameter,if true, will direct get-help cmdlet to
+        /// This parameter, if true, will direct get-help cmdlet to
         /// display the help content using Microsoft.PowerShell.Pager on alternate screen buffer.
         /// </summary>
         [Parameter]
@@ -1006,4 +1006,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-
