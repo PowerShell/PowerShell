@@ -27,7 +27,7 @@ jobs:
           downloadPath: '$(System.ArtifactsDirectory)\Symbols'
 
       - powershell: |
-          dir "$(System.ArtifactsDirectory)\*" -Recurse
+          Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
         displayName: 'Capture Downloaded Artifacts'
         # Diagnostics is not critical it passes every time it runs
         continueOnError: true
@@ -86,7 +86,7 @@ jobs:
       - powershell: |
           $destination = "$(System.ArtifactsDirectory)\azureMacOs"
           New-Item -Path $destination -Type Directory
-          $zipPath = dir "$(Build.StagingDirectory)\signedMacOSPackages\powershell-*.zip" -Recurse | select-object -expandproperty fullname
+          $zipPath = Get-ChildItem "$(Build.StagingDirectory)\signedMacOSPackages\powershell-*.zip" -Recurse | select-object -expandproperty fullname
           foreach ($z in $zipPath) { Expand-Archive -Path $z -DestinationPath $destination }
         displayName: 'Extract and copy macOS artifacts for upload'
         condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))

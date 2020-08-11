@@ -50,7 +50,7 @@ jobs:
       downloadPath: '$(System.ArtifactsDirectory)/macOsBins'
 
   - powershell: |
-      dir "$(System.ArtifactsDirectory)\*" -Recurse
+      Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
     displayName: 'Capture Downloaded Artifacts'
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
@@ -83,7 +83,7 @@ jobs:
       $destFolder = '$(System.ArtifactsDirectory)\signedZip'
       $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
 
-      New-Item -ItemType Directory -Path $destFolder -Force
+      $null = New-Item -ItemType Directory -Path $destFolder -Force
 
       $BuildPackagePath = New-PSBuildZip -BuildPath $BuildPath -DestinationFolder $destFolder
 
