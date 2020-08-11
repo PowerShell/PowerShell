@@ -2,4 +2,4 @@ $ERRORACTIONPREFERENCE = $WARNINGPREFERENCE = [System.Management.Automation.Acti
 Set-PSRepository PSGallery -InstallationPolicy:Trusted
 INSTALL-MODULE PESTER
 IPMO PESTER
-UPDATE-HELP -M:Microsoft.PowerShell.Core -UI:EN-US -SO:NUL -EA:ST | SHOULD -THROW -E:UnableToRetrieveHelpInfoXml,Microsoft.PowerShell.Commands.UpdateHelpCommand
+UPDATE-HELP -M:Microsoft.PowerShell.Core -UI:EN-US -SO:NUL -EA:ST | SHOULD -THROW -ErrorId:UnableToRetrieveHelpInfoXml,Microsoft.PowerShell.Commands.UpdateHelpCommand
