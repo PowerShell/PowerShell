@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-
-#nullable enable
 
 namespace Microsoft.PowerShell
 {

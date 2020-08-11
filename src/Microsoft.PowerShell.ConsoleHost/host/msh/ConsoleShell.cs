@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-
-#nullable enable
 
 namespace Microsoft.PowerShell
 {
@@ -38,21 +38,16 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException(nameof(args));
             }
 
-            ConsoleHost.ParseCommandLine(args);
-
-            return InternalStart(initialSessionState, bannerText, helpText, args);
-        }
-
-        internal static int InternalStart(InitialSessionState initialSessionState, string? bannerText, string? helpText, string?[] args)
-        {
             if (initialSessionState == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
+            ConsoleHost.ParseCommandLine(args);
+
             ConsoleHost.DefaultInitialSessionState = initialSessionState;
 
-            return ConsoleHost.Start(bannerText, helpText, args);
+            return ConsoleHost.Start(bannerText, helpText);
         }
     }
 }

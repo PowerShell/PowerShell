@@ -11,6 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -69,9 +70,6 @@ namespace Microsoft.PowerShell
         /// <param name="helpText">
         /// Help text for minishell. This is displayed on 'minishell -?'.
         /// </param>
-        /// <param name = "args">
-        /// Command line parameters to pwsh.exe
-        /// </param>
         /// <returns>
         /// The exit code for the shell.
         ///
@@ -98,7 +96,7 @@ namespace Microsoft.PowerShell
         /// Anyone checking the exit code of the shell or monitor can mask off the high word to determine the exit code passed
         /// by the script that the shell last executed.
         /// </returns>
-        internal static int Start(string bannerText, string helpText, string[] args)
+        internal static int Start(string bannerText, string helpText)
         {
 #if DEBUG
             if (Environment.GetEnvironmentVariable("POWERSHELL_DEBUG_STARTUP") != null)
@@ -275,7 +273,7 @@ namespace Microsoft.PowerShell
 
             if (s_cpp.SettingsFile is not null)
             {
-                System.Management.Automation.Configuration.PowerShellConfig.Instance.SetSystemConfigFilePath(s_cpp.SettingsFile);
+                PowerShellConfig.Instance.SetSystemConfigFilePath(s_cpp.SettingsFile);
             }
 
             // Check registry setting for a Group Policy ConfigurationName entry and

@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,8 +19,6 @@ using System.Security;
 using System.Text;
 
 using Dbg = System.Management.Automation.Diagnostics;
-
-#nullable enable
 
 namespace Microsoft.PowerShell
 {
@@ -157,14 +157,21 @@ namespace Microsoft.PowerShell
     {
         private const int MaxPipePathLengthLinux = 108;
         private const int MaxPipePathLengthMacOS = 104;
-        internal static int MaxNameLength() =>
-            Platform.IsWindows ? ushort.MaxValue :
-            (Platform.IsLinux ? MaxPipePathLengthLinux :
-            MaxPipePathLengthMacOS) - Path.GetTempPath().Length;
+
+        internal static int MaxNameLength()
+        {
+            if (Platform.IsWindows)
+            {
+                return ushort.MaxValue;
+            }
+
+            int maxLength = Platform.IsLinux ? MaxPipePathLengthLinux : MaxPipePathLengthMacOS;
+            return maxLength - Path.GetTempPath().Length;
+        }
 
         internal bool? TestHookConsoleInputRedirected;
 
-        private static readonly string[] _validParameters = {
+        private static readonly string[] s_validParameters = {
             "sta",
             "mta",
             "command",
@@ -188,14 +195,13 @@ namespace Microsoft.PowerShell
             "workingdirectory"
         };
 
-        private void InsureParsing()
+        [Conditional("DEBUG")]
+        private void AssertArgumentsParsed()
         {
-#if DEBUG
             if (!_dirty)
             {
                 throw new InvalidOperationException("Parse has not been called yet");
             }
-#endif
         }
 
         internal CommandLineParameterParser()
@@ -207,7 +213,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _abortStartup;
             }
         }
@@ -216,7 +222,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _settingsFile;
             }
         }
@@ -225,7 +231,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _commandLineCommand;
             }
         }
@@ -234,7 +240,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _wasCommandEncoded;
             }
         }
@@ -243,7 +249,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _showBanner;
             }
         }
@@ -252,7 +258,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _noExit;
             }
         }
@@ -261,7 +267,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _skipUserInit;
             }
         }
@@ -270,7 +276,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _exitCode;
             }
         }
@@ -279,7 +285,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _explicitReadCommandsFromStdin;
             }
         }
@@ -288,7 +294,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _noPrompt;
             }
         }
@@ -297,14 +303,18 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _collectedArgs;
             }
         }
 
         internal string? ConfigurationName
         {
-            get { return _configurationName; }
+            get
+            {
+                AssertArgumentsParsed();
+                return _configurationName;
+            }
             set
             {
                 if (!string.IsNullOrEmpty(value))
@@ -318,7 +328,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _socketServerMode;
             }
         }
@@ -327,7 +337,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _namedPipeServerMode;
             }
         }
@@ -336,7 +346,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _sshServerMode;
             }
         }
@@ -345,7 +355,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _serverMode;
             }
         }
@@ -355,7 +365,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _error;
             }
         }
@@ -365,7 +375,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _showHelp;
             }
         }
@@ -375,7 +385,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _showExtendedHelp;
             }
         }
@@ -384,7 +394,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _showVersion;
             }
         }
@@ -393,7 +403,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _customPipeName;
             }
         }
@@ -402,7 +412,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _outFormat;
             }
         }
@@ -411,7 +421,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _outputFormatSpecified;
             }
         }
@@ -420,7 +430,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _inFormat;
             }
         }
@@ -429,7 +439,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _file;
             }
         }
@@ -438,7 +448,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _executionPolicy;
             }
         }
@@ -447,7 +457,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 if (_staMode.HasValue)
                 {
                     return _staMode.Value;
@@ -463,7 +473,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _noInteractive;
             }
         }
@@ -472,7 +482,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _noInteractive;
             }
         }
@@ -481,7 +491,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
 #if !UNIX
                 if (_removeWorkingDirectoryTrailingCharacter && _workingDirectory?.Length > 0)
                 {
@@ -497,7 +507,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                InsureParsing();
+                AssertArgumentsParsed();
                 return _removeWorkingDirectoryTrailingCharacter;
             }
         }
@@ -797,8 +807,8 @@ namespace Microsoft.PowerShell
                         break;
                     }
 
-                    int maxNameLength = MaxNameLength();
-                    if (!Platform.IsWindows && args[i].Length > maxNameLength)
+                    int maxNameLength;
+                    if (!Platform.IsWindows && args[i].Length > (maxNameLength = MaxNameLength()))
                     {
                         SetCommandLineError(
                             string.Format(
@@ -854,15 +864,6 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-#if DEBUG
-                // this option is useful when debugging ConsoleHost remotely using VS remote debugging, as you can only
-                // attach to an already running process with that debugger.
-                else if (MatchSwitch(switchKey, "wait", "wa"))
-                {
-                    // This does not need to be localized: its chk only
-                    _wait = true;
-                }
-#endif
                 else if (MatchSwitch(switchKey, "outputformat", "o") || MatchSwitch(switchKey, "of", "o"))
                 {
                     ParseFormat(args, ref i, ref _outFormat, CommandLineParameterParserStrings.MissingOutputFormatParameter);
@@ -972,25 +973,8 @@ namespace Microsoft.PowerShell
                 "if exit code is failure, then abortstartup should be true");
         }
 
-#if DEBUG
-        private void WaitingRemoteDebugger(PSHostUserInterface hostUI)
-        {
-            // This option is useful when debugging ConsoleHost remotely using VS remote debugging, as you can only
-            // attach to an already running process with that debugger.
-            if (_wait)
-            {
-                // This does not need to be localized: its chk only
-                ((ConsoleHostUserInterface)hostUI).WriteToConsole("Waiting - type enter to continue:", false);
-                hostUI.ReadLine();
-            }
-        }
-#endif
-
         internal void ShowErrorHelpBanner(PSHostUserInterface hostUI, string? bannerText, string? helpText)
         {
-#if DEBUG
-            WaitingRemoteDebugger(hostUI);
-#endif
             ShowError(hostUI);
             ShowHelp(hostUI, helpText);
             DisplayBanner(hostUI, bannerText);
@@ -1123,7 +1107,7 @@ namespace Microsoft.PowerShell
                     {
                         string param = args[i].Substring(1, args[i].Length - 1).ToLower();
                         StringBuilder possibleParameters = new StringBuilder();
-                        foreach (string validParameter in _validParameters)
+                        foreach (string validParameter in s_validParameters)
                         {
                             if (validParameter.Contains(param))
                             {
@@ -1347,9 +1331,6 @@ namespace Microsoft.PowerShell
         private string? _executionPolicy;
         private string? _settingsFile;
         private string? _workingDirectory;
-#if DEBUG
-        private bool _wait;
-#endif
 
 #if !UNIX
         private bool _removeWorkingDirectoryTrailingCharacter = false;

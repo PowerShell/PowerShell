@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.ComponentModel;
 using System.Globalization;
@@ -10,8 +12,6 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Runtime.InteropServices;
 using System.Threading;
-
-#nullable enable
 
 namespace Microsoft.PowerShell
 {
@@ -86,15 +86,17 @@ namespace Microsoft.PowerShell
             // to allow overriding logging options.
             PSEtwLog.LogConsoleStartup();
 
-            var banner = string.Format(
-                CultureInfo.InvariantCulture,
-                ManagedEntranceStrings.ShellBannerNonWindowsPowerShell,
-                PSVersionInfo.GitCommitId);
-
             int exitCode = 0;
             try
             {
-                exitCode = ConsoleShell.InternalStart(InitialSessionState.CreateDefault2(), banner, ManagedEntranceStrings.UsageHelp, args);
+                var banner = string.Format(
+                    CultureInfo.InvariantCulture,
+                    ManagedEntranceStrings.ShellBannerNonWindowsPowerShell,
+                    PSVersionInfo.GitCommitId);
+
+                ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
+
+                exitCode = ConsoleHost.Start(banner, ManagedEntranceStrings.UsageHelp);
             }
             catch (HostException e)
             {
