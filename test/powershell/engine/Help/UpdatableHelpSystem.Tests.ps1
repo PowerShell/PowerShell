@@ -37,18 +37,18 @@ if ([System.Management.Automation.Platform]::IsWindows)
 
 if([System.Management.Automation.Platform]::IsWindows)
 {
-    $userHelpRoot = Join-Path $HOME Documents PowerShell Help
+    $userHelpRoot = Join-Path $HOME Documents PowerShell -AdditionalChildPath:Help
 }
 else
 {
     [string] $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
-    $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help"
+    $userHelpRoot = Join-Path $userModulesRoot .. -AdditionalChildPath:Help
 }
 
 # default values for system modules
 [string] $myUICulture = 'en-US'   
-[string] $HelpInstallationPath = Join-Path $PSHOME $myUICulture
-[string] $HelpInstallationPathHome = Join-Path $userHelpRoot $myUICulture
+[string] $HelpInstallationPath = Join-Path $PSHOME -AdditionalChildPath:$myUICulture
+[string] $HelpInstallationPathHome = Join-Path $userHelpRoot -AdditionalChildPath:$myUICulture
 
 # This is the list of test cases -- each test case represents a PowerShell module.
 [hashtable] $testCases = @{
@@ -57,15 +57,15 @@ else
         HelpFiles            = "Microsoft.Management.Infrastructure.CimCmdlets.dll-help.xml"
         HelpInfoFiles        = "CimCmdlets_fb6cc51d-c096-4b38-b78d-0fed6277096a_HelpInfo.xml"
         CompressedFiles      = "CimCmdlets_fb6cc51d-c096-4b38-b78d-0fed6277096a_en-US_HelpContent$extension"
-        HelpInstallationPath = Join-Path $PSHOME Modules CimCmdlets $myUICulture
-        HelpInstallationPathHome = Join-Path $userHelpRoot CimCmdlets $myUICulture
+        HelpInstallationPath = Join-Path $PSHOME Modules CimCmdlets -AdditionalChildPath:$myUICulture
+        HelpInstallationPathHome = Join-Path $userHelpRoot CimCmdlets -AdditionalChildPath:$myUICulture
     }
 
     "Microsoft.PowerShell.Archive" = @{
         HelpFiles            = "Microsoft.PowerShell.Archive-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Archive_eb74e8da-9ae2-482a-a648-e96550fb8733_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Archive_eb74e8da-9ae2-482a-a648-e96550fb8733_en-US_HelpContent$extension"
-        HelpInstallationPath = Join-Path $PSHOME Modules Microsoft.PowerShell.Archive $myUICulture
+        HelpInstallationPath = Join-Path $PSHOME Modules Microsoft.PowerShell.Archive -AdditionalChildPath:$myUICulture
     }
 
     "Microsoft.PowerShell.Core" = @{
@@ -136,16 +136,16 @@ else
         HelpFiles            = "Microsoft.PowerShell.PackageManagement.dll-help.xml"
         HelpInfoFiles        = "PackageManagement_4ae9fd46-338a-459c-8186-07f910774cb8_HelpInfo.xml"
         CompressedFiles      = "PackageManagement_4ae9fd46-338a-459c-8186-07f910774cb8_en-US_helpcontent$extension"
-        HelpInstallationPath = Join-Path $PSHOME Modules PackageManagement $myUICulture
-        HelpInstallationPathHome = Join-Path $userHelpRoot PackageManagement $myUICulture
+        HelpInstallationPath = Join-Path $PSHOME Modules PackageManagement -AdditionalChildPath:$myUICulture
+        HelpInstallationPathHome = Join-Path $userHelpRoot PackageManagement -AdditionalChildPath:$myUICulture
     }
 
     "PowershellGet" = @{
         HelpFiles            = "PSGet.psm1-help.xml"
         HelpInfoFiles        = "PowershellGet_1d73a601-4a6c-43c5-ba3f-619b18bbb404_HelpInfo.xml"
         CompressedFiles      = "PowershellGet_1d73a601-4a6c-43c5-ba3f-619b18bbb404_en-US_helpcontent$extension"
-        HelpInstallationPath = Join-Path $PSHOME Modules PowershellGet $myUICulture
-        HelpInstallationPathHome = Join-Path $userHelpRoot PackageManagement $myUICulture
+        HelpInstallationPath = Join-Path $PSHOME Modules PowershellGet -AdditionalChildPath:$myUICulture
+        HelpInstallationPathHome = Join-Path $userHelpRoot PackageManagement -AdditionalChildPath:$myUICulture
     }
 }
 
@@ -231,7 +231,7 @@ function RunUpdateHelpTests
 
                 # If the help file is already installed, delete it.
                 Get-ChildItem @params |
-                    Remove-Item -Force -ErrorAction SilentlyContinue
+                    Remove-Item -Force -ErrorAction:SilentlyContinue
 
                 [hashtable] $UICultureParam = $(if ((Get-UICulture).Name -ne $myUICulture) { @{ UICulture = $myUICulture } } else { @{} })
                 [hashtable] $sourcePathParam = $(if ($useSourcePath) { @{ SourcePath = Join-Path $PSScriptRoot assets } } else { @{} })
