@@ -24,7 +24,7 @@ jobs:
 
     # Runs a single command using the runners shell
     - name: Run a one-line script
-      run: pwsh ./Test-UpdateHelp.ps1
+      run: pwsh "$GITHUB_WORKSPACE/.github/workflows/Test-UpdateHelp.ps1'
 
     # Runs a set of commands using the runners shell
     - name: Run a multi-line script
