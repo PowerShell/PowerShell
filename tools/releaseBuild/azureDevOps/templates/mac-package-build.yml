@@ -13,7 +13,7 @@ jobs:
     HOMEBREW_NO_ANALYTICS: 1
     runCodesignValidationInjection: false
   steps:
-  - powershell: |
+  - pwsh: |
       # create folder
       sudo mkdir /PowerShell
 
@@ -21,7 +21,7 @@ jobs:
       sudo chown $env:USER /PowerShell
     displayName: 'Create /PowerShell'
 
-  - powershell: |
+  - pwsh: |
       Write-Host "##vso[task.setvariable variable=PowerShellRoot]/PowerShell"
       git clone $env:BUILD_REPOSITORY_LOCALPATH /PowerShell
     displayName: Clone PowerShell Repo to /PowerShell
@@ -49,13 +49,13 @@ jobs:
       itemPattern: '**/*'
       downloadPath: '$(System.ArtifactsDirectory)/macOsBins'
 
-  - powershell: |
+  - pwsh: |
       Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
     displayName: 'Capture Downloaded Artifacts'
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
 
-  - powershell: |
+  - pwsh: |
       $zipPath = Get-Item '$(System.ArtifactsDirectory)\Symbols\macosBinResults\*symbol*.zip'
       Write-Verbose -Verbose "Zip Path: $zipPath"
 
@@ -66,7 +66,7 @@ jobs:
       Expand-Archive -Path $zipPath -Destination "$(System.ArtifactsDirectory)\$expandedFolder" -Force
     displayName: Expand symbols zip
 
-  - powershell: |
+  - pwsh: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
       Import-Module $(PowerShellRoot)/tools/packaging -Force
       $signedFilesPath = '$(System.ArtifactsDirectory)/macOsBins/signedMacOsBins/'
@@ -76,7 +76,7 @@ jobs:
     displayName: Merge signed files with Build
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
-  - powershell: |
+  - pwsh: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
       Import-Module $(PowerShellRoot)/tools/packaging -Force
 
@@ -95,11 +95,11 @@ jobs:
       Write-Host "##$vstsCommandString"
     displayName: Compress signed files
 
-  - powershell: |
+  - pwsh: |
       tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
     displayName: 'Bootstrap VM'
 
-  - powershell: |
+  - pwsh: |
       $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -location $(PowerShellRoot) -ArtifactName macosPkgResults -BuildZip $(BuildPackagePath) -ExtraPackage "tar"
     displayName: 'Package'
 

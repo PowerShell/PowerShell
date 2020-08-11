@@ -26,13 +26,13 @@ jobs:
       itemPattern: '**/*'
       downloadPath: '$(System.ArtifactsDirectory)'
 
-  - powershell: |
+  - pwsh: |
       dir "$(System.ArtifactsDirectory)\*" -Recurse
     displayName: 'Capture Downloaded Artifacts'
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
 
-  - powershell: |
+  - pwsh: |
       $null = new-item -type directory -path "$(Build.StagingDirectory)\macos"
       $zipFile = "$(Build.StagingDirectory)\macos\powershell-$(Version)-osx-x64.zip"
       Compress-Archive -Path "$(System.ArtifactsDirectory)\macosPkgResults\powershell-$(Version)-osx-x64.pkg" -Destination $zipFile
@@ -48,12 +48,12 @@ jobs:
       }
     displayName: 'Compress macOS Package'
 
-  - powershell: |
+  - pwsh: |
       $pkgFiles = "$(Build.StagingDirectory)\macos\powershell-$(Version)-osx-x64.zip", "$(Build.StagingDirectory)\macos\powershell-lts-$(Version)-osx-x64.zip"
       tools/releaseBuild/generatePackgeSigning.ps1 -MacDeveloperFiles $pkgFiles -path "$(System.ArtifactsDirectory)\package.xml"
     displayName: 'Generate macOS Package Signing Xml'
 
-  - powershell: |
+  - pwsh: |
       Get-Content "$(System.ArtifactsDirectory)\package.xml"
     displayName: 'Capture macOS signing xml'
     # Diagnostics is not critical it passes every time it runs
@@ -75,7 +75,7 @@ jobs:
       artifactPath: $(System.ArtifactsDirectory)\macosPkgResults
       artifactFilter: "*.tar.gz"
 
-  - powershell: |
+  - pwsh: |
       $destination = "$(System.ArtifactsDirectory)\azureMacOs"
       New-Item -Path $destination -Type Directory
       $zipPath = dir "$(Build.StagingDirectory)\signedMacOSPackages\powershell-*.zip" -Recurse | select-object -expandproperty fullname
@@ -91,7 +91,7 @@ jobs:
       artifactFilter: "*.pkg"
       condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
-  - powershell: |
+  - pwsh: |
       $null = new-item -type directory -path "$(Build.StagingDirectory)\macos-unsigned"
       Copy-Item -Path "$(System.ArtifactsDirectory)\results\powershell-$(Version)-osx-x64.pkg" -Destination "$(Build.StagingDirectory)\macos-unsigned"
       Copy-Item -Path "$(System.ArtifactsDirectory)\results\powershell-$(Version)-osx-x64.tar.gz" -Destination "$(Build.StagingDirectory)\macos-unsigned"
