@@ -807,8 +807,9 @@ namespace Microsoft.PowerShell
                         break;
                     }
 
-                    int maxNameLength;
-                    if (!Platform.IsWindows && args[i].Length > (maxNameLength = MaxNameLength()))
+#if UNIX
+                    int maxNameLength = MaxNameLength();
+                    if (args[i].Length > maxNameLength)
                     {
                         SetCommandLineError(
                             string.Format(
@@ -818,7 +819,7 @@ namespace Microsoft.PowerShell
                                 args[i].Length));
                         break;
                     }
-
+#endif
                     _customPipeName = args[i];
                 }
                 else if (MatchSwitch(switchKey, "command", "c"))
@@ -864,6 +865,12 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
+#if DEBUG
+                else if (MatchSwitch(switchKey, "isswait", "isswait"))
+                {
+                    // Just toss this option, it was processed earlier in 'ManagedEntrance.Start()'.
+                }
+#endif
                 else if (MatchSwitch(switchKey, "outputformat", "o") || MatchSwitch(switchKey, "of", "o"))
                 {
                     ParseFormat(args, ref i, ref _outFormat, CommandLineParameterParserStrings.MissingOutputFormatParameter);
