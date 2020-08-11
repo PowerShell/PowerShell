@@ -174,19 +174,12 @@ function ValidateInstalledHelpContent
         [switch]$UserScope
     )
 
-    if($UserScope)
-    {
-        $params = @{ Path = $testCases[$moduleName].HelpInstallationPathHome }
-    }
-    else
-    {
-        $params = @{ Path = $testCases[$moduleName].HelpInstallationPath }
-    }
+    [string] $pathProperty = $(if ($UserScope) { 'HelpInstallationPathHome' } else { 'HelpInstallationPath' })
+    [System.Management.Automation.FileInfo[]] $helpFilesInstalled = Get-ChildItem $testCases[$moduleName]. $pathProperty *help.xml -Recurse
 
-    $helpFilesInstalled = @(GetFiles @params | ForEach-Object {Split-Path $_ -Leaf})
-
-    $expectedHelpFiles = @($testCases[$moduleName].HelpFiles)
-    $helpFilesInstalled.Count | Should -Be $expectedHelpFiles.Count
+    [string[]] $expectedHelpFiles = $testCases[$moduleName].HelpFiles
+    [string] $junct = "`t"
+    $helpFilesInstalled.Name -join $junct | Should -Be $expectedHelpFiles -join $junct
 
     foreach ($fileName in $expectedHelpFiles)
     {
