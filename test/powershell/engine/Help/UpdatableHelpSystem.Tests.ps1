@@ -179,7 +179,7 @@ function ValidateInstalledHelpContent
 
     [string[]] $expectedHelpFiles = $testCases[$moduleName].HelpFiles
     [string] $junct = "`t"
-    $helpFilesInstalled.Name -join $junct | Should -Be $expectedHelpFiles -join $junct
+    $helpFilesInstalled.Name -join $junct | Should -Be ($expectedHelpFiles -join $junct)
 
     foreach ($fileName in $expectedHelpFiles)
     {
