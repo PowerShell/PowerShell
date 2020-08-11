@@ -5321,6 +5321,7 @@ end {
             {
                 { "Add-History",                       new SessionStateCmdletEntry("Add-History", typeof(AddHistoryCommand), helpFile) },
                 { "Clear-History",                     new SessionStateCmdletEntry("Clear-History", typeof(ClearHistoryCommand), helpFile) },
+                { "Convert-CimMofToJson",              new SessionStateCmdletEntry("Convert-CimMofToJson", typeof(Microsoft.PowerShell.DesiredStateConfiguration.Internal.ConvertCimMofToJsonCommand), helpFile) },
                 { "Debug-Job",                         new SessionStateCmdletEntry("Debug-Job", typeof(DebugJobCommand), helpFile) },
 #if !UNIX
                 { "Disable-PSRemoting",                new SessionStateCmdletEntry("Disable-PSRemoting", typeof(DisablePSRemotingCommand), helpFile) },
