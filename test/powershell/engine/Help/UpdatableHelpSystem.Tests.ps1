@@ -58,8 +58,8 @@ else
         HelpFiles            = "Microsoft.Management.Infrastructure.CimCmdlets.dll-help.xml"
         HelpInfoFiles        = "CimCmdlets_fb6cc51d-c096-4b38-b78d-0fed6277096a_HelpInfo.xml"
         CompressedFiles      = "CimCmdlets_fb6cc51d-c096-4b38-b78d-0fed6277096a_en-US_HelpContent$extension"
-        HelpInstallationPath = Join-Path -Path:$PSHOME Modules CimCmdlets -AdditionalChildPath:$myUICulture
-        HelpInstallationPathHome = Join-Path -Path:$userHelpRoot ChildPath:CimCmdlets -AdditionalChildPath:$myUICulture
+        HelpInstallationPath = Join-Path -Path:$PSHOME ChildPath:Modules -AdditionalChildPath:CimCmdlets, $myUICulture
+        HelpInstallationPathHome = Join-Path -Path:$userHelpRoot -ChildPath:CimCmdlets -AdditionalChildPath:$myUICulture
     }
 
     "Microsoft.PowerShell.Archive" = @{
