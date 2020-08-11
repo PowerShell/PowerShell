@@ -224,7 +224,7 @@ function RunUpdateHelpTests
                 Get-ChildItem @params |
                     Remove-Item -Force -ErrorAction SilentlyContinue
 
-                if ((Get-UICulture).Name -ne "en-Us")
+                if ((Get-UICulture).Name -ne "en-US")
                 {
                     if ($useSourcePath)
                     {
