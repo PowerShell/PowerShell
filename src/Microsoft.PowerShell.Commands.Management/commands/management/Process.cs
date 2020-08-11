@@ -545,7 +545,6 @@ namespace Microsoft.PowerShell.Commands
         ///<summary>
         /// To display the modules of a process.
         ///</summary>
-
         [Parameter(ParameterSetName = NameParameterSet)]
         [Parameter(ParameterSetName = IdParameterSet)]
         [Parameter(ParameterSetName = InputObjectParameterSet)]

@@ -13,7 +13,6 @@ namespace Microsoft.PowerShell
     /// progress updates are shown.
     ///
     ///</summary>
-
     internal
     class ProgressPane
     {
@@ -23,7 +22,6 @@ namespace Microsoft.PowerShell
         /// <param name="ui">
         /// An implementation of the PSHostRawUserInterface with which the pane will be shown and hidden.
         /// </param>
-
         internal
         ProgressPane(ConsoleHostUserInterface ui)
         {
@@ -39,7 +37,6 @@ namespace Microsoft.PowerShell
         /// true if the pane is visible, false if not.
         ///
         ///</value>
-
         internal
         bool
         IsShowing
@@ -54,7 +51,6 @@ namespace Microsoft.PowerShell
         /// Shows the pane in the screen buffer.  Saves off the content of the region of the buffer that will be overwritten so
         /// that it can be restored again.
         /// </summary>
-
         internal
         void
         Show()
@@ -140,7 +136,6 @@ namespace Microsoft.PowerShell
         /// Hides the pane by restoring the saved contents of the region of the buffer that the pane occupies.  If the pane is
         /// not showing, then does nothing.
         /// </summary>
-
         internal
         void
         Hide()
@@ -164,7 +159,6 @@ namespace Microsoft.PowerShell
         /// <param name="pendingProgress">
         /// A PendingProgress instance that represents the outstanding activities that should be shown.
         /// </param>
-
         internal
         void
         Show(PendingProgress pendingProgress)

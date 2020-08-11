@@ -431,7 +431,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         /// <param name="strNative"></param>
         /// <param name="strSize"></param>
         /// <param name="strColl"></param>
-
         private void ReadPdhMultiString(ref IntPtr strNative, Int32 strSize, ref StringCollection strColl)
         {
             Debug.Assert(strSize >= 2);

@@ -43,7 +43,6 @@ namespace Microsoft.PowerShell.Commands
         /// Abstract Property - Input Object which is written in Csv format.
         /// Derived as Different Attributes.In ConvertTo-CSV, This is a positional parameter. Export-CSV not a Positional behaviour.
         /// </summary>
-
         public abstract PSObject InputObject { get; set; }
 
         /// <summary>

@@ -23,7 +23,6 @@ namespace System.Management.Automation.Host
     /// </summary>
     /// <seealso cref="System.Management.Automation.Host.PSHost"/>
     /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface"/>
-
     public abstract class PSHostUserInterface
     {
         /// <summary>

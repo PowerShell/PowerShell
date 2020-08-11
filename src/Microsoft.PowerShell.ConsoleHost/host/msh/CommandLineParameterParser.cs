@@ -667,7 +667,6 @@ namespace Microsoft.PowerShell
         /// <param name="args">
         /// The command line parameters to be processed.
         /// </param>
-
         internal void Parse(string[] args)
         {
             Dbg.Assert(!_dirty, "This instance has already been used. Create a new instance.");

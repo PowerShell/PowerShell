@@ -23,7 +23,6 @@ namespace Microsoft.WSMan.Management
 
     #region WsManEnumFlags
     /// <summary><para>_WSManEnumFlags enumeration.</para></summary>
-
     [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     [TypeLibType((short)0)]
     public enum WSManEnumFlags
@@ -926,7 +925,6 @@ namespace Microsoft.WSMan.Management
         /// <param name="parameters"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "URI")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "0#")]
         [DispId(5)]
