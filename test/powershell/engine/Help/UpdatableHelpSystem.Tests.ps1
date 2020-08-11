@@ -202,6 +202,8 @@ function RunUpdateHelpTests
 
             [hashtable] $params = $null
             [hashtable] $updateScope = $null
+            $testCases[$moduleName]['HelpInstallationPath'] | Should -Not -BeNull
+            $testCases[$moduleName]['HelpInstallationPathHome'] | Should -Not -BeNull
             if($userscope)
             {
                 $params = @{Path = $testCases[$moduleName]['HelpInstallationPathHome']}
@@ -214,6 +216,7 @@ function RunUpdateHelpTests
             }
 
             It ('Validate Update-Help for module ''{0}'' in {1}' -F $moduleName, [PSCustomObject] $updateScope) -Skip:(!(Test-CanWriteToPsHome) -and $userscope -eq $false) {
+                $params['Path']  | Should -Not -BeNull
 
                 [hashtable] $commonParam = @{
                     Filter = @("*help.xml")
@@ -224,7 +227,7 @@ function RunUpdateHelpTests
                 $params += $commonParam
 
                 # If the help file is already installed, delete it.
-                Remove-Item $params['Path']
+                Remove-Item ($params['Path'])
  
                 [hashtable] $UICultureParam = $(if ((Get-UICulture).Name -ne $myUICulture) { @{ UICulture = $myUICulture } } else { @{} })
                 [hashtable] $sourcePathParam = $(if ($useSourcePath) { @{ SourcePath = Join-Path $PSScriptRoot assets } } else { @{} })
