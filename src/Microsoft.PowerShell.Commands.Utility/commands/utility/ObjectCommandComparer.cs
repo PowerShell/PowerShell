@@ -222,7 +222,11 @@ namespace Microsoft.PowerShell.Commands
             string firstString = PSObject.AsPSObject(first).ToString();
             string secondString = PSObject.AsPSObject(second).ToString();
 
-            return string.Compare(firstString, secondString, _cultureInfo, _caseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase) * (_ascendingOrder ? 1 : -1);
+            return string.Compare(
+                firstString,
+                secondString,
+                _cultureInfo,
+                _caseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase) * (_ascendingOrder ? 1 : -1);
         }
 
         private CultureInfo _cultureInfo = null;

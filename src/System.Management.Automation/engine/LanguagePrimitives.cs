@@ -661,8 +661,11 @@ namespace System.Management.Automation
             if (firstString != null)
             {
                 secondString = second as string ?? (string)LanguagePrimitives.ConvertTo(second, typeof(string), culture);
-                return (string.Compare(firstString, secondString, culture,
-                                                    ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0);
+                return string.Compare(
+                    firstString,
+                    secondString,
+                    culture,
+                    ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0;
             }
 
             if (first.Equals(second)) return true;
@@ -820,8 +823,11 @@ namespace System.Management.Automation
                     }
                 }
 
-                return string.Compare(firstString, secondString, culture,
-                                                   ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
+                return string.Compare(
+                    firstString,
+                    secondString,
+                    culture,
+                    ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
             }
 
             Type firstType = first.GetType();
@@ -944,7 +950,12 @@ namespace System.Management.Automation
                     }
                 }
 
-                result = string.Compare(firstString, secondString, culture, ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
+                result = string.Compare(
+                    firstString,
+                    secondString,
+                    culture,
+                    ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
+                
                 return true;
             }
 
