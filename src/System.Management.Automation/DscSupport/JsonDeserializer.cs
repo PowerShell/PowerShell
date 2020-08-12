@@ -27,10 +27,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         /// <summary>
         /// Returns schema of Cim classes from specified json file
         /// </summary>
-        public IEnumerable<PSObject> DeserializeClasses(string json)
+        public IEnumerable<PSObject> DeserializeClasses(string json, RunspaceMode runspaceMode = RunspaceMode.CurrentRunspace)
         {
             IEnumerable<PSObject> result = null;
-            using (var powerShell = System.Management.Automation.PowerShell.Create(RunspaceMode.NewRunspace))
+            using (var powerShell = System.Management.Automation.PowerShell.Create(runspaceMode))
             {
                 powerShell.AddCommand("ConvertFrom-Json");
                 powerShell.AddParameter("InputObject", json);
