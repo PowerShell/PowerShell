@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
             _json_deserializer = JsonDeserializer.Create();
         }
 
-        internal List<PSObject> ParseSchemaJson(string filePath)
+        internal List<PSObject> ParseSchemaJson(string filePath, bool useNewRunspace = false)
         {
             string json = System.IO.File.ReadAllText(filePath);
             try
@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
                     fileNameDefiningClass = fileNameDefiningClass.Substring(0, dotIndex);
                 }
 
-                var result = new List<PSObject>(_json_deserializer.DeserializeClasses(json));
+                var result = new List<PSObject>(_json_deserializer.DeserializeClasses(json, useNewRunspace));
                 foreach (dynamic c in result)
                 {
                     string superClassName = c.CimSuperClassName;

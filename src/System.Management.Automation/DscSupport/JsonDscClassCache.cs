@@ -480,8 +480,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// Parses json file without adding it to caches or creating dynamic keywords
         /// </summary>
         /// <param name="jsonFilePath">Path to json file</param>
+        /// <param name="useNewRunspace">If True PowerShell will use a fresh runspace to do Json deserialization</param>
         /// <returns>List of classes from json file</returns>
-        public static List<PSObject> ReadClassesFromJson(string jsonFilePath)
+        public static List<PSObject> ReadClassesFromJson(string jsonFilePath, bool useNewRunspace = false)
         {
             if (! jsonFilePath.EndsWith(".json", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -490,7 +491,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
 
             var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser();
-            List<PSObject> classes = parser.ParseSchemaJson(jsonFilePath);
+            List<PSObject> classes = parser.ParseSchemaJson(jsonFilePath, useNewRunspace);
             return classes;
         }
 
