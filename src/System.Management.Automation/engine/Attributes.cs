@@ -1666,7 +1666,7 @@ namespace System.Management.Automation
                 if (string.Compare(
                     setString,
                     objString,
-                    IgnoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.InvariantCulture) == 0)
+                    IgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) == 0)
                 {
                     return;
                 }
