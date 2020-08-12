@@ -11,6 +11,17 @@ $ContosoServer = 'ContosoServer'
 $FabrikamServerScript = 'Fabrikam-ServerScript'
 $Initialized = $false
 
+$myDocumentsPath = [Environment]::GetFolderPath([Environment]::SpecialFolder.MyDocuments)
+$programFilesPath = [Environment]::GetFolderPath([Environment]::SpecialFolder.ProgramFiles)
+
+$myDocumentsPathPS = [Path]::Combine([Environment]::GetFolderPath([Environment]::SpecialFolder.MyDocuments), "PowerShell");
+$programFilesPathPS = [Path]::Combine([Environment]::GetFolderPath([Environment]::SpecialFolder.ProgramFiles), "PowerShell");
+
+
+$myDocumentsPathPSModules = [Path]::Combine($myDocumentsPathPS, "Modules");
+$programFilesPathPSModules = [Path]::Combine($programFilesPathPS, "Modules");
+
+
 #region Utility functions
 
 function IsInbox { $PSHOME.EndsWith('\WindowsPowerShell\v1.0', [System.StringComparison]::OrdinalIgnoreCase) }
@@ -128,6 +139,17 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
         Write-Host("PSModulePath: $env:PSModulePath")
         Write-Host("GMO CompatPowerShellGet: ")
         gmo CompatPowerShellGet -ListAvailable
+
+        Write-Host("Test paths: ")
+        Write-Host("test MyDocuments path: " + (test-path $myDocumentsPath))
+        Write-Host("test Program Files path: " + (test-path $programFilesPath))
+
+        Write-Host("test MyDocuments\PowerShell path: " + (test-path $myDocumentsPathPS))
+        Write-Host("test Program Files\PowerShell path: " + (test-path $programFilesPathPS))
+
+        Write-Host("test MyDocuments\PowerShell\Modules path: " + (test-path $myDocumentsPathPSModules))
+        Write-Host("test Program Files\PowerShell\Modules path: " + (test-path $programFilesPathPSModules))
+
         Install-Module -Name $ContosoServer -Repository $RepositoryName -AllowClobber
         $installedModuleInfo = Get-InstalledModule -Name $ContosoServer
         $installedModuleInfo | Should -Not -BeNullOrEmpty
@@ -162,6 +184,18 @@ Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
         Write-Host("PSModulePath: $env:PSModulePath")
         Write-Host("GMO CompatPowerShellGet: ")
         gmo CompatPowerShellGet -ListAvailable
+
+        Write-Host("Test paths: ")
+        Write-Host("test MyDocuments path: " + (test-path $myDocumentsPath))
+        Write-Host("test Program Files path: " + (test-path $programFilesPath))
+
+        Write-Host("test MyDocuments\PowerShell path: " + (test-path $myDocumentsPathPS))
+        Write-Host("test Program Files\PowerShell path: " + (test-path $programFilesPathPS))
+
+        Write-Host("test MyDocuments\PowerShell\Modules path: " + (test-path $myDocumentsPathPSModules))
+        Write-Host("test Program Files\PowerShell\Modules path: " + (test-path $programFilesPathPSModules))
+
+
         Install-Module -Name $ContosoServer -Repository $RepositoryName -Scope AllUsers -AllowClobber
         $installedModuleInfo = Get-InstalledModule -Name $ContosoServer
 
@@ -208,6 +242,18 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
         Write-Host("PSModulePath: $env:PSModulePath")
         Write-Host("GMO CompatPowerShellGet: ")
         gmo CompatPowerShellGet -ListAvailable
+
+        Write-Host("Test paths: ")
+        Write-Host("test MyDocuments path: " + (test-path $myDocumentsPath))
+        Write-Host("test Program Files path: " + (test-path $programFilesPath))
+
+        Write-Host("test MyDocuments\PowerShell path: " + (test-path $myDocumentsPathPS))
+        Write-Host("test Program Files\PowerShell path: " + (test-path $programFilesPathPS))
+
+        Write-Host("test MyDocuments\PowerShell\Modules path: " + (test-path $myDocumentsPathPSModules))
+        Write-Host("test Program Files\PowerShell\Modules path: " + (test-path $programFilesPathPSModules))
+
+
         Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -NoPathUpdate
         $installedScriptInfo = Get-InstalledScript -Name $FabrikamServerScript
 
@@ -238,6 +284,18 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
         Write-Host("PSModulePath: $env:PSModulePath")
         Write-Host("GMO CompatPowerShellGet: ")
         gmo CompatPowerShellGet -ListAvailable
+
+        Write-Host("Test paths: ")
+        Write-Host("test MyDocuments path: " + (test-path $myDocumentsPath))
+        Write-Host("test Program Files path: " + (test-path $programFilesPath))
+
+        Write-Host("test MyDocuments\PowerShell path: " + (test-path $myDocumentsPathPS))
+        Write-Host("test Program Files\PowerShell path: " + (test-path $programFilesPathPS))
+
+        Write-Host("test MyDocuments\PowerShell\Modules path: " + (test-path $myDocumentsPathPSModules))
+        Write-Host("test Program Files\PowerShell\Modules path: " + (test-path $programFilesPathPSModules))
+
+
         Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -Scope AllUsers
         $installedScriptInfo = Get-InstalledScript -Name $FabrikamServerScript
 
