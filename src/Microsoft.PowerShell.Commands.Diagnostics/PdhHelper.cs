@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
-
+using System.Text;
 using Microsoft.PowerShell.Commands.GetCounter;
 using Microsoft.Win32;
 
@@ -542,15 +542,16 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return ConnectToDataSource(blgFileNames[0]);
             }
 
-            string doubleNullTerminated = string.Empty;
-            foreach (string fileName in blgFileNames)
+            StringBuilder doubleNullTerminated = new StringBuilder();
+            for (int i = 0; i < blgFileNames.Count; i++)
             {
-                doubleNullTerminated += fileName + '\0';
+                string fileName = blgFileNames[i];
+                doubleNullTerminated.Append(fileName).Append('\0');
             }
 
-            doubleNullTerminated += '\0';
+            doubleNullTerminated.Append('\0');
 
-            return ConnectToDataSource(doubleNullTerminated);
+            return ConnectToDataSource(doubleNullTerminated.ToString());
         }
 
         public uint OpenQuery()
