@@ -4,7 +4,6 @@
 #pragma warning disable 1634, 1691
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -12,6 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -70,9 +70,6 @@ namespace Microsoft.PowerShell
         /// <param name="helpText">
         /// Help text for minishell. This is displayed on 'minishell -?'.
         /// </param>
-        /// <param name = "args">
-        /// Command line parameters to pwsh.exe
-        /// </param>
         /// <returns>
         /// The exit code for the shell.
         ///
@@ -99,7 +96,7 @@ namespace Microsoft.PowerShell
         /// Anyone checking the exit code of the shell or monitor can mask off the high word to determine the exit code passed
         /// by the script that the shell last executed.
         /// </returns>
-        internal static int Start(string bannerText, string helpText, string[] args)
+        internal static int Start(string bannerText, string helpText)
         {
 #if DEBUG
             if (Environment.GetEnvironmentVariable("POWERSHELL_DEBUG_STARTUP") != null)
@@ -161,15 +158,8 @@ namespace Microsoft.PowerShell
                     hostException = e;
                 }
 
-                PSHostUserInterface hostUi = s_theConsoleHost?.UI ?? new NullHostUserInterface();
-                s_cpp = new CommandLineParameterParser(hostUi, bannerText, helpText);
-                s_cpp.Parse(args);
-
-#if UNIX
-                // On Unix, logging has to be deferred until after command-line parsing
-                // completes to allow overriding logging options.
-                PSEtwLog.LogConsoleStartup();
-#endif
+                PSHostUserInterface hostUI = s_theConsoleHost?.UI ?? new NullHostUserInterface();
+                s_cpp.ShowErrorHelpBanner(hostUI, bannerText, helpText);
 
                 if (s_cpp.ShowVersion)
                 {
@@ -277,7 +267,22 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private static CommandLineParameterParser s_cpp;
+        internal static void ParseCommandLine(string[] args)
+        {
+            s_cpp.Parse(args);
+
+            if (s_cpp.SettingsFile is not null)
+            {
+                PowerShellConfig.Instance.SetSystemConfigFilePath(s_cpp.SettingsFile);
+            }
+
+            // Check registry setting for a Group Policy ConfigurationName entry and
+            // use it to override anything set by the user.
+            // It depends on setting file so 'SetSystemConfigFilePath()' should be called before.
+            s_cpp.ConfigurationName = CommandLineParameterParser.GetConfigurationNameFromGroupPolicy();
+        }
+
+        private static readonly CommandLineParameterParser s_cpp = new CommandLineParameterParser();
 
 #if UNIX
         /// <summary>

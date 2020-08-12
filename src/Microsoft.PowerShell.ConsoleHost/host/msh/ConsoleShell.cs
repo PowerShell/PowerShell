@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-using System.Runtime.CompilerServices;
 
 namespace Microsoft.PowerShell
 {
@@ -19,7 +20,7 @@ namespace Microsoft.PowerShell
         /// <param name="helpText">Help text for minishell. This is displayed on 'minishell -?'.</param>
         /// <param name="args">Commandline parameters specified by user.</param>
         /// <returns>An integer value which should be used as exit code for the process.</returns>
-        public static int Start(string bannerText, string helpText, string[] args)
+        public static int Start(string? bannerText, string? helpText, string?[] args)
         {
             return Start(InitialSessionState.CreateDefault2(), bannerText, helpText, args);
         }
@@ -30,7 +31,7 @@ namespace Microsoft.PowerShell
         /// <param name="helpText">Help text for the shell.</param>
         /// <param name="args">Commandline parameters specified by user.</param>
         /// <returns>An integer value which should be used as exit code for the process.</returns>
-        public static int Start(InitialSessionState initialSessionState, string bannerText, string helpText, string[] args)
+        public static int Start(InitialSessionState initialSessionState, string? bannerText, string? helpText, string?[] args)
         {
             if (initialSessionState == null)
             {
@@ -42,9 +43,10 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException(nameof(args));
             }
 
+            ConsoleHost.ParseCommandLine(args);
             ConsoleHost.DefaultInitialSessionState = initialSessionState;
 
-            return ConsoleHost.Start(bannerText, helpText, args);
+            return ConsoleHost.Start(bannerText, helpText);
         }
     }
 }
