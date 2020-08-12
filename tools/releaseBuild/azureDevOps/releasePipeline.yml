@@ -100,11 +100,10 @@ stages:
 - stage: ReleaseAutomation
   dependsOn: []
   jobs:
-  - job: RAKickOff
-    steps:
-    - pwsh: |
-        Write-Host "Start release automation here"
-      displayName: Start Release Automation
+  - deployment: ReleaseAutomationKickOff
+    displayName: Kick off release ReleaseAutomation
+    pool: server
+    environment: PSReleaseAutomationKickOff
 
 - stage: GitHubDraftRelease
   # do not include stages that are likely to fail in dependency as there is no way to force deploy.
@@ -178,15 +177,19 @@ stages:
     pool: server
     environment: PSReleaseChangesToMaster
 
-- stage: ReleaseSnapAndDocker
+- stage: ReleaseDocker
   dependsOn:
-    - PublishPackages
-    - ChangesToMaster
+    - StartDocker
   jobs:
   - deployment: ReleaseDocker
     displayName: Release Docker
     pool: server
     environment: PSReleaseDockerRelease
+
+- stage: ReleaseSnap
+  dependsOn:
+    - PublishPackages
+    - ChangesToMaster
 
   - deployment: ReleaseSnap
     displayName: Release Snap
