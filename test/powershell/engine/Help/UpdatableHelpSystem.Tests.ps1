@@ -178,12 +178,11 @@ function ValidateInstalledHelpContent
     [System.IO.FileInfo[]] $helpFilesInstalled = Get-ChildItem -Path:($testCases[$moduleName][$pathProperty]) -Filter:*help.xml -Recurse
 
     [string[]] $expectedHelpFiles = $testCases[$moduleName].HelpFiles
-    [string] $junct = "`t"
-    $helpFilesInstalled.Name -join $junct | Should -Be ($expectedHelpFiles -join $junct)
+    $helpFilesInstalled.Count | Should -Be ($expectedHelpFiles.Count)
 
     foreach ($fileName in $expectedHelpFiles)
     {
-        $helpFilesInstalled -contains $fileName | Should -BeTrue
+        $helpFilesInstalled.Name -eq $fileName | Should -Be $fileName
     }
 }
 
