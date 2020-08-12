@@ -3111,28 +3111,30 @@
       <Component Id="cmp5485813EC16244898CB9A944AC2BC5E9">
         <File Id="fil6EA784763CF94299BC6E75DF068F05A3" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.Pager.dll" />
       </Component>
-      <Component Id="cmpEF8ADE303C474061BD40F76A091700FC" Guid="{88d9794d-7eea-4512-a617-03875c8fe213}">
-        <File Id="filB1D7717F568A4180A604B27EBE7EDA6E" KeyPath="yes" Source="$(env.ProductSourcePath)\pwshw.dll" />
+      <Component Id="cmpDA1453DB684C4170B974D0C7ADC0C424">
+        <File Id="fil6396806B94F34AE88BB862C8D08E66B9" KeyPath="yes" Source="$(var.ProductSourcePath)\pwshw.exe" />
       </Component>
-      <Component Id="cmp809B0A86A84E44E8BDDBE8C10016FF7D" Guid="{0fc8e636-e3a3-4cc0-a5ad-fbfe7ca3e0b6}">
-        <File Id="fil94CCC692DAF84A5A8652780C9B06EB2F" KeyPath="yes" Source="$(env.ProductSourcePath)\pwshw.xml" />
+      <Component Id="cmp5951388228634DD8BCBDA8F6BA84AC32">
+        <File Id="filFF7DCF6BF27E47C88DD211C9D813E258" KeyPath="yes" Source="$(var.ProductSourcePath)\pwshw.xml" />
       </Component>
-      <Component Id="cmp4FB327A8BE924E14BA996745EFD40325" Guid="{28552fa1-e433-4f2a-8305-502484f58fd4}">
-        <File Id="fil62FA4B5EAED14E25AAD82B5726505B35" KeyPath="yes" Source="$(env.ProductSourcePath)\pwshw.pdb" />
+      <Component Id="cmp0FC42840B034428FA062F6D848718167">
+        <File Id="fil13D53DE960C24D5190CF3D6C87AE0818" KeyPath="yes" Source="$(var.ProductSourcePath)\pwshw.dll" />
       </Component>
-      <Component Id="cmp690D406DC9F249B4AFFAFAEF0172086B" Guid="{b38ca8bc-b64a-4597-8351-4a878c2a538f}">
-        <File Id="fil9359A9F0F73B4192B4F81591DFA667F5" KeyPath="yes" Source="$(env.ProductSourcePath)\pwshw.exe" />
+      <Component Id="cmpF08FF4A7952F4AE1A6148D5D879668F9">
+        <File Id="fil818AA56637E24A389BCAA02EACF8FC1E" KeyPath="yes" Source="$(var.ProductSourcePath)\pwshw.deps.json" />
       </Component>
-      <Component Id="cmp463BE93A0EB34578B1B0758BEABE6726" Guid="{39943912-7ef5-40b9-9e20-9cc4e56deae2}">
-        <File Id="filB1D9DEF18C5D4E86B04966D436157DCE" KeyPath="yes" Source="$(env.ProductSourcePath)\pwshw.deps.json" />
-      </Component>
-      <Component Id="cmp6CC991E0210642BDA9F3C3924A3E3A37" Guid="{fbff1c81-6f41-4d07-b956-93eb5341a495}">
-        <File Id="fil48355C46055740C79186A80975FE341A" KeyPath="yes" Source="$(env.ProductSourcePath)\pwshw.runtimeconfig.json" />
+      <Component Id="cmp0A0B969E114A4FD0AB1B5EF85DAAD9C2">
+        <File Id="fil6AC2B5AAC977495DBA6D4A64DE589746" KeyPath="yes" Source="$(var.ProductSourcePath)\pwshw.runtimeconfig.json" />
       </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
     <ComponentGroup Id="ApplicationFiles">
+      <ComponentRef Id="cmpDA1453DB684C4170B974D0C7ADC0C424" />
+      <ComponentRef Id="cmp5951388228634DD8BCBDA8F6BA84AC32" />
+      <ComponentRef Id="cmp0FC42840B034428FA062F6D848718167" />
+      <ComponentRef Id="cmpF08FF4A7952F4AE1A6148D5D879668F9" />
+      <ComponentRef Id="cmp0A0B969E114A4FD0AB1B5EF85DAAD9C2" />
       <ComponentRef Id="cmpCBE3857586454EB3B634B118E8EBD1D1" />
       <ComponentRef Id="cmp22EA8B65E9784BB197A5CC42FBFF1788" />
       <ComponentRef Id="cmp9F22B503FD4D4F0286514A511718FD7A" />
@@ -3672,6 +3674,7 @@
       <ComponentRef Id="cmpF1B0E6DCC3BD4797B206C879EF270062" />
       <ComponentRef Id="cmp25A144CC34E545378735B06794A02F90" />
       <ComponentRef Id="cmp19ADFEFDD03047828CF493B5B5CE7B6E" />
+      <ComponentRef Id="cmp72C41225E0B4457C8CB5F4C5FE6E3187" />
       <ComponentRef Id="cmpDC2EF4541FA5A2E63F36A8CD6C5FA51B" />
       <ComponentRef Id="cmpA620CA71E6FF4F50B6D7BB0761D17036" />
       <ComponentRef Id="cmp2DF9FE0BD560EB7DC8489A259330C2C6" />
@@ -4127,11 +4130,16 @@
       <ComponentRef Id="cmpE9599A00802144DF98F5792E029C8875" />
       <ComponentRef Id="cmp0989343D60B74AF082291F612F0E6FA6" />
       <ComponentRef Id="cmp7BDE558CCB344A399134DE2C9E2C8D3D" />
-      <ComponentRef Id="cmp72C41225E0B4457C8CB5F4C5FE6E3187" />
       <ComponentRef Id="cmp0BD7D15E0377407FA4C43BFE89F0C12E" />
       <ComponentRef Id="cmpC0FFB3F4FB30438082D2DC0F4E4BF12D" />
       <ComponentRef Id="cmpF65478926051451688800150DBAEE4BC" />
       <ComponentRef Id="cmp5485813EC16244898CB9A944AC2BC5E9" />
+      <ComponentRef Id="cmpEF8ADE303C474061BD40F76A091700FC" />
+      <ComponentRef Id="cmp809B0A86A84E44E8BDDBE8C10016FF7D" />
+      <ComponentRef Id="cmp4FB327A8BE924E14BA996745EFD40325" />
+      <ComponentRef Id="cmp690D406DC9F249B4AFFAFAEF0172086B" />
+      <ComponentRef Id="cmp463BE93A0EB34578B1B0758BEABE6726" />
+      <ComponentRef Id="cmp6CC991E0210642BDA9F3C3924A3E3A37" />
     </ComponentGroup>
   </Fragment>
 </Wix>
