@@ -409,7 +409,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal string OutputLog
+        internal string? OutputLog
         {
             get
             {
@@ -1356,7 +1356,7 @@ namespace Microsoft.PowerShell
         private bool _wasCommandEncoded;
         private uint _exitCode = ConsoleHost.ExitCodeSuccess;
         private bool _dirty;
-        private string _outputLog = String.Empty;
+        private string? _outputLog;
         private Serialization.DataFormat _outFormat = Serialization.DataFormat.Text;
         private bool _outputFormatSpecified = false;
         private Serialization.DataFormat _inFormat = Serialization.DataFormat.Text;
