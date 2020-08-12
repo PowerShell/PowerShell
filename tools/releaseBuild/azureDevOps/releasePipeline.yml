@@ -1,3 +1,7 @@
+# needed to disable CI trigger and allow manual trigger
+# when the branch is same as pipline source, the latest build from the source is used.
+# all environment used are for manual tasks and approvals.
+
 trigger: none
 
 resources:
@@ -7,6 +11,9 @@ resources:
     trigger:
       branches:
       - release/*
+
+variables:
+  runCodesignValidationInjection: false
 
 stages:
 - stage: ValidateSDK
@@ -100,6 +107,7 @@ stages:
       displayName: Start Release Automation
 
 - stage: GitHubDraftRelease
+  # do not include stages that are likely to fail in dependency as there is no way to force deploy.
   dependsOn:
   - ValidateSDK
   - PRCreation
@@ -108,6 +116,7 @@ stages:
   - ManualValidation
   - ReleaseAutomation
 
+# The environment here is used for approval.
   jobs:
   - deployment: AzureBlobPublic
     displayName: Make Azure Blob Public
@@ -216,16 +225,7 @@ stages:
   dependsOn: GitHubManualTasks
   displayName: Update pwsh.deps.json links
   jobs:
-  - job: UpdateDepsFiles
-    displayName: Update deps files
-    pool:
-      vmImage: windows-latest
-    steps:
-    - download: releasePipeline
-      artifact: finalResults
-      patterns: '**/PowerShell*-win-x64.zip'
-
-
+  - template: templates/release-UpdateDepsJson.yml
 
 - stage: ReleaseClose
   displayName: Finish Release
@@ -235,6 +235,7 @@ stages:
   - UpdateDotnetDocker
   - ReleaseSnapAndDocker
   - ChangesToMaster
+  - ReleaseDeps
   jobs:
   - deployment: RetainBuild
     displayName: Retain Build
