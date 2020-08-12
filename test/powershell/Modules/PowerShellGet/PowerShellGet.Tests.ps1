@@ -125,6 +125,9 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
     }
 
     It "Should install a module correctly to the required location with default CurrentUser scope" {
+        Write-Host("PSModulePath: $env:PSModulePath")
+        Write-Host("GMO: ")
+        gmo PowerShellGet -ListAvailable
         Install-Module -Name $ContosoServer -Repository $RepositoryName -AllowClobber
         $installedModuleInfo = Get-InstalledModule -Name $ContosoServer
         $installedModuleInfo | Should -Not -BeNullOrEmpty
@@ -156,6 +159,9 @@ Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 
     It "Should install a module correctly to the required location with AllUsers scope" {
+        Write-Host("PSModulePath: $env:PSModulePath")
+        Write-Host("GMO: ")
+        gmo PowerShellGet -ListAvailable
         Install-Module -Name $ContosoServer -Repository $RepositoryName -Scope AllUsers -AllowClobber
         $installedModuleInfo = Get-InstalledModule -Name $ContosoServer
 
@@ -199,6 +205,9 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
     }
 
     It "Should install a script correctly to the required location with default CurrentUser scope" {
+        Write-Host("PSModulePath: $env:PSModulePath")
+        Write-Host("GMO: ")
+        gmo PowerShellGet -ListAvailable
         Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -NoPathUpdate
         $installedScriptInfo = Get-InstalledScript -Name $FabrikamServerScript
 
@@ -226,6 +235,9 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 
     It "Should install a script correctly to the required location with AllUsers scope" {
+        Write-Host("PSModulePath: $env:PSModulePath")
+        Write-Host("GMO: ")
+        gmo PowerShellGet -ListAvailable
         Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -Scope AllUsers
         $installedScriptInfo = Get-InstalledScript -Name $FabrikamServerScript
 
