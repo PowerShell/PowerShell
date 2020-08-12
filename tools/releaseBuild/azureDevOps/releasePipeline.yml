@@ -71,6 +71,8 @@ stages:
   - job: ValidatePkgNames
     pool:
       vmImage: windows-latest
+    variables:
+    - group: 'Azure Blob variable group'
     steps:
       - template: templates/release-ValidatePackageNames.yml
 
@@ -121,6 +123,8 @@ stages:
     displayName: Make Azure Blob Public
     pool:
       vmImage: windows-latest
+    variables:
+    - group: 'ACR'
     environment: PSReleaseAzureBlobPublic
     strategy:
       runOnce:
@@ -132,6 +136,9 @@ stages:
     displayName: Create GitHub Draft release
     pool:
       vmImage: windows-latest
+    variables:
+    - group: 'Azure Blob variable group'
+    - group: 'AzDevOpsArtifacts'
     dependsOn: AzureBlobPublic
     steps:
     - template: templates/release-CreateGitHubDraft.yml
@@ -166,6 +173,9 @@ stages:
   - job: PublishPkgsMsftCom
     pool:
       vmImage: ubuntu-latest
+    variables:
+    - group: 'AzDevOpsArtifacts'
+    - group: 'packages.microsoft.com'
     steps:
     - template: templates/release-PublishPackageMsftCom.yml
 
@@ -212,6 +222,8 @@ stages:
   - job: UploadJson
     pool:
       vmImage: windows-latest
+    variables:
+    - group: 'Azure Blob variable group'
     steps:
     - template: templates/release-BuildJson.yml
 

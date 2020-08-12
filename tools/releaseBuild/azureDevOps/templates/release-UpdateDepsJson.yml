@@ -3,6 +3,8 @@ jobs:
   displayName: Update deps files
   pool:
     vmImage: windows-latest
+  variables:
+  - group: 'Azure Blob variable group'
   steps:
   - download: releasePipeline
     artifact: finalResults
