@@ -199,40 +199,27 @@ function RunUpdateHelpTests
         if ($powershellCoreModules -contains $moduleName)
         {
 
-            [hashtable] $params = $null
-            [hashtable] $updateScope = $null
-            $testCases[$moduleName]['HelpInstallationPath'] | Should -Not -BeNull
-            $testCases[$moduleName]['HelpInstallationPathHome'] | Should -Not -BeNull
-            if($userscope)
+            [string] $moduleHelpPath = $null
+            [string] $updateScope = $null
+            if ($userscope)
             {
-                $params = @{Path = $testCases[$moduleName]['HelpInstallationPathHome']}
-                $updateScope = @{Scope = 'CurrentUser'}
+                $moduleHelpPath = $testCases[$moduleName]['HelpInstallationPathHome']
+                $updateScope = 'CurrentUser'
             }
             else
             {
-                $params = @{Path = $testCases[$moduleName]['HelpInstallationPath']}
-                $updateScope = @{Scope = 'AllUsers'}
+                $moduleHelpPath = $testCases[$moduleName]['HelpInstallationPath']
+                $updateScope = 'AllUsers'
             }
 
             It ('Validate Update-Help for module ''{0}'' in {1}' -F $moduleName, [PSCustomObject] $updateScope) -Skip:(!(Test-CanWriteToPsHome) -and $userscope -eq $false) {
-                $params['Path']  | Should -Not -BeNull
 
-                [hashtable] $commonParam = @{
-                    Filter = @("*help.xml")
-                    Recurse = $true
-                    ErrorAction = [System.Management.Automation.ActionPreference]:: Stop
-                }
-
-                # $params += $commonParam
-
-                # If the help file is already installed, delete it.
-                [string] $path = $params['Path']
-                $path | Should -Not -BeNull
-                Remove-Item $path -Recurse
+                # Delete the whole help directory
+                Remove-Item ($moduleHelpPath) -Recurse
  
                 [hashtable] $UICultureParam = $(if ((Get-UICulture).Name -ne $myUICulture) { @{ UICulture = $myUICulture } } else { @{} })
                 [hashtable] $sourcePathParam = $(if ($useSourcePath) { @{ SourcePath = Join-Path $PSScriptRoot assets } } else { @{} })
-                Update-Help -Module:$moduleName -Force @UICultureParam @sourcePathParam @updateScope
+                Update-Help -Module:$moduleName -Force @UICultureParam @sourcePathParam -Scope:$updateScope
 
                 [hashtable] $userScopeParam = $(if ($userscope) { @{ UserScope = $true } } else { @{} })
                 ValidateInstalledHelpContent -moduleName:$moduleName @userScopeParam
