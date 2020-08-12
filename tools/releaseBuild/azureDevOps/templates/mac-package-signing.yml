@@ -93,8 +93,8 @@ jobs:
 
   - pwsh: |
       $null = new-item -type directory -path "$(Build.StagingDirectory)\macos-unsigned"
-      Copy-Item -Path "$(System.ArtifactsDirectory)\results\powershell-$(Version)-osx-x64.pkg" -Destination "$(Build.StagingDirectory)\macos-unsigned"
-      Copy-Item -Path "$(System.ArtifactsDirectory)\results\powershell-$(Version)-osx-x64.tar.gz" -Destination "$(Build.StagingDirectory)\macos-unsigned"
+      Copy-Item -Path "$(System.ArtifactsDirectory)\macosPkgResults\powershell-$(Version)-osx-x64.pkg" -Destination "$(Build.StagingDirectory)\macos-unsigned"
+      Copy-Item -Path "$(System.ArtifactsDirectory)\macosPkgResults\powershell-$(Version)-osx-x64.tar.gz" -Destination "$(Build.StagingDirectory)\macos-unsigned"
     displayName: 'Create unsigned folder to upload'
     condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
 
