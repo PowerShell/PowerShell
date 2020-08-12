@@ -38,16 +38,19 @@ jobs:
 
 
   - task: DownloadBuildArtifacts@0
+    displayName: Download macosBinResults
     inputs:
       artifactName: 'macosBinResults'
       itemPattern: '**/*.zip'
       downloadPath: '$(System.ArtifactsDirectory)/Symbols'
 
   - task: DownloadBuildArtifacts@0
+    displayName: Download signedMacOsBins
     inputs:
       artifactName: 'signedMacOsBins'
       itemPattern: '**/*'
       downloadPath: '$(System.ArtifactsDirectory)/macOsBins'
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - pwsh: |
       Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
