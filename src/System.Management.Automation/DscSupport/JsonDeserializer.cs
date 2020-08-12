@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation;
+using System.Management.Automation.Runspaces;
 
 namespace Microsoft.PowerShell.DesiredStateConfiguration
 {
@@ -30,8 +31,26 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         public IEnumerable<PSObject> DeserializeClasses(string json, bool useNewRunspace = false)
         {
             IEnumerable<PSObject> result = null;
-            RunspaceMode runspaceMode = useNewRunspace ? RunspaceMode.NewRunspace : RunspaceMode.CurrentRunspace;
-            using (var powerShell = System.Management.Automation.PowerShell.Create(runspaceMode))
+            System.Management.Automation.PowerShell powerShell = null;
+
+            if (useNewRunspace)
+            {
+                // currently using RunspaceMode.NewRunspace will reset PSModulePath env var for the entire process
+                // this is something we want to avoid in DSC GuestConfigAgent scenario, so we use following workaround
+                var s_iss = InitialSessionState.CreateDefault();
+                s_iss.EnvironmentVariables.Add(
+                    new SessionStateVariableEntry(
+                        "PSModulePath",
+                        Environment.GetEnvironmentVariable("PSModulePath"),
+                        description: null));
+                powerShell = System.Management.Automation.PowerShell.Create(s_iss);
+            }
+            else
+            {
+                powerShell = System.Management.Automation.PowerShell.Create(RunspaceMode.NewRunspace);
+            }
+
+            using (powerShell)
             {
                 powerShell.AddCommand("ConvertFrom-Json");
                 powerShell.AddParameter("InputObject", json);
