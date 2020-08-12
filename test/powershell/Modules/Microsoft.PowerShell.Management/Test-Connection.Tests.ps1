@@ -44,12 +44,7 @@ Describe "Test-Connection" -tags "CI" {
         $targetAddress = "127.0.0.1"
         $targetAddressIPv6 = "::1"
         $UnreachableAddress = "10.11.12.13"
-        # this resolves to an actual IP rather than 127.0.0.1
-        # this can also include both IPv4 and IPv6, so select InterNetwork rather than InterNetworkV6
-        #$hostAddress = [System.Net.Dns]::GetHostEntry($hostName).AddressList |
-        #    Where-Object { $_.AddressFamily -eq "InterNetwork" } |
-        #    Select-Object -First 1 |
-        #    ForEach-Object { $_.IPAddressToString }
+
         # under some environments, we can't round trip this and retrieve the real name from the address
         # in this case we will simply use the hostname
         $jobContinues = Start-Job { Test-Connection $using:targetAddress -Repeat }
