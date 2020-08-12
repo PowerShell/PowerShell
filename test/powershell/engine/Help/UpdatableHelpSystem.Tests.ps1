@@ -182,7 +182,7 @@ function ValidateInstalledHelpContent
 
     foreach ($fileName in $expectedHelpFiles)
     {
-        $helpFilesInstalled.Name -eq $fileName | Should -Be $fileName
+        [string[]] $helpFilesInstalled.Name -eq $fileName | Should -Be $fileName
     }
 }
 
