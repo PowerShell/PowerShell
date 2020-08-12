@@ -98,11 +98,11 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
     It "Passing '<name>' to -uformat produces a descriptive error" -TestCases @(
-        @{ name = "`$null"      ; value = $null }
-        @{ name = "empty string"; value = "" }
+        @{ name = "`$null"      ; value = $null; errorId = "ParameterArgumentValidationErrorNullNotAllowed" }
+        @{ name = "empty string"; value = ""; errorId = "ParameterArgumentValidationErrorEmptyStringNotAllowed" }
     ) {
-        param($value)
-        { Get-Date -Date 1/1/1970 -UFormat $value -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetDateCommand"
+        param($value, $errorId)
+        { Get-Date -Date 1/1/1970 -UFormat $value -ErrorAction Stop } | Should -Throw -ErrorId "${errorId},Microsoft.PowerShell.Commands.GetDateCommand"
     }
 
     It "Get-date works with pipeline input" {
@@ -193,13 +193,17 @@ Describe "Get-Date" -Tags "CI" {
         $timeDifference.Ticks        | Should -BeLessThan 10000
     }
 
-    It "-FromUnixTime works" {
+    It "-UnixTimeSeconds works" -TestCases @(
+        @{ UnixTimeSeconds = 1577836800; Expected = [System.DateTimeOffset]::FromUnixTimeSeconds(1577836800).LocalDateTime },
+        @{ UnixTimeSeconds = 0;          Expected = [System.DateTimeOffset]::UnixEpoch.LocalDateTime },
+        @{ UnixTimeSeconds = -1;         Expected = [System.DateTimeOffset]::FromUnixTimeSeconds(-1).LocalDateTime }
+    ) {
+        param(
+            [long] $UnixTimeSeconds,
+            [DateTime] $Expected
+        )
 
-        # Test conversion of arbitrary date in Unix time: 2020-01-01​T00:00:00.000Z
-        Get-Date -Date 1577836800 -FromUnixTime | Should -Be (Get-Date -Date 637134336000000000 -AsUTC)
-
-        # Test converstion of Unix time start date: 1970-01-01​T00:00:00.000Z
-        Get-Date -Date 0 -FromUnixTime | Should -Be (Get-Date -Date 621355968000000000 -AsUTC)
+        Get-Date -UnixTimeSeconds $UnixTimeSeconds | Should -Be $Expected
     }
 }
 
