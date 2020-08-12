@@ -1,8 +1,8 @@
+trigger: none
+
 # needed to disable CI trigger and allow manual trigger
 # when the branch is same as pipline source, the latest build from the source is used.
 # all environment used are for manual tasks and approvals.
-
-trigger: none
 
 resources:
   pipelines:
@@ -17,6 +17,7 @@ variables:
 
 stages:
 - stage: ValidateSDK
+  displayName: Validate SDK
   dependsOn: []
   jobs:
   - template: templates/release-SDKTests.yml
@@ -38,6 +39,7 @@ stages:
       imageName: macOS-latest
 
 - stage: PRCreation
+  displayName: Create PR in GH Master
   dependsOn: []
   jobs:
   - deployment: CreatePRInMaster
@@ -46,6 +48,7 @@ stages:
     environment: PSReleaseCreatePR
 
 - stage: ValidateGlobalTool
+  displayName: Validate Global Tool
   dependsOn: []
   jobs:
   - template: templates/release-GlobalToolTest.yml
@@ -100,6 +103,7 @@ stages:
     environment: PSReleaseLinuxPkgValidate
 
 - stage: ReleaseAutomation
+  displayName: Release Automation
   dependsOn: []
   jobs:
   - deployment: ReleaseAutomationKickOff
@@ -108,6 +112,7 @@ stages:
     environment: PSReleaseAutomationKickOff
 
 - stage: GitHubDraftRelease
+  displayName: Create GitHub draft release
   # do not include stages that are likely to fail in dependency as there is no way to force deploy.
   dependsOn:
   - ValidateSDK
@@ -144,6 +149,7 @@ stages:
     - template: templates/release-CreateGitHubDraft.yml
 
 - stage: GitHubManualTasks
+  displayName: GitHub manual tasks
   dependsOn: GitHubDraftRelease
   jobs:
   - deployment: UpdateChangeLog
@@ -162,6 +168,7 @@ stages:
     environment: PSReleaseDraftPublic
 
 - stage: PublishPackages
+  displayName: Publish packages
   dependsOn: GitHubManualTasks
   jobs:
   - job: PublishNuget
@@ -180,6 +187,7 @@ stages:
     - template: templates/release-PublishPackageMsftCom.yml
 
 - stage: ChangesToMaster
+  displayName: Ensure changes are in GH master
   dependsOn: PublishPackages
   jobs:
   - deployment: MergeToMaster
@@ -188,6 +196,7 @@ stages:
     environment: PSReleaseChangesToMaster
 
 - stage: ReleaseDocker
+  displayName: Release Docker
   dependsOn:
     - StartDocker
   jobs:
@@ -197,10 +206,11 @@ stages:
     environment: PSReleaseDockerRelease
 
 - stage: ReleaseSnap
+  displayName: Release Snap
   dependsOn:
     - PublishPackages
     - ChangesToMaster
-
+  jobs:
   - deployment: ReleaseSnap
     displayName: Release Snap
     pool: server
