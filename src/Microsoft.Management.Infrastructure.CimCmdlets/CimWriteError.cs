@@ -121,7 +121,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ErrorRecord errorRecord = InitializeErrorRecordCore(
                 context,
                 exception: cimException,
-                errorId: cimException.MessageId ?? "MiClientApiError_" + cimException.NativeErrorCode,
+                errorId: cimException.MessageId ?? "MiClientApiError_" + cimException.NativeErrorCode.ToString(),
                 errorCategory: ConvertCimExceptionToErrorCategory(cimException),
                 cimResultContext: cimResultContext);
 

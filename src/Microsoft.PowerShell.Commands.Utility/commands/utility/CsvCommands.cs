@@ -1670,14 +1670,14 @@ namespace Microsoft.PowerShell.Commands
                 // if name is null and delimiter is '"', use a default property name 'UnspecifiedName'
                 if (name.Length == 0 && delimiterlocal == '"')
                 {
-                    name = UnspecifiedName + unspecifiedNameIndex;
+                    name = UnspecifiedName + unspecifiedNameIndex.ToString();
                     unspecifiedNameIndex++;
                 }
 
                 // if name is null and delimiter is not '"', use a default property name 'UnspecifiedName'
                 if (string.IsNullOrEmpty(name))
                 {
-                    name = UnspecifiedName + unspecifiedNameIndex;
+                    name = UnspecifiedName + unspecifiedNameIndex.ToString();
                     unspecifiedNameIndex++;
                 }
 

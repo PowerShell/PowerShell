@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell
                 var hResult = CoCreateInstance(ref CLSID_DestinationList, null, CLSCTX_INPROC_SERVER, ref IID_IUnknown, out object pCustDestListobj);
                 if (hResult < 0)
                 {
-                    Debug.Fail($"Creating ICustomDestinationList failed with HResult '{hResult}'.");
+                    Debug.Fail($"Creating ICustomDestinationList failed with HResult '{hResult.ToString()}'.");
                     return;
                 }
 
@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell
                 hResult = pCustDestList.BeginList(out uint uMaxSlots, new Guid(@"92CA9DCD-5622-4BBA-A805-5E9F541BD8C9"), out object pRemovedItems);
                 if (hResult < 0)
                 {
-                    Debug.Fail($"BeginList on ICustomDestinationList failed with HResult '{hResult}'.");
+                    Debug.Fail($"BeginList on ICustomDestinationList failed with HResult '{hResult.ToString()}'.");
                     return;
                 }
 
@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell
                     if (hResult < 0)
                     {
                         pCustDestList.AbortList();
-                        Debug.Fail($"SetValue on IPropertyStore with title '{title}' failed with HResult '{hResult}'.");
+                        Debug.Fail($"SetValue on IPropertyStore with title '{title}' failed with HResult '{hResult.ToString()}'.");
                         return;
                     }
 
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell
                     if (hResult < 0)
                     {
                         pCustDestList.AbortList();
-                        Debug.Fail($"Commit on IPropertyStore failed with HResult '{hResult}'.");
+                        Debug.Fail($"Commit on IPropertyStore failed with HResult '{hResult.ToString()}'.");
                         return;
                     }
 
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell
                     if (hResult < 0)
                     {
                         pCustDestList.AbortList();
-                        Debug.Fail($"Creating IObjectCollection failed with HResult '{hResult}'.");
+                        Debug.Fail($"Creating IObjectCollection failed with HResult '{hResult.ToString()}'.");
                         return;
                     }
 
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell
                     if (hResult < 0)
                     {
                         pCustDestList.AbortList();
-                        Debug.Fail($"AddUserTasks on ICustomDestinationList failed with HResult '{hResult}'.");
+                        Debug.Fail($"AddUserTasks on ICustomDestinationList failed with HResult '{hResult.ToString()}'.");
                         return;
                     }
 

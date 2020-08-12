@@ -65,13 +65,13 @@ namespace PSTests.Parallel
 
             for (int i = 0; i < capacity; i++)
             {
-                boundedStack.Push($"{i}");
+                boundedStack.Push($"{i.ToString()}");
             }
 
             for (int i = 0; i < capacity; i++)
             {
                 var poppedItem = boundedStack.Pop();
-                Assert.Equal($"{20 - 1 - i}", poppedItem);
+                Assert.Equal($"{(20 - 1 - i).ToString()}", poppedItem);
             }
 
             Assert.Throws<InvalidOperationException>(() => boundedStack.Pop());

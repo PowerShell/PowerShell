@@ -545,7 +545,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             string doubleNullTerminated = string.Empty;
             foreach (string fileName in blgFileNames)
             {
-                doubleNullTerminated += fileName + '\0';
+                doubleNullTerminated += fileName + "\0";
             }
 
             doubleNullTerminated += '\0';

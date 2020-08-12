@@ -283,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
             for (int i = 0; i < list.Count; i++)
             {
                 OrderByPropertyEntry listEntry = list[i];
-                Diagnostics.Assert(listEntry != null, "null listEntry " + i);
+                Diagnostics.Assert(listEntry != null, "null listEntry " + i.ToString());
                 if (0 == _comparer.Compare(match, listEntry))
                 {
                     list.RemoveAt(i);
@@ -335,7 +335,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     List<MshParameter> mshParameterList = _orderByProperty.MshParameterList;
                     Diagnostics.Assert(mshParameterList != null, "null mshParameterList");
-                    Diagnostics.Assert(mshParameterList.Count == Property.Length, "mshParameterList.Count " + mshParameterList.Count);
+                    Diagnostics.Assert(mshParameterList.Count == Property.Length, "mshParameterList.Count " + mshParameterList.Count.ToString());
 
                     for (int i = 0; i < Property.Length; i++)
                     {

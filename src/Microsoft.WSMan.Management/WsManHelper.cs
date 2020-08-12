@@ -540,7 +540,7 @@ namespace Microsoft.WSMan.Management
                 ConnectionString = computername;
                 if (port != 0)
                 {
-                    ConnectionString = ConnectionString + ":" + port;
+                    ConnectionString = ConnectionString + ":" + port.ToString();
                 }
 
                 if (applicationname != null)
@@ -953,7 +953,7 @@ namespace Microsoft.WSMan.Management
                 if (connectionuri != null)
                 {
                     // in the format http(s)://server[:port/applicationname]
-                    string[] constrsplit = connectionStr.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                    string[] constrsplit = connectionStr.Split(":" + port.ToString() + "/" + applicationname, StringSplitOptions.None);
                     string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                     computername = constrsplit1[1].Trim();
                 }

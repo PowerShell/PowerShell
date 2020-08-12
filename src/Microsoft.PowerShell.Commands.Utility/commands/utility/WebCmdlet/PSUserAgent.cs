@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
                         Regex pattern = new Regex(@"\d+(\.\d+)+");
                         string versionText = pattern.Match(OS).Value;
                         Version windowsPlatformversion = new Version(versionText);
-                        s_windowsUserAgent = $"Windows NT {windowsPlatformversion.Major}.{windowsPlatformversion.Minor}";
+                        s_windowsUserAgent = $"Windows NT {windowsPlatformversion.Major.ToString()}.{windowsPlatformversion.Minor.ToString()}";
                     }
 
                     return s_windowsUserAgent;

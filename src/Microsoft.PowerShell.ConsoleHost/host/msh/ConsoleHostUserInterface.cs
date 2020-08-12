@@ -447,7 +447,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!string.IsNullOrEmpty(printToken),
                 "Calling WritePrintToken with printToken being null or empty");
             Dbg.Assert(printToken.Length == 1,
-                "Calling WritePrintToken with printToken's Length being " + printToken.Length);
+                "Calling WritePrintToken with printToken's Length being " + printToken.Length.ToString());
             Size consoleBufferSize = _rawui.BufferSize;
             Coordinates currentCursorPosition = _rawui.CursorPosition;
 
@@ -1677,7 +1677,7 @@ namespace Microsoft.PowerShell
                         Write(StringUtil.Padding(leftover));
                         RawUI.CursorPosition = c;
 
-                        restOfLine = s[i] + (charUnderCursor + s.Substring(i + 1));
+                        restOfLine = s[i].ToString() + (charUnderCursor.ToString() + s.Substring(i + 1));
                     }
                     else
                     {

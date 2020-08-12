@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.MarkdownRender
     {
         private const char Esc = (char)0x1B;
 
-        private string endSequence = Esc + "[0m";
+        private string endSequence = Esc.ToString() + "[0m";
 
         // For code blocks, [500@ make sure that the whole line has background color.
         private const string LongBackgroundCodeBlock = "[500@";

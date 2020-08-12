@@ -529,7 +529,7 @@ namespace Microsoft.WSMan.Management
                 try
                 {
                     // in the format http(s)://server[:port/applicationname]
-                    string[] constrsplit = connectionuri.OriginalString.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                    string[] constrsplit = connectionuri.OriginalString.Split(":" + port.ToString() + "/" + applicationname, StringSplitOptions.None);
                     string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                     computername = constrsplit1[1].Trim();
                 }
@@ -909,7 +909,7 @@ namespace Microsoft.WSMan.Management
                     try
                     {
                         // in the format http(s)://server[:port/applicationname]
-                        string[] constrsplit = connectionuri.OriginalString.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                        string[] constrsplit = connectionuri.OriginalString.Split(":" + port.ToString() + "/" + applicationname, StringSplitOptions.None);
                         string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                         computername = constrsplit1[1].Trim();
                     }
@@ -1203,7 +1203,7 @@ namespace Microsoft.WSMan.Management
                     try
                     {
                         // in the format http(s)://server[:port/applicationname]
-                        string[] constrsplit = connectionuri.OriginalString.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                        string[] constrsplit = connectionuri.OriginalString.Split(":" + port.ToString() + "/" + applicationname, StringSplitOptions.None);
                         string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                         computername = constrsplit1[1].Trim();
                     }
@@ -1492,7 +1492,7 @@ namespace Microsoft.WSMan.Management
                 try
                 {
                     // in the format http(s)://server[:port/applicationname]
-                    string[] constrsplit = connectionuri.OriginalString.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                    string[] constrsplit = connectionuri.OriginalString.Split(":" + port.ToString() + "/" + applicationname, StringSplitOptions.None);
                     string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                     computername = constrsplit1[1].Trim();
                 }

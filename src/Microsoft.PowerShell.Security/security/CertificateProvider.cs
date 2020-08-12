@@ -1441,12 +1441,12 @@ namespace Microsoft.PowerShell.Commands
                 // the root path separator back
                 if (index + 1 == path.Length)
                 {
-                    result = path + StringLiterals.DefaultPathSeparator;
+                    result = path + StringLiterals.DefaultPathSeparator.ToString();
                 }
             }
             else if ((path.Length == 0) || (path[0] != StringLiterals.DefaultPathSeparator))
             {
-                result = StringLiterals.DefaultPathSeparator + path;
+                result = StringLiterals.DefaultPathSeparator.ToString() + path;
             }
 
             s_tracer.WriteLine("result = {0}", result);

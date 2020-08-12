@@ -236,7 +236,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             InitializeErrorRecordCore(
                 jobContext: jobContext,
                 exception: cimException,
-                errorId: cimException.MessageId ?? "MiClientApiError_" + cimException.NativeErrorCode,
+                errorId: cimException.MessageId ?? "MiClientApiError_" + cimException.NativeErrorCode.ToString(),
                 errorCategory: ConvertCimExceptionToErrorCategory(cimException));
 
             if (cimException.ErrorData != null)
