@@ -11,15 +11,15 @@ $ContosoServer = 'ContosoServer'
 $FabrikamServerScript = 'Fabrikam-ServerScript'
 $Initialized = $false
 
-$myDocumentsPath = [Environment]::GetFolderPath([Environment]::SpecialFolder.MyDocuments)
-$programFilesPath = [Environment]::GetFolderPath([Environment]::SpecialFolder.ProgramFiles)
+$myDocumentsPath = [Environment]::GetFolderPath(5)
+$programFilesPath = [Environment]::GetFolderPath(38)
 
-$myDocumentsPathPS = [Path]::Combine([Environment]::GetFolderPath([Environment]::SpecialFolder.MyDocuments), "PowerShell");
-$programFilesPathPS = [Path]::Combine([Environment]::GetFolderPath([Environment]::SpecialFolder.ProgramFiles), "PowerShell");
+$myDocumentsPathPS = [System.IO.Path]::Combine($myDocumentsPath, "PowerShell");
+$programFilesPathPS = [System.IO.Path]::Combine($programFilesPath, "PowerShell");
 
 
-$myDocumentsPathPSModules = [Path]::Combine($myDocumentsPathPS, "Modules");
-$programFilesPathPSModules = [Path]::Combine($programFilesPathPS, "Modules");
+$myDocumentsPathPSModules = [System.IO.Path]::Combine($myDocumentsPathPS, "Modules");
+$programFilesPathPSModules = [System.IO.Path]::Combine($programFilesPathPS, "Modules");
 
 
 #region Utility functions
