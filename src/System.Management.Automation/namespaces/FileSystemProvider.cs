@@ -6486,7 +6486,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Only the attributes property can be cleared
             if (propertiesToClear.Count > 1 ||
-                Host.CurrentCulture.CompareInfo.Compare("Attributes", propertiesToClear[0], CompareOptions.IgnoreCase) != 0)
+                string.Compare("Attributes", propertiesToClear[0], Host.CurrentCulture, CompareOptions.IgnoreCase) != 0)
             {
                 throw PSTraceSource.NewArgumentException(nameof(propertiesToClear), FileSystemProviderStrings.CannotClearProperty);
             }

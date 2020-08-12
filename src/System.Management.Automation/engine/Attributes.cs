@@ -1663,10 +1663,10 @@ namespace System.Management.Automation
             string objString = element.ToString();
             foreach (string setString in ValidValues)
             {
-                if (CultureInfo.InvariantCulture.CompareInfo.Compare(
+                if (string.Compare(
                     setString,
                     objString,
-                    IgnoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0)
+                    IgnoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.InvariantCulture) == 0)
                 {
                     return;
                 }

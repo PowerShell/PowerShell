@@ -661,7 +661,7 @@ namespace System.Management.Automation
             if (firstString != null)
             {
                 secondString = second as string ?? (string)LanguagePrimitives.ConvertTo(second, typeof(string), culture);
-                return (culture.CompareInfo.Compare(firstString, secondString,
+                return (string.Compare(firstString, secondString, culture,
                                                     ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0);
             }
 
@@ -820,7 +820,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                return culture.CompareInfo.Compare(firstString, secondString,
+                return string.Compare(firstString, secondString, culture,
                                                    ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
             }
 
@@ -944,7 +944,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                result = culture.CompareInfo.Compare(firstString, secondString, ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
+                result = string.Compare(firstString, secondString, culture, ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
                 return true;
             }
 
