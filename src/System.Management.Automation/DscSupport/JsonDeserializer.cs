@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
             }
             else
             {
-                powerShell = System.Management.Automation.PowerShell.Create(RunspaceMode.NewRunspace);
+                powerShell = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
             }
 
             using (powerShell)
