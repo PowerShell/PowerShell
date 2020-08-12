@@ -11,26 +11,14 @@ namespace System.Management.Automation.Internal
     internal static
     class StringUtil
     {
-        internal static
-        string
-        Format(string formatSpec, object o)
-        {
-            return string.Format(System.Globalization.CultureInfo.CurrentCulture, formatSpec, o);
-        }
+        internal static string Format(string format, object arg0)
+            => string.Format(Globalization.CultureInfo.CurrentCulture, format, arg0);
 
-        internal static
-        string
-        Format(string formatSpec, object o1, object o2)
-        {
-            return string.Format(System.Globalization.CultureInfo.CurrentCulture, formatSpec, o1, o2);
-        }
+        internal static string Format(string format, object arg0, object arg1)
+            => string.Format(Globalization.CultureInfo.CurrentCulture, format, arg0, arg1);
 
-        internal static
-        string
-        Format(string formatSpec, params object[] o)
-        {
-            return string.Format(System.Globalization.CultureInfo.CurrentCulture, formatSpec, o);
-        }
+        internal static string Format(string format, params object[] args)
+            => string.Format(Globalization.CultureInfo.CurrentCulture, format, args);
 
         internal static
         string
