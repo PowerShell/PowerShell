@@ -17,6 +17,9 @@ namespace System.Management.Automation.Internal
         internal static string Format(string format, object arg0, object arg1)
             => string.Format(Globalization.CultureInfo.CurrentCulture, format, arg0, arg1);
 
+        internal static string Format(string format, object arg0, object arg1, object arg2)
+            => string.Format(Globalization.CultureInfo.CurrentCulture, format, arg0, arg1, arg2);
+
         internal static string Format(string format, params object[] args)
             => string.Format(Globalization.CultureInfo.CurrentCulture, format, args);
 
