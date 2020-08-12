@@ -505,54 +505,17 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Mof
             }
         }
 
-        internal static List<PSObject> PrepareCimMofForJsonConvertion(List<CimClass> classes)
-        {
-            var result = new List<PSObject>();
-            foreach(var c in classes)
-            {
-                var cpso = new PSObject();
-                cpso.Properties.Add(new PSNoteProperty("CimSystemProperties", c.CimSystemProperties));
-                cpso.Properties.Add(new PSNoteProperty("CimSuperClassName", c.CimSuperClassName));
-                cpso.Properties.Add(new PSNoteProperty("CimClassQualifiers", c.CimClassQualifiers));
-
-                var properties = new List<object>();
-
-                foreach(var p in c.CimClassProperties)
-                {
-                    if (!CimPropertyIsInherited(p.Name, c.CimSuperClass))
-                    {
-                        properties.Add(p);
-                    }
-                }
-
-                cpso.Properties.Add(new PSNoteProperty("CimClassProperties", properties));
-                
-                result.Add(cpso);
-            }
-
-            return result;
-        }
-
-        internal static void ConvertCimMofToJson(string mofPath)
+        /// <summary>
+        /// Reads CIM MOF schema file and returns classes defined in it
+        /// </summary>
+        /// <param name="mofPath">
+        /// Path to CIM MOF schema file for reading
+        /// </param>
+        /// <returns>List of classes from MOF schema file</returns>
+        public static List<CimClass> ReadCimSchemaMof(string mofPath)
         {
             var parser = new Microsoft.PowerShell.DesiredStateConfiguration.Mof.CimDSCParser(MyClassCallback);
-            List<CimClass> mofClasses = parser.ParseSchemaMof(mofPath);
-            var jsonClasses = PrepareCimMofForJsonConvertion(mofClasses);
-
-            string jsonPath = mofPath.Substring(0, mofPath.LastIndexOf('.')) + ".json";
-            using (var powerShell = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
-            {
-                powerShell.AddCommand("ConvertTo-Json");
-                powerShell.AddParameter("InputObject", jsonClasses);
-                powerShell.AddParameter("Depth", 100);
-                powerShell.AddParameter("EnumsAsStrings", true);
-
-                powerShell.AddCommand("Out-File");
-                powerShell.AddParameter("Path", jsonPath);
-                powerShell.AddParameter("Force", true);
-
-                powerShell.Invoke();
-            }
+            return parser.ParseSchemaMof(mofPath);
         }
 
         /// <summary>
