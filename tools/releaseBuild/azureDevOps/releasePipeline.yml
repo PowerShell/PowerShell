@@ -258,7 +258,8 @@ stages:
   - ReleaseVPack
   - BuildInfoJson
   - UpdateDotnetDocker
-  - ReleaseSnapAndDocker
+  - ReleaseDocker
+  - ReleaseSnap
   - ChangesToMaster
   - ReleaseDeps
   jobs:
