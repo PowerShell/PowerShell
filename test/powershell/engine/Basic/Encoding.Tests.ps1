@@ -99,4 +99,30 @@ Describe "File encoding tests" -Tag CI {
             (Get-Content $testFile -AsByteStream) -join "-" | Should -BeExactly $expectedBytes
         }
     }
+
+    Context "Using encoding utf7 results in a warning" {
+        BeforeAll {
+            $expectedString = "Encoding 'UTF-7' is obsolete, please use UTF-8."
+            $testCases = @(
+                @{ Command = 'Add-Content';   Script = { "test" | Add-Content -Encoding utf7 -Path TESTDRIVE:/file 3>TESTDRIVE:/warning } }
+                @{ Command = 'Export-CliXml'; Script = { "test" | Export-Clixml -Path TESTDRIVE:/file.ps1xml -Encoding utf7 3>TESTDRIVE:/warning } }
+                @{ Command = 'Export-Csv';    Script = { "test" | Export-Csv -Path TESTDRIVE:/export.csv -Encoding utf7 3>TESTDRIVE:/warning } }
+                @{ Command = 'Format-Hex';    Script = { "test" | Format-Hex -Encoding utf7 > TESTDRIVE:/output 3>TESTDRIVE:/warning } }
+                @{ Command = 'Get-Content';   Script = { "output" > TESTDRIVE:/input; $null = Get-Content -Path TESTDRIVE:/input -Encoding utf7 3>TESTDRIVE:/warning } }
+                @{ Command = 'Import-Csv';    Script = { "test" | Export-Csv -Path TESTDRIVE:/output.csv; $null = Import-Csv -Path TESTDRIVE:/output.csv -Encoding utf7 3>TESTDRIVE:/warning } }
+                @{ Command = 'Out-File';      Script = { "test" | Out-File -Path TESTDRIVE:/output.txt -Encoding utf7 3>TESTDRIVE:/warning } }
+                @{ Command = 'Select-String'; Script = { "aa" | Select-String -pattern bb -Encoding utf7 3>TESTDRIVE:/warning } }
+                @{ Command = 'Set-Content';   Script = { "aa" | Set-Content -Path TESTDRIVE:/output.txt -Encoding utf7 3>TESTDRIVE:/warning } }
+            )
+        }
+        BeforeEach {
+            Remove-Item TESTDRIVE:/* -force -ErrorAction Ignore
+        }
+        It "'<command> has a warning when '-Encoding utf7' is used" -TestCases $testCases {
+            param ($command, $script)
+            & $script
+            $observed = Get-Content TESTDRIVE:/warning
+            $observed | Should -BeExactly $expectedString
+        }
+    }
 }
