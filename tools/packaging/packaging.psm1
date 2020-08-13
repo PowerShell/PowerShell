@@ -2323,6 +2323,8 @@ function CleanupGeneratedSourceCode
         '[System.Management.Automation.Internal.ArchitectureSensitiveAttribute]'
         '[Microsoft.PowerShell.Commands.SelectStringCommand.FileinfoToStringAttribute]'
         '[System.Runtime.CompilerServices.IsReadOnlyAttribute]'
+        '[System.Runtime.CompilerServices.NullableContextAttribute('
+        '[System.Runtime.CompilerServices.NullableAttribute((byte)0)]'
         )
 
     $patternsToReplace = @(
@@ -2355,6 +2357,16 @@ function CleanupGeneratedSourceCode
             ApplyTo = "System.Management.Automation"
             Pattern = "Unable to resolve assembly 'Assembly(Name=System.Security.AccessControl"
             Replacement = "// Unable to resolve assembly 'Assembly(Name=System.Security.AccessControl"
+        },
+        @{
+            ApplyTo = "Microsoft.PowerShell.ConsoleHost"
+            Pattern = "[System.Runtime.CompilerServices.NullableAttribute((byte)2)]"
+            Replacement = "/* [System.Runtime.CompilerServices.NullableAttribute((byte)2)] */"
+        },
+        @{
+            ApplyTo = "Microsoft.PowerShell.ConsoleHost"
+            Pattern = "[System.Runtime.CompilerServices.NullableAttribute((byte)1)]"
+            Replacement = "/* [System.Runtime.CompilerServices.NullableAttribute((byte)1)] */"
         }
     )
 
