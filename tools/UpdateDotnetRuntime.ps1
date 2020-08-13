@@ -202,13 +202,15 @@ if ($dotnetUpdate.ShouldUpdate) {
 
         if ($addDotnet5Source) {
             $dotnet5Feed = $nugetFileSources | Where-Object { $_.Key -eq 'dotnet5' } | Select-Object -ExpandProperty Value
-            Register-PackageSource -Name 'dotnet5' -Location $nugetFeed -ProviderName NuGet
+            Register-PackageSource -Name 'dotnet5' -Location $dotnet5Feed -ProviderName NuGet
             Write-Verbose -Message "Register new package source 'dotnet5'" -verbose
         }
 
-        if ($addDotnet5InternalSource) {
-            $dotnet5InternalFeed = $nugetFileSources | Where-Object { $_.Key -eq 'dotnet5-internal' } | Select-Object -ExpandProperty Value
-            Register-PackageSource -Name 'dotnet5-internal' -Location $nugetFeed -ProviderName NuGet
+        if ($addDotnet5InternalSource -and $InteractiveAuth) {
+            $dotnet5InternalFeed = 'https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet5-internal/nuget/v3/index.json'
+            $updatedNugetFile = (Get-Content .\nuget.config -Raw) -replace "</packageSources>", "  <add key=`"dotnet5-internal`" value=`"$dotnet5InternalFeed`" />`r`n  </packageSources>"
+            $updatedNugetFile | Out-File .\nuget.config -Force
+            Register-PackageSource -Name 'dotnet5-internal' -Location $dotnet5InternalFeed -ProviderName NuGet
             Write-Verbose -Message "Register new package source 'dotnet5-internal'" -verbose
         }
     }
