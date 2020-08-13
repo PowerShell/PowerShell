@@ -130,7 +130,14 @@ namespace System.Management.Automation
                             stringConstantType = StringConstantType.DoubleQuoted;
                         }
 
-                        AppendOneNativeArgument(Context, argValue, arrayLiteralAst, sawVerbatimArgumentMarker, stringConstantType);
+                        string valueString = parameter.ArgumentValue as string;
+                        if ( valueString != null && stringConstantType == StringConstantType.DoubleQuoted && valueString.Contains("\"")) {
+                            AppendOneNativeArgument(Context, valueString.Replace("\"","\\\""), arrayLiteralAst, sawVerbatimArgumentMarker, stringConstantType);
+                        }
+                        else {
+                            AppendOneNativeArgument(Context, argValue, arrayLiteralAst, sawVerbatimArgumentMarker, stringConstantType);
+                        }
+
                     }
                 }
             }
