@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using System.Text;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -217,7 +218,20 @@ namespace Microsoft.PowerShell.Commands
         [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
-        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
+        public Encoding Encoding
+        {
+            get
+            {
+                return _encoding;
+            }
+            set
+            {
+                EncodingConversion.WarnIfObsolete(this, value);
+                _encoding = value;
+            }
+        }
+
+        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// Gets or sets property that sets append parameter.
