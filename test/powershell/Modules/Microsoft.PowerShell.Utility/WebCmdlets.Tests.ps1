@@ -1694,12 +1694,16 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 @{ Test = @{SslProtocol = 'Tls'; ActualProtocol = 'Tls'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls13'; ActualProtocol = 'Tls13'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12, Tls13'; ActualProtocol = 'Tls13'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12, Tls13'; ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls13'; ActualProtocol = 'Tls'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}; Pending = $false }
                 # Skipping intermediary protocols is not supported on all platforms
                 @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}; Pending = -not $IsWindows }
@@ -1707,13 +1711,19 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             )
 
             $testCases2 = @(
+                @{ Test = @{IntendedProtocol = 'Tls'; ActualProtocol = 'Tls13'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls'; ActualProtocol = 'Tls12'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls13'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls12'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls13'; ActualProtocol = 'Tls'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls11, Tls12, Tls13'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls13'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls13'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls12'}; Pending = $false }
             )
@@ -3196,12 +3206,16 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
                 @{ Test = @{SslProtocol = 'Tls'; ActualProtocol = 'Tls'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls13'; ActualProtocol = 'Tls13'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12, Tls13'; ActualProtocol = 'Tls13'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12, Tls13'; ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls13'; ActualProtocol = 'Tls'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}; Pending = $false }
                 # Skipping intermediary protocols is not supported on all platforms
                 @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}; Pending = -not $IsWindows }
@@ -3209,13 +3223,19 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             )
 
             $testCases2 = @(
+                @{ Test = @{IntendedProtocol = 'Tls'; ActualProtocol = 'Tls13'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls'; ActualProtocol = 'Tls12'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls13'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls12'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls13'; ActualProtocol = 'Tls'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls11, Tls12, Tls13'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls13'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls13'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls12'}; Pending = $false }
             )
