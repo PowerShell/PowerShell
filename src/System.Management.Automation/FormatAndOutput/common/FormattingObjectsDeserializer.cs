@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return null;
 
             // copy to string collection, since, a priori, we do not know the length
-            StringCollection temp = new StringCollection ();
+            List<string> temp = new List<string>();
 
             foreach (string s in e)
                 temp.Add (s);

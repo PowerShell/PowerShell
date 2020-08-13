@@ -6,12 +6,12 @@
 //#define TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
 
 using System;
-using System.Collections.Specialized;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
 
 using Dbg = System.Management.Automation.Diagnostics;
+using System.Collections.Generic;
 
 // interfaces for host interaction
 
@@ -550,7 +550,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// Cached string(s) valid during a sequence of ComputePromptLines()/PromptUser()
             /// </summary>
-            private StringCollection _actualPrompt;
+            private List<string> _actualPrompt;
 
             /// <summary>
             /// Prompt string as passed at initialization.

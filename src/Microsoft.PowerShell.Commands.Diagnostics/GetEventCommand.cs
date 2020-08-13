@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
@@ -396,10 +395,10 @@ namespace Microsoft.PowerShell.Commands
         // Other private members and constants
         //
         private ResourceManager _resourceMgr = null;
-        private Dictionary<string, StringCollection> _providersByLogMap = new Dictionary<string, StringCollection>();
+        private Dictionary<string, List<string>> _providersByLogMap = new Dictionary<string, List<string>>();
 
-        private StringCollection _logNamesMatchingWildcard = null;
-        private StringCollection _resolvedPaths = new StringCollection();
+        private List<string> _logNamesMatchingWildcard = null;
+        private List<string> _resolvedPaths = new List<string>();
 
         private List<string> _accumulatedLogNames = new List<string>();
         private List<string> _accumulatedProviderNames = new List<string>();
@@ -771,7 +770,7 @@ namespace Microsoft.PowerShell.Commands
                 //
                 for (int i = 0; i < _path.Length; i++)
                 {
-                    StringCollection resolvedPaths = ValidateAndResolveFilePath(_path[i]);
+                    List<string> resolvedPaths = ValidateAndResolveFilePath(_path[i]);
                     foreach (string resolvedPath in resolvedPaths)
                     {
                         _resolvedPaths.Add(resolvedPath);
@@ -1169,7 +1168,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         foreach (object elt in (Array)hash[hashkey_path_lc])
                         {
-                            StringCollection resolvedPaths = ValidateAndResolveFilePath(elt.ToString());
+                            List<string> resolvedPaths = ValidateAndResolveFilePath(elt.ToString());
                             foreach (string resolvedPath in resolvedPaths)
                             {
                                 queriedLogsQueryMap.Add(filePrefix + resolvedPath.ToLowerInvariant(),
@@ -1181,7 +1180,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        StringCollection resolvedPaths = ValidateAndResolveFilePath(hash[hashkey_path_lc].ToString());
+                        List<string> resolvedPaths = ValidateAndResolveFilePath(hash[hashkey_path_lc].ToString());
                         foreach (string resolvedPath in resolvedPaths)
                         {
                             queriedLogsQueryMap.Add(filePrefix + resolvedPath.ToLowerInvariant(),
@@ -1752,9 +1751,9 @@ namespace Microsoft.PowerShell.Commands
         // Writes non-terminating errors for invalid paths
         // and returns an empty collection.
         //
-        private StringCollection ValidateAndResolveFilePath(string path)
+        private List<string> ValidateAndResolveFilePath(string path)
         {
-            StringCollection retColl = new StringCollection();
+            List<string> retColl = new List<string>();
 
             Collection<PathInfo> resolvedPathSubset = null;
             try
@@ -1872,7 +1871,7 @@ namespace Microsoft.PowerShell.Commands
         // and will may produce garbage if the _filterXPath expression provided by the user is invalid.
         // However, we are relying on the EventLog XPath parser to reject the garbage later on.
         //
-        private string AddProviderPredicatesToFilter(StringCollection providers)
+        private string AddProviderPredicatesToFilter(List<string> providers)
         {
             if (providers.Count == 0)
             {
@@ -1910,7 +1909,7 @@ namespace Microsoft.PowerShell.Commands
         // "System/Provider[@Name='a' or @Name='b']"
         // for all provider names specified in the "providers" argument.
         //
-        private string BuildProvidersPredicate(StringCollection providers)
+        private string BuildProvidersPredicate(List<string> providers)
         {
             if (providers.Count == 0)
             {
@@ -2012,7 +2011,7 @@ namespace Microsoft.PowerShell.Commands
 
                         WriteVerbose(string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("ProviderLogLink"), providerName, logLink.LogName));
 
-                        StringCollection provColl = new StringCollection();
+                        List<string> provColl = new List<string>();
                         provColl.Add(providerName.ToLowerInvariant());
 
                         _providersByLogMap.Add(logLink.LogName.ToLowerInvariant(), provColl);
@@ -2022,7 +2021,7 @@ namespace Microsoft.PowerShell.Commands
                         //
                         // Log is there: add provider, if needed
                         //
-                        StringCollection coll = _providersByLogMap[logLink.LogName.ToLowerInvariant()];
+                        List<string> coll = _providersByLogMap[logLink.LogName.ToLowerInvariant()];
 
                         if (!coll.Contains(providerName.ToLowerInvariant()))
                         {
@@ -2054,7 +2053,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_logNamesMatchingWildcard == null)
             {
-                _logNamesMatchingWildcard = new StringCollection();
+                _logNamesMatchingWildcard = new List<string>();
             }
             else
             {

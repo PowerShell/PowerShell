@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management.Automation.Internal;
 
@@ -207,21 +207,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             int fieldCellCount = _columnWidth - _propertyLabelsDisplayLength;
 
             // split the lines
-            StringCollection sc = StringManipulationHelper.GenerateLines(lo.DisplayCells, line, fieldCellCount, fieldCellCount);
+            List<string> list = StringManipulationHelper.GenerateLines(lo.DisplayCells, line, fieldCellCount, fieldCellCount);
 
             // padding to use in the lines after the first
             string padding = StringUtil.Padding(_propertyLabelsDisplayLength);
 
             // display the string collection
-            for (int k = 0; k < sc.Count; k++)
+            for (int k = 0; k < list.Count; k++)
             {
                 if (k == 0)
                 {
-                    lo.WriteLine(prependString + sc[k]);
+                    lo.WriteLine(prependString + list[k]);
                 }
                 else
                 {
-                    lo.WriteLine(padding + sc[k]);
+                    lo.WriteLine(padding + list[k]);
                 }
             }
         }

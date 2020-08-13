@@ -4,7 +4,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -426,12 +425,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         private Dictionary<string, CounterHandleNInstance> _consumerPathToHandleAndInstanceMap = new Dictionary<string, CounterHandleNInstance>();
 
         /// <summary>
-        /// A helper reading in a Unicode string with embedded NULLs and splitting it into a StringCollection.
+        /// A helper reading in a Unicode string with embedded NULLs and splitting it into a List.
         /// </summary>
         /// <param name="strNative"></param>
         /// <param name="strSize"></param>
         /// <param name="strColl"></param>
-        private void ReadPdhMultiString(ref IntPtr strNative, Int32 strSize, ref StringCollection strColl)
+        private void ReadPdhMultiString(ref IntPtr strNative, Int32 strSize, ref List<string> strColl)
         {
             Debug.Assert(strSize >= 2);
             int offset = 0;
@@ -534,7 +533,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint ConnectToDataSource(StringCollection blgFileNames)
+        public uint ConnectToDataSource(List<string> blgFileNames)
         {
             if (blgFileNames.Count == 1)
             {
@@ -609,7 +608,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return PdhSetQueryTimeRange(_hQuery, ref pTimeInfo);
         }
 
-        public uint EnumBlgFilesMachines(ref StringCollection machineNames)
+        public uint EnumBlgFilesMachines(ref List<string> machineNames)
         {
             IntPtr MachineListTcharSizePtr = new IntPtr(0);
             uint res = PdhHelper.PdhEnumMachinesH(_hDataSource, IntPtr.Zero, ref MachineListTcharSizePtr);
@@ -637,7 +636,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint EnumObjects(string machineName, ref StringCollection objectNames)
+        public uint EnumObjects(string machineName, ref List<string> objectNames)
         {
             IntPtr pBufferSize = new IntPtr(0);
             uint res = PdhEnumObjectsH(_hDataSource, machineName, IntPtr.Zero, ref pBufferSize, PerfDetail.PERF_DETAIL_WIZARD, false);
@@ -665,7 +664,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint EnumObjectItems(string machineName, string objectName, ref StringCollection counterNames, ref StringCollection instanceNames)
+        public uint EnumObjectItems(string machineName, string objectName, ref List<string> counterNames, ref List<string> instanceNames)
         {
             IntPtr pCounterBufferSize = new IntPtr(0);
             IntPtr pInstanceBufferSize = new IntPtr(0);
@@ -745,11 +744,11 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint GetValidPathsFromFiles(ref StringCollection validPaths)
+        public uint GetValidPathsFromFiles(ref List<string> validPaths)
         {
             Debug.Assert(_hDataSource != null && !_hDataSource.IsInvalid, "Call ConnectToDataSource before GetValidPathsFromFiles");
 
-            StringCollection machineNames = new StringCollection();
+            List<string> machineNames = new List<string>();
             uint res = this.EnumBlgFilesMachines(ref machineNames);
             if (res != 0)
             {
@@ -758,7 +757,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             foreach (string machine in machineNames)
             {
-                StringCollection counterSets = new StringCollection();
+                List<string> counterSets = new List<string>();
                 res = this.EnumObjects(machine, ref counterSets);
                 if (res != 0)
                 {
@@ -769,8 +768,8 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 {
                     // Console.WriteLine("Counter set " + counterSet);
 
-                    StringCollection counterSetCounters = new StringCollection();
-                    StringCollection counterSetInstances = new StringCollection();
+                    List<string> counterSetCounters = new List<string>();
+                    List<string> counterSetInstances = new List<string>();
 
                     res = this.EnumObjectItems(machine, counterSet, ref counterSetCounters, ref counterSetInstances);
                     if (res != 0)
@@ -1056,9 +1055,9 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         public uint GetValidPaths(string machineName,
                                    string objectName,
-                                   ref StringCollection counters,
-                                   ref StringCollection instances,
-                                   ref StringCollection validPaths)
+                                   ref List<string> counters,
+                                   ref List<string> instances,
+                                   ref List<string> validPaths)
         {
             uint res = 0;
 
@@ -1097,7 +1096,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint AddCounters(ref StringCollection validPaths, bool bFlushOldCounters)
+        public uint AddCounters(ref List<string> validPaths, bool bFlushOldCounters)
         {
             Debug.Assert(_hQuery != null && !_hQuery.IsInvalid);
 
@@ -1281,9 +1280,9 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint ExpandWildCardPath(string path, out StringCollection expandedPaths)
+        public uint ExpandWildCardPath(string path, out List<string> expandedPaths)
         {
-            expandedPaths = new StringCollection();
+            expandedPaths = new List<string>();
             IntPtr pcchPathListLength = new IntPtr(0);
 
             uint res = PdhExpandWildCardPathH(_hDataSource,

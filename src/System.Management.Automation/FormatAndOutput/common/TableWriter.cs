@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Management.Automation.Internal;
 using System.Text;
 
@@ -256,7 +255,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return null;
             }
 
-            StringCollection[] scArray = new StringCollection[validColumnCount];
+            List<string>[] scArray = new List<string>[validColumnCount];
             bool addPadding = true;
             for (int k = 0; k < scArray.Length; k++)
             {
@@ -386,9 +385,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return rows;
         }
 
-        private StringCollection GenerateMultiLineRowField(string val, int k, int alignment, DisplayCells dc, bool addPadding)
+        private List<string> GenerateMultiLineRowField(string val, int k, int alignment, DisplayCells dc, bool addPadding)
         {
-            StringCollection sc = StringManipulationHelper.GenerateLines(dc, val,
+            List<string> sc = StringManipulationHelper.GenerateLines(dc, val,
                                         _si.columnInfo[k].width, _si.columnInfo[k].width);
             if (addPadding || alignment == TextAlignment.Right || alignment == TextAlignment.Center)
             {

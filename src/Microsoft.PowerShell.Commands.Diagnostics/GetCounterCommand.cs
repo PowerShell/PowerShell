@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -317,7 +316,7 @@ namespace Microsoft.PowerShell.Commands
         //
         private void ProcessListSetPerMachine(string machine)
         {
-            StringCollection counterSets = new StringCollection();
+            List<string> counterSets = new List<string>();
             uint res = _pdhHelper.EnumObjects(machine, ref counterSets);
             if (res != 0)
             {
@@ -330,7 +329,7 @@ namespace Microsoft.PowerShell.Commands
 
             CultureInfo culture = GetCurrentCulture();
             List<Tuple<char, char>> characterReplacementList = null;
-            StringCollection validPaths = new StringCollection();
+            List<string> validPaths = new List<string>();
 
             _cultureAndSpecialCharacterMap.TryGetValue(culture.Name, out characterReplacementList);
 
@@ -356,8 +355,8 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    StringCollection counterSetCounters = new StringCollection();
-                    StringCollection counterSetInstances = new StringCollection();
+                    List<string> counterSetCounters = new List<string>();
+                    List<string> counterSetInstances = new List<string>();
 
                     res = _pdhHelper.EnumObjectItems(machine, counterSet, ref counterSetCounters, ref counterSetInstances);
                     if (res == PdhResults.PDH_ACCESS_DENIED)
@@ -444,7 +443,7 @@ namespace Microsoft.PowerShell.Commands
                 _cultureAndSpecialCharacterMap.TryGetValue(culture.Name, out characterReplacementList);
             }
 
-            StringCollection allExpandedPaths = new StringCollection();
+            List<string> allExpandedPaths = new List<string>();
             foreach (string path in paths)
             {
                 string localizedPath = path;
@@ -468,7 +467,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                StringCollection expandedPaths;
+                List<string> expandedPaths;
                 res = _pdhHelper.ExpandWildCardPath(localizedPath, out expandedPaths);
                 if (res != 0)
                 {

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
@@ -185,7 +184,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// Ordered list of ETS type names this object is handling.
             /// </summary>
-            private StringCollection _applicableTypes = new StringCollection();
+            private List<string> _applicableTypes = new List<string>();
         }
 
         /// <summary>

@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            StringCollection pathsToParse = new StringCollection();
+            List<string> pathsToParse = new List<string>();
 
             if (Resolve)
             {

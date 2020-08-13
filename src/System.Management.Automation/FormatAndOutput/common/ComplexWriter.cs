@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Globalization;
 using System.Management.Automation.Internal;
 using System.Text;
@@ -168,7 +167,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // error checking on invalid values
 
             // generate the lines using the computed widths
-            StringCollection sc = StringManipulationHelper.GenerateLines(_lo.DisplayCells, _stringBuffer.ToString(),
+            List<string> list = StringManipulationHelper.GenerateLines(_lo.DisplayCells, _stringBuffer.ToString(),
                                         firstLineWidth, followingLinesWidth);
 
             // compute padding
@@ -187,7 +186,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // now write the lines on the screen
             bool firstLine = true;
-            foreach (string s in sc)
+            foreach (string s in list)
             {
                 if (firstLine)
                 {
@@ -388,7 +387,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             yield return result;
         }
 
-        internal static StringCollection GenerateLines(DisplayCells displayCells, string val, int firstLineLen, int followingLinesLen)
+        internal static List<string> GenerateLines(DisplayCells displayCells, string val, int firstLineLen, int followingLinesLen)
         {
             if (s_cultureCollection.Contains(CultureInfo.CurrentCulture.TwoLetterISOLanguageName))
             {
@@ -400,9 +399,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private static StringCollection GenerateLinesWithoutWordWrap(DisplayCells displayCells, string val, int firstLineLen, int followingLinesLen)
+        private static List<string> GenerateLinesWithoutWordWrap(DisplayCells displayCells, string val, int firstLineLen, int followingLinesLen)
         {
-            StringCollection retVal = new StringCollection();
+            List<string> retVal = new List<string>();
 
             if (string.IsNullOrEmpty(val))
             {
@@ -483,7 +482,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private sealed class SplitLinesAccumulator
         {
-            internal SplitLinesAccumulator(StringCollection retVal, int firstLineLen, int followingLinesLen)
+            internal SplitLinesAccumulator(List<string> retVal, int firstLineLen, int followingLinesLen)
             {
                 _retVal = retVal;
                 _firstLineLen = firstLineLen;
@@ -510,15 +509,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            private StringCollection _retVal;
+            private List<string> _retVal;
             private bool _addedFirstLine;
             private int _firstLineLen;
             private int _followingLinesLen;
         }
 
-        private static StringCollection GenerateLinesWithWordWrap(DisplayCells displayCells, string val, int firstLineLen, int followingLinesLen)
+        private static List<string> GenerateLinesWithWordWrap(DisplayCells displayCells, string val, int firstLineLen, int followingLinesLen)
         {
-            StringCollection retVal = new StringCollection();
+            List<string> retVal = new List<string>();
 
             if (string.IsNullOrEmpty(val))
             {
