@@ -838,6 +838,7 @@ namespace Microsoft.PowerShell.Commands
                 if (disposing)
                 {
                     _sender?.Dispose();
+                    _dnsLookupCancel.Dispose();
                 }
 
                 _disposed = true;
