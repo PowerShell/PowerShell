@@ -194,16 +194,23 @@ if ($dotnetUpdate.ShouldUpdate) {
 
     Find-Dotnet
 
-    if (-not (Get-PackageSource -Name 'dotnet5' -ErrorAction SilentlyContinue)) {
-        $nugetFeed = ([xml](Get-Content .\nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet5' } | Select-Object -ExpandProperty Value
-        Register-PackageSource -Name 'dotnet5' -Location $nugetFeed -ProviderName NuGet
-        Write-Verbose -Message "Register new package source 'dotnet5'" -verbose
-    }
+    $addDotnet5Source = (-not (Get-PackageSource -Name 'dotnet5' -ErrorAction SilentlyContinue))
+    $addDotnet5InternalSource = (-not (Get-PackageSource -Name 'dotnet5-internal' -ErrorAction SilentlyContinue))
 
-    if (-not (Get-PackageSource -Name 'dotnet5-internal' -ErrorAction SilentlyContinue)) {
-        $nugetFeed = ([xml](Get-Content .\nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet5' } | Select-Object -ExpandProperty Value
-        Register-PackageSource -Name 'dotnet5-internal' -Location $nugetFeed -ProviderName NuGet
-        Write-Verbose -Message "Register new package source 'dotnet5-internal'" -verbose
+    if ($addDotnet5Source -or $addDotnet5InternalSource) {
+        $nugetFileSources = ([xml](Get-Content .\nuget.config -Raw)).Configuration.packagesources.add
+
+        if ($addDotnet5Source) {
+            $dotnet5Feed = $nugetFileSources | Where-Object { $_.Key -eq 'dotnet5' } | Select-Object -ExpandProperty Value
+            Register-PackageSource -Name 'dotnet5' -Location $nugetFeed -ProviderName NuGet
+            Write-Verbose -Message "Register new package source 'dotnet5'" -verbose
+        }
+
+        if ($addDotnet5InternalSource) {
+            $dotnet5InternalFeed = $nugetFileSources | Where-Object { $_.Key -eq 'dotnet5-internal' } | Select-Object -ExpandProperty Value
+            Register-PackageSource -Name 'dotnet5-internal' -Location $nugetFeed -ProviderName NuGet
+            Write-Verbose -Message "Register new package source 'dotnet5-internal'" -verbose
+        }
     }
 
     ## Install latest version from the channel
