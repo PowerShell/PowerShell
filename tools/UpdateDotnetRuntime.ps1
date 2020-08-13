@@ -207,6 +207,7 @@ if ($dotnetUpdate.ShouldUpdate) {
         }
 
         if ($addDotnet5InternalSource -and $InteractiveAuth) {
+            # This NuGet feed is for internal to Microsoft use only.
             $dotnet5InternalFeed = 'https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet5-internal/nuget/v3/index.json'
             $updatedNugetFile = (Get-Content .\nuget.config -Raw) -replace "</packageSources>", "  <add key=`"dotnet5-internal`" value=`"$dotnet5InternalFeed`" />`r`n  </packageSources>"
             $updatedNugetFile | Out-File .\nuget.config -Force
