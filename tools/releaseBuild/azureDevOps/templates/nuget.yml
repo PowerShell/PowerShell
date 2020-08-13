@@ -152,10 +152,18 @@ jobs:
     displayName: Fake copy when not signing
     condition: eq(variables['SHOULD_SIGN'], 'false')
 
+  - pwsh: |
+      if (-not (Test-Path '$(System.ArtifactsDirectory)\signed\')) { $null = New-Item -ItemType Directory -Path '$(System.ArtifactsDirectory)\signed\' }
+      Copy-Item -Path '$(PackagePath)\*.nupkg' -Destination '$(System.ArtifactsDirectory)\signed\' -Verbose -Force
+      Copy-Item -Path '$(PackagePath)\globaltool\*.nupkg' -Destination '$(System.ArtifactsDirectory)\signed\' -Verbose -Force
+    displayName: Fake copy when not signing
+    condition: eq(variables['SHOULD_SIGN'], 'false')
+
   - powershell: |
       Import-Module "${env:REPOROOT}\build.psm1" -Force
       Get-ChildItem -Recurse "$(System.ArtifactsDirectory)\signed\*.nupkg" -Verbose | ForEach-Object {  Start-NativeExecution -sb { nuget.exe verify -All $_.FullName } }
     displayName: Verify all packages are signed
+    condition: eq(variables['SHOULD_SIGN'], 'true')
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
     displayName: 'Run MpCmdRun.exe'
@@ -171,9 +179,9 @@ jobs:
       artifactPath: '$(System.ArtifactsDirectory)\signed'
 
   - powershell: |
-      if (-not (Test-Path "$(System.ArtifactsDirectory)\signed\globaltool"))
+      if (-not (Test-Path "$(System.ArtifactsDirectory)\signed"))
       {
-        $null = New-Item -Path "$(System.ArtifactsDirectory)\signed\globaltool" -ItemType Directory -Force
+        $null = New-Item -Path "$(System.ArtifactsDirectory)\signed\globaltool" -ItemType Directory
       }
 
       Move-Item -Path "$(System.ArtifactsDirectory)\signed\PowerShell.*" -Destination "$(System.ArtifactsDirectory)\signed\globaltool" -Force
