@@ -149,6 +149,34 @@ stages:
       condition: succeededOrFailed()
 
     - pwsh: |
+        Import-Module .\tools\ci.psm1
+        Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+        Invoke-CITest -Purpose PwshwUnelevatedPesterTests -TagSet CI
+      displayName: Test - PwshwUnelevatedPesterTests - CI
+      condition: succeeded()
+
+    - pwsh: |
+        Import-Module .\tools\ci.psm1
+        Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+        Invoke-CITest -Purpose PwshwElevatedPesterTests -TagSet CI
+      displayName: Test - PwshwElevatedPesterTests - CI
+      condition: succeededOrFailed()
+
+    - pwsh: |
+        Import-Module .\tools\ci.psm1
+        Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+        Invoke-CITest -Purpose PwshwUnelevatedPesterTests -TagSet Others
+      displayName: Test - PwshwUnelevatedPesterTests - Others
+      condition: succeededOrFailed()
+
+    - pwsh: |
+        Import-Module .\tools\ci.psm1
+        Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+        Invoke-CITest -Purpose PwshwElevatedPesterTests -TagSet Others
+      displayName: Test - PwshwElevatedPesterTests - Others
+      condition: succeededOrFailed()
+
+    - pwsh: |
         Import-Module .\build.psm1
         $xUnitTestResultsFile = '$(System.ArtifactsDirectory)\xunit\xUnitTestResults.xml'
         Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
