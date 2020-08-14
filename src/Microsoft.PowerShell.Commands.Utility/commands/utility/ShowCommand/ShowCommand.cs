@@ -278,8 +278,8 @@ namespace Microsoft.PowerShell.Commands
             // errors are not created here, because there is a field for it used in the final pop up
             PSDataCollection<object> output = new PSDataCollection<object>();
 
-            output.DataAdded += new EventHandler<DataAddedEventArgs>(this.Output_DataAdded);
-            _errors.DataAdded += new EventHandler<DataAddedEventArgs>(this.Error_DataAdded);
+            output.DataAdded += this.Output_DataAdded;
+            _errors.DataAdded += this.Error_DataAdded;
 
             System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
             ps.Streams.Error = _errors;
