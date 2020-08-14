@@ -364,34 +364,7 @@ namespace System.Management.Automation.Security
                     return SystemEnforcementMode.None;
                 }
 
-                using (RegistryKey hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default))
-                {
-                    using (RegistryKey wldpPolicy = hklm.OpenSubKey("SYSTEM\\CurrentControlSet\\Control\\CI\\TRSData"))
-                    {
-                        if (wldpPolicy != null)
-                        {
-                            object exclusionPathsKey = wldpPolicy.GetValue("TestPath");
-
-                            wldpPolicy.Close();
-                            hklm.Close();
-
-                            if (exclusionPathsKey != null)
-                            {
-                                string[] exclusionPaths = (string[])exclusionPathsKey;
-                                foreach (string exclusionPath in exclusionPaths)
-                                {
-                                    if (path.IndexOf(exclusionPath, StringComparison.OrdinalIgnoreCase) >= 0)
-                                    {
-                                        return SystemEnforcementMode.None;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // No explicit debug allowance for the file, so return the system policy if there
-                // is one.
+                // No explicit debug allowance for the file, so return the system policy if there is one.
                 return s_systemLockdownPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             }
 
