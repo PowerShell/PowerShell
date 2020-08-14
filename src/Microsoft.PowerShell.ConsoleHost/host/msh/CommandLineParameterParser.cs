@@ -745,8 +745,8 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "login", "l"))
                 {
-                    // This handles -Login on Windows only, where it does nothing.
-                    // On *nix, -Login is handled much earlier to improve startup performance.
+                    // On Windows, '-Login' does nothing.
+                    // On *nix, '-Login' is already handled much earlier to improve startup performance, so we do nothing here.
                 }
                 else if (MatchSwitch(switchKey, "noexit", "noe"))
                 {
