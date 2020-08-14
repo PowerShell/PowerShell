@@ -34,37 +34,37 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The parameter Ast.
         /// </summary>
-        internal CommandParameterAst Parameter { get; protected set; }
+        internal CommandParameterAst Parameter { get; set; }
 
         /// <summary>
         /// The argument type.
         /// </summary>
-        internal AstParameterArgumentType ParameterArgumentType { get; protected set; }
+        internal AstParameterArgumentType ParameterArgumentType { get; set; }
 
         /// <summary>
         /// Indicate if the parameter is specified.
         /// </summary>
-        internal bool ParameterSpecified { get; protected set; } = false;
+        internal bool ParameterSpecified { get; set; } = false;
 
         /// <summary>
         /// Indicate if the parameter is specified.
         /// </summary>
-        internal bool ArgumentSpecified { get; protected set; } = false;
+        internal bool ArgumentSpecified { get; set; } = false;
 
         /// <summary>
         /// The parameter name.
         /// </summary>
-        internal string ParameterName { get; protected set; }
+        internal string ParameterName { get; set; }
 
         /// <summary>
         /// The parameter text.
         /// </summary>
-        internal string ParameterText { get; protected set; }
+        internal string ParameterText { get; set; }
 
         /// <summary>
         /// The argument type.
         /// </summary>
-        internal Type ArgumentType { get; protected set; }
+        internal Type ArgumentType { get; set; }
     }
 
     /// <summary>

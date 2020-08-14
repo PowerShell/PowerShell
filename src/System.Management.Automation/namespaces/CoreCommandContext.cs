@@ -547,7 +547,7 @@ namespace System.Management.Automation
         /// expansion. This is set when the user specifies the
         /// -LiteralPath parameter to one of the core commands.
         /// </summary>
-        internal bool SuppressWildcardExpansion { get; internal set; }
+        internal bool SuppressWildcardExpansion { get; set; }
 
         #region User feedback mechanisms
 
