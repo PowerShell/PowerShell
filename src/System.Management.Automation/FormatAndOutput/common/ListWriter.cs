@@ -207,21 +207,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             int fieldCellCount = _columnWidth - _propertyLabelsDisplayLength;
 
             // split the lines
-            List<string> list = StringManipulationHelper.GenerateLines(lo.DisplayCells, line, fieldCellCount, fieldCellCount);
+            List<string> lines = StringManipulationHelper.GenerateLines(lo.DisplayCells, line, fieldCellCount, fieldCellCount);
 
             // padding to use in the lines after the first
             string padding = StringUtil.Padding(_propertyLabelsDisplayLength);
 
             // display the string collection
-            for (int k = 0; k < list.Count; k++)
+            for (int k = 0; k < lines.Count; k++)
             {
                 if (k == 0)
                 {
-                    lo.WriteLine(prependString + list[k]);
+                    lo.WriteLine(prependString + lines[k]);
                 }
                 else
                 {
-                    lo.WriteLine(padding + list[k]);
+                    lo.WriteLine(padding + lines[k]);
                 }
             }
         }

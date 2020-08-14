@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // error checking on invalid values
 
             // generate the lines using the computed widths
-            List<string> list = StringManipulationHelper.GenerateLines(_lo.DisplayCells, _stringBuffer.ToString(),
+            List<string> lines = StringManipulationHelper.GenerateLines(_lo.DisplayCells, _stringBuffer.ToString(),
                                         firstLineWidth, followingLinesWidth);
 
             // compute padding
@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // now write the lines on the screen
             bool firstLine = true;
-            foreach (string s in list)
+            foreach (string s in lines)
             {
                 if (firstLine)
                 {
