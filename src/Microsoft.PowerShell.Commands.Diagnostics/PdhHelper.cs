@@ -535,7 +535,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint ConnectToDataSource(StringCollection blgFileNames)
+        public uint ConnectToDataSource(List<string> blgFileNames)
         {
             if (blgFileNames.Count == 1)
             {
