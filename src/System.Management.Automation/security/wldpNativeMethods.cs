@@ -48,14 +48,21 @@ namespace System.Management.Automation.Security
         /// <returns>An EnforcementMode that describes the system policy.</returns>
         public static SystemEnforcementMode GetSystemLockdownPolicy()
         {
-            if (s_allowDebugOverridePolicy || (s_systemLockdownPolicy == null))
+            if (s_systemLockdownPolicy == null)
             {
                 lock (s_systemLockdownPolicyLock)
                 {
-                    if (s_allowDebugOverridePolicy || (s_systemLockdownPolicy == null))
+                    if (s_systemLockdownPolicy == null)
                     {
-                        s_systemLockdownPolicy = GetLockdownPolicy(null, null);
+                        s_systemLockdownPolicy = GetLockdownPolicy(path: null, handle: null);
                     }
+                }
+            }
+            else if (s_allowDebugOverridePolicy)
+            {
+                lock (s_systemLockdownPolicyLock)
+                {
+                    s_systemLockdownPolicy = GetDebugLockdownPolicy(path: null);
                 }
             }
 
