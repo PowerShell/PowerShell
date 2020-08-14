@@ -477,7 +477,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        internal IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
             if (_dict != null)
             {
