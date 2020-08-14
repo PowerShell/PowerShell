@@ -125,7 +125,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public static Instruction Create(Type type)
+        internal static Instruction Create(Type type)
         {
             Debug.Assert(!type.IsEnum);
             switch (type.GetTypeCode())
@@ -258,7 +258,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public static Instruction Create(Type type)
+        internal static Instruction Create(Type type)
         {
             Debug.Assert(!type.IsEnum);
             switch (type.GetTypeCode())

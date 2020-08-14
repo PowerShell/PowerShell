@@ -200,7 +200,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Listen to this event to observe the PowerShell guid of the processed object.
         /// </summary>
-        public event EventHandler PowerShellGuidObserver;
+        internal event EventHandler PowerShellGuidObserver;
 
         #endregion
 
@@ -349,7 +349,7 @@ namespace System.Management.Automation.Remoting
         /// Copy the DataReceived event handlers to the supplied transport Manager.
         /// </summary>
         /// <param name="transportManager"></param>
-        public void MigrateDataReadyEventHandlers(BaseTransportManager transportManager)
+        internal void MigrateDataReadyEventHandlers(BaseTransportManager transportManager)
         {
             foreach (Delegate handler in transportManager.DataReceived.GetInvocationList())
             {

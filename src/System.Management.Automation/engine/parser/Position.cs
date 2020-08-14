@@ -112,12 +112,12 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Return a unique position representing an empty or missing position.
         /// </summary>
-        public static IScriptPosition EmptyPosition { get; } = new EmptyScriptPosition();
+        internal static IScriptPosition EmptyPosition { get; } = new EmptyScriptPosition();
 
         /// <summary>
         /// Return a unique extent representing an empty or missing extent.
         /// </summary>
-        public static IScriptExtent EmptyExtent { get; } = new EmptyScriptExtent();
+        internal static IScriptExtent EmptyExtent { get; } = new EmptyScriptExtent();
 
         /// <summary>
         /// Return a message that looks like:
@@ -396,7 +396,7 @@ namespace System.Management.Automation.Language
             set { _lineStartMap = value; }
         }
 
-        public string File { get; }
+        internal string File { get; }
 
         internal int LineFromOffset(int offset)
         {

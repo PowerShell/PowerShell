@@ -185,12 +185,12 @@ namespace System.Management.Automation
     /// </summary>
     internal class StopUpstreamCommandsException : FlowControlException
     {
-        public StopUpstreamCommandsException(InternalCommand requestingCommand)
+        internal StopUpstreamCommandsException(InternalCommand requestingCommand)
         {
             this.RequestingCommandProcessor = requestingCommand.Context.CurrentCommandProcessor;
         }
 
-        public CommandProcessorBase RequestingCommandProcessor { get; private set; }
+        internal CommandProcessorBase RequestingCommandProcessor { get; private set; }
     }
 
     #endregion Flow Control Exceptions
@@ -1670,7 +1670,7 @@ namespace System.Management.Automation
 
         private bool _firstElement = true;
 
-        public RangeEnumerator(int lowerBound, int upperBound)
+        internal RangeEnumerator(int lowerBound, int upperBound)
         {
             _lowerBound = lowerBound;
             _current = _lowerBound;
@@ -1711,7 +1711,7 @@ namespace System.Management.Automation
 
         private bool _firstElement = true;
 
-        public CharRangeEnumerator(char lowerBound, char upperBound)
+        internal CharRangeEnumerator(char lowerBound, char upperBound)
         {
             LowerBound = lowerBound;
             Current = lowerBound;

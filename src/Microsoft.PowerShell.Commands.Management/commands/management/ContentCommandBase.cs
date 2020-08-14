@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="pathInfo">
             /// The path information for which the cache will be bound.
             /// </param>
-            public ContentPathsCache(PathInfo pathInfo)
+            internal ContentPathsCache(PathInfo pathInfo)
             {
                 PathInfo = pathInfo;
             }
@@ -257,32 +257,32 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// The path information for the cached item.
             /// </summary>
-            public PathInfo PathInfo { get; }
+            internal PathInfo PathInfo { get; }
 
             /// <summary>
             /// The cached PSPath of the item.
             /// </summary>
-            public string PSPath { get; set; }
+            internal string PSPath { get; set; }
 
             /// <summary>
             /// The cached parent path of the item.
             /// </summary>
-            public string ParentPath { get; set; }
+            internal string ParentPath { get; set; }
 
             /// <summary>
             /// The cached drive for the item.
             /// </summary>
-            public PSDriveInfo Drive { get; set; }
+            internal PSDriveInfo Drive { get; set; }
 
             /// <summary>
             /// The cached provider of the item.
             /// </summary>
-            public ProviderInfo Provider { get; set; }
+            internal ProviderInfo Provider { get; set; }
 
             /// <summary>
             /// The cached child name of the item.
             /// </summary>
-            public string ChildName { get; set; }
+            internal string ChildName { get; set; }
 
             /// <summary>
             /// Attaches the cached notes to the specified PSObject.
@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
             /// <returns>
             /// The PSObject that was passed in with the cached notes added.
             /// </returns>
-            public PSObject AttachNotes(PSObject content)
+            internal PSObject AttachNotes(PSObject content)
             {
                 // Construct a provider qualified path as the Path note
 

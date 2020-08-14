@@ -672,16 +672,16 @@ namespace System.Management.Automation.Runspaces
 
         private class RunspaceEventQueueItem
         {
-            public RunspaceEventQueueItem(RunspaceStateInfo runspaceStateInfo, RunspaceAvailability currentAvailability, RunspaceAvailability newAvailability)
+            internal RunspaceEventQueueItem(RunspaceStateInfo runspaceStateInfo, RunspaceAvailability currentAvailability, RunspaceAvailability newAvailability)
             {
                 this.RunspaceStateInfo = runspaceStateInfo;
                 this.CurrentRunspaceAvailability = currentAvailability;
                 this.NewRunspaceAvailability = newAvailability;
             }
 
-            public RunspaceStateInfo RunspaceStateInfo;
-            public RunspaceAvailability CurrentRunspaceAvailability;
-            public RunspaceAvailability NewRunspaceAvailability;
+            internal RunspaceStateInfo RunspaceStateInfo;
+            internal RunspaceAvailability CurrentRunspaceAvailability;
+            internal RunspaceAvailability NewRunspaceAvailability;
         }
 
         // This is to notify once runspace has been opened (RunspaceState.Opened)
@@ -1315,7 +1315,7 @@ namespace System.Management.Automation.Runspaces
         /// Protected methods to be implemented by derived class.
         /// This does the actual work of getting scripts.
         /// </summary>
-        public PSLanguageMode LanguageMode
+        internal PSLanguageMode LanguageMode
         {
             get
             {

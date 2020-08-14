@@ -61,7 +61,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Received data.
         /// </summary>
-        public RemoteDataObject<PSObject> ReceivedData { get; }
+        internal RemoteDataObject<PSObject> ReceivedData { get; }
     }
 
     /// <summary>
@@ -327,7 +327,7 @@ namespace System.Management.Automation
         /// <summary>
         /// State information about the connection.
         /// </summary>
-        public RemoteSessionStateInfo SessionStateInfo { get; }
+        internal RemoteSessionStateInfo SessionStateInfo { get; }
 
         #endregion Public_Properties
     }

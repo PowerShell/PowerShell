@@ -15,7 +15,7 @@ namespace System.Management.Automation.ComInterop
 {
     internal static class ComRuntimeHelpers
     {
-        public static void CheckThrowException(int hresult, ref ExcepInfo excepInfo, ComMethodDesc method, object[] args, uint argErr)
+        internal static void CheckThrowException(int hresult, ref ExcepInfo excepInfo, ComMethodDesc method, object[] args, uint argErr)
         {
             if (ComHresults.IsSuccess(hresult))
             {
@@ -275,12 +275,12 @@ namespace System.Management.Automation.ComInterop
             }
         }
 
-        public static BoundDispEvent CreateComEvent(object rcw, Guid sourceIid, int dispid)
+        internal static BoundDispEvent CreateComEvent(object rcw, Guid sourceIid, int dispid)
         {
             return new BoundDispEvent(rcw, sourceIid, dispid);
         }
 
-        public static DispCallable CreateDispCallable(IDispatchComObject dispatch, ComMethodDesc method)
+        internal static DispCallable CreateDispCallable(IDispatchComObject dispatch, ComMethodDesc method)
         {
             return new DispCallable(dispatch, method.Name, method.DispId);
         }
@@ -296,8 +296,8 @@ namespace System.Management.Automation.ComInterop
     {
         #region public members
 
-        public static unsafe IntPtr ConvertInt32ByrefToPtr(ref int value) { return (IntPtr)System.Runtime.CompilerServices.Unsafe.AsPointer(ref value); }
-        public static unsafe IntPtr ConvertVariantByrefToPtr(ref Variant value) { return (IntPtr)System.Runtime.CompilerServices.Unsafe.AsPointer(ref value); }
+        internal static unsafe IntPtr ConvertInt32ByrefToPtr(ref int value) { return (IntPtr)System.Runtime.CompilerServices.Unsafe.AsPointer(ref value); }
+        internal static unsafe IntPtr ConvertVariantByrefToPtr(ref Variant value) { return (IntPtr)System.Runtime.CompilerServices.Unsafe.AsPointer(ref value); }
 
         internal static Variant GetVariantForObject(object obj)
         {
@@ -327,20 +327,20 @@ namespace System.Management.Automation.ComInterop
         }
 
         // This method is intended for use through reflection and should not be used directly
-        public static object GetObjectForVariant(Variant variant)
+        internal static object GetObjectForVariant(Variant variant)
         {
             IntPtr ptr = UnsafeMethods.ConvertVariantByrefToPtr(ref variant);
             return Marshal.GetObjectForNativeVariant(ptr);
         }
 
         // This method is intended for use through reflection and should only be used directly by IUnknownReleaseNotZero
-        public static unsafe int IUnknownRelease(IntPtr interfacePointer)
+        internal static unsafe int IUnknownRelease(IntPtr interfacePointer)
         {
             return ((delegate* stdcall<IntPtr, int>)(*(*(void***)interfacePointer + 2 /* IUnknown.Release slot */)))(interfacePointer);
         }
 
         // This method is intended for use through reflection and should not be used directly
-        public static void IUnknownReleaseNotZero(IntPtr interfacePointer)
+        internal static void IUnknownReleaseNotZero(IntPtr interfacePointer)
         {
             if (interfacePointer != IntPtr.Zero)
             {
@@ -349,7 +349,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         // This method is intended for use through reflection and should not be used directly
-        public static unsafe int IDispatchInvoke(
+        internal static unsafe int IDispatchInvoke(
             IntPtr dispatchPointer,
             int memberDispId,
             ComTypes.INVOKEKIND flags,
@@ -385,7 +385,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         // This method is intended for use through reflection and should not be used directly
-        public static IntPtr GetIdsOfNamedParameters(IDispatch dispatch, string[] names, int methodDispId, out GCHandle pinningHandle)
+        internal static IntPtr GetIdsOfNamedParameters(IDispatch dispatch, string[] names, int methodDispId, out GCHandle pinningHandle)
         {
             pinningHandle = GCHandle.Alloc(null, GCHandleType.Pinned);
             int[] dispIds = new int[names.Length];

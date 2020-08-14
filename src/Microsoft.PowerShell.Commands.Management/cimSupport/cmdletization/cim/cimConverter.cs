@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Cim
             private GCHandle _gcHandle;
             private string _string;
 
-            public string Value { get { return _string; } }
+            internal string Value { get { return _string; } }
 
             internal SensitiveString(int numberOfCharacters)
             {

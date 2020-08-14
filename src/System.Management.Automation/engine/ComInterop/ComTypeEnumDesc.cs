@@ -64,7 +64,7 @@ namespace System.Management.Automation.ComInterop
             return new TypeEnumMetaObject(this, parameter);
         }
 
-        public object GetValue(string enumValueName)
+        internal object GetValue(string enumValueName)
         {
             for (int i = 0; i < _memberNames.Length; i++)
             {
@@ -88,7 +88,7 @@ namespace System.Management.Automation.ComInterop
             return false;
         }
 
-        public string[] GetMemberNames()
+        internal string[] GetMemberNames()
         {
             return (string[])_memberNames.Clone();
         }

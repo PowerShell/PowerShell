@@ -118,7 +118,7 @@ namespace System.Management.Automation.Tracing
             /// </summary>
             /// <param name="tracer"></param>
             /// <param name="callback"></param>
-            public CorrelatedCallback(EtwActivity tracer, CallbackNoParameter callback)
+            internal CorrelatedCallback(EtwActivity tracer, CallbackNoParameter callback)
             {
                 if (callback == null)
                 {
@@ -140,7 +140,7 @@ namespace System.Management.Automation.Tracing
             /// </summary>
             /// <param name="tracer"></param>
             /// <param name="callback"></param>
-            public CorrelatedCallback(EtwActivity tracer, CallbackWithState callback)
+            internal CorrelatedCallback(EtwActivity tracer, CallbackWithState callback)
             {
                 if (callback == null)
                 {
@@ -162,7 +162,7 @@ namespace System.Management.Automation.Tracing
             /// </summary>
             /// <param name="tracer"></param>
             /// <param name="callback"></param>
-            public CorrelatedCallback(EtwActivity tracer, AsyncCallback callback)
+            internal CorrelatedCallback(EtwActivity tracer, AsyncCallback callback)
             {
                 if (callback == null)
                 {
@@ -189,7 +189,7 @@ namespace System.Management.Automation.Tracing
             /// </summary>
             /// <param name="tracer"></param>
             /// <param name="callback"></param>
-            public CorrelatedCallback(EtwActivity tracer, CallbackWithStateAndArgs callback)
+            internal CorrelatedCallback(EtwActivity tracer, CallbackWithStateAndArgs callback)
             {
                 if (callback == null)
                 {
@@ -209,7 +209,7 @@ namespace System.Management.Automation.Tracing
             /// <summary>
             /// This is the wrapper on the actual callback.
             /// </summary>
-            public void Callback(object state, System.Timers.ElapsedEventArgs args)
+            internal void Callback(object state, System.Timers.ElapsedEventArgs args)
             {
                 Debug.Assert(callbackWithStateAndArgs != null, "callback is NULL.  There MUST always ba a valid callback!");
 
@@ -228,7 +228,7 @@ namespace System.Management.Automation.Tracing
             /// <summary>
             /// This is the wrapper on the actual callback.
             /// </summary>
-            public void Callback()
+            internal void Callback()
             {
                 Debug.Assert(callbackNoParam != null, "callback is NULL.  There MUST always ba a valid callback");
 
@@ -239,7 +239,7 @@ namespace System.Management.Automation.Tracing
             /// <summary>
             /// This is the wrapper on the actual callback.
             /// </summary>
-            public void Callback(object state)
+            internal void Callback(object state)
             {
                 Debug.Assert(callbackWithState != null, "callback is NULL.  There MUST always ba a valid callback!");
 
@@ -250,7 +250,7 @@ namespace System.Management.Automation.Tracing
             /// <summary>
             /// This is the wrapper on the actual callback.
             /// </summary>
-            public void Callback(IAsyncResult asyncResult)
+            internal void Callback(IAsyncResult asyncResult)
             {
                 Debug.Assert(asyncCallback != null, "callback is NULL.  There MUST always ba a valid callback!");
 

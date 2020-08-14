@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
         // For the wildcard case, lets us know if we can reuse the callsite:
         private string _lastUsedPropertyName;
 
-        public object GetValue(PSObject inputObject, string propertyName)
+        internal object GetValue(PSObject inputObject, string propertyName)
         {
             Dbg.Assert(!WildcardPattern.ContainsWildcardCharacters(propertyName), "propertyName should be pre-resolved by caller");
 

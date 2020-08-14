@@ -57,13 +57,13 @@ namespace System.Management.Automation.Interpreter
         {
             private readonly InstructionArray _array;
 
-            public DebugView(InstructionArray array)
+            internal DebugView(InstructionArray array)
             {
                 _array = array;
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public InstructionList.DebugView.InstructionView[] A0
+            internal InstructionList.DebugView.InstructionView[] A0
             {
                 get
                 {
@@ -103,13 +103,13 @@ namespace System.Management.Automation.Interpreter
         {
             private readonly InstructionList _list;
 
-            public DebugView(InstructionList list)
+            internal DebugView(InstructionList list)
             {
                 _list = list;
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public InstructionView[] A0
+            internal InstructionView[] A0
             {
                 get
                 {
@@ -181,7 +181,7 @@ namespace System.Management.Automation.Interpreter
                     return _instruction.ContinuationsBalance + "/" + _instruction.StackBalance;
                 }
 
-                public InstructionView(Instruction instruction, string name, int index, int stackDepth, int continuationsDepth)
+                internal InstructionView(Instruction instruction, string name, int index, int stackDepth, int continuationsDepth)
                 {
                     _instruction = instruction;
                     _name = name;
@@ -196,7 +196,7 @@ namespace System.Management.Automation.Interpreter
 
         #region Core Emit Ops
 
-        public void Emit(Instruction instruction)
+        internal void Emit(Instruction instruction)
         {
             _instructions.Add(instruction);
             UpdateStackDepth(instruction);
@@ -228,7 +228,7 @@ namespace System.Management.Automation.Interpreter
         /// Attaches a cookie to the last emitted instruction.
         /// </summary>
         [Conditional("DEBUG")]
-        public void SetDebugCookie(object cookie)
+        internal void SetDebugCookie(object cookie)
         {
 #if DEBUG
             if (_debugCookies == null)
@@ -241,22 +241,22 @@ namespace System.Management.Automation.Interpreter
 #endif
         }
 
-        public int Count
+        internal int Count
         {
             get { return _instructions.Count; }
         }
 
-        public int CurrentStackDepth
+        internal int CurrentStackDepth
         {
             get { return _currentStackDepth; }
         }
 
-        public int CurrentContinuationsDepth
+        internal int CurrentContinuationsDepth
         {
             get { return _currentContinuationsDepth; }
         }
 
-        public int MaxStackDepth
+        internal int MaxStackDepth
         {
             get { return _maxStackDepth; }
         }
@@ -289,7 +289,7 @@ namespace System.Management.Automation.Interpreter
             });
         }
 #endif
-        public InstructionArray ToArray()
+        internal InstructionArray ToArray()
         {
 #if STATS
             lock (_executedInstructions) {
@@ -332,12 +332,12 @@ namespace System.Management.Automation.Interpreter
         private static Instruction[] s_ints;
         private static Instruction[] s_loadObjectCached;
 
-        public void EmitLoad(object value)
+        internal void EmitLoad(object value)
         {
             EmitLoad(value, null);
         }
 
-        public void EmitLoad(bool value)
+        internal void EmitLoad(bool value)
         {
             if ((bool)value)
             {
@@ -349,7 +349,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public void EmitLoad(object value, Type type)
+        internal void EmitLoad(object value, Type type)
         {
             if (value == null)
             {
@@ -403,12 +403,12 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public void EmitDup()
+        internal void EmitDup()
         {
             Emit(DupInstruction.Instance);
         }
 
-        public void EmitPop()
+        internal void EmitPop()
         {
             Emit(PopInstruction.Instance);
         }
@@ -447,7 +447,7 @@ namespace System.Management.Automation.Interpreter
         private static Instruction[] s_parameterBox;
         private static Instruction[] s_parameter;
 
-        public void EmitLoadLocal(int index)
+        internal void EmitLoadLocal(int index)
         {
             if (s_loadLocal == null)
             {
@@ -464,7 +464,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public void EmitLoadLocalBoxed(int index)
+        internal void EmitLoadLocalBoxed(int index)
         {
             Emit(LoadLocalBoxed(index));
         }
@@ -486,7 +486,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public void EmitLoadLocalFromClosure(int index)
+        internal void EmitLoadLocalFromClosure(int index)
         {
             if (s_loadLocalFromClosure == null)
             {
@@ -503,7 +503,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public void EmitLoadLocalFromClosureBoxed(int index)
+        internal void EmitLoadLocalFromClosureBoxed(int index)
         {
             if (s_loadLocalFromClosureBoxed == null)
             {
@@ -520,7 +520,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public void EmitAssignLocal(int index)
+        internal void EmitAssignLocal(int index)
         {
             if (s_assignLocal == null)
             {
@@ -537,7 +537,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public void EmitStoreLocal(int index)
+        internal void EmitStoreLocal(int index)
         {
             if (s_storeLocal == null)
             {
@@ -554,7 +554,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public void EmitAssignLocalBoxed(int index)
+        internal void EmitAssignLocalBoxed(int index)
         {
             Emit(AssignLocalBoxed(index));
         }
@@ -576,7 +576,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public void EmitStoreLocalBoxed(int index)
+        internal void EmitStoreLocalBoxed(int index)
         {
             Emit(StoreLocalBoxed(index));
         }
@@ -598,7 +598,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public void EmitAssignLocalToClosure(int index)
+        internal void EmitAssignLocalToClosure(int index)
         {
             if (s_assignLocalToClosure == null)
             {
@@ -615,13 +615,13 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public void EmitStoreLocalToClosure(int index)
+        internal void EmitStoreLocalToClosure(int index)
         {
             EmitAssignLocalToClosure(index);
             EmitPop();
         }
 
-        public void EmitInitializeLocal(int index, Type type)
+        internal void EmitInitializeLocal(int index, Type type)
         {
             object value = ScriptingRuntimeHelpers.GetPrimitiveDefaultValue(type);
             if (value != null)
@@ -703,7 +703,7 @@ namespace System.Management.Automation.Interpreter
             return new InitializeLocalInstruction.ImmutableBox(index, null);
         }
 
-        public void EmitNewRuntimeVariables(int count)
+        internal void EmitNewRuntimeVariables(int count)
         {
             Emit(new RuntimeVariablesInstruction(count));
         }
@@ -712,7 +712,7 @@ namespace System.Management.Automation.Interpreter
 
         #region Array Operations
 
-        public void EmitGetArrayItem(Type arrayType)
+        internal void EmitGetArrayItem(Type arrayType)
         {
             var elementType = arrayType.GetElementType();
             if (elementType.IsClass || elementType.IsInterface)
@@ -725,7 +725,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public void EmitSetArrayItem(Type arrayType)
+        internal void EmitSetArrayItem(Type arrayType)
         {
             var elementType = arrayType.GetElementType();
             if (elementType.IsClass || elementType.IsInterface)
@@ -738,17 +738,17 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public void EmitNewArray(Type elementType)
+        internal void EmitNewArray(Type elementType)
         {
             Emit(InstructionFactory.GetFactory(elementType).NewArray());
         }
 
-        public void EmitNewArrayBounds(Type elementType, int rank)
+        internal void EmitNewArrayBounds(Type elementType, int rank)
         {
             Emit(new NewArrayBoundsInstruction(elementType, rank));
         }
 
-        public void EmitNewArrayInit(Type elementType, int elementCount)
+        internal void EmitNewArrayInit(Type elementType, int elementCount)
         {
             // To avoid lock contention in InstructionFactory.GetFactory, we special case the most common
             // types of arrays that the compiler creates.
@@ -778,7 +778,7 @@ namespace System.Management.Automation.Interpreter
 
         #region Arithmetic Operations
 
-        public void EmitAdd(Type type, bool @checked)
+        internal void EmitAdd(Type type, bool @checked)
         {
             if (@checked)
             {
@@ -791,7 +791,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
-        public void EmitSub(Type type, bool @checked)
+        internal void EmitSub(Type type, bool @checked)
         {
             if (@checked)
             {
@@ -804,7 +804,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
-        public void EmitMul(Type type, bool @checked)
+        internal void EmitMul(Type type, bool @checked)
         {
             if (@checked)
             {
@@ -816,7 +816,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public void EmitDiv(Type type)
+        internal void EmitDiv(Type type)
         {
             Emit(DivInstruction.Create(type));
         }
@@ -825,34 +825,34 @@ namespace System.Management.Automation.Interpreter
 
         #region Comparisons
 
-        public void EmitEqual(Type type)
+        internal void EmitEqual(Type type)
         {
             Emit(EqualInstruction.Create(type));
         }
 
-        public void EmitNotEqual(Type type)
+        internal void EmitNotEqual(Type type)
         {
             Emit(NotEqualInstruction.Create(type));
         }
 
-        public void EmitLessThan(Type type)
+        internal void EmitLessThan(Type type)
         {
             Emit(LessThanInstruction.Create(type));
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
-        public void EmitLessThanOrEqual(Type type)
+        internal void EmitLessThanOrEqual(Type type)
         {
             throw new NotSupportedException();
         }
 
-        public void EmitGreaterThan(Type type)
+        internal void EmitGreaterThan(Type type)
         {
             Emit(GreaterThanInstruction.Create(type));
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
-        public void EmitGreaterThanOrEqual(Type type)
+        internal void EmitGreaterThanOrEqual(Type type)
         {
             throw new NotSupportedException();
         }
@@ -861,12 +861,12 @@ namespace System.Management.Automation.Interpreter
 
         #region Conversions
 
-        public void EmitNumericConvertChecked(TypeCode from, TypeCode to)
+        internal void EmitNumericConvertChecked(TypeCode from, TypeCode to)
         {
             Emit(new NumericConvertInstruction.Checked(from, to));
         }
 
-        public void EmitNumericConvertUnchecked(TypeCode from, TypeCode to)
+        internal void EmitNumericConvertUnchecked(TypeCode from, TypeCode to)
         {
             Emit(new NumericConvertInstruction.Unchecked(from, to));
         }
@@ -875,7 +875,7 @@ namespace System.Management.Automation.Interpreter
 
         #region Boolean Operators
 
-        public void EmitNot()
+        internal void EmitNot()
         {
             Emit(NotInstruction.Instance);
         }
@@ -884,12 +884,12 @@ namespace System.Management.Automation.Interpreter
 
         #region Types
 
-        public void EmitDefaultValue(Type type)
+        internal void EmitDefaultValue(Type type)
         {
             Emit(InstructionFactory.GetFactory(type).DefaultValue());
         }
 
-        public void EmitNew(ConstructorInfo constructorInfo)
+        internal void EmitNew(ConstructorInfo constructorInfo)
         {
             Emit(new NewInstruction(constructorInfo));
         }
@@ -899,17 +899,17 @@ namespace System.Management.Automation.Interpreter
             Emit(new CreateDelegateInstruction(creator));
         }
 
-        public void EmitTypeEquals()
+        internal void EmitTypeEquals()
         {
             Emit(TypeEqualsInstruction.Instance);
         }
 
-        public void EmitTypeIs(Type type)
+        internal void EmitTypeIs(Type type)
         {
             Emit(InstructionFactory.GetFactory(type).TypeIs());
         }
 
-        public void EmitTypeAs(Type type)
+        internal void EmitTypeAs(Type type)
         {
             Emit(InstructionFactory.GetFactory(type).TypeAs());
         }
@@ -920,7 +920,7 @@ namespace System.Management.Automation.Interpreter
 
         private static readonly Dictionary<FieldInfo, Instruction> s_loadFields = new Dictionary<FieldInfo, Instruction>();
 
-        public void EmitLoadField(FieldInfo field)
+        internal void EmitLoadField(FieldInfo field)
         {
             Emit(GetLoadField(field));
         }
@@ -948,7 +948,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public void EmitStoreField(FieldInfo field)
+        internal void EmitStoreField(FieldInfo field)
         {
             if (field.IsStatic)
             {
@@ -960,12 +960,12 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public void EmitCall(MethodInfo method)
+        internal void EmitCall(MethodInfo method)
         {
             EmitCall(method, method.GetParameters());
         }
 
-        public void EmitCall(MethodInfo method, ParameterInfo[] parameters)
+        internal void EmitCall(MethodInfo method, ParameterInfo[] parameters)
         {
             Emit(CallInstruction.Create(method, parameters));
         }
@@ -974,7 +974,7 @@ namespace System.Management.Automation.Interpreter
 
         #region Dynamic
 
-        public void EmitDynamic(Type type, CallSiteBinder binder)
+        internal void EmitDynamic(Type type, CallSiteBinder binder)
         {
             Emit(CreateDynamicInstruction(type, binder));
         }
@@ -984,77 +984,77 @@ namespace System.Management.Automation.Interpreter
         // *** BEGIN GENERATED CODE ***
         // generated by function: gen_instructionlist_factory from: generate_dynamic_instructions.py
 
-        public void EmitDynamic<T0, TRet>(CallSiteBinder binder)
+        internal void EmitDynamic<T0, TRet>(CallSiteBinder binder)
         {
             Emit(DynamicInstruction<T0, TRet>.Factory(binder));
         }
 
-        public void EmitDynamic<T0, T1, TRet>(CallSiteBinder binder)
+        internal void EmitDynamic<T0, T1, TRet>(CallSiteBinder binder)
         {
             Emit(DynamicInstruction<T0, T1, TRet>.Factory(binder));
         }
 
-        public void EmitDynamic<T0, T1, T2, TRet>(CallSiteBinder binder)
+        internal void EmitDynamic<T0, T1, T2, TRet>(CallSiteBinder binder)
         {
             Emit(DynamicInstruction<T0, T1, T2, TRet>.Factory(binder));
         }
 
-        public void EmitDynamic<T0, T1, T2, T3, TRet>(CallSiteBinder binder)
+        internal void EmitDynamic<T0, T1, T2, T3, TRet>(CallSiteBinder binder)
         {
             Emit(DynamicInstruction<T0, T1, T2, T3, TRet>.Factory(binder));
         }
 
-        public void EmitDynamic<T0, T1, T2, T3, T4, TRet>(CallSiteBinder binder)
+        internal void EmitDynamic<T0, T1, T2, T3, T4, TRet>(CallSiteBinder binder)
         {
             Emit(DynamicInstruction<T0, T1, T2, T3, T4, TRet>.Factory(binder));
         }
 
-        public void EmitDynamic<T0, T1, T2, T3, T4, T5, TRet>(CallSiteBinder binder)
+        internal void EmitDynamic<T0, T1, T2, T3, T4, T5, TRet>(CallSiteBinder binder)
         {
             Emit(DynamicInstruction<T0, T1, T2, T3, T4, T5, TRet>.Factory(binder));
         }
 
-        public void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, TRet>(CallSiteBinder binder)
+        internal void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, TRet>(CallSiteBinder binder)
         {
             Emit(DynamicInstruction<T0, T1, T2, T3, T4, T5, T6, TRet>.Factory(binder));
         }
 
-        public void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, T7, TRet>(CallSiteBinder binder)
+        internal void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, T7, TRet>(CallSiteBinder binder)
         {
             Emit(DynamicInstruction<T0, T1, T2, T3, T4, T5, T6, T7, TRet>.Factory(binder));
         }
 
-        public void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, T7, T8, TRet>(CallSiteBinder binder)
+        internal void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, T7, T8, TRet>(CallSiteBinder binder)
         {
             Emit(DynamicInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8, TRet>.Factory(binder));
         }
 
-        public void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, TRet>(CallSiteBinder binder)
+        internal void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, TRet>(CallSiteBinder binder)
         {
             Emit(DynamicInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, TRet>.Factory(binder));
         }
 
-        public void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TRet>(CallSiteBinder binder)
+        internal void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TRet>(CallSiteBinder binder)
         {
             Emit(DynamicInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TRet>.Factory(binder));
         }
 
-        public void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TRet>(CallSiteBinder binder)
+        internal void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TRet>(CallSiteBinder binder)
         {
             Emit(DynamicInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TRet>.Factory(binder));
         }
 
-        public void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TRet>(CallSiteBinder binder)
+        internal void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TRet>(CallSiteBinder binder)
         {
             Emit(DynamicInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TRet>.Factory(binder));
         }
 
-        public void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TRet>(CallSiteBinder binder)
+        internal void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TRet>(CallSiteBinder binder)
         {
             Emit(DynamicInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TRet>.Factory(binder));
         }
 
-        public void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TRet>(CallSiteBinder binder)
+        internal void EmitDynamic<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TRet>(CallSiteBinder binder)
         {
             Emit(DynamicInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TRet>.Factory(binder));
         }
@@ -1123,7 +1123,7 @@ namespace System.Management.Automation.Interpreter
             return result;
         }
 
-        public BranchLabel MakeLabel()
+        internal BranchLabel MakeLabel()
         {
             if (_labels == null)
             {
@@ -1152,19 +1152,19 @@ namespace System.Management.Automation.Interpreter
             return label.LabelIndex;
         }
 
-        public int MarkRuntimeLabel()
+        internal int MarkRuntimeLabel()
         {
             BranchLabel handlerLabel = MakeLabel();
             MarkLabel(handlerLabel);
             return EnsureLabelIndex(handlerLabel);
         }
 
-        public void MarkLabel(BranchLabel label)
+        internal void MarkLabel(BranchLabel label)
         {
             label.Mark(this);
         }
 
-        public void EmitGoto(BranchLabel label, bool hasResult, bool hasValue)
+        internal void EmitGoto(BranchLabel label, bool hasResult, bool hasValue)
         {
             Emit(GotoInstruction.Create(EnsureLabelIndex(label), hasResult, hasValue));
         }
@@ -1175,92 +1175,92 @@ namespace System.Management.Automation.Interpreter
             label.AddBranch(this, Count - 1);
         }
 
-        public void EmitBranch(BranchLabel label)
+        internal void EmitBranch(BranchLabel label)
         {
             EmitBranch(new BranchInstruction(), label);
         }
 
-        public void EmitBranch(BranchLabel label, bool hasResult, bool hasValue)
+        internal void EmitBranch(BranchLabel label, bool hasResult, bool hasValue)
         {
             EmitBranch(new BranchInstruction(hasResult, hasValue), label);
         }
 
-        public void EmitCoalescingBranch(BranchLabel leftNotNull)
+        internal void EmitCoalescingBranch(BranchLabel leftNotNull)
         {
             EmitBranch(new CoalescingBranchInstruction(), leftNotNull);
         }
 
-        public void EmitBranchTrue(BranchLabel elseLabel)
+        internal void EmitBranchTrue(BranchLabel elseLabel)
         {
             EmitBranch(new BranchTrueInstruction(), elseLabel);
         }
 
-        public void EmitBranchFalse(BranchLabel elseLabel)
+        internal void EmitBranchFalse(BranchLabel elseLabel)
         {
             EmitBranch(new BranchFalseInstruction(), elseLabel);
         }
 
-        public void EmitThrow()
+        internal void EmitThrow()
         {
             Emit(ThrowInstruction.Throw);
         }
 
-        public void EmitThrowVoid()
+        internal void EmitThrowVoid()
         {
             Emit(ThrowInstruction.VoidThrow);
         }
 
-        public void EmitRethrow()
+        internal void EmitRethrow()
         {
             Emit(ThrowInstruction.Rethrow);
         }
 
-        public void EmitRethrowVoid()
+        internal void EmitRethrowVoid()
         {
             Emit(ThrowInstruction.VoidRethrow);
         }
 
-        public void EmitEnterTryFinally(BranchLabel finallyStartLabel)
+        internal void EmitEnterTryFinally(BranchLabel finallyStartLabel)
         {
             Emit(EnterTryCatchFinallyInstruction.CreateTryFinally(EnsureLabelIndex(finallyStartLabel)));
         }
 
-        public void EmitEnterTryCatch()
+        internal void EmitEnterTryCatch()
         {
             Emit(EnterTryCatchFinallyInstruction.CreateTryCatch());
         }
 
-        public void EmitEnterFinally(BranchLabel finallyStartLabel)
+        internal void EmitEnterFinally(BranchLabel finallyStartLabel)
         {
             Emit(EnterFinallyInstruction.Create(EnsureLabelIndex(finallyStartLabel)));
         }
 
-        public void EmitLeaveFinally()
+        internal void EmitLeaveFinally()
         {
             Emit(LeaveFinallyInstruction.Instance);
         }
 
-        public void EmitLeaveFault(bool hasValue)
+        internal void EmitLeaveFault(bool hasValue)
         {
             Emit(hasValue ? LeaveFaultInstruction.NonVoid : LeaveFaultInstruction.Void);
         }
 
-        public void EmitEnterExceptionHandlerNonVoid()
+        internal void EmitEnterExceptionHandlerNonVoid()
         {
             Emit(EnterExceptionHandlerInstruction.NonVoid);
         }
 
-        public void EmitEnterExceptionHandlerVoid()
+        internal void EmitEnterExceptionHandlerVoid()
         {
             Emit(EnterExceptionHandlerInstruction.Void);
         }
 
-        public void EmitLeaveExceptionHandler(bool hasValue, BranchLabel tryExpressionEndLabel)
+        internal void EmitLeaveExceptionHandler(bool hasValue, BranchLabel tryExpressionEndLabel)
         {
             Emit(LeaveExceptionHandlerInstruction.Create(EnsureLabelIndex(tryExpressionEndLabel), hasValue));
         }
 
-        public void EmitSwitch(Dictionary<int, int> cases)
+        internal void EmitSwitch(Dictionary<int, int> cases)
         {
             Emit(new SwitchInstruction(cases));
         }

@@ -24,7 +24,7 @@ namespace System.Management.Automation.InteropServices
         /// handling of this scenario - we are pre-processing delegate's signature by looking for 'ref enums'
         /// and cache the types required for such coercion.
         /// </summary>
-        public class DelegateWrapper
+        internal class DelegateWrapper
         {
             private bool _once;
             private int _expectedParamsCount;
@@ -109,12 +109,12 @@ namespace System.Management.Automation.InteropServices
         private readonly int _dispid;
         private ComEventsMethod? _next;
 
-        public ComEventsMethod(int dispid)
+        internal ComEventsMethod(int dispid)
         {
             _dispid = dispid;
         }
 
-        public static ComEventsMethod? Find(ComEventsMethod? methods, int dispid)
+        internal static ComEventsMethod? Find(ComEventsMethod? methods, int dispid)
         {
             while (methods != null && methods._dispid != dispid)
             {
@@ -124,13 +124,13 @@ namespace System.Management.Automation.InteropServices
             return methods;
         }
 
-        public static ComEventsMethod Add(ComEventsMethod? methods, ComEventsMethod method)
+        internal static ComEventsMethod Add(ComEventsMethod? methods, ComEventsMethod method)
         {
             method._next = methods;
             return method;
         }
 
-        public static ComEventsMethod? Remove(ComEventsMethod methods, ComEventsMethod method)
+        internal static ComEventsMethod? Remove(ComEventsMethod methods, ComEventsMethod method)
         {
             Debug.Assert(methods != null, "removing method from empty methods collection");
             Debug.Assert(method != null, "specify method is null");
@@ -157,7 +157,7 @@ namespace System.Management.Automation.InteropServices
             }
         }
 
-        public bool Empty
+        internal bool Empty
         {
             get
             {
@@ -168,7 +168,7 @@ namespace System.Management.Automation.InteropServices
             }
         }
 
-        public void AddDelegate(Delegate d, bool wrapArgs = false)
+        internal void AddDelegate(Delegate d, bool wrapArgs = false)
         {
             lock (_delegateWrappers)
             {
@@ -187,7 +187,7 @@ namespace System.Management.Automation.InteropServices
             }
         }
 
-        public void RemoveDelegate(Delegate d, bool wrapArgs = false)
+        internal void RemoveDelegate(Delegate d, bool wrapArgs = false)
         {
             lock (_delegateWrappers)
             {
@@ -224,7 +224,7 @@ namespace System.Management.Automation.InteropServices
             }
         }
 
-        public void RemoveDelegates(Func<Delegate, bool> condition)
+        internal void RemoveDelegates(Func<Delegate, bool> condition)
         {
             lock (_delegateWrappers)
             {
@@ -258,7 +258,7 @@ namespace System.Management.Automation.InteropServices
             }
         }
 
-        public object? Invoke(object[] args)
+        internal object? Invoke(object[] args)
         {
             Debug.Assert(!Empty);
             object? result = null;

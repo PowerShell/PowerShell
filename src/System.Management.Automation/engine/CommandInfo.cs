@@ -480,8 +480,8 @@ namespace System.Management.Automation
 
         private class GetMergedCommandParameterMetadataSafelyEventArgs : EventArgs
         {
-            public MergedCommandParameterMetadata Result;
-            public ExceptionDispatchInfo Exception;
+            internal MergedCommandParameterMetadata Result;
+            internal ExceptionDispatchInfo Exception;
         }
 
         private void OnGetMergedCommandParameterMetadataSafelyEventHandler(object sender, PSEventArgs args)
@@ -906,13 +906,13 @@ namespace System.Management.Automation
     [DebuggerDisplay("{PSTypeName} {Name}")]
     internal struct PSMemberNameAndType
     {
-        public readonly string Name;
+        internal readonly string Name;
 
-        public readonly PSTypeName PSTypeName;
+        internal readonly PSTypeName PSTypeName;
 
-        public readonly object Value;
+        internal readonly object Value;
 
-        public PSMemberNameAndType(string name, PSTypeName typeName, object value = null)
+        internal PSMemberNameAndType(string name, PSTypeName typeName, object value = null)
         {
             Name = name;
             PSTypeName = typeName;
@@ -989,7 +989,7 @@ namespace System.Management.Automation
             return builder.ToString();
         }
 
-        public IList<PSMemberNameAndType> Members { get; }
+        internal IList<PSMemberNameAndType> Members { get; }
     }
 
     internal interface IScriptCommandInfo

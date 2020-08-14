@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands
 
         private class DuplicateMemberHashSet : HashSet<string>
         {
-            public DuplicateMemberHashSet(int capacity)
+            internal DuplicateMemberHashSet(int capacity)
                 : base(capacity, StringComparer.OrdinalIgnoreCase)
             {
             }

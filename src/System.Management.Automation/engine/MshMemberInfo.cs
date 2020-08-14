@@ -989,7 +989,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class PSInferredProperty : PSPropertyInfo
     {
-        public PSInferredProperty(string name, PSTypeName typeName)
+        internal PSInferredProperty(string name, PSTypeName typeName)
         {
             this.name = name;
             TypeName = typeName;
@@ -1913,12 +1913,12 @@ namespace System.Management.Automation
         /// <remarks>
         /// If <c>null</c> then there are no constraints
         /// </remarks>
-        public Type MethodTargetType { get; }
+        internal Type MethodTargetType { get; }
 
         /// <remarks>
         /// If <c>null</c> then there are no constraints
         /// </remarks>
-        public IEnumerable<Type> ParameterTypes => _parameterTypes;
+        internal IEnumerable<Type> ParameterTypes => _parameterTypes;
 
         private readonly Type[] _parameterTypes;
 
@@ -1944,7 +1944,7 @@ namespace System.Management.Automation
 
         // TODO: IEnumerable<Type> genericTypeParameters { get; private set; }
 
-        public bool Equals(PSMethodInvocationConstraints other)
+        internal bool Equals(PSMethodInvocationConstraints other)
         {
             if (other is null)
             {
@@ -4446,7 +4446,7 @@ namespace System.Management.Automation
         }
 
         // This is the implementation of the PSTypeNames CodeProperty.
-        public static Collection<string> PSTypeNames(PSObject o)
+        internal static Collection<string> PSTypeNames(PSObject o)
         {
             return o.TypeNames;
         }

@@ -21,24 +21,24 @@ namespace Microsoft.PowerShell
         [StructLayout(LayoutKind.Sequential)]
         internal struct StartUpInfo
         {
-            public readonly UInt32 cb;
+            internal readonly UInt32 cb;
             private readonly IntPtr lpReserved;
-            public readonly IntPtr lpDesktop;
-            public readonly IntPtr lpTitle;
-            public readonly UInt32 dwX;
-            public readonly UInt32 dwY;
-            public readonly UInt32 dwXSize;
-            public readonly UInt32 dwYSize;
-            public readonly UInt32 dwXCountChars;
-            public readonly UInt32 dwYCountChars;
-            public readonly UInt32 dwFillAttribute;
-            public readonly UInt32 dwFlags;
-            public readonly UInt16 wShowWindow;
+            internal readonly IntPtr lpDesktop;
+            internal readonly IntPtr lpTitle;
+            internal readonly UInt32 dwX;
+            internal readonly UInt32 dwY;
+            internal readonly UInt32 dwXSize;
+            internal readonly UInt32 dwYSize;
+            internal readonly UInt32 dwXCountChars;
+            internal readonly UInt32 dwYCountChars;
+            internal readonly UInt32 dwFillAttribute;
+            internal readonly UInt32 dwFlags;
+            internal readonly UInt16 wShowWindow;
             private readonly UInt16 cbReserved2;
             private readonly IntPtr lpReserved2;
-            public readonly IntPtr hStdInput;
-            public readonly IntPtr hStdOutput;
-            public readonly IntPtr hStdError;
+            internal readonly IntPtr hStdInput;
+            internal readonly IntPtr hStdOutput;
+            internal readonly IntPtr hStdError;
         }
 
         [ComImport]

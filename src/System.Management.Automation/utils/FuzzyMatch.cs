@@ -8,7 +8,7 @@ namespace System.Management.Automation
 {
     internal static class FuzzyMatcher
     {
-        public const int MinimumDistance = 5;
+        internal const int MinimumDistance = 5;
 
         /// <summary>
         /// Determine if the two strings are considered similar.
@@ -16,7 +16,7 @@ namespace System.Management.Automation
         /// <param name="string1">The first string to compare.</param>
         /// <param name="string2">The second string to compare.</param>
         /// <returns>True if the two strings have a distance <= MinimumDistance.</returns>
-        public static bool IsFuzzyMatch(string string1, string string2)
+        internal static bool IsFuzzyMatch(string string1, string string2)
         {
             return GetDamerauLevenshteinDistance(string1, string2) <= MinimumDistance;
         }
@@ -28,7 +28,7 @@ namespace System.Management.Automation
         /// <param name="string1">The first string to compare.</param>
         /// <param name="string2">The second string to compare.</param>
         /// <returns>The distance value where the lower the value the shorter the distance between the two strings representing a closer match.</returns>
-        public static int GetDamerauLevenshteinDistance(string string1, string string2)
+        internal static int GetDamerauLevenshteinDistance(string string1, string string2)
         {
             string1 = string1.ToUpper(CultureInfo.CurrentCulture);
             string2 = string2.ToUpper(CultureInfo.CurrentCulture);

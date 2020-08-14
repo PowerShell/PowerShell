@@ -2928,7 +2928,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// </summary>
-        public Runspace Runspace { get; }
+        internal Runspace Runspace { get; }
 
         /// <summary>
         /// Helper associated with this entity.
@@ -3866,7 +3866,7 @@ namespace System.Management.Automation
         /// <param name="debugger">Debugger to wrap.</param>
         /// <param name="runspace">Remote runspace.</param>
         /// <param name="jobName">Name of associated job.</param>
-        public RemotingJobDebugger(
+        internal RemotingJobDebugger(
             Debugger debugger,
             Runspace runspace,
             string jobName)

@@ -21,13 +21,13 @@ namespace System.Management.Automation.InteropServices
         private ComEventsMethod? _methods;
         private ComEventsSink? _next;
 
-        public ComEventsSink(object rcw, Guid iid)
+        internal ComEventsSink(object rcw, Guid iid)
         {
             _iidSourceItf = iid;
             this.Advise(rcw);
         }
 
-        public static ComEventsSink? Find(ComEventsSink? sinks, ref Guid iid)
+        internal static ComEventsSink? Find(ComEventsSink? sinks, ref Guid iid)
         {
             ComEventsSink? sink = sinks;
             while (sink != null && sink._iidSourceItf != iid)
@@ -38,13 +38,13 @@ namespace System.Management.Automation.InteropServices
             return sink;
         }
 
-        public static ComEventsSink Add(ComEventsSink? sinks, ComEventsSink sink)
+        internal static ComEventsSink Add(ComEventsSink? sinks, ComEventsSink sink)
         {
             sink._next = sinks;
             return sink;
         }
 
-        public static ComEventsSink? RemoveAll(ComEventsSink? sinks)
+        internal static ComEventsSink? RemoveAll(ComEventsSink? sinks)
         {
             while (sinks != null)
             {
@@ -55,7 +55,7 @@ namespace System.Management.Automation.InteropServices
             return null;
         }
 
-        public static ComEventsSink? Remove(ComEventsSink sinks, ComEventsSink sink)
+        internal static ComEventsSink? Remove(ComEventsSink sinks, ComEventsSink sink)
         {
             Debug.Assert(sinks != null, "removing event sink from empty sinks collection");
             Debug.Assert(sink != null, "specify event sink is null");
@@ -85,18 +85,18 @@ namespace System.Management.Automation.InteropServices
             return toReturn;
         }
 
-        public ComEventsMethod? RemoveMethod(ComEventsMethod method)
+        internal ComEventsMethod? RemoveMethod(ComEventsMethod method)
         {
             _methods = ComEventsMethod.Remove(_methods!, method);
             return _methods;
         }
 
-        public ComEventsMethod? FindMethod(int dispid)
+        internal ComEventsMethod? FindMethod(int dispid)
         {
             return ComEventsMethod.Find(_methods, dispid);
         }
 
-        public ComEventsMethod AddMethod(int dispid)
+        internal ComEventsMethod AddMethod(int dispid)
         {
             ComEventsMethod method = new ComEventsMethod(dispid);
             _methods = ComEventsMethod.Add(_methods, method);

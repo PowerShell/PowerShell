@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands
             /// <returns>
             /// The existing value, or a newly-created value.
             /// </returns>
-            public V EnsureEntry(string key)
+            internal V EnsureEntry(string key)
             {
                 V val;
                 if (!TryGetValue(key, out val))

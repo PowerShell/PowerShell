@@ -314,7 +314,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class ParameterBox : InitializeLocalInstruction
         {
-            public ParameterBox(int index)
+            internal ParameterBox(int index)
                 : base(index)
             {
             }
@@ -422,7 +422,7 @@ namespace System.Management.Automation.Interpreter
     {
         private readonly int _count;
 
-        public RuntimeVariablesInstruction(int count)
+        internal RuntimeVariablesInstruction(int count)
         {
             _count = count;
         }

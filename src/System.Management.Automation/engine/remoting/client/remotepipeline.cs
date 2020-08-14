@@ -44,16 +44,16 @@ namespace System.Management.Automation
 
         private class ExecutionEventQueueItem
         {
-            public ExecutionEventQueueItem(PipelineStateInfo pipelineStateInfo, RunspaceAvailability currentAvailability, RunspaceAvailability newAvailability)
+            internal ExecutionEventQueueItem(PipelineStateInfo pipelineStateInfo, RunspaceAvailability currentAvailability, RunspaceAvailability newAvailability)
             {
                 this.PipelineStateInfo = pipelineStateInfo;
                 this.CurrentRunspaceAvailability = currentAvailability;
                 this.NewRunspaceAvailability = newAvailability;
             }
 
-            public PipelineStateInfo PipelineStateInfo;
-            public RunspaceAvailability CurrentRunspaceAvailability;
-            public RunspaceAvailability NewRunspaceAvailability;
+            internal PipelineStateInfo PipelineStateInfo;
+            internal RunspaceAvailability CurrentRunspaceAvailability;
+            internal RunspaceAvailability NewRunspaceAvailability;
         }
 
         private bool _performNestedCheck = true;
@@ -345,7 +345,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Whether the pipeline needs to be added to history of the runspace.
         /// </summary>
-        public bool AddToHistory
+        internal bool AddToHistory
         {
             get
             {

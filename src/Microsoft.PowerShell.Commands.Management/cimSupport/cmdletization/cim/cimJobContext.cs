@@ -22,13 +22,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             this.TargetObject = targetObject ?? this.ClassName;
         }
 
-        public CimCmdletInvocationContext CmdletInvocationContext { get; private set; }
+        internal CimCmdletInvocationContext CmdletInvocationContext { get; private set; }
 
-        public CimSession Session { get; private set; }
+        internal CimSession Session { get; private set; }
 
-        public object TargetObject { get; private set; }
+        internal object TargetObject { get; private set; }
 
-        public string ClassName
+        internal string ClassName
         {
             get
             {
@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        public string ClassNameOrNullIfResourceUriIsUsed
+        internal string ClassNameOrNullIfResourceUriIsUsed
         {
             get
             {
@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        public string Namespace
+        internal string Namespace
         {
             get
             {
@@ -110,57 +110,57 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 message);
         }
 
-        public InvocationInfo CmdletInvocationInfo
+        internal InvocationInfo CmdletInvocationInfo
         {
             get { return this.CmdletInvocationContext.CmdletInvocationInfo; }
         }
 
-        public string CmdletizationClassName
+        internal string CmdletizationClassName
         {
             get { return this.CmdletInvocationContext.CmdletDefinitionContext.CmdletizationClassName; }
         }
 
-        public Version CmdletizationModuleVersion
+        internal Version CmdletizationModuleVersion
         {
             get { return this.CmdletInvocationContext.CmdletDefinitionContext.CmdletizationModuleVersion; }
         }
 
-        public ActionPreference ErrorActionPreference
+        internal ActionPreference ErrorActionPreference
         {
             get { return this.CmdletInvocationContext.ErrorActionPreference; }
         }
 
-        public ActionPreference WarningActionPreference
+        internal ActionPreference WarningActionPreference
         {
             get { return this.CmdletInvocationContext.WarningActionPreference; }
         }
 
-        public ActionPreference VerboseActionPreference
+        internal ActionPreference VerboseActionPreference
         {
             get { return this.CmdletInvocationContext.VerboseActionPreference; }
         }
 
-        public ActionPreference DebugActionPreference
+        internal ActionPreference DebugActionPreference
         {
             get { return this.CmdletInvocationContext.DebugActionPreference; }
         }
 
-        public bool IsRunningInBackground
+        internal bool IsRunningInBackground
         {
             get { return this.CmdletInvocationContext.IsRunningInBackground; }
         }
 
-        public MshCommandRuntime.ShouldProcessPossibleOptimization ShouldProcessOptimization
+        internal MshCommandRuntime.ShouldProcessPossibleOptimization ShouldProcessOptimization
         {
             get { return this.CmdletInvocationContext.ShouldProcessOptimization; }
         }
 
-        public bool ShowComputerName
+        internal bool ShowComputerName
         {
             get { return this.CmdletInvocationContext.ShowComputerName; }
         }
 
-        public bool SupportsShouldProcess
+        internal bool SupportsShouldProcess
         {
             get { return this.CmdletInvocationContext.CmdletDefinitionContext.SupportsShouldProcess; }
         }

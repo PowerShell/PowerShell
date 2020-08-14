@@ -30,10 +30,10 @@ namespace System.Management.Automation.Interpreter
         private const int IsBoxedFlag = 1;
         private const int InClosureFlag = 2;
 
-        public readonly int Index;
+        internal readonly int Index;
         private int _flags;
 
-        public bool IsBoxed
+        internal bool IsBoxed
         {
             get { return (_flags & IsBoxedFlag) != 0; }
 
@@ -50,12 +50,12 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public bool InClosure
+        internal bool InClosure
         {
             get { return (_flags & InClosureFlag) != 0; }
         }
 
-        public bool InClosureOrBoxed
+        internal bool InClosureOrBoxed
         {
             get { return InClosure | IsBoxed; }
         }
@@ -89,7 +89,7 @@ namespace System.Management.Automation.Interpreter
             _parameter = parameter;
         }
 
-        public int Index
+        internal int Index
         {
             get
             {
@@ -97,7 +97,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public ParameterExpression Parameter
+        internal ParameterExpression Parameter
         {
             get
             {
@@ -148,7 +148,7 @@ namespace System.Management.Automation.Interpreter
         {
         }
 
-        public LocalDefinition DefineLocal(ParameterExpression variable, int start)
+        internal LocalDefinition DefineLocal(ParameterExpression variable, int start)
         {
             // ContractUtils.RequiresNotNull(variable, "variable");
             // ContractUtils.Requires(start >= 0, "start", "start must be positive");
@@ -176,7 +176,7 @@ namespace System.Management.Automation.Interpreter
             return new LocalDefinition(result.Index, variable);
         }
 
-        public void UndefineLocal(LocalDefinition definition, int end)
+        internal void UndefineLocal(LocalDefinition definition, int end)
         {
             var scope = _variables[definition.Parameter];
             scope.Stop = end;
@@ -217,12 +217,12 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public int LocalCount
+        internal int LocalCount
         {
             get { return _maxLocalCount; }
         }
 
-        public int GetOrDefineLocal(ParameterExpression var)
+        internal int GetOrDefineLocal(ParameterExpression var)
         {
             int index = GetLocalIndex(var);
             if (index == -1)
@@ -233,13 +233,13 @@ namespace System.Management.Automation.Interpreter
             return index;
         }
 
-        public int GetLocalIndex(ParameterExpression var)
+        internal int GetLocalIndex(ParameterExpression var)
         {
             VariableScope loc;
             return _variables.TryGetValue(var, out loc) ? loc.Variable.Index : -1;
         }
 
-        public bool TryGetLocalOrClosure(ParameterExpression var, out LocalVariable local)
+        internal bool TryGetLocalOrClosure(ParameterExpression var, out LocalVariable local)
         {
             VariableScope scope;
             if (_variables.TryGetValue(var, out scope))
@@ -308,13 +308,13 @@ namespace System.Management.Automation.Interpreter
         /// </summary>
         private sealed class VariableScope
         {
-            public readonly int Start;
-            public int Stop = Int32.MaxValue;
-            public readonly LocalVariable Variable;
-            public readonly VariableScope Parent;
-            public List<VariableScope> ChildScopes;
+            internal readonly int Start;
+            internal int Stop = Int32.MaxValue;
+            internal readonly LocalVariable Variable;
+            internal readonly VariableScope Parent;
+            internal List<VariableScope> ChildScopes;
 
-            public VariableScope(LocalVariable variable, int start, VariableScope parent)
+            internal VariableScope(LocalVariable variable, int start, VariableScope parent)
             {
                 Variable = variable;
                 Start = start;

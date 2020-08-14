@@ -402,7 +402,7 @@ namespace System.Management.Automation.Host
             private PSHostUserInterface _ui;
             private bool _disposed = false;
 
-            public TranscribeOnlyCookie(PSHostUserInterface ui)
+            internal TranscribeOnlyCookie(PSHostUserInterface ui)
             {
                 _ui = ui;
                 Interlocked.Increment(ref _ui._transcribeOnlyCount);

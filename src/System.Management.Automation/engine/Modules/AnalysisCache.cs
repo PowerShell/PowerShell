@@ -654,15 +654,15 @@ namespace System.Management.Automation
         }
 
         // The last time the index was maintained.
-        public DateTime LastReadTime { get; set; }
+        internal DateTime LastReadTime { get; set; }
 
-        public ConcurrentDictionary<string, ModuleCacheEntry> Entries { get; set; }
+        internal ConcurrentDictionary<string, ModuleCacheEntry> Entries { get; set; }
 
         private int _saveCacheToDiskQueued;
 
         private bool _saveCacheToDisk = true;
 
-        public void QueueSerialization()
+        internal void QueueSerialization()
         {
             // We expect many modules to rapidly call for serialization.
             // Instead of doing it right away, we'll queue a task that starts writing
@@ -928,7 +928,7 @@ namespace System.Management.Automation
             // No need to return - we don't use it other than to detect the correct file format
         }
 
-        public static AnalysisCacheData Deserialize(string filename)
+        internal static AnalysisCacheData Deserialize(string filename)
         {
             using (var stream = File.OpenRead(filename))
             {
@@ -1128,10 +1128,10 @@ namespace System.Management.Automation
     [DebuggerDisplay("ModulePath = {ModulePath}")]
     internal class ModuleCacheEntry
     {
-        public DateTime LastWriteTime;
-        public string ModulePath;
-        public bool TypesAnalyzed;
-        public ConcurrentDictionary<string, CommandTypes> Commands;
-        public ConcurrentDictionary<string, TypeAttributes> Types;
+        internal DateTime LastWriteTime;
+        internal string ModulePath;
+        internal bool TypesAnalyzed;
+        internal ConcurrentDictionary<string, CommandTypes> Commands;
+        internal ConcurrentDictionary<string, TypeAttributes> Types;
     }
 }

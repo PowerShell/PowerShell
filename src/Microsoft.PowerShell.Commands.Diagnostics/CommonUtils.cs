@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
         [DllImport(LocalizationDllName, EntryPoint = "GetUserDefaultLangID", CallingConvention = CallingConvention.Winapi, SetLastError = true)]
         private static extern ushort GetUserDefaultLangID();
 
-        public static uint FormatMessageFromModule(uint lastError, string moduleName, out String msg)
+        internal static uint FormatMessageFromModule(uint lastError, string moduleName, out String msg)
         {
             Debug.Assert(!string.IsNullOrEmpty(moduleName));
 
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
             return formatError;
         }
 
-        public static ResourceManager GetResourceManager()
+        internal static ResourceManager GetResourceManager()
         {
             return new ResourceManager("Microsoft.PowerShell.Commands.Diagnostics.resources.GetEventResources", typeof(CommonUtilities).GetTypeInfo().Assembly);
         }

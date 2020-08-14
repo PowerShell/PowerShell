@@ -34,13 +34,13 @@ namespace System.Management.Automation
         /// </summary>
         internal class WMIMethodCacheEntry : CacheEntry
         {
-            public string Name { get; }
+            internal string Name { get; }
 
-            public string ClassPath { get; }
+            internal string ClassPath { get; }
 
-            public MethodInformation MethodInfoStructure { get; }
+            internal MethodInformation MethodInfoStructure { get; }
 
-            public string MethodDefinition { get; }
+            internal string MethodDefinition { get; }
 
             internal WMIMethodCacheEntry(string n, string cPath, MethodData mData)
             {
@@ -57,9 +57,9 @@ namespace System.Management.Automation
 
         internal class WMIParameterInformation : ParameterInformation
         {
-            public string Name { get; }
+            internal string Name { get; }
 
-            public WMIParameterInformation(string name, Type ty) : base(ty, true, null, false)
+            internal WMIParameterInformation(string name, Type ty) : base(ty, true, null, false)
             {
                 Name = name;
             }

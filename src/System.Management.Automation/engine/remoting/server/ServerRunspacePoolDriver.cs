@@ -1250,13 +1250,13 @@ namespace System.Management.Automation
 
         private class DebuggerCommandArgument
         {
-            public DebugModes? Mode { get; set; }
+            internal DebugModes? Mode { get; set; }
 
-            public DebuggerResumeAction? ResumeAction { get; set; }
+            internal DebuggerResumeAction? ResumeAction { get; set; }
 
-            public bool? DebuggerStepEnabled { get; set; }
+            internal bool? DebuggerStepEnabled { get; set; }
 
-            public UnhandledBreakpointProcessingMode? UnhandledBreakpointMode { get; set; }
+            internal UnhandledBreakpointProcessingMode? UnhandledBreakpointMode { get; set; }
         }
 
         /// <summary>
@@ -1596,7 +1596,7 @@ namespace System.Management.Automation
             /// <summary>
             /// Constructor.
             /// </summary>
-            public PowerShellDriverInvoker()
+            internal PowerShellDriverInvoker()
             {
                 _invokePumpStack = new ConcurrentStack<InvokePump>();
             }
@@ -1608,7 +1608,7 @@ namespace System.Management.Automation
             /// <summary>
             /// IsActive.
             /// </summary>
-            public bool IsActive
+            internal bool IsActive
             {
                 get { return !_invokePumpStack.IsEmpty; }
             }
@@ -1616,7 +1616,7 @@ namespace System.Management.Automation
             /// <summary>
             /// True if thread is ready to invoke a PowerShell driver.
             /// </summary>
-            public bool IsAvailable
+            internal bool IsAvailable
             {
                 get
                 {
@@ -1638,7 +1638,7 @@ namespace System.Management.Automation
             /// Submit a driver object to be invoked.
             /// </summary>
             /// <param name="driver">ServerPowerShellDriver.</param>
-            public void InvokeDriverAsync(ServerPowerShellDriver driver)
+            internal void InvokeDriverAsync(ServerPowerShellDriver driver)
             {
                 InvokePump currentPump;
                 if (!_invokePumpStack.TryPeek(out currentPump))
@@ -1653,7 +1653,7 @@ namespace System.Management.Automation
             /// Blocking call that creates a new pump object and pumps
             /// driver invokes until stopped via a PopInvoker call.
             /// </summary>
-            public void PushInvoker()
+            internal void PushInvoker()
             {
                 InvokePump newPump = new InvokePump();
                 _invokePumpStack.Push(newPump);
@@ -1667,7 +1667,7 @@ namespace System.Management.Automation
             /// Stops the current driver invoker and restores the previous
             /// invoker object on the stack, if any, to handle driver invocations.
             /// </summary>
-            public void PopInvoker()
+            internal void PopInvoker()
             {
                 InvokePump oldPump;
                 if (_invokePumpStack.TryPop(out oldPump))
@@ -1696,14 +1696,14 @@ namespace System.Management.Automation
                 private bool _stopPump;
                 private bool _isDisposed;
 
-                public InvokePump()
+                internal InvokePump()
                 {
                     _driverInvokeQueue = new Queue<ServerPowerShellDriver>();
                     _processDrivers = new ManualResetEvent(false);
                     _syncObject = new object();
                 }
 
-                public void Start()
+                internal void Start()
                 {
                     try
                     {
@@ -1756,7 +1756,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                public void Dispatch(ServerPowerShellDriver driver)
+                internal void Dispatch(ServerPowerShellDriver driver)
                 {
                     CheckDisposed();
 
@@ -1767,7 +1767,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                public void Stop()
+                internal void Stop()
                 {
                     CheckDisposed();
 
@@ -1778,7 +1778,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                public bool IsBusy { get; private set; }
+                internal bool IsBusy { get; private set; }
 
                 private void CheckDisposed()
                 {
@@ -2261,7 +2261,7 @@ namespace System.Management.Automation
             // Constructors
             private ThreadCommandProcessing() { }
 
-            public ThreadCommandProcessing(
+            internal ThreadCommandProcessing(
                 PSCommand command,
                 PSDataCollection<PSObject> output,
                 Debugger debugger,
@@ -2274,7 +2274,7 @@ namespace System.Management.Automation
             }
 
             // Methods
-            public DebuggerCommandResults Invoke(ManualResetEventSlim startInvokeEvent)
+            internal DebuggerCommandResults Invoke(ManualResetEventSlim startInvokeEvent)
             {
 #if !UNIX
                 // Get impersonation information to flow if any.
@@ -2307,7 +2307,7 @@ namespace System.Management.Automation
                 return _results;
             }
 
-            public void Stop()
+            internal void Stop()
             {
                 Debugger debugger = _wrappedDebugger;
                 if (debugger != null)

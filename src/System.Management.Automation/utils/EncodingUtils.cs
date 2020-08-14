@@ -116,7 +116,7 @@ namespace System.Management.Automation
     /// </summary>
     internal sealed class ArgumentEncodingCompletionsAttribute : ArgumentCompletionsAttribute
     {
-        public ArgumentEncodingCompletionsAttribute() : base(
+        internal ArgumentEncodingCompletionsAttribute() : base(
             EncodingConversion.Ascii,
             EncodingConversion.BigEndianUnicode,
             EncodingConversion.BigEndianUtf32,

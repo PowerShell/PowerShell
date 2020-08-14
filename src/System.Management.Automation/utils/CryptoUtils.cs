@@ -26,37 +26,37 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// The blob version is fixed.
         /// </summary>
-        public const uint CUR_BLOB_VERSION = 0x00000002;
+        internal const uint CUR_BLOB_VERSION = 0x00000002;
 
         /// <summary>
         /// RSA Key.
         /// </summary>
-        public const uint CALG_RSA_KEYX = 0x000000a4;
+        internal const uint CALG_RSA_KEYX = 0x000000a4;
 
         /// <summary>
         /// AES 256 symmetric key.
         /// </summary>
-        public const uint CALG_AES_256 = 0x00000010;
+        internal const uint CALG_AES_256 = 0x00000010;
 
         /// <summary>
         /// Option for exporting public key blob.
         /// </summary>
-        public const uint PUBLICKEYBLOB = 0x00000006;
+        internal const uint PUBLICKEYBLOB = 0x00000006;
 
         /// <summmary>
         /// PUBLICKEYBLOB header length.
         /// </summary>
-        public const int PUBLICKEYBLOB_HEADER_LEN = 20;
+        internal const int PUBLICKEYBLOB_HEADER_LEN = 20;
 
         /// <summary>
         /// Option for exporting a session key.
         /// </summary>
-        public const uint SIMPLEBLOB = 0x00000001;
+        internal const uint SIMPLEBLOB = 0x00000001;
 
         /// <summmary>
         /// SIMPLEBLOB header length.
         /// </summary>
-        public const int SIMPLEBLOB_HEADER_LEN = 12;
+        internal const int SIMPLEBLOB_HEADER_LEN = 12;
 
         #endregion Constants
 
@@ -302,7 +302,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public PSCryptoException() : this(0, new StringBuilder(string.Empty)) { }
+        internal PSCryptoException() : this(0, new StringBuilder(string.Empty)) { }
 
         /// <summary>
         /// Constructor that will be used from within CryptoUtils.
@@ -310,7 +310,7 @@ namespace System.Management.Automation.Internal
         /// <param name="errorCode">error code returned by native
         /// crypto application</param>
         /// <param name="message">Error message associated with this failure.</param>
-        public PSCryptoException(uint errorCode, StringBuilder message)
+        internal PSCryptoException(uint errorCode, StringBuilder message)
             : base(message.ToString())
         {
             _errorCode = errorCode;
@@ -320,7 +320,7 @@ namespace System.Management.Automation.Internal
         /// Constructor with just message but no inner exception.
         /// </summary>
         /// <param name="message">Error message associated with this failure.</param>
-        public PSCryptoException(string message) : this(message, null) { }
+        internal PSCryptoException(string message) : this(message, null) { }
 
         /// <summary>
         /// Constructor with inner exception.
@@ -329,7 +329,7 @@ namespace System.Management.Automation.Internal
         /// <param name="innerException">Inner exception.</param>
         /// <remarks>This constructor is currently not called
         /// explicitly from crypto utils</remarks>
-        public PSCryptoException(string message, Exception innerException) :
+        internal PSCryptoException(string message, Exception innerException) :
             base(message, innerException)
         {
             _errorCode = unchecked((uint)-1);

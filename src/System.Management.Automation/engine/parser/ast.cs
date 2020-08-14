@@ -404,7 +404,7 @@ namespace System.Management.Automation.Language
     // This Ast is never produced by the parser, only from the compiler.
     internal class SequencePointAst : Ast
     {
-        public SequencePointAst(IScriptExtent extent)
+        internal SequencePointAst(IScriptExtent extent)
             : base(extent)
         {
         }

@@ -289,15 +289,15 @@ namespace System.Management.Automation.Interpreter
             Count = count;
         }
 
-        public int Count { get; }
+        internal int Count { get; }
 
-        public object GetArgument(int index)
+        internal object GetArgument(int index)
         {
             // ContractUtils.RequiresArrayIndex(_arguments, index, "index");
             return _arguments[_first + index];
         }
 
-        public DynamicMetaObject GetMetaObject(Expression parameter, int index)
+        internal DynamicMetaObject GetMetaObject(Expression parameter, int index)
         {
             return DynamicMetaObject.Create(
                 GetArgument(index),
@@ -310,7 +310,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         // [CLSCompliant(false)]
-        public static object GetArg(ArgumentArray array, int index)
+        internal static object GetArg(ArgumentArray array, int index)
         {
             return array._arguments[array._first + index];
         }
@@ -326,7 +326,7 @@ namespace System.Management.Automation.Interpreter
         /// Updates an exception before it's getting re-thrown so
         /// we can present a reasonable stack trace to the user.
         /// </summary>
-        public static Exception UpdateForRethrow(Exception rethrow)
+        internal static Exception UpdateForRethrow(Exception rethrow)
         {
 #if !SILVERLIGHT
             List<StackTrace> prev;
@@ -349,7 +349,7 @@ namespace System.Management.Automation.Interpreter
         /// <summary>
         /// Returns all the stack traces associates with an exception.
         /// </summary>
-        public static IList<StackTrace> GetExceptionStackTraces(Exception rethrow)
+        internal static IList<StackTrace> GetExceptionStackTraces(Exception rethrow)
         {
             List<StackTrace> result;
             return TryGetAssociatedStackTraces(rethrow, out result) ? result : null;
@@ -378,11 +378,11 @@ namespace System.Management.Automation.Interpreter
 
         private const int _arraySize = 10;
 
-        public HybridReferenceDictionary()
+        internal HybridReferenceDictionary()
         {
         }
 
-        public HybridReferenceDictionary(int initialCapacity)
+        internal HybridReferenceDictionary(int initialCapacity)
         {
             if (initialCapacity > _arraySize)
             {
@@ -394,7 +394,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
+        internal bool TryGetValue(TKey key, out TValue value)
         {
             Debug.Assert(key != null);
 
@@ -418,7 +418,7 @@ namespace System.Management.Automation.Interpreter
             return false;
         }
 
-        public bool Remove(TKey key)
+        internal bool Remove(TKey key)
         {
             Debug.Assert(key != null);
 
@@ -442,7 +442,7 @@ namespace System.Management.Automation.Interpreter
             return false;
         }
 
-        public bool ContainsKey(TKey key)
+        internal bool ContainsKey(TKey key)
         {
             Debug.Assert(key != null);
 
@@ -464,7 +464,7 @@ namespace System.Management.Automation.Interpreter
             return false;
         }
 
-        public int Count
+        internal int Count
         {
             get
             {
@@ -477,7 +477,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        internal IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
             if (_dict != null)
             {
@@ -587,7 +587,7 @@ namespace System.Management.Automation.Interpreter
         /// Creates a dictionary-like object used for caches.
         /// </summary>
         /// <param name="maxSize">The maximum number of elements to store.</param>
-        public CacheDict(int maxSize)
+        internal CacheDict(int maxSize)
         {
             _maxSize = maxSize;
         }
@@ -596,7 +596,7 @@ namespace System.Management.Automation.Interpreter
         /// Tries to get the value associated with 'key', returning true if it's found and
         /// false if it's not present.
         /// </summary>
-        public bool TryGetValue(TKey key, out TValue value)
+        internal bool TryGetValue(TKey key, out TValue value)
         {
             KeyInfo storedValue;
             if (_dict.TryGetValue(key, out storedValue))
@@ -621,7 +621,7 @@ namespace System.Management.Automation.Interpreter
         /// Adds a new element to the cache, replacing and moving it to the front if the
         /// element is already present.
         /// </summary>
-        public void Add(TKey key, TValue value)
+        internal void Add(TKey key, TValue value)
         {
             KeyInfo keyInfo;
             if (_dict.TryGetValue(key, out keyInfo))
@@ -687,7 +687,7 @@ namespace System.Management.Automation.Interpreter
         private static readonly StorageInfo[] s_updating = Array.Empty<StorageInfo>();   // a marker used when updating the array
         private readonly bool _refCounted;
 
-        public ThreadLocal()
+        internal ThreadLocal()
         {
         }
 
@@ -701,7 +701,7 @@ namespace System.Management.Automation.Interpreter
         /// local is back to it's original state.  This allows the ThreadLocal object
         /// to not check the current owning thread on retrieval.
         /// </summary>
-        public ThreadLocal(bool refCounted)
+        internal ThreadLocal(bool refCounted)
         {
             _refCounted = refCounted;
         }
@@ -711,7 +711,7 @@ namespace System.Management.Automation.Interpreter
         /// <summary>
         /// Gets or sets the value for the current thread.
         /// </summary>
-        public T Value
+        internal T Value
         {
             get
             {
@@ -728,7 +728,7 @@ namespace System.Management.Automation.Interpreter
         /// Gets the current value if its not == null or calls the provided function
         /// to create a new value.
         /// </summary>
-        public T GetOrCreate(Func<T> func)
+        internal T GetOrCreate(Func<T> func)
         {
             Assert.NotNull(func);
 
@@ -746,7 +746,7 @@ namespace System.Management.Automation.Interpreter
         /// Calls the provided update function with the current value and
         /// replaces the current value with the result of the function.
         /// </summary>
-        public T Update(Func<T, T> updater)
+        internal T Update(Func<T, T> updater)
         {
             Assert.NotNull(updater);
 
@@ -757,7 +757,7 @@ namespace System.Management.Automation.Interpreter
         /// <summary>
         /// Replaces the current value with a new one and returns the old value.
         /// </summary>
-        public T Update(T newValue)
+        internal T Update(T newValue)
         {
             StorageInfo si = GetStorageInfo();
             var oldValue = si.Value;
@@ -772,7 +772,7 @@ namespace System.Management.Automation.Interpreter
         /// <summary>
         /// Gets the StorageInfo for the current thread.
         /// </summary>
-        public StorageInfo GetStorageInfo()
+        internal StorageInfo GetStorageInfo()
         {
             return GetStorageInfo(_stores);
         }
@@ -886,7 +886,7 @@ namespace System.Management.Automation.Interpreter
         internal sealed class StorageInfo
         {
             internal readonly Thread Thread;                 // the thread that owns the StorageInfo
-            public T Value;                                // the current value for the owning thread
+            internal T Value;                                // the current value for the owning thread
 
             internal StorageInfo(Thread curThread)
             {
@@ -911,25 +911,25 @@ namespace System.Management.Automation.Interpreter
         }
 
         [Conditional("DEBUG")]
-        public static void NotNull(object var)
+        internal static void NotNull(object var)
         {
             Debug.Assert(var != null);
         }
 
         [Conditional("DEBUG")]
-        public static void NotNull(object var1, object var2)
+        internal static void NotNull(object var1, object var2)
         {
             Debug.Assert(var1 != null && var2 != null);
         }
 
         [Conditional("DEBUG")]
-        public static void NotNull(object var1, object var2, object var3)
+        internal static void NotNull(object var1, object var2, object var3)
         {
             Debug.Assert(var1 != null && var2 != null && var3 != null);
         }
 
         [Conditional("DEBUG")]
-        public static void NotNullItems<T>(IEnumerable<T> items) where T : class
+        internal static void NotNullItems<T>(IEnumerable<T> items) where T : class
         {
             Debug.Assert(items != null);
             foreach (object item in items)
@@ -939,7 +939,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         [Conditional("DEBUG")]
-        public static void NotEmpty(string str)
+        internal static void NotEmpty(string str)
         {
             Debug.Assert(!string.IsNullOrEmpty(str));
         }
@@ -963,12 +963,12 @@ namespace System.Management.Automation.Interpreter
 
         private static readonly DefaultExpression s_voidInstance = Expression.Empty();
 
-        public static DefaultExpression Empty()
+        internal static DefaultExpression Empty()
         {
             return s_voidInstance;
         }
 
-        public static Expression Void(Expression expression)
+        internal static Expression Void(Expression expression)
         {
             // ContractUtils.RequiresNotNull(expression, "expression");
             if (expression.Type == typeof(void))
@@ -979,7 +979,7 @@ namespace System.Management.Automation.Interpreter
             return Expression.Block(expression, Utils.Empty());
         }
 
-        public static DefaultExpression Default(Type type)
+        internal static DefaultExpression Default(Type type)
         {
             if (type == typeof(void))
             {
@@ -989,7 +989,7 @@ namespace System.Management.Automation.Interpreter
             return Expression.Default(type);
         }
 
-        public static Expression Convert(Expression expression, Type type)
+        internal static Expression Convert(Expression expression, Type type)
         {
             // ContractUtils.RequiresNotNull(expression, "expression");
 
@@ -1018,7 +1018,7 @@ namespace System.Management.Automation.Interpreter
             return Expression.Convert(expression, type);
         }
 
-        public static Expression Box(Expression expression)
+        internal static Expression Box(Expression expression)
         {
             MethodInfo m;
             if (expression.Type == typeof(int))
@@ -1037,7 +1037,7 @@ namespace System.Management.Automation.Interpreter
             return Expression.Convert(expression, typeof(object), m);
         }
 
-        public static bool IsReadWriteAssignment(this ExpressionType type)
+        internal static bool IsReadWriteAssignment(this ExpressionType type)
         {
             switch (type)
             {

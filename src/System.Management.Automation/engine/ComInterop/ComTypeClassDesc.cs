@@ -15,7 +15,7 @@ namespace System.Management.Automation.ComInterop
         private LinkedList<string> _sourceItfs; // source interfaces supported by this coclass
         private Type _typeObj;
 
-        public object CreateInstance()
+        internal object CreateInstance()
         {
             if (_typeObj == null)
             {

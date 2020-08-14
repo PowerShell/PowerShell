@@ -6431,7 +6431,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// This is used to start the service. return a bool value. if false we throw error.
         /// </summary>
-        public const string StartWinrmServiceSBFormat = @"
+        internal const string StartWinrmServiceSBFormat = @"
 function Start-WSManServiceD15A7957836142a18627D7E1D342DD82
 {{
 [CmdletBinding()]

@@ -20,9 +20,9 @@ namespace PSTests.Parallel
 
     internal class MyAstVisitor2 : AstVisitor2
     {
-        public List<string> Commands { get; }
+        internal List<string> Commands { get; }
 
-        public MyAstVisitor2()
+        internal MyAstVisitor2()
         {
             Commands = new List<string>();
         }

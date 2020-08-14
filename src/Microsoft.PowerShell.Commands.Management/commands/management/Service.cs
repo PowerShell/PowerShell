@@ -2816,7 +2816,7 @@ namespace Microsoft.PowerShell.Commands
         /// If the function fails, the return value is zero.
         /// </returns>
         [DllImport("Kernel32.dll", EntryPoint = "QueryInformationJobObject", SetLastError = true, CharSet = CharSet.Unicode)]
-        public static extern bool QueryInformationJobObject(SafeHandle hJob, int JobObjectInfoClass,
+        internal static extern bool QueryInformationJobObject(SafeHandle hJob, int JobObjectInfoClass,
                                     ref JOBOBJECT_BASIC_PROCESS_ID_LIST lpJobObjectInfo,
                                     int cbJobObjectLength, IntPtr lpReturnLength);
 

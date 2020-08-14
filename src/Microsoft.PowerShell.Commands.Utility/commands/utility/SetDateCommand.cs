@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
         internal static class NativeMethods
         {
             [StructLayout(LayoutKind.Sequential)]
-            public struct SystemTime
+            internal struct SystemTime
             {
                 public UInt16 Year;
                 public UInt16 Month;
@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
 
             [DllImport(PinvokeDllNames.SetLocalTimeDllName, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool SetLocalTime(ref SystemTime systime);
+            internal static extern bool SetLocalTime(ref SystemTime systime);
         }
         #endregion
     }

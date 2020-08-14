@@ -29,7 +29,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The constructor.
         /// </summary>
-        public CimAsyncOperation()
+        internal CimAsyncOperation()
         {
             this.moreActionEvent = new ManualResetEventSlim(false);
             this.actionQueue = new ConcurrentQueue<CimBaseAction>();
@@ -128,7 +128,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cmdletOperation">
         /// Wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details.
         /// </param>
-        public void ProcessActions(CmdletOperationBase cmdletOperation)
+        internal void ProcessActions(CmdletOperationBase cmdletOperation)
         {
             if (!this.actionQueue.IsEmpty)
             {
@@ -153,7 +153,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cmdletOperation">
         /// Wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details.
         /// </param>
-        public void ProcessRemainActions(CmdletOperationBase cmdletOperation)
+        internal void ProcessRemainActions(CmdletOperationBase cmdletOperation)
         {
             DebugHelper.WriteLogEx();
 

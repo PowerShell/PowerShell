@@ -815,10 +815,10 @@ namespace System.Management.Automation
         /// </summary>
         internal struct ProcessWithParentId
         {
-            public Process OriginalProcessInstance;
+            internal Process OriginalProcessInstance;
             private int _parentId;
 
-            public int ParentId
+            internal int ParentId
             {
                 get
                 {
@@ -832,13 +832,13 @@ namespace System.Management.Automation
                 }
             }
 
-            public ProcessWithParentId(Process originalProcess)
+            internal ProcessWithParentId(Process originalProcess)
             {
                 OriginalProcessInstance = originalProcess;
                 _parentId = int.MinValue;
             }
 
-            public static ProcessWithParentId[] Construct(Process[] originalProcCollection)
+            internal static ProcessWithParentId[] Construct(Process[] originalProcCollection)
             {
                 ProcessWithParentId[] result = new ProcessWithParentId[originalProcCollection.Length];
                 for (int index = 0; index < originalProcCollection.Length; index++)
@@ -1405,15 +1405,15 @@ namespace System.Management.Automation
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct SHFILEINFO
         {
-            public IntPtr hIcon;
-            public int iIcon;
-            public uint dwAttributes;
+            internal IntPtr hIcon;
+            internal int iIcon;
+            internal uint dwAttributes;
 
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-            public string szDisplayName;
+            internal string szDisplayName;
 
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
-            public string szTypeName;
+            internal string szTypeName;
         };
 
         private const uint SHGFI_EXETYPE = 0x000002000; // flag used to ask to return exe type
@@ -1469,7 +1469,7 @@ namespace System.Management.Automation
         private bool _isXmlCliError;
         private string _processFileName;
 
-        public ProcessOutputHandler(Process process, BlockingCollection<ProcessOutputObject> queue)
+        internal ProcessOutputHandler(Process process, BlockingCollection<ProcessOutputObject> queue)
         {
             Debug.Assert(process.StartInfo.RedirectStandardOutput || process.StartInfo.RedirectStandardError, "Caller should redirect at least one stream");
             _refCount = 0;
@@ -1912,7 +1912,7 @@ namespace System.Management.Automation
         /// <summary>
         /// If set to true, then native commands will always be run redirected...
         /// </summary>
-        public static bool AlwaysCaptureApplicationIO { get; set; }
+        internal static bool AlwaysCaptureApplicationIO { get; set; }
 
         [DllImport("Kernel32.dll")]
         internal static extern IntPtr GetConsoleWindow();
@@ -2015,7 +2015,7 @@ namespace System.Management.Automation
         /// If there is a console attached, then make it visible
         /// and allow interactive console applications to be run.
         /// </summary>
-        public static void Show()
+        internal static void Show()
         {
             IntPtr hwnd = GetConsoleWindow();
             if (hwnd != IntPtr.Zero)
@@ -2033,7 +2033,7 @@ namespace System.Management.Automation
         /// If there is a console attached, then hide it and always capture
         /// output from the child process.
         /// </summary>
-        public static void Hide()
+        internal static void Hide()
         {
             IntPtr hwnd = GetConsoleWindow();
             if (hwnd != IntPtr.Zero)

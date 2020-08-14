@@ -16,12 +16,12 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// A unique GUID for the property.
         /// </summary>
-        public Guid FormatId { get; }
+        internal Guid FormatId { get; }
 
         /// <summary>
         /// Property identifier (PID)
         /// </summary>
-        public Int32 PropertyId { get; }
+        internal Int32 PropertyId { get; }
 
         #endregion
 

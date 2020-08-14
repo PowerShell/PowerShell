@@ -439,7 +439,7 @@ namespace System.Management.Automation
 
         private class CheckBreakpointInScript : AstVisitor
         {
-            public static bool IsInNestedScriptBlock(Ast ast, LineBreakpoint breakpoint)
+            internal static bool IsInNestedScriptBlock(Ast ast, LineBreakpoint breakpoint)
             {
                 var visitor = new CheckBreakpointInScript { _breakpoint = breakpoint };
                 ast.InternalVisit(visitor);

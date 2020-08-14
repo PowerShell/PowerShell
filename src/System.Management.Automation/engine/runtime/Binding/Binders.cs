@@ -3724,7 +3724,7 @@ namespace System.Management.Automation.Language
         private static readonly Dictionary<Type, PSConvertBinder> s_binderCache = new Dictionary<Type, PSConvertBinder>();
         internal int _version;
 
-        public static PSConvertBinder Get(Type type)
+        internal static PSConvertBinder Get(Type type)
         {
             PSConvertBinder result;
 
@@ -3927,7 +3927,7 @@ namespace System.Management.Automation.Language
         private readonly bool _allowSlicing;
         internal int _version;
 
-        public static PSGetIndexBinder Get(int argCount, PSMethodInvocationConstraints constraints, bool allowSlicing = true)
+        internal static PSGetIndexBinder Get(int argCount, PSMethodInvocationConstraints constraints, bool allowSlicing = true)
         {
             lock (s_binderCache)
             {
@@ -4517,7 +4517,7 @@ namespace System.Management.Automation.Language
         private readonly PSMethodInvocationConstraints _constraints;
         internal int _version;
 
-        public static PSSetIndexBinder Get(int argCount, PSMethodInvocationConstraints constraints = null)
+        internal static PSSetIndexBinder Get(int argCount, PSMethodInvocationConstraints constraints = null)
         {
             lock (s_binderCache)
             {
@@ -5062,12 +5062,12 @@ namespace System.Management.Automation.Language
             }
         }
 
-        public static PSGetMemberBinder Get(string memberName, TypeDefinitionAst classScope, bool @static)
+        internal static PSGetMemberBinder Get(string memberName, TypeDefinitionAst classScope, bool @static)
         {
             return Get(memberName, classScope != null ? classScope.Type : null, @static, false);
         }
 
-        public static PSGetMemberBinder Get(string memberName, Type classScope, bool @static)
+        internal static PSGetMemberBinder Get(string memberName, Type classScope, bool @static)
         {
             return Get(memberName, classScope, @static, false);
         }
@@ -5955,13 +5955,13 @@ namespace System.Management.Automation.Language
         private readonly Type _classScope;
         private readonly PSGetMemberBinder _getMemberBinder;
 
-        public static PSSetMemberBinder Get(string memberName, TypeDefinitionAst classScopeAst, bool @static)
+        internal static PSSetMemberBinder Get(string memberName, TypeDefinitionAst classScopeAst, bool @static)
         {
             var classScope = classScopeAst != null ? classScopeAst.Type : null;
             return Get(memberName, classScope, @static);
         }
 
-        public static PSSetMemberBinder Get(string memberName, Type classScope, bool @static)
+        internal static PSSetMemberBinder Get(string memberName, Type classScope, bool @static)
         {
             PSSetMemberBinder result;
 
@@ -5978,7 +5978,7 @@ namespace System.Management.Automation.Language
             return result;
         }
 
-        public PSSetMemberBinder(string name, bool ignoreCase, bool @static, Type classScope)
+        internal PSSetMemberBinder(string name, bool ignoreCase, bool @static, Type classScope)
             : base(name, ignoreCase)
         {
             _static = @static;
@@ -6546,7 +6546,7 @@ namespace System.Management.Automation.Language
             return Get(Name, _classScope, CallInfo, @static: false, propertySetter: _propertySetter, nonEnumerating: true, constraints: _invocationConstraints);
         }
 
-        public static PSInvokeMemberBinder Get(string memberName, CallInfo callInfo, bool @static, bool propertySetter,
+        internal static PSInvokeMemberBinder Get(string memberName, CallInfo callInfo, bool @static, bool propertySetter,
                                                PSMethodInvocationConstraints constraints, Type classScope)
         {
             return Get(memberName, classScope, callInfo, @static, propertySetter, nonEnumerating: false, constraints: constraints);
@@ -7520,7 +7520,7 @@ namespace System.Management.Automation.Language
             s_binderCache =
                 new Dictionary<Tuple<CallInfo, PSMethodInvocationConstraints, bool>, PSCreateInstanceBinder>(new KeyComparer());
 
-        public static PSCreateInstanceBinder Get(CallInfo callInfo, PSMethodInvocationConstraints constraints, bool publicTypeOnly = false)
+        internal static PSCreateInstanceBinder Get(CallInfo callInfo, PSMethodInvocationConstraints constraints, bool publicTypeOnly = false)
         {
             PSCreateInstanceBinder result;
 
@@ -7697,7 +7697,7 @@ namespace System.Management.Automation.Language
             s_binderCache =
                 new Dictionary<Tuple<CallInfo, PSMethodInvocationConstraints>, PSInvokeBaseCtorBinder>(new KeyComparer());
 
-        public static PSInvokeBaseCtorBinder Get(CallInfo callInfo, PSMethodInvocationConstraints constraints)
+        internal static PSInvokeBaseCtorBinder Get(CallInfo callInfo, PSMethodInvocationConstraints constraints)
         {
             PSInvokeBaseCtorBinder result;
 

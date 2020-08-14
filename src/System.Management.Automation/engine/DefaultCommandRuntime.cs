@@ -18,7 +18,7 @@ namespace System.Management.Automation
         /// Constructs an instance of the default ICommandRuntime object
         /// that will write objects into the list that was passed.
         /// </summary>
-        public DefaultCommandRuntime(List<object> outputList)
+        internal DefaultCommandRuntime(List<object> outputList)
         {
             if (outputList == null)
                 throw new System.ArgumentNullException(nameof(outputList));

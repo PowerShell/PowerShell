@@ -10,7 +10,7 @@ namespace System.Management.Automation
 {
     internal static class ExtensionMethods
     {
-        public static void SafeInvoke(this EventHandler eventHandler, object sender, EventArgs eventArgs)
+        internal static void SafeInvoke(this EventHandler eventHandler, object sender, EventArgs eventArgs)
         {
             if (eventHandler != null)
             {
@@ -18,7 +18,7 @@ namespace System.Management.Automation
             }
         }
 
-        public static void SafeInvoke<T>(this EventHandler<T> eventHandler, object sender, T eventArgs) where T : EventArgs
+        internal static void SafeInvoke<T>(this EventHandler<T> eventHandler, object sender, T eventArgs) where T : EventArgs
         {
             if (eventHandler != null)
             {

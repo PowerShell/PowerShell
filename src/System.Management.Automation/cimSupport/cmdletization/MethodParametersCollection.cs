@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <summary>
         /// Creates an empty collection of method parameters.
         /// </summary>
-        public MethodParametersCollection()
+        internal MethodParametersCollection()
             : base(StringComparer.Ordinal, 5)
         {
         }

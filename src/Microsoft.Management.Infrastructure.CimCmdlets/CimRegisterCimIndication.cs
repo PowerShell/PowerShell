@@ -24,7 +24,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Returns an Object value for an operation context
         /// </para>
         /// </summary>
-        public object Context
+        internal object Context
         {
             get
             {
@@ -47,7 +47,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// subscription result
         /// </para>
         /// </summary>
-        public CimSubscriptionResult Result
+        internal CimSubscriptionResult Result
         {
             get
             {
@@ -61,7 +61,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <para>Constructor</para>
         /// </summary>
         /// <param name="theResult"></param>
-        public CimSubscriptionResultEventArgs(
+        internal CimSubscriptionResultEventArgs(
             CimSubscriptionResult theResult)
         {
             this.context = null;
@@ -81,7 +81,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// subscription result
         /// </para>
         /// </summary>
-        public Exception Exception
+        internal Exception Exception
         {
             get
             {
@@ -95,7 +95,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <para>Constructor</para>
         /// </summary>
         /// <param name="theResult"></param>
-        public CimSubscriptionExceptionEventArgs(
+        internal CimSubscriptionExceptionEventArgs(
             Exception theException)
         {
             this.context = null;
@@ -115,14 +115,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// New subscription result event
         /// </para>
         /// </summary>
-        public event EventHandler<CimSubscriptionEventArgs> OnNewSubscriptionResult;
+        internal event EventHandler<CimSubscriptionEventArgs> OnNewSubscriptionResult;
 
         /// <summary>
         /// <para>
         /// Constructor
         /// </para>
         /// </summary>
-        public CimRegisterCimIndication()
+        internal CimRegisterCimIndication()
             : base()
         {
             this.ackedEvent = new ManualResetEventSlim(false);
@@ -136,7 +136,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="queryDialect"></param>
         /// <param name="queryExpression"></param>
         /// <param name="operationTimeout"></param>
-        public void RegisterCimIndication(
+        internal void RegisterCimIndication(
             string computerName,
             string nameSpace,
             string queryDialect,
@@ -159,7 +159,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="queryExpression"></param>
         /// <param name="operationTimeout"></param>
         /// <exception cref="ArgumentNullException">Throw if cimSession is null.</exception>
-        public void RegisterCimIndication(
+        internal void RegisterCimIndication(
             CimSession cimSession,
             string nameSpace,
             string queryDialect,

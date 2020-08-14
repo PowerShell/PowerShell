@@ -18,7 +18,7 @@ namespace System.Management.Automation.Tracing
 
         #region Creation/Cleanup
 
-        public EtwActivityReverterMethodInvoker(IEtwEventCorrelator eventCorrelator)
+        internal EtwActivityReverterMethodInvoker(IEtwEventCorrelator eventCorrelator)
         {
             if (eventCorrelator == null)
             {

@@ -69,7 +69,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="session"></param>
         /// <param name="observable"></param>
         /// <param name="resultType"></param>
-        public AsyncResultEventArgsBase(
+        internal AsyncResultEventArgsBase(
             CimSession session,
             IObservable<object> observable,
             AsyncResultType resultType)
@@ -86,7 +86,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="observable"></param>
         /// <param name="resultType"></param>
         /// <param name="context"></param>
-        public AsyncResultEventArgsBase(
+        internal AsyncResultEventArgsBase(
             CimSession session,
             IObservable<object> observable,
             AsyncResultType resultType,
@@ -98,12 +98,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.context = cimResultContext;
         }
 
-        public readonly CimSession session;
-        public readonly IObservable<object> observable;
-        public readonly AsyncResultType resultType;
+        internal readonly CimSession session;
+        internal readonly IObservable<object> observable;
+        internal readonly AsyncResultType resultType;
 
         // property ErrorSource
-        public readonly CimResultContext context;
+        internal readonly CimResultContext context;
     }
 
     #endregion
@@ -123,7 +123,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="session"><see cref="CimSession"/> object.</param>
         /// <param name="cancellationDisposable"></param>
-        public AsyncResultCompleteEventArgs(
+        internal AsyncResultCompleteEventArgs(
             CimSession session,
             IObservable<object> observable) :
             base(session, observable, AsyncResultType.Completion)
@@ -144,7 +144,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="session"></param>
         /// <param name="observable"></param>
         /// <param name="resultObject"></param>
-        public AsyncResultObjectEventArgs(
+        internal AsyncResultObjectEventArgs(
             CimSession session,
             IObservable<object> observable,
             object resultObject) :
@@ -153,7 +153,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.resultObject = resultObject;
         }
 
-        public readonly object resultObject;
+        internal readonly object resultObject;
     }
 
     /// <summary>
@@ -169,7 +169,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="session"></param>
         /// <param name="observable"></param>
         /// <param name="error"></param>
-        public AsyncResultErrorEventArgs(
+        internal AsyncResultErrorEventArgs(
             CimSession session,
             IObservable<object> observable,
             Exception error) :
@@ -185,7 +185,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="observable"></param>
         /// <param name="error"></param>
         /// <param name="context"></param>
-        public AsyncResultErrorEventArgs(
+        internal AsyncResultErrorEventArgs(
             CimSession session,
             IObservable<object> observable,
             Exception error,
@@ -195,7 +195,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.error = error;
         }
 
-        public readonly Exception error;
+        internal readonly Exception error;
     }
     #endregion
 
@@ -229,14 +229,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Define an Event based on the NewActionHandler.
         /// </summary>
-        public event ResultEventHandler OnNewResult;
+        internal event ResultEventHandler OnNewResult;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="session"><see cref="CimSession"/> object that issued the operation.</param>
         /// <param name="observable">Operation that can be observed.</param>
-        public CimResultObserver(CimSession session, IObservable<object> observable)
+        internal CimResultObserver(CimSession session, IObservable<object> observable)
         {
             this.session = session;
             this.observable = observable;
@@ -247,7 +247,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="session"><see cref="CimSession"/> object that issued the operation.</param>
         /// <param name="observable">Operation that can be observed.</param>
-        public CimResultObserver(CimSession session,
+        internal CimResultObserver(CimSession session,
             IObservable<object> observable,
             CimResultContext cimResultContext)
         {
@@ -376,7 +376,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="session"></param>
         /// <param name="observable"></param>
-        public CimSubscriptionResultObserver(CimSession session, IObservable<object> observable)
+        internal CimSubscriptionResultObserver(CimSession session, IObservable<object> observable)
             : base(session, observable)
         {
         }
@@ -386,7 +386,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="session"></param>
         /// <param name="observable"></param>
-        public CimSubscriptionResultObserver(
+        internal CimSubscriptionResultObserver(
             CimSession session,
             IObservable<object> observable,
             CimResultContext context)
@@ -415,7 +415,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="session"></param>
         /// <param name="observable"></param>
-        public CimMethodResultObserver(CimSession session, IObservable<object> observable)
+        internal CimMethodResultObserver(CimSession session, IObservable<object> observable)
             : base(session, observable)
         {
         }
@@ -426,7 +426,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="session"></param>
         /// <param name="observable"></param>
         /// <param name="context"></param>
-        public CimMethodResultObserver(
+        internal CimMethodResultObserver(
             CimSession session,
             IObservable<object> observable,
             CimResultContext context)
@@ -508,7 +508,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="session"></param>
         /// <param name="observable"></param>
-        public IgnoreResultObserver(CimSession session, IObservable<object> observable)
+        internal IgnoreResultObserver(CimSession session, IObservable<object> observable)
             : base(session, observable)
         {
         }

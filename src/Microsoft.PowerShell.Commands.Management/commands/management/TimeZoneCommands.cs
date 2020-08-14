@@ -457,7 +457,7 @@ namespace Microsoft.PowerShell.Commands
             /// Used to marshal win32 SystemTime structure to managed code layer.
             /// </summary>
             [StructLayout(LayoutKind.Sequential)]
-            public struct SystemTime
+            internal struct SystemTime
             {
                 /// <summary>
                 /// The year.
@@ -505,7 +505,7 @@ namespace Microsoft.PowerShell.Commands
             /// Used to marshal win32 DYNAMIC_TIME_ZONE_INFORMATION structure to managed code layer.
             /// </summary>
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-            public struct DYNAMIC_TIME_ZONE_INFORMATION
+            internal struct DYNAMIC_TIME_ZONE_INFORMATION
             {
                 /// <summary>
                 /// The current bias for local time translation on this computer, in minutes.
@@ -556,7 +556,7 @@ namespace Microsoft.PowerShell.Commands
             /// Used to marshal win32 TIME_ZONE_INFORMATION structure to managed code layer.
             /// </summary>
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-            public struct TIME_ZONE_INFORMATION
+            internal struct TIME_ZONE_INFORMATION
             {
                 /// <summary>
                 /// The current bias for local time translation on this computer, in minutes.
@@ -600,11 +600,11 @@ namespace Microsoft.PowerShell.Commands
             /// <returns></returns>
             [DllImport(SetDynamicTimeZoneApiDllName, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool SetDynamicTimeZoneInformation([In] ref DYNAMIC_TIME_ZONE_INFORMATION lpTimeZoneInformation);
+            internal static extern bool SetDynamicTimeZoneInformation([In] ref DYNAMIC_TIME_ZONE_INFORMATION lpTimeZoneInformation);
 
             [DllImport(GetTimeZoneInformationForYearApiDllName, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool GetTimeZoneInformationForYear([In] ushort wYear, [In] ref DYNAMIC_TIME_ZONE_INFORMATION pdtzi, ref TIME_ZONE_INFORMATION ptzi);
+            internal static extern bool GetTimeZoneInformationForYear([In] ushort wYear, [In] ref DYNAMIC_TIME_ZONE_INFORMATION pdtzi, ref TIME_ZONE_INFORMATION ptzi);
 
             #endregion Win32 SetDynamicTimeZoneInformation imports
 
@@ -613,29 +613,29 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Definition of TOKEN_QUERY constant from Win32 API.
             /// </summary>
-            public const int TOKEN_QUERY = 0x00000008;
+            internal const int TOKEN_QUERY = 0x00000008;
 
             /// <summary>
             /// Definition of TOKEN_ADJUST_PRIVILEGES constant from Win32 API.
             /// </summary>
-            public const int TOKEN_ADJUST_PRIVILEGES = 0x00000020;
+            internal const int TOKEN_ADJUST_PRIVILEGES = 0x00000020;
 
             /// <summary>
             /// Definition of SE_PRIVILEGE_ENABLED constant from Win32 API.
             /// </summary>
-            public const int SE_PRIVILEGE_ENABLED = 0x00000002;
+            internal const int SE_PRIVILEGE_ENABLED = 0x00000002;
 
             /// <summary>
             /// Definition of SE_TIME_ZONE_NAME constant from Win32 API.
             /// </summary>
-            public const string SE_TIME_ZONE_NAME = "SeTimeZonePrivilege"; // https://msdn.microsoft.com/library/bb530716(VS.85).aspx
+            internal const string SE_TIME_ZONE_NAME = "SeTimeZonePrivilege"; // https://msdn.microsoft.com/library/bb530716(VS.85).aspx
 
             /// <summary>
             /// PInvoke GetCurrentProcess API.
             /// </summary>
             /// <returns></returns>
             [DllImport(GetCurrentProcessApiDllName, ExactSpelling = true)]
-            public static extern IntPtr GetCurrentProcess();
+            internal static extern IntPtr GetCurrentProcess();
 
             /// <summary>
             /// PInvoke OpenProcessToken API.
@@ -646,7 +646,7 @@ namespace Microsoft.PowerShell.Commands
             /// <returns></returns>
             [DllImport(OpenProcessTokenApiDllName, SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool OpenProcessToken(IntPtr ProcessHandle, int DesiredAccess, ref IntPtr TokenHandle);
+            internal static extern bool OpenProcessToken(IntPtr ProcessHandle, int DesiredAccess, ref IntPtr TokenHandle);
 
             /// <summary>
             /// PInvoke LookupPrivilegeValue API.
@@ -657,7 +657,7 @@ namespace Microsoft.PowerShell.Commands
             /// <returns></returns>
             [DllImport(LookupPrivilegeTokenApiDllName, SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool LookupPrivilegeValue(string lpSystemName, string lpName, ref long lpLuid);
+            internal static extern bool LookupPrivilegeValue(string lpSystemName, string lpName, ref long lpLuid);
 
             /// <summary>
             /// PInvoke PrivilegeCheck API.
@@ -668,7 +668,7 @@ namespace Microsoft.PowerShell.Commands
             /// <returns></returns>
             [DllImport(PrivilegeCheckApiDllName, SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool PrivilegeCheck(IntPtr ClientToken, ref PRIVILEGE_SET RequiredPrivileges, ref bool pfResult);
+            internal static extern bool PrivilegeCheck(IntPtr ClientToken, ref PRIVILEGE_SET RequiredPrivileges, ref bool pfResult);
 
             /// <summary>
             /// PInvoke AdjustTokenPrivilege API.
@@ -682,7 +682,7 @@ namespace Microsoft.PowerShell.Commands
             /// <returns></returns>
             [DllImport(AdjustTokenPrivilegesApiDllName, SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool AdjustTokenPrivileges(IntPtr TokenHandle, bool DisableAllPrivileges,
+            internal static extern bool AdjustTokenPrivileges(IntPtr TokenHandle, bool DisableAllPrivileges,
                 ref TOKEN_PRIVILEGES NewState, int BufferLength, IntPtr PreviousState, IntPtr ReturnLength);
 
             /// <summary>
@@ -692,13 +692,13 @@ namespace Microsoft.PowerShell.Commands
             /// <returns></returns>
             [DllImport(CloseHandleApiDllName, ExactSpelling = true, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool CloseHandle(IntPtr hObject);
+            internal static extern bool CloseHandle(IntPtr hObject);
 
             /// <summary>
             /// Used to marshal win32 PRIVILEGE_SET structure to managed code layer.
             /// </summary>
             [StructLayout(LayoutKind.Sequential, Pack = 1)]
-            public struct PRIVILEGE_SET
+            internal struct PRIVILEGE_SET
             {
                 public int PrivilegeCount;
                 public int Control;
@@ -710,7 +710,7 @@ namespace Microsoft.PowerShell.Commands
             /// Used to marshal win32 TOKEN_PRIVILEGES structure to managed code layer.
             /// </summary>
             [StructLayout(LayoutKind.Sequential, Pack = 1)]
-            public struct TOKEN_PRIVILEGES
+            internal struct TOKEN_PRIVILEGES
             {
                 public int PrivilegeCount;
                 public long Luid;
@@ -724,17 +724,17 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Definition of WM_SETTINGCHANGE constant from Win32 API.
             /// </summary>
-            public const int WM_SETTINGCHANGE = 0x001A;
+            internal const int WM_SETTINGCHANGE = 0x001A;
 
             /// <summary>
             /// Definition of HWND_BROADCAST constant from Win32 API.
             /// </summary>
-            public const int HWND_BROADCAST = (-1);
+            internal const int HWND_BROADCAST = (-1);
 
             /// <summary>
             /// Definition of SMTO_ABORTIFHUNG constant from Win32 API.
             /// </summary>
-            public const int SMTO_ABORTIFHUNG = 0x0002;
+            internal const int SMTO_ABORTIFHUNG = 0x0002;
 
             /// <summary>
             /// PInvoke SendMessageTimeout API.
@@ -748,7 +748,7 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="lpdwResult"></param>
             /// <returns></returns>
             [DllImport(SendMessageTimeoutApiDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-            public static extern IntPtr SendMessageTimeout(IntPtr hWnd, int Msg, IntPtr wParam, string lParam, int fuFlags, int uTimeout, ref int lpdwResult);
+            internal static extern IntPtr SendMessageTimeout(IntPtr hWnd, int Msg, IntPtr wParam, string lParam, int fuFlags, int uTimeout, ref int lpdwResult);
 
             #endregion Win32 SendMessage imports
         }

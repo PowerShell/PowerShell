@@ -104,7 +104,7 @@ namespace System.Management.Automation
         ///        For normal functions or scriptblocks, exit command will
         ///        kill current powershell session.
         /// </remarks>
-        public bool FromScriptFile { get { return _fromScriptFile; } }
+        internal bool FromScriptFile { get { return _fromScriptFile; } }
 
         protected bool _fromScriptFile = false;
 

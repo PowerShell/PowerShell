@@ -44,7 +44,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="ast">The ast to infer the type from.</param>
         /// <returns>List of inferred typenames.</returns>
-        public static IList<PSTypeName> InferTypeOf(Ast ast)
+        internal static IList<PSTypeName> InferTypeOf(Ast ast)
         {
             return InferTypeOf(ast, TypeInferenceRuntimePermissions.None);
         }
@@ -55,7 +55,7 @@ namespace System.Management.Automation
         /// <param name="ast">The ast to infer the type from.</param>
         /// <param name="evalPermissions">The runtime usage permissions allowed during type inference.</param>
         /// <returns>List of inferred typenames.</returns>
-        public static IList<PSTypeName> InferTypeOf(Ast ast, TypeInferenceRuntimePermissions evalPermissions)
+        internal static IList<PSTypeName> InferTypeOf(Ast ast, TypeInferenceRuntimePermissions evalPermissions)
         {
             return InferTypeOf(ast, PowerShell.Create(RunspaceMode.CurrentRunspace), evalPermissions);
         }
@@ -66,7 +66,7 @@ namespace System.Management.Automation
         /// <param name="ast">The ast to infer the type from.</param>
         /// <param name="powerShell">The instance of powershell to use for expression evaluation needed for type inference.</param>
         /// <returns>List of inferred typenames.</returns>
-        public static IList<PSTypeName> InferTypeOf(Ast ast, PowerShell powerShell)
+        internal static IList<PSTypeName> InferTypeOf(Ast ast, PowerShell powerShell)
         {
             return InferTypeOf(ast, powerShell, TypeInferenceRuntimePermissions.None);
         }
@@ -78,7 +78,7 @@ namespace System.Management.Automation
         /// <param name="powerShell">The instance of powershell to user for expression evaluation needed for type inference.</param>
         /// <param name="evalPersmissions">The runtime usage permissions allowed during type inference.</param>
         /// <returns>List of inferred typenames.</returns>
-        public static IList<PSTypeName> InferTypeOf(Ast ast, PowerShell powerShell, TypeInferenceRuntimePermissions evalPersmissions)
+        internal static IList<PSTypeName> InferTypeOf(Ast ast, PowerShell powerShell, TypeInferenceRuntimePermissions evalPersmissions)
         {
             var context = new TypeInferenceContext(powerShell);
             return InferTypeOf(ast, context, evalPersmissions);
@@ -124,10 +124,10 @@ namespace System.Management.Automation
 
     internal class TypeInferenceContext
     {
-        public static readonly PSTypeName[] EmptyPSTypeNameArray = Array.Empty<PSTypeName>();
+        internal static readonly PSTypeName[] EmptyPSTypeNameArray = Array.Empty<PSTypeName>();
         private readonly PowerShell _powerShell;
 
-        public TypeInferenceContext() : this(PowerShell.Create(RunspaceMode.CurrentRunspace))
+        internal TypeInferenceContext() : this(PowerShell.Create(RunspaceMode.CurrentRunspace))
         {
         }
 
@@ -136,7 +136,7 @@ namespace System.Management.Automation
         /// The powerShell instance passed need to have a non null Runspace.
         /// </summary>
         /// <param name="powerShell">The instance of powershell to use for expression evaluation needed for type inference.</param>
-        public TypeInferenceContext(PowerShell powerShell)
+        internal TypeInferenceContext(PowerShell powerShell)
         {
             Diagnostics.Assert(powerShell.Runspace != null, "Callers are required to ensure we have a runspace");
             _powerShell = powerShell;
@@ -146,17 +146,17 @@ namespace System.Management.Automation
 
         // used to infer types in script properties attached to an object,
         // to be able to determine the type of $this in the scripts properties
-        public PSTypeName CurrentThisType { get; set; }
+        internal PSTypeName CurrentThisType { get; set; }
 
-        public TypeDefinitionAst CurrentTypeDefinitionAst { get; set; }
+        internal TypeDefinitionAst CurrentTypeDefinitionAst { get; set; }
 
-        public TypeInferenceRuntimePermissions RuntimePermissions { get; set; }
+        internal TypeInferenceRuntimePermissions RuntimePermissions { get; set; }
 
         internal PowerShellExecutionHelper Helper { get; }
 
         internal ExecutionContext ExecutionContext => _powerShell.Runspace.ExecutionContext;
 
-        public bool TryGetRepresentativeTypeNameFromExpressionSafeEval(ExpressionAst expression, out PSTypeName typeName)
+        internal bool TryGetRepresentativeTypeNameFromExpressionSafeEval(ExpressionAst expression, out PSTypeName typeName)
         {
             typeName = null;
             if (RuntimePermissions != TypeInferenceRuntimePermissions.AllowSafeEval)
@@ -486,7 +486,7 @@ namespace System.Management.Automation
 
         private static readonly PSTypeName StringPSTypeName = new PSTypeName(typeof(string));
 
-        public TypeInferenceVisitor(TypeInferenceContext context)
+        internal TypeInferenceVisitor(TypeInferenceContext context)
         {
             _context = context;
         }
@@ -2349,12 +2349,12 @@ namespace System.Management.Automation
 
     internal static class TypeInferenceExtension
     {
-        public static bool EqualsOrdinalIgnoreCase(this string s, string t)
+        internal static bool EqualsOrdinalIgnoreCase(this string s, string t)
         {
             return string.Equals(s, t, StringComparison.OrdinalIgnoreCase);
         }
 
-        public static IEnumerable<MethodInfo> GetGetterProperty(this Type type, string propertyName)
+        internal static IEnumerable<MethodInfo> GetGetterProperty(this Type type, string propertyName)
         {
             var res = new List<MethodInfo>();
             foreach (var m in type.GetMethods(BindingFlags.Public | BindingFlags.Instance))
@@ -2371,7 +2371,7 @@ namespace System.Management.Automation
             return res;
         }
 
-        public static bool AstAssignsToSameVariable(this VariableExpressionAst variableAst, Ast ast)
+        internal static bool AstAssignsToSameVariable(this VariableExpressionAst variableAst, Ast ast)
         {
             var parameterAst = ast as ParameterAst;
             var variableAstVariablePath = variableAst.VariablePath;

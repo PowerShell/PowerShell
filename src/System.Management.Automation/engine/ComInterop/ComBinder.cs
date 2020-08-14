@@ -20,7 +20,7 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         /// <param name="value">The object to test.</param>
         /// <returns>True if the object is a COM object, false otherwise.</returns>
-        public static bool IsComObject(object value)
+        internal static bool IsComObject(object value)
         {
             return value != null && Marshal.IsComObject(value);
         }
@@ -33,7 +33,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
         /// <param name="delayInvocation">True if member evaluation may be delayed.</param>
         /// <returns>True if operation was bound successfully; otherwise, false.</returns>
-        public static bool TryBindGetMember(GetMemberBinder binder, DynamicMetaObject instance, out DynamicMetaObject result, bool delayInvocation)
+        internal static bool TryBindGetMember(GetMemberBinder binder, DynamicMetaObject instance, out DynamicMetaObject result, bool delayInvocation)
         {
             Requires.NotNull(binder, nameof(binder));
             Requires.NotNull(instance, nameof(instance));
@@ -64,7 +64,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="value">The <see cref="DynamicMetaObject"/> representing the value for the set member operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
         /// <returns>True if operation was bound successfully; otherwise, false.</returns>
-        public static bool TryBindSetMember(SetMemberBinder binder, DynamicMetaObject instance, DynamicMetaObject value, out DynamicMetaObject result)
+        internal static bool TryBindSetMember(SetMemberBinder binder, DynamicMetaObject instance, DynamicMetaObject value, out DynamicMetaObject result)
         {
             Requires.NotNull(binder, nameof(binder));
             Requires.NotNull(instance, nameof(instance));
@@ -89,7 +89,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="args">An array of <see cref="DynamicMetaObject"/> instances - arguments to the invoke member operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
         /// <returns>True if operation was bound successfully; otherwise, false.</returns>
-        public static bool TryBindInvoke(InvokeBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
+        internal static bool TryBindInvoke(InvokeBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
         {
             Requires.NotNull(binder, nameof(binder));
             Requires.NotNull(instance, nameof(instance));
@@ -114,7 +114,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="args">An array of <see cref="DynamicMetaObject"/> instances - arguments to the invoke member operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
         /// <returns>True if operation was bound successfully; otherwise, false.</returns>
-        public static bool TryBindInvokeMember(InvokeMemberBinder binder, bool isSetProperty, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
+        internal static bool TryBindInvokeMember(InvokeMemberBinder binder, bool isSetProperty, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
         {
             Requires.NotNull(binder, nameof(binder));
             Requires.NotNull(instance, nameof(instance));
@@ -156,7 +156,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="args">An array of <see cref="DynamicMetaObject"/> instances - arguments to the invoke member operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
         /// <returns>True if operation was bound successfully; otherwise, false.</returns>
-        public static bool TryBindGetIndex(GetIndexBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
+        internal static bool TryBindGetIndex(GetIndexBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
         {
             Requires.NotNull(binder, nameof(binder));
             Requires.NotNull(instance, nameof(instance));
@@ -181,7 +181,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="value">The <see cref="DynamicMetaObject"/> representing the value for the set index operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
         /// <returns>True if operation was bound successfully; otherwise, false.</returns>
-        public static bool TryBindSetIndex(SetIndexBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, DynamicMetaObject value, out DynamicMetaObject result)
+        internal static bool TryBindSetIndex(SetIndexBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, DynamicMetaObject value, out DynamicMetaObject result)
         {
             Requires.NotNull(binder, nameof(binder));
             Requires.NotNull(instance, nameof(instance));
@@ -206,7 +206,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="instance">The target of the dynamic operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
         /// <returns>True if operation was bound successfully; otherwise, false.</returns>
-        public static bool TryConvert(ConvertBinder binder, DynamicMetaObject instance, out DynamicMetaObject result)
+        internal static bool TryConvert(ConvertBinder binder, DynamicMetaObject instance, out DynamicMetaObject result)
         {
             Requires.NotNull(binder, nameof(binder));
             Requires.NotNull(instance, nameof(instance));

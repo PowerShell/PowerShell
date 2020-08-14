@@ -24,7 +24,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Id of the cimsession.
         /// </summary>
-        public uint SessionId
+        internal uint SessionId
         {
             get
             {
@@ -37,7 +37,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// InstanceId of the cimsession.
         /// </summary>
-        public Guid InstanceId
+        internal Guid InstanceId
         {
             get
             {
@@ -50,7 +50,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Name of the cimsession.
         /// </summary>
-        public string Name
+        internal string Name
         {
             get
             {
@@ -63,7 +63,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Computer name of the cimsession.
         /// </summary>
-        public string ComputerName
+        internal string ComputerName
         {
             get
             {
@@ -76,7 +76,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Wrapped cimsession object.
         /// </summary>
-        public CimSession CimSession
+        internal CimSession CimSession
         {
             get
             {
@@ -89,7 +89,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Computer name of the cimsession.
         /// </summary>
-        public string Protocol
+        internal string Protocol
         {
             get
             {
@@ -360,7 +360,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// resetting unmanaged resources.
         /// </para>
         /// </summary>
-        public void Cleanup()
+        internal void Cleanup()
         {
             foreach (CimSession session in curCimSessionWrapper.Keys)
             {
@@ -787,7 +787,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The constructor.
         /// </summary>
-        public CimSessionBase()
+        internal CimSessionBase()
         {
             this.sessionState = cimSessions.GetOrAdd(
                 CurrentRunspaceId,
@@ -850,7 +850,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
         #endregion
 
-        public static CimSessionState GetCimSessionState()
+        internal static CimSessionState GetCimSessionState()
         {
             CimSessionState state = null;
             cimSessions.TryGetValue(CurrentRunspaceId, out state);
@@ -1027,7 +1027,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cmdletOperation">
         /// Wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details.
         /// </param>
-        public void ProcessActions(CmdletOperationBase cmdletOperation)
+        internal void ProcessActions(CmdletOperationBase cmdletOperation)
         {
             this.cimTestSession.ProcessActions(cmdletOperation);
         }
@@ -1041,7 +1041,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cmdletOperation">
         /// Wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details.
         /// </param>
-        public void ProcessRemainActions(CmdletOperationBase cmdletOperation)
+        internal void ProcessRemainActions(CmdletOperationBase cmdletOperation)
         {
             this.cimTestSession.ProcessRemainActions(cmdletOperation);
         }
@@ -1132,7 +1132,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The constructor.
         /// </summary>
-        public CimGetSession() : base()
+        internal CimGetSession() : base()
         {
         }
 
@@ -1141,7 +1141,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// and its parameter.
         /// </summary>
         /// <param name="cmdlet"></param>
-        public void GetCimSession(GetCimSessionCommand cmdlet)
+        internal void GetCimSession(GetCimSessionCommand cmdlet)
         {
             DebugHelper.WriteLogEx();
 
@@ -1214,7 +1214,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Constructor.
         /// </summary>
-        public CimRemoveSession() : base()
+        internal CimRemoveSession() : base()
         {
         }
 
@@ -1223,7 +1223,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// and its parameter.
         /// </summary>
         /// <param name="cmdlet"></param>
-        public void RemoveCimSession(RemoveCimSessionCommand cmdlet)
+        internal void RemoveCimSession(RemoveCimSessionCommand cmdlet)
         {
             DebugHelper.WriteLogEx();
 

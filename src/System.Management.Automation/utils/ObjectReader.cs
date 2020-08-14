@@ -23,7 +23,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="stream">The stream to read.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
-        public ObjectReaderBase([In, Out] ObjectStreamBase stream)
+        internal ObjectReaderBase([In, Out] ObjectStreamBase stream)
         {
             if (stream == null)
             {
@@ -66,7 +66,7 @@ namespace System.Management.Automation.Internal
             }
         }
 
-        public event EventHandler InternalDataReady = null;
+        internal event EventHandler InternalDataReady = null;
 
         #endregion Events
 
@@ -242,7 +242,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="stream">The stream to read.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
-        public ObjectReader([In, Out] ObjectStream stream)
+        internal ObjectReader([In, Out] ObjectStream stream)
             : base(stream)
         { }
         #endregion ctor
@@ -352,7 +352,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="stream">The stream to read.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
-        public PSObjectReader([In, Out] ObjectStream stream)
+        internal PSObjectReader([In, Out] ObjectStream stream)
             : base(stream)
         { }
         #endregion ctor
@@ -500,7 +500,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="stream">The stream to read.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
-        public PSDataCollectionReader(PSDataCollectionStream<DataStoreType> stream)
+        internal PSDataCollectionReader(PSDataCollectionStream<DataStoreType> stream)
             : base(stream)
         {
             System.Management.Automation.Diagnostics.Assert(stream.ObjectStore != null,

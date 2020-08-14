@@ -2830,15 +2830,15 @@ namespace System.Management.Automation.Remoting.Client
 
         private class SendDataChunk
         {
-            public SendDataChunk(byte[] data, DataPriorityType type)
+            internal SendDataChunk(byte[] data, DataPriorityType type)
             {
                 Data = data;
                 Type = type;
             }
 
-            public byte[] Data { get; }
+            internal byte[] Data { get; }
 
-            public DataPriorityType Type { get; }
+            internal DataPriorityType Type { get; }
         }
 
         #endregion

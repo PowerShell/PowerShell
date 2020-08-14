@@ -1943,19 +1943,19 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Remote command instance Id.
         /// </summary>
-        public Guid CommandId { get; } = Guid.Empty;
+        internal Guid CommandId { get; } = Guid.Empty;
 
         /// <summary>
         /// Remote command string.
         /// </summary>
-        public string Command { get; } = string.Empty;
+        internal string Command { get; } = string.Empty;
 
         /// <summary>
         /// Constructs a remote command object.
         /// </summary>
         /// <param name="cmdId">Command instance Id.</param>
         /// <param name="cmdStr">Command string.</param>
-        public ConnectCommandInfo(Guid cmdId, string cmdStr)
+        internal ConnectCommandInfo(Guid cmdId, string cmdStr)
         {
             CommandId = cmdId;
             Command = cmdStr;

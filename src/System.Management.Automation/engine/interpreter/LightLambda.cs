@@ -32,7 +32,7 @@ namespace System.Management.Automation.Interpreter
 {
     internal sealed class LightLambdaCompileEventArgs : EventArgs
     {
-        public Delegate Compiled { get; private set; }
+        internal Delegate Compiled { get; private set; }
 
         internal LightLambdaCompileEventArgs(Delegate compiled)
         {
@@ -54,7 +54,7 @@ namespace System.Management.Automation.Interpreter
         /// <summary>
         /// Provides notification that the LightLambda has been compiled.
         /// </summary>
-        public event EventHandler<LightLambdaCompileEventArgs> Compile;
+        internal event EventHandler<LightLambdaCompileEventArgs> Compile;
 
         internal LightLambda(LightDelegateCreator delegateCreator, StrongBox<object>[] closure, int compilationThreshold)
         {
@@ -274,7 +274,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public object Run(params object[] arguments)
+        internal object Run(params object[] arguments)
         {
             if (_compiled != null || TryGetCompiled())
             {

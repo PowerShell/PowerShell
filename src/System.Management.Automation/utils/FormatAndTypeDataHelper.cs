@@ -14,7 +14,7 @@ namespace System.Management.Automation.Runspaces
 {
     internal class PSSnapInTypeAndFormatErrors
     {
-        public string psSnapinName;
+        internal string psSnapinName;
         // only one of fullPath or formatTable or typeData or typeDefinition should be specified..
         // typeData and isRemove should be used together
 

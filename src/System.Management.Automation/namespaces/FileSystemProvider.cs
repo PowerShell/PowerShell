@@ -7350,22 +7350,22 @@ namespace Microsoft.PowerShell.Commands
         [StructLayout(LayoutKind.Sequential)]
         private struct NetResource
         {
-            public int Scope;
-            public int Type;
-            public int DisplayType;
-            public int Usage;
+            internal int Scope;
+            internal int Type;
+            internal int DisplayType;
+            internal int Usage;
 
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string LocalName;
+            internal string LocalName;
 
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string RemoteName;
+            internal string RemoteName;
 
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string Comment;
+            internal string Comment;
 
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string Provider;
+            internal string Provider;
         }
 
         #region InodeTracker
@@ -7417,12 +7417,12 @@ namespace Microsoft.PowerShell.Commands
 
     internal static class SafeInvokeCommand
     {
-        public static Hashtable Invoke(System.Management.Automation.PowerShell ps, FileSystemProvider fileSystemContext, CmdletProviderContext cmdletContext)
+        internal static Hashtable Invoke(System.Management.Automation.PowerShell ps, FileSystemProvider fileSystemContext, CmdletProviderContext cmdletContext)
         {
             return Invoke(ps, fileSystemContext, cmdletContext, true);
         }
 
-        public static Hashtable Invoke(System.Management.Automation.PowerShell ps, FileSystemProvider fileSystemContext, CmdletProviderContext cmdletContext, bool shouldHaveOutput)
+        internal static Hashtable Invoke(System.Management.Automation.PowerShell ps, FileSystemProvider fileSystemContext, CmdletProviderContext cmdletContext, bool shouldHaveOutput)
         {
             bool useFileSystemProviderContext = (cmdletContext == null);
 
@@ -7493,11 +7493,11 @@ namespace Microsoft.PowerShell.Commands
     {
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public PSSession FromSession { get; set; }
+        internal PSSession FromSession { get; set; }
 
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public PSSession ToSession { get; set; }
+        internal PSSession ToSession { get; set; }
     }
 
     /// <summary>
@@ -7509,20 +7509,20 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the attribute filtering enum evaluator.
         /// </summary>
         [Parameter]
-        public FlagsExpression<FileAttributes> Attributes { get; set; }
+        internal FlagsExpression<FileAttributes> Attributes { get; set; }
 
         /// <summary>
         /// Gets or sets the flag to follow symbolic links when recursing.
         /// </summary>
         [Parameter]
-        public SwitchParameter FollowSymlink { get; set; }
+        internal SwitchParameter FollowSymlink { get; set; }
 
         /// <summary>
         /// Gets or sets the filter directory flag.
         /// </summary>
         [Parameter]
         [Alias("ad", "d")]
-        public SwitchParameter Directory
+        internal SwitchParameter Directory
         {
             get { return _attributeDirectory; }
 
@@ -7536,7 +7536,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("af")]
-        public SwitchParameter File
+        internal SwitchParameter File
         {
             get { return _attributeFile; }
 
@@ -7550,7 +7550,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("ah", "h")]
-        public SwitchParameter Hidden
+        internal SwitchParameter Hidden
         {
             get { return _attributeHidden; }
 
@@ -7564,7 +7564,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("ar")]
-        public SwitchParameter ReadOnly
+        internal SwitchParameter ReadOnly
         {
             get { return _attributeReadOnly; }
 
@@ -7578,7 +7578,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("as")]
-        public SwitchParameter System
+        internal SwitchParameter System
         {
             get { return _attributeSystem; }
 
@@ -7898,82 +7898,82 @@ namespace Microsoft.PowerShell.Commands
         [StructLayout(LayoutKind.Sequential)]
         private struct REPARSE_DATA_BUFFER_SYMBOLICLINK
         {
-            public uint ReparseTag;
-            public ushort ReparseDataLength;
-            public ushort Reserved;
-            public ushort SubstituteNameOffset;
-            public ushort SubstituteNameLength;
-            public ushort PrintNameOffset;
-            public ushort PrintNameLength;
-            public uint Flags;
+            internal uint ReparseTag;
+            internal ushort ReparseDataLength;
+            internal ushort Reserved;
+            internal ushort SubstituteNameOffset;
+            internal ushort SubstituteNameLength;
+            internal ushort PrintNameOffset;
+            internal ushort PrintNameLength;
+            internal uint Flags;
 
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
-            public byte[] PathBuffer;
+            internal byte[] PathBuffer;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct REPARSE_DATA_BUFFER_MOUNTPOINT
         {
-            public uint ReparseTag;
-            public ushort ReparseDataLength;
-            public ushort Reserved;
-            public ushort SubstituteNameOffset;
-            public ushort SubstituteNameLength;
-            public ushort PrintNameOffset;
-            public ushort PrintNameLength;
+            internal uint ReparseTag;
+            internal ushort ReparseDataLength;
+            internal ushort Reserved;
+            internal ushort SubstituteNameOffset;
+            internal ushort SubstituteNameLength;
+            internal ushort PrintNameOffset;
+            internal ushort PrintNameLength;
 
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
-            public byte[] PathBuffer;
+            internal byte[] PathBuffer;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct REPARSE_DATA_BUFFER_APPEXECLINK
         {
-            public uint ReparseTag;
-            public ushort ReparseDataLength;
-            public ushort Reserved;
-            public uint StringCount;
+            internal uint ReparseTag;
+            internal ushort ReparseDataLength;
+            internal ushort Reserved;
+            internal uint StringCount;
 
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
-            public byte[] StringList;
+            internal byte[] StringList;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct BY_HANDLE_FILE_INFORMATION
         {
-            public uint FileAttributes;
-            public System.Runtime.InteropServices.ComTypes.FILETIME CreationTime;
-            public System.Runtime.InteropServices.ComTypes.FILETIME LastAccessTime;
-            public System.Runtime.InteropServices.ComTypes.FILETIME LastWriteTime;
-            public uint VolumeSerialNumber;
-            public uint FileSizeHigh;
-            public uint FileSizeLow;
-            public uint NumberOfLinks;
-            public uint FileIndexHigh;
-            public uint FileIndexLow;
+            internal uint FileAttributes;
+            internal System.Runtime.InteropServices.ComTypes.FILETIME CreationTime;
+            internal System.Runtime.InteropServices.ComTypes.FILETIME LastAccessTime;
+            internal System.Runtime.InteropServices.ComTypes.FILETIME LastWriteTime;
+            internal uint VolumeSerialNumber;
+            internal uint FileSizeHigh;
+            internal uint FileSizeLow;
+            internal uint NumberOfLinks;
+            internal uint FileIndexHigh;
+            internal uint FileIndexLow;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct GUID
         {
-            public uint Data1;
-            public ushort Data2;
-            public ushort Data3;
+            internal uint Data1;
+            internal ushort Data2;
+            internal ushort Data3;
 
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public char[] Data4;
+            internal char[] Data4;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct REPARSE_GUID_DATA_BUFFER
         {
-            public uint ReparseTag;
-            public ushort ReparseDataLength;
-            public ushort Reserved;
-            public GUID ReparseGuid;
+            internal uint ReparseTag;
+            internal ushort ReparseDataLength;
+            internal ushort Reserved;
+            internal GUID ReparseGuid;
 
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_REPARSE_SIZE)]
-            public char[] DataBuffer;
+            internal char[] DataBuffer;
         }
 
         [DllImport(PinvokeDllNames.DeviceIoControlDllName, CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]
@@ -8783,13 +8783,13 @@ namespace System.Management.Automation.Internal
             /// <summary>
             /// The length of this stream.
             /// </summary>
-            public long Length;
+            internal long Length;
 
             /// <summary>
             /// The name of this stream.
             /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 296)]
-            public string Name;
+            internal string Name;
         }
     }
 

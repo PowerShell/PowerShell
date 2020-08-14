@@ -38,7 +38,7 @@ namespace System.Management.Automation.Language
 {
     internal class IsSafeValueVisitor : ICustomAstVisitor2
     {
-        public static bool IsAstSafe(Ast ast, GetSafeValueVisitor.SafeValueContext safeValueContext)
+        internal static bool IsAstSafe(Ast ast, GetSafeValueVisitor.SafeValueContext safeValueContext)
         {
             IsSafeValueVisitor visitor = new IsSafeValueVisitor(safeValueContext);
             return visitor.IsAstSafe(ast);
@@ -368,7 +368,7 @@ namespace System.Management.Automation.Language
         // future proofing
         private GetSafeValueVisitor() { }
 
-        public static object GetSafeValue(Ast ast, ExecutionContext context, SafeValueContext safeValueContext)
+        internal static object GetSafeValue(Ast ast, ExecutionContext context, SafeValueContext safeValueContext)
         {
             t_context = context;
             if (IsSafeValueVisitor.IsAstSafe(ast, safeValueContext))

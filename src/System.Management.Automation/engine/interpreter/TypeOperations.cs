@@ -59,7 +59,7 @@ namespace System.Management.Automation.Interpreter
         private readonly ConstructorInfo _constructor;
         private readonly int _argCount;
 
-        public NewInstruction(ConstructorInfo constructor)
+        internal NewInstruction(ConstructorInfo constructor)
         {
             _constructor = constructor;
             _argCount = constructor.GetParameters().Length;
@@ -171,7 +171,7 @@ namespace System.Management.Automation.Interpreter
 
     internal sealed class TypeEqualsInstruction : Instruction
     {
-        public static readonly TypeEqualsInstruction Instance = new TypeEqualsInstruction();
+        internal static readonly TypeEqualsInstruction Instance = new TypeEqualsInstruction();
 
         public override int ConsumedStack { get { return 2; } }
 

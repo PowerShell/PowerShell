@@ -778,7 +778,7 @@ namespace System.Management.Automation
 
             private Pipe _shellFunctionErrorOutputPipe;
 
-            public SavedContextData(ExecutionContext context)
+            internal SavedContextData(ExecutionContext context)
             {
                 _stepScript = context.PSDebugTraceStep;
                 _ignoreScriptDebug = context.IgnoreScriptDebug;
@@ -787,7 +787,7 @@ namespace System.Management.Automation
                 _shellFunctionErrorOutputPipe = context.ShellFunctionErrorOutputPipe;
             }
 
-            public void RestoreContextData(ExecutionContext context)
+            internal void RestoreContextData(ExecutionContext context)
             {
                 context.PSDebugTraceStep = _stepScript;
                 context.IgnoreScriptDebug = _ignoreScriptDebug;

@@ -388,7 +388,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="argumentName"></param>
-        public static void ValidateNoNullArgument(object obj, string argumentName)
+        internal static void ValidateNoNullArgument(object obj, string argumentName)
         {
             if (obj == null)
             {
@@ -401,7 +401,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="argumentName"></param>
-        public static void ValidateNoNullorWhiteSpaceArgument(string obj, string argumentName)
+        internal static void ValidateNoNullorWhiteSpaceArgument(string obj, string argumentName)
         {
             if (string.IsNullOrWhiteSpace(obj))
             {
@@ -417,7 +417,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="value"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Throw if the given value is not a valid name (class name or property name).</exception>
-        public static string ValidateArgumentIsValidName(string parameterName, string value)
+        internal static string ValidateArgumentIsValidName(string parameterName, string value)
         {
             DebugHelper.WriteLogEx();
             if (value != null)
@@ -445,7 +445,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="value"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Throw if the given value contains any invalid name (class name or property name).</exception>
-        public static string[] ValidateArgumentIsValidName(string parameterName, string[] value)
+        internal static string[] ValidateArgumentIsValidName(string parameterName, string[] value)
         {
             if (value != null)
             {

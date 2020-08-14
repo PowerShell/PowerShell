@@ -59,16 +59,16 @@ namespace System.Management.Automation
 
         protected class RunspaceEventQueueItem
         {
-            public RunspaceEventQueueItem(RunspaceStateInfo runspaceStateInfo, RunspaceAvailability currentAvailability, RunspaceAvailability newAvailability)
+            internal RunspaceEventQueueItem(RunspaceStateInfo runspaceStateInfo, RunspaceAvailability currentAvailability, RunspaceAvailability newAvailability)
             {
                 this.RunspaceStateInfo = runspaceStateInfo;
                 this.CurrentRunspaceAvailability = currentAvailability;
                 this.NewRunspaceAvailability = newAvailability;
             }
 
-            public RunspaceStateInfo RunspaceStateInfo;
-            public RunspaceAvailability CurrentRunspaceAvailability;
-            public RunspaceAvailability NewRunspaceAvailability;
+            internal RunspaceStateInfo RunspaceStateInfo;
+            internal RunspaceAvailability CurrentRunspaceAvailability;
+            internal RunspaceAvailability NewRunspaceAvailability;
         }
 
         /// <summary>
@@ -1813,19 +1813,19 @@ namespace System.Management.Automation
         /// <summary>
         /// RemoteDebuggerStopEvent.
         /// </summary>
-        public const string RemoteDebuggerStopEvent = "PSInternalRemoteDebuggerStopEvent";
+        internal const string RemoteDebuggerStopEvent = "PSInternalRemoteDebuggerStopEvent";
 
         /// <summary>
         /// RemoteDebuggerBreakpointUpdatedEvent.
         /// </summary>
-        public const string RemoteDebuggerBreakpointUpdatedEvent = "PSInternalRemoteDebuggerBreakpointUpdatedEvent";
+        internal const string RemoteDebuggerBreakpointUpdatedEvent = "PSInternalRemoteDebuggerBreakpointUpdatedEvent";
 
         // Remote debugger settings
-        public const string DebugModeSetting = "DebugMode";
-        public const string DebugStopState = "DebugStop";
-        public const string DebugBreakpointCount = "DebugBreakpointCount";
-        public const string BreakAllSetting = "BreakAll";
-        public const string UnhandledBreakpointModeSetting = "UnhandledBreakpointMode";
+        internal const string DebugModeSetting = "DebugMode";
+        internal const string DebugStopState = "DebugStop";
+        internal const string DebugBreakpointCount = "DebugBreakpointCount";
+        internal const string BreakAllSetting = "BreakAll";
+        internal const string UnhandledBreakpointModeSetting = "UnhandledBreakpointMode";
 
         #endregion
 
@@ -1837,7 +1837,7 @@ namespace System.Management.Automation
         /// Constructor.
         /// </summary>
         /// <param name="runspace">Associated remote runspace.</param>
-        public RemoteDebugger(RemoteRunspace runspace)
+        internal RemoteDebugger(RemoteRunspace runspace)
         {
             if (runspace == null)
             {

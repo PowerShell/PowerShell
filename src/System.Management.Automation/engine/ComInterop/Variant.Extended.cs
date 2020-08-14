@@ -14,147 +14,147 @@ namespace System.Management.Automation.InteropServices
     {
         // VT_I1
 
-        public void SetAsByrefI1(ref sbyte value)
+        internal void SetAsByrefI1(ref sbyte value)
         {
             SetAsByref(ref value, VarEnum.VT_I1);
         }
 
         // VT_I2
 
-        public void SetAsByrefI2(ref short value)
+        internal void SetAsByrefI2(ref short value)
         {
             SetAsByref(ref value, VarEnum.VT_I2);
         }
 
         // VT_I4
 
-        public void SetAsByrefI4(ref int value)
+        internal void SetAsByrefI4(ref int value)
         {
             SetAsByref(ref value, VarEnum.VT_I4);
         }
 
         // VT_I8
 
-        public void SetAsByrefI8(ref long value)
+        internal void SetAsByrefI8(ref long value)
         {
             SetAsByref(ref value, VarEnum.VT_I8);
         }
 
         // VT_UI1
 
-        public void SetAsByrefUi1(ref byte value)
+        internal void SetAsByrefUi1(ref byte value)
         {
             SetAsByref(ref value, VarEnum.VT_UI1);
         }
 
         // VT_UI2
 
-        public void SetAsByrefUi2(ref ushort value)
+        internal void SetAsByrefUi2(ref ushort value)
         {
             SetAsByref(ref value, VarEnum.VT_UI2);
         }
 
         // VT_UI4
 
-        public void SetAsByrefUi4(ref uint value)
+        internal void SetAsByrefUi4(ref uint value)
         {
             SetAsByref(ref value, VarEnum.VT_UI4);
         }
 
         // VT_UI8
 
-        public void SetAsByrefUi8(ref ulong value)
+        internal void SetAsByrefUi8(ref ulong value)
         {
             SetAsByref(ref value, VarEnum.VT_UI8);
         }
 
         // VT_INT
 
-        public void SetAsByrefInt(ref IntPtr value)
+        internal void SetAsByrefInt(ref IntPtr value)
         {
             SetAsByref(ref value, VarEnum.VT_INT);
         }
 
         // VT_UINT
 
-        public void SetAsByrefUint(ref UIntPtr value)
+        internal void SetAsByrefUint(ref UIntPtr value)
         {
             SetAsByref(ref value, VarEnum.VT_UINT);
         }
 
         // VT_BOOL
 
-        public void SetAsByrefBool(ref short value)
+        internal void SetAsByrefBool(ref short value)
         {
             SetAsByref(ref value, VarEnum.VT_BOOL);
         }
 
         // VT_ERROR
 
-        public void SetAsByrefError(ref int value)
+        internal void SetAsByrefError(ref int value)
         {
             SetAsByref(ref value, VarEnum.VT_ERROR);
         }
 
         // VT_R4
 
-        public void SetAsByrefR4(ref float value)
+        internal void SetAsByrefR4(ref float value)
         {
             SetAsByref(ref value, VarEnum.VT_R4);
         }
 
         // VT_R8
 
-        public void SetAsByrefR8(ref double value)
+        internal void SetAsByrefR8(ref double value)
         {
             SetAsByref(ref value, VarEnum.VT_R8);
         }
 
         // VT_DECIMAL
 
-        public void SetAsByrefDecimal(ref decimal value)
+        internal void SetAsByrefDecimal(ref decimal value)
         {
             SetAsByref(ref value, VarEnum.VT_DECIMAL);
         }
 
         // VT_CY
 
-        public void SetAsByrefCy(ref long value)
+        internal void SetAsByrefCy(ref long value)
         {
             SetAsByref(ref value, VarEnum.VT_CY);
         }
 
         // VT_DATE
 
-        public void SetAsByrefDate(ref double value)
+        internal void SetAsByrefDate(ref double value)
         {
             SetAsByref(ref value, VarEnum.VT_DATE);
         }
 
         // VT_BSTR
 
-        public void SetAsByrefBstr(ref IntPtr value)
+        internal void SetAsByrefBstr(ref IntPtr value)
         {
             SetAsByref(ref value, VarEnum.VT_BSTR);
         }
 
         // VT_UNKNOWN
 
-        public void SetAsByrefUnknown(ref IntPtr value)
+        internal void SetAsByrefUnknown(ref IntPtr value)
         {
             SetAsByref(ref value, VarEnum.VT_UNKNOWN);
         }
 
         // VT_DISPATCH
 
-        public void SetAsByrefDispatch(ref IntPtr value)
+        internal void SetAsByrefDispatch(ref IntPtr value)
         {
             SetAsByref(ref value, VarEnum.VT_DISPATCH);
         }
 
         // VT_VARIANT
 
-        public object AsVariant
+        internal object AsVariant
         {
             get
             {
@@ -171,13 +171,13 @@ namespace System.Management.Automation.InteropServices
             }
         }
 
-        public void SetAsByrefVariant(ref Variant value)
+        internal void SetAsByrefVariant(ref Variant value)
         {
             SetAsByref(ref value, VarEnum.VT_VARIANT);
         }
 
         // constructs a ByRef variant to pass contents of another variant ByRef.
-        public unsafe void SetAsByrefVariantIndirect(ref Variant value)
+        internal unsafe void SetAsByrefVariantIndirect(ref Variant value)
         {
             Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
             Debug.Assert((value.VariantType & VarEnum.VT_BYREF) == 0, "double indirection");
@@ -287,7 +287,7 @@ namespace System.Management.Automation.InteropServices
             return string.Format(CultureInfo.CurrentCulture, "Variant ({0})", VariantType);
         }
 
-        public void SetAsIConvertible(IConvertible value)
+        internal void SetAsIConvertible(IConvertible value)
         {
             Debug.Assert(IsEmpty); // The setter can only be called once as VariantClear might be needed otherwise
 

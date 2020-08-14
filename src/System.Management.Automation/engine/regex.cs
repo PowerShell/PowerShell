@@ -632,7 +632,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pattern">Pattern to parse.</param>
         /// <param name="parser">Parser to call back.</param>
-        public static void Parse(WildcardPattern pattern, WildcardPatternParser parser)
+        internal static void Parse(WildcardPattern pattern, WildcardPatternParser parser)
         {
             parser.BeginWildcardPattern(pattern);
 
@@ -904,7 +904,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="wildcardPattern">Wildcard pattern to parse.</param>
         /// <returns>Regular expression equivalent to <paramref name="wildcardPattern"/></returns>
-        public static Regex Parse(WildcardPattern wildcardPattern)
+        internal static Regex Parse(WildcardPattern wildcardPattern)
         {
             WildcardPatternToRegexParser parser = new WildcardPatternToRegexParser();
             WildcardPatternParser.Parse(wildcardPattern, parser);
@@ -1010,7 +1010,7 @@ namespace System.Management.Automation
             private readonly int[] _patternPositionsForFurtherProcessing;
             private int _patternPositionsForFurtherProcessingCount;
 
-            public PatternPositionsVisitor(int lengthOfPattern)
+            internal PatternPositionsVisitor(int lengthOfPattern)
             {
                 Dbg.Assert(lengthOfPattern >= 0, "Caller should verify lengthOfPattern >= 0");
 
@@ -1032,9 +1032,9 @@ namespace System.Management.Automation
                 ArrayPool<int>.Shared.Return(_patternPositionsForFurtherProcessing, clearArray: true);
             }
 
-            public int StringPosition { private get; set; }
+            internal int StringPosition { private get; set; }
 
-            public void Add(int patternPosition)
+            internal void Add(int patternPosition)
             {
                 Dbg.Assert(patternPosition >= 0, "Caller should verify patternPosition >= 0");
                 Dbg.Assert(
@@ -1061,7 +1061,7 @@ namespace System.Management.Automation
                 }
             }
 
-            public bool ReachedEndOfPattern
+            internal bool ReachedEndOfPattern
             {
                 get
                 {
@@ -1071,7 +1071,7 @@ namespace System.Management.Automation
 
             // non-virtual MoveNext is more performant
             // than implementing IEnumerable / virtual MoveNext
-            public bool MoveNext(out int patternPosition)
+            internal bool MoveNext(out int patternPosition)
             {
                 Dbg.Assert(
                         _patternPositionsForFurtherProcessingCount >= 0,
@@ -1091,13 +1091,13 @@ namespace System.Management.Automation
 
         private abstract class PatternElement
         {
-            public abstract void ProcessStringCharacter(
+            internal abstract void ProcessStringCharacter(
                             char currentStringCharacter,
                             int currentPatternPosition,
                             PatternPositionsVisitor patternPositionsForCurrentStringPosition,
                             PatternPositionsVisitor patternPositionsForNextStringPosition);
 
-            public abstract void ProcessEndOfString(
+            internal abstract void ProcessEndOfString(
                             int currentPatternPosition,
                             PatternPositionsVisitor patternPositionsForEndOfStringPosition);
         }
@@ -1126,7 +1126,7 @@ namespace System.Management.Automation
         {
             private readonly char _literalCharacter;
 
-            public LiteralCharacterElement(char literalCharacter)
+            internal LiteralCharacterElement(char literalCharacter)
             {
                 _literalCharacter = literalCharacter;
             }
@@ -1152,7 +1152,7 @@ namespace System.Management.Automation
         {
             private readonly Regex _regex;
 
-            public BracketExpressionElement(Regex regex)
+            internal BracketExpressionElement(Regex regex)
             {
                 Dbg.Assert(regex != null, "Caller should verify regex != null");
                 _regex = regex;
@@ -1204,7 +1204,7 @@ namespace System.Management.Automation
             private RegexOptions _regexOptions;
             private StringBuilder _bracketExpressionBuilder;
 
-            public static PatternElement[] Parse(
+            internal static PatternElement[] Parse(
                             WildcardPattern pattern,
                             CharacterNormalizer characterNormalizer)
             {
@@ -1269,7 +1269,7 @@ namespace System.Management.Automation
             private readonly CultureInfo _cultureInfo;
             private readonly bool _caseInsensitive;
 
-            public CharacterNormalizer(WildcardOptions options)
+            internal CharacterNormalizer(WildcardOptions options)
             {
                 _caseInsensitive = 0 != (options & WildcardOptions.IgnoreCase);
                 if (_caseInsensitive)
@@ -1286,7 +1286,7 @@ namespace System.Management.Automation
             }
 
             [Pure]
-            public char Normalize(char x)
+            internal char Normalize(char x)
             {
                 if (_caseInsensitive)
                 {

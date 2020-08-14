@@ -426,7 +426,7 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <param name="capacity">The maximum capacity of the buffer.</param>
             /// <exception cref="ArgumentOutOfRangeException">If <paramref name="capacity" /> is negative.</exception>
-            public CircularBuffer(int capacity)
+            internal CircularBuffer(int capacity)
             {
                 if (capacity < 0)
                 {
@@ -443,12 +443,12 @@ namespace Microsoft.PowerShell.Commands
             /// older items will be removed from the buffer with
             /// a first-in, first-out policy.
             /// </summary>
-            public int Capacity => _items.Length;
+            internal int Capacity => _items.Length;
 
             /// <summary>
             /// Whether or not the buffer is at capacity.
             /// </summary>
-            public bool IsFull => Count == Capacity;
+            internal bool IsFull => Count == Capacity;
 
             /// <summary>
             /// Convert from a 0-based index to a buffer index which
@@ -565,7 +565,7 @@ namespace Microsoft.PowerShell.Commands
             /// will be in the same order they were added.
             /// </summary>
             /// <returns>The new array.</returns>
-            public T[] ToArray()
+            internal T[] ToArray()
             {
                 T[] result = new T[Count];
                 CopyTo(result, 0);
@@ -656,7 +656,7 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <param name="preContext">How much preContext to collect at most.</param>
             /// <param name="postContext">How much postContext to collect at most.</param>
-            public DisplayContextTracker(int preContext, int postContext)
+            internal DisplayContextTracker(int preContext, int postContext)
             {
                 _preContext = preContext;
                 _postContext = postContext;
@@ -791,15 +791,15 @@ namespace Microsoft.PowerShell.Commands
             // or non-matching lines.
             private class ContextEntry
             {
-                public readonly string Line;
-                public readonly MatchInfo Match;
+                internal readonly string Line;
+                internal readonly MatchInfo Match;
 
-                public ContextEntry(string line)
+                internal ContextEntry(string line)
                 {
                     Line = line;
                 }
 
-                public ContextEntry(MatchInfo match)
+                internal ContextEntry(MatchInfo match)
                 {
                     Match = match;
                 }
@@ -836,7 +836,7 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <param name="preContext">How much preContext to collect at most.</param>
             /// <param name="postContext">How much postContext to collect at most.</param>
-            public LogicalContextTracker(int preContext, int postContext)
+            internal LogicalContextTracker(int preContext, int postContext)
             {
                 _preContext = preContext;
                 _postContext = postContext;
@@ -999,7 +999,7 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <param name="preContext">How much preContext to collect at most.</param>
             /// <param name="postContext">How much postContext to collect at most.</param>
-            public ContextTracker(int preContext, int postContext)
+            internal ContextTracker(int preContext, int postContext)
             {
                 _displayTracker = new DisplayContextTracker(preContext, postContext);
                 _logicalTracker = new LogicalContextTracker(preContext, postContext);

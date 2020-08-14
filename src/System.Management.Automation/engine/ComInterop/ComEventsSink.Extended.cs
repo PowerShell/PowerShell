@@ -15,7 +15,7 @@ namespace System.Management.Automation.InteropServices
             Advise(rcw);
         }
 
-        public void AddHandler(int dispid, object func)
+        internal void AddHandler(int dispid, object func)
         {
             ComEventsMethod method = FindMethod(dispid);
             if (method == null)
@@ -33,7 +33,7 @@ namespace System.Management.Automation.InteropServices
             }
         }
 
-        public void RemoveHandler(int dispid, object func)
+        internal void RemoveHandler(int dispid, object func)
         {
             ComEventsMethod sinkEntry = FindMethod(dispid);
             if (sinkEntry == null)
@@ -67,7 +67,7 @@ namespace System.Management.Automation.InteropServices
             }
         }
 
-        public static ComEventsSink FromRuntimeCallableWrapper(object rcw, Guid sourceIid, bool createIfNotFound)
+        internal static ComEventsSink FromRuntimeCallableWrapper(object rcw, Guid sourceIid, bool createIfNotFound)
         {
             List<ComEventsSink> comEventSinks = ComEventSinksContainer.FromRuntimeCallableWrapper(rcw, createIfNotFound);
             if (comEventSinks == null)

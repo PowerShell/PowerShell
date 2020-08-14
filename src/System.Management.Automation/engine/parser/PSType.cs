@@ -284,9 +284,9 @@ namespace System.Management.Automation.Language
             /// If type has fatal errors we cannot construct .NET type from it.
             /// TypeBuilder.CreateTypeInfo() would throw exception.
             /// </summary>
-            public bool HasFatalErrors { get; private set; }
+            internal bool HasFatalErrors { get; private set; }
 
-            public DefineTypeHelper(Parser parser, ModuleBuilder module, TypeDefinitionAst typeDefinitionAst, string typeName)
+            internal DefineTypeHelper(Parser parser, ModuleBuilder module, TypeDefinitionAst typeDefinitionAst, string typeName)
             {
                 _moduleBuilder = module;
                 _parser = parser;
@@ -475,7 +475,7 @@ namespace System.Management.Automation.Language
                 return _interfaceProperties.Contains(Tuple.Create(name, type));
             }
 
-            public void DefineMembers()
+            internal void DefineMembers()
             {
                 // If user didn't provide any instance ctors or static ctor we will generate default ctor or static ctor respectively.
                 // We can avoid explicit default ctor and static ctor, if we don't have any properties to initialize.

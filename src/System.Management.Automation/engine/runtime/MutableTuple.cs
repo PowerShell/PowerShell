@@ -138,12 +138,12 @@ namespace System.Management.Automation
             }
         }
 
-        public object GetValue(int index)
+        internal object GetValue(int index)
         {
             return GetNestedValue(_size, index);
         }
 
-        public void SetValue(int index, object value)
+        internal void SetValue(int index, object value)
         {
             SetNestedValue(_size, index, value);
         }
@@ -265,7 +265,7 @@ namespace System.Management.Automation
         /// create a single tuple.  If it's greater then we create nested tuples
         /// (e.g. a Tuple`2 which contains a Tuple`128 and a Tuple`8 if we had a size of 136).
         /// </summary>
-        public static Type MakeTupleType(params Type[] types)
+        internal static Type MakeTupleType(params Type[] types)
         {
             // ContractUtils.RequiresNotNull(types, "types");
 
@@ -275,7 +275,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the number of usable slots in the provided Tuple type including slots available in nested tuples.
         /// </summary>
-        public static int GetSize(Type tupleType)
+        internal static int GetSize(Type tupleType)
         {
             // ContractUtils.RequiresNotNull(tupleType, "tupleType");
 
@@ -309,7 +309,7 @@ namespace System.Management.Automation
         private static readonly ConcurrentDictionary<Type, Func<MutableTuple>> s_tupleCreators =
             new ConcurrentDictionary<Type, Func<MutableTuple>>(concurrencyLevel: 3, capacity: 100);
 
-        public static Func<MutableTuple> TupleCreator(Type type)
+        internal static Func<MutableTuple> TupleCreator(Type type)
         {
             return s_tupleCreators.GetOrAdd(type,
                 t =>
@@ -323,7 +323,7 @@ namespace System.Management.Automation
         /// Creates a new instance of tupleType with the specified args.  If the tuple is a nested
         /// tuple the values are added in their nested forms.
         /// </summary>
-        public static MutableTuple MakeTuple(Type tupleType, Dictionary<string, int> nameToIndexMap, Func<MutableTuple> creator = null)
+        internal static MutableTuple MakeTuple(Type tupleType, Dictionary<string, int> nameToIndexMap, Func<MutableTuple> creator = null)
         {
             // ContractUtils.RequiresNotNull(tupleType, "tupleType");
             // ContractUtils.RequiresNotNull(args, "args");
@@ -338,7 +338,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the values from a tuple including unpacking nested values.
         /// </summary>
-        public static object[] GetTupleValues(MutableTuple tuple)
+        internal static object[] GetTupleValues(MutableTuple tuple)
         {
             // ContractUtils.RequiresNotNull(tuple, "tuple");
 
@@ -352,7 +352,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the series of properties that needs to be accessed to access a logical item in a potentially nested tuple.
         /// </summary>
-        public static IEnumerable<PropertyInfo> GetAccessPath(Type tupleType, int index)
+        internal static IEnumerable<PropertyInfo> GetAccessPath(Type tupleType, int index)
         {
             return GetAccessProperties(tupleType, GetSize(tupleType), index);
         }
@@ -493,7 +493,7 @@ namespace System.Management.Automation
             return type.MakeGenericType(nestedTypes);
         }
 
-        public abstract int Capacity
+        internal abstract int Capacity
         {
             get;
         }
@@ -501,7 +501,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Provides an expression for creating a tuple with the specified values.
         /// </summary>
-        public static Expression Create(params Expression[] values)
+        internal static Expression Create(params Expression[] values)
         {
             return CreateNew(MakeTupleType(values.Select(x => x.Type).ToArray()), 0, values.Length, values);
         }

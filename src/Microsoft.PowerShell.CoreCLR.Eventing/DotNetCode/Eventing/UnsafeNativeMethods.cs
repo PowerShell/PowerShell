@@ -239,28 +239,28 @@ namespace System.Diagnostics.Eventing
         internal struct SystemTime
         {
             [MarshalAs(UnmanagedType.U2)]
-            public short Year;
+            internal short Year;
 
             [MarshalAs(UnmanagedType.U2)]
-            public short Month;
+            internal short Month;
 
             [MarshalAs(UnmanagedType.U2)]
-            public short DayOfWeek;
+            internal short DayOfWeek;
 
             [MarshalAs(UnmanagedType.U2)]
-            public short Day;
+            internal short Day;
 
             [MarshalAs(UnmanagedType.U2)]
-            public short Hour;
+            internal short Hour;
 
             [MarshalAs(UnmanagedType.U2)]
-            public short Minute;
+            internal short Minute;
 
             [MarshalAs(UnmanagedType.U2)]
-            public short Second;
+            internal short Second;
 
             [MarshalAs(UnmanagedType.U2)]
-            public short Milliseconds;
+            internal short Milliseconds;
         }
 
         [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
@@ -268,76 +268,76 @@ namespace System.Diagnostics.Eventing
         internal struct EvtVariant
         {
             [FieldOffset(0)]
-            public UInt32 UInteger;
+            internal UInt32 UInteger;
 
             [FieldOffset(0)]
-            public Int32 Integer;
+            internal Int32 Integer;
 
             [FieldOffset(0)]
-            public byte UInt8;
+            internal byte UInt8;
 
             [FieldOffset(0)]
-            public short Short;
+            internal short Short;
 
             [FieldOffset(0)]
-            public ushort UShort;
+            internal ushort UShort;
 
             [FieldOffset(0)]
-            public UInt32 Bool;
+            internal UInt32 Bool;
 
             [FieldOffset(0)]
-            public byte ByteVal;
+            internal byte ByteVal;
 
             [FieldOffset(0)]
-            public byte SByte;
+            internal byte SByte;
 
             [FieldOffset(0)]
-            public UInt64 ULong;
+            internal UInt64 ULong;
 
             [FieldOffset(0)]
-            public Int64 Long;
+            internal Int64 Long;
 
             [FieldOffset(0)]
-            public Single Single;
+            internal Single Single;
 
             [FieldOffset(0)]
-            public double Double;
+            internal double Double;
 
             [FieldOffset(0)]
-            public IntPtr StringVal;
+            internal IntPtr StringVal;
 
             [FieldOffset(0)]
-            public IntPtr AnsiString;
+            internal IntPtr AnsiString;
 
             [FieldOffset(0)]
-            public IntPtr SidVal;
+            internal IntPtr SidVal;
 
             [FieldOffset(0)]
-            public IntPtr Binary;
+            internal IntPtr Binary;
 
             [FieldOffset(0)]
-            public IntPtr Reference;
+            internal IntPtr Reference;
 
             [FieldOffset(0)]
-            public IntPtr Handle;
+            internal IntPtr Handle;
 
             [FieldOffset(0)]
-            public IntPtr GuidReference;
+            internal IntPtr GuidReference;
 
             [FieldOffset(0)]
-            public UInt64 FileTime;
+            internal UInt64 FileTime;
 
             [FieldOffset(0)]
-            public IntPtr SystemTime;
+            internal IntPtr SystemTime;
 
             [FieldOffset(0)]
-            public IntPtr SizeT;
+            internal IntPtr SizeT;
 
             [FieldOffset(8)]
-            public UInt32 Count;   // number of elements (not length) in bytes.
+            internal UInt32 Count;   // number of elements (not length) in bytes.
 
             [FieldOffset(12)]
-            public UInt32 Type;
+            internal UInt32 Type;
         }
 
         internal enum EvtEventPropertyId
@@ -523,18 +523,18 @@ namespace System.Diagnostics.Eventing
         internal struct EvtRpcLogin
         {
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string Server;
+            internal string Server;
 
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string User;
+            internal string User;
 
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string Domain;
+            internal string Domain;
 
             [SecurityCritical]
-            public CoTaskMemUnicodeSafeHandle Password;
+            internal CoTaskMemUnicodeSafeHandle Password;
 
-            public int Flags;
+            internal int Flags;
         }
 
         // SEEK
@@ -859,13 +859,13 @@ namespace System.Diagnostics.Eventing
         internal struct EvtStringVariant
         {
             [MarshalAs(UnmanagedType.LPWStr), FieldOffset(0)]
-            public string StringVal;
+            internal string StringVal;
 
             [FieldOffset(8)]
-            public UInt32 Count;
+            internal UInt32 Count;
 
             [FieldOffset(12)]
-            public UInt32 Type;
+            internal UInt32 Type;
         };
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]

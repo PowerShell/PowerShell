@@ -2040,7 +2040,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Aborts an existing connection attempt.
         /// </summary>
-        public void AbortConnect()
+        internal void AbortConnect()
         {
             if (_clientPipe != null)
             {

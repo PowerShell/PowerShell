@@ -4196,7 +4196,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Type of runspace being monitored for debugging.
         /// </summary>
-        public PSMonitorRunspaceType RunspaceType
+        internal PSMonitorRunspaceType RunspaceType
         {
             get;
             private set;
@@ -4205,7 +4205,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Unique parent debugger identifier for monitored runspace.
         /// </summary>
-        public Guid ParentDebuggerId
+        internal Guid ParentDebuggerId
         {
             get;
             private set;
@@ -4221,7 +4221,7 @@ namespace System.Management.Automation
         /// <param name="runspace">Runspace.</param>
         /// <param name="runspaceType">Runspace type.</param>
         /// <param name="parentDebuggerId">Debugger Id of parent.</param>
-        public NestedRunspaceDebugger(
+        internal NestedRunspaceDebugger(
             Runspace runspace,
             PSMonitorRunspaceType runspaceType,
             Guid parentDebuggerId)
@@ -4605,7 +4605,7 @@ namespace System.Management.Automation
         /// Constructor.
         /// </summary>
         /// <param name="runspace">Runspace.</param>
-        public StandaloneRunspaceDebugger(
+        internal StandaloneRunspaceDebugger(
             Runspace runspace)
             : base(runspace, PSMonitorRunspaceType.Standalone, Guid.Empty)
         { }
@@ -4718,7 +4718,7 @@ namespace System.Management.Automation
         /// <param name="rootDebugger">Root debugger.</param>
         /// <param name="runspaceType">Runspace to monitor type.</param>
         /// <param name="parentDebuggerId">Parent debugger Id.</param>
-        public EmbeddedRunspaceDebugger(
+        internal EmbeddedRunspaceDebugger(
             Runspace runspace,
             PowerShell command,
             Debugger rootDebugger,
@@ -5102,7 +5102,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates the table of debugger commands.
         /// </summary>
-        public DebuggerCommandProcessor()
+        internal DebuggerCommandProcessor()
         {
             _commandTable = new Dictionary<string, DebuggerCommand>(StringComparer.OrdinalIgnoreCase);
             _commandTable[StepCommand] = _commandTable[StepShortcut] = new DebuggerCommand(StepCommand, DebuggerResumeAction.StepInto, repeatOnEnter: true, executedByDebugger: false);
@@ -5119,7 +5119,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Resets any state in the command processor.
         /// </summary>
-        public void Reset()
+        internal void Reset()
         {
             _lines = null;
         }
@@ -5128,7 +5128,7 @@ namespace System.Management.Automation
         /// Process the command read by the host and returns the DebuggerResumeAction or the command
         /// that the host should execute (see comments in the DebuggerCommand class above).
         /// </summary>
-        public DebuggerCommand ProcessCommand(PSHost host, string command, InvocationInfo invocationInfo)
+        internal DebuggerCommand ProcessCommand(PSHost host, string command, InvocationInfo invocationInfo)
         {
             return _lastCommand = DoProcessCommand(host, command, invocationInfo, null);
         }
@@ -5141,7 +5141,7 @@ namespace System.Management.Automation
         /// <param name="invocationInfo"></param>
         /// <param name="output"></param>
         /// <returns></returns>
-        public DebuggerCommand ProcessCommand(PSHost host, string command, InvocationInfo invocationInfo, IList<PSObject> output)
+        internal DebuggerCommand ProcessCommand(PSHost host, string command, InvocationInfo invocationInfo, IList<PSObject> output)
         {
             DebuggerCommand dbgCommand = DoProcessCommand(host, command, invocationInfo, output);
             if (dbgCommand.ExecutedByDebugger || (dbgCommand.ResumeAction != null)) { _lastCommand = dbgCommand; }
@@ -5154,7 +5154,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="invocationInfo">Current InvocationInfo.</param>
         /// <param name="output">Output.</param>
-        public void ProcessListCommand(InvocationInfo invocationInfo, IList<PSObject> output)
+        internal void ProcessListCommand(InvocationInfo invocationInfo, IList<PSObject> output)
         {
             DoProcessCommand(null, "list", invocationInfo, output);
         }
@@ -5165,7 +5165,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="command">String command.</param>
         /// <returns>DebuggerCommand or null.</returns>
-        public DebuggerCommand ProcessBasicCommand(string command)
+        internal DebuggerCommand ProcessBasicCommand(string command)
         {
             if (command.Length == 0 && _lastCommand != null && _lastCommand.RepeatOnEnter)
             {
@@ -5415,7 +5415,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class DebuggerCommand
     {
-        public DebuggerCommand(string command, DebuggerResumeAction? action, bool repeatOnEnter, bool executedByDebugger)
+        internal DebuggerCommand(string command, DebuggerResumeAction? action, bool repeatOnEnter, bool executedByDebugger)
         {
             ResumeAction = action;
             Command = command;
@@ -5429,23 +5429,23 @@ namespace System.Management.Automation
         /// value of this property to decide how to resume the pipeline (i.e. step into,
         /// step-over, continue, etc)
         /// </summary>
-        public DebuggerResumeAction? ResumeAction { get; }
+        internal DebuggerResumeAction? ResumeAction { get; }
 
         /// <summary>
         /// When ResumeAction is null, this property indicates the command that the
         /// host should pass to the PowerShell engine.
         /// </summary>
-        public string Command { get; }
+        internal string Command { get; }
 
         /// <summary>
         /// If true, the host should repeat this command if the next command in an empty line (enter)
         /// </summary>
-        public bool RepeatOnEnter { get; }
+        internal bool RepeatOnEnter { get; }
 
         /// <summary>
         /// If true, the command was executed by the debugger and the host should ignore the command.
         /// </summary>
-        public bool ExecutedByDebugger { get; }
+        internal bool ExecutedByDebugger { get; }
     }
 
     #endregion

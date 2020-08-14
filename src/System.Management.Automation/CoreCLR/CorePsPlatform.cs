@@ -570,7 +570,7 @@ namespace System.Management.Automation
             private static Dictionary<int, string> groupnameCache = new Dictionary<int, string>();
 
             /// <summary>The type of a Unix file system item.</summary>
-            public enum ItemType
+            internal enum ItemType
             {
                 /// <summary>The item is a Directory.</summary>
                 Directory,
@@ -595,7 +595,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>The mask to use to retrieve specific mode bits from the mode value in the stat class.</summary>
-            public enum StatMask
+            internal enum StatMask
             {
                 /// <summary>The mask to collect the owner mode.</summary>
                 OwnerModeMask = 0x1C0,
@@ -644,7 +644,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>The Common Stat class.</summary>
-            public class CommonStat
+            internal class CommonStat
             {
                 /// <summary>The inode of the filesystem item.</summary>
                 public long Inode;
@@ -826,7 +826,7 @@ namespace System.Management.Automation
             /// <summary>Is this a hardlink.</summary>
             /// <param name="handle">The handle to a file.</param>
             /// <returns>A boolean that represents whether the item is a hardlink.</returns>
-            public static bool IsHardLink(ref IntPtr handle)
+            internal static bool IsHardLink(ref IntPtr handle)
             {
                 // TODO:PSL implement using fstat to query inode refcount to see if it is a hard link
                 return false;
@@ -835,7 +835,7 @@ namespace System.Management.Automation
             /// <summary>Determine if the item is a hardlink.</summary>
             /// <param name="fs">A FileSystemInfo to check to determine if it is a hardlink.</param>
             /// <returns>A boolean that represents whether the item is a hardlink.</returns>
-            public static bool IsHardLink(FileSystemInfo fs)
+            internal static bool IsHardLink(FileSystemInfo fs)
             {
                 if (!fs.Exists || (fs.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
                 {
@@ -940,7 +940,7 @@ namespace System.Management.Automation
             /// <summary>Get the lstat info from a path.</summary>
             /// <param name="path">The path to the lstat information.</param>
             /// <returns>An instance of the CommonStat for the path.</returns>
-            public static CommonStat GetLStat(string path)
+            internal static CommonStat GetLStat(string path)
             {
                 NativeMethods.CommonStatStruct css;
                 if (NativeMethods.GetCommonLStat(path, out css) == 0)
@@ -954,7 +954,7 @@ namespace System.Management.Automation
             /// <summary>Get the stat info from a path.</summary>
             /// <param name="path">The path to the stat information.</param>
             /// <returns>An instance of the CommonStat for the path.</returns>
-            public static CommonStat GetStat(string path)
+            internal static CommonStat GetStat(string path)
             {
                 NativeMethods.CommonStatStruct css;
                 if (NativeMethods.GetCommonStat(path, out css) == 0)
@@ -968,7 +968,7 @@ namespace System.Management.Automation
             /// <summary>Read the /proc file system for information about the parent.</summary>
             /// <param name="pid">The process id used to get the parent process.</param>
             /// <returns>The process id.</returns>
-            public static int GetProcFSParentPid(int pid)
+            internal static int GetProcFSParentPid(int pid)
             {
                 const int invalidPid = -1;
 

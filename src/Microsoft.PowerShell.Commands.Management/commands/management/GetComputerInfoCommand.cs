@@ -33,49 +33,49 @@ namespace Microsoft.PowerShell.Commands
         #region Inner Types
         private class OSInfoGroup
         {
-            public WmiOperatingSystem os;
-            public HotFix[] hotFixes;
-            public WmiPageFileUsage[] pageFileUsage;
-            public string halVersion;
-            public TimeSpan? upTime;
-            public RegWinNtCurrentVersion regCurVer;
+            internal WmiOperatingSystem os;
+            internal HotFix[] hotFixes;
+            internal WmiPageFileUsage[] pageFileUsage;
+            internal string halVersion;
+            internal TimeSpan? upTime;
+            internal RegWinNtCurrentVersion regCurVer;
         }
 
         private class SystemInfoGroup
         {
-            public WmiBaseBoard baseboard;
-            public WmiBios bios;
-            public WmiComputerSystem computer;
-            public Processor[] processors;
-            public NetworkAdapter[] networkAdapters;
+            internal WmiBaseBoard baseboard;
+            internal WmiBios bios;
+            internal WmiComputerSystem computer;
+            internal Processor[] processors;
+            internal NetworkAdapter[] networkAdapters;
         }
 
         private class HyperVInfo
         {
-            public bool? Present;
-            public bool? VMMonitorModeExtensions;
-            public bool? SecondLevelAddressTranslation;
-            public bool? VirtualizationFirmwareEnabled;
-            public bool? DataExecutionPreventionAvailable;
+            internal bool? Present;
+            internal bool? VMMonitorModeExtensions;
+            internal bool? SecondLevelAddressTranslation;
+            internal bool? VirtualizationFirmwareEnabled;
+            internal bool? DataExecutionPreventionAvailable;
         }
 
         private class DeviceGuardInfo
         {
-            public DeviceGuardSmartStatus status;
-            public DeviceGuard deviceGuard;
+            internal DeviceGuardSmartStatus status;
+            internal DeviceGuard deviceGuard;
         }
 
         private class MiscInfoGroup
         {
-            public ulong? physicallyInstalledMemory;
-            public string timeZone;
-            public string logonServer;
-            public FirmwareType? firmwareType;
-            public PowerPlatformRole? powerPlatformRole;
-            public WmiKeyboard[] keyboards;
-            public HyperVInfo hyperV;
-            public ServerLevel? serverLevel;
-            public DeviceGuardInfo deviceGuard;
+            internal ulong? physicallyInstalledMemory;
+            internal string timeZone;
+            internal string logonServer;
+            internal FirmwareType? firmwareType;
+            internal PowerPlatformRole? powerPlatformRole;
+            internal WmiKeyboard[] keyboards;
+            internal HyperVInfo hyperV;
+            internal ServerLevel? serverLevel;
+            internal DeviceGuardInfo deviceGuard;
         }
         #endregion Inner Types
 
@@ -1231,7 +1231,7 @@ namespace Microsoft.PowerShell.Commands
 
     internal static class RegistryInfo
     {
-        public static Dictionary<string, UInt32> GetServerLevels()
+        internal static Dictionary<string, UInt32> GetServerLevels()
         {
             const string keyPath = @"Software\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels";
 
@@ -1255,7 +1255,7 @@ namespace Microsoft.PowerShell.Commands
             return rv;
         }
 
-        public static string GetLogonServer()
+        internal static string GetLogonServer()
         {
             const string valueName = "LOGONSERVER";
             const string keyPath = "Volatile Environment";
@@ -1269,7 +1269,7 @@ namespace Microsoft.PowerShell.Commands
             return null;
         }
 
-        public static RegWinNtCurrentVersion GetWinNtCurrentVersion()
+        internal static RegWinNtCurrentVersion GetWinNtCurrentVersion()
         {
             using (var key = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows NT\CurrentVersion"))
             {
@@ -1339,134 +1339,134 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiBaseBoard
     {
-        public string Caption;
-        public string[] ConfigOptions;
-        public float? Depth;
-        public string Description;
-        public float? Height;
-        public bool? HostingBoard;
-        public bool? HotSwappable;
-        public DateTime? InstallDate;
-        public string Manufacturer;
-        public string Model;
-        public string Name;
-        public string OtherIdentifyingInfo;
-        public string PartNumber;
-        public bool? PoweredOn;
-        public string Product;
-        public bool? Removable;
-        public bool? Replaceable;
-        public string RequirementsDescription;
-        public bool? RequiresDaughterBoard;
-        public string SerialNumber;
-        public string SKU;
-        public string SlotLayout;
-        public bool? SpecialRequirements;
-        public string Status;
-        public string Tag;
-        public string Version;
-        public float? Weight;
-        public float? Width;
+        internal string Caption;
+        internal string[] ConfigOptions;
+        internal float? Depth;
+        internal string Description;
+        internal float? Height;
+        internal bool? HostingBoard;
+        internal bool? HotSwappable;
+        internal DateTime? InstallDate;
+        internal string Manufacturer;
+        internal string Model;
+        internal string Name;
+        internal string OtherIdentifyingInfo;
+        internal string PartNumber;
+        internal bool? PoweredOn;
+        internal string Product;
+        internal bool? Removable;
+        internal bool? Replaceable;
+        internal string RequirementsDescription;
+        internal bool? RequiresDaughterBoard;
+        internal string SerialNumber;
+        internal string SKU;
+        internal string SlotLayout;
+        internal bool? SpecialRequirements;
+        internal string Status;
+        internal string Tag;
+        internal string Version;
+        internal float? Weight;
+        internal float? Width;
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiBios : WmiClassBase
     {
-        public UInt16[] BiosCharacteristics;
-        public string[] BIOSVersion;
-        public string BuildNumber;
-        public string Caption;
-        public string CodeSet;
-        public string CurrentLanguage;
-        public string Description;
-        public byte? EmbeddedControllerMajorVersion;
-        public byte? EmbeddedControllerMinorVersion;
-        public string IdentificationCode;
-        public ushort? InstallableLanguages;
-        public DateTime? InstallDate;
-        public string LanguageEdition;
-        public string[] ListOfLanguages;
-        public string Manufacturer;
-        public string Name;
-        public string OtherTargetOS;
-        public bool? PrimaryBIOS;
-        public DateTime? ReleaseDate;
-        public string SerialNumber;
-        public string SMBIOSBIOSVersion;
-        public ushort? SMBIOSMajorVersion;
-        public ushort? SMBIOSMinorVersion;
-        public bool? SMBIOSPresent;
-        public ushort? SoftwareElementState;
-        public string Status;
-        public byte? SystemBiosMajorVersion;
-        public byte? SystemBiosMinorVersion;
-        public ushort? TargetOperatingSystem;
-        public string Version;
+        internal UInt16[] BiosCharacteristics;
+        internal string[] BIOSVersion;
+        internal string BuildNumber;
+        internal string Caption;
+        internal string CodeSet;
+        internal string CurrentLanguage;
+        internal string Description;
+        internal byte? EmbeddedControllerMajorVersion;
+        internal byte? EmbeddedControllerMinorVersion;
+        internal string IdentificationCode;
+        internal ushort? InstallableLanguages;
+        internal DateTime? InstallDate;
+        internal string LanguageEdition;
+        internal string[] ListOfLanguages;
+        internal string Manufacturer;
+        internal string Name;
+        internal string OtherTargetOS;
+        internal bool? PrimaryBIOS;
+        internal DateTime? ReleaseDate;
+        internal string SerialNumber;
+        internal string SMBIOSBIOSVersion;
+        internal ushort? SMBIOSMajorVersion;
+        internal ushort? SMBIOSMinorVersion;
+        internal bool? SMBIOSPresent;
+        internal ushort? SoftwareElementState;
+        internal string Status;
+        internal byte? SystemBiosMajorVersion;
+        internal byte? SystemBiosMinorVersion;
+        internal ushort? TargetOperatingSystem;
+        internal string Version;
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiComputerSystem
     {
-        public ushort? AdminPasswordStatus;
-        public bool? AutomaticManagedPagefile;
-        public bool? AutomaticResetBootOption;
-        public bool? AutomaticResetCapability;
-        public ushort? BootOptionOnLimit;
-        public ushort? BootOptionOnWatchDog;
-        public bool? BootROMSupported;
-        public string BootupState;
-        public UInt16[] BootStatus;
-        public string Caption;
-        public ushort? ChassisBootupState;
-        public string ChassisSKUNumber;
-        public Int16? CurrentTimeZone;
-        public bool? DaylightInEffect;
-        public string Description;
-        public string DNSHostName;
-        public string Domain;
-        public ushort? DomainRole;
-        public bool? EnableDaylightSavingsTime;
-        public ushort? FrontPanelResetStatus;
-        public bool? HypervisorPresent;
-        public bool? InfraredSupported;
-        public string InitialLoadInfo;
-        public DateTime? InstallDate;
-        public ushort? KeyboardPasswordStatus;
-        public string LastLoadInfo;
-        public string Manufacturer;
-        public string Model;
-        public string Name;
-        public bool? NetworkServerModeEnabled;
-        public uint? NumberOfLogicalProcessors;
-        public uint? NumberOfProcessors;
-        public string[] OEMStringArray;
-        public bool? PartOfDomain;
-        public Int64? PauseAfterReset;
-        public ushort? PCSystemType;
-        public ushort? PCSystemTypeEx;
-        public UInt16[] PowerManagementCapabilities;
-        public bool? PowerManagementSupported;
-        public ushort? PowerOnPasswordStatus;
-        public ushort? PowerState;
-        public ushort? PowerSupplyState;
-        public string PrimaryOwnerContact;
-        public string PrimaryOwnerName;
-        public ushort? ResetCapability;
-        public Int16? ResetCount;
-        public Int16? ResetLimit;
-        public string[] Roles;
-        public string Status;
-        public string[] SupportContactDescription;
-        public string SystemFamily;
-        public string SystemSKUNumber;
-        public string SystemType;
-        public ushort? ThermalState;
-        public ulong? TotalPhysicalMemory;
-        public string UserName;
-        public ushort? WakeUpType;
-        public string Workgroup;
+        internal ushort? AdminPasswordStatus;
+        internal bool? AutomaticManagedPagefile;
+        internal bool? AutomaticResetBootOption;
+        internal bool? AutomaticResetCapability;
+        internal ushort? BootOptionOnLimit;
+        internal ushort? BootOptionOnWatchDog;
+        internal bool? BootROMSupported;
+        internal string BootupState;
+        internal UInt16[] BootStatus;
+        internal string Caption;
+        internal ushort? ChassisBootupState;
+        internal string ChassisSKUNumber;
+        internal Int16? CurrentTimeZone;
+        internal bool? DaylightInEffect;
+        internal string Description;
+        internal string DNSHostName;
+        internal string Domain;
+        internal ushort? DomainRole;
+        internal bool? EnableDaylightSavingsTime;
+        internal ushort? FrontPanelResetStatus;
+        internal bool? HypervisorPresent;
+        internal bool? InfraredSupported;
+        internal string InitialLoadInfo;
+        internal DateTime? InstallDate;
+        internal ushort? KeyboardPasswordStatus;
+        internal string LastLoadInfo;
+        internal string Manufacturer;
+        internal string Model;
+        internal string Name;
+        internal bool? NetworkServerModeEnabled;
+        internal uint? NumberOfLogicalProcessors;
+        internal uint? NumberOfProcessors;
+        internal string[] OEMStringArray;
+        internal bool? PartOfDomain;
+        internal Int64? PauseAfterReset;
+        internal ushort? PCSystemType;
+        internal ushort? PCSystemTypeEx;
+        internal UInt16[] PowerManagementCapabilities;
+        internal bool? PowerManagementSupported;
+        internal ushort? PowerOnPasswordStatus;
+        internal ushort? PowerState;
+        internal ushort? PowerSupplyState;
+        internal string PrimaryOwnerContact;
+        internal string PrimaryOwnerName;
+        internal ushort? ResetCapability;
+        internal Int16? ResetCount;
+        internal Int16? ResetLimit;
+        internal string[] Roles;
+        internal string Status;
+        internal string[] SupportContactDescription;
+        internal string SystemFamily;
+        internal string SystemSKUNumber;
+        internal string SystemType;
+        internal ushort? ThermalState;
+        internal ulong? TotalPhysicalMemory;
+        internal string UserName;
+        internal ushort? WakeUpType;
+        internal string Workgroup;
 
-        public PowerManagementCapabilities[] GetPowerManagementCapabilities()
+        internal PowerManagementCapabilities[] GetPowerManagementCapabilities()
         {
             if (PowerManagementCapabilities != null)
             {
@@ -1490,15 +1490,15 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiDeviceGuard
     {
-        public UInt32[] AvailableSecurityProperties;
-        public uint? CodeIntegrityPolicyEnforcementStatus;
-        public uint? UsermodeCodeIntegrityPolicyEnforcementStatus;
-        public UInt32[] RequiredSecurityProperties;
-        public UInt32[] SecurityServicesConfigured;
-        public UInt32[] SecurityServicesRunning;
-        public uint? VirtualizationBasedSecurityStatus;
+        internal UInt32[] AvailableSecurityProperties;
+        internal uint? CodeIntegrityPolicyEnforcementStatus;
+        internal uint? UsermodeCodeIntegrityPolicyEnforcementStatus;
+        internal UInt32[] RequiredSecurityProperties;
+        internal UInt32[] SecurityServicesConfigured;
+        internal UInt32[] SecurityServicesRunning;
+        internal uint? VirtualizationBasedSecurityStatus;
 
-        public DeviceGuard AsOutputType
+        internal DeviceGuard AsOutputType
         {
             get
             {
@@ -1565,319 +1565,319 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiKeyboard
     {
-        public ushort? Availability;
-        public string Caption;
-        public uint? ConfigManagerErrorCode;
-        public bool? ConfigManagerUserConfig;
-        public string Description;
-        public string DeviceID;
-        public bool? ErrorCleared;
-        public string ErrorDescription;
-        public DateTime? InstallDate;
-        public bool? IsLocked;
-        public uint? LastErrorCode;
-        public string Layout;
-        public string Name;
-        public ushort? NumberOfFunctionKeys;
-        public ushort? Password;
-        public string PNPDeviceID;
-        public UInt16[] PowerManagementCapabilities;
-        public bool? PowerManagementSupported;
-        public string Status;
-        public ushort? StatusInfo;
-        public string SystemCreationClassName;
-        public string SystemName;
+        internal ushort? Availability;
+        internal string Caption;
+        internal uint? ConfigManagerErrorCode;
+        internal bool? ConfigManagerUserConfig;
+        internal string Description;
+        internal string DeviceID;
+        internal bool? ErrorCleared;
+        internal string ErrorDescription;
+        internal DateTime? InstallDate;
+        internal bool? IsLocked;
+        internal uint? LastErrorCode;
+        internal string Layout;
+        internal string Name;
+        internal ushort? NumberOfFunctionKeys;
+        internal ushort? Password;
+        internal string PNPDeviceID;
+        internal UInt16[] PowerManagementCapabilities;
+        internal bool? PowerManagementSupported;
+        internal string Status;
+        internal ushort? StatusInfo;
+        internal string SystemCreationClassName;
+        internal string SystemName;
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WMiLogicalMemory
     {
         // TODO: fill this in!!!
-        public uint? TotalPhysicalMemory;
+        internal uint? TotalPhysicalMemory;
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiMsftNetAdapter
     {
-        public string Caption;
-        public string Description;
-        public DateTime? InstallDate;
-        public string Name;
-        public string Status;
-        public ushort? Availability;
-        public uint? ConfigManagerErrorCode;
-        public bool? ConfigManagerUserConfig;
-        public string DeviceID;
-        public bool? ErrorCleared;
-        public string ErrorDescription;
-        public uint? LastErrorCode;
-        public string PNPDeviceID;
-        public UInt16[] PowerManagementCapabilities;
-        public bool? PowerManagementSupported;
-        public ushort? StatusInfo;
-        public string SystemCreationClassName;
-        public string SystemName;
-        public ulong? Speed;
-        public ulong? MaxSpeed;
-        public ulong? RequestedSpeed;
-        public ushort? UsageRestriction;
-        public ushort? PortType;
-        public string OtherPortType;
-        public string OtherNetworkPortType;
-        public ushort? PortNumber;
-        public ushort? LinkTechnology;
-        public string OtherLinkTechnology;
-        public string PermanentAddress;
-        public string[] NetworkAddresses;
-        public bool? FullDuplex;
-        public bool? AutoSense;
-        public ulong? SupportedMaximumTransmissionUnit;
-        public ulong? ActiveMaximumTransmissionUnit;
-        public string InterfaceDescription;
-        public string InterfaceName;
-        public ulong? NetLuid;
-        public string InterfaceGuid;
-        public uint? InterfaceIndex;
-        public string DeviceName;
-        public uint? NetLuidIndex;
-        public bool? Virtual;
-        public bool? Hidden;
-        public bool? NotUserRemovable;
-        public bool? IMFilter;
-        public uint? InterfaceType;
-        public bool? HardwareInterface;
-        public bool? WdmInterface;
-        public bool? EndPointInterface;
-        public bool? iSCSIInterface;
-        public uint? State;
-        public uint? NdisMedium;
-        public uint? NdisPhysicalMedium;
-        public uint? InterfaceOperationalStatus;
-        public bool? OperationalStatusDownDefaultPortNotAuthenticated;
-        public bool? OperationalStatusDownMediaDisconnected;
-        public bool? OperationalStatusDownInterfacePaused;
-        public bool? OperationalStatusDownLowPowerState;
-        public uint? InterfaceAdminStatus;
-        public uint? MediaConnectState;
-        public uint? MtuSize;
-        public ushort? VlanID;
-        public ulong? TransmitLinkSpeed;
-        public ulong? ReceiveLinkSpeed;
-        public bool? PromiscuousMode;
-        public bool? DeviceWakeUpEnable;
-        public bool? ConnectorPresent;
-        public uint? MediaDuplexState;
-        public string DriverDate;
-        public ulong? DriverDateData;
-        public string DriverVersionString;
-        public string DriverName;
-        public string DriverDescription;
-        public ushort? MajorDriverVersion;
-        public ushort? MinorDriverVersion;
-        public byte? DriverMajorNdisVersion;
-        public byte? DriverMinorNdisVersion;
-        public string PnPDeviceID;
-        public string DriverProvider;
-        public string ComponentID;
-        public UInt32[] LowerLayerInterfaceIndices;
-        public UInt32[] HigherLayerInterfaceIndices;
-        public bool? AdminLocked;
+        internal string Caption;
+        internal string Description;
+        internal DateTime? InstallDate;
+        internal string Name;
+        internal string Status;
+        internal ushort? Availability;
+        internal uint? ConfigManagerErrorCode;
+        internal bool? ConfigManagerUserConfig;
+        internal string DeviceID;
+        internal bool? ErrorCleared;
+        internal string ErrorDescription;
+        internal uint? LastErrorCode;
+        internal string PNPDeviceID;
+        internal UInt16[] PowerManagementCapabilities;
+        internal bool? PowerManagementSupported;
+        internal ushort? StatusInfo;
+        internal string SystemCreationClassName;
+        internal string SystemName;
+        internal ulong? Speed;
+        internal ulong? MaxSpeed;
+        internal ulong? RequestedSpeed;
+        internal ushort? UsageRestriction;
+        internal ushort? PortType;
+        internal string OtherPortType;
+        internal string OtherNetworkPortType;
+        internal ushort? PortNumber;
+        internal ushort? LinkTechnology;
+        internal string OtherLinkTechnology;
+        internal string PermanentAddress;
+        internal string[] NetworkAddresses;
+        internal bool? FullDuplex;
+        internal bool? AutoSense;
+        internal ulong? SupportedMaximumTransmissionUnit;
+        internal ulong? ActiveMaximumTransmissionUnit;
+        internal string InterfaceDescription;
+        internal string InterfaceName;
+        internal ulong? NetLuid;
+        internal string InterfaceGuid;
+        internal uint? InterfaceIndex;
+        internal string DeviceName;
+        internal uint? NetLuidIndex;
+        internal bool? Virtual;
+        internal bool? Hidden;
+        internal bool? NotUserRemovable;
+        internal bool? IMFilter;
+        internal uint? InterfaceType;
+        internal bool? HardwareInterface;
+        internal bool? WdmInterface;
+        internal bool? EndPointInterface;
+        internal bool? iSCSIInterface;
+        internal uint? State;
+        internal uint? NdisMedium;
+        internal uint? NdisPhysicalMedium;
+        internal uint? InterfaceOperationalStatus;
+        internal bool? OperationalStatusDownDefaultPortNotAuthenticated;
+        internal bool? OperationalStatusDownMediaDisconnected;
+        internal bool? OperationalStatusDownInterfacePaused;
+        internal bool? OperationalStatusDownLowPowerState;
+        internal uint? InterfaceAdminStatus;
+        internal uint? MediaConnectState;
+        internal uint? MtuSize;
+        internal ushort? VlanID;
+        internal ulong? TransmitLinkSpeed;
+        internal ulong? ReceiveLinkSpeed;
+        internal bool? PromiscuousMode;
+        internal bool? DeviceWakeUpEnable;
+        internal bool? ConnectorPresent;
+        internal uint? MediaDuplexState;
+        internal string DriverDate;
+        internal ulong? DriverDateData;
+        internal string DriverVersionString;
+        internal string DriverName;
+        internal string DriverDescription;
+        internal ushort? MajorDriverVersion;
+        internal ushort? MinorDriverVersion;
+        internal byte? DriverMajorNdisVersion;
+        internal byte? DriverMinorNdisVersion;
+        internal string PnPDeviceID;
+        internal string DriverProvider;
+        internal string ComponentID;
+        internal UInt32[] LowerLayerInterfaceIndices;
+        internal UInt32[] HigherLayerInterfaceIndices;
+        internal bool? AdminLocked;
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiNetworkAdapter
     {
-        public string AdapterType;
-        public ushort? AdapterTypeID;
-        public bool? AutoSense;
-        public ushort? Availability;
-        public string Caption;
-        public uint? ConfigManagerErrorCode;
-        public bool? ConfigManagerUserConfig;
-        public string Description;
-        public string DeviceID;
-        public bool? ErrorCleared;
-        public string ErrorDescription;
-        public string GUID;
-        public uint? Index;
-        public DateTime? InstallDate;
-        public bool? Installed;
-        public uint? InterfaceIndex;
-        public uint? LastErrorCode;
-        public string MACAddress;
-        public string Manufacturer;
-        public uint? MaxNumberControlled;
-        public ulong? MaxSpeed;
-        public string Name;
-        public string NetConnectionID;
-        public ushort? NetConnectionStatus;
-        public bool? NetEnabled;
-        public string[] NetworkAddresses;
-        public string PermanentAddress;
-        public bool? PhysicalAdapter;
-        public string PNPDeviceID;
-        public UInt16[] PowerManagementCapabilities;
-        public bool? PowerManagementSupported;
-        public string ProductName;
-        public string ServiceName;
-        public ulong? Speed;
-        public string Status;
-        public ushort? StatusInfo;
-        public string SystemCreationClassName;
-        public string SystemName;
-        public DateTime? TimeOfLastReset;
+        internal string AdapterType;
+        internal ushort? AdapterTypeID;
+        internal bool? AutoSense;
+        internal ushort? Availability;
+        internal string Caption;
+        internal uint? ConfigManagerErrorCode;
+        internal bool? ConfigManagerUserConfig;
+        internal string Description;
+        internal string DeviceID;
+        internal bool? ErrorCleared;
+        internal string ErrorDescription;
+        internal string GUID;
+        internal uint? Index;
+        internal DateTime? InstallDate;
+        internal bool? Installed;
+        internal uint? InterfaceIndex;
+        internal uint? LastErrorCode;
+        internal string MACAddress;
+        internal string Manufacturer;
+        internal uint? MaxNumberControlled;
+        internal ulong? MaxSpeed;
+        internal string Name;
+        internal string NetConnectionID;
+        internal ushort? NetConnectionStatus;
+        internal bool? NetEnabled;
+        internal string[] NetworkAddresses;
+        internal string PermanentAddress;
+        internal bool? PhysicalAdapter;
+        internal string PNPDeviceID;
+        internal UInt16[] PowerManagementCapabilities;
+        internal bool? PowerManagementSupported;
+        internal string ProductName;
+        internal string ServiceName;
+        internal ulong? Speed;
+        internal string Status;
+        internal ushort? StatusInfo;
+        internal string SystemCreationClassName;
+        internal string SystemName;
+        internal DateTime? TimeOfLastReset;
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiNetworkAdapterConfiguration
     {
-        public bool? ArpAlwaysSourceRoute;
-        public bool? ArpUseEtherSNAP;
-        public string Caption;
-        public string DatabasePath;
-        public bool? DeadGWDetectEnabled;
-        public string[] DefaultIPGateway;
-        public byte? DefaultTOS;
-        public byte? DefaultTTL;
-        public string Description;
-        public bool? DHCPEnabled;
-        public DateTime? DHCPLeaseExpires;
-        public DateTime? DHCPLeaseObtained;
-        public string DHCPServer;
-        public string DNSDomain;
-        public string[] DNSDomainSuffixSearchOrder;
-        public bool? DNSEnabledForWINSResolution;
-        public string DNSHostName;
-        public string[] DNSServerSearchOrder;
-        public bool? DomainDNSRegistrationEnabled;
-        public uint? ForwardBufferMemory;
-        public bool? FullDNSRegistrationEnabled;
-        public UInt16[] GatewayCostMetric;
-        public byte? IGMPLevel;
-        public uint? Index;
-        public uint? InterfaceIndex;
-        public string[] IPAddress;
-        public uint? IPConnectionMetric;
-        public bool? IPEnabled;
-        public bool? IPFilterSecurityEnabled;
-        public bool? IPPortSecurityEnabled;
-        public string[] IPSecPermitIPProtocols;
-        public string[] IPSecPermitTCPPorts;
-        public string[] IPSecPermitUDPPorts;
-        public string[] IPSubnet;
-        public bool? IPUseZeroBroadcast;
-        public string IPXAddress;
-        public bool? IPXEnabled;
-        public UInt32[] IPXFrameType;
-        public uint? IPXMediaType;
-        public string[] IPXNetworkNumber;
-        public string IPXVirtualNetNumber;
-        public uint? KeepAliveInterval;
-        public uint? KeepAliveTime;
-        public string MACAddress;
-        public uint? MTU;
-        public uint? NumForwardPackets;
-        public bool? PMTUBHDetectEnabled;
-        public bool? PMTUDiscoveryEnabled;
-        public string ServiceName;
-        public string SettingID;
-        public uint? TcpipNetbiosOptions;
-        public uint? TcpMaxConnectRetransmissions;
-        public uint? TcpMaxDataRetransmissions;
-        public uint? TcpNumConnections;
-        public bool? TcpUseRFC1122UrgentPointer;
-        public ushort? TcpWindowSize;
-        public bool? WINSEnableLMHostsLookup;
-        public string WINSHostLookupFile;
-        public string WINSPrimaryServer;
-        public string WINSScopeID;
-        public string WINSSecondaryServer;
+        internal bool? ArpAlwaysSourceRoute;
+        internal bool? ArpUseEtherSNAP;
+        internal string Caption;
+        internal string DatabasePath;
+        internal bool? DeadGWDetectEnabled;
+        internal string[] DefaultIPGateway;
+        internal byte? DefaultTOS;
+        internal byte? DefaultTTL;
+        internal string Description;
+        internal bool? DHCPEnabled;
+        internal DateTime? DHCPLeaseExpires;
+        internal DateTime? DHCPLeaseObtained;
+        internal string DHCPServer;
+        internal string DNSDomain;
+        internal string[] DNSDomainSuffixSearchOrder;
+        internal bool? DNSEnabledForWINSResolution;
+        internal string DNSHostName;
+        internal string[] DNSServerSearchOrder;
+        internal bool? DomainDNSRegistrationEnabled;
+        internal uint? ForwardBufferMemory;
+        internal bool? FullDNSRegistrationEnabled;
+        internal UInt16[] GatewayCostMetric;
+        internal byte? IGMPLevel;
+        internal uint? Index;
+        internal uint? InterfaceIndex;
+        internal string[] IPAddress;
+        internal uint? IPConnectionMetric;
+        internal bool? IPEnabled;
+        internal bool? IPFilterSecurityEnabled;
+        internal bool? IPPortSecurityEnabled;
+        internal string[] IPSecPermitIPProtocols;
+        internal string[] IPSecPermitTCPPorts;
+        internal string[] IPSecPermitUDPPorts;
+        internal string[] IPSubnet;
+        internal bool? IPUseZeroBroadcast;
+        internal string IPXAddress;
+        internal bool? IPXEnabled;
+        internal UInt32[] IPXFrameType;
+        internal uint? IPXMediaType;
+        internal string[] IPXNetworkNumber;
+        internal string IPXVirtualNetNumber;
+        internal uint? KeepAliveInterval;
+        internal uint? KeepAliveTime;
+        internal string MACAddress;
+        internal uint? MTU;
+        internal uint? NumForwardPackets;
+        internal bool? PMTUBHDetectEnabled;
+        internal bool? PMTUDiscoveryEnabled;
+        internal string ServiceName;
+        internal string SettingID;
+        internal uint? TcpipNetbiosOptions;
+        internal uint? TcpMaxConnectRetransmissions;
+        internal uint? TcpMaxDataRetransmissions;
+        internal uint? TcpNumConnections;
+        internal bool? TcpUseRFC1122UrgentPointer;
+        internal ushort? TcpWindowSize;
+        internal bool? WINSEnableLMHostsLookup;
+        internal string WINSHostLookupFile;
+        internal string WINSPrimaryServer;
+        internal string WINSScopeID;
+        internal string WINSSecondaryServer;
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiOperatingSystem : WmiClassBase
     {
         #region Fields
-        public string BootDevice;
-        public string BuildNumber;
-        public string BuildType;
-        public string Caption;
-        public string CodeSet;
-        public string CountryCode;
-        public string CSDVersion;
-        public string CSName;
-        public Int16? CurrentTimeZone;
-        public bool? DataExecutionPrevention_Available;
-        public bool? DataExecutionPrevention_32BitApplications;
-        public bool? DataExecutionPrevention_Drivers;
-        public byte? DataExecutionPrevention_SupportPolicy;
-        public bool? Debug;
-        public string Description;
-        public bool? Distributed;
-        public uint? EncryptionLevel;
-        public byte? ForegroundApplicationBoost;
-        public ulong? FreePhysicalMemory;
-        public ulong? FreeSpaceInPagingFiles;
-        public ulong? FreeVirtualMemory;
-        public DateTime? InstallDate;
-        public DateTime? LastBootUpTime;
-        public DateTime? LocalDateTime;
-        public string Locale;
-        public string Manufacturer;
-        public uint? MaxNumberOfProcesses;
-        public ulong? MaxProcessMemorySize;
-        public string[] MUILanguages;
-        public string Name;
-        public uint? NumberOfLicensedUsers;
-        public uint? NumberOfProcesses;
-        public uint? NumberOfUsers;
-        public uint? OperatingSystemSKU;
-        public string Organization;
-        public string OSArchitecture;
-        public uint? OSLanguage;
-        public uint? OSProductSuite;
-        public ushort? OSType;
-        public string OtherTypeDescription;
-        public bool? PAEEnabled;
-        public bool? PortableOperatingSystem;
-        public bool? Primary;
-        public uint? ProductType;
-        public string RegisteredUser;
-        public string SerialNumber;
-        public ushort? ServicePackMajorVersion;
-        public ushort? ServicePackMinorVersion;
-        public ulong? SizeStoredInPagingFiles;
-        public string Status;
-        public uint? SuiteMask;
-        public string SystemDevice;
-        public string SystemDirectory;
-        public string SystemDrive;
-        public ulong? TotalSwapSpaceSize;
-        public ulong? TotalVirtualMemorySize;
-        public ulong? TotalVisibleMemorySize;
-        public string Version;
-        public string WindowsDirectory;
+        internal string BootDevice;
+        internal string BuildNumber;
+        internal string BuildType;
+        internal string Caption;
+        internal string CodeSet;
+        internal string CountryCode;
+        internal string CSDVersion;
+        internal string CSName;
+        internal Int16? CurrentTimeZone;
+        internal bool? DataExecutionPrevention_Available;
+        internal bool? DataExecutionPrevention_32BitApplications;
+        internal bool? DataExecutionPrevention_Drivers;
+        internal byte? DataExecutionPrevention_SupportPolicy;
+        internal bool? Debug;
+        internal string Description;
+        internal bool? Distributed;
+        internal uint? EncryptionLevel;
+        internal byte? ForegroundApplicationBoost;
+        internal ulong? FreePhysicalMemory;
+        internal ulong? FreeSpaceInPagingFiles;
+        internal ulong? FreeVirtualMemory;
+        internal DateTime? InstallDate;
+        internal DateTime? LastBootUpTime;
+        internal DateTime? LocalDateTime;
+        internal string Locale;
+        internal string Manufacturer;
+        internal uint? MaxNumberOfProcesses;
+        internal ulong? MaxProcessMemorySize;
+        internal string[] MUILanguages;
+        internal string Name;
+        internal uint? NumberOfLicensedUsers;
+        internal uint? NumberOfProcesses;
+        internal uint? NumberOfUsers;
+        internal uint? OperatingSystemSKU;
+        internal string Organization;
+        internal string OSArchitecture;
+        internal uint? OSLanguage;
+        internal uint? OSProductSuite;
+        internal ushort? OSType;
+        internal string OtherTypeDescription;
+        internal bool? PAEEnabled;
+        internal bool? PortableOperatingSystem;
+        internal bool? Primary;
+        internal uint? ProductType;
+        internal string RegisteredUser;
+        internal string SerialNumber;
+        internal ushort? ServicePackMajorVersion;
+        internal ushort? ServicePackMinorVersion;
+        internal ulong? SizeStoredInPagingFiles;
+        internal string Status;
+        internal uint? SuiteMask;
+        internal string SystemDevice;
+        internal string SystemDirectory;
+        internal string SystemDrive;
+        internal ulong? TotalSwapSpaceSize;
+        internal ulong? TotalVirtualMemorySize;
+        internal ulong? TotalVisibleMemorySize;
+        internal string Version;
+        internal string WindowsDirectory;
         #endregion Fields
 
         #region Public Properties
-        public string LanguageName
+        internal string LanguageName
         {
             get { return GetLanguageName(OSLanguage); }
         }
 
-        public OSProductSuite[] ProductSuites
+        internal OSProductSuite[] ProductSuites
         {
             get { return MakeProductSuites(OSProductSuite); }
         }
 
-        public OSProductSuite[] Suites
+        internal OSProductSuite[] Suites
         {
             get { return MakeProductSuites(SuiteMask); }
         }
         #endregion Public Properties
 
         #region Public Methods
-        public string GetLocale()
+        internal string GetLocale()
         {
             return Conversion.GetLocaleName(Locale);
         }
@@ -1904,75 +1904,75 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiPageFileUsage
     {
-        public uint? AllocatedBaseSize;
-        public string Caption;
-        public uint? CurrentUsage;
-        public string Description;
-        public DateTime? InstallDate;
-        public string Name;
-        public uint? PeakUsage;
-        public string Status;
-        public bool? TempPageFile;
+        internal uint? AllocatedBaseSize;
+        internal string Caption;
+        internal uint? CurrentUsage;
+        internal string Description;
+        internal DateTime? InstallDate;
+        internal string Name;
+        internal uint? PeakUsage;
+        internal string Status;
+        internal bool? TempPageFile;
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiProcessor
     {
-        public ushort? AddressWidth;
-        public ushort? Architecture;
-        public string AssetTag;
-        public ushort? Availability;
-        public string Caption;
-        public uint? Characteristics;
-        public uint? ConfigManagerErrorCode;
-        public bool? ConfigManagerUserConfig;
-        public ushort? CpuStatus;
-        public uint? CurrentClockSpeed;
-        public ushort? CurrentVoltage;
-        public ushort? DataWidth;
-        public string Description;
-        public string DeviceID;
-        public bool? ErrorCleared;
-        public string ErrorDescription;
-        public uint? ExtClock;
-        public ushort? Family;
-        public DateTime? InstallDate;
-        public uint? L2CacheSize;
-        public uint? L2CacheSpeed;
-        public uint? L3CacheSize;
-        public uint? L3CacheSpeed;
-        public uint? LastErrorCode;
-        public ushort? Level;
-        public ushort? LoadPercentage;
-        public string Manufacturer;
-        public uint? MaxClockSpeed;
-        public string Name;
-        public uint? NumberOfCores;
-        public uint? NumberOfEnabledCore;
-        public uint? NumberOfLogicalProcessors;
-        public string OtherFamilyDescription;
-        public string PartNumber;
-        public string PNPDeviceID;
-        public UInt16[] PowerManagementCapabilities;
-        public bool? PowerManagementSupported;
-        public string ProcessorId;
-        public ushort? ProcessorType;
-        public ushort? Revision;
-        public string Role;
-        public bool? SecondLevelAddressTranslationExtensions;
-        public string SerialNumber;
-        public string SocketDesignation;
-        public string Status;
-        public ushort? StatusInfo;
-        public string Stepping;
-        public string SystemName;
-        public uint? ThreadCount;
-        public string UniqueId;
-        public ushort? UpgradeMethod;
-        public string Version;
-        public bool? VirtualizationFirmwareEnabled;
-        public bool? VMMonitorModeExtensions;
-        public uint? VoltageCaps;
+        internal ushort? AddressWidth;
+        internal ushort? Architecture;
+        internal string AssetTag;
+        internal ushort? Availability;
+        internal string Caption;
+        internal uint? Characteristics;
+        internal uint? ConfigManagerErrorCode;
+        internal bool? ConfigManagerUserConfig;
+        internal ushort? CpuStatus;
+        internal uint? CurrentClockSpeed;
+        internal ushort? CurrentVoltage;
+        internal ushort? DataWidth;
+        internal string Description;
+        internal string DeviceID;
+        internal bool? ErrorCleared;
+        internal string ErrorDescription;
+        internal uint? ExtClock;
+        internal ushort? Family;
+        internal DateTime? InstallDate;
+        internal uint? L2CacheSize;
+        internal uint? L2CacheSpeed;
+        internal uint? L3CacheSize;
+        internal uint? L3CacheSpeed;
+        internal uint? LastErrorCode;
+        internal ushort? Level;
+        internal ushort? LoadPercentage;
+        internal string Manufacturer;
+        internal uint? MaxClockSpeed;
+        internal string Name;
+        internal uint? NumberOfCores;
+        internal uint? NumberOfEnabledCore;
+        internal uint? NumberOfLogicalProcessors;
+        internal string OtherFamilyDescription;
+        internal string PartNumber;
+        internal string PNPDeviceID;
+        internal UInt16[] PowerManagementCapabilities;
+        internal bool? PowerManagementSupported;
+        internal string ProcessorId;
+        internal ushort? ProcessorType;
+        internal ushort? Revision;
+        internal string Role;
+        internal bool? SecondLevelAddressTranslationExtensions;
+        internal string SerialNumber;
+        internal string SocketDesignation;
+        internal string Status;
+        internal ushort? StatusInfo;
+        internal string Stepping;
+        internal string SystemName;
+        internal uint? ThreadCount;
+        internal string UniqueId;
+        internal ushort? UpgradeMethod;
+        internal string Version;
+        internal bool? VirtualizationFirmwareEnabled;
+        internal bool? VMMonitorModeExtensions;
+        internal uint? VoltageCaps;
     }
 
 #pragma warning restore 649
@@ -1981,18 +1981,18 @@ namespace Microsoft.PowerShell.Commands
     #region Other Intermediate classes
     internal class RegWinNtCurrentVersion
     {
-        public string BuildLabEx;
-        public string CurrentVersion;
-        public string EditionId;
-        public string InstallationType;
-        public DateTime? InstallDate;
-        public string ProductId;
-        public string ProductName;
-        public string RegisteredOrganization;
-        public string RegisteredOwner;
-        public string SystemRoot;
-        public string ReleaseId;
-        public int? UBR;
+        internal string BuildLabEx;
+        internal string CurrentVersion;
+        internal string EditionId;
+        internal string InstallationType;
+        internal DateTime? InstallDate;
+        internal string ProductId;
+        internal string ProductName;
+        internal string RegisteredOrganization;
+        internal string RegisteredOwner;
+        internal string SystemRoot;
+        internal string ReleaseId;
+        internal int? UBR;
     }
     #endregion Other Intermediate classes
 
@@ -5089,16 +5089,16 @@ namespace Microsoft.PowerShell.Commands
     {
         private static class PInvokeDllNames
         {
-            public const string GetPhysicallyInstalledSystemMemoryDllName = "api-ms-win-core-sysinfo-l1-2-1.dll";
-            public const string PowerDeterminePlatformRoleExDllName = "api-ms-win-power-base-l1-1-0.dll";
-            public const string GetFirmwareTypeDllName = "api-ms-win-core-kernel32-legacy-l1-1-1";
+            internal const string GetPhysicallyInstalledSystemMemoryDllName = "api-ms-win-core-sysinfo-l1-2-1.dll";
+            internal const string PowerDeterminePlatformRoleExDllName = "api-ms-win-power-base-l1-1-0.dll";
+            internal const string GetFirmwareTypeDllName = "api-ms-win-core-kernel32-legacy-l1-1-1";
         }
 
-        public const int LOCALE_NAME_MAX_LENGTH = 85;
-        public const uint POWER_PLATFORM_ROLE_V1 = 0x1;
-        public const uint POWER_PLATFORM_ROLE_V2 = 0x2;
+        internal const int LOCALE_NAME_MAX_LENGTH = 85;
+        internal const uint POWER_PLATFORM_ROLE_V1 = 0x1;
+        internal const uint POWER_PLATFORM_ROLE_V2 = 0x2;
 
-        public const UInt32 S_OK = 0;
+        internal const UInt32 S_OK = 0;
 
         /// <summary>
         /// Import WINAPI function PowerDeterminePlatformRoleEx.
@@ -5106,7 +5106,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="version">The version of the POWER_PLATFORM_ROLE enumeration for the platform.</param>
         /// <returns>POWER_PLATFORM_ROLE enumeration.</returns>
         [DllImport(PInvokeDllNames.PowerDeterminePlatformRoleExDllName, EntryPoint = "PowerDeterminePlatformRoleEx", CharSet = CharSet.Ansi)]
-        public static extern uint PowerDeterminePlatformRoleEx(uint version);
+        internal static extern uint PowerDeterminePlatformRoleEx(uint version);
 
         /// <summary>
         /// Retrieve the amount of RAM physically installed in the computer.
@@ -5115,7 +5115,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         [DllImport(PInvokeDllNames.GetPhysicallyInstalledSystemMemoryDllName, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetPhysicallyInstalledSystemMemory(out ulong MemoryInKilobytes);
+        internal static extern bool GetPhysicallyInstalledSystemMemory(out ulong MemoryInKilobytes);
 
         /// <summary>
         /// Retrieve the firmware type of the local computer.
@@ -5127,7 +5127,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         [DllImport(PInvokeDllNames.GetFirmwareTypeDllName, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetFirmwareType(out FirmwareType firmwareType);
+        internal static extern bool GetFirmwareType(out FirmwareType firmwareType);
 
         /// <summary>
         /// Gets the data specified for the passed in property name from the

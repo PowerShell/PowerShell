@@ -437,7 +437,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Public constructor.
         /// </summary>
-        public ThrottleManager()
+        internal ThrottleManager()
         {
             _operationsQueue = new List<IThrottleOperation>();
             _startOperationQueue = new List<IThrottleOperation>();

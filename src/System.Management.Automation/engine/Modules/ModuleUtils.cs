@@ -605,14 +605,14 @@ namespace System.Management.Automation.Internal
 
     internal struct CommandScore
     {
-        public CommandScore(CommandInfo command, int score)
+        internal CommandScore(CommandInfo command, int score)
         {
             Command = command;
             Score = score;
         }
 
-        public CommandInfo Command;
-        public int Score;
+        internal CommandInfo Command;
+        internal int Score;
     }
 }
 

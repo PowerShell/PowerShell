@@ -37,7 +37,7 @@ namespace System.Management.Automation.ComInterop
             return string.Format(CultureInfo.CurrentCulture, "<type library {0}>", Name);
         }
 
-        public string Documentation
+        internal string Documentation
         {
             get { return string.Empty; }
         }
@@ -116,7 +116,7 @@ namespace System.Management.Automation.ComInterop
             return typeLibDesc;
         }
 
-        public object GetTypeLibObjectDesc(string member)
+        internal object GetTypeLibObjectDesc(string member)
         {
             foreach (ComTypeClassDesc coclass in _classes)
             {
@@ -132,7 +132,7 @@ namespace System.Management.Automation.ComInterop
             return null;
         }
 
-        public string[] GetMemberNames()
+        internal string[] GetMemberNames()
         {
             string[] retval = new string[_enums.Count + _classes.Count];
             int i = 0;
@@ -165,9 +165,9 @@ namespace System.Management.Automation.ComInterop
             return false;
         }
 
-        public Guid Guid => _typeLibAttributes.guid;
+        internal Guid Guid => _typeLibAttributes.guid;
 
-        public string Name { get; private set; }
+        internal string Name { get; private set; }
 
         internal ComTypeClassDesc GetCoClassForInterface(string itfName)
         {

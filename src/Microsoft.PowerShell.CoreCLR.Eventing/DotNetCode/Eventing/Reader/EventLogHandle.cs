@@ -54,7 +54,7 @@ namespace System.Diagnostics.Eventing.Reader
 
         // DONT compare EventLogHandle with EventLogHandle.Zero
         // use IsInvalid instead. Zero is provided where a NULL handle needed
-        public static EventLogHandle Zero
+        internal static EventLogHandle Zero
         {
             get
             {

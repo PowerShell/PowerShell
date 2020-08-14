@@ -218,7 +218,7 @@ namespace Microsoft.PowerShell.Commands.Utility
             return res;
         }
 
-        public string NewLineText
+        internal string NewLineText
         {
             get
             {

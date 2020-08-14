@@ -17,7 +17,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Constructor.
         /// </summary>
-        public CimWriteResultObject(object result, XOperationContextBase theContext)
+        internal CimWriteResultObject(object result, XOperationContextBase theContext)
         {
             this.result = result;
             this.Context = theContext;

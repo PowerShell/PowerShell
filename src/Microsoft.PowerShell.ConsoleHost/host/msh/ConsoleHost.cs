@@ -734,7 +734,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        public class ConsoleColorProxy
+        internal class ConsoleColorProxy
         {
             private ConsoleHostUserInterface _ui;
 

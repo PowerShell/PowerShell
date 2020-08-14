@@ -52,11 +52,11 @@ namespace System.Management.Automation.ComInterop
             ParameterInformation = ComUtil.GetParameterInformation(funcDesc, skipLast);
         }
 
-        public string Name { get; }
+        internal string Name { get; }
 
-        public int DispId { get; }
+        internal int DispId { get; }
 
-        public bool IsPropertyGet
+        internal bool IsPropertyGet
         {
             get
             {
@@ -64,7 +64,7 @@ namespace System.Management.Automation.ComInterop
             }
         }
 
-        public bool IsDataMember
+        internal bool IsDataMember
         {
             get
             {
@@ -79,7 +79,7 @@ namespace System.Management.Automation.ComInterop
             }
         }
 
-        public bool IsPropertyPut
+        internal bool IsPropertyPut
         {
             get
             {
@@ -87,7 +87,7 @@ namespace System.Management.Automation.ComInterop
             }
         }
 
-        public bool IsPropertyPutRef
+        internal bool IsPropertyPutRef
         {
             get
             {
@@ -96,10 +96,10 @@ namespace System.Management.Automation.ComInterop
         }
 
         internal int ParamCount { get; }
-        public Type ReturnType { get; set; }
-        public Type InputType { get; set; }
+        internal Type ReturnType { get; set; }
+        internal Type InputType { get; set; }
 
-        public ParameterInformation[] ParameterInformation
+        internal ParameterInformation[] ParameterInformation
         {
             get;
             set;

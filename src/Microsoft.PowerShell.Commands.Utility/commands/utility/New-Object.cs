@@ -397,9 +397,9 @@ namespace Microsoft.PowerShell.Commands
 
         private class ComCreateInfo
         {
-            public object objectCreated;
-            public bool success;
-            public Exception e;
+            internal object objectCreated;
+            internal bool success;
+            internal Exception e;
         }
 
         private ComCreateInfo createInfo;

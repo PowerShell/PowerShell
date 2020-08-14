@@ -1507,23 +1507,23 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Script to run while starting the background process.
         /// </summary>
-        public ScriptBlock InitializationScript { get; set; }
+        internal ScriptBlock InitializationScript { get; set; }
 
         /// <summary>
         /// On a 64bit machine, specifying true for this will launch a 32 bit process
         /// for the background process.
         /// </summary>
-        public bool RunAs32 { get; set; }
+        internal bool RunAs32 { get; set; }
 
         /// <summary>
         /// Gets or sets an initial working directory for the powershell background process.
         /// </summary>
-        public string WorkingDirectory { get; set; }
+        internal string WorkingDirectory { get; set; }
 
         /// <summary>
         /// Powershell version to execute the job in.
         /// </summary>
-        public Version PSVersion { get; set; }
+        internal Version PSVersion { get; set; }
 
         internal PowerShellProcessInstance Process { get; set; }
 
@@ -1591,7 +1591,7 @@ namespace System.Management.Automation.Runspaces
             set { throw new NotImplementedException(); }
         }
 
-        public NewProcessConnectionInfo Copy()
+        internal NewProcessConnectionInfo Copy()
         {
             NewProcessConnectionInfo result = new NewProcessConnectionInfo(_credential);
             result.AuthenticationMechanism = this.AuthenticationMechanism;
@@ -3019,17 +3019,17 @@ namespace System.Management.Automation.Runspaces
         /// Gets or Sets, for Hyper-V container, the Guid of utility VM hosting Hyper-V container.
         /// For Windows Server Container, it is empty.
         /// </summary>
-        public Guid RuntimeId { get; set; }
+        internal Guid RuntimeId { get; set; }
 
         /// <summary>
         /// Gets or sets the OB root of the container.
         /// </summary>
-        public string ContainerObRoot { get; set; }
+        internal string ContainerObRoot { get; set; }
 
         /// <summary>
         /// Gets or sets the ID of the container.
         /// </summary>
-        public string ContainerId { get; set; }
+        internal string ContainerId { get; set; }
 
         /// <summary>
         /// Gets or sets the process ID of the process created in container.
@@ -3077,27 +3077,27 @@ namespace System.Management.Automation.Runspaces
             /// <summary>
             /// The process id.
             /// </summary>
-            public uint ProcessId;
+            internal uint ProcessId;
 
             /// <summary>
             /// Reserved.
             /// </summary>
-            public uint Reserved;
+            internal uint Reserved;
 
             /// <summary>
             /// If created, standard input handle of the process.
             /// </summary>
-            public IntPtr StdInput;
+            internal IntPtr StdInput;
 
             /// <summary>
             /// If created, standard output handle of the process.
             /// </summary>
-            public IntPtr StdOutput;
+            internal IntPtr StdOutput;
 
             /// <summary>
             /// If created, standard error handle of the process.
             /// </summary>
-            public IntPtr StdError;
+            internal IntPtr StdError;
         }
 
         [DllImport(PinvokeDllNames.CreateProcessInComputeSystemDllName, SetLastError = true, CharSet = CharSet.Unicode)]
@@ -3140,7 +3140,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates an instance used for PowerShell Direct for container.
         /// </summary>
-        public ContainerProcess(string containerId, string containerObRoot, int processId, bool runAsAdmin, string configurationName)
+        internal ContainerProcess(string containerId, string containerObRoot, int processId, bool runAsAdmin, string configurationName)
         {
             this.ContainerId = containerId;
             this.ContainerObRoot = containerObRoot;
@@ -3160,7 +3160,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create process inside container.
         /// </summary>
-        public void CreateContainerProcess()
+        internal void CreateContainerProcess()
         {
             RunOnMTAThread(CreateContainerProcessInternal);
 
@@ -3195,7 +3195,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Terminate process inside container.
         /// </summary>
-        public bool TerminateContainerProcess()
+        internal bool TerminateContainerProcess()
         {
             RunOnMTAThread(TerminateContainerProcessInternal);
 
@@ -3205,7 +3205,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Get object root based on given container id.
         /// </summary>
-        public void GetContainerProperties()
+        internal void GetContainerProperties()
         {
             RunOnMTAThread(GetContainerPropertiesInternal);
 

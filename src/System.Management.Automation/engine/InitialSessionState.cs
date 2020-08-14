@@ -5495,56 +5495,56 @@ end {
     {
         internal static readonly RunspaceEventSource Log = new RunspaceEventSource();
 
-        public void OpenRunspaceStart() { WriteEvent(1); }
+        internal void OpenRunspaceStart() { WriteEvent(1); }
 
-        public void OpenRunspaceStop() { WriteEvent(2); }
+        internal void OpenRunspaceStop() { WriteEvent(2); }
 
-        public void LoadAssembliesStart() { WriteEvent(3); }
+        internal void LoadAssembliesStart() { WriteEvent(3); }
 
-        public void LoadAssembliesStop() { WriteEvent(4); }
+        internal void LoadAssembliesStop() { WriteEvent(4); }
 
-        public void UpdateFormatTableStart() { WriteEvent(5); }
+        internal void UpdateFormatTableStart() { WriteEvent(5); }
 
-        public void UpdateFormatTableStop() { WriteEvent(6); }
+        internal void UpdateFormatTableStop() { WriteEvent(6); }
 
-        public void UpdateTypeTableStart() { WriteEvent(7); }
+        internal void UpdateTypeTableStart() { WriteEvent(7); }
 
-        public void UpdateTypeTableStop() { WriteEvent(8); }
+        internal void UpdateTypeTableStop() { WriteEvent(8); }
 
-        public void LoadProvidersStart() { WriteEvent(9); }
+        internal void LoadProvidersStart() { WriteEvent(9); }
 
-        public void LoadProvidersStop() { WriteEvent(10); }
+        internal void LoadProvidersStop() { WriteEvent(10); }
 
-        public void LoadCommandsStart() { WriteEvent(11); }
+        internal void LoadCommandsStart() { WriteEvent(11); }
 
-        public void LoadCommandsStop() { WriteEvent(12); }
+        internal void LoadCommandsStop() { WriteEvent(12); }
 
-        public void LoadVariablesStart() { WriteEvent(13); }
+        internal void LoadVariablesStart() { WriteEvent(13); }
 
-        public void LoadVariablesStop() { WriteEvent(14); }
+        internal void LoadVariablesStop() { WriteEvent(14); }
 
-        public void LoadEnvironmentVariablesStart() { WriteEvent(15); }
+        internal void LoadEnvironmentVariablesStart() { WriteEvent(15); }
 
-        public void LoadEnvironmentVariablesStop() { WriteEvent(16); }
+        internal void LoadEnvironmentVariablesStop() { WriteEvent(16); }
 
-        public void LoadAssemblyStart(string Name, string FileName) { WriteEvent(17, Name, FileName); }
+        internal void LoadAssemblyStart(string Name, string FileName) { WriteEvent(17, Name, FileName); }
 
-        public void LoadAssemblyStop(string Name, string FileName) { WriteEvent(18, Name, FileName); }
+        internal void LoadAssemblyStop(string Name, string FileName) { WriteEvent(18, Name, FileName); }
 
-        public void ProcessFormatFileStart(string FileName) { WriteEvent(19, FileName); }
+        internal void ProcessFormatFileStart(string FileName) { WriteEvent(19, FileName); }
 
-        public void ProcessFormatFileStop(string FileName) { WriteEvent(20, FileName); }
+        internal void ProcessFormatFileStop(string FileName) { WriteEvent(20, FileName); }
 
-        public void ProcessTypeFileStart(string FileName) { WriteEvent(21, FileName); }
+        internal void ProcessTypeFileStart(string FileName) { WriteEvent(21, FileName); }
 
-        public void ProcessTypeFileStop(string FileName) { WriteEvent(22, FileName); }
+        internal void ProcessTypeFileStop(string FileName) { WriteEvent(22, FileName); }
 
-        public void LoadProviderStart(string Name) { WriteEvent(23, Name); }
+        internal void LoadProviderStart(string Name) { WriteEvent(23, Name); }
 
-        public void LoadProviderStop(string Name) { WriteEvent(24, Name); }
+        internal void LoadProviderStop(string Name) { WriteEvent(24, Name); }
 
-        public void LoadCommandStart(string Name) { WriteEvent(25, Name); }
+        internal void LoadCommandStart(string Name) { WriteEvent(25, Name); }
 
-        public void LoadCommandStop(string Name) { WriteEvent(26, Name); }
+        internal void LoadCommandStop(string Name) { WriteEvent(26, Name); }
     }
 }

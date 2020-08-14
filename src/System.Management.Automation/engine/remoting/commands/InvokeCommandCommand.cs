@@ -2105,7 +2105,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Constructor.
         /// </summary>
-        public RobustConnectionProgress()
+        internal RobustConnectionProgress()
         {
             _syncObject = new object();
             _activity = RemotingErrorIdStrings.RCProgressActivity;
@@ -2118,7 +2118,7 @@ namespace System.Management.Automation.Internal
         /// <param name="computerName"></param>
         /// <param name="secondsTotal"></param>
         /// <param name="psHost"></param>
-        public void StartProgress(
+        internal void StartProgress(
             long sourceId,
             string computerName,
             int secondsTotal,
@@ -2162,7 +2162,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Stops progress bar.
         /// </summary>
-        public void StopProgress(
+        internal void StopProgress(
             long sourceId)
         {
             lock (_syncObject)

@@ -2366,7 +2366,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="e">The exception.</param>
         /// <returns>PipelineStoppedException.</returns>
-        public Exception ManageException(Exception e)
+        internal Exception ManageException(Exception e)
         {
             if (e == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(e));

@@ -21,7 +21,7 @@ namespace System.Management.Automation.ComInterop
 
         private static readonly object s_comObjectEventSinksKey = new object();
 
-        public static ComEventSinksContainer FromRuntimeCallableWrapper(object rcw, bool createIfNotFound)
+        internal static ComEventSinksContainer FromRuntimeCallableWrapper(object rcw, bool createIfNotFound)
         {
             object data = Marshal.GetComObjectData(rcw, s_comObjectEventSinksKey);
             if (data != null || createIfNotFound == false)

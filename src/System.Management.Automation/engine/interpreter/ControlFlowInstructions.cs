@@ -34,11 +34,11 @@ namespace System.Management.Automation.Interpreter
         // the offset to jump to (relative to this instruction):
         protected int _offset = Unknown;
 
-        public int Offset { get { return _offset; } }
+        internal int Offset { get { return _offset; } }
 
-        public abstract Instruction[] Cache { get; }
+        internal abstract Instruction[] Cache { get; }
 
-        public Instruction Fixup(int offset)
+        internal Instruction Fixup(int offset)
         {
             Debug.Assert(_offset == Unknown && offset != Unknown);
             _offset = offset;
@@ -174,7 +174,7 @@ namespace System.Management.Automation.Interpreter
         {
         }
 
-        public BranchInstruction(bool hasResult, bool hasValue)
+        internal BranchInstruction(bool hasResult, bool hasValue)
         {
             _hasResult = hasResult;
             _hasValue = hasValue;
@@ -204,12 +204,12 @@ namespace System.Management.Automation.Interpreter
 
         internal readonly int _labelIndex;
 
-        public IndexedBranchInstruction(int labelIndex)
+        internal IndexedBranchInstruction(int labelIndex)
         {
             _labelIndex = labelIndex;
         }
 
-        public RuntimeLabel GetLabel(InterpretedFrame frame)
+        internal RuntimeLabel GetLabel(InterpretedFrame frame)
         {
             Debug.Assert(_labelIndex != UnknownInstrIndex);
             return frame.Interpreter._labels[_labelIndex];
@@ -784,7 +784,7 @@ namespace System.Management.Automation.Interpreter
     {
         private readonly LoopFunc _compiledLoop;
 
-        public CompiledLoopInstruction(LoopFunc compiledLoop)
+        internal CompiledLoopInstruction(LoopFunc compiledLoop)
         {
             Assert.NotNull(compiledLoop);
             _compiledLoop = compiledLoop;

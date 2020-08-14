@@ -227,7 +227,7 @@ namespace System.Management.Automation.Language
 /*     0x7F */ CharTraits.None,
         };
 
-        public static bool IsCurlyBracket(char c)
+        internal static bool IsCurlyBracket(char c)
         {
             return (c == '{' || c == '}');
         }

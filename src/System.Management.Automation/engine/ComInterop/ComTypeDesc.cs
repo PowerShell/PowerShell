@@ -190,11 +190,11 @@ namespace System.Management.Automation.ComInterop
             return result;
         }
 
-        public string TypeName => _typeName;
+        internal string TypeName => _typeName;
 
         internal string Documentation => _documentation;
 
-        public ComTypeLibDesc TypeLib { get; }
+        internal ComTypeLibDesc TypeLib { get; }
 
         internal Guid Guid { get; set; }
 

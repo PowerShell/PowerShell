@@ -47,7 +47,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Constructor method.
         /// </summary>
-        public CimWriteMessage(UInt32 channel,
+        internal CimWriteMessage(UInt32 channel,
             string message)
         {
             this.channel = channel;

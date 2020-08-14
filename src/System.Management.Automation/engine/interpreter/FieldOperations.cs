@@ -22,7 +22,7 @@ namespace System.Management.Automation.Interpreter
     {
         private readonly FieldInfo _field;
 
-        public LoadStaticFieldInstruction(FieldInfo field)
+        internal LoadStaticFieldInstruction(FieldInfo field)
         {
             Debug.Assert(field.IsStatic);
             _field = field;
@@ -41,7 +41,7 @@ namespace System.Management.Automation.Interpreter
     {
         private readonly FieldInfo _field;
 
-        public LoadFieldInstruction(FieldInfo field)
+        internal LoadFieldInstruction(FieldInfo field)
         {
             Assert.NotNull(field);
             _field = field;
@@ -62,7 +62,7 @@ namespace System.Management.Automation.Interpreter
     {
         private readonly FieldInfo _field;
 
-        public StoreFieldInstruction(FieldInfo field)
+        internal StoreFieldInstruction(FieldInfo field)
         {
             Assert.NotNull(field);
             _field = field;
@@ -85,7 +85,7 @@ namespace System.Management.Automation.Interpreter
     {
         private readonly FieldInfo _field;
 
-        public StoreStaticFieldInstruction(FieldInfo field)
+        internal StoreStaticFieldInstruction(FieldInfo field)
         {
             Assert.NotNull(field);
             _field = field;

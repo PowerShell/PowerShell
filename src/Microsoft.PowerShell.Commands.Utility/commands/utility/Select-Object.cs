@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
                 _firstOrLastSpecified = firstOrLastSpecified;
             }
 
-            public bool AllRequestedObjectsProcessed
+            internal bool AllRequestedObjectsProcessed
             {
                 get
                 {
@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            public new void Enqueue(PSObject obj)
+            internal new void Enqueue(PSObject obj)
             {
                 if (_last > 0 && this.Count >= (_last + _skip) && _first == 0)
                 {
@@ -255,7 +255,7 @@ namespace Microsoft.PowerShell.Commands
                 base.Enqueue(obj);
             }
 
-            public PSObject StreamingDequeue()
+            internal PSObject StreamingDequeue()
             {
                 // if skip parameter is not mentioned or there are no more objects to skip
                 if (_skip == 0)

@@ -23,7 +23,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Constructor
         /// </para>
         /// </summary>
-        public CimGetAssociatedInstance()
+        internal CimGetAssociatedInstance()
             : base()
         {
         }
@@ -34,7 +34,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object.</param>
-        public void GetCimAssociatedInstance(GetCimAssociatedInstanceCommand cmdlet)
+        internal void GetCimAssociatedInstance(GetCimAssociatedInstanceCommand cmdlet)
         {
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(cmdlet.ComputerName);
             // use the namespace from parameter

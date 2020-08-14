@@ -320,15 +320,15 @@ namespace System.Management.Automation
         [StructLayout(LayoutKind.Sequential)]
         internal struct EXCEPINFO
         {
-            public short wCode;
-            public short wReserved;
-            public IntPtr bstrSource;
-            public IntPtr bstrDescription;
-            public IntPtr bstrHelpFile;
-            public int dwHelpContext;
-            public IntPtr pvReserved;
-            public IntPtr pfnDeferredFillIn;
-            public int scode;
+            internal short wCode;
+            internal short wReserved;
+            internal IntPtr bstrSource;
+            internal IntPtr bstrDescription;
+            internal IntPtr bstrHelpFile;
+            internal int dwHelpContext;
+            internal IntPtr pvReserved;
+            internal IntPtr pfnDeferredFillIn;
+            internal int scode;
         }
 
         /// <summary>

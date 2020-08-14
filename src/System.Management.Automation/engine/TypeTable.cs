@@ -27,7 +27,7 @@ namespace System.Management.Automation.Runspaces
     // ReSharper disable RedundantCast
     internal class TypesPs1xmlReader
     {
-        public TypesPs1xmlReader(LoadContext context)
+        internal TypesPs1xmlReader(LoadContext context)
         {
             _context = context;
             _reader = context.reader;
@@ -291,7 +291,7 @@ namespace System.Management.Automation.Runspaces
 
         #endregion Helpers
 
-        public IEnumerable<TypeData> Read()
+        internal IEnumerable<TypeData> Read()
         {
             IEnumerable<TypeData> result = null;
             _reader.MoveToContent();
@@ -1649,7 +1649,7 @@ namespace System.Management.Automation.Runspaces
         /// Copy constructor (deep copy)
         /// </summary>
         /// <param name="other"></param>
-        public ConsolidatedString(ConsolidatedString other)
+        internal ConsolidatedString(ConsolidatedString other)
             : base(new List<string>(other))
         {
             this.Key = other.Key;
@@ -1664,7 +1664,7 @@ namespace System.Management.Automation.Runspaces
             UpdateKey();
         }
 
-        public ConsolidatedString(IEnumerable<string> strings)
+        internal ConsolidatedString(IEnumerable<string> strings)
             : base(strings.ToList())
         {
             for (int i = 0; i < this.Count; i++)

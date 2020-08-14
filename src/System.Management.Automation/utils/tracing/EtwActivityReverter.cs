@@ -33,7 +33,7 @@ namespace System.Management.Automation.Tracing
 
         private bool _isDisposed;
 
-        public EtwActivityReverter(IEtwEventCorrelator correlator, Guid oldActivityId)
+        internal EtwActivityReverter(IEtwEventCorrelator correlator, Guid oldActivityId)
         {
             _correlator = correlator;
             _oldActivityId = oldActivityId;

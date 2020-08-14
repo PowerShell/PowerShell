@@ -57,7 +57,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Constructor
         /// </para>
         /// </summary>
-        public CimGetInstance() : base()
+        internal CimGetInstance() : base()
         {
         }
 
@@ -67,7 +67,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object.</param>
-        public void GetCimInstance(GetCimInstanceCommand cmdlet)
+        internal void GetCimInstance(GetCimInstanceCommand cmdlet)
         {
             GetCimInstanceInternal(cmdlet);
         }

@@ -56,7 +56,7 @@ namespace System.Diagnostics.Eventing.Reader
         // use IsInvalid instead. Zero is provided where a NULL handle needed
         //
 
-        public static CoTaskMemSafeHandle Zero
+        internal static CoTaskMemSafeHandle Zero
         {
             get
             {

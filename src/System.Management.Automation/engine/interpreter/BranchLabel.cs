@@ -21,11 +21,11 @@ namespace System.Management.Automation.Interpreter
 {
     internal struct RuntimeLabel
     {
-        public readonly int Index;
-        public readonly int StackDepth;
-        public readonly int ContinuationStackDepth;
+        internal readonly int Index;
+        internal readonly int StackDepth;
+        internal readonly int ContinuationStackDepth;
 
-        public RuntimeLabel(int index, int continuationStackDepth, int stackDepth)
+        internal RuntimeLabel(int index, int continuationStackDepth, int stackDepth)
         {
             Index = index;
             ContinuationStackDepth = continuationStackDepth;
@@ -52,7 +52,7 @@ namespace System.Management.Automation.Interpreter
         // that need to be updated after we emit the label.
         private List<int> _forwardBranchFixups;
 
-        public BranchLabel()
+        internal BranchLabel()
         {
         }
 

@@ -45,53 +45,53 @@ namespace System.Management.Automation.InteropServices
         [StructLayout(LayoutKind.Sequential)]
         private struct TypeUnion
         {
-            public ushort _vt;
-            public ushort _wReserved1;
-            public ushort _wReserved2;
-            public ushort _wReserved3;
+            internal ushort _vt;
+            internal ushort _wReserved1;
+            internal ushort _wReserved2;
+            internal ushort _wReserved3;
 
-            public UnionTypes _unionTypes;
+            internal UnionTypes _unionTypes;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct Record
         {
-            public IntPtr _record;
-            public IntPtr _recordInfo;
+            internal IntPtr _record;
+            internal IntPtr _recordInfo;
         }
 
         [StructLayout(LayoutKind.Explicit)]
         private struct UnionTypes
         {
-            [FieldOffset(0)] public sbyte _i1;
-            [FieldOffset(0)] public short _i2;
-            [FieldOffset(0)] public int _i4;
-            [FieldOffset(0)] public long _i8;
-            [FieldOffset(0)] public byte _ui1;
-            [FieldOffset(0)] public ushort _ui2;
-            [FieldOffset(0)] public uint _ui4;
-            [FieldOffset(0)] public ulong _ui8;
-            [FieldOffset(0)] public int _int;
-            [FieldOffset(0)] public uint _uint;
-            [FieldOffset(0)] public short _bool;
-            [FieldOffset(0)] public int _error;
-            [FieldOffset(0)] public float _r4;
-            [FieldOffset(0)] public double _r8;
-            [FieldOffset(0)] public long _cy;
-            [FieldOffset(0)] public double _date;
-            [FieldOffset(0)] public IntPtr _bstr;
-            [FieldOffset(0)] public IntPtr _unknown;
-            [FieldOffset(0)] public IntPtr _dispatch;
-            [FieldOffset(0)] public IntPtr _pvarVal;
-            [FieldOffset(0)] public IntPtr _byref;
-            [FieldOffset(0)] public Record _record;
+            [FieldOffset(0)] internal sbyte _i1;
+            [FieldOffset(0)] internal short _i2;
+            [FieldOffset(0)] internal int _i4;
+            [FieldOffset(0)] internal long _i8;
+            [FieldOffset(0)] internal byte _ui1;
+            [FieldOffset(0)] internal ushort _ui2;
+            [FieldOffset(0)] internal uint _ui4;
+            [FieldOffset(0)] internal ulong _ui8;
+            [FieldOffset(0)] internal int _int;
+            [FieldOffset(0)] internal uint _uint;
+            [FieldOffset(0)] internal short _bool;
+            [FieldOffset(0)] internal int _error;
+            [FieldOffset(0)] internal float _r4;
+            [FieldOffset(0)] internal double _r8;
+            [FieldOffset(0)] internal long _cy;
+            [FieldOffset(0)] internal double _date;
+            [FieldOffset(0)] internal IntPtr _bstr;
+            [FieldOffset(0)] internal IntPtr _unknown;
+            [FieldOffset(0)] internal IntPtr _dispatch;
+            [FieldOffset(0)] internal IntPtr _pvarVal;
+            [FieldOffset(0)] internal IntPtr _byref;
+            [FieldOffset(0)] internal Record _record;
         }
 
         /// <summary>
         /// Primitive types are the basic COM types. It includes valuetypes like ints, but also reference types
         /// like BStrs. It does not include composite types like arrays and user-defined COM types (IUnknown/IDispatch).
         /// </summary>
-        public static bool IsPrimitiveType(VarEnum varEnum)
+        internal static bool IsPrimitiveType(VarEnum varEnum)
         {
             switch (varEnum)
             {
@@ -119,7 +119,7 @@ namespace System.Management.Automation.InteropServices
             return false;
         }
 
-        public unsafe void CopyFromIndirect(object value)
+        internal unsafe void CopyFromIndirect(object value)
         {
             VarEnum vt = (VarEnum)(((int)this.VariantType) & ~((int)VarEnum.VT_BYREF));
 
@@ -231,7 +231,7 @@ namespace System.Management.Automation.InteropServices
         /// Get the managed object representing the Variant.
         /// </summary>
         /// <returns></returns>
-        public object? ToObject()
+        internal object? ToObject()
         {
             // Check the simple case upfront
             if (IsEmpty)
@@ -282,7 +282,7 @@ namespace System.Management.Automation.InteropServices
         /// <summary>
         /// Release any unmanaged memory associated with the Variant
         /// </summary>
-        public void Clear()
+        internal void Clear()
         {
             // We do not need to call OLE32's VariantClear for primitive types or ByRefs
             // to save ourselves the cost of interop transition.
@@ -318,17 +318,17 @@ namespace System.Management.Automation.InteropServices
             }
         }
 
-        public VarEnum VariantType
+        internal VarEnum VariantType
         {
             get => (VarEnum)_typeUnion._vt;
             set => _typeUnion._vt = (ushort)value;
         }
 
-        public bool IsEmpty => _typeUnion._vt == ((ushort)VarEnum.VT_EMPTY);
+        internal bool IsEmpty => _typeUnion._vt == ((ushort)VarEnum.VT_EMPTY);
 
-        public bool IsByRef => (_typeUnion._vt & ((ushort)VarEnum.VT_BYREF)) != 0;
+        internal bool IsByRef => (_typeUnion._vt & ((ushort)VarEnum.VT_BYREF)) != 0;
 
-        public void SetAsNULL()
+        internal void SetAsNULL()
         {
             Debug.Assert(IsEmpty);
             VariantType = VarEnum.VT_NULL;
@@ -336,7 +336,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_I1
 
-        public sbyte AsI1
+        internal sbyte AsI1
         {
             get
             {
@@ -353,7 +353,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_I2
 
-        public short AsI2
+        internal short AsI2
         {
             get
             {
@@ -370,7 +370,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_I4
 
-        public int AsI4
+        internal int AsI4
         {
             get
             {
@@ -387,7 +387,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_I8
 
-        public long AsI8
+        internal long AsI8
         {
             get
             {
@@ -404,7 +404,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_UI1
 
-        public byte AsUi1
+        internal byte AsUi1
         {
             get
             {
@@ -421,7 +421,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_UI2
 
-        public ushort AsUi2
+        internal ushort AsUi2
         {
             get
             {
@@ -438,7 +438,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_UI4
 
-        public uint AsUi4
+        internal uint AsUi4
         {
             get
             {
@@ -455,7 +455,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_UI8
 
-        public ulong AsUi8
+        internal ulong AsUi8
         {
             get
             {
@@ -472,7 +472,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_INT
 
-        public int AsInt
+        internal int AsInt
         {
             get
             {
@@ -489,7 +489,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_UINT
 
-        public uint AsUint
+        internal uint AsUint
         {
             get
             {
@@ -506,7 +506,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_BOOL
 
-        public bool AsBool
+        internal bool AsBool
         {
             get
             {
@@ -525,7 +525,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_ERROR
 
-        public int AsError
+        internal int AsError
         {
             get
             {
@@ -542,7 +542,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_R4
 
-        public float AsR4
+        internal float AsR4
         {
             get
             {
@@ -559,7 +559,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_R8
 
-        public double AsR8
+        internal double AsR8
         {
             get
             {
@@ -576,7 +576,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_DECIMAL
 
-        public decimal AsDecimal
+        internal decimal AsDecimal
         {
             get
             {
@@ -598,7 +598,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_CY
 
-        public decimal AsCy
+        internal decimal AsCy
         {
             get
             {
@@ -615,7 +615,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_DATE
 
-        public DateTime AsDate
+        internal DateTime AsDate
         {
             get
             {
@@ -632,7 +632,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_BSTR
 
-        public string AsBstr
+        internal string AsBstr
         {
             get
             {
@@ -649,7 +649,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_UNKNOWN
 
-        public object? AsUnknown
+        internal object? AsUnknown
         {
             get
             {
@@ -677,7 +677,7 @@ namespace System.Management.Automation.InteropServices
 
         // VT_DISPATCH
 
-        public object? AsDispatch
+        internal object? AsDispatch
         {
             get
             {
@@ -703,7 +703,7 @@ namespace System.Management.Automation.InteropServices
             }
         }
 
-        public IntPtr AsByRefVariant
+        internal IntPtr AsByRefVariant
         {
             get
             {

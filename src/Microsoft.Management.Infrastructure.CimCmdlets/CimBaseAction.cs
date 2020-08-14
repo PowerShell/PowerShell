@@ -19,7 +19,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Constructor method.
         /// </summary>
-        public CimBaseAction()
+        internal CimBaseAction()
         {
         }
 
@@ -32,7 +32,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// cmdlet wrapper object, to which write result.
         /// <see cref="CmdletOperationBase"/> for details.
         /// </param>
-        public virtual void Execute(CmdletOperationBase cmdlet)
+        internal virtual void Execute(CmdletOperationBase cmdlet)
         {
         }
 
@@ -71,7 +71,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The constructor.
         /// </summary>
-        public CimSyncAction()
+        internal CimSyncAction()
         {
             this.completeEvent = new ManualResetEventSlim(false);
             this.responseType = CimResponseType.None;
@@ -83,7 +83,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <returns>Response from user.</returns>
-        public virtual CimResponseType GetResponse()
+        internal virtual CimResponseType GetResponse()
         {
             this.Block();
             return responseType;

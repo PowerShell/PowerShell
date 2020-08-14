@@ -75,7 +75,7 @@ namespace System.Management.Automation.Interpreter
             get { return _compiledDelegateType == DelegateType; }
         }
 
-        public Delegate CreateDelegate()
+        internal Delegate CreateDelegate()
         {
             return CreateDelegate(null);
         }

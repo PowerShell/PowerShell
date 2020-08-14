@@ -21,7 +21,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="stream">The stream to write.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
-        public ObjectWriter([In, Out] ObjectStreamBase stream)
+        internal ObjectWriter([In, Out] ObjectStreamBase stream)
         {
             if (stream == null)
             {
@@ -224,7 +224,7 @@ namespace System.Management.Automation.Internal
         /// <exception cref="ArgumentNullException">
         /// Thrown if the specified stream is null
         /// </exception>
-        public PSDataCollectionWriter(PSDataCollectionStream<T> stream)
+        internal PSDataCollectionWriter(PSDataCollectionStream<T> stream)
             : base(stream)
         {
         }

@@ -257,15 +257,15 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal sealed class PSETWBinaryBlob
     {
-        public PSETWBinaryBlob(byte[] blob, int offset, int length)
+        internal PSETWBinaryBlob(byte[] blob, int offset, int length)
         {
             this.blob = blob;
             this.offset = offset;
             this.length = length;
         }
 
-        public readonly byte[] blob;
-        public readonly int offset;
-        public readonly int length;
+        internal readonly byte[] blob;
+        internal readonly int offset;
+        internal readonly int length;
     }
 }

@@ -92,7 +92,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Constructor
         /// </para>
         /// </summary>
-        public CimSetCimInstance()
+        internal CimSetCimInstance()
             : base()
         {
         }
@@ -103,7 +103,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cmdlet"><see cref="SetCimInstanceCommand"/> object.</param>
-        public void SetCimInstance(SetCimInstanceCommand cmdlet)
+        internal void SetCimInstance(SetCimInstanceCommand cmdlet)
         {
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(
                 GetComputerName(cmdlet));
@@ -174,7 +174,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cimInstance"></param>
-        public void SetCimInstance(CimInstance cimInstance, CimSetCimInstanceContext context, CmdletOperationBase cmdlet)
+        internal void SetCimInstance(CimInstance cimInstance, CimSetCimInstanceContext context, CmdletOperationBase cmdlet)
         {
             DebugHelper.WriteLog("CimSetCimInstance::SetCimInstance", 4);
 

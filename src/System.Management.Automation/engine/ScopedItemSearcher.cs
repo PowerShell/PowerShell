@@ -244,7 +244,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class VariableScopeItemSearcher : ScopedItemSearcher<PSVariable>
     {
-        public VariableScopeItemSearcher(
+        internal VariableScopeItemSearcher(
             SessionStateInternal sessionState,
             VariablePath lookupPath,
             CommandOrigin origin) : base(sessionState, lookupPath)
@@ -302,7 +302,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class AliasScopeItemSearcher : ScopedItemSearcher<AliasInfo>
     {
-        public AliasScopeItemSearcher(
+        internal AliasScopeItemSearcher(
             SessionStateInternal sessionState,
             VariablePath lookupPath) : base(sessionState, lookupPath)
         {
@@ -355,7 +355,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class FunctionScopeItemSearcher : ScopedItemSearcher<FunctionInfo>
     {
-        public FunctionScopeItemSearcher(
+        internal FunctionScopeItemSearcher(
             SessionStateInternal sessionState,
             VariablePath lookupPath,
             CommandOrigin origin) : base(sessionState, lookupPath)
@@ -444,7 +444,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class DriveScopeItemSearcher : ScopedItemSearcher<PSDriveInfo>
     {
-        public DriveScopeItemSearcher(
+        internal DriveScopeItemSearcher(
             SessionStateInternal sessionState,
             VariablePath lookupPath) : base(sessionState, lookupPath)
         {

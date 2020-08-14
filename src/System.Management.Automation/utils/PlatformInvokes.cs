@@ -30,7 +30,7 @@ namespace System.Management.Automation
                 dwHighDateTime = (uint)(fileTime >> 32);
             }
 
-            public long ToTicks()
+            internal long ToTicks()
             {
                 return ((long)dwHighDateTime << 32) + dwLowDateTime;
             }
@@ -541,12 +541,12 @@ namespace System.Management.Automation
         [StructLayout(LayoutKind.Sequential)]
         internal class PROCESS_INFORMATION
         {
-            public IntPtr hProcess;
-            public IntPtr hThread;
-            public int dwProcessId;
-            public int dwThreadId;
+            internal IntPtr hProcess;
+            internal IntPtr hThread;
+            internal int dwProcessId;
+            internal int dwThreadId;
 
-            public PROCESS_INFORMATION()
+            internal PROCESS_INFORMATION()
             {
                 this.hProcess = IntPtr.Zero;
                 this.hThread = IntPtr.Zero;
@@ -555,7 +555,7 @@ namespace System.Management.Automation
             /// <summary>
             /// Dispose.
             /// </summary>
-            public void Dispose()
+            internal void Dispose()
             {
                 Dispose(true);
             }
@@ -586,26 +586,26 @@ namespace System.Management.Automation
         [StructLayout(LayoutKind.Sequential)]
         internal class STARTUPINFO
         {
-            public int cb;
-            public IntPtr lpReserved;
-            public IntPtr lpDesktop;
-            public IntPtr lpTitle;
-            public int dwX;
-            public int dwY;
-            public int dwXSize;
-            public int dwYSize;
-            public int dwXCountChars;
-            public int dwYCountChars;
-            public int dwFillAttribute;
-            public int dwFlags;
-            public short wShowWindow;
-            public short cbReserved2;
-            public IntPtr lpReserved2;
-            public SafeFileHandle hStdInput;
-            public SafeFileHandle hStdOutput;
-            public SafeFileHandle hStdError;
+            internal int cb;
+            internal IntPtr lpReserved;
+            internal IntPtr lpDesktop;
+            internal IntPtr lpTitle;
+            internal int dwX;
+            internal int dwY;
+            internal int dwXSize;
+            internal int dwYSize;
+            internal int dwXCountChars;
+            internal int dwYCountChars;
+            internal int dwFillAttribute;
+            internal int dwFlags;
+            internal short wShowWindow;
+            internal short cbReserved2;
+            internal IntPtr lpReserved2;
+            internal SafeFileHandle hStdInput;
+            internal SafeFileHandle hStdOutput;
+            internal SafeFileHandle hStdError;
 
-            public STARTUPINFO()
+            internal STARTUPINFO()
             {
                 this.lpReserved = IntPtr.Zero;
                 this.lpDesktop = IntPtr.Zero;
@@ -617,7 +617,7 @@ namespace System.Management.Automation
                 this.cb = Marshal.SizeOf(this);
             }
 
-            public void Dispose(bool disposing)
+            internal void Dispose(bool disposing)
             {
                 if (disposing)
                 {
@@ -641,7 +641,7 @@ namespace System.Management.Automation
                 }
             }
 
-            public void Dispose()
+            internal void Dispose()
             {
                 Dispose(true);
             }
@@ -650,11 +650,11 @@ namespace System.Management.Automation
         [StructLayout(LayoutKind.Sequential)]
         internal class SECURITY_ATTRIBUTES
         {
-            public int nLength;
-            public SafeLocalMemHandle lpSecurityDescriptor;
-            public bool bInheritHandle;
+            internal int nLength;
+            internal SafeLocalMemHandle lpSecurityDescriptor;
+            internal bool bInheritHandle;
 
-            public SECURITY_ATTRIBUTES()
+            internal SECURITY_ATTRIBUTES()
             {
                 this.nLength = 12;
                 this.bInheritHandle = true;
@@ -677,12 +677,12 @@ namespace System.Management.Automation
             PROCESS_INFORMATION lpProcessInformation);
 
         [DllImport(PinvokeDllNames.ResumeThreadDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern uint ResumeThread(IntPtr threadHandle);
+        internal static extern uint ResumeThread(IntPtr threadHandle);
 
         internal static readonly uint RESUME_THREAD_FAILED = System.UInt32.MaxValue; // (DWORD)-1
 
         [DllImport(PinvokeDllNames.CreateFileDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern System.IntPtr CreateFileW(
+        internal static extern System.IntPtr CreateFileW(
             [In, MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
             UInt32 dwDesiredAccess,
             UInt32 dwShareMode,
@@ -707,7 +707,7 @@ namespace System.Management.Automation
         }
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern IntPtr GetStdHandle(uint handleId);
+        internal static extern IntPtr GetStdHandle(uint handleId);
 
 #endif
 

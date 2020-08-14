@@ -220,22 +220,22 @@ namespace System.Management.Automation.Remoting
             /// <summary>
             /// The size, in bytes, of this structure. Set this value to the size of the SECURITY_ATTRIBUTES structure.
             /// </summary>
-            public int NLength;
+            internal int NLength;
 
             /// <summary>
             /// A pointer to a security descriptor for the object that controls the sharing of it.
             /// </summary>
-            public IntPtr LPSecurityDescriptor = IntPtr.Zero;
+            internal IntPtr LPSecurityDescriptor = IntPtr.Zero;
 
             /// <summary>
             /// A Boolean value that specifies whether the returned handle is inherited when a new process is created.
             /// </summary>
-            public bool InheritHandle;
+            internal bool InheritHandle;
 
             /// <summary>
             /// Initializes a new instance of the SECURITY_ATTRIBUTES class.
             /// </summary>
-            public SECURITY_ATTRIBUTES()
+            internal SECURITY_ATTRIBUTES()
             {
                 this.NLength = 12;
             }
@@ -301,7 +301,7 @@ namespace System.Management.Automation.Remoting
         /// Exception reason for listener end event.  Can be null
         /// which indicates listener thread end is not due to an error.
         /// </summary>
-        public Exception Reason
+        internal Exception Reason
         {
             private set;
             get;
@@ -310,7 +310,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// True if listener should be restarted after ending.
         /// </summary>
-        public bool RestartListener
+        internal bool RestartListener
         {
             private set;
             get;
@@ -327,7 +327,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="reason">Listener end reason.</param>
         /// <param name="restartListener">Restart listener.</param>
-        public ListenerEndedEventArgs(
+        internal ListenerEndedEventArgs(
             Exception reason,
             bool restartListener)
         {
@@ -1029,17 +1029,17 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Accessor for the named pipe reader.
         /// </summary>
-        public StreamReader TextReader { get; private set; }
+        internal StreamReader TextReader { get; private set; }
 
         /// <summary>
         /// Accessor for the named pipe writer.
         /// </summary>
-        public StreamWriter TextWriter { get; private set; }
+        internal StreamWriter TextWriter { get; private set; }
 
         /// <summary>
         /// Name of pipe.
         /// </summary>
-        public string PipeName
+        internal string PipeName
         {
             get { return _pipeName; }
         }
@@ -1048,7 +1048,7 @@ namespace System.Management.Automation.Remoting
 
         #region Constructor
 
-        public NamedPipeClientBase()
+        internal NamedPipeClientBase()
         { }
 
         #endregion
@@ -1092,7 +1092,7 @@ namespace System.Management.Automation.Remoting
         /// connection occurs or the timeout time has elapsed.
         /// </summary>
         /// <param name="timeout">Connection attempt timeout in milliseconds.</param>
-        public void Connect(
+        internal void Connect(
             int timeout)
         {
             // Uses Native API to connect to pipe and return NamedPipeClientStream object.
@@ -1110,7 +1110,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Closes the named pipe.
         /// </summary>
-        public void Close()
+        internal void Close()
         {
             if (_clientPipeStream != null)
             {
@@ -1118,7 +1118,7 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-        public virtual void AbortConnect()
+        internal virtual void AbortConnect()
         { }
 
         protected virtual NamedPipeClientStream DoConnect(int timeout)
@@ -1152,7 +1152,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="process">Target process object for pipe.</param>
         /// <param name="appDomainName">AppDomain name or null for default AppDomain.</param>
-        public RemoteSessionNamedPipeClient(
+        internal RemoteSessionNamedPipeClient(
             System.Diagnostics.Process process, string appDomainName) :
             this(NamedPipeUtils.CreateProcessPipeName(process, appDomainName))
         { }
@@ -1162,7 +1162,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="procId">Target process Id for pipe.</param>
         /// <param name="appDomainName">AppDomain name or null for default AppDomain.</param>
-        public RemoteSessionNamedPipeClient(
+        internal RemoteSessionNamedPipeClient(
             int procId, string appDomainName) :
             this(NamedPipeUtils.CreateProcessPipeName(procId, appDomainName))
         { }
@@ -1275,7 +1275,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="procId">Target process Id for pipe.</param>
         /// <param name="appDomainName">AppDomain name or null for default AppDomain.</param>
         /// <param name="containerObRoot">Container OB root.</param>
-        public ContainerSessionNamedPipeClient(
+        internal ContainerSessionNamedPipeClient(
             int procId,
             string appDomainName,
             string containerObRoot)

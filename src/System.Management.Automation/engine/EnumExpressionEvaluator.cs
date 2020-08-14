@@ -112,9 +112,9 @@ namespace System.Management.Automation
 
         internal class Token
         {
-            public string Text { get; set; }
+            internal string Text { get; set; }
 
-            public TokenKind Kind { get; set; }
+            internal TokenKind Kind { get; set; }
 
             internal Token(TokenKind kind)
             {
@@ -154,7 +154,7 @@ namespace System.Management.Automation
         {
             // Only used in internal nodes holding operators.
 
-            public Node Operand1 { get; set; }
+            internal Node Operand1 { get; set; }
 
             internal abstract bool Eval(object val);
             internal abstract bool ExistEnum(object enumVal);
@@ -165,9 +165,9 @@ namespace System.Management.Automation
         /// </summary>
         internal class OrNode : Node
         {
-            public Node Operand2 { get; set; }
+            internal Node Operand2 { get; set; }
 
-            public OrNode(Node n)
+            internal OrNode(Node n)
             {
                 Operand2 = n;
             }
@@ -191,9 +191,9 @@ namespace System.Management.Automation
         /// </summary>
         internal class AndNode : Node
         {
-            public Node Operand2 { get; set; }
+            internal Node Operand2 { get; set; }
 
-            public AndNode(Node n)
+            internal AndNode(Node n)
             {
                 Operand2 = n;
             }
@@ -238,7 +238,7 @@ namespace System.Management.Automation
         {
             internal object _operandValue;
 
-            public object OperandValue
+            internal object OperandValue
             {
                 get
                 {

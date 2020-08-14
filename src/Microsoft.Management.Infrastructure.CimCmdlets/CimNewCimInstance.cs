@@ -48,7 +48,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Constructor
         /// </para>
         /// </summary>
-        public CimNewCimInstance()
+        internal CimNewCimInstance()
             : base()
         {
         }
@@ -60,7 +60,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object.</param>
-        public void NewCimInstance(NewCimInstanceCommand cmdlet)
+        internal void NewCimInstance(NewCimInstanceCommand cmdlet)
         {
             DebugHelper.WriteLogEx();
 

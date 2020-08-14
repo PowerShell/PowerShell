@@ -34,37 +34,37 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The parameter Ast.
         /// </summary>
-        public CommandParameterAst Parameter { get; protected set; }
+        internal CommandParameterAst Parameter { get; protected set; }
 
         /// <summary>
         /// The argument type.
         /// </summary>
-        public AstParameterArgumentType ParameterArgumentType { get; protected set; }
+        internal AstParameterArgumentType ParameterArgumentType { get; protected set; }
 
         /// <summary>
         /// Indicate if the parameter is specified.
         /// </summary>
-        public bool ParameterSpecified { get; protected set; } = false;
+        internal bool ParameterSpecified { get; protected set; } = false;
 
         /// <summary>
         /// Indicate if the parameter is specified.
         /// </summary>
-        public bool ArgumentSpecified { get; protected set; } = false;
+        internal bool ArgumentSpecified { get; protected set; } = false;
 
         /// <summary>
         /// The parameter name.
         /// </summary>
-        public string ParameterName { get; protected set; }
+        internal string ParameterName { get; protected set; }
 
         /// <summary>
         /// The parameter text.
         /// </summary>
-        public string ParameterText { get; protected set; }
+        internal string ParameterText { get; protected set; }
 
         /// <summary>
         /// The argument type.
         /// </summary>
-        public Type ArgumentType { get; protected set; }
+        internal Type ArgumentType { get; protected set; }
     }
 
     /// <summary>
@@ -114,7 +114,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Get the argument.
         /// </summary>
-        public ExpressionAst[] Argument { get; } = null;
+        internal ExpressionAst[] Argument { get; } = null;
     }
 
     /// <summary>
@@ -159,7 +159,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Get the argument.
         /// </summary>
-        public bool Argument
+        internal bool Argument
         {
             get { return true; }
         }
@@ -233,17 +233,17 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Indicate if the argument is contained in the CommandParameterAst.
         /// </summary>
-        public bool ParameterContainsArgument { get; } = false;
+        internal bool ParameterContainsArgument { get; } = false;
 
         /// <summary>
         /// Indicate if the argument is of type CommandParameterAst.
         /// </summary>
-        public bool ArgumentIsCommandParameterAst { get; } = false;
+        internal bool ArgumentIsCommandParameterAst { get; } = false;
 
         /// <summary>
         /// Get the argument.
         /// </summary>
-        public CommandElementAst Argument { get; } = null;
+        internal CommandElementAst Argument { get; } = null;
     }
 
     #endregion "AstArgumentPair"

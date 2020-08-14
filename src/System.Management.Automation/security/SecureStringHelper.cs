@@ -428,7 +428,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Protect.
         /// </summary>
-        public static byte[] Protect(byte[] userData, byte[] optionalEntropy, DataProtectionScope scope)
+        internal static byte[] Protect(byte[] userData, byte[] optionalEntropy, DataProtectionScope scope)
         {
             if (userData == null)
             {
@@ -516,7 +516,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Unprotect.
         /// </summary>
-        public static byte[] Unprotect(byte[] encryptedData, byte[] optionalEntropy, DataProtectionScope scope)
+        internal static byte[] Unprotect(byte[] encryptedData, byte[] optionalEntropy, DataProtectionScope scope)
         {
             if (encryptedData == null)
             {

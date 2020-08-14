@@ -17,7 +17,7 @@ namespace System.Management.Automation.Language
      */
     internal class IsConstantValueVisitor : ICustomAstVisitor2
     {
-        public static bool IsConstant(Ast ast, out object constantValue, bool forAttribute = false, bool forRequires = false)
+        internal static bool IsConstant(Ast ast, out object constantValue, bool forAttribute = false, bool forRequires = false)
         {
             try
             {

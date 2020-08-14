@@ -16,25 +16,25 @@ namespace System.Management.Automation.ComInterop
     [StructLayout(LayoutKind.Sequential)]
     internal struct VariantArray1
     {
-        public Variant Element0;
+        internal Variant Element0;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     internal struct VariantArray2
     {
-        public Variant Element0, Element1;
+        internal Variant Element0, Element1;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     internal struct VariantArray4
     {
-        public Variant Element0, Element1, Element2, Element3;
+        internal Variant Element0, Element1, Element2, Element3;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     internal struct VariantArray8
     {
-        public Variant Element0, Element1, Element2, Element3, Element4, Element5, Element6, Element7;
+        internal Variant Element0, Element1, Element2, Element3, Element4, Element5, Element6, Element7;
     }
 
     //

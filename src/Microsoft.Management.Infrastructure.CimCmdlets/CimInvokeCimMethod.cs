@@ -78,7 +78,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Constructor
         /// </para>
         /// </summary>
-        public CimInvokeCimMethod()
+        internal CimInvokeCimMethod()
             : base()
         {
         }
@@ -89,7 +89,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object.</param>
-        public void InvokeCimMethod(InvokeCimMethodCommand cmdlet)
+        internal void InvokeCimMethod(InvokeCimMethodCommand cmdlet)
         {
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(cmdlet.ComputerName);
             string nameSpace;
@@ -246,7 +246,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cimInstance"></param>
-        public void InvokeCimMethodOnCimInstance(CimInstance cimInstance, XOperationContextBase context, CmdletOperationBase operation)
+        internal void InvokeCimMethodOnCimInstance(CimInstance cimInstance, XOperationContextBase context, CmdletOperationBase operation)
         {
             DebugHelper.WriteLogEx();
             CimInvokeCimMethodContext cimInvokeCimMethodContext = context as CimInvokeCimMethodContext;

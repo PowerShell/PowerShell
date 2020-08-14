@@ -5608,7 +5608,7 @@ namespace System.Management.Automation.Language
 
         #region Expressions
 
-        public Expression GenerateCallContains(Expression lhs, Expression rhs, bool ignoreCase)
+        internal Expression GenerateCallContains(Expression lhs, Expression rhs, bool ignoreCase)
         {
             return Expression.Call(
                 CachedReflectionInfo.ParserOps_ContainsOperatorCompiled,
@@ -6951,7 +6951,7 @@ namespace System.Management.Automation.Language
         private readonly int _sequencePoint;
         private readonly bool _checkBreakpoints;
 
-        public UpdatePositionExpr(IScriptExtent extent, int sequencePoint, SymbolDocumentInfo debugSymbolDocument, bool checkBreakpoints)
+        internal UpdatePositionExpr(IScriptExtent extent, int sequencePoint, SymbolDocumentInfo debugSymbolDocument, bool checkBreakpoints)
         {
             _extent = extent;
             _checkBreakpoints = checkBreakpoints;

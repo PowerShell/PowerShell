@@ -1262,13 +1262,13 @@ namespace System.Management.Automation
         private struct DefaultPSSnapInInformation
         {
             // since this is a private structure..making it as simple as possible
-            public string PSSnapInName;
-            public string AssemblyName;
-            public string Description;
-            public string DescriptionIndirect;
-            public string VendorIndirect;
+            internal string PSSnapInName;
+            internal string AssemblyName;
+            internal string Description;
+            internal string DescriptionIndirect;
+            internal string VendorIndirect;
 
-            public DefaultPSSnapInInformation(string sName,
+            internal DefaultPSSnapInInformation(string sName,
                 string sAssemblyName,
                 string sDescription,
                 string sDescriptionIndirect,

@@ -270,7 +270,7 @@ namespace System.Management.Automation.Remoting.Client
         internal abstract class BaseWSManAuthenticationCredentials : IDisposable
         {
             // used to get Marshalled data of the class.
-            public abstract MarshalledObject GetMarshalledObject();
+            internal abstract MarshalledObject GetMarshalledObject();
 
             public void Dispose()
             {
@@ -1574,8 +1574,8 @@ namespace System.Management.Automation.Remoting.Client
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
             private struct WSManProxyInfoInternal
             {
-                public int proxyAccessType;
-                public WSManUserNameAuthenticationCredentials.WSManUserNameCredentialStruct proxyAuthCredentialsStruct;
+                internal int proxyAccessType;
+                internal WSManUserNameAuthenticationCredentials.WSManUserNameCredentialStruct proxyAuthCredentialsStruct;
             }
 
             private MarshalledObject _data;
@@ -1781,7 +1781,7 @@ namespace System.Management.Automation.Remoting.Client
                 _data = MarshalledObject.Create<WSManShellAsyncInternal>(_internalData);
             }
 
-            public void Dispose()
+            internal void Dispose()
             {
                 _data.Dispose();
             }

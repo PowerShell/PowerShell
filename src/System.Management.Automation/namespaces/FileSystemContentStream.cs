@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="isRawStream">
         /// Indicates raw stream.
         /// </param>
-        public FileSystemContentReaderWriter(
+        internal FileSystemContentReaderWriter(
             string path, FileMode mode, FileAccess access,
             FileShare share, Encoding encoding, bool usingByteEncoding,
             bool waitForChanges, CmdletProvider provider, bool isRawStream) :
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="isRawStream">
         /// Indicates raw stream.
         /// </param>
-        public FileSystemContentReaderWriter(
+        internal FileSystemContentReaderWriter(
             string path, string streamName, FileMode mode, FileAccess access, FileShare share,
             Encoding encoding, bool usingByteEncoding, bool waitForChanges, CmdletProvider provider,
             bool isRawStream)
@@ -220,7 +220,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="suppressNewline">
         /// False to add a newline to the end of the output string, true if not.
         /// </param>
-        public FileSystemContentReaderWriter(
+        internal FileSystemContentReaderWriter(
             string path, string streamName, FileMode mode, FileAccess access, FileShare share,
             Encoding encoding, bool usingByteEncoding, bool waitForChanges, CmdletProvider provider,
             bool isRawStream, bool suppressNewline)
@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="isRawStream">
         /// Indicates raw stream.
         /// </param>
-        public FileSystemContentReaderWriter(
+        internal FileSystemContentReaderWriter(
             string path,
             string streamName,
             FileMode mode,
@@ -1511,10 +1511,10 @@ namespace Microsoft.PowerShell.Commands
                 internal int MaxCharSize;
 
                 [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEFAULTCHAR)]
-                public byte[] DefaultChar;
+                internal byte[] DefaultChar;
 
                 [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_LEADBYTES)]
-                public byte[] LeadBytes;
+                internal byte[] LeadBytes;
             };
 
             /// <summary>

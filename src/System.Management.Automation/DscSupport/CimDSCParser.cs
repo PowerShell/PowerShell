@@ -488,23 +488,23 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Store the RunAs Credentials that this DSC resource will use.
         /// </summary>
-        public DSCResourceRunAsCredential DscResRunAsCred;
+        internal DSCResourceRunAsCredential DscResRunAsCred;
 
         /// <summary>
         /// If we have implicitly imported this resource, we will set this field to true. This will
         /// only happen to InBox resources.
         /// </summary>
-        public bool IsImportedImplicitly;
+        internal bool IsImportedImplicitly;
 
         /// <summary>
         /// A CimClass instance for this resource.
         /// </summary>
-        public Microsoft.Management.Infrastructure.CimClass CimClassInstance;
+        internal Microsoft.Management.Infrastructure.CimClass CimClassInstance;
 
         /// <summary>
         /// Initializes variables with default values.
         /// </summary>
-        public DscClassCacheEntry() : this(DSCResourceRunAsCredential.Default, false, null) { }
+        internal DscClassCacheEntry() : this(DSCResourceRunAsCredential.Default, false, null) { }
 
         /// <summary>
         /// Initializes all values.
@@ -512,7 +512,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="aDSCResourceRunAsCredential"></param>
         /// <param name="aIsImportedImplicitly"></param>
         /// <param name="aCimClassInstance"></param>
-        public DscClassCacheEntry(DSCResourceRunAsCredential aDSCResourceRunAsCredential, bool aIsImportedImplicitly, Microsoft.Management.Infrastructure.CimClass aCimClassInstance)
+        internal DscClassCacheEntry(DSCResourceRunAsCredential aDSCResourceRunAsCredential, bool aIsImportedImplicitly, Microsoft.Management.Infrastructure.CimClass aCimClassInstance)
         {
             DscResRunAsCred = aDSCResourceRunAsCredential;
             IsImportedImplicitly = aIsImportedImplicitly;

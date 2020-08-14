@@ -21,14 +21,14 @@ namespace System.Management.Automation.Remoting
         private Guid _vmId;
         private Guid _serviceId;
 
-        public const System.Net.Sockets.AddressFamily AF_HYPERV = (System.Net.Sockets.AddressFamily)34;
-        public const int HYPERV_SOCK_ADDR_SIZE = 36;
+        internal const System.Net.Sockets.AddressFamily AF_HYPERV = (System.Net.Sockets.AddressFamily)34;
+        internal const int HYPERV_SOCK_ADDR_SIZE = 36;
 
         #endregion
 
         #region Constructor
 
-        public HyperVSocketEndPoint(System.Net.Sockets.AddressFamily AddrFamily,
+        internal HyperVSocketEndPoint(System.Net.Sockets.AddressFamily AddrFamily,
                                    Guid VmId,
                                    Guid ServiceId)
         {
@@ -42,14 +42,14 @@ namespace System.Management.Automation.Remoting
             get { return _addressFamily; }
         }
 
-        public Guid VmId
+        internal Guid VmId
         {
             get { return _vmId; }
 
             set { _vmId = value; }
         }
 
-        public Guid ServiceId
+        internal Guid ServiceId
         {
             get { return _serviceId; }
 
@@ -147,33 +147,33 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Returns the Hyper-V socket object.
         /// </summary>
-        public Socket HyperVSocket { get; }
+        internal Socket HyperVSocket { get; }
 
         /// <summary>
         /// Returns the network stream object.
         /// </summary>
-        public NetworkStream Stream { get; }
+        internal NetworkStream Stream { get; }
 
         /// <summary>
         /// Accessor for the Hyper-V socket reader.
         /// </summary>
-        public StreamReader TextReader { get; private set; }
+        internal StreamReader TextReader { get; private set; }
 
         /// <summary>
         /// Accessor for the Hyper-V socket writer.
         /// </summary>
-        public StreamWriter TextWriter { get; private set; }
+        internal StreamWriter TextWriter { get; private set; }
 
         /// <summary>
         /// Returns true if object is currently disposed.
         /// </summary>
-        public bool IsDisposed { get; private set; }
+        internal bool IsDisposed { get; private set; }
 
         #endregion
 
         #region Constructors
 
-        public RemoteSessionHyperVSocketServer(bool LoopbackMode)
+        internal RemoteSessionHyperVSocketServer(bool LoopbackMode)
         {
             // TODO: uncomment below code when .NET supports Hyper-V socket duplication
             /*
@@ -346,8 +346,8 @@ namespace System.Management.Automation.Remoting
 
         #region constants in hvsocket.h
 
-        public const int HV_PROTOCOL_RAW = 1;
-        public const int HVSOCKET_CONTAINER_PASSTHRU = 2;
+        internal const int HV_PROTOCOL_RAW = 1;
+        internal const int HVSOCKET_CONTAINER_PASSTHRU = 2;
 
         #endregion
 
@@ -356,32 +356,32 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Returns the Hyper-V socket endpoint object.
         /// </summary>
-        public HyperVSocketEndPoint EndPoint { get; }
+        internal HyperVSocketEndPoint EndPoint { get; }
 
         /// <summary>
         /// Returns the Hyper-V socket object.
         /// </summary>
-        public Socket HyperVSocket { get; }
+        internal Socket HyperVSocket { get; }
 
         /// <summary>
         /// Returns the network stream object.
         /// </summary>
-        public NetworkStream Stream { get; private set; }
+        internal NetworkStream Stream { get; private set; }
 
         /// <summary>
         /// Accessor for the Hyper-V socket reader.
         /// </summary>
-        public StreamReader TextReader { get; private set; }
+        internal StreamReader TextReader { get; private set; }
 
         /// <summary>
         /// Accessor for the Hyper-V socket writer.
         /// </summary>
-        public StreamWriter TextWriter { get; private set; }
+        internal StreamWriter TextWriter { get; private set; }
 
         /// <summary>
         /// Returns true if object is currently disposed.
         /// </summary>
-        public bool IsDisposed { get; private set; }
+        internal bool IsDisposed { get; private set; }
 
         #endregion
 
@@ -490,7 +490,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="networkCredential">The credential used for authentication.</param>
         /// <param name="configurationName">The configuration name of the PS session.</param>
         /// <param name="isFirstConnection">Whether this is the first connection.</param>
-        public bool Connect(
+        internal bool Connect(
             NetworkCredential networkCredential,
             string configurationName,
             bool isFirstConnection)
@@ -624,7 +624,7 @@ namespace System.Management.Automation.Remoting
             return result;
         }
 
-        public void Close()
+        internal void Close()
         {
             Stream.Dispose();
             HyperVSocket.Dispose();

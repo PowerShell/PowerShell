@@ -1577,9 +1577,9 @@ namespace System.Management.Automation
             }
         }
 
-        public static bool AmsiUninitializeCalled = false;
-        public static bool AmsiInitialized = false;
-        public static bool AmsiCleanedUp = false;
+        internal static bool AmsiUninitializeCalled = false;
+        internal static bool AmsiInitialized = false;
+        internal static bool AmsiCleanedUp = false;
 
         internal class AmsiNativeMethods
         {

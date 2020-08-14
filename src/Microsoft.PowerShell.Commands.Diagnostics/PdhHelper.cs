@@ -17,154 +17,154 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 {
     internal static class PdhResults
     {
-        public const long PDH_CSTATUS_VALID_DATA = 0x0L;
-        public const long PDH_CSTATUS_NEW_DATA = 0x1L;
-        public const long PDH_CSTATUS_NO_MACHINE = 0x800007D0L;
-        public const long PDH_CSTATUS_NO_INSTANCE = 0x800007D1L;
-        public const long PDH_MORE_DATA = 0x800007D2L;
-        public const long PDH_CSTATUS_ITEM_NOT_VALIDATED = 0x800007D3L;
-        public const long PDH_RETRY = 0x800007D4L;
-        public const long PDH_NO_DATA = 0x800007D5L;
-        public const long PDH_CALC_NEGATIVE_DENOMINATOR = 0x800007D6L;
-        public const long PDH_CALC_NEGATIVE_TIMEBASE = 0x800007D7L;
-        public const long PDH_CALC_NEGATIVE_VALUE = 0x800007D8L;
-        public const long PDH_DIALOG_CANCELLED = 0x800007D9L;
-        public const long PDH_END_OF_LOG_FILE = 0x800007DAL;
-        public const long PDH_ASYNC_QUERY_TIMEOUT = 0x800007DBL;
-        public const long PDH_CANNOT_SET_DEFAULT_REALTIME_DATASOURCE = 0x800007DCL;
-        public const long PDH_UNABLE_MAP_NAME_FILES = 0x80000BD5L;
-        public const long PDH_PLA_VALIDATION_WARNING = 0x80000BF3L;
-        public const long PDH_CSTATUS_NO_OBJECT = 0xC0000BB8L;
-        public const long PDH_CSTATUS_NO_COUNTER = 0xC0000BB9L;
-        public const long PDH_CSTATUS_INVALID_DATA = 0xC0000BBAL;
-        public const long PDH_MEMORY_ALLOCATION_FAILURE = 0xC0000BBBL;
-        public const long PDH_INVALID_HANDLE = 0xC0000BBCL;
-        public const long PDH_INVALID_ARGUMENT = 0xC0000BBDL;
-        public const long PDH_FUNCTION_NOT_FOUND = 0xC0000BBEL;
-        public const long PDH_CSTATUS_NO_COUNTERNAME = 0xC0000BBFL;
-        public const long PDH_CSTATUS_BAD_COUNTERNAME = 0xC0000BC0L;
-        public const long PDH_INVALID_BUFFER = 0xC0000BC1L;
-        public const long PDH_INSUFFICIENT_BUFFER = 0xC0000BC2L;
-        public const long PDH_CANNOT_CONNECT_MACHINE = 0xC0000BC3L;
-        public const long PDH_INVALID_PATH = 0xC0000BC4L;
-        public const long PDH_INVALID_INSTANCE = 0xC0000BC5L;
-        public const long PDH_INVALID_DATA = 0xC0000BC6L;
-        public const long PDH_NO_DIALOG_DATA = 0xC0000BC7L;
-        public const long PDH_CANNOT_READ_NAME_STRINGS = 0xC0000BC8L;
-        public const long PDH_LOG_FILE_CREATE_ERROR = 0xC0000BC9L;
-        public const long PDH_LOG_FILE_OPEN_ERROR = 0xC0000BCAL;
-        public const long PDH_LOG_TYPE_NOT_FOUND = 0xC0000BCBL;
-        public const long PDH_NO_MORE_DATA = 0xC0000BCCL;
-        public const long PDH_ENTRY_NOT_IN_LOG_FILE = 0xC0000BCDL;
-        public const long PDH_DATA_SOURCE_IS_LOG_FILE = 0xC0000BCEL;
-        public const long PDH_DATA_SOURCE_IS_REAL_TIME = 0xC0000BCFL;
-        public const long PDH_UNABLE_READ_LOG_HEADER = 0xC0000BD0L;
-        public const long PDH_FILE_NOT_FOUND = 0xC0000BD1L;
-        public const long PDH_FILE_ALREADY_EXISTS = 0xC0000BD2L;
-        public const long PDH_NOT_IMPLEMENTED = 0xC0000BD3L;
-        public const long PDH_STRING_NOT_FOUND = 0xC0000BD4L;
-        public const long PDH_UNKNOWN_LOG_FORMAT = 0xC0000BD6L;
-        public const long PDH_UNKNOWN_LOGSVC_COMMAND = 0xC0000BD7L;
-        public const long PDH_LOGSVC_QUERY_NOT_FOUND = 0xC0000BD8L;
-        public const long PDH_LOGSVC_NOT_OPENED = 0xC0000BD9L;
-        public const long PDH_WBEM_ERROR = 0xC0000BDAL;
-        public const long PDH_ACCESS_DENIED = 0xC0000BDBL;
-        public const long PDH_LOG_FILE_TOO_SMALL = 0xC0000BDCL;
-        public const long PDH_INVALID_DATASOURCE = 0xC0000BDDL;
-        public const long PDH_INVALID_SQLDB = 0xC0000BDEL;
-        public const long PDH_NO_COUNTERS = 0xC0000BDFL;
-        public const long PDH_SQL_ALLOC_FAILED = 0xC0000BE0L;
-        public const long PDH_SQL_ALLOCCON_FAILED = 0xC0000BE1L;
-        public const long PDH_SQL_EXEC_DIRECT_FAILED = 0xC0000BE2L;
-        public const long PDH_SQL_FETCH_FAILED = 0xC0000BE3L;
-        public const long PDH_SQL_ROWCOUNT_FAILED = 0xC0000BE4L;
-        public const long PDH_SQL_MORE_RESULTS_FAILED = 0xC0000BE5L;
-        public const long PDH_SQL_CONNECT_FAILED = 0xC0000BE6L;
-        public const long PDH_SQL_BIND_FAILED = 0xC0000BE7L;
-        public const long PDH_CANNOT_CONNECT_WMI_SERVER = 0xC0000BE8L;
-        public const long PDH_PLA_COLLECTION_ALREADY_RUNNING = 0xC0000BE9L;
-        public const long PDH_PLA_ERROR_SCHEDULE_OVERLAP = 0xC0000BEAL;
-        public const long PDH_PLA_COLLECTION_NOT_FOUND = 0xC0000BEBL;
-        public const long PDH_PLA_ERROR_SCHEDULE_ELAPSED = 0xC0000BECL;
-        public const long PDH_PLA_ERROR_NOSTART = 0xC0000BEDL;
-        public const long PDH_PLA_ERROR_ALREADY_EXISTS = 0xC0000BEEL;
-        public const long PDH_PLA_ERROR_TYPE_MISMATCH = 0xC0000BEFL;
-        public const long PDH_PLA_ERROR_FILEPATH = 0xC0000BF0L;
-        public const long PDH_PLA_SERVICE_ERROR = 0xC0000BF1L;
-        public const long PDH_PLA_VALIDATION_ERROR = 0xC0000BF2L;
-        public const long PDH_PLA_ERROR_NAME_TOO_LONG = 0xC0000BF4L;
-        public const long PDH_INVALID_SQL_LOG_FORMAT = 0xC0000BF5L;
-        public const long PDH_COUNTER_ALREADY_IN_QUERY = 0xC0000BF6L;
-        public const long PDH_BINARY_LOG_CORRUPT = 0xC0000BF7L;
-        public const long PDH_LOG_SAMPLE_TOO_SMALL = 0xC0000BF8L;
-        public const long PDH_OS_LATER_VERSION = 0xC0000BF9L;
-        public const long PDH_OS_EARLIER_VERSION = 0xC0000BFAL;
-        public const long PDH_INCORRECT_APPEND_TIME = 0xC0000BFBL;
-        public const long PDH_UNMATCHED_APPEND_COUNTER = 0xC0000BFCL;
-        public const long PDH_SQL_ALTER_DETAIL_FAILED = 0xC0000BFDL;
-        public const long PDH_QUERY_PERF_DATA_TIMEOUT = 0xC0000BFEL;
+        internal const long PDH_CSTATUS_VALID_DATA = 0x0L;
+        internal const long PDH_CSTATUS_NEW_DATA = 0x1L;
+        internal const long PDH_CSTATUS_NO_MACHINE = 0x800007D0L;
+        internal const long PDH_CSTATUS_NO_INSTANCE = 0x800007D1L;
+        internal const long PDH_MORE_DATA = 0x800007D2L;
+        internal const long PDH_CSTATUS_ITEM_NOT_VALIDATED = 0x800007D3L;
+        internal const long PDH_RETRY = 0x800007D4L;
+        internal const long PDH_NO_DATA = 0x800007D5L;
+        internal const long PDH_CALC_NEGATIVE_DENOMINATOR = 0x800007D6L;
+        internal const long PDH_CALC_NEGATIVE_TIMEBASE = 0x800007D7L;
+        internal const long PDH_CALC_NEGATIVE_VALUE = 0x800007D8L;
+        internal const long PDH_DIALOG_CANCELLED = 0x800007D9L;
+        internal const long PDH_END_OF_LOG_FILE = 0x800007DAL;
+        internal const long PDH_ASYNC_QUERY_TIMEOUT = 0x800007DBL;
+        internal const long PDH_CANNOT_SET_DEFAULT_REALTIME_DATASOURCE = 0x800007DCL;
+        internal const long PDH_UNABLE_MAP_NAME_FILES = 0x80000BD5L;
+        internal const long PDH_PLA_VALIDATION_WARNING = 0x80000BF3L;
+        internal const long PDH_CSTATUS_NO_OBJECT = 0xC0000BB8L;
+        internal const long PDH_CSTATUS_NO_COUNTER = 0xC0000BB9L;
+        internal const long PDH_CSTATUS_INVALID_DATA = 0xC0000BBAL;
+        internal const long PDH_MEMORY_ALLOCATION_FAILURE = 0xC0000BBBL;
+        internal const long PDH_INVALID_HANDLE = 0xC0000BBCL;
+        internal const long PDH_INVALID_ARGUMENT = 0xC0000BBDL;
+        internal const long PDH_FUNCTION_NOT_FOUND = 0xC0000BBEL;
+        internal const long PDH_CSTATUS_NO_COUNTERNAME = 0xC0000BBFL;
+        internal const long PDH_CSTATUS_BAD_COUNTERNAME = 0xC0000BC0L;
+        internal const long PDH_INVALID_BUFFER = 0xC0000BC1L;
+        internal const long PDH_INSUFFICIENT_BUFFER = 0xC0000BC2L;
+        internal const long PDH_CANNOT_CONNECT_MACHINE = 0xC0000BC3L;
+        internal const long PDH_INVALID_PATH = 0xC0000BC4L;
+        internal const long PDH_INVALID_INSTANCE = 0xC0000BC5L;
+        internal const long PDH_INVALID_DATA = 0xC0000BC6L;
+        internal const long PDH_NO_DIALOG_DATA = 0xC0000BC7L;
+        internal const long PDH_CANNOT_READ_NAME_STRINGS = 0xC0000BC8L;
+        internal const long PDH_LOG_FILE_CREATE_ERROR = 0xC0000BC9L;
+        internal const long PDH_LOG_FILE_OPEN_ERROR = 0xC0000BCAL;
+        internal const long PDH_LOG_TYPE_NOT_FOUND = 0xC0000BCBL;
+        internal const long PDH_NO_MORE_DATA = 0xC0000BCCL;
+        internal const long PDH_ENTRY_NOT_IN_LOG_FILE = 0xC0000BCDL;
+        internal const long PDH_DATA_SOURCE_IS_LOG_FILE = 0xC0000BCEL;
+        internal const long PDH_DATA_SOURCE_IS_REAL_TIME = 0xC0000BCFL;
+        internal const long PDH_UNABLE_READ_LOG_HEADER = 0xC0000BD0L;
+        internal const long PDH_FILE_NOT_FOUND = 0xC0000BD1L;
+        internal const long PDH_FILE_ALREADY_EXISTS = 0xC0000BD2L;
+        internal const long PDH_NOT_IMPLEMENTED = 0xC0000BD3L;
+        internal const long PDH_STRING_NOT_FOUND = 0xC0000BD4L;
+        internal const long PDH_UNKNOWN_LOG_FORMAT = 0xC0000BD6L;
+        internal const long PDH_UNKNOWN_LOGSVC_COMMAND = 0xC0000BD7L;
+        internal const long PDH_LOGSVC_QUERY_NOT_FOUND = 0xC0000BD8L;
+        internal const long PDH_LOGSVC_NOT_OPENED = 0xC0000BD9L;
+        internal const long PDH_WBEM_ERROR = 0xC0000BDAL;
+        internal const long PDH_ACCESS_DENIED = 0xC0000BDBL;
+        internal const long PDH_LOG_FILE_TOO_SMALL = 0xC0000BDCL;
+        internal const long PDH_INVALID_DATASOURCE = 0xC0000BDDL;
+        internal const long PDH_INVALID_SQLDB = 0xC0000BDEL;
+        internal const long PDH_NO_COUNTERS = 0xC0000BDFL;
+        internal const long PDH_SQL_ALLOC_FAILED = 0xC0000BE0L;
+        internal const long PDH_SQL_ALLOCCON_FAILED = 0xC0000BE1L;
+        internal const long PDH_SQL_EXEC_DIRECT_FAILED = 0xC0000BE2L;
+        internal const long PDH_SQL_FETCH_FAILED = 0xC0000BE3L;
+        internal const long PDH_SQL_ROWCOUNT_FAILED = 0xC0000BE4L;
+        internal const long PDH_SQL_MORE_RESULTS_FAILED = 0xC0000BE5L;
+        internal const long PDH_SQL_CONNECT_FAILED = 0xC0000BE6L;
+        internal const long PDH_SQL_BIND_FAILED = 0xC0000BE7L;
+        internal const long PDH_CANNOT_CONNECT_WMI_SERVER = 0xC0000BE8L;
+        internal const long PDH_PLA_COLLECTION_ALREADY_RUNNING = 0xC0000BE9L;
+        internal const long PDH_PLA_ERROR_SCHEDULE_OVERLAP = 0xC0000BEAL;
+        internal const long PDH_PLA_COLLECTION_NOT_FOUND = 0xC0000BEBL;
+        internal const long PDH_PLA_ERROR_SCHEDULE_ELAPSED = 0xC0000BECL;
+        internal const long PDH_PLA_ERROR_NOSTART = 0xC0000BEDL;
+        internal const long PDH_PLA_ERROR_ALREADY_EXISTS = 0xC0000BEEL;
+        internal const long PDH_PLA_ERROR_TYPE_MISMATCH = 0xC0000BEFL;
+        internal const long PDH_PLA_ERROR_FILEPATH = 0xC0000BF0L;
+        internal const long PDH_PLA_SERVICE_ERROR = 0xC0000BF1L;
+        internal const long PDH_PLA_VALIDATION_ERROR = 0xC0000BF2L;
+        internal const long PDH_PLA_ERROR_NAME_TOO_LONG = 0xC0000BF4L;
+        internal const long PDH_INVALID_SQL_LOG_FORMAT = 0xC0000BF5L;
+        internal const long PDH_COUNTER_ALREADY_IN_QUERY = 0xC0000BF6L;
+        internal const long PDH_BINARY_LOG_CORRUPT = 0xC0000BF7L;
+        internal const long PDH_LOG_SAMPLE_TOO_SMALL = 0xC0000BF8L;
+        internal const long PDH_OS_LATER_VERSION = 0xC0000BF9L;
+        internal const long PDH_OS_EARLIER_VERSION = 0xC0000BFAL;
+        internal const long PDH_INCORRECT_APPEND_TIME = 0xC0000BFBL;
+        internal const long PDH_UNMATCHED_APPEND_COUNTER = 0xC0000BFCL;
+        internal const long PDH_SQL_ALTER_DETAIL_FAILED = 0xC0000BFDL;
+        internal const long PDH_QUERY_PERF_DATA_TIMEOUT = 0xC0000BFEL;
     }
 
     internal static class PerfDetail
     {
-        public const uint PERF_DETAIL_NOVICE = 100;   // The uninformed can understand it
-        public const uint PERF_DETAIL_ADVANCED = 200; // For the advanced user
-        public const uint PERF_DETAIL_EXPERT = 300;   // For the expert user
-        public const uint PERF_DETAIL_WIZARD = 400;   // For the system designer
+        internal const uint PERF_DETAIL_NOVICE = 100;   // The uninformed can understand it
+        internal const uint PERF_DETAIL_ADVANCED = 200; // For the advanced user
+        internal const uint PERF_DETAIL_EXPERT = 300;   // For the expert user
+        internal const uint PERF_DETAIL_WIZARD = 400;   // For the system designer
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2, Size = 16)]
     internal struct SYSTEMTIME
     {
-        public UInt16 year;
-        public UInt16 month;
-        public UInt16 dayOfWeek;
-        public UInt16 day;
-        public UInt16 hour;
-        public UInt16 minute;
-        public UInt16 second;
-        public UInt16 milliseconds;
+        internal UInt16 year;
+        internal UInt16 month;
+        internal UInt16 dayOfWeek;
+        internal UInt16 day;
+        internal UInt16 hour;
+        internal UInt16 minute;
+        internal UInt16 second;
+        internal UInt16 milliseconds;
     }
 
     internal static class PdhFormat
     {
-        public const uint PDH_FMT_RAW = 0x00000010;
-        public const uint PDH_FMT_ANSI = 0x00000020;
-        public const uint PDH_FMT_UNICODE = 0x00000040;
-        public const uint PDH_FMT_LONG = 0x00000100;
-        public const uint PDH_FMT_DOUBLE = 0x00000200;
-        public const uint PDH_FMT_LARGE = 0x00000400;
-        public const uint PDH_FMT_NOSCALE = 0x00001000;
-        public const uint PDH_FMT_1000 = 0x00002000;
-        public const uint PDH_FMT_NODATA = 0x00004000;
-        public const uint PDH_FMT_NOCAP100 = 0x00008000;
-        public const uint PERF_DETAIL_COSTLY = 0x00010000;
-        public const uint PERF_DETAIL_STANDARD = 0x0000FFFF;
+        internal const uint PDH_FMT_RAW = 0x00000010;
+        internal const uint PDH_FMT_ANSI = 0x00000020;
+        internal const uint PDH_FMT_UNICODE = 0x00000040;
+        internal const uint PDH_FMT_LONG = 0x00000100;
+        internal const uint PDH_FMT_DOUBLE = 0x00000200;
+        internal const uint PDH_FMT_LARGE = 0x00000400;
+        internal const uint PDH_FMT_NOSCALE = 0x00001000;
+        internal const uint PDH_FMT_1000 = 0x00002000;
+        internal const uint PDH_FMT_NODATA = 0x00004000;
+        internal const uint PDH_FMT_NOCAP100 = 0x00008000;
+        internal const uint PERF_DETAIL_COSTLY = 0x00010000;
+        internal const uint PERF_DETAIL_STANDARD = 0x0000FFFF;
     }
 
     internal static class PdhLogAccess
     {
-        public const uint PDH_LOG_READ_ACCESS = 0x00010000;
-        public const uint PDH_LOG_WRITE_ACCESS = 0x00020000;
-        public const uint PDH_LOG_UPDATE_ACCESS = 0x00040000;
-        public const uint PDH_LOG_ACCESS_MASK = 0x000F0000;
+        internal const uint PDH_LOG_READ_ACCESS = 0x00010000;
+        internal const uint PDH_LOG_WRITE_ACCESS = 0x00020000;
+        internal const uint PDH_LOG_UPDATE_ACCESS = 0x00040000;
+        internal const uint PDH_LOG_ACCESS_MASK = 0x000F0000;
     }
 
     internal static class PdhLogOpenMode
     {
-        public const uint PDH_LOG_CREATE_NEW = 0x00000001;
-        public const uint PDH_LOG_CREATE_ALWAYS = 0x00000002;
-        public const uint PDH_LOG_OPEN_ALWAYS = 0x00000003;
-        public const uint PDH_LOG_OPEN_EXISTING = 0x00000004;
-        public const uint PDH_LOG_CREATE_MASK = 0x0000000F;
+        internal const uint PDH_LOG_CREATE_NEW = 0x00000001;
+        internal const uint PDH_LOG_CREATE_ALWAYS = 0x00000002;
+        internal const uint PDH_LOG_OPEN_ALWAYS = 0x00000003;
+        internal const uint PDH_LOG_OPEN_EXISTING = 0x00000004;
+        internal const uint PDH_LOG_CREATE_MASK = 0x0000000F;
     }
 
     internal static class PdhLogOpenOption
     {
-        public const uint PDH_LOG_OPT_USER_STRING = 0x01000000;
-        public const uint PDH_LOG_OPT_CIRCULAR = 0x02000000;
-        public const uint PDH_LOG_OPT_MAX_IS_BYTES = 0x04000000;
-        public const uint PDH_LOG_OPT_APPEND = 0x08000000;
+        internal const uint PDH_LOG_OPT_USER_STRING = 0x01000000;
+        internal const uint PDH_LOG_OPT_CIRCULAR = 0x02000000;
+        internal const uint PDH_LOG_OPT_MAX_IS_BYTES = 0x04000000;
+        internal const uint PDH_LOG_OPT_APPEND = 0x08000000;
     }
 
     internal enum PdhLogFileType
@@ -181,15 +181,15 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
     internal static class PdhWildCardFlag
     {
-        public const uint PDH_NOEXPANDCOUNTERS = 1;
-        public const uint PDH_NOEXPANDINSTANCES = 2;
-        public const uint PDH_REFRESHCOUNTERS = 4;
+        internal const uint PDH_NOEXPANDCOUNTERS = 1;
+        internal const uint PDH_NOEXPANDINSTANCES = 2;
+        internal const uint PDH_REFRESHCOUNTERS = 4;
     }
 
     internal struct CounterHandleNInstance
     {
-        public IntPtr hCounter;
-        public string InstanceName;
+        internal IntPtr hCounter;
+        internal string InstanceName;
     }
 
     internal class PdhHelper : IDisposable
@@ -198,29 +198,29 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         private struct PDH_COUNTER_PATH_ELEMENTS
         {
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string MachineName;
+            internal string MachineName;
 
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string ObjectName;
+            internal string ObjectName;
 
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string InstanceName;
+            internal string InstanceName;
 
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string ParentInstance;
+            internal string ParentInstance;
 
-            public UInt32 InstanceIndex;
+            internal UInt32 InstanceIndex;
 
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string CounterName;
+            internal string CounterName;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct PDH_FMT_COUNTERVALUE_LARGE
         {
-            public uint CStatus;
+            internal uint CStatus;
 
-            public Int64 largeValue;
+            internal Int64 largeValue;
 
             // [FieldOffset (4), MarshalAs(UnmanagedType.LPStr)]
             // public string AnsiStringValue;
@@ -232,36 +232,36 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         [StructLayout(LayoutKind.Sequential)]
         private struct PDH_FMT_COUNTERVALUE_DOUBLE
         {
-            public uint CStatus;
+            internal uint CStatus;
 
-            public double doubleValue;
+            internal double doubleValue;
         };
 
         [StructLayout(LayoutKind.Sequential)]
         private struct PDH_FMT_COUNTERVALUE_UNICODE
         {
-            public uint CStatus;
+            internal uint CStatus;
 
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string WideStringValue;
+            internal string WideStringValue;
         };
 
         [StructLayout(LayoutKind.Sequential)]
         private struct PDH_RAW_COUNTER
         {
-            public uint CStatus;
-            public System.Runtime.InteropServices.ComTypes.FILETIME TimeStamp;
-            public Int64 FirstValue;
-            public Int64 SecondValue;
-            public uint MultiCount;
+            internal uint CStatus;
+            internal System.Runtime.InteropServices.ComTypes.FILETIME TimeStamp;
+            internal Int64 FirstValue;
+            internal Int64 SecondValue;
+            internal uint MultiCount;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct PDH_TIME_INFO
         {
-            public Int64 StartTime;
-            public Int64 EndTime;
-            public UInt32 SampleCount;
+            internal Int64 StartTime;
+            internal Int64 EndTime;
+            internal UInt32 SampleCount;
         }
 
         //
@@ -272,25 +272,25 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
         private struct PDH_COUNTER_INFO
         {
-            [FieldOffset(0)] public UInt32 dwLength;
-            [FieldOffset(4)] public UInt32 dwType;
-            [FieldOffset(8)] public UInt32 CVersion;
-            [FieldOffset(12)] public UInt32 CStatus;
-            [FieldOffset(16)] public UInt32 lScale;
-            [FieldOffset(20)] public UInt32 lDefaultScale;
-            [FieldOffset(24)] public IntPtr dwUserData;
-            [FieldOffset(32)] public IntPtr dwQueryUserData;
-            [FieldOffset(40)] public string szFullPath;
+            [FieldOffset(0)] internal UInt32 dwLength;
+            [FieldOffset(4)] internal UInt32 dwType;
+            [FieldOffset(8)] internal UInt32 CVersion;
+            [FieldOffset(12)] internal UInt32 CStatus;
+            [FieldOffset(16)] internal UInt32 lScale;
+            [FieldOffset(20)] internal UInt32 lDefaultScale;
+            [FieldOffset(24)] internal IntPtr dwUserData;
+            [FieldOffset(32)] internal IntPtr dwQueryUserData;
+            [FieldOffset(40)] internal string szFullPath;
 
-            [FieldOffset(48)] public string szMachineName;
-            [FieldOffset(56)] public string szObjectName;
-            [FieldOffset(64)] public string szInstanceName;
-            [FieldOffset(72)] public string szParentInstance;
-            [FieldOffset(80)] public UInt32 dwInstanceIndex;
-            [FieldOffset(88)] public string szCounterName;
+            [FieldOffset(48)] internal string szMachineName;
+            [FieldOffset(56)] internal string szObjectName;
+            [FieldOffset(64)] internal string szInstanceName;
+            [FieldOffset(72)] internal string szParentInstance;
+            [FieldOffset(80)] internal UInt32 dwInstanceIndex;
+            [FieldOffset(88)] internal string szCounterName;
 
-            [FieldOffset(96)] public string szExplainText;
-            [FieldOffset(104)] public IntPtr DataBuffer;
+            [FieldOffset(96)] internal string szExplainText;
+            [FieldOffset(104)] internal IntPtr DataBuffer;
         }
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
@@ -498,7 +498,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint ConnectToDataSource()
+        internal uint ConnectToDataSource()
         {
             if (_hDataSource != null && !_hDataSource.IsInvalid)
             {
@@ -519,7 +519,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         /// </summary>
         /// <param name="dataSourceName"></param>
         /// <returns></returns>
-        public uint ConnectToDataSource(string dataSourceName)
+        internal uint ConnectToDataSource(string dataSourceName)
         {
             if (_hDataSource != null && !_hDataSource.IsInvalid)
             {
@@ -535,7 +535,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint ConnectToDataSource(StringCollection blgFileNames)
+        internal uint ConnectToDataSource(StringCollection blgFileNames)
         {
             if (blgFileNames.Count == 1)
             {
@@ -553,7 +553,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return ConnectToDataSource(doubleNullTerminated);
         }
 
-        public uint OpenQuery()
+        internal uint OpenQuery()
         {
             uint res = PdhOpenQueryH(_hDataSource, IntPtr.Zero, out _hQuery);
 
@@ -565,7 +565,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint OpenLogForWriting(string logName, PdhLogFileType logFileType, bool bOverwrite, UInt32 maxSize, bool bCircular, string caption)
+        internal uint OpenLogForWriting(string logName, PdhLogFileType logFileType, bool bOverwrite, UInt32 maxSize, bool bCircular, string caption)
         {
             Debug.Assert(_hQuery != null);
 
@@ -584,7 +584,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint SetQueryTimeRange(DateTime startTime, DateTime endTime)
+        internal uint SetQueryTimeRange(DateTime startTime, DateTime endTime)
         {
             Debug.Assert(_hQuery != null);
             Debug.Assert(endTime >= startTime);
@@ -610,7 +610,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return PdhSetQueryTimeRange(_hQuery, ref pTimeInfo);
         }
 
-        public uint EnumBlgFilesMachines(ref StringCollection machineNames)
+        internal uint EnumBlgFilesMachines(ref StringCollection machineNames)
         {
             IntPtr MachineListTcharSizePtr = new IntPtr(0);
             uint res = PdhHelper.PdhEnumMachinesH(_hDataSource, IntPtr.Zero, ref MachineListTcharSizePtr);
@@ -638,7 +638,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint EnumObjects(string machineName, ref StringCollection objectNames)
+        internal uint EnumObjects(string machineName, ref StringCollection objectNames)
         {
             IntPtr pBufferSize = new IntPtr(0);
             uint res = PdhEnumObjectsH(_hDataSource, machineName, IntPtr.Zero, ref pBufferSize, PerfDetail.PERF_DETAIL_WIZARD, false);
@@ -666,7 +666,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint EnumObjectItems(string machineName, string objectName, ref StringCollection counterNames, ref StringCollection instanceNames)
+        internal uint EnumObjectItems(string machineName, string objectName, ref StringCollection counterNames, ref StringCollection instanceNames)
         {
             IntPtr pCounterBufferSize = new IntPtr(0);
             IntPtr pInstanceBufferSize = new IntPtr(0);
@@ -746,7 +746,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint GetValidPathsFromFiles(ref StringCollection validPaths)
+        internal uint GetValidPathsFromFiles(ref StringCollection validPaths)
         {
             Debug.Assert(_hDataSource != null && !_hDataSource.IsInvalid, "Call ConnectToDataSource before GetValidPathsFromFiles");
 
@@ -823,7 +823,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return ret;
         }
 
-        public bool IsPathValid(string path)
+        internal bool IsPathValid(string path)
         {
             return (PdhValidatePathEx(_hDataSource, path) == 0);
         }
@@ -931,7 +931,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         // requires a different firewall exception.
         // This function checks and Asserts if the path is not valid.
         //
-        public uint TranslateLocalCounterPath(string englishPath, out string localizedPath)
+        internal uint TranslateLocalCounterPath(string englishPath, out string localizedPath)
         {
             uint res = 0;
             localizedPath = string.Empty;
@@ -1020,7 +1020,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint LookupPerfNameByIndex(string machineName, uint index, out string locName)
+        internal uint LookupPerfNameByIndex(string machineName, uint index, out string locName)
         {
             //
             //  NOTE: to make PdhLookupPerfNameByIndex() work,
@@ -1055,7 +1055,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint GetValidPaths(string machineName,
+        internal uint GetValidPaths(string machineName,
                                    string objectName,
                                    ref StringCollection counters,
                                    ref StringCollection instances,
@@ -1098,7 +1098,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint AddCounters(ref StringCollection validPaths, bool bFlushOldCounters)
+        internal uint AddCounters(ref StringCollection validPaths, bool bFlushOldCounters)
         {
             Debug.Assert(_hQuery != null && !_hQuery.IsInvalid);
 
@@ -1139,13 +1139,13 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return bAtLeastOneAdded ? 0 : res;
         }
 
-        public string GetCounterSetHelp(string szMachineName, string szObjectName)
+        internal string GetCounterSetHelp(string szMachineName, string szObjectName)
         {
             // API not available to retrieve
             return string.Empty;
         }
 
-        public uint ReadNextSet(out PerformanceCounterSampleSet nextSet, bool bSkipReading)
+        internal uint ReadNextSet(out PerformanceCounterSampleSet nextSet, bool bSkipReading)
         {
             Debug.Assert(_hQuery != null && !_hQuery.IsInvalid);
 
@@ -1282,7 +1282,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint ExpandWildCardPath(string path, out StringCollection expandedPaths)
+        internal uint ExpandWildCardPath(string path, out StringCollection expandedPaths)
         {
             expandedPaths = new StringCollection();
             IntPtr pcchPathListLength = new IntPtr(0);

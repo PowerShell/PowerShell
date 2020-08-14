@@ -24,7 +24,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Constructor.
         /// </summary>
-        public CimPromptUser(string message,
+        internal CimPromptUser(string message,
             CimPromptType prompt)
         {
             this.message = message;
@@ -121,7 +121,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Prompt message.
         /// </summary>
-        public string Message
+        internal string Message
         {
             get
             {

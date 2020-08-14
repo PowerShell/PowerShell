@@ -435,18 +435,18 @@ namespace System.Management.Automation
 
     internal class CimClassSerializationId : Tuple<string, string, string, int>
     {
-        public CimClassSerializationId(string className, string namespaceName, string computerName, int hashCode)
+        internal CimClassSerializationId(string className, string namespaceName, string computerName, int hashCode)
             : base(className, namespaceName, computerName, hashCode)
         {
         }
 
-        public string ClassName { get { return this.Item1; } }
+        internal string ClassName { get { return this.Item1; } }
 
-        public string NamespaceName { get { return this.Item2; } }
+        internal string NamespaceName { get { return this.Item2; } }
 
-        public string ComputerName { get { return this.Item3; } }
+        internal string ComputerName { get { return this.Item3; } }
 
-        public int ClassHashCode { get { return this.Item4; } }
+        internal int ClassHashCode { get { return this.Item4; } }
     }
 
     /// <summary>
@@ -5682,7 +5682,7 @@ namespace System.Management.Automation
         private readonly IEqualityComparer<WeakReference> _weakEqualityComparer;
         private Dictionary<WeakReference, T> _dictionary;
 
-        public WeakReferenceDictionary()
+        internal WeakReferenceDictionary()
         {
             _weakEqualityComparer = new WeakReferenceEqualityComparer();
             _dictionary = new Dictionary<WeakReference, T>(_weakEqualityComparer);

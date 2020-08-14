@@ -30,12 +30,12 @@ namespace System.Management.Automation.Interpreter
     {
         private struct LoopVariable
         {
-            public ExpressionAccess Access;
+            internal ExpressionAccess Access;
 
             // a variable that holds on the strong box for closure variables:
-            public ParameterExpression BoxStorage;
+            internal ParameterExpression BoxStorage;
 
-            public LoopVariable(ExpressionAccess access, ParameterExpression box)
+            internal LoopVariable(ExpressionAccess access, ParameterExpression box)
             {
                 Access = access;
                 BoxStorage = box;

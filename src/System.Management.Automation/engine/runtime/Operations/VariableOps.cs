@@ -279,7 +279,7 @@ namespace System.Management.Automation
 
         private class UsingResult
         {
-            public object Value { get; set; }
+            internal object Value { get; set; }
         }
 
         internal static object GetUsingValue(MutableTuple tuple, string usingExpressionKey, int index, ExecutionContext context)

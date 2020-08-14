@@ -4373,7 +4373,7 @@ namespace System.Management.Automation
         {
             private readonly PSConverter<T> _converter;
 
-            public ConversionData(PSConverter<T> converter, ConversionRank rank)
+            internal ConversionData(PSConverter<T> converter, ConversionRank rank)
             {
                 _converter = converter;
                 Rank = rank;

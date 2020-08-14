@@ -216,11 +216,11 @@ namespace System.Management.Automation.Internal.Host
 
         private struct PromptContextData
         {
-            public object SavedCurrentlyExecutingCommandVarValue;
-            public object SavedPSBoundParametersVarValue;
-            public ExecutionContext.SavedContextData SavedContextData;
-            public RunspaceAvailability RunspaceAvailability;
-            public PSLanguageMode LanguageMode;
+            internal object SavedCurrentlyExecutingCommandVarValue;
+            internal object SavedPSBoundParametersVarValue;
+            internal ExecutionContext.SavedContextData SavedContextData;
+            internal RunspaceAvailability RunspaceAvailability;
+            internal PSLanguageMode LanguageMode;
         }
 
         /// <summary>

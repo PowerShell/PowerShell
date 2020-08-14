@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             return stdout;
         }
 
-        public static string GetText()
+        internal static string GetText()
         {
             if (_clipboardSupported == false)
             {
@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             return StartProcess(tool, args);
         }
 
-        public static void SetText(string text)
+        internal static void SetText(string text)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
         }
 
-        public static void SetRtf(string plainText, string rtfText)
+        internal static void SetRtf(string plainText, string rtfText)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {

@@ -24,13 +24,13 @@ namespace System.Management.Automation.ComInterop
             return string.Format(CultureInfo.CurrentCulture, "<bound dispmethod {0}>", MemberName);
         }
 
-        public IDispatchComObject DispatchComObject { get; }
+        internal IDispatchComObject DispatchComObject { get; }
 
-        public IDispatch DispatchObject => DispatchComObject.DispatchObject;
+        internal IDispatch DispatchObject => DispatchComObject.DispatchObject;
 
-        public string MemberName { get; }
+        internal string MemberName { get; }
 
-        public int DispId { get; }
+        internal int DispId { get; }
 
         public DynamicMetaObject GetMetaObject(Expression parameter)
         {

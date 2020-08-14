@@ -4496,9 +4496,9 @@ namespace System.Management.Automation
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct SHARE_INFO_1
         {
-            public string netname;
-            public int type;
-            public string remark;
+            internal string netname;
+            internal int type;
+            internal string remark;
         }
 
         private const int MAX_PREFERRED_LENGTH = -1;
@@ -7119,7 +7119,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyNameCompleter"/> class.
         /// </summary>
-        public PropertyNameCompleter()
+        internal PropertyNameCompleter()
         {
             _parameterNameOfInput = "InputObject";
         }
@@ -7128,7 +7128,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of the <see cref="PropertyNameCompleter"/> class.
         /// </summary>
         /// <param name="parameterNameOfInput">The name of the property of the input object for witch to complete with property names.</param>
-        public PropertyNameCompleter(string parameterNameOfInput)
+        internal PropertyNameCompleter(string parameterNameOfInput)
         {
             _parameterNameOfInput = parameterNameOfInput;
         }

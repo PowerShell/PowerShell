@@ -280,11 +280,11 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal struct SSHConnection
     {
-        public string ComputerName;
-        public string UserName;
-        public string KeyFilePath;
-        public int Port;
-        public string Subsystem;
+        internal string ComputerName;
+        internal string UserName;
+        internal string KeyFilePath;
+        internal int Port;
+        internal string Subsystem;
     }
 
     /// <summary>
@@ -4152,7 +4152,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="runspace">Runspace object to test.</param>
         /// <param name="filterState">Filter state to compare.</param>
         /// <returns>Result of test.</returns>
-        public static bool TestRunspaceState(Runspace runspace, SessionFilterState filterState)
+        internal static bool TestRunspaceState(Runspace runspace, SessionFilterState filterState)
         {
             bool result;
 

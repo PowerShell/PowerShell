@@ -45,7 +45,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Constructor
         /// </para>
         /// </summary>
-        public CimRemoveCimInstance()
+        internal CimRemoveCimInstance()
             : base()
         {
         }
@@ -56,7 +56,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object.</param>
-        public void RemoveCimInstance(RemoveCimInstanceCommand cmdlet)
+        internal void RemoveCimInstance(RemoveCimInstanceCommand cmdlet)
         {
             DebugHelper.WriteLogEx();
 

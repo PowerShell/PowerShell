@@ -65,36 +65,36 @@ namespace System.Management.Automation.Remoting
         /// User needs to register event handler to ConnectionEstablished and ConnectionClosed to
         /// monitor the actual connection state.
         /// </summary>
-        public abstract void CreateAsync();
+        internal abstract void CreateAsync();
 
         /// <summary>
         /// This event handler is raised when the state of session changes.
         /// </summary>
-        public abstract event EventHandler<RemoteSessionStateEventArgs> StateChanged;
+        internal abstract event EventHandler<RemoteSessionStateEventArgs> StateChanged;
 
         /// <summary>
         /// Close the connection to the remote computer in an asynchronous manner.
         /// Client side user can register an event handler with ConnectionClosed to monitor
         /// the connection state.
         /// </summary>
-        public abstract void CloseAsync();
+        internal abstract void CloseAsync();
 
         /// <summary>
         /// Disconnects the remote session in an asynchronous manner.
         /// </summary>
-        public abstract void DisconnectAsync();
+        internal abstract void DisconnectAsync();
 
         /// <summary>
         /// Reconnects the remote session in an asynchronous manner.
         /// </summary>
-        public abstract void ReconnectAsync();
+        internal abstract void ReconnectAsync();
 
         /// <summary>
         /// Connects to an existing remote session
         /// User needs to register event handler to ConnectionEstablished and ConnectionClosed to
         /// monitor the actual connection state.
         /// </summary>
-        public abstract void ConnectAsync();
+        internal abstract void ConnectAsync();
 
         #endregion Public_Method_API
 

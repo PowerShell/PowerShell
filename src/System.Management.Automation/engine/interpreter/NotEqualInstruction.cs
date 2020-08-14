@@ -148,7 +148,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        public static Instruction Create(Type type)
+        internal static Instruction Create(Type type)
         {
             // Boxed enums can be unboxed as their underlying types:
             var typeToUse = type.IsEnum ? Enum.GetUnderlyingType(type) : type;

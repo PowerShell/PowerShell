@@ -81,23 +81,23 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        public CimCmdletDefinitionContext CmdletDefinitionContext { get; private set; }
+        internal CimCmdletDefinitionContext CmdletDefinitionContext { get; private set; }
 
-        public InvocationInfo CmdletInvocationInfo { get; private set; }
+        internal InvocationInfo CmdletInvocationInfo { get; private set; }
 
-        public MshCommandRuntime.ShouldProcessPossibleOptimization ShouldProcessOptimization { get; private set; }
+        internal MshCommandRuntime.ShouldProcessPossibleOptimization ShouldProcessOptimization { get; private set; }
 
-        public ActionPreference ErrorActionPreference { get; private set; }
+        internal ActionPreference ErrorActionPreference { get; private set; }
 
-        public ActionPreference WarningActionPreference { get; private set; }
+        internal ActionPreference WarningActionPreference { get; private set; }
 
-        public ActionPreference VerboseActionPreference { get; private set; }
+        internal ActionPreference VerboseActionPreference { get; private set; }
 
-        public ActionPreference DebugActionPreference { get; private set; }
+        internal ActionPreference DebugActionPreference { get; private set; }
 
-        public string NamespaceOverride { get; private set; }
+        internal string NamespaceOverride { get; private set; }
 
-        public bool IsRunningInBackground
+        internal bool IsRunningInBackground
         {
             get
             {
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        public bool ShowComputerName
+        internal bool ShowComputerName
         {
             get
             {
@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             return CimSession.Create(null);
         }
 
-        public CimSession GetDefaultCimSession()
+        internal CimSession GetDefaultCimSession()
         {
             return _defaultCimSession.Value;
         }

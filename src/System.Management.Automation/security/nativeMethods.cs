@@ -27,87 +27,87 @@ namespace System.Management.Automation.Security
         /// <Summary>
         /// SAFER_TOKEN_NULL_IF_EQUAL -> 0x00000001.
         /// </Summary>
-        public const int SAFER_TOKEN_NULL_IF_EQUAL = 1;
+        internal const int SAFER_TOKEN_NULL_IF_EQUAL = 1;
 
         /// <Summary>
         /// SAFER_TOKEN_COMPARE_ONLY -> 0x00000002.
         /// </Summary>
-        public const int SAFER_TOKEN_COMPARE_ONLY = 2;
+        internal const int SAFER_TOKEN_COMPARE_ONLY = 2;
 
         /// <Summary>
         /// SAFER_TOKEN_MAKE_INERT -> 0x00000004.
         /// </Summary>
-        public const int SAFER_TOKEN_MAKE_INERT = 4;
+        internal const int SAFER_TOKEN_MAKE_INERT = 4;
 
         /// <Summary>
         /// SAFER_CRITERIA_IMAGEPATH -> 0x00001.
         /// </Summary>
-        public const int SAFER_CRITERIA_IMAGEPATH = 1;
+        internal const int SAFER_CRITERIA_IMAGEPATH = 1;
 
         /// <Summary>
         /// SAFER_CRITERIA_NOSIGNEDHASH -> 0x00002.
         /// </Summary>
-        public const int SAFER_CRITERIA_NOSIGNEDHASH = 2;
+        internal const int SAFER_CRITERIA_NOSIGNEDHASH = 2;
 
         /// <Summary>
         /// SAFER_CRITERIA_IMAGEHASH -> 0x00004.
         /// </Summary>
-        public const int SAFER_CRITERIA_IMAGEHASH = 4;
+        internal const int SAFER_CRITERIA_IMAGEHASH = 4;
 
         /// <Summary>
         /// SAFER_CRITERIA_AUTHENTICODE -> 0x00008.
         /// </Summary>
-        public const int SAFER_CRITERIA_AUTHENTICODE = 8;
+        internal const int SAFER_CRITERIA_AUTHENTICODE = 8;
 
         /// <Summary>
         /// SAFER_CRITERIA_URLZONE -> 0x00010.
         /// </Summary>
-        public const int SAFER_CRITERIA_URLZONE = 16;
+        internal const int SAFER_CRITERIA_URLZONE = 16;
 
         /// <Summary>
         /// SAFER_CRITERIA_IMAGEPATH_NT -> 0x01000.
         /// </Summary>
-        public const int SAFER_CRITERIA_IMAGEPATH_NT = 4096;
+        internal const int SAFER_CRITERIA_IMAGEPATH_NT = 4096;
 
         /// <Summary>
         /// WTD_UI_NONE -> 0x00002.
         /// </Summary>
-        public const int WTD_UI_NONE = 2;
+        internal const int WTD_UI_NONE = 2;
 
         /// <Summary>
         /// S_OK -> ((HRESULT)0L)
         /// </Summary>
-        public const int S_OK = 0;
+        internal const int S_OK = 0;
 
         /// <Summary>
         /// S_FALSE -> ((HRESULT)1L)
         /// </Summary>
-        public const int S_FALSE = 1;
+        internal const int S_FALSE = 1;
 
         /// <Summary>
         /// ERROR_MORE_DATA -> 234L.
         /// </Summary>
-        public const int ERROR_MORE_DATA = 234;
+        internal const int ERROR_MORE_DATA = 234;
 
         /// <Summary>
         /// ERROR_ACCESS_DISABLED_BY_POLICY -> 1260L.
         /// </Summary>
-        public const int ERROR_ACCESS_DISABLED_BY_POLICY = 1260;
+        internal const int ERROR_ACCESS_DISABLED_BY_POLICY = 1260;
 
         /// <Summary>
         /// ERROR_ACCESS_DISABLED_NO_SAFER_UI_BY_POLICY -> 786L.
         /// </Summary>
-        public const int ERROR_ACCESS_DISABLED_NO_SAFER_UI_BY_POLICY = 786;
+        internal const int ERROR_ACCESS_DISABLED_NO_SAFER_UI_BY_POLICY = 786;
 
         /// <Summary>
         /// SAFER_MAX_HASH_SIZE -> 64.
         /// </Summary>
-        public const int SAFER_MAX_HASH_SIZE = 64;
+        internal const int SAFER_MAX_HASH_SIZE = 64;
 
         /// <Summary>
         /// SRP_POLICY_SCRIPT -> L"SCRIPT"
         /// </Summary>
-        public const string SRP_POLICY_SCRIPT = "SCRIPT";
+        internal const string SRP_POLICY_SCRIPT = "SCRIPT";
 
         /// <Summary>
         /// SIGNATURE_DISPLAYNAME_LENGTH -> MAX_PATH.
@@ -420,39 +420,39 @@ namespace System.Management.Automation.Security
             /// <summary>
             /// String naming a key container within a particular CSP.
             /// </summary>
-            public string pwszContainerName;
+            internal string pwszContainerName;
 
             /// <summary>
             /// String that names a CSP.
             /// </summary>
-            public string pwszProvName;
+            internal string pwszProvName;
 
             /// <summary>
             /// CSP type.
             /// </summary>
-            public PROV dwProvType;
+            internal PROV dwProvType;
 
             /// <summary>
             /// Flags value indicating whether a key container is to be created or destroyed, and
             /// whether an application is allowed access to a key container.
             /// </summary>
-            public uint dwFlags;
+            internal uint dwFlags;
 
             /// <summary>
             /// Number of elements in the rgProvParam array.
             /// </summary>
-            public uint cProvParam;
+            internal uint cProvParam;
 
             /// <summary>
             /// Array of pointers to CRYPT_KEY_PROV_PARAM structures.
             /// </summary>
-            public IntPtr rgProvParam;
+            internal IntPtr rgProvParam;
 
             /// <summary>
             /// The specification of the private key to retrieve. AT_KEYEXCHANGE and AT_SIGNATURE
             /// are defined for the default provider.
             /// </summary>
-            public uint dwKeySpec;
+            internal uint dwKeySpec;
         }
 
         internal const string NCRYPT_WINDOW_HANDLE_PROPERTY = "HWND Handle";
@@ -654,24 +654,24 @@ namespace System.Management.Automation.Security
         internal struct CRYPT_OID_INFO
         {
             /// DWORD->unsigned int
-            public uint cbSize;
+            internal uint cbSize;
 
             /// LPCSTR->CHAR*
             [MarshalAsAttribute(UnmanagedType.LPStr)]
-            public string pszOID;
+            internal string pszOID;
 
             /// LPCWSTR->WCHAR*
             [MarshalAsAttribute(UnmanagedType.LPWStr)]
-            public string pwszName;
+            internal string pwszName;
 
             /// DWORD->unsigned int
-            public uint dwGroupId;
+            internal uint dwGroupId;
 
             /// Anonymous_a3ae7823_8a1d_432c_bc07_a72b6fc6c7d8
-            public Anonymous_a3ae7823_8a1d_432c_bc07_a72b6fc6c7d8 Union1;
+            internal Anonymous_a3ae7823_8a1d_432c_bc07_a72b6fc6c7d8 Union1;
 
             /// CRYPT_DATA_BLOB->_CRYPTOAPI_BLOB
-            public CRYPT_ATTR_BLOB ExtraInfo;
+            internal CRYPT_ATTR_BLOB ExtraInfo;
         }
 
         [StructLayout(LayoutKind.Explicit)]
@@ -679,45 +679,45 @@ namespace System.Management.Automation.Security
         {
             /// DWORD->unsigned int
             [FieldOffset(0)]
-            public uint dwValue;
+            internal uint dwValue;
 
             /// ALG_ID->unsigned int
             [FieldOffset(0)]
-            public uint Algid;
+            internal uint Algid;
 
             /// DWORD->unsigned int
             [FieldOffset(0)]
-            public uint dwLength;
+            internal uint dwLength;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPT_ATTR_BLOB
         {
             /// DWORD->unsigned int
-            public uint cbData;
+            internal uint cbData;
 
             /// BYTE*
-            public System.IntPtr pbData;
+            internal System.IntPtr pbData;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPT_DATA_BLOB
         {
             /// DWORD->unsigned int
-            public uint cbData;
+            internal uint cbData;
 
             /// BYTE*
-            public System.IntPtr pbData;
+            internal System.IntPtr pbData;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct CERT_CONTEXT
         {
-            public int dwCertEncodingType;
-            public IntPtr pbCertEncoded;
-            public int cbCertEncoded;
-            public IntPtr pCertInfo;
-            public IntPtr hCertStore;
+            internal int dwCertEncodingType;
+            internal IntPtr pbCertEncoded;
+            internal int cbCertEncoded;
+            internal IntPtr pCertInfo;
+            internal IntPtr hCertStore;
         }
 
         // Return the OID info for a given algorithm
@@ -1520,45 +1520,45 @@ namespace System.Management.Automation.Security
     internal struct SAFER_CODE_PROPERTIES
     {
         /// DWORD->unsigned int
-        public uint cbSize;
+        internal uint cbSize;
 
         /// DWORD->unsigned int
-        public uint dwCheckFlags;
+        internal uint dwCheckFlags;
 
         /// LPCWSTR->WCHAR*
         [MarshalAsAttribute(UnmanagedType.LPWStr)]
-        public string ImagePath;
+        internal string ImagePath;
 
         /// HANDLE->void*
-        public System.IntPtr hImageFileHandle;
+        internal System.IntPtr hImageFileHandle;
 
         /// DWORD->unsigned int
-        public uint UrlZoneId;
+        internal uint UrlZoneId;
 
         /// BYTE[SAFER_MAX_HASH_SIZE]
         [MarshalAsAttribute(
             UnmanagedType.ByValArray,
             SizeConst = NativeConstants.SAFER_MAX_HASH_SIZE,
             ArraySubType = UnmanagedType.I1)]
-        public byte[] ImageHash;
+        internal byte[] ImageHash;
 
         /// DWORD->unsigned int
-        public uint dwImageHashSize;
+        internal uint dwImageHashSize;
 
         /// LARGE_INTEGER->_LARGE_INTEGER
-        public LARGE_INTEGER ImageSize;
+        internal LARGE_INTEGER ImageSize;
 
         /// ALG_ID->unsigned int
-        public uint HashAlgorithm;
+        internal uint HashAlgorithm;
 
         /// LPBYTE->BYTE*
-        public System.IntPtr pByteBlock;
+        internal System.IntPtr pByteBlock;
 
         /// HWND->HWND__*
-        public System.IntPtr hWndParent;
+        internal System.IntPtr hWndParent;
 
         /// DWORD->unsigned int
-        public uint dwWVTUIChoice;
+        internal uint dwWVTUIChoice;
     }
 
     [StructLayoutAttribute(LayoutKind.Explicit)]
@@ -1566,42 +1566,42 @@ namespace System.Management.Automation.Security
     {
         /// Anonymous_9320654f_2227_43bf_a385_74cc8c562686
         [FieldOffsetAttribute(0)]
-        public Anonymous_9320654f_2227_43bf_a385_74cc8c562686 Struct1;
+        internal Anonymous_9320654f_2227_43bf_a385_74cc8c562686 Struct1;
 
         /// Anonymous_947eb392_1446_4e25_bbd4_10e98165f3a9
         [FieldOffsetAttribute(0)]
-        public Anonymous_947eb392_1446_4e25_bbd4_10e98165f3a9 u;
+        internal Anonymous_947eb392_1446_4e25_bbd4_10e98165f3a9 u;
 
         /// LONGLONG->__int64
         [FieldOffsetAttribute(0)]
-        public long QuadPart;
+        internal long QuadPart;
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential)]
     internal struct HWND__
     {
         /// int
-        public int unused;
+        internal int unused;
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential)]
     internal struct Anonymous_9320654f_2227_43bf_a385_74cc8c562686
     {
         /// DWORD->unsigned int
-        public uint LowPart;
+        internal uint LowPart;
 
         /// LONG->int
-        public int HighPart;
+        internal int HighPart;
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential)]
     internal struct Anonymous_947eb392_1446_4e25_bbd4_10e98165f3a9
     {
         /// DWORD->unsigned int
-        public uint LowPart;
+        internal uint LowPart;
 
         /// LONG->int
-        public int HighPart;
+        internal int HighPart;
     }
 
     #endregion SAFER_APIs
@@ -1898,40 +1898,40 @@ namespace System.Management.Automation.Security
     internal partial class NativeConstants
     {
         // CRYPTCAT_E_AREA_HEADER = "0x00000000";
-        public const int CRYPTCAT_E_AREA_HEADER = 0;
+        internal const int CRYPTCAT_E_AREA_HEADER = 0;
 
         // CRYPTCAT_E_AREA_MEMBER = "0x00010000";
-        public const int CRYPTCAT_E_AREA_MEMBER = 65536;
+        internal const int CRYPTCAT_E_AREA_MEMBER = 65536;
 
         // CRYPTCAT_E_AREA_ATTRIBUTE = "0x00020000";
-        public const int CRYPTCAT_E_AREA_ATTRIBUTE = 131072;
+        internal const int CRYPTCAT_E_AREA_ATTRIBUTE = 131072;
 
         // CRYPTCAT_E_CDF_UNSUPPORTED = "0x00000001";
-        public const int CRYPTCAT_E_CDF_UNSUPPORTED = 1;
+        internal const int CRYPTCAT_E_CDF_UNSUPPORTED = 1;
 
         // CRYPTCAT_E_CDF_DUPLICATE = "0x00000002";
-        public const int CRYPTCAT_E_CDF_DUPLICATE = 2;
+        internal const int CRYPTCAT_E_CDF_DUPLICATE = 2;
 
         // CRYPTCAT_E_CDF_TAGNOTFOUND = "0x00000004";
-        public const int CRYPTCAT_E_CDF_TAGNOTFOUND = 4;
+        internal const int CRYPTCAT_E_CDF_TAGNOTFOUND = 4;
 
         // CRYPTCAT_E_CDF_MEMBER_FILE_PATH = "0x00010001";
-        public const int CRYPTCAT_E_CDF_MEMBER_FILE_PATH = 65537;
+        internal const int CRYPTCAT_E_CDF_MEMBER_FILE_PATH = 65537;
 
         // CRYPTCAT_E_CDF_MEMBER_INDIRECTDATA = "0x00010002";
-        public const int CRYPTCAT_E_CDF_MEMBER_INDIRECTDATA = 65538;
+        internal const int CRYPTCAT_E_CDF_MEMBER_INDIRECTDATA = 65538;
 
         // CRYPTCAT_E_CDF_MEMBER_FILENOTFOUND = "0x00010004";
-        public const int CRYPTCAT_E_CDF_MEMBER_FILENOTFOUND = 65540;
+        internal const int CRYPTCAT_E_CDF_MEMBER_FILENOTFOUND = 65540;
 
         // CRYPTCAT_E_CDF_BAD_GUID_CONV = "0x00020001";
-        public const int CRYPTCAT_E_CDF_BAD_GUID_CONV = 131073;
+        internal const int CRYPTCAT_E_CDF_BAD_GUID_CONV = 131073;
 
         // CRYPTCAT_E_CDF_ATTR_TOOFEWVALUES = "0x00020002";
-        public const int CRYPTCAT_E_CDF_ATTR_TOOFEWVALUES = 131074;
+        internal const int CRYPTCAT_E_CDF_ATTR_TOOFEWVALUES = 131074;
 
         // CRYPTCAT_E_CDF_ATTR_TYPECOMBO = "0x00020004";
-        public const int CRYPTCAT_E_CDF_ATTR_TYPECOMBO = 131076;
+        internal const int CRYPTCAT_E_CDF_ATTR_TYPECOMBO = 131076;
     }
 
     /// <summary>

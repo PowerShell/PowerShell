@@ -24,12 +24,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     {
         internal class NotFoundError
         {
-            public NotFoundError()
+            internal NotFoundError()
             {
                 this.ErrorMessageGenerator = GetErrorMessageForNotFound;
             }
 
-            public NotFoundError(string propertyName, object propertyValue, bool wildcardsEnabled)
+            internal NotFoundError(string propertyName, object propertyValue, bool wildcardsEnabled)
             {
                 this.PropertyName = propertyName;
                 this.PropertyValue = propertyValue;
@@ -55,11 +55,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
             }
 
-            public string PropertyName { get; private set; }
+            internal string PropertyName { get; private set; }
 
-            public object PropertyValue { get; private set; }
+            internal object PropertyValue { get; private set; }
 
-            public Func<string, string, string> ErrorMessageGenerator { get; private set; }
+            internal Func<string, string, string> ErrorMessageGenerator { get; private set; }
 
             private static string GetErrorMessageForNotFound(string queryDescription, string className)
             {
@@ -102,14 +102,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             private bool HadMatches { get; set; }
 
-            public bool IsMatch(CimInstance cimInstance)
+            internal bool IsMatch(CimInstance cimInstance)
             {
                 bool isMatch = this.IsMatchCore(cimInstance);
                 this.HadMatches = this.HadMatches || isMatch;
                 return isMatch;
             }
 
-            public virtual bool ShouldReportErrorOnNoMatches_IfMultipleFilters()
+            internal virtual bool ShouldReportErrorOnNoMatches_IfMultipleFilters()
             {
                 switch (this.BehaviorOnNoMatch)
                 {
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
             }
 
-            public virtual IEnumerable<NotFoundError> GetNotFoundErrors_IfThisIsTheOnlyFilter()
+            internal virtual IEnumerable<NotFoundError> GetNotFoundErrors_IfThisIsTheOnlyFilter()
             {
                 switch (this.BehaviorOnNoMatch)
                 {
@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private class CimInstanceRegularFilter : CimInstancePropertyBasedFilter
         {
-            public CimInstanceRegularFilter(string propertyName, IEnumerable allowedPropertyValues, bool wildcardsEnabled, BehaviorOnNoMatch behaviorOnNoMatch)
+            internal CimInstanceRegularFilter(string propertyName, IEnumerable allowedPropertyValues, bool wildcardsEnabled, BehaviorOnNoMatch behaviorOnNoMatch)
             {
                 var valueBehaviors = new HashSet<BehaviorOnNoMatch>();
 
@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private class CimInstanceExcludeFilter : CimInstancePropertyBasedFilter
         {
-            public CimInstanceExcludeFilter(string propertyName, IEnumerable excludedPropertyValues, bool wildcardsEnabled, BehaviorOnNoMatch behaviorOnNoMatch)
+            internal CimInstanceExcludeFilter(string propertyName, IEnumerable excludedPropertyValues, bool wildcardsEnabled, BehaviorOnNoMatch behaviorOnNoMatch)
             {
                 if (behaviorOnNoMatch == BehaviorOnNoMatch.Default)
                 {
@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private class CimInstanceMinFilter : CimInstancePropertyBasedFilter
         {
-            public CimInstanceMinFilter(string propertyName, object minPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
+            internal CimInstanceMinFilter(string propertyName, object minPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
             {
                 if (behaviorOnNoMatch == BehaviorOnNoMatch.Default)
                 {
@@ -295,7 +295,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private class CimInstanceMaxFilter : CimInstancePropertyBasedFilter
         {
-            public CimInstanceMaxFilter(string propertyName, object minPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
+            internal CimInstanceMaxFilter(string propertyName, object minPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
             {
                 if (behaviorOnNoMatch == BehaviorOnNoMatch.Default)
                 {
@@ -316,7 +316,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private class CimInstanceAssociationFilter : CimInstanceFilterBase
         {
-            public CimInstanceAssociationFilter(BehaviorOnNoMatch behaviorOnNoMatch)
+            internal CimInstanceAssociationFilter(BehaviorOnNoMatch behaviorOnNoMatch)
             {
                 if (behaviorOnNoMatch == BehaviorOnNoMatch.Default)
                 {
@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 CimTypedExpectedPropertyValue = CimValueConverter.ConvertFromDotNetToCim(expectedPropertyValue);
             }
 
-            public BehaviorOnNoMatch BehaviorOnNoMatch
+            internal BehaviorOnNoMatch BehaviorOnNoMatch
             {
                 get
                 {
@@ -361,15 +361,15 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             private BehaviorOnNoMatch _behaviorOnNoMatch;
 
-            public string PropertyName { get; }
+            internal string PropertyName { get; }
 
-            public object CimTypedExpectedPropertyValue { get; }
+            internal object CimTypedExpectedPropertyValue { get; }
 
-            public object OriginalExpectedPropertyValue { get; }
+            internal object OriginalExpectedPropertyValue { get; }
 
-            public bool HadMatch { get; private set; }
+            internal bool HadMatch { get; private set; }
 
-            public bool IsMatch(CimInstance o)
+            internal bool IsMatch(CimInstance o)
             {
                 if (o == null)
                 {
@@ -452,7 +452,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             private readonly bool _wildcardsEnabled;
 
-            public PropertyValueRegularFilter(string propertyName, object expectedPropertyValue, bool wildcardsEnabled, BehaviorOnNoMatch behaviorOnNoMatch)
+            internal PropertyValueRegularFilter(string propertyName, object expectedPropertyValue, bool wildcardsEnabled, BehaviorOnNoMatch behaviorOnNoMatch)
                 : base(propertyName, expectedPropertyValue, behaviorOnNoMatch)
             {
                 _wildcardsEnabled = wildcardsEnabled;
@@ -535,7 +535,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal class PropertyValueExcludeFilter : PropertyValueRegularFilter
         {
-            public PropertyValueExcludeFilter(string propertyName, object expectedPropertyValue, bool wildcardsEnabled, BehaviorOnNoMatch behaviorOnNoMatch)
+            internal PropertyValueExcludeFilter(string propertyName, object expectedPropertyValue, bool wildcardsEnabled, BehaviorOnNoMatch behaviorOnNoMatch)
                 : base(propertyName, expectedPropertyValue, wildcardsEnabled, behaviorOnNoMatch)
             {
             }
@@ -553,7 +553,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal class PropertyValueMinFilter : PropertyValueFilter
         {
-            public PropertyValueMinFilter(string propertyName, object expectedPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
+            internal PropertyValueMinFilter(string propertyName, object expectedPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
                 : base(propertyName, expectedPropertyValue, behaviorOnNoMatch)
             {
             }
@@ -589,7 +589,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal class PropertyValueMaxFilter : PropertyValueFilter
         {
-            public PropertyValueMaxFilter(string propertyName, object expectedPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
+            internal PropertyValueMaxFilter(string propertyName, object expectedPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
                 : base(propertyName, expectedPropertyValue, behaviorOnNoMatch)
             {
             }

@@ -24,15 +24,15 @@ namespace System.Management.Automation.Language
 
     internal class TypeLookupResult
     {
-        public TypeLookupResult(TypeDefinitionAst type = null)
+        internal TypeLookupResult(TypeDefinitionAst type = null)
         {
             Type = type;
         }
 
-        public TypeDefinitionAst Type { get; set; }
-        public List<string> ExternalNamespaces { get; set; }
+        internal TypeDefinitionAst Type { get; set; }
+        internal List<string> ExternalNamespaces { get; set; }
 
-        public bool IsAmbiguous()
+        internal bool IsAmbiguous()
         {
             return (ExternalNamespaces != null && ExternalNamespaces.Count > 1);
         }
@@ -152,7 +152,7 @@ namespace System.Management.Automation.Language
             return typeLookupResult;
         }
 
-        public Ast LookupVariable(VariablePath variablePath)
+        internal Ast LookupVariable(VariablePath variablePath)
         {
             Ast variabledefinition;
             _variableTable.TryGetValue(variablePath.UserPath, out variabledefinition);
@@ -209,7 +209,7 @@ namespace System.Management.Automation.Language
         /// Add Type to the symbol Table.
         /// </summary>
         /// <param name="typeDefinitionAst"></param>
-        public void AddType(TypeDefinitionAst typeDefinitionAst)
+        internal void AddType(TypeDefinitionAst typeDefinitionAst)
         {
             _scopes[_scopes.Count - 1].AddType(_parser, typeDefinitionAst);
         }
@@ -219,12 +219,12 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="typeDefinitionAst"></param>
         /// <param name="moduleInfo"></param>
-        public void AddTypeFromUsingModule(TypeDefinitionAst typeDefinitionAst, PSModuleInfo moduleInfo)
+        internal void AddTypeFromUsingModule(TypeDefinitionAst typeDefinitionAst, PSModuleInfo moduleInfo)
         {
             _scopes[_scopes.Count - 1].AddTypeFromUsingModule(_parser, typeDefinitionAst, moduleInfo);
         }
 
-        public TypeLookupResult LookupType(TypeName typeName)
+        internal TypeLookupResult LookupType(TypeName typeName)
         {
             TypeLookupResult result = null;
             for (int i = _scopes.Count - 1; i >= 0; i--)
@@ -237,7 +237,7 @@ namespace System.Management.Automation.Language
             return result;
         }
 
-        public Ast LookupVariable(VariablePath variablePath)
+        internal Ast LookupVariable(VariablePath variablePath)
         {
             Ast result = null;
             for (int i = _scopes.Count - 1; i >= 0; i--)
@@ -254,7 +254,7 @@ namespace System.Management.Automation.Language
         /// Return the most deep typeDefinitionAst in the current context.
         /// </summary>
         /// <returns>TypeDefinitionAst or null, if currently not in type definition.</returns>
-        public TypeDefinitionAst GetCurrentTypeDefinitionAst()
+        internal TypeDefinitionAst GetCurrentTypeDefinitionAst()
         {
             for (int i = _scopes.Count - 1; i >= 0; i--)
             {
@@ -268,7 +268,7 @@ namespace System.Management.Automation.Language
             return null;
         }
 
-        public bool IsInMethodScope()
+        internal bool IsInMethodScope()
         {
             return _scopes[_scopes.Count - 1]._scopeType == ScopeType.Method;
         }

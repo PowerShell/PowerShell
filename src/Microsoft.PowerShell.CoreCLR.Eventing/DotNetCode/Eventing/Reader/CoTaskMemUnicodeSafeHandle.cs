@@ -59,7 +59,7 @@ namespace System.Diagnostics.Eventing.Reader
 
         // DONT compare CoTaskMemUnicodeSafeHandle with CoTaskMemUnicodeSafeHandle.Zero
         // use IsInvalid instead. Zero is provided where a NULL handle needed
-        public static CoTaskMemUnicodeSafeHandle Zero
+        internal static CoTaskMemUnicodeSafeHandle Zero
         {
             get
             {

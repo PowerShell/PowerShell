@@ -71,12 +71,12 @@ namespace Microsoft.PowerShell
         [StructLayout(LayoutKind.Sequential)]
         private struct PROCESS_BASIC_INFORMATION
         {
-            public IntPtr ExitStatus;
-            public IntPtr PebBaseAddress;
-            public IntPtr AffinityMask;
-            public IntPtr BasePriority;
-            public IntPtr UniqueProcessId;
-            public IntPtr InheritedFromUniqueProcessId;
+            internal IntPtr ExitStatus;
+            internal IntPtr PebBaseAddress;
+            internal IntPtr AffinityMask;
+            internal IntPtr BasePriority;
+            internal IntPtr UniqueProcessId;
+            internal IntPtr InheritedFromUniqueProcessId;
         }
 
         [DllImport("ntdll.dll", SetLastError = true)]

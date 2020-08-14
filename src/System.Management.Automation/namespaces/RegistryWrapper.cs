@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
 
     internal static class RegistryWrapperUtils
     {
-        public static object ConvertValueToUIntFromRegistryIfNeeded(string name, object value, RegistryValueKind kind)
+        internal static object ConvertValueToUIntFromRegistryIfNeeded(string name, object value, RegistryValueKind kind)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
             return value;
         }
 
-        public static object ConvertUIntToValueForRegistryIfNeeded(object value, RegistryValueKind kind)
+        internal static object ConvertUIntToValueForRegistryIfNeeded(object value, RegistryValueKind kind)
         {
             // Workaround for CLR bug that doesn't support full range of DWORD or QWORD
             if (kind == RegistryValueKind.DWord)

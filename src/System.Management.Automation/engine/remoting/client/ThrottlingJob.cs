@@ -1199,7 +1199,7 @@ namespace System.Management.Automation
                 }
             }
 
-            public static void ForwardAllResultsToCmdlet(ThrottlingJob throttlingJob, Cmdlet cmdlet, CancellationToken? cancellationToken)
+            internal static void ForwardAllResultsToCmdlet(ThrottlingJob throttlingJob, Cmdlet cmdlet, CancellationToken? cancellationToken)
             {
                 using (var helper = new ForwardingHelper(throttlingJob))
                 {

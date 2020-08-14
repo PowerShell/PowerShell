@@ -2256,17 +2256,17 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Get the count of the Hashset.
         /// </summary>
-        public int Count => _hashset.Count;
+        internal int Count => _hashset.Count;
 
         /// <summary>
         /// Indicate if it's a readonly Hashset.
         /// </summary>
-        public bool IsReadOnly => true;
+        internal bool IsReadOnly => true;
 
         /// <summary>
         /// Check if the set contains an item.
         /// </summary>
-        public bool Contains(T item) => _hashset.Contains(item);
+        internal bool Contains(T item) => _hashset.Contains(item);
 
         /// <summary>
         /// GetEnumerator method.

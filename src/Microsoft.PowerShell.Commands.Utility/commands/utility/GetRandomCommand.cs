@@ -585,7 +585,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor.
         /// </summary>
-        public PolymorphicRandomNumberGenerator()
+        internal PolymorphicRandomNumberGenerator()
         {
             _cryptographicGenerator = RandomNumberGenerator.Create();
             _pseudoGenerator = null;
@@ -657,7 +657,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
         /// <param name="maxValue">The exclusive upper bound of the random number returned. maxValue must be greater than or equal to minValue.</param>
         /// <returns></returns>
-        public int Next(int minValue, int maxValue)
+        internal int Next(int minValue, int maxValue)
         {
             if (minValue > maxValue)
             {

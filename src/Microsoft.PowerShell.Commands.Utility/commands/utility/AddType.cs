@@ -1096,8 +1096,8 @@ namespace Microsoft.PowerShell.Commands
         // Visit symbols in all namespaces and collect duplicates.
         private class AllNamedTypeSymbolsVisitor : SymbolVisitor
         {
-            public readonly ConcurrentBag<string> DuplicateSymbols = new ConcurrentBag<string>();
-            public readonly ConcurrentBag<string> UniqueSymbols = new ConcurrentBag<string>();
+            internal readonly ConcurrentBag<string> DuplicateSymbols = new ConcurrentBag<string>();
+            internal readonly ConcurrentBag<string> UniqueSymbols = new ConcurrentBag<string>();
 
             public override void VisitNamespace(INamespaceSymbol symbol)
             {

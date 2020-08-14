@@ -103,7 +103,7 @@ namespace System.Management.Automation.ComInterop
             return string.Format(CultureInfo.CurrentCulture, "{0} ({1})", RuntimeCallableWrapper.ToString(), typeName);
         }
 
-        public ComTypeDesc ComTypeDesc
+        internal ComTypeDesc ComTypeDesc
         {
             get
             {
@@ -112,7 +112,7 @@ namespace System.Management.Automation.ComInterop
             }
         }
 
-        public IDispatch DispatchObject { get; }
+        internal IDispatch DispatchObject { get; }
 
         private static int GetIDsOfNames(IDispatch dispatch, string name, out int dispId)
         {

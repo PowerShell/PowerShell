@@ -8097,25 +8097,25 @@ namespace System.Management.Automation.Language
 
         internal const int MaxScriptLengthToLog = 50;
 
-        public void ParseStart(string FileName, int Length) { WriteEvent(1, FileName, Length); }
+        internal void ParseStart(string FileName, int Length) { WriteEvent(1, FileName, Length); }
 
-        public void ParseStop() { WriteEvent(2); }
+        internal void ParseStop() { WriteEvent(2); }
 
-        public void ResolveSymbolsStart() { WriteEvent(3); }
+        internal void ResolveSymbolsStart() { WriteEvent(3); }
 
-        public void ResolveSymbolsStop() { WriteEvent(4); }
+        internal void ResolveSymbolsStop() { WriteEvent(4); }
 
-        public void SemanticChecksStart() { WriteEvent(5); }
+        internal void SemanticChecksStart() { WriteEvent(5); }
 
-        public void SemanticChecksStop() { WriteEvent(6); }
+        internal void SemanticChecksStop() { WriteEvent(6); }
 
-        public void CheckSecurityStart(string FileName) { WriteEvent(7, FileName); }
+        internal void CheckSecurityStart(string FileName) { WriteEvent(7, FileName); }
 
-        public void CheckSecurityStop(string FileName) { WriteEvent(8, FileName); }
+        internal void CheckSecurityStop(string FileName) { WriteEvent(8, FileName); }
 
-        public void CompileStart(string FileName, int Length, bool Optimized) { WriteEvent(9, FileName, Length, Optimized); }
+        internal void CompileStart(string FileName, int Length, bool Optimized) { WriteEvent(9, FileName, Length, Optimized); }
 
-        public void CompileStop() { WriteEvent(10); }
+        internal void CompileStop() { WriteEvent(10); }
 
         internal static string GetFileOrScript(string fileName, string input)
         {

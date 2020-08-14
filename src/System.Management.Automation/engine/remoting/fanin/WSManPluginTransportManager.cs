@@ -39,7 +39,7 @@ namespace System.Management.Automation.Remoting
 
         // event that gets raised when Prepare is called. Respective Session
         // object can use this callback to ReportContext to client.
-        public event EventHandler<EventArgs> PrepareCalled;
+        internal event EventHandler<EventArgs> PrepareCalled;
 
         #region Constructor
 

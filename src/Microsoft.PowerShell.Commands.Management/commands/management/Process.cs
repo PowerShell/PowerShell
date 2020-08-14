@@ -2680,21 +2680,21 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The number of process identifiers to be stored in ProcessIdList.
         /// </summary>
-        public uint NumberOfAssignedProcess;
+        internal uint NumberOfAssignedProcess;
 
         /// <summary>
         /// The number of process identifiers returned in the ProcessIdList buffer.
         /// If this number is less than NumberOfAssignedProcesses, increase
         /// the size of the buffer to accommodate the complete list.
         /// </summary>
-        public uint NumberOfProcessIdsInList;
+        internal uint NumberOfProcessIdsInList;
 
         /// <summary>
         /// A variable-length array of process identifiers returned by this call.
         /// Array elements 0 through NumberOfProcessIdsInList minus 1
         /// contain valid process identifiers.
         /// </summary>
-        public IntPtr ProcessIdList;
+        internal IntPtr ProcessIdList;
     }
 
     internal static class ProcessNativeMethods
@@ -2712,7 +2712,7 @@ namespace Microsoft.PowerShell.Commands
         // Methods
 
         [DllImport(PinvokeDllNames.GetStdHandleDllName, SetLastError = true)]
-        public static extern IntPtr GetStdHandle(int whichHandle);
+        internal static extern IntPtr GetStdHandle(int whichHandle);
 
         [DllImport(PinvokeDllNames.CreateProcessWithLogonWDllName, CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -2730,7 +2730,7 @@ namespace Microsoft.PowerShell.Commands
 
         [DllImport(PinvokeDllNames.CreateProcessDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool CreateProcess([MarshalAs(UnmanagedType.LPWStr)] string lpApplicationName,
+        internal static extern bool CreateProcess([MarshalAs(UnmanagedType.LPWStr)] string lpApplicationName,
             [MarshalAs(UnmanagedType.LPWStr)] StringBuilder lpCommandLine,
             SECURITY_ATTRIBUTES lpProcessAttributes,
             SECURITY_ATTRIBUTES lpThreadAttributes,
@@ -2742,10 +2742,10 @@ namespace Microsoft.PowerShell.Commands
             SafeNativeMethods.PROCESS_INFORMATION lpProcessInformation);
 
         [DllImport(PinvokeDllNames.ResumeThreadDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern uint ResumeThread(IntPtr threadHandle);
+        internal static extern uint ResumeThread(IntPtr threadHandle);
 
         [DllImport(PinvokeDllNames.CreateFileDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern FileNakedHandle CreateFileW(
+        internal static extern FileNakedHandle CreateFileW(
             [In, MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
             DWORD dwDesiredAccess,
             DWORD dwShareMode,
@@ -2757,11 +2757,11 @@ namespace Microsoft.PowerShell.Commands
 
         [DllImport("userenv.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool CreateEnvironmentBlock(out IntPtr lpEnvironment, IntPtr hToken, bool bInherit);
+        internal static extern bool CreateEnvironmentBlock(out IntPtr lpEnvironment, IntPtr hToken, bool bInherit);
 
         [DllImport("userenv.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool DestroyEnvironmentBlock(IntPtr lpEnvironment);
+        internal static extern bool DestroyEnvironmentBlock(IntPtr lpEnvironment);
 
         [Flags]
         internal enum LogonFlags
@@ -2773,11 +2773,11 @@ namespace Microsoft.PowerShell.Commands
         [StructLayout(LayoutKind.Sequential)]
         internal class SECURITY_ATTRIBUTES
         {
-            public int nLength;
-            public SafeLocalMemHandle lpSecurityDescriptor;
-            public bool bInheritHandle;
+            internal int nLength;
+            internal SafeLocalMemHandle lpSecurityDescriptor;
+            internal bool bInheritHandle;
 
-            public SECURITY_ATTRIBUTES()
+            internal SECURITY_ATTRIBUTES()
             {
                 this.nLength = 12;
                 this.bInheritHandle = true;
@@ -2812,26 +2812,26 @@ namespace Microsoft.PowerShell.Commands
         [StructLayout(LayoutKind.Sequential)]
         internal class STARTUPINFO
         {
-            public int cb;
-            public IntPtr lpReserved;
-            public IntPtr lpDesktop;
-            public IntPtr lpTitle;
-            public int dwX;
-            public int dwY;
-            public int dwXSize;
-            public int dwYSize;
-            public int dwXCountChars;
-            public int dwYCountChars;
-            public int dwFillAttribute;
-            public int dwFlags;
-            public short wShowWindow;
-            public short cbReserved2;
-            public IntPtr lpReserved2;
-            public SafeFileHandle hStdInput;
-            public SafeFileHandle hStdOutput;
-            public SafeFileHandle hStdError;
+            internal int cb;
+            internal IntPtr lpReserved;
+            internal IntPtr lpDesktop;
+            internal IntPtr lpTitle;
+            internal int dwX;
+            internal int dwY;
+            internal int dwXSize;
+            internal int dwYSize;
+            internal int dwXCountChars;
+            internal int dwYCountChars;
+            internal int dwFillAttribute;
+            internal int dwFlags;
+            internal short wShowWindow;
+            internal short cbReserved2;
+            internal IntPtr lpReserved2;
+            internal SafeFileHandle hStdInput;
+            internal SafeFileHandle hStdOutput;
+            internal SafeFileHandle hStdError;
 
-            public STARTUPINFO()
+            internal STARTUPINFO()
             {
                 this.lpReserved = IntPtr.Zero;
                 this.lpDesktop = IntPtr.Zero;
@@ -2843,7 +2843,7 @@ namespace Microsoft.PowerShell.Commands
                 this.cb = Marshal.SizeOf(this);
             }
 
-            public void Dispose(bool disposing)
+            internal void Dispose(bool disposing)
             {
                 if (disposing)
                 {
@@ -2867,7 +2867,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            public void Dispose()
+            internal void Dispose()
             {
                 Dispose(true);
             }
@@ -2877,17 +2877,17 @@ namespace Microsoft.PowerShell.Commands
     internal static class SafeNativeMethods
     {
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true, ExactSpelling = true)]
-        public static extern bool CloseHandle(IntPtr handle);
+        internal static extern bool CloseHandle(IntPtr handle);
 
         [StructLayout(LayoutKind.Sequential)]
         internal class PROCESS_INFORMATION
         {
-            public IntPtr hProcess;
-            public IntPtr hThread;
-            public int dwProcessId;
-            public int dwThreadId;
+            internal IntPtr hProcess;
+            internal IntPtr hThread;
+            internal int dwProcessId;
+            internal int dwThreadId;
 
-            public PROCESS_INFORMATION()
+            internal PROCESS_INFORMATION()
             {
                 this.hProcess = IntPtr.Zero;
                 this.hThread = IntPtr.Zero;
@@ -2896,7 +2896,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Dispose.
             /// </summary>
-            public void Dispose()
+            internal void Dispose()
             {
                 Dispose(true);
             }

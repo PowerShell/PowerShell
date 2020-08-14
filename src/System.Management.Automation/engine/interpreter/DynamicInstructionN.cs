@@ -25,7 +25,7 @@ namespace System.Management.Automation.Interpreter
         private readonly int _argumentCount;
         private readonly bool _isVoid;
 
-        public DynamicInstructionN(Type delegateType, CallSite site)
+        internal DynamicInstructionN(Type delegateType, CallSite site)
         {
             var methodInfo = delegateType.GetMethod("Invoke");
             var parameters = methodInfo.GetParameters();
@@ -36,7 +36,7 @@ namespace System.Management.Automation.Interpreter
             _targetDelegate = site.GetType().GetField("Target").GetValue(site);
         }
 
-        public DynamicInstructionN(Type delegateType, CallSite site, bool isVoid)
+        internal DynamicInstructionN(Type delegateType, CallSite site, bool isVoid)
             : this(delegateType, site)
         {
             _isVoid = isVoid;

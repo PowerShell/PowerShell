@@ -47,7 +47,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Wildcard expansion should be allowed.
         /// </para>
         /// </summary>
-        public string ClassName
+        internal string ClassName
         {
             get { return className; }
 
@@ -111,7 +111,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Constructor
         /// </para>
         /// </summary>
-        public CimGetCimClass()
+        internal CimGetCimClass()
             : base()
         {
         }
@@ -122,7 +122,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cmdlet"><see cref="GetCimClassCommand"/> object.</param>
-        public void GetCimClass(GetCimClassCommand cmdlet)
+        internal void GetCimClass(GetCimClassCommand cmdlet)
         {
             List<CimSessionProxy> proxys = new List<CimSessionProxy>();
             string nameSpace = ConstValue.GetNamespace(cmdlet.Namespace);

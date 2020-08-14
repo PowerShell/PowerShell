@@ -28,7 +28,7 @@ namespace System.Management.Automation.Interpreter
     internal sealed class InterpretedFrame
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
-        public static readonly ThreadLocal<InterpretedFrame> CurrentFrame = new ThreadLocal<InterpretedFrame>();
+        internal static readonly ThreadLocal<InterpretedFrame> CurrentFrame = new ThreadLocal<InterpretedFrame>();
 
         internal readonly Interpreter Interpreter;
         internal InterpretedFrame _parent;
@@ -41,13 +41,13 @@ namespace System.Management.Automation.Interpreter
         private object _pendingValue;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2105:ArrayFieldsShouldNotBeReadOnly")]
-        public readonly object[] Data;
+        internal readonly object[] Data;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2105:ArrayFieldsShouldNotBeReadOnly")]
-        public readonly StrongBox<object>[] Closure;
+        internal readonly StrongBox<object>[] Closure;
 
-        public int StackIndex;
-        public int InstructionIndex;
+        internal int StackIndex;
+        internal int InstructionIndex;
 
         internal InterpretedFrame(Interpreter interpreter, StrongBox<object>[] closure)
         {
@@ -67,34 +67,34 @@ namespace System.Management.Automation.Interpreter
             _pendingValue = Interpreter.NoValue;
         }
 
-        public DebugInfo GetDebugInfo(int instructionIndex)
+        internal DebugInfo GetDebugInfo(int instructionIndex)
         {
             return DebugInfo.GetMatchingDebugInfo(Interpreter._debugInfos, instructionIndex);
         }
 
-        public string Name
+        internal string Name
         {
             get { return Interpreter._name; }
         }
 
         #region Data Stack Operations
 
-        public void Push(object value)
+        internal void Push(object value)
         {
             Data[StackIndex++] = value;
         }
 
-        public void Push(bool value)
+        internal void Push(bool value)
         {
             Data[StackIndex++] = value ? ScriptingRuntimeHelpers.True : ScriptingRuntimeHelpers.False;
         }
 
-        public void Push(int value)
+        internal void Push(int value)
         {
             Data[StackIndex++] = ScriptingRuntimeHelpers.Int32ToObject(value);
         }
 
-        public object Pop()
+        internal object Pop()
         {
             return Data[--StackIndex];
         }
@@ -104,24 +104,24 @@ namespace System.Management.Automation.Interpreter
             StackIndex = Interpreter.LocalCount + depth;
         }
 
-        public object Peek()
+        internal object Peek()
         {
             return Data[StackIndex - 1];
         }
 
-        public void Dup()
+        internal void Dup()
         {
             int i = StackIndex;
             Data[i] = Data[i - 1];
             StackIndex = i + 1;
         }
 
-        public ExecutionContext ExecutionContext
+        internal ExecutionContext ExecutionContext
         {
             get { return (ExecutionContext)Data[1]; }
         }
 
-        public FunctionContext FunctionContext
+        internal FunctionContext FunctionContext
         {
             get { return (FunctionContext)Data[0]; }
         }
@@ -130,12 +130,12 @@ namespace System.Management.Automation.Interpreter
 
         #region Stack Trace
 
-        public InterpretedFrame Parent
+        internal InterpretedFrame Parent
         {
             get { return _parent; }
         }
 
-        public static bool IsInterpretedFrame(MethodBase method)
+        internal static bool IsInterpretedFrame(MethodBase method)
         {
             // ContractUtils.RequiresNotNull(method, "method");
             return method.DeclaringType == typeof(Interpreter) && method.Name == "Run";
@@ -145,7 +145,7 @@ namespace System.Management.Automation.Interpreter
         /// A single interpreted frame might be represented by multiple subsequent Interpreter.Run CLR frames.
         /// This method filters out the duplicate CLR frames.
         /// </summary>
-        public static IEnumerable<StackFrame> GroupStackFrames(IEnumerable<StackFrame> stackTrace)
+        internal static IEnumerable<StackFrame> GroupStackFrames(IEnumerable<StackFrame> stackTrace)
         {
             bool inInterpretedFrame = false;
             foreach (StackFrame frame in stackTrace)
@@ -168,7 +168,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public IEnumerable<InterpretedFrameInfo> GetStackTraceDebugInfo()
+        internal IEnumerable<InterpretedFrameInfo> GetStackTraceDebugInfo()
         {
             var frame = this;
             do
@@ -186,7 +186,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public static InterpretedFrameInfo[] GetExceptionStackTrace(Exception exception)
+        internal static InterpretedFrameInfo[] GetExceptionStackTrace(Exception exception)
         {
             return exception.Data[typeof(InterpretedFrameInfo)] as InterpretedFrameInfo[];
         }
@@ -230,17 +230,17 @@ namespace System.Management.Automation.Interpreter
             return _pendingContinuation >= 0;
         }
 
-        public void RemoveContinuation()
+        internal void RemoveContinuation()
         {
             _continuationIndex--;
         }
 
-        public void PushContinuation(int continuation)
+        internal void PushContinuation(int continuation)
         {
             _continuations[_continuationIndex++] = continuation;
         }
 
-        public int YieldToCurrentContinuation()
+        internal int YieldToCurrentContinuation()
         {
             var target = Interpreter._labels[_continuations[_continuationIndex - 1]];
             SetStackDepth(target.StackDepth);
@@ -250,7 +250,7 @@ namespace System.Management.Automation.Interpreter
         /// <summary>
         /// Get called from the LeaveFinallyInstruction.
         /// </summary>
-        public int YieldToPendingContinuation()
+        internal int YieldToPendingContinuation()
         {
             Debug.Assert(_pendingContinuation >= 0);
             RuntimeLabel pendingTarget = Interpreter._labels[_pendingContinuation];
@@ -303,12 +303,12 @@ namespace System.Management.Automation.Interpreter
             get { return s_voidGoto ?? (s_voidGoto = typeof(InterpretedFrame).GetMethod("VoidGoto")); }
         }
 
-        public int VoidGoto(int labelIndex)
+        internal int VoidGoto(int labelIndex)
         {
             return Goto(labelIndex, Interpreter.NoValue, gotoExceptionHandler: false);
         }
 
-        public int Goto(int labelIndex, object value, bool gotoExceptionHandler)
+        internal int Goto(int labelIndex, object value, bool gotoExceptionHandler)
         {
             // TODO: we know this at compile time (except for compiled loop):
             RuntimeLabel target = Interpreter._labels[labelIndex];

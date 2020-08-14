@@ -38,7 +38,7 @@ namespace System.Management.Automation.PSTasks
         /// <param name="dollarUnderbar">Dollar underbar variable value.</param>
         /// <param name="currentLocationPath">Current working directory.</param>
         /// <param name="dataStreamWriter">Cmdlet data stream writer.</param>
-        public PSTask(
+        internal PSTask(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
             object dollarUnderbar,
@@ -182,7 +182,7 @@ namespace System.Management.Automation.PSTasks
         /// <param name="dollarUnderbar">Dollar underbar variable value for script block.</param>
         /// <param name="currentLocationPath">Current working directory.</param>
         /// <param name="job">Job object associated with task.</param>
-        public PSJobTask(
+        internal PSJobTask(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
             object dollarUnderbar,
@@ -297,7 +297,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Gets Debugger.
         /// </summary>
-        public Debugger Debugger
+        internal Debugger Debugger
         {
             get => _powershell.Runspace.Debugger;
         }
@@ -321,7 +321,7 @@ namespace System.Management.Automation.PSTasks
         protected PowerShell _powershell;
         protected PSDataCollection<PSObject> _output;
 
-        public const string RunspaceName = "PSTask";
+        internal const string RunspaceName = "PSTask";
 
         private static int s_taskId;
 
@@ -332,7 +332,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Event that fires when the task running state changes.
         /// </summary>
-        public event EventHandler<PSInvocationStateChangedEventArgs> StateChanged;
+        internal event EventHandler<PSInvocationStateChangedEventArgs> StateChanged;
 
         internal void RaiseStateChangedEvent(PSInvocationStateChangedEventArgs args)
         {
@@ -346,7 +346,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Gets current running state of the task.
         /// </summary>
-        public PSInvocationState State
+        internal PSInvocationState State
         {
             get
             {
@@ -363,12 +363,12 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Gets Task Id.
         /// </summary>
-        public int Id { get => _id; }
+        internal int Id { get => _id; }
 
         /// <summary>
         /// Gets Task Runspace.
         /// </summary>
-        public Runspace Runspace { get => _runspace; }
+        internal Runspace Runspace { get => _runspace; }
 
         #endregion
 
@@ -428,7 +428,7 @@ namespace System.Management.Automation.PSTasks
         /// Start task.
         /// </summary>
         /// <param name="runspace">Runspace used to run task.</param>
-        public void Start(Runspace runspace)
+        internal void Start(Runspace runspace)
         {
             if (_powershell != null)
             {
@@ -486,7 +486,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Signals the running task to stop.
         /// </summary>
-        public void SignalStop()
+        internal void SignalStop()
         {
             if (_powershell != null)
             {
@@ -536,7 +536,7 @@ namespace System.Management.Automation.PSTasks
         /// Initializes a new instance of the <see cref="PSTaskDataStreamWriter"/> class.
         /// </summary>
         /// <param name="psCmdlet">Parent cmdlet.</param>
-        public PSTaskDataStreamWriter(PSCmdlet psCmdlet)
+        internal PSTaskDataStreamWriter(PSCmdlet psCmdlet)
         {
             _cmdlet = psCmdlet;
             _cmdletThreadId = Thread.CurrentThread.ManagedThreadId;
@@ -551,7 +551,7 @@ namespace System.Management.Automation.PSTasks
         /// Add data stream object to the writer.
         /// </summary>
         /// <param name="streamObject">Data stream object to write.</param>
-        public void Add(PSStreamObject streamObject)
+        internal void Add(PSStreamObject streamObject)
         {
             _dataStream.Add(streamObject);
         }
@@ -559,7 +559,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Write all objects in data stream collection to the cmdlet data stream.
         /// </summary>
-        public void WriteImmediate()
+        internal void WriteImmediate()
         {
             CheckCmdletThread();
 
@@ -574,7 +574,7 @@ namespace System.Management.Automation.PSTasks
         /// to the cmdlet data stream.
         /// This method returns only after the writer has been closed.
         /// </summary>
-        public void WaitAndWrite()
+        internal void WaitAndWrite()
         {
             CheckCmdletThread();
 
@@ -594,7 +594,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Closes the stream writer.
         /// </summary>
-        public void Close()
+        internal void Close()
         {
             _dataStream.Complete();
         }
@@ -664,7 +664,7 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         /// <param name="size">Total number of allowed running objects in pool at one time.</param>
         /// <param name="useNewRunspace">When true, a new runspace object is created for the task instead of reusing one from the pool.</param>
-        public PSTaskPool(
+        internal PSTaskPool(
             int size,
             bool useNewRunspace)
         {
@@ -694,7 +694,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Event that fires when pool is closed and drained of all tasks.
         /// </summary>
-        public event EventHandler<EventArgs> PoolComplete;
+        internal event EventHandler<EventArgs> PoolComplete;
 
         #endregion
 
@@ -703,7 +703,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Gets a value indicating whether a pool is currently open for accepting tasks.
         /// </summary>
-        public bool IsOpen
+        internal bool IsOpen
         {
             get => _isOpen;
         }
@@ -711,7 +711,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Gets a value of the count of total runspaces allocated.
         /// </summary>
-        public int AllocatedRunspaceCount
+        internal int AllocatedRunspaceCount
         {
             get => _createdRunspaceCount;
         }
@@ -755,7 +755,7 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         /// <param name="task">Task to be added to pool.</param>
         /// <returns>True when task is successfully added.</returns>
-        public bool Add(PSTaskBase task)
+        internal bool Add(PSTaskBase task)
         {
             if (!_isOpen)
             {
@@ -801,7 +801,7 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         /// <param name="childJob">Child job to be added to pool.</param>
         /// <returns>True when child job is successfully added.</returns>
-        public bool Add(PSTaskChildJob childJob)
+        internal bool Add(PSTaskChildJob childJob)
         {
             return Add(childJob.Task);
         }
@@ -809,7 +809,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Signals all running tasks to stop and closes pool for any new tasks.
         /// </summary>
-        public void StopAll()
+        internal void StopAll()
         {
             _stopping = true;
 
@@ -838,7 +838,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Closes the pool and prevents any new tasks from being added.
         /// </summary>
-        public void Close()
+        internal void Close()
         {
             _isOpen = false;
             CheckForComplete();
@@ -1185,7 +1185,7 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         /// <param name="debugger">Script debugger associated with task.</param>
         /// <param name="jobName">Job name for associated task.</param>
-        public PSTaskChildDebugger(
+        internal PSTaskChildDebugger(
             Debugger debugger,
             string jobName)
         {
@@ -1448,7 +1448,7 @@ namespace System.Management.Automation.PSTasks
         /// <param name="usingValuesMap">Using variable values passed to script block.</param>
         /// <param name="dollarUnderbar">Dollar underbar variable value.</param>
         /// <param name="currentLocationPath">Current working directory.</param>
-        public PSTaskChildJob(
+        internal PSTaskChildJob(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
             object dollarUnderbar,

@@ -561,7 +561,7 @@ namespace System.Management.Automation
 
         internal abstract class CimModuleFile
         {
-            public CimFileCode FileCode
+            internal CimFileCode FileCode
             {
                 get
                 {
@@ -589,16 +589,16 @@ namespace System.Management.Automation
                 }
             }
 
-            public abstract string FileName { get; }
+            internal abstract string FileName { get; }
 
             internal abstract byte[] RawFileDataCore { get; }
 
-            public byte[] RawFileData
+            internal byte[] RawFileData
             {
                 get { return this.RawFileDataCore.Skip(4).ToArray(); }
             }
 
-            public string FileData
+            internal string FileData
             {
                 get
                 {
@@ -632,7 +632,7 @@ namespace System.Management.Automation
                 _baseObject = baseObject;
             }
 
-            public string ModuleName
+            internal string ModuleName
             {
                 get
                 {
@@ -647,7 +647,7 @@ namespace System.Management.Automation
                 Cim = 1,
             }
 
-            public bool IsPsCimModule
+            internal bool IsPsCimModule
             {
                 get
                 {
@@ -658,7 +658,7 @@ namespace System.Management.Automation
                 }
             }
 
-            public CimModuleFile MainManifest
+            internal CimModuleFile MainManifest
             {
                 get
                 {
@@ -667,7 +667,7 @@ namespace System.Management.Automation
                 }
             }
 
-            public IEnumerable<CimModuleFile> ModuleFiles
+            internal IEnumerable<CimModuleFile> ModuleFiles
             {
                 get { return _moduleFiles; }
             }

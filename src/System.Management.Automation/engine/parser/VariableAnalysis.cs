@@ -24,14 +24,14 @@ namespace System.Management.Automation.Language
             this.AssociatedAsts = new List<Ast>();
         }
 
-        public int BitIndex { get; set; }
-        public int LocalTupleIndex { get; set; }
-        public Type Type { get; set; }
-        public string Name { get; set; }
-        public bool Automatic { get; set; }
-        public bool PreferenceVariable { get; set; }
-        public bool Assigned { get; set; }
-        public List<Ast> AssociatedAsts { get; private set; }
+        internal int BitIndex { get; set; }
+        internal int LocalTupleIndex { get; set; }
+        internal Type Type { get; set; }
+        internal string Name { get; set; }
+        internal bool Automatic { get; set; }
+        internal bool PreferenceVariable { get; set; }
+        internal bool Assigned { get; set; }
+        internal List<Ast> AssociatedAsts { get; private set; }
     }
 
     internal class FindAllVariablesVisitor : AstVisitor
@@ -362,12 +362,12 @@ namespace System.Management.Automation.Language
             // Only Entry block, that can be constructed via NewEntryBlock() is reachable initially.
             // all other blocks are unreachable.
             // reachability of block should be proved with FlowsTo() calls.
-            public Block()
+            internal Block()
             {
                 this._unreachable = true;
             }
 
-            public static Block NewEntryBlock()
+            internal static Block NewEntryBlock()
             {
                 return new Block(unreachable: false);
             }
@@ -438,13 +438,13 @@ namespace System.Management.Automation.Language
             internal readonly string _variableName;
             internal readonly Type _type;
 
-            public AssignmentTarget(ExpressionAst targetExpressionAst)
+            internal AssignmentTarget(ExpressionAst targetExpressionAst)
                 : base(PositionUtilities.EmptyExtent)
             {
                 this._targetAst = targetExpressionAst;
             }
 
-            public AssignmentTarget(string variableName, Type type)
+            internal AssignmentTarget(string variableName, Type type)
                 : base(PositionUtilities.EmptyExtent)
             {
                 this._variableName = variableName;

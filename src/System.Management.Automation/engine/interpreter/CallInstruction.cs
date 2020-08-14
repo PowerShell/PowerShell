@@ -21,12 +21,12 @@ namespace System.Management.Automation.Interpreter
 {
     internal abstract partial class CallInstruction : Instruction
     {
-        public abstract MethodInfo Info { get; }
+        internal abstract MethodInfo Info { get; }
 
         /// <summary>
         /// The number of arguments including "this" for instance methods.
         /// </summary>
-        public abstract int ArgumentCount { get; }
+        internal abstract int ArgumentCount { get; }
 
         #region Construction
 
@@ -34,7 +34,7 @@ namespace System.Management.Automation.Interpreter
 
         private static readonly Dictionary<MethodInfo, CallInstruction> s_cache = new Dictionary<MethodInfo, CallInstruction>();
 
-        public static CallInstruction Create(MethodInfo info)
+        internal static CallInstruction Create(MethodInfo info)
         {
             return Create(info, info.GetParameters());
         }
@@ -42,7 +42,7 @@ namespace System.Management.Automation.Interpreter
         /// <summary>
         /// Creates a new ReflectedCaller which can be used to quickly invoke the provided MethodInfo.
         /// </summary>
-        public static CallInstruction Create(MethodInfo info, ParameterInfo[] parameters)
+        internal static CallInstruction Create(MethodInfo info, ParameterInfo[] parameters)
         {
             int argumentCount = parameters.Length;
             if (!info.IsStatic)
@@ -161,17 +161,17 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public static void ArrayItemSetter1(Array array, int index0, object value)
+        internal static void ArrayItemSetter1(Array array, int index0, object value)
         {
             array.SetValue(value, index0);
         }
 
-        public static void ArrayItemSetter2(Array array, int index0, int index1, object value)
+        internal static void ArrayItemSetter2(Array array, int index0, int index1, object value)
         {
             array.SetValue(value, index0, index1);
         }
 
-        public static void ArrayItemSetter3(Array array, int index0, int index1, int index2, object value)
+        internal static void ArrayItemSetter3(Array array, int index0, int index1, int index2, object value)
         {
             array.SetValue(value, index0, index1, index2);
         }

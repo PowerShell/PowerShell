@@ -1712,29 +1712,29 @@ namespace System.Management.Automation
     {
         internal static readonly CommandDiscoveryEventSource Log = new CommandDiscoveryEventSource();
 
-        public void CommandLookupStart(string CommandName) { WriteEvent(1, CommandName); }
+        internal void CommandLookupStart(string CommandName) { WriteEvent(1, CommandName); }
 
-        public void CommandLookupStop(string CommandName) { WriteEvent(2, CommandName); }
+        internal void CommandLookupStop(string CommandName) { WriteEvent(2, CommandName); }
 
-        public void ModuleAutoLoadingStart(string CommandName) { WriteEvent(3, CommandName); }
+        internal void ModuleAutoLoadingStart(string CommandName) { WriteEvent(3, CommandName); }
 
-        public void ModuleAutoLoadingStop(string CommandName) { WriteEvent(4, CommandName); }
+        internal void ModuleAutoLoadingStop(string CommandName) { WriteEvent(4, CommandName); }
 
-        public void ModuleAutoDiscoveryStart(string CommandName) { WriteEvent(5, CommandName); }
+        internal void ModuleAutoDiscoveryStart(string CommandName) { WriteEvent(5, CommandName); }
 
-        public void ModuleAutoDiscoveryStop(string CommandName) { WriteEvent(6, CommandName); }
+        internal void ModuleAutoDiscoveryStop(string CommandName) { WriteEvent(6, CommandName); }
 
-        public void SearchingForModuleFilesStart() { WriteEvent(7); }
+        internal void SearchingForModuleFilesStart() { WriteEvent(7); }
 
-        public void SearchingForModuleFilesStop() { WriteEvent(8); }
+        internal void SearchingForModuleFilesStop() { WriteEvent(8); }
 
-        public void GetModuleExportedCommandsStart(string ModulePath) { WriteEvent(9, ModulePath); }
+        internal void GetModuleExportedCommandsStart(string ModulePath) { WriteEvent(9, ModulePath); }
 
-        public void GetModuleExportedCommandsStop(string ModulePath) { WriteEvent(10, ModulePath); }
+        internal void GetModuleExportedCommandsStop(string ModulePath) { WriteEvent(10, ModulePath); }
 
-        public void ModuleManifestAnalysisResult(string ModulePath, bool Success) { WriteEvent(11, ModulePath, Success); }
+        internal void ModuleManifestAnalysisResult(string ModulePath, bool Success) { WriteEvent(11, ModulePath, Success); }
 
-        public void ModuleManifestAnalysisException(string ModulePath, string Exception) { WriteEvent(12, ModulePath, Exception); }
+        internal void ModuleManifestAnalysisException(string ModulePath, string Exception) { WriteEvent(12, ModulePath, Exception); }
     }
 }
 

@@ -35,7 +35,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="secondsRemaining">
         /// how many seconds remained for the given activity
         /// </param>
-        public CimWriteProgress(
+        internal CimWriteProgress(
             string theActivity,
             int theActivityID,
             string theCurrentOperation,

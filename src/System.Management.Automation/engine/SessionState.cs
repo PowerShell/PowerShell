@@ -221,7 +221,7 @@ namespace System.Management.Automation
         /// The list of scripts that are allowed to be run. If the name "*"
         /// is in the list, then all scripts can be run. (This is the default.)
         /// </summary>
-        public List<string> Scripts { get; } = new List<string>(new string[] { "*" });
+        internal List<string> Scripts { get; } = new List<string>(new string[] { "*" });
 
         /// <summary>
         /// See if a script is allowed to be run.
@@ -237,7 +237,7 @@ namespace System.Management.Automation
         /// The list of applications that are allowed to be run. If the name "*"
         /// is in the list, then all applications can be run. (This is the default.)
         /// </summary>
-        public List<string> Applications { get; } = new List<string>(new string[] { "*" });
+        internal List<string> Applications { get; } = new List<string>(new string[] { "*" });
 
         /// <summary>
         /// List of functions/filters to export from this session state object...

@@ -16,7 +16,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Prefix used to add NameSpace of root element to namespace manager.
         /// </summary>
-        public const string DefaultNameSpacePrefix = "defaultNameSpace";
+        internal const string DefaultNameSpacePrefix = "defaultNameSpace";
 
         /// <summary>
         /// This holds the current configurations XML.
@@ -41,7 +41,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Gets the server session associated with the configuration.
         /// </summary>
-        public IWSManSession ServerSession
+        internal IWSManSession ServerSession
         {
             get { return serverSession; }
         }
@@ -49,7 +49,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Gets the current configuration XML.
         /// </summary>
-        public XmlDocument RootDocument
+        internal XmlDocument RootDocument
         {
             get { return this.rootDocument; }
         }
@@ -59,7 +59,7 @@ namespace Microsoft.WSMan.Management
         /// This issues a GET request to the server.
         /// </summary>
         /// <param name="serverSession">Current server session.</param>
-        public CurrentConfigurations(IWSManSession serverSession)
+        internal CurrentConfigurations(IWSManSession serverSession)
         {
             if (serverSession == null)
             {
@@ -77,7 +77,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         /// <param name="responseOfGet">Plugin configuration.</param>
         /// <returns>False, if operation failed.</returns>
-        public bool RefreshCurrentConfiguration(string responseOfGet)
+        internal bool RefreshCurrentConfiguration(string responseOfGet)
         {
             if (string.IsNullOrEmpty(responseOfGet))
             {
@@ -99,7 +99,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         /// <param name="resourceUri">Resource URI to use.</param>
         /// <returns>False, if operation is not succesful.</returns>
-        public void PutConfigurationOnServer(string resourceUri)
+        internal void PutConfigurationOnServer(string resourceUri)
         {
             if (string.IsNullOrEmpty(resourceUri))
             {
@@ -115,7 +115,7 @@ namespace Microsoft.WSMan.Management
         /// Node removals in future.
         /// </summary>
         /// <param name="pathToNodeFromRoot">Path with namespace to the node from Root element. Must not end with '/'.</param>
-        public void RemoveOneConfiguration(string pathToNodeFromRoot)
+        internal void RemoveOneConfiguration(string pathToNodeFromRoot)
         {
             if (pathToNodeFromRoot == null)
             {
@@ -148,7 +148,7 @@ namespace Microsoft.WSMan.Management
         /// <param name="pathToNodeFromRoot">Path with namespace to the node from Root element. Must not end with '/'.</param>
         /// <param name="configurationName">Name of the configuration with name space to update or create.</param>
         /// <param name="configurationValue">Value of the configurations.</param>
-        public void UpdateOneConfiguration(string pathToNodeFromRoot, string configurationName, string configurationValue)
+        internal void UpdateOneConfiguration(string pathToNodeFromRoot, string configurationName, string configurationValue)
         {
             if (pathToNodeFromRoot == null)
             {
@@ -193,7 +193,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         /// <param name="pathFromRoot">Path with namespace to the node from Root element.</param>
         /// <returns>Value of the Node, or Null if no node present.</returns>
-        public string GetOneConfiguration(string pathFromRoot)
+        internal string GetOneConfiguration(string pathFromRoot)
         {
             if (pathFromRoot == null)
             {

@@ -26,13 +26,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             _privateData = privateData;
         }
 
-        public string CmdletizationClassName { get; private set; }
+        internal string CmdletizationClassName { get; private set; }
 
-        public string CmdletizationClassVersion { get; private set; }
+        internal string CmdletizationClassVersion { get; private set; }
 
-        public Version CmdletizationModuleVersion { get; private set; }
+        internal Version CmdletizationModuleVersion { get; private set; }
 
-        public bool SupportsShouldProcess { get; private set; }
+        internal bool SupportsShouldProcess { get; private set; }
 
         private readonly IDictionary<string, string> _privateData;
 
@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private bool? _useEnumerateInstancesInsteadOfWql;
 
-        public bool UseEnumerateInstancesInsteadOfWql
+        internal bool UseEnumerateInstancesInsteadOfWql
         {
             get
             {
@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             MaxConcurrentOperations        1500    System.String
         */
 
-        public int DefaultThrottleLimit
+        internal int DefaultThrottleLimit
         {
             get
             {
@@ -94,17 +94,17 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        public bool ExposeCimNamespaceParameter
+        internal bool ExposeCimNamespaceParameter
         {
             get { return _privateData.ContainsKey("CimNamespaceParameter"); }
         }
 
-        public bool ClientSideWriteVerbose
+        internal bool ClientSideWriteVerbose
         {
             get { return _privateData.ContainsKey("ClientSideWriteVerbose"); }
         }
 
-        public bool ClientSideShouldProcess
+        internal bool ClientSideShouldProcess
         {
             get
             {
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private Uri _resourceUri;
         private bool _resourceUriHasBeenCalculated;
 
-        public Uri ResourceUri
+        internal Uri ResourceUri
         {
             get
             {
@@ -137,14 +137,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        public bool SkipTestConnection
+        internal bool SkipTestConnection
         {
             get { return _privateData.ContainsKey("SkipTestConnection"); }
         }
 
         private CimOperationFlags? _schemaConformanceLevel;
 
-        public CimOperationFlags SchemaConformanceLevel
+        internal CimOperationFlags SchemaConformanceLevel
         {
             get
             {

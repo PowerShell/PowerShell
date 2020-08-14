@@ -2176,7 +2176,7 @@ namespace System.Management.Automation
         /// Class constructor.
         /// </summary>
         /// <param name="args">Event arguments.</param>
-        public PSEventArgs(T args)
+        internal PSEventArgs(T args)
         {
             Args = args;
         }
@@ -2440,7 +2440,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class EventAction
     {
-        public EventAction(PSEventSubscriber sender, PSEventArgs args)
+        internal EventAction(PSEventSubscriber sender, PSEventArgs args)
         {
             Sender = sender;
             Args = args;
@@ -2449,12 +2449,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the sender of this event (the event subscriber)
         /// </summary>
-        public PSEventSubscriber Sender { get; }
+        internal PSEventSubscriber Sender { get; }
 
         /// <summary>
         /// Get the arguments of this event (the event that was fired)
         /// </summary>
-        public PSEventArgs Args { get; }
+        internal PSEventArgs Args { get; }
     }
 
     /// <summary>

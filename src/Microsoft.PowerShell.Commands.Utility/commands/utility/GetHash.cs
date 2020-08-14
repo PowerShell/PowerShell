@@ -269,11 +269,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static class HashAlgorithmNames
         {
-            public const string MD5 = "MD5";
-            public const string SHA1 = "SHA1";
-            public const string SHA256 = "SHA256";
-            public const string SHA384 = "SHA384";
-            public const string SHA512 = "SHA512";
+            internal const string MD5 = "MD5";
+            internal const string SHA1 = "SHA1";
+            internal const string SHA256 = "SHA256";
+            internal const string SHA384 = "SHA384";
+            internal const string SHA512 = "SHA512";
         }
 
         /// <summary>

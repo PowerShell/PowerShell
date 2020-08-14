@@ -485,7 +485,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if a transaction is available and active.
         /// </summary>
-        public bool TransactionAvailable()
+        internal bool TransactionAvailable()
         {
             if (_command != null)
             {
@@ -499,7 +499,7 @@ namespace System.Management.Automation
         /// Gets an object that surfaces the current PowerShell transaction.
         /// When this object is disposed, PowerShell resets the active transaction.
         /// </summary>
-        public PSTransactionContext CurrentPSTransaction
+        internal PSTransactionContext CurrentPSTransaction
         {
             get
             {
@@ -547,7 +547,7 @@ namespace System.Management.Automation
         /// expansion. This is set when the user specifies the
         /// -LiteralPath parameter to one of the core commands.
         /// </summary>
-        public bool SuppressWildcardExpansion { get; internal set; }
+        internal bool SuppressWildcardExpansion { get; internal set; }
 
         #region User feedback mechanisms
 

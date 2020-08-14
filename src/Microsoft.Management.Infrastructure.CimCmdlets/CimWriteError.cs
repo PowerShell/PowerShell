@@ -320,7 +320,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Constructor with an <see cref="CimInstance"/> error.
         /// </summary>
         /// <param name="error"></param>
-        public CimWriteError(CimInstance error, InvocationContext context)
+        internal CimWriteError(CimInstance error, InvocationContext context)
         {
             this.error = error;
             this.invocationContext = context;
@@ -330,7 +330,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Construct with an exception object.
         /// </summary>
         /// <param name="exception"></param>
-        public CimWriteError(Exception exception, InvocationContext context, CimResultContext cimResultContext)
+        internal CimWriteError(Exception exception, InvocationContext context, CimResultContext cimResultContext)
         {
             this.exception = exception;
             this.invocationContext = context;

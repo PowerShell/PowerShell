@@ -225,26 +225,26 @@ namespace Microsoft.PowerShell
         internal struct TEXTMETRIC
         {
             // From public\sdk\inc\wingdi.h
-            public int tmHeight;
-            public int tmAscent;
-            public int tmDescent;
-            public int tmInternalLeading;
-            public int tmExternalLeading;
-            public int tmAveCharWidth;
-            public int tmMaxCharWidth;
-            public int tmWeight;
-            public int tmOverhang;
-            public int tmDigitizedAspectX;
-            public int tmDigitizedAspectY;
-            public char tmFirstChar;
-            public char tmLastChar;
-            public char tmDefaultChar;
-            public char tmBreakChar;
-            public byte tmItalic;
-            public byte tmUnderlined;
-            public byte tmStruckOut;
-            public byte tmPitchAndFamily;
-            public byte tmCharSet;
+            internal int tmHeight;
+            internal int tmAscent;
+            internal int tmDescent;
+            internal int tmInternalLeading;
+            internal int tmExternalLeading;
+            internal int tmAveCharWidth;
+            internal int tmMaxCharWidth;
+            internal int tmWeight;
+            internal int tmOverhang;
+            internal int tmDigitizedAspectX;
+            internal int tmDigitizedAspectY;
+            internal char tmFirstChar;
+            internal char tmLastChar;
+            internal char tmDefaultChar;
+            internal char tmBreakChar;
+            internal byte tmItalic;
+            internal byte tmUnderlined;
+            internal byte tmStruckOut;
+            internal byte tmPitchAndFamily;
+            internal byte tmCharSet;
         }
 
         #region SentInput Data Structures

@@ -142,76 +142,76 @@ namespace Microsoft.PowerShell.Commands.Internal
     {
         public void Dispose() { }
 
-        public void SetValue(string name, object value)
+        internal void SetValue(string name, object value)
         {
             throw new NotImplementedException("SetValue(string name, obj value) is not implemented. TransactedRegistry related APIs should not be used.");
         }
 
-        public void SetValue(string name, object value, RegistryValueKind valueKind)
+        internal void SetValue(string name, object value, RegistryValueKind valueKind)
         {
             throw new NotImplementedException("SetValue(string name, obj value, RegistryValueKind valueKind) is not implemented. TransactedRegistry related APIs should not be used.");
         }
 
-        public string[] GetValueNames()
+        internal string[] GetValueNames()
         {
             throw new NotImplementedException("GetValueNames() is not implemented. TransactedRegistry related APIs should not be used.");
         }
 
-        public void DeleteValue(string name)
+        internal void DeleteValue(string name)
         {
             throw new NotImplementedException("DeleteValue(string name) is not implemented. TransactedRegistry related APIs should not be used.");
         }
 
-        public string[] GetSubKeyNames()
+        internal string[] GetSubKeyNames()
         {
             throw new NotImplementedException("GetSubKeyNames() is not implemented. TransactedRegistry related APIs should not be used.");
         }
 
-        public TransactedRegistryKey CreateSubKey(string subkey)
+        internal TransactedRegistryKey CreateSubKey(string subkey)
         {
             throw new NotImplementedException("CreateSubKey(string subkey) is not implemented. TransactedRegistry related APIs should not be used.");
         }
 
-        public TransactedRegistryKey OpenSubKey(string name, bool writable)
+        internal TransactedRegistryKey OpenSubKey(string name, bool writable)
         {
             throw new NotImplementedException("OpenSubKey(string name, bool writeable) is not implemented. TransactedRegistry related APIs should not be used.");
         }
 
-        public void DeleteSubKeyTree(string subkey)
+        internal void DeleteSubKeyTree(string subkey)
         {
             throw new NotImplementedException("DeleteSubKeyTree(string subkey) is not implemented. TransactedRegistry related APIs should not be used.");
         }
 
-        public object GetValue(string name)
+        internal object GetValue(string name)
         {
             throw new NotImplementedException("GetValue(string name) is not implemented. TransactedRegistry related APIs should not be used.");
         }
 
-        public object GetValue(string name, object defaultValue, RegistryValueOptions options)
+        internal object GetValue(string name, object defaultValue, RegistryValueOptions options)
         {
             throw new NotImplementedException("GetValue(string name, object defaultValue, RegistryValueOptions options) is not implemented. TransactedRegistry related APIs should not be used.");
         }
 
-        public RegistryValueKind GetValueKind(string name)
+        internal RegistryValueKind GetValueKind(string name)
         {
             throw new NotImplementedException("GetValueKind(string name) is not implemented. TransactedRegistry related APIs should not be used.");
         }
 
-        public void Close()
+        internal void Close()
         {
             throw new NotImplementedException("Close() is not implemented. TransactedRegistry related APIs should not be used.");
         }
 
-        public abstract string Name { get; }
+        internal abstract string Name { get; }
 
-        public abstract int SubKeyCount { get; }
+        internal abstract int SubKeyCount { get; }
 
-        public void SetAccessControl(ObjectSecurity securityDescriptor)
+        internal void SetAccessControl(ObjectSecurity securityDescriptor)
         {
             throw new NotImplementedException("SetAccessControl(ObjectSecurity securityDescriptor) is not implemented. TransactedRegistry related APIs should not be used.");
         }
 
-        public ObjectSecurity GetAccessControl(AccessControlSections includeSections)
+        internal ObjectSecurity GetAccessControl(AccessControlSections includeSections)
         {
             throw new NotImplementedException("GetAccessControl(AccessControlSections includeSections) is not implemented. TransactedRegistry related APIs should not be used.");
         }

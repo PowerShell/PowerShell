@@ -29,16 +29,16 @@ namespace System.Management.Automation.Interpreter
 {
     internal sealed class ExceptionHandler
     {
-        public readonly Type ExceptionType;
-        public readonly int StartIndex;
-        public readonly int EndIndex;
-        public readonly int LabelIndex;
-        public readonly int HandlerStartIndex;
-        public readonly int HandlerEndIndex;
+        internal readonly Type ExceptionType;
+        internal readonly int StartIndex;
+        internal readonly int EndIndex;
+        internal readonly int LabelIndex;
+        internal readonly int HandlerStartIndex;
+        internal readonly int HandlerEndIndex;
 
         internal TryCatchFinallyHandler Parent = null;
 
-        public bool IsFault { get { return ExceptionType == null; } }
+        internal bool IsFault { get { return ExceptionType == null; } }
 
         internal ExceptionHandler(int start, int end, int labelIndex, int handlerStartIndex, int handlerEndIndex, Type exceptionType)
         {
@@ -56,7 +56,7 @@ namespace System.Management.Automation.Interpreter
             Parent = tryHandler;
         }
 
-        public bool Matches(Type exceptionType)
+        internal bool Matches(Type exceptionType)
         {
             if (ExceptionType == null || ExceptionType.IsAssignableFrom(exceptionType))
             {
@@ -66,7 +66,7 @@ namespace System.Management.Automation.Interpreter
             return false;
         }
 
-        public bool IsBetterThan(ExceptionHandler other)
+        internal bool IsBetterThan(ExceptionHandler other)
         {
             if (other == null) return true;
 
@@ -186,10 +186,10 @@ namespace System.Management.Automation.Interpreter
     {
         // TODO: readonly
 
-        public int StartLine, EndLine;
-        public int Index;
-        public string FileName;
-        public bool IsClear;
+        internal int StartLine, EndLine;
+        internal int Index;
+        internal string FileName;
+        internal bool IsClear;
         private static readonly DebugInfoComparer s_debugComparer = new DebugInfoComparer();
 
         private class DebugInfoComparer : IComparer<DebugInfo>
@@ -203,7 +203,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public static DebugInfo GetMatchingDebugInfo(DebugInfo[] debugInfos, int index)
+        internal static DebugInfo GetMatchingDebugInfo(DebugInfo[] debugInfos, int index)
         {
             // Create a faked DebugInfo to do the search
             DebugInfo d = new DebugInfo { Index = index };
@@ -245,13 +245,13 @@ namespace System.Management.Automation.Interpreter
     [Serializable]
     internal struct InterpretedFrameInfo
     {
-        public readonly string MethodName;
+        internal readonly string MethodName;
 
         // TODO:
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
-        public readonly DebugInfo DebugInfo;
+        internal readonly DebugInfo DebugInfo;
 
-        public InterpretedFrameInfo(string methodName, DebugInfo info)
+        internal InterpretedFrameInfo(string methodName, DebugInfo info)
         {
             MethodName = methodName;
             DebugInfo = info;
@@ -290,7 +290,7 @@ namespace System.Management.Automation.Interpreter
 
         private static LocalDefinition[] s_emptyLocals = Array.Empty<LocalDefinition>();
 
-        public LightCompiler(int compilationThreshold)
+        internal LightCompiler(int compilationThreshold)
         {
             _instructions = new InstructionList();
             _compilationThreshold = compilationThreshold < 0 ? DefaultCompilationThreshold : compilationThreshold;
@@ -302,12 +302,12 @@ namespace System.Management.Automation.Interpreter
             _parent = parent;
         }
 
-        public InstructionList Instructions
+        internal InstructionList Instructions
         {
             get { return _instructions; }
         }
 
-        public LocalVariables Locals
+        internal LocalVariables Locals
         {
             get { return _locals; }
         }
@@ -317,7 +317,7 @@ namespace System.Management.Automation.Interpreter
             return Expression.Field(strongBoxExpression, typeof(StrongBox<object>).GetField("Value"));
         }
 
-        public LightDelegateCreator CompileTop(LambdaExpression node)
+        internal LightDelegateCreator CompileTop(LambdaExpression node)
         {
             for (int index = 0; index < node.Parameters.Count; index++)
             {
@@ -442,7 +442,7 @@ namespace System.Management.Automation.Interpreter
             return local;
         }
 
-        public void CompileGetVariable(ParameterExpression variable)
+        internal void CompileGetVariable(ParameterExpression variable)
         {
             LocalVariable local = ResolveLocal(variable);
 
@@ -462,7 +462,7 @@ namespace System.Management.Automation.Interpreter
             _instructions.SetDebugCookie(variable.Name);
         }
 
-        public void CompileGetBoxedVariable(ParameterExpression variable)
+        internal void CompileGetBoxedVariable(ParameterExpression variable)
         {
             LocalVariable local = ResolveLocal(variable);
 
@@ -479,7 +479,7 @@ namespace System.Management.Automation.Interpreter
             _instructions.SetDebugCookie(variable.Name);
         }
 
-        public void CompileSetVariable(ParameterExpression variable, bool isVoid)
+        internal void CompileSetVariable(ParameterExpression variable, bool isVoid)
         {
             LocalVariable local = ResolveLocal(variable);
 
@@ -520,7 +520,7 @@ namespace System.Management.Automation.Interpreter
             _instructions.SetDebugCookie(variable.Name);
         }
 
-        public void CompileParameterExpression(Expression expr)
+        internal void CompileParameterExpression(Expression expr)
         {
             var node = (ParameterExpression)expr;
             CompileGetVariable(node);
@@ -1165,18 +1165,18 @@ namespace System.Management.Automation.Interpreter
             _instructions.EmitGoto(labelInfo.GetLabel(this), node.Type != typeof(void), node.Value != null && node.Value.Type != typeof(void));
         }
 
-        public BranchLabel GetBranchLabel(LabelTarget target)
+        internal BranchLabel GetBranchLabel(LabelTarget target)
         {
             return ReferenceLabel(target).GetLabel(this);
         }
 
-        public void PushLabelBlock(LabelScopeKind type)
+        internal void PushLabelBlock(LabelScopeKind type)
         {
             _labelBlock = new LabelScopeInfo(_labelBlock, type);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "kind")]
-        public void PopLabelBlock(LabelScopeKind kind)
+        internal void PopLabelBlock(LabelScopeKind kind)
         {
             Debug.Assert(_labelBlock != null && _labelBlock.Kind == kind);
             _labelBlock = _labelBlock.Parent;
@@ -2038,7 +2038,7 @@ namespace System.Management.Automation.Interpreter
             Debug.Assert(_instructions.CurrentStackDepth == startingStackDepth + (expr.Type == typeof(void) ? 0 : 1));
         }
 
-        public void Compile(Expression expr)
+        internal void Compile(Expression expr)
         {
             bool pushLabelBlock = TryPushLabelBlock(expr);
             CompileNoLabelPush(expr);

@@ -43,7 +43,7 @@ namespace System.Management.Automation.Interpreter
             return +1;
         }
 
-        public static Instruction Create(int sequencePoint, bool checkBreakpoints)
+        internal static Instruction Create(int sequencePoint, bool checkBreakpoints)
         {
             return new UpdatePositionInstruction(checkBreakpoints, sequencePoint);
         }

@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         /// code signing certs.
         /// </summary>
         [Parameter]
-        public SwitchParameter CodeSigningCert
+        internal SwitchParameter CodeSigningCert
         {
             get { return _codeSigningCert; }
 
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         /// data encipherment certs.
         /// </summary>
         [Parameter]
-        public SwitchParameter DocumentEncryptionCert
+        internal SwitchParameter DocumentEncryptionCert
         {
             get;
             set;
@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
         /// server authentication certs.
         /// </summary>
         [Parameter]
-        public SwitchParameter SSLServerAuthentication
+        internal SwitchParameter SSLServerAuthentication
         {
             get;
             set;
@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
         /// All WildcardPattern class features supported.
         /// </summary>
         [Parameter]
-        public string DnsName
+        internal string DnsName
         {
             get;
             set;
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         /// All WildcardPattern class features supported.
         /// </summary>
         [Parameter]
-        public string[] Eku
+        internal string[] Eku
         {
             get;
             set;
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateRange(ValidateRangeKind.NonNegative)]
-        public int ExpiringInDays
+        internal int ExpiringInDays
         {
             get;
             set;
@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
         /// when remove a certificate.
         /// </summary>
         [Parameter]
-        public SwitchParameter DeleteKey
+        internal SwitchParameter DeleteKey
         {
             get
             {
@@ -258,7 +258,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal sealed class CertificateStoreHandle : SafeHandle
     {
-        public CertificateStoreHandle() : base(IntPtr.Zero, true)
+        internal CertificateStoreHandle() : base(IntPtr.Zero, true)
         {
             return;
         }
@@ -281,7 +281,7 @@ namespace Microsoft.PowerShell.Commands
             return fResult;
         }
 
-        public IntPtr Handle
+        internal IntPtr Handle
         {
             get { return handle; }
 
@@ -299,13 +299,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Initializes a new instance of the X509NativeStore class.
         /// </summary>
-        public X509NativeStore(X509StoreLocation StoreLocation, string StoreName)
+        internal X509NativeStore(X509StoreLocation StoreLocation, string StoreName)
         {
             _storeLocation = StoreLocation;
             _storeName = StoreName;
         }
 
-        public void Open(bool includeArchivedCerts)
+        internal void Open(bool includeArchivedCerts)
         {
             if (_storeHandle != null && _archivedCerts != includeArchivedCerts)
             {
@@ -380,12 +380,12 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        public IntPtr GetFirstCert()
+        internal IntPtr GetFirstCert()
         {
             return GetNextCert(IntPtr.Zero);
         }
 
-        public IntPtr GetNextCert(IntPtr certContext)
+        internal IntPtr GetNextCert(IntPtr certContext)
         {
             if (!_open)
             {
@@ -407,7 +407,7 @@ namespace Microsoft.PowerShell.Commands
             return certContext;
         }
 
-        public IntPtr GetCertByName(string Name)
+        internal IntPtr GetCertByName(string Name)
         {
             IntPtr certContext = IntPtr.Zero;
 
@@ -461,7 +461,7 @@ namespace Microsoft.PowerShell.Commands
             return certContext;
         }
 
-        public void FreeCert(IntPtr certContext)
+        internal void FreeCert(IntPtr certContext)
         {
             Security.NativeMethods.CertFreeCertificateContext(certContext);
         }
@@ -470,7 +470,7 @@ namespace Microsoft.PowerShell.Commands
         /// Native IntPtr store handle.
         /// </summary>
 
-        public IntPtr StoreHandle
+        internal IntPtr StoreHandle
         {
             get
             {
@@ -481,7 +481,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// X509StoreLocation store location.
         /// </summary>
-        public X509StoreLocation Location
+        internal X509StoreLocation Location
         {
             get
             {
@@ -492,7 +492,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// String store name.
         /// </summary>
-        public string StoreName
+        internal string StoreName
         {
             get
             {
@@ -504,7 +504,7 @@ namespace Microsoft.PowerShell.Commands
         /// True if a real store is open.
         /// </summary>
 
-        public bool Valid
+        internal bool Valid
         {
             get
             {

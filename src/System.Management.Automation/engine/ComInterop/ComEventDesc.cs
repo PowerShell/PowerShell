@@ -7,7 +7,7 @@ namespace System.Management.Automation.ComInterop
 {
     internal class ComEventDesc
     {
-        public Guid SourceIID;
-        public int Dispid;
+        internal Guid SourceIID;
+        internal int Dispid;
     };
 }

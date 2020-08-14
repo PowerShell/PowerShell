@@ -467,7 +467,7 @@ namespace System.Management.Automation
 
         private ExperimentalAttribute _expAttribute = ExperimentalAttribute.None;
 
-        public MergedCommandParameterMetadata GetParameterMetadata(ScriptBlock scriptBlock)
+        internal MergedCommandParameterMetadata GetParameterMetadata(ScriptBlock scriptBlock)
         {
             if (_parameterMetadata == null)
             {
@@ -1988,7 +1988,7 @@ namespace System.Management.Automation
             /// mod.
             /// </summary>
             /// <returns>The string matching the hash, or null.</returns>
-            public static string Match(string text)
+            internal static string Match(string text)
             {
                 // The longest pattern is 29 characters.
                 // The values in the array are the computed hashes of length
@@ -2191,7 +2191,7 @@ namespace System.Management.Automation
         private bool _exitWasCalled;
         private readonly FunctionContext _functionContext;
 
-        public PSScriptCmdlet(ScriptBlock scriptBlock, bool useNewScope, bool fromScriptFile, ExecutionContext context)
+        internal PSScriptCmdlet(ScriptBlock scriptBlock, bool useNewScope, bool fromScriptFile, ExecutionContext context)
         {
             _scriptBlock = scriptBlock;
             _useLocalScope = useNewScope;

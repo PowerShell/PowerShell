@@ -39,7 +39,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override string InstructionName { get { return "UncheckedConvert"; } }
 
-            public Unchecked(TypeCode from, TypeCode to)
+            internal Unchecked(TypeCode from, TypeCode to)
                 : base(from, to)
             {
             }
@@ -163,7 +163,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override string InstructionName { get { return "CheckedConvert"; } }
 
-            public Checked(TypeCode from, TypeCode to)
+            internal Checked(TypeCode from, TypeCode to)
                 : base(from, to)
             {
             }

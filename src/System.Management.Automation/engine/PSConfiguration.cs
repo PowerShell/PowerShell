@@ -635,13 +635,13 @@ namespace System.Management.Automation.Configuration
     /// </summary>
     internal sealed class PowerShellPolicies
     {
-        public ScriptExecution ScriptExecution { get; set; }
-        public ScriptBlockLogging ScriptBlockLogging { get; set; }
-        public ModuleLogging ModuleLogging { get; set; }
-        public ProtectedEventLogging ProtectedEventLogging { get; set; }
-        public Transcription Transcription { get; set; }
-        public UpdatableHelp UpdatableHelp { get; set; }
-        public ConsoleSessionConfiguration ConsoleSessionConfiguration { get; set; }
+        internal ScriptExecution ScriptExecution { get; set; }
+        internal ScriptBlockLogging ScriptBlockLogging { get; set; }
+        internal ModuleLogging ModuleLogging { get; set; }
+        internal ProtectedEventLogging ProtectedEventLogging { get; set; }
+        internal Transcription Transcription { get; set; }
+        internal UpdatableHelp UpdatableHelp { get; set; }
+        internal ConsoleSessionConfiguration ConsoleSessionConfiguration { get; set; }
     }
 
     internal abstract class PolicyBase { }
@@ -651,8 +651,8 @@ namespace System.Management.Automation.Configuration
     /// </summary>
     internal sealed class ScriptExecution : PolicyBase
     {
-        public string ExecutionPolicy { get; set; }
-        public bool? EnableScripts { get; set; }
+        internal string ExecutionPolicy { get; set; }
+        internal bool? EnableScripts { get; set; }
     }
 
     /// <summary>
@@ -660,8 +660,8 @@ namespace System.Management.Automation.Configuration
     /// </summary>
     internal sealed class ScriptBlockLogging : PolicyBase
     {
-        public bool? EnableScriptBlockInvocationLogging { get; set; }
-        public bool? EnableScriptBlockLogging { get; set; }
+        internal bool? EnableScriptBlockInvocationLogging { get; set; }
+        internal bool? EnableScriptBlockLogging { get; set; }
     }
 
     /// <summary>
@@ -669,8 +669,8 @@ namespace System.Management.Automation.Configuration
     /// </summary>
     internal sealed class ModuleLogging : PolicyBase
     {
-        public bool? EnableModuleLogging { get; set; }
-        public string[] ModuleNames { get; set; }
+        internal bool? EnableModuleLogging { get; set; }
+        internal string[] ModuleNames { get; set; }
     }
 
     /// <summary>
@@ -678,9 +678,9 @@ namespace System.Management.Automation.Configuration
     /// </summary>
     internal sealed class Transcription : PolicyBase
     {
-        public bool? EnableTranscripting { get; set; }
-        public bool? EnableInvocationHeader { get; set; }
-        public string OutputDirectory { get; set; }
+        internal bool? EnableTranscripting { get; set; }
+        internal bool? EnableInvocationHeader { get; set; }
+        internal string OutputDirectory { get; set; }
     }
 
     /// <summary>
@@ -688,8 +688,8 @@ namespace System.Management.Automation.Configuration
     /// </summary>
     internal sealed class UpdatableHelp : PolicyBase
     {
-        public bool? EnableUpdateHelpDefaultSourcePath { get; set; }
-        public string DefaultSourcePath { get; set; }
+        internal bool? EnableUpdateHelpDefaultSourcePath { get; set; }
+        internal string DefaultSourcePath { get; set; }
     }
 
     /// <summary>
@@ -697,8 +697,8 @@ namespace System.Management.Automation.Configuration
     /// </summary>
     internal sealed class ConsoleSessionConfiguration : PolicyBase
     {
-        public bool? EnableConsoleSessionConfiguration { get; set; }
-        public string ConsoleSessionConfigurationName { get; set; }
+        internal bool? EnableConsoleSessionConfiguration { get; set; }
+        internal string ConsoleSessionConfigurationName { get; set; }
     }
 
     /// <summary>
@@ -706,8 +706,8 @@ namespace System.Management.Automation.Configuration
     /// </summary>
     internal sealed class ProtectedEventLogging : PolicyBase
     {
-        public bool? EnableProtectedEventLogging { get; set; }
-        public string[] EncryptionCertificate { get; set; }
+        internal bool? EnableProtectedEventLogging { get; set; }
+        internal string[] EncryptionCertificate { get; set; }
     }
 
     #endregion

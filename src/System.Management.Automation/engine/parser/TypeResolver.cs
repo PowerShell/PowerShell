@@ -53,11 +53,11 @@ namespace System.Management.Automation.Language
         /// </summary>
         internal class AmbiguousTypeException : InvalidCastException
         {
-            public string[] Candidates { private set; get; }
+            internal string[] Candidates { private set; get; }
 
-            public TypeName TypeName { private set; get; }
+            internal TypeName TypeName { private set; get; }
 
-            public AmbiguousTypeException(TypeName typeName, IEnumerable<string> candidates)
+            internal AmbiguousTypeException(TypeName typeName, IEnumerable<string> candidates)
             {
                 Candidates = candidates.ToArray();
                 TypeName = typeName;
@@ -918,7 +918,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="typeName">The type accelerator name.</param>
         /// <param name="type">The type of the type accelerator.</param>
-        public static void Add(string typeName, Type type)
+        internal static void Add(string typeName, Type type)
         {
             userTypeAccelerators[typeName] = type;
             if (s_allTypeAccelerators != null)
@@ -932,7 +932,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns>True if the accelerator was removed, false otherwise.</returns>
         /// <param name="typeName">The accelerator to remove.</param>
-        public static bool Remove(string typeName)
+        internal static bool Remove(string typeName)
         {
             userTypeAccelerators.Remove(typeName);
             if (s_allTypeAccelerators != null)
@@ -954,7 +954,7 @@ namespace System.Management.Automation
         /// <see cref="TypeAccelerators.Remove"/> to
         /// affect the type resolution in PowerShell scripts.
         /// </remarks>
-        public static Dictionary<string, Type> Get
+        internal static Dictionary<string, Type> Get
         {
             get
             {
